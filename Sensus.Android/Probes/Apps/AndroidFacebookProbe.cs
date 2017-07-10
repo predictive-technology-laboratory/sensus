@@ -240,7 +240,9 @@ namespace Sensus.Android.Probes.Apps
                                         value = values;
                                     }
                                     else
-                                        throw new SensusException("Unrecognized FacebookDatum property type:  " + property.PropertyType.ToString());
+                                    {
+                                        throw SensusException.Report("Unrecognized FacebookDatum property type:  " + property.PropertyType);
+                                    }
 
                                     if (value != null)
                                     {
@@ -249,14 +251,20 @@ namespace Sensus.Android.Probes.Apps
                                     }
                                 }
                                 else if (jsonField != "data" && jsonField != "paging" && jsonField != "summary")
+                                {
                                     SensusServiceHelper.Get().Logger.Log("Unrecognized JSON field in Facebook query response:  " + jsonField, LoggingLevel.Verbose, GetType());
+                                }
                             }
 
                             if (valuesSet)
+                            {
                                 data.Add(datum);
+                            }
                         }
                         else
+                        {
                             throw new Exception("Error received while querying Facebook graph API:  " + response.Error.ErrorMessage);
+                        }
                     }
                 }
             }

@@ -191,12 +191,16 @@ namespace Sensus.iOS.Probes.Apps
 
                                                         NSArray resultArray = resultDictionary[resultKey] as NSArray;
                                                         for (nuint i = 0; i < resultArray.Count; ++i)
+                                                        {
                                                             values.Add(resultArray.GetItem<NSObject>(i).ToString());
+                                                        }
 
                                                         value = values;
                                                     }
                                                     else
-                                                        throw new SensusException("Unrecognized FacebookDatum property type:  " + property.PropertyType);
+                                                    {
+                                                        throw SensusException.Report("Unrecognized FacebookDatum property type:  " + property.PropertyType);
+                                                    }
 
                                                     if (value != null)
                                                     {
@@ -211,10 +215,14 @@ namespace Sensus.iOS.Probes.Apps
                                             #endregion
 
                                             if (valuesSet)
+                                            {
                                                 data.Add(datum);
+                                            }
                                         }
                                         else
+                                        {
                                             SensusServiceHelper.Get().Logger.Log("Error received while querying Facebook graph API:  " + error.Description, LoggingLevel.Normal, GetType());
+                                        }
 
                                         SensusServiceHelper.Get().Logger.Log("Response for \"" + request.GraphPath + "\" has been processed.", LoggingLevel.Verbose, GetType());
                                     }
@@ -242,7 +250,9 @@ namespace Sensus.iOS.Probes.Apps
                         #endregion
 
                         if (responseWaits.Count == 0)
+                        {
                             exception = new Exception("Request connection contained zero requests.");
+                        }
                         else
                         {
                             SensusServiceHelper.Get().Logger.Log("Starting request connection with " + responseWaits.Count + " requests.", LoggingLevel.Normal, GetType());
@@ -257,7 +267,9 @@ namespace Sensus.iOS.Probes.Apps
 
                         // if anything bad happened when starting the request, abort any response waits
                         foreach (ManualResetEvent responseWait in responseWaits)
+                        {
                             responseWait.Set();
+                        }
 
                         startWait.Set();
                     }
@@ -267,14 +279,20 @@ namespace Sensus.iOS.Probes.Apps
 
                 // wait for all responses to be processed
                 foreach (ManualResetEvent responseWait in responseWaits)
+                {
                     responseWait.WaitOne();
+                }
 
                 // if any exception occurred when running query, throw it now
                 if (exception != null)
+                {
                     throw exception;
+                }
             }
             else
+            {
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
+            }
 
             return data;
         }
@@ -284,7 +302,9 @@ namespace Sensus.iOS.Probes.Apps
             bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (!HasValidAccessToken)
+            {
                 restart = true;
+            }
 
             return restart;
         }
@@ -295,12 +315,16 @@ namespace Sensus.iOS.Probes.Apps
             {
                 List<string> permissions = new List<string>();
                 foreach (NSString permission in AccessToken.CurrentAccessToken.Permissions)
+                {
                     permissions.Add(permission.ToString());
+                }
 
                 return permissions;
             }
             else
+            {
                 return new string[0];
+            }
         }
     }
 }

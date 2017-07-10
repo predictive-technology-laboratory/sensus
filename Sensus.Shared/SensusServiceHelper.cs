@@ -470,7 +470,7 @@ namespace Sensus
         {
             if (SINGLETON != null)
             {
-                throw new SensusException("Attempted to construct new service helper when singleton already existed.");
+                throw SensusException.Report("Attempted to construct new service helper when singleton already existed.");
             }
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
@@ -1207,16 +1207,26 @@ namespace Sensus
                     // convert platform namespace
                     string convertedJsonLine;
                     if (currentTypeName == "AndroidSensusServiceHelper")
+                    {
                         convertedJsonLine = jsonLine.Replace("iOS", "Android").Replace("WinPhone", "Android");
+                    }
                     else if (currentTypeName == "iOSSensusServiceHelper")
+                    {
                         convertedJsonLine = jsonLine.Replace("Android", "iOS").Replace("WinPhone", "iOS");
+                    }
                     else if (currentTypeName == "WinPhoneSensusServiceHelper")
+                    {
                         convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
+                    }
                     else
-                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
+                    {
+                        throw SensusException.Report("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
+                    }
 
                     if (convertedJsonLine != jsonLine)
+                    {
                         conversionPerformed = true;
+                    }
 
                     convertedJSON.AppendLine(convertedJsonLine);
                 }
@@ -1324,7 +1334,9 @@ namespace Sensus
         public void AssertNotOnMainThread(string actionDescription)
         {
             if (IsOnMainThread)
-                throw new SensusException("Attempted to execute on main thread:  " + actionDescription);
+            {
+                throw SensusException.Report("Attempted to execute on main thread:  " + actionDescription);
+            }
         }
 
         public void StopProtocols()

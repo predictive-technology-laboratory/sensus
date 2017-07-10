@@ -220,12 +220,6 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.3.5\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\packages\AWSSDK.SecurityToken.3.3.0.3\lib\Xamarin.iOS10\AWSSDK.SecurityToken.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.3.0.3\lib\Xamarin.iOS10\AWSSDK.CognitoIdentity.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.1.2\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
     </Reference>

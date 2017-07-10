@@ -322,7 +322,7 @@ namespace Sensus.DataStores.Local
                     }
                     catch (Exception ex)
                     {
-                        throw new SensusException("Failed to get path to local file:  " + ex.Message, ex);
+                        throw SensusException.Report("Failed to get path to local file:  " + ex.Message, ex);
                     }
 
                     // create an empty file at the path if one does not exist
@@ -333,7 +333,9 @@ namespace Sensus.DataStores.Local
                 }
 
                 if (_path == null)
-                    throw new SensusException("Failed to find new path.");
+                {
+                    throw SensusException.Report("Failed to find new path.");
+                }
             }
         }
 

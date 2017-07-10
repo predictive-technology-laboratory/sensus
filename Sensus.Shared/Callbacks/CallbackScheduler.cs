@@ -75,7 +75,9 @@ namespace Sensus.Callbacks
                 return false;
             }
             else
+            {
                 return _idCallback.ContainsKey(callbackId);
+            }
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
@@ -131,13 +133,17 @@ namespace Sensus.Callbacks
                         }
 
                         if (actionAlreadyRunning)
+                        {
                             SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" is already running. Not running again.", LoggingLevel.Normal, GetType());
+                        }
                         else
                         {
                             try
                             {
                                 if (scheduledCallback.Canceller.IsCancellationRequested)
+                                {
                                     SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" was cancelled before it was raised.", LoggingLevel.Normal, GetType());
+                                }
                                 else
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
@@ -149,7 +155,9 @@ namespace Sensus.Callbacks
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
                                     if (scheduledCallback.CallbackTimeout.HasValue)
+                                    {
                                         scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
+                                    }
 
                                     await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                 }

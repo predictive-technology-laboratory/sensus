@@ -163,12 +163,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.3.5\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\packages\AWSSDK.SecurityToken.3.3.0.3\lib\MonoAndroid10\AWSSDK.SecurityToken.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.3.0.3\lib\MonoAndroid10\AWSSDK.CognitoIdentity.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.1.2\lib\MonoAndroid10\AWSSDK.S3.dll</HintPath>
     </Reference>

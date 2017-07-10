@@ -18,7 +18,6 @@ using Sensus.UI.UiProperties;
 using System.Text;
 using System.Threading;
 using Amazon.S3;
-using Amazon.CognitoIdentity;
 using Amazon;
 using Amazon.S3.Model;
 using System.Threading.Tasks;
@@ -28,7 +27,9 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Security.Cryptography;
 using Sensus.Encryption;
-using Org.BouncyCastle.Asn1.X509;
+using Sensus.Exceptions;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace Sensus.DataStores.Remote
 {
@@ -211,13 +212,38 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
-            // ensure that we have a pinned public key if we're pinning the service
-            if (_pinnedServiceURL != null && string.IsNullOrWhiteSpace(_pinnedPublicKey))
+            if (_pinnedServiceURL != null)
             {
-                throw new Exception("Ensure that a pinned public key is provided to the AWS S3 remote data store.");
+                // ensure that we have a pinned public key if we're pinning the service URL
+                if (string.IsNullOrWhiteSpace(_pinnedPublicKey))
+                {
+                    throw new Exception("Ensure that a pinned public key is provided to the AWS S3 remote data store.");
+                }
+                // set up a certificate validation callback if we're pinning and have a public key
+                else
+                {
+                    ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
+                }
             }
 
             base.Start();
+        }
+
+        private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sllPolicyErrors)
+        {
+            if (certificate == null)
+            {
+                return false;
+            }
+
+            if (certificate.Subject == "CN=" + _pinnedServiceURL.Substring("https://".Length))
+            {
+                return Convert.ToBase64String(certificate.GetPublicKey()) == _pinnedPublicKey;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private AmazonS3Client InitializeS3()
@@ -233,18 +259,6 @@ namespace Sensus.DataStores.Remote
             else
             {
                 clientConfig.ServiceURL = _pinnedServiceURL;
-
-                ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
-                {
-                    if (certificate == null)
-                    {
-                        return false;
-                    }
-
-                    return true;
-
-                    return certificate.GetPublicKeyString() == _pinnedPublicKey;
-                };
             }
 
             return new AmazonS3Client(null, clientConfig);
@@ -327,7 +341,9 @@ namespace Sensus.DataStores.Remote
                     foreach (string datumType in datumTypeJSON.Keys)
                     {
                         if (cancellationToken.IsCancellationRequested)
+                        {
                             break;
+                        }
 
                         string key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/');  // trim '/' in case folder is blank
 
@@ -445,7 +461,20 @@ namespace Sensus.DataStores.Remote
                     putRequest.InputStream = putRequestInputStream;
                 }
 
-                return (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
+                try
+                {
+                    return (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.TrustFailure)
+                    {
+                        string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
+                        SensusException.Report(message, ex);
+                    }
+
+                    throw ex;
+                }
             });
         }
 
@@ -482,6 +511,17 @@ namespace Sensus.DataStores.Remote
             finally
             {
                 DisposeS3(s3);
+            }
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+
+            // remove the callback
+            if (_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey))
+            {
+                ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
             }
         }
 

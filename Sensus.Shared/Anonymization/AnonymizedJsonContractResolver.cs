@@ -49,7 +49,7 @@ namespace Sensus.Anonymization
             {
                 if (target == null)
                 {
-                    throw new SensusException("Attempted to process a null object.");
+                    throw SensusException.Report("Attempted to process a null object.");
                 }
                 // if the target object is a Datum, consider anonymizing the property value
                 else if (target is Datum)
@@ -224,7 +224,9 @@ namespace Sensus.Anonymization
                 return defaultValueProvider;
             }
             else
+            {
                 return new AnonymizedPropertyValueProvider(propertyInfo, defaultValueProvider, this);
+            }
         }
     }
 }
