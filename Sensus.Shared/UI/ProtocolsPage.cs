@@ -504,7 +504,7 @@ namespace Sensus.UI
                 {
                     Protocol.Create("New Protocol");
                 }
-                else if (action == "Display Device ID")
+                else if (action == "View Device ID")
                 {
                     await DisplayAlert("Device ID", SensusServiceHelper.Get().DeviceId, "Close");
                 }
