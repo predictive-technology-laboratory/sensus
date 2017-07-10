@@ -323,7 +323,7 @@ namespace Sensus.Probes
                 // on ios we do significant-change polling, which can override scheduled polls. don't check for polling delays if the scheduled polls are overridden.
                 if (_significantChangePoll && _significantChangePollOverridesScheduledPolls)
                 {
-                    return;
+                    return restart;
                 }
 #endif
 
