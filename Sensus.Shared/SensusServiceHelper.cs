@@ -67,10 +67,10 @@ namespace Sensus
 
 #if DEBUG || UNIT_TESTING
         // test every 30 seconds in debug
-        public const int HEALTH_TEST_DELAY_MS = 30000;
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
         // test every 15 minutes in release
-        public const int HEALTH_TEST_DELAY_MS = 900000;
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(15);
 #endif
 
         /// <summary>
@@ -636,7 +636,7 @@ namespace Sensus
 
                     }, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG);
                 }
             }
         }
@@ -761,7 +761,7 @@ namespace Sensus
                         scriptToKeep = scriptsFromSameRunner.First();
                         scriptsToRemove = scriptsFromSameRunner.Skip(1).ToList();
                     }
-                    else if (runMode == RunMode.SingleUpdate)
+                    else if (runMode == RunMode.SingleKeepNewest)
                     {
                         scriptToKeep = scriptsFromSameRunner.Last();
                         scriptsToRemove = scriptsFromSameRunner.Take(scriptsFromSameRunner.Count - 1).ToList();

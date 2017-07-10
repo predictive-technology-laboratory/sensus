@@ -766,20 +766,24 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public float Participation
+        public double Participation
         {
             get
             {
-                float[] participations = _probes.Select(probe => probe.GetParticipation())
+                double[] participations = _probes.Select(probe => probe.GetParticipation())
                                                 .Where(participation => participation != null)
                                                 .Select(participation => participation.GetValueOrDefault())
                                                 .ToArray();
 
                 // there will not be any participations if all probes are disabled -- perfect participation by definition
                 if (participations.Length == 0)
+                {
                     return 1;
+                }
                 else
+                {
                     return participations.Average();
+                }
             }
         }
 
@@ -1210,7 +1214,7 @@ namespace Sensus
             $"Started study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, (int)timeUntilStart.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, timeUntilStart);
         }
 
         public void CancelScheduledStart()
@@ -1242,7 +1246,7 @@ namespace Sensus
             $"Stopped study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, (int)timeUntilStop.TotalMilliseconds);
+            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, timeUntilStop);
         }
 
         public void CancelScheduledStop()
@@ -1289,16 +1293,20 @@ namespace Sensus
                 consent.Add(new LabelOnlyInput(_description));
 
             consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                           " and " + (_continueIndefinitely ? "continue forever." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
+                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
 
             consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
 
             LabelOnlyInput collectionDescriptionLabel = null;
             int collectionDescriptionFontSize = 15;
             if (collectionDescription.Length == 0)
+            {
                 collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
+            }
             else
+            {
                 collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
+            }
 
             collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
             consent.Add(collectionDescriptionLabel);

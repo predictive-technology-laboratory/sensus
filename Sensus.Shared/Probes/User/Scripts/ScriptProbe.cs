@@ -40,7 +40,7 @@ namespace Sensus.Probes.User.Scripts
             get { return typeof(ScriptDatum); }
         }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {
@@ -84,9 +84,9 @@ namespace Sensus.Probes.User.Scripts
                         if (scriptRunner.RunOnStart)
                             collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
 
-                        if (scriptRunner.TriggerWindows != "")
+                        if (scriptRunner.TriggerWindowsString != "")
                         {
-                            string windows = scriptRunner.TriggerWindows;
+                            string windows = scriptRunner.TriggerWindowsString;
                             string collectionDescriptionPrefix = "Randomly during hours ";
                             int commaCount = windows.Count(c => c == ',');
                             if (commaCount == 0)

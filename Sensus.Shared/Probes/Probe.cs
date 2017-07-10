@@ -139,7 +139,9 @@ namespace Sensus.Probes
                     _mostRecentDatum = value;
 
                     if (MostRecentDatumChanged != null)
+                    {
                         MostRecentDatumChanged(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
+                    }
                 }
             }
         }
@@ -167,7 +169,7 @@ namespace Sensus.Probes
         public abstract Type DatumType { get; }
 
         [JsonIgnore]
-        protected abstract float RawParticipation { get; }
+        protected abstract double RawParticipation { get; }
 
         /// <summary>
         /// Gets a list of times at which the probe was started (tuple bool = True) and stopped (tuple bool = False). Only includes 
@@ -259,12 +261,16 @@ namespace Sensus.Probes
         /// to trigger scripts but not told to store its data.
         /// </summary>
         /// <returns>The participation level (null, or somewhere 0-1).</returns>
-        public float? GetParticipation()
+        public double? GetParticipation()
         {
             if (_originallyEnabled && _storeData)
+            {
                 return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
+            }
             else
+            {
                 return null;
+            }
         }
 
         protected void StartAsync()
@@ -373,7 +379,9 @@ namespace Sensus.Probes
                             _chartData.Add(chartDataPoint);
 
                             while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                            {
                                 _chartData.RemoveAt(0);
+                            }
                         }
                     }
 

@@ -30,23 +30,23 @@ namespace Sensus.Android.Callbacks
             _service = service;
         }
 
-        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, int delayMS)
+        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, TimeSpan delay)
         {
             Intent callbackIntent = CreateCallbackIntent(callbackId);
             PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
-            ScheduleCallbackAlarm(callbackPendingIntent, delayMS);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + DateTime.Now.AddMilliseconds(delayMS) + " (one-time).", LoggingLevel.Normal, GetType());
+            ScheduleCallbackAlarm(callbackPendingIntent, delay);
+            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + (DateTime.Now + delay) + " (one-time).", LoggingLevel.Normal, GetType());
         }
 
-        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag)
         {
             Intent callbackIntent = CreateCallbackIntent(callbackId);
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEATING_KEY, true);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelay.Ticks.ToString());
             callbackIntent.PutExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag);
             PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
-            ScheduleCallbackAlarm(callbackPendingIntent, initialDelayMS);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + DateTime.Now.AddMilliseconds(initialDelayMS) + " (repeating).", LoggingLevel.Normal, GetType());
+            ScheduleCallbackAlarm(callbackPendingIntent, initialDelay);
+            SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " scheduled for " + (DateTime.Now + initialDelay) + " (repeating).", LoggingLevel.Normal, GetType());
         }
 
         private Intent CreateCallbackIntent(string callbackId)
@@ -70,7 +70,7 @@ namespace Sensus.Android.Callbacks
             return PendingIntent.GetService(_service, 0, callbackIntent, PendingIntentFlags.CancelCurrent);
         }
 
-        private void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, long delayMS)
+        private void ScheduleCallbackAlarm(PendingIntent callbackPendingIntent, TimeSpan delay)
         {
             AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
 
@@ -80,14 +80,18 @@ namespace Sensus.Android.Callbacks
             // additional, duplicate alarms. we need to be careful to avoid duplicate alarms, and this is how we manage it.
             alarmManager.Cancel(callbackPendingIntent);
 
-            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + delayMS;
+            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + (long)delay.TotalMilliseconds;
 
             // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
 #if __ANDROID_23__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
                 alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
+            }
             else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+            {
                 alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
+            }
             else
 #endif
             {
@@ -110,17 +114,23 @@ namespace Sensus.Android.Callbacks
                 if (CallbackIsScheduled(callbackId))
                 {
                     bool repeating = intent.GetBooleanExtra(SENSUS_CALLBACK_REPEATING_KEY, false);
-                    int repeatDelayMS = intent.GetIntExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY, -1);
+
+                    TimeSpan repeatDelay = TimeSpan.Zero;
+                    if (repeating)
+                    {
+                        repeatDelay = TimeSpan.FromTicks(long.Parse(intent.GetStringExtra(SENSUS_CALLBACK_REPEAT_DELAY_KEY)));
+                    }
+
                     bool repeatLag = intent.GetBooleanExtra(SENSUS_CALLBACK_REPEAT_LAG_KEY, false);
                     bool wakeLockReleased = false;
 
                     // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                    await RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, true,
+                    await RaiseCallbackAsync(callbackId, repeating, repeatDelay, repeatLag, true,
 
                         // schedule a new alarm for the same callback at the desired time.
                         repeatCallbackTime =>
                         {
-                            ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), (long)(repeatCallbackTime - DateTime.Now).TotalMilliseconds);
+                            ScheduleCallbackAlarm(CreateCallbackPendingIntent(intent), repeatCallbackTime - DateTime.Now);
                         },
 
                         // if the callback indicates that it's okay for the device to sleep, release the wake lock now.

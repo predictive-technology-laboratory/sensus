@@ -39,8 +39,8 @@ namespace Sensus.Probes.User.MicrosoftBand
         private static ManualResetEvent BAND_CLIENT_CONNECT_WAIT = new ManualResetEvent(false);
         private static object BAND_CLIENT_LOCKER = new object();
         private static ScheduledCallback HEALTH_TEST_CALLBACK;
-        private const int HEALTH_TEST_DELAY_MS = 60000;
-        private const int HEALTH_TEST_TIMEOUT_MS = 60000;
+        private readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan HEALTH_TEST_TIMEOUT = TimeSpan.FromSeconds(60);
         private static readonly object HEALTH_TEST_LOCKER = new object();
         private static bool REENABLE_BLUETOOTH_IF_NEEDED = true;
 
@@ -368,8 +368,8 @@ namespace Sensus.Probes.User.MicrosoftBand
                 if (HEALTH_TEST_CALLBACK == null)
                 {
                     // the band health test is static, so it has no domain other than sensus.
-                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, "BAND-HEALTH-TEST", null, null, TimeSpan.FromMilliseconds(HEALTH_TEST_TIMEOUT_MS));
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(HEALTH_TEST_CALLBACK, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, false);
+                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(HEALTH_TEST_CALLBACK, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, false);
                 }
             }
 

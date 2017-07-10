@@ -19,30 +19,27 @@ using System.Threading.Tasks;
 using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
-using Sensus.Exceptions;
-using Sensus.UI;
 using UIKit;
-using Xamarin.Forms;
 
 namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
-        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag)
         {
-            ScheduleCallbackAsync(callbackId, initialDelayMS, true, repeatDelayMS, repeatLag);
+            ScheduleCallbackAsync(callbackId, initialDelay, true, repeatDelay, repeatLag);
         }
 
-        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, int delayMS)
+        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, TimeSpan delay)
         {
-            ScheduleCallbackAsync(callbackId, delayMS, false, -1, false);
+            ScheduleCallbackAsync(callbackId, delay, false, TimeSpan.Zero, false);
         }
 
-        protected abstract void ScheduleCallbackAsync(string callbackId, int delayMS, bool repeating, int repeatDelayMS, bool repeatLag);
+        protected abstract void ScheduleCallbackAsync(string callbackId, TimeSpan delay, bool repeating, TimeSpan repeatDelay, bool repeatLag);
 
         public abstract Task UpdateCallbacksAsync();
 
-        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, DisplayPage displayPage)
+        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, TimeSpan repeatDelay, bool repeatLag, DisplayPage displayPage)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -51,14 +48,16 @@ namespace Sensus.iOS.Callbacks
             // see:  https://insights.xamarin.com/app/Sensus-Production/issues/64
             // 
             if (callbackId == null)
+            {
                 return null;
+            }
 
             List<object> keyValuePairs = new object[]
             {
                 iOSNotifier.NOTIFICATION_ID_KEY, callbackId,
                 Notifier.DISPLAY_PAGE_KEY, displayPage.ToString(),
                 SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelayMS,
+                SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelay.Ticks.ToString(),
                 SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag
 
             }.ToList();
@@ -73,12 +72,20 @@ namespace Sensus.iOS.Callbacks
                 // check whether the passed information describes a callback
                 NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
                 if (!(isCallback?.BoolValue ?? false))
+                {
                     return;
+                }
 
                 // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
                 string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
                 bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
-                int repeatDelayMS = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSNumber)?.Int32Value ?? 100000; // not sure what the right value is here.
+
+                TimeSpan repeatDelay = TimeSpan.Zero;
+                if (repeating)
+                {
+                    repeatDelay = TimeSpan.FromTicks(long.Parse(callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSString));
+                }
+
                 bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
 
                 // only raise callback if it is still scheduled
@@ -101,7 +108,7 @@ namespace Sensus.iOS.Callbacks
                 // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
                 // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
                 // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-                await RaiseCallbackAsync(callbackId, repeating, repeatDelayMS, repeatLag, false, null, null);
+                await RaiseCallbackAsync(callbackId, repeating, repeatDelay, repeatLag, false, null, null);
 
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
