@@ -16,6 +16,6 @@ None
 Decompresses JSON files downloaded from AWS S3.
 }
 \examples{
-# sensus.decompress("~/Desktop/data")
+# sensus.decompress.json("~/Desktop/data")
 }
 

@@ -47,7 +47,9 @@ namespace Sensus.Probes.Apps
             _field = field;
 
             if (_edge == null && _field == null)
-                throw new SensusException("Facebook permission edge and field are both null for permission \"" + _name + "\".");
+            {
+                throw SensusException.Report("Facebook permission edge and field are both null for permission \"" + _name + "\".");
+            }
         }
 
         public override string ToString()

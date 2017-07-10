@@ -53,7 +53,9 @@ namespace Sensus.Anonymization
             _propertyDisplayName = propertyDisplayName;
 
             if (availableAnonymizerTypes == null)
-                availableAnonymizerTypes = new Type[0];            
+            {
+                availableAnonymizerTypes = new Type[0];
+            }
 
             // we're always going to add the value omitting anonymizer at the start of the anonymizers list. if 
             // the default is >= 0 add 1 to produce the result that the caller desires. only do this if the 
@@ -61,7 +63,9 @@ namespace Sensus.Anonymization
             // 0, then they are asking for the value omitting anonymizer by default -- in this case we should
             // not increment.
             if (defaultAnonymizerIndex >= 0 && availableAnonymizerTypes.Length > 0)
+            {
                 ++defaultAnonymizerIndex;
+            }
 
             // instantiate available anonymizers
             _availableAnonymizers = new List<Anonymizer>();
@@ -71,13 +75,17 @@ namespace Sensus.Anonymization
                 Anonymizer availableAnonymizer = Activator.CreateInstance(availableAnonymizerType) as Anonymizer;
 
                 if (availableAnonymizer == null)
-                    throw new SensusException("Attempted to create an anonymizer from a type that does not derive from Anonymizer.");
+                {
+                    throw SensusException.Report("Attempted to create an anonymizer from a type that does not derive from Anonymizer.");
+                }
                 
                 _availableAnonymizers.Add(availableAnonymizer);
             }
 
             if (defaultAnonymizerIndex < -1 || defaultAnonymizerIndex >= _availableAnonymizers.Count)
-                throw new SensusException("Attempted to set default anonymizer for property outside the bounds of available types:  " + defaultAnonymizerIndex);
+            {
+                throw SensusException.Report("Attempted to set default anonymizer for property outside the bounds of available types:  " + defaultAnonymizerIndex);
+            }
 
             // set default anonymizer if requested
             if (defaultAnonymizerIndex >= 0)

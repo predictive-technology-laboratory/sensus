@@ -208,14 +208,8 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.3.5\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.CognitoIdentity">
-      <HintPath>..\packages\AWSSDK.CognitoIdentity.3.3.0\lib\netstandard1.3\AWSSDK.CognitoIdentity.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.1.2\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.SecurityToken">
-      <HintPath>..\packages\AWSSDK.SecurityToken.3.3.0.3\lib\Xamarin.iOS10\AWSSDK.SecurityToken.dll</HintPath>
     </Reference>
     <Reference Include="PInvoke.Windows.Core">
       <HintPath>..\packages\PInvoke.Windows.Core.0.3.152\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\PInvoke.Windows.Core.dll</HintPath>
@@ -255,6 +249,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Xamarin.Estimote.iOS">
       <HintPath>..\packages\Xamarin.Estimote.iOS.4.7.3.2\lib\Xamarin.iOS10\Xamarin.Estimote.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

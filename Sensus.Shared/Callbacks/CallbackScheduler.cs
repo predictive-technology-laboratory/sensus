@@ -75,7 +75,9 @@ namespace Sensus.Callbacks
                 return false;
             }
             else
+            {
                 return _idCallback.ContainsKey(callbackId);
+            }
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)

@@ -28,7 +28,7 @@ namespace Sensus.Anonymization.Anonymizers
             }
         }
        
-        public override object Apply(object value, Protocol Protocol)
+        public override object Apply(object value, Protocol protocol)
         {
             if (value is string)
                 return SensusServiceHelper.Get().GetHash(value as string);
@@ -37,12 +37,16 @@ namespace Sensus.Anonymization.Anonymizers
                 List<string> hashes = new List<string>();
 
                 foreach (string s in (value as IEnumerable<string>))
+                {
                     hashes.Add(SensusServiceHelper.Get().GetHash(s));
-                  
+                }
+
                 return hashes;
             }
             else
-                throw new SensusException("Attempted to apply string hash anonymizer to a non-string value.");
+            {
+                throw SensusException.Report("Attempted to apply string hash anonymizer to a non-string value.");
+            }
         }
     }
 }
