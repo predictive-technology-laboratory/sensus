@@ -101,15 +101,43 @@ namespace Sensus.Probes.User.Scripts
                 // the effect of such latencies.
                 List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
 
-                // return up to 8 trigger times beyond the reference
-                for (; (after - reference).TotalDays < (8 * _intervalDays); after = after.AddDays(_intervalDays))
+                // return 7 triggers for each window
+                for (int triggerNum = 0; triggerNum < 7; ++triggerNum)
                 {
-                    // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (ScriptTriggerTime triggerTime in _windows.Select(window => window.GetNextTriggerTime(reference, after, WindowExpiration, maxAge)).OrderBy(t => t.Trigger))
+                    foreach (TriggerWindow window in _windows)
                     {
+                        DateTime afterCurr;
+
+                        // if the window has a day-of-week specified, ignore the interval days field and go week by week instead
+                        if (window.DayOfTheWeek.HasValue)
+                        {
+                            // how many days until the specified day of week?
+                            int daysUntilDOW = 0;
+                            if (after.DayOfWeek < window.DayOfTheWeek.Value)
+                            {
+                                daysUntilDOW = window.DayOfTheWeek.Value - after.DayOfWeek;
+                            }
+                            else if (after.DayOfWeek > window.DayOfTheWeek.Value)
+                            {
+                                // number of days until saturday + number of days from saturday to window's DOW
+                                daysUntilDOW = ((int)DayOfWeek.Saturday - (int)after.DayOfWeek) + (int)window.DayOfTheWeek.Value + 1;
+                            }
+
+                            afterCurr = after.AddDays(triggerNum * 7 + daysUntilDOW);
+                        }
+                        else
+                        {
+                            afterCurr = after.AddDays(triggerNum * _intervalDays);
+                        }
+
+                        ScriptTriggerTime triggerTime = window.GetNextTriggerTime(reference, afterCurr, WindowExpiration, maxAge);
+
                         triggerTimes.Add(triggerTime);
                     }
                 }
+
+                // it is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
+                triggerTimes.OrderBy(t => t.Trigger);
 
                 return triggerTimes;
             }
