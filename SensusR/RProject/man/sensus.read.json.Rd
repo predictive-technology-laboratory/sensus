@@ -28,4 +28,3 @@ Read JSON-formatted Sensus data.
 data.path = system.file("extdata", "example_data", package="SensusR")
 data = sensus.read.json(data.path)
 }
-

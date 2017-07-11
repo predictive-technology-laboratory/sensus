@@ -18,4 +18,3 @@ Decompresses JSON files downloaded from AWS S3.
 \examples{
 # sensus.decompress.json("~/Desktop/data")
 }
-

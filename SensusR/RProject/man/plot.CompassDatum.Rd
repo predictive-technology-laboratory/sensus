@@ -23,4 +23,3 @@ data.path = system.file("extdata", "example_data", package="SensusR")
 data = sensus.read.json(data.path)
 plot(data$CompassDatum)
 }
-

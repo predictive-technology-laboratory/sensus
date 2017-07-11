@@ -21,4 +21,3 @@ data = sensus.read.json(data.path)
 lags = sensus.get.all.timestamp.lags(data)
 plot(lags[["AccelerometerDatum"]])
 }
-

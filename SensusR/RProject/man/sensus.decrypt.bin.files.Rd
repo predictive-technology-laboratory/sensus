@@ -33,4 +33,3 @@ Decrypts Sensus .bin files that were encrypted using asymmetric public/private k
 #                          rsa.private.key.path = "/path/to/private.pem", 
 #                          replace.files = FALSE)
 }
-

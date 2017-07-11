@@ -30,4 +30,3 @@ Synchronizes data from Amazon S3 to a local path.
 \examples{
 # data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", local.path = "~/Desktop/data")
 }
-

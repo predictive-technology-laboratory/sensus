@@ -22,4 +22,3 @@ data.path = system.file("extdata", "example_data", package="SensusR")
 data = sensus.read.json(data.path)
 filtered.data = sensus.remove.device.id(data$AccelerometerDatum, "a448s0df98f")
 }
-
