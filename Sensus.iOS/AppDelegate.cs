@@ -56,7 +56,7 @@ namespace Sensus.iOS
             {
                 Platform = Sensus.Context.Platform.iOS,
                 MainThreadSynchronizer = new MainConcurrent(),
-                Encryption = new SimpleEncryption(SensusServiceHelper.ENCRYPTION_KEY)
+                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY)
             };
 
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications
@@ -184,7 +184,9 @@ namespace Sensus.iOS
             // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them via this app delegate
             // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem to Insights and bail.
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+            {
                 SensusException.Report("Received UILocalNotification in iOS 10 or later.");
+            }
             else
             {
                 // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
@@ -194,7 +196,9 @@ namespace Sensus.iOS
 
                 IiOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler;
                 if (callbackScheduler == null)
+                {
                     SensusException.Report("Invalid callback scheduler.");
+                }
                 else
                 {
                     // run asynchronously to release the UI thread

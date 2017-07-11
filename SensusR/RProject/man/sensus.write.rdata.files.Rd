@@ -21,4 +21,3 @@ data.path = system.file("extdata", "example_data", package="SensusR")
 data = sensus.read.json(data.path)
 # sensus.write.csv.files(data, directory = "/path/to/directory")
 }
-

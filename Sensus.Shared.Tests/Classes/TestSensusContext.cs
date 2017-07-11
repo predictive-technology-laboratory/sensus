@@ -24,7 +24,7 @@ namespace Sensus.Test.Classes
     {
         public Platform Platform { get; set; }
         public IConcurrent MainThreadSynchronizer { get; set; }
-        public IEncryption Encryption { get; set; }
+        public IEncryption SymmetricEncryption { get; set; }
         public INotifier Notifier { get; set; }
         public ICallbackScheduler CallbackScheduler { get; set; }
         public string ActivationId { get; set; }
@@ -33,7 +33,7 @@ namespace Sensus.Test.Classes
         {
             Platform = Platform.Test;
             MainThreadSynchronizer = new LockConcurrent();
-            Encryption = new SimpleEncryption("");
+            SymmetricEncryption = new SymmetricEncryption("91091462A8D6FD3B4DB1D91C731070F10460D73AEE0377EDC2585C42F70A84A5");
         }
     }
 }

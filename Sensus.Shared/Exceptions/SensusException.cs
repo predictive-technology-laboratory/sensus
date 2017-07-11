@@ -19,27 +19,27 @@ namespace Sensus.Exceptions
 {
     public class SensusException : Exception
     {
-        public static void Report(string message, Exception innerException = null, bool throwException = false)
+        public static SensusException Report(string message, Exception innerException = null)
         {
-            SensusException exception = new SensusException(message, innerException);
+            SensusServiceHelper.Get().Logger.Log("Sensus exception being reported:  " + message + Environment.NewLine + "Stack:  " + Environment.StackTrace, LoggingLevel.Normal, typeof(SensusException));
 
-            if (throwException)
-                throw exception;
-        }
-
-        public SensusException(string message, Exception innerException = null)
-            : base(message, innerException)
-        {
-            SensusServiceHelper.Get().Logger.Log("Exception being created:  " + message + Environment.NewLine + "Stack:  " + Environment.StackTrace, LoggingLevel.Normal, GetType());
+            SensusException sensusException = new SensusException(message, innerException);
 
             try
             {
-                Insights.Report(this, "Stack Trace", Environment.StackTrace, Insights.Severity.Error);
+                Insights.Report(sensusException, "Stack Trace", Environment.StackTrace, Insights.Severity.Critical);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to report new exception to Xamarin Insights:  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Failed to report new exception to Xamarin Insights:  " + ex.Message, LoggingLevel.Normal, typeof(SensusException));
             }
+
+            return sensusException;
+        }
+
+        protected SensusException(string message, Exception innerException = null)
+            : base(message, innerException)
+        {            
         }
     }
 }
