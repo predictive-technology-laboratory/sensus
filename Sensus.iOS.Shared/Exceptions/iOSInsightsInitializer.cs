@@ -12,22 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using Xamarin;
 using Sensus.Exceptions;
+using Xamarin;
 
-namespace Sensus.Android.Exceptions
+namespace Sensus.iOS.Exceptions
 {
-    public class AndroidInsightsInitializer : InsightsInitializer
+    public class iOSInsightsInitializer : InsightsInitializer
     {
-        public AndroidInsightsInitializer(string deviceId)
+        public iOSInsightsInitializer(string deviceId)
             : base(deviceId)
         {
         }
 
         protected override void InitializePlatformSpecific(string insightsKey)
         {
-            Insights.Initialize(insightsKey, Application.Context);
+            Insights.Initialize(insightsKey);
         }
     }
 }

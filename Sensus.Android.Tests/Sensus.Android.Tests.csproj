@@ -311,7 +311,7 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\filepaths.xml" />
   </ItemGroup>
-  <Import Project="..\Sensus.Shared.Android\Sensus.Shared.Android.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Shared.Tests\Sensus.Shared.Tests.projitems" Label="Shared" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

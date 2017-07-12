@@ -12,23 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Xamarin.Forms.Platform.iOS;
-using UIKit;
+using Android.Widget;
+using Android.Graphics.Drawables;
 using Xamarin.Forms;
-using Sensus.Shared.iOS.UI;
+using Xamarin.Forms.Platform.Android;
+using Sensus.Android.UI;
 using Sensus.UI.Inputs;
-using CoreGraphics;
 
-// register the slider input effect
 [assembly: ExportEffect(typeof(SliderInputEffect), SliderInput.EFFECT_RESOLUTION_EFFECT_NAME)]
 
-namespace Sensus.Shared.iOS.UI
+namespace Sensus.Android.UI
 {
+    /// <summary>
+    /// Hides the slider thumb button until the user taps the slider. This is important because displaying the thumb
+    /// button immediately can bias the user to (1) move the button away from the initial value or (2) bias the user
+    /// to select a value near the initial value (anchor-adjustment bias).
+    /// </summary>
     public class SliderInputEffect : PlatformEffect
     {
-        private UIImage _visibleThumbImage;
         private bool _userHasChangedSliderValue;
+        private Drawable _visibleThumbDrawable;
 
         public SliderInputEffect()
         {
@@ -37,34 +40,30 @@ namespace Sensus.Shared.iOS.UI
 
         protected override void OnAttached()
         {
-            UISlider nativeSlider = Control as UISlider;
+            SeekBar nativeSeekBar = Control as SeekBar;
             Slider formsSlider = Element as Slider;
 
             // make the thumb image invisible if the user hasn't previously changed the slider's value
             if (!_userHasChangedSliderValue)
             {
-                _visibleThumbImage = nativeSlider.ThumbImage(UIControlState.Normal);
-                nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
+                _visibleThumbDrawable = nativeSeekBar.Thumb;
+                nativeSeekBar.SetThumb(new ColorDrawable(global::Android.Graphics.Color.Transparent));
             }
 
-            // listen for the user pressing on the slider. this also reports slides.
-            nativeSlider.AddGestureRecognizer(new UILongPressGestureRecognizer(pressRecognizer =>
+            nativeSeekBar.ProgressChanged += (sender, e) =>
             {
-                // make the thumb image visible
+                // make the thumb image visible if we haven't already
                 if (!_userHasChangedSliderValue)
                 {
-                    nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
+                    nativeSeekBar.SetThumb(_visibleThumbDrawable);
                     _userHasChangedSliderValue = true;
                 }
 
-                // update the slider value - we subtract 25 from the width of the frame to get the right offset (fudgey)
-                CGPoint pointTapped = pressRecognizer.LocationInView(pressRecognizer.View);
-                float percent = (float)((pointTapped.X - nativeSlider.Frame.Location.X) / (nativeSlider.Frame.Size.Width - 25));
-                float newNativeValue = nativeSlider.MinValue + (percent * (nativeSlider.MaxValue - nativeSlider.MinValue));
-                nativeSlider.SetValue(newNativeValue, false);
+                // set the value on the forms slider control. note that SeekBars have a fixed minimum (0) and
+                // a variable maximum. rescale the SeekBar's value to be in the range desired for the forms control.
+                double percent = nativeSeekBar.Progress / (double)nativeSeekBar.Max;
                 formsSlider.Value = formsSlider.Minimum + (percent * (formsSlider.Maximum - formsSlider.Minimum));
-            })
-            { MinimumPressDuration = 0 });
+            };
         }
 
         protected override void OnDetached()

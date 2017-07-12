@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Exceptions;
-using Xamarin;
+using Sensus.Context;
+using Sensus.Concurrent;
+using Sensus.Encryption;
+using Sensus.Callbacks;
 
-namespace Sensus.iOS.Exceptions
+namespace Sensus.iOS.Context
 {
-    public class iOSInsightsInitializer : InsightsInitializer
+    public class iOSSensusContext : ISensusContext
     {
-        public iOSInsightsInitializer(string deviceId)
-            : base(deviceId)
-        {
-        }
-
-        protected override void InitializePlatformSpecific(string insightsKey)
-        {
-            Insights.Initialize(insightsKey);
-        }
+        public Platform Platform { get; set; }
+        public IConcurrent MainThreadSynchronizer { get; set; }
+        public IEncryption SymmetricEncryption { get; set; }
+        public ICallbackScheduler CallbackScheduler { get; set; }
+        public INotifier Notifier { get; set; }
+        public string ActivationId { get; set; }
     }
 }

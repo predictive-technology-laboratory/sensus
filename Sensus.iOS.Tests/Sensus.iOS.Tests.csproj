@@ -275,7 +275,7 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
       <Visible>False</Visible>
     </XamarinComponentReference>
   </ItemGroup>
-  <Import Project="..\Sensus.Shared.iOS\Sensus.Shared.iOS.projitems" Label="Shared" />
+  <Import Project="..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Shared.Tests\Sensus.Shared.Tests.projitems" Label="Shared" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

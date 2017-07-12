@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
@@ -28,29 +28,27 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Cloud", "Sensu
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared", "Sensus.Shared\Sensus.Shared.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Android", "Sensus.Shared.Android\Sensus.Shared.Android.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Android.Shared", "Sensus.Android.Shared\Sensus.Android.Shared.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.iOS", "Sensus.Shared.iOS\Sensus.Shared.iOS.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.iOS.Shared", "Sensus.iOS.Shared\Sensus.iOS.Shared.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Tests", "Sensus.Shared.Tests\Sensus.Shared.Tests.shproj", "{542CBE5F-B59A-422D-B0B9-6123121CB203}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13
-		Sensus.Shared.iOS\Sensus.Shared.iOS.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
-		Sensus.Shared.Android\Sensus.Shared.Android.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
-		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{b11b3650-c440-40f2-834d-339d5ff8cd96}*SharedItemsImports = 4
-		Sensus.Shared\Sensus.Shared.projitems*{b11b3650-c440-40f2-834d-339d5ff8cd96}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
-		Sensus.Shared.Android\Sensus.Shared.Android.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
-		Sensus.Shared.iOS\Sensus.Shared.iOS.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
-		Sensus.Shared.iOS\Sensus.Shared.iOS.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
-		Sensus.Shared.Android\Sensus.Shared.Android.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -114,12 +112,12 @@ Global
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|iPhoneSimulator.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|iPhoneSimulator.Deploy.0 = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.ActiveCfg = Release|Android
+		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Build.0 = Release|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Deploy.0 = Release|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Any CPU.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhone.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhone.Deploy.0 = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhoneSimulator.ActiveCfg = Debug|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Build.0 = Release|Android
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|Android.ActiveCfg = Debug|iPhoneSimulator
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|Any CPU.ActiveCfg = Debug|iPhoneSimulator
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
@@ -146,10 +144,10 @@ Global
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Android.ActiveCfg = Release|Android
+		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Android.Build.0 = Release|Android
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Any CPU.ActiveCfg = Debug|Android
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhone.ActiveCfg = Debug|iPhone
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Android.Build.0 = Release|Android
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
