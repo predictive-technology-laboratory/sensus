@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Purpose:  Prompt for path to protocol (.json) file to use when unit testing. Copies 
+#  Purpose:  Prompt for path to protocol (.json) file to use when UI testing. Copies 
 #            file into appropriate directory for current OS.
 #
 
@@ -15,12 +15,12 @@ fi
 echo "Contents of $destinationDirectory:"
 ls -lh $destinationDirectory
 
-read -e -p "If you would like to use a new unit testing protocol, enter its path:  " filepath
+read -e -p "If you would like to use a new UI testing protocol, enter its path:  " filepath
 
 if [ "$filepath" == "" ]; then
 	echo "No file selected."
 else
-	destinationPath="$destinationDirectory/UnitTestingProtocol.json"
+	destinationPath="$destinationDirectory/UiTestingProtocol.json"
 	echo "Copying $filepath to $destinationPath"
 	cp $filepath $destinationPath
 

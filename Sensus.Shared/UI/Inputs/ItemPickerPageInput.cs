@@ -172,7 +172,7 @@ namespace Sensus.UI.Inputs
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         BindingContext = item
                                 
-                        // set the style ID on the view so that we can retrieve it when unit testing
+                        // set the style ID on the view so that we can retrieve it when UI testing
                         #if UI_TESTING
                         , StyleId = Name + " " + i
                         #endif

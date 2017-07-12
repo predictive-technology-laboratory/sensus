@@ -109,11 +109,11 @@ namespace Sensus.Android
                 // signal the activity that the service has been bound
                 _serviceBindWait.Set();
 
-                // if we're unit testing, try to load and run the unit testing protocol from the embedded assets
+                // if we're UI testing, try to load and run the UI testing protocol from the embedded assets
 #if UI_TESTING
-                using (Stream protocolFile = Assets.Open("UnitTestingProtocol.json"))
+                using (Stream protocolFile = Assets.Open("UiTestingProtocol.json"))
                 {
-                Protocol.RunUnitTestingProtocol(protocolFile);
+                    Protocol.RunUiTestingProtocol(protocolFile);
                 }
 #endif
             };
@@ -404,5 +404,4 @@ namespace Sensus.Android
 
         #endregion
     }
-}
 }

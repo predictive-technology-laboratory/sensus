@@ -205,7 +205,7 @@ namespace Sensus.UI
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
 
 #if UI_TESTING
-                // set style id so that we can retrieve the button when unit testing
+                // set style id so that we can retrieve the button when UI testing
                 , StyleId = "NextButton"
 #endif
             };

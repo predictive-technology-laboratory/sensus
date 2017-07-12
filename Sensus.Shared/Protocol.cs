@@ -328,7 +328,7 @@ namespace Sensus
             return SensusServiceHelper.Get().GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == protocolId)?.AlertExclusionWindows.Any(window => window.Encompasses(time)) ?? false;
         }
 
-        public static void RunUnitTestingProtocol(Stream unitTestingProtocolFile)
+        public static void RunUiTestingProtocol(Stream uiTestingProtocolFile)
         {
             try
             {
@@ -338,16 +338,16 @@ namespace Sensus
 
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
-                    unitTestingProtocolFile.CopyTo(protocolStream);
+                    uiTestingProtocolFile.CopyTo(protocolStream);
                     string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.Decrypt(protocolStream.ToArray()));
                     DeserializeAsync(protocolJSON, protocol =>
                     {
                         if (protocol == null)
-                            throw new Exception("Failed to deserialize unit testing protocol.");
+                            throw new Exception("Failed to deserialize UI testing protocol.");
 
                         foreach (Probe probe in protocol.Probes)
                         {
-                            // unit testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
+                            // UI testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                             // interaction outside of Sensus. disable any probes that might take us away from Sensus.
 
                             if (probe is FacebookProbe)
@@ -359,7 +359,7 @@ namespace Sensus
 #endif
 
                             // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
-                            // that need to run every unit testing execution.
+                            // that need to run every UI testing execution.
                             if (probe is ScriptProbe)
                                 foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
                                     scriptRunner.RunTimes.Clear();
@@ -375,7 +375,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                string message = "Failed to run unit testing protocol:  " + ex.Message;
+                string message = "Failed to run UI testing protocol:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
                 throw new Exception(message);
             }
@@ -1336,7 +1336,7 @@ namespace Sensus
             collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
             consent.Add(collectionDescriptionLabel);
 
-            // the name in the following text input is used to grab the UI element when unit testing
+            // the name in the following text input is used to grab the UI element when UI testing
             consent.Add(new SingleLineTextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
             {
                 DisplayNumber = false

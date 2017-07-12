@@ -861,7 +861,7 @@ namespace Sensus
         /// <param name="callback">Callback.</param>
         public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, TimeSpan? duration = null, Action callback = null)
         {
-            // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
+            // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
 
             if (_flashNotificationsEnabled)
