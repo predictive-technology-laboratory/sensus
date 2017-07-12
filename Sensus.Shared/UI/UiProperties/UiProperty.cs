@@ -85,7 +85,7 @@ namespace Sensus.UI.UiProperties
                 View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
                 propertyView.IsEnabled = uiElement.Editable;
 
-#if UNIT_TESTING
+#if UI_TESTING
                 // set style id so we can get the property value when unit testing
                 propertyView.StyleId = propertyLabel.Text + " View";
 #endif

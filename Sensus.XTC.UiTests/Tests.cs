@@ -24,8 +24,8 @@ namespace Sensus.XTC.UiTests
     [TestFixture]
     public abstract class Tests
     {
-        private const string UNIT_TESTING_PROTOCOL_RUNNING_NAME = "Unit Testing Protocol (Running)";
-        private const string UNIT_TESTING_PROTOCOL_STOPPED_NAME = "Unit Testing Protocol (Stopped)";
+        private const string UI_TESTING_PROTOCOL_RUNNING_NAME = "UI Testing Protocol (Running)";
+        private const string UI_TESTING_PROTOCOL_STOPPED_NAME = "UI Testing Protocol (Stopped)";
 
         private const string PROTOCOL_ACTION_SHEET_START = "Start";
         private const string PROTOCOL_ACTION_SHEET_EDIT = "Edit";
@@ -67,7 +67,7 @@ namespace Sensus.XTC.UiTests
         }
 
         [Test]
-        public void RunUnitTestingProtocol()
+        public void RunProtocol()
         {
             // wait a bit for app to start up -- ios sometimes displays permissions dialogs that need time to be dismissed (UiTest appears to take care of these on its own)
             Thread.Sleep(5000);
@@ -116,7 +116,7 @@ namespace Sensus.XTC.UiTests
 
         private void TapProtocol(bool running)
         {
-            _app.WaitForElementThenTap(running ? UNIT_TESTING_PROTOCOL_RUNNING_NAME : UNIT_TESTING_PROTOCOL_STOPPED_NAME, true);
+            _app.WaitForElementThenTap(running ? UI_TESTING_PROTOCOL_RUNNING_NAME : UI_TESTING_PROTOCOL_STOPPED_NAME, true);
             _app.WaitForElement(PROTOCOL_ACTION_SHEET_EDIT);  // wait for action sheet to come up
         }
 

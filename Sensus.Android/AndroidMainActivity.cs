@@ -80,7 +80,7 @@ namespace Sensus.Android
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
             CrossCurrentActivity.Current.Activity = this;
 
-#if UNIT_TESTING
+#if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
@@ -110,10 +110,10 @@ namespace Sensus.Android
                 _serviceBindWait.Set();
 
                 // if we're unit testing, try to load and run the unit testing protocol from the embedded assets
-#if UNIT_TESTING
+#if UI_TESTING
                 using (Stream protocolFile = Assets.Open("UnitTestingProtocol.json"))
                 {
-                    Protocol.RunUnitTestingProtocol(protocolFile);
+                Protocol.RunUnitTestingProtocol(protocolFile);
                 }
 #endif
             };
@@ -404,4 +404,5 @@ namespace Sensus.Android
 
         #endregion
     }
+}
 }

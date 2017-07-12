@@ -22,7 +22,9 @@ namespace Sensus.XTC.UiTests
         public static void WaitForElementThenTap(this IApp app, string element, bool scrollTo, TimeSpan? timeout = null)
         {
             if (scrollTo)
+            {
                 app.ScrollTo(element);
+            }
             
             app.WaitForElement(element, timeout: timeout);
             app.Tap(element);
@@ -31,7 +33,9 @@ namespace Sensus.XTC.UiTests
         public static void WaitForElementThenEnterText(this IApp app, string element, bool scrollTo, string text, TimeSpan? timeout = null)
         {
             if (scrollTo)
+            {
                 app.ScrollTo(element);
+            }
             
             app.WaitForElement(element, timeout: timeout);
             app.ClearText(element);

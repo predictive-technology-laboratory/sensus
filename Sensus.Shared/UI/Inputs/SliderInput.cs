@@ -214,7 +214,7 @@ namespace Sensus.UI.Inputs
                     Maximum = double.MaxValue
 
                     // set the style ID on the view so that we can retrieve it when unit testing
-#if UNIT_TESTING
+#if UI_TESTING
                     , StyleId = Name
 #endif
                 };

@@ -100,7 +100,7 @@ namespace Sensus.UI.Inputs
                     IsPassword = _masked
 
                     // set the style ID on the view so that we can retrieve it when unit testing
-                    #if UNIT_TESTING
+                    #if UI_TESTING
                     , StyleId = Name
                     #endif
                 };

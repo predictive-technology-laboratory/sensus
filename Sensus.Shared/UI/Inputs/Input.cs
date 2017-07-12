@@ -387,7 +387,7 @@ namespace Sensus.UI.Inputs
                 FontSize = _labelFontSize
 
                 // set the style ID on the label so that we can retrieve it when unit testing
-#if UNIT_TESTING
+#if UI_TESTING
                 , StyleId = Name + " Label"
 #endif
             };

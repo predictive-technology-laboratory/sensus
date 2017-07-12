@@ -204,7 +204,7 @@ namespace Sensus.UI
                 FontSize = 20,
                 Text = stepNumber < totalSteps ? "Next" : "Submit"
 
-#if UNIT_TESTING
+#if UI_TESTING
                 // set style id so that we can retrieve the button when unit testing
                 , StyleId = "NextButton"
 #endif

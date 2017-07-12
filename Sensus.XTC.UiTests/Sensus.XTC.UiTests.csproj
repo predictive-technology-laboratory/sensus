@@ -52,18 +52,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="UnitTestingProtocols\5.0.0-android-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.0.0-ios-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.1.0-android-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.1.0-ios-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.2.0-android-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.2.0-ios-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.3.0-android-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.3.0-ios-file-s3-all-probes.sensus" />
-    <None Include="UnitTestingProtocols\5.5.0-android-file-s3-all-probes.json" />
-    <None Include="UnitTestingProtocols\5.5.0-ios-file-s3-all-probes.json" />
-    <None Include="UnitTestingProtocols\7.0.0-android-file-s3-all-probes.json" />
-    <None Include="UnitTestingProtocols\7.0.0-ios-file-s3-all-probes.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Tests.cs" />
@@ -86,6 +74,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="UnitTestingProtocols\PromptForUnitTestingProtocol.sh" />
+    <AndroidAsset Include="Protocols\PromptForUnitTestingProtocol.sh" />
   </ItemGroup>
 </Project>
