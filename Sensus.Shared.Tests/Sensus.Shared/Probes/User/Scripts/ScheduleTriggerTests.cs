@@ -44,7 +44,7 @@ namespace Sensus.Tests.Scripts
         [Test]
         public void Deserialize1PointTrailingCommaTest()
         {
-            var schedule = new ScheduleTrigger { WindowsString = "10:00" };
+            var schedule = new ScheduleTrigger { WindowsString = "10:00," };
 
             Assert.AreEqual(1, schedule.WindowCount);
             Assert.AreEqual("10:00", schedule.WindowsString);
@@ -66,6 +66,51 @@ namespace Sensus.Tests.Scripts
 
             Assert.AreEqual(2, schedule.WindowCount);
             Assert.AreEqual("10:00, 10:10-10:20", schedule.WindowsString);
+        }
+
+        [Test]
+        public void DowDeserialize1PointTest()
+        {
+            var schedule = new ScheduleTrigger { WindowsString = "Su-10:00" };
+
+            Assert.AreEqual(1, schedule.WindowCount);
+            Assert.AreEqual("Su-10:00", schedule.WindowsString);
+        }
+
+        [Test]
+        public void DowDeserialize1WindowTest()
+        {
+            var schedule = new ScheduleTrigger { WindowsString = "Mo-10:00-10:30" };
+
+            Assert.AreEqual(1, schedule.WindowCount);
+            Assert.AreEqual("Mo-10:00-10:30", schedule.WindowsString);
+        }
+
+        [Test]
+        public void DowDeserialize1PointTrailingCommaTest()
+        {
+            var schedule = new ScheduleTrigger { WindowsString = "Tu-10:00," };
+
+            Assert.AreEqual(1, schedule.WindowCount);
+            Assert.AreEqual("Tu-10:00", schedule.WindowsString);
+        }
+
+        [Test]
+        public void DowDeserialize1Point1WindowTest()
+        {
+            var schedule = new ScheduleTrigger { WindowsString = "We-10:00,10:10-10:20" };
+
+            Assert.AreEqual(2, schedule.WindowCount);
+            Assert.AreEqual("We-10:00, 10:10-10:20", schedule.WindowsString);
+        }
+
+        [Test]
+        public void DowDeserialize1Point1WindowSpacesTest()
+        {
+            var schedule = new ScheduleTrigger { WindowsString = "10:00,                Th-10:10-10:20" };
+
+            Assert.AreEqual(2, schedule.WindowCount);
+            Assert.AreEqual("10:00, Th-10:10-10:20", schedule.WindowsString);
         }
 
         [Test]
@@ -258,6 +303,149 @@ namespace Sensus.Tests.Scripts
             Assert.AreEqual(new DateTime(1986, 4, 19, 10, 20, 00).Min(referenceDate + triggerTimes[3].ReferenceTillTrigger + TimeSpan.FromMinutes(5)), triggerTimes[3].Expiration);
             Assert.AreEqual(referenceDate + triggerTimes[4].ReferenceTillTrigger + TimeSpan.FromMinutes(5), triggerTimes[4].Expiration);
             Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00).Min(referenceDate + triggerTimes[5].ReferenceTillTrigger + TimeSpan.FromMinutes(5)), triggerTimes[5].Expiration);
+        }
+
+        [Test]
+        public void DowSameDayTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Mo-12:34"
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(0, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(7, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(14, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(21, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(28, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(35, 2, 34, 0));
+        }
+
+        [Test]
+        public void DowSameDayPriorToAfterTimeTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Mo-8:34"  // this time is prior to the time of day specified in the after datetime. we allow this to be scheduled. in practice this will cause surveys (and other scheduled events) to trigger immediately.
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(0, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(7, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(14, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(21, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(28, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(35, -2, 34, 0));
+        }
+
+        [Test]
+        public void DowWithinWeekTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Fr-12:34"
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(4, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(11, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(18, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(25, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(32, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(39, 2, 34, 0));
+        }
+
+        [Test]
+        public void DowNextWeekTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Su-12:34"
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, 2, 34, 0));
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, 2, 34, 0));
+        }
+
+        [Test]
+        public void DowNextWeekPriorToAfterTimeOfDayTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Su-8:34"  // this time of day is prior to the after time of day below. with day-interval-based scheduling, we would skip ahead to the next day (monday) at this time. with dow-based scheduling we will schedule at this exact time.
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, -2, 34, 0));
+        }
+
+        [Test]
+        public void DowNextWeekPriorToAfterTimeOfDayPlusIntervalBasedWindowTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Su-8:34,10:00"  // this time of day is prior to the after time of day below. with day-interval-based scheduling, we would skip ahead to the next day (monday) at this time. with dow-based scheduling we will schedule at this exact time.
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(14).ToArray();
+
+            Assert.AreEqual(14, triggerTimes.Length);
+
+            // the 10am interval-based trigger should be scheduled for 10am each day, starting with tomorrow.
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + TimeSpan.FromDays(1));  // Tuesday
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + TimeSpan.FromDays(2));  // Wednesday
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + TimeSpan.FromDays(3));  // Thursday
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + TimeSpan.FromDays(4));  // Friday
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + TimeSpan.FromDays(5));  // Saturday
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(6, -2, 34, 0));  // On Sunday, the DOW-based window will be scheduled at 8:34am...                                             
+            Assert.AreEqual(triggerTimes[6].Trigger, reference + TimeSpan.FromDays(6));        // ...preceding our 10am interval-based trigger.
+            Assert.AreEqual(triggerTimes[7].Trigger, reference + TimeSpan.FromDays(7));        
+            Assert.AreEqual(triggerTimes[8].Trigger, reference + new TimeSpan(13, -2, 34, 0));  // we only schedule 7 windows, so there are no more interval-based triggers left.
+            Assert.AreEqual(triggerTimes[9].Trigger, reference + new TimeSpan(20, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[10].Trigger, reference + new TimeSpan(27, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[11].Trigger, reference + new TimeSpan(34, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[12].Trigger, reference + new TimeSpan(41, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[13].Trigger, reference + new TimeSpan(48, -2, 34, 0));
         }
     }
 }

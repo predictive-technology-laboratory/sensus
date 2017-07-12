@@ -85,7 +85,7 @@ namespace Sensus
             if (DayOfTheWeek.HasValue)
             {
                 dowAbbreviation = DayOfTheWeek.Value.ToString().Substring(0, 2).ToLower();
-                dowAbbreviation = dowAbbreviation[0].ToString().ToUpper() + dowAbbreviation[1];
+                dowAbbreviation = dowAbbreviation[0].ToString().ToUpper() + dowAbbreviation[1] + "-";
             }
 
             // String interpolation doesn't seem to work here for some reason. E.g., $"{Start:hh:mm}"
