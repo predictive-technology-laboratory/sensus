@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android.Tests", "Sen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests", "Sensus.iOS.Tests\Sensus.iOS.Tests.csproj", "{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Cloud", "Sensus.Tests.Cloud\Sensus.Tests.Cloud.csproj", "{306FDC42-BB95-4DFD-B867-654EA3F941E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.XTC.UnitTests", "Sensus.XTC.UnitTests\Sensus.XTC.UnitTests.csproj", "{306FDC42-BB95-4DFD-B867-654EA3F941E9}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared", "Sensus.Shared\Sensus.Shared.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
