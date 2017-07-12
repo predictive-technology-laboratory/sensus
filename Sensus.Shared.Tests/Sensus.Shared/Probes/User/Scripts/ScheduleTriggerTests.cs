@@ -310,7 +310,6 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                WindowExpiration = true,
                 WindowsString = "Mo-12:34"
             };
 
@@ -332,7 +331,6 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                WindowExpiration = true,
                 WindowsString = "Mo-8:34"  // this time is prior to the time of day specified in the after datetime. we allow this to be scheduled. in practice this will cause surveys (and other scheduled events) to trigger immediately.
             };
 
@@ -354,7 +352,6 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                WindowExpiration = true,
                 WindowsString = "Fr-12:34"
             };
 
@@ -376,7 +373,6 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                WindowExpiration = true,
                 WindowsString = "Su-12:34"
             };
 
@@ -398,7 +394,6 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                WindowExpiration = true,
                 WindowsString = "Su-8:34"  // this time of day is prior to the after time of day below. with day-interval-based scheduling, we would skip ahead to the next day (monday) at this time. with dow-based scheduling we will schedule at this exact time.
             };
 
@@ -420,7 +415,6 @@ namespace Sensus.Tests.Scripts
         {
             var schedule = new ScheduleTrigger
             {
-                WindowExpiration = true,
                 WindowsString = "Su-8:34,10:00"  // this time of day is prior to the after time of day below. with day-interval-based scheduling, we would skip ahead to the next day (monday) at this time. with dow-based scheduling we will schedule at this exact time.
             };
 
@@ -446,6 +440,45 @@ namespace Sensus.Tests.Scripts
             Assert.AreEqual(triggerTimes[11].Trigger, reference + new TimeSpan(34, -2, 34, 0));
             Assert.AreEqual(triggerTimes[12].Trigger, reference + new TimeSpan(41, -2, 34, 0));
             Assert.AreEqual(triggerTimes[13].Trigger, reference + new TimeSpan(48, -2, 34, 0));
+        }
+
+        [Test]
+        public void DowNextWeekWindowExpirationTest()
+        {
+            var schedule = new ScheduleTrigger
+            {
+                WindowExpiration = true,
+                WindowsString = "Su-12:00-14:00"
+            };
+
+            var reference = new DateTime(2017, 7, 10, 10, 0, 0);
+            var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
+
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+
+            Assert.GreaterOrEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, 2, 0, 0));
+            Assert.LessOrEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, 4, 0, 0));
+            Assert.AreEqual(triggerTimes[0].Expiration.Value, reference + new TimeSpan(6, 4, 0, 0));
+
+            Assert.GreaterOrEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, 2, 0, 0));
+            Assert.LessOrEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, 4, 0, 0));
+            Assert.AreEqual(triggerTimes[1].Expiration.Value, reference + new TimeSpan(13, 4, 0, 0));
+
+            Assert.GreaterOrEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, 2, 0, 0));
+            Assert.LessOrEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, 4, 0, 0));
+            Assert.AreEqual(triggerTimes[2].Expiration.Value, reference + new TimeSpan(20, 4, 0, 0));
+
+            Assert.GreaterOrEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, 2, 0, 0));
+            Assert.LessOrEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, 4, 0, 0));
+            Assert.AreEqual(triggerTimes[3].Expiration.Value, reference + new TimeSpan(27, 4, 0, 0));
+
+            Assert.GreaterOrEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, 2, 0, 0));
+            Assert.LessOrEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, 4, 0, 0));
+            Assert.AreEqual(triggerTimes[4].Expiration.Value, reference + new TimeSpan(34, 4, 0, 0));
+
+            Assert.GreaterOrEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, 2, 0, 0));
+            Assert.LessOrEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, 4, 0, 0));
+            Assert.AreEqual(triggerTimes[5].Expiration.Value, reference + new TimeSpan(41, 4, 0, 0));
         }
     }
 }
