@@ -12,42 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Foundation;
 using System;
 using System.Threading;
 using Sensus.Dispose;
 using Sensus.Concurrent;
-using Android.OS;
+using Xamarin.Forms;
 
-namespace Sensus.Android.Concurrent
+namespace Sensus.iOS.Concurrent
 {
-    /// <remarks>
-    /// Device.BeginInvokeOnMainThread invokes off the activity. Sensus does not always have an activity, so we create a handler bound to the main thread's looper instead.
-    /// </remarks>
     public class MainConcurrent : Disposable, IConcurrent
     {
         private readonly int? _waitTime;
 
-        #region Fields
-        private readonly Handler _handler;
-        #endregion
-
-        #region Constructor
         public MainConcurrent(int? waitTime = null)
         {
             _waitTime = waitTime;
-            _handler = new Handler(Looper.MainLooper);
         }
-        #endregion
 
-        #region Public Methods
         public void ExecuteThreadSafe(Action action)
         {
             if (action == null)
             {
-                throw new ArgumentNullException(nameof(action));
+                throw new ArgumentNullException();
             }
 
-            if (_handler.Looper.IsCurrentThread)
+            if (NSThread.IsMain)
             {
                 action();
             }
@@ -55,7 +45,7 @@ namespace Sensus.Android.Concurrent
             {
                 var runWait = new ManualResetEvent(false);
 
-                _handler.Post(() =>
+                NSThread.MainThread.BeginInvokeOnMainThread(() =>
                 {
                     try
                     {
@@ -81,16 +71,16 @@ namespace Sensus.Android.Concurrent
                 throw new ArgumentNullException(nameof(func));
             }
 
-            if (_handler.Looper.IsCurrentThread)
+            if (NSThread.IsMain)
             {
                 return func();
             }
             else
             {
-                var runWait = new ManualResetEvent(false);
                 var result = default(T);
+                var runWait = new ManualResetEvent(false);
 
-                _handler.Post(() =>
+                NSThread.MainThread.BeginInvokeOnMainThread(() =>
                 {
                     try
                     {
@@ -110,17 +100,5 @@ namespace Sensus.Android.Concurrent
                 return result;
             }
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _handler.Dispose();
-            }
-
-            base.Dispose(disposing);
-        }
-
-        #endregion
     }
 }

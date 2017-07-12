@@ -59,7 +59,7 @@ namespace Sensus.DataStores.Local
             _uploadToRemoteDataStore = true;
             _sizeTriggeredRemoteCommitRunning = false;
 
-#if DEBUG || UNIT_TESTING
+#if DEBUG || UI_TESTING
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
 #else
             CommitDelayMS = 1000 * 60 * 15;  // 15 minutes

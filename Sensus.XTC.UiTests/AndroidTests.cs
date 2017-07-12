@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using Xamarin;
-using Sensus.Exceptions;
+using System;
+using Xamarin.UITest;
+using Xamarin.UITest.Queries;
 
-namespace Sensus.Android.Exceptions
+namespace Sensus.XTC.UiTests
 {
-    public class AndroidInsightsInitializer : InsightsInitializer
+    public class AndroidTests : Tests
     {
-        public AndroidInsightsInitializer(string deviceId)
-            : base(deviceId)
+        protected override IApp GetApp()
         {
+            return ConfigureApp.Android.StartApp();
         }
 
-        protected override void InitializePlatformSpecific(string insightsKey)
+        protected override Func<AppQuery, AppQuery> GetStatusLinesQuery()
         {
-            Insights.Initialize(insightsKey, Application.Context);
+            return c => c.Class("TextCellRenderer_TextCellView").Class("TextView");
         }
     }
 }

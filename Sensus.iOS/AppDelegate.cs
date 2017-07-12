@@ -92,7 +92,7 @@ namespace Sensus.iOS
 
             LoadApplication(new App());
 
-#if UNIT_TESTING
+#if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
@@ -166,12 +166,12 @@ namespace Sensus.iOS
             {
                 await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
-#if UNIT_TESTING
-                    // load and run the unit testing protocol
-                    string filePath = NSBundle.MainBundle.PathForResource("UnitTestingProtocol", "json");
+#if UI_TESTING
+                    // load and run the UI testing protocol
+                    string filePath = NSBundle.MainBundle.PathForResource("UiTestingProtocol", "json");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        Protocol.RunUnitTestingProtocol(file);
+                        Protocol.RunUiTestingProtocol(file);
                     }
 #endif
             });

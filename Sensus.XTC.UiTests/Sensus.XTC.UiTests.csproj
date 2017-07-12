@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Android</Platform>
+    <ProjectGuid>{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Sensus.XTC.UiTests</RootNamespace>
+    <AssemblyName>Sensus.XTC.UiTests</AssemblyName>
+    <ReleaseVersion>2.0.0</ReleaseVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Android' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Android\Debug</OutputPath>
+    <DefineConstants>__ANDROID__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Android' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Android\Release</OutputPath>
+    <DefineConstants>__ANDROID__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>__IOS__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>anycpu</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>__IOS__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.UITest">
+      <HintPath>..\packages\Xamarin.UITest.2.0.5.1587-dev\lib\Xamarin.UITest.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Tests.cs" />
+    <Compile Include="iOSTests.cs" />
+    <Compile Include="AndroidTests.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj">
+      <Project>{D33B6CDB-795C-4826-B131-47C526ACE07F}</Project>
+      <Name>Sensus.Android</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Sensus.iOS\Sensus.iOS.csproj">
+      <Project>{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}</Project>
+      <Name>Sensus.iOS</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Protocols\PromptForUnitTestingProtocol.sh" />
+  </ItemGroup>
+</Project>

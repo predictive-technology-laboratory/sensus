@@ -82,8 +82,8 @@ namespace Sensus.UI.Inputs
                     Keyboard = Keyboard.Numeric,
                     HorizontalOptions = LayoutOptions.FillAndExpand
 
-                    // set the style ID on the view so that we can retrieve it when unit testing
-#if UNIT_TESTING
+                    // set the style ID on the view so that we can retrieve it when UI testing
+#if UI_TESTING
                     , StyleId = Name
 #endif
                 };

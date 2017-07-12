@@ -24,6 +24,7 @@ using Sensus.UI.UiProperties;
 using Sensus.Probes.Location;
 using Sensus.Context;
 using Sensus.Callbacks;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -108,12 +109,12 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        [EntryIntegerUiProperty("Trigger Windows Interval (Days):", true, 9)]
-        public int TriggerIntervalDays
+        [EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9)]
+        public int NonDowTriggerIntervalDays
         {
             get
             {
-                return _scheduleTrigger.IntervalDays;
+                return _scheduleTrigger.NonDowTriggerIntervalDays;
             }
             set
             {
@@ -122,7 +123,23 @@ namespace Sensus.Probes.User.Scripts
                     value = 1;
                 }
 
-                _scheduleTrigger.IntervalDays = value;
+                _scheduleTrigger.NonDowTriggerIntervalDays = value;
+            }
+        }
+
+        [JsonIgnore]
+        public string ScheduleTriggerReadableDescription
+        {
+            get
+            {
+                string description = _scheduleTrigger.ReadableDescription;
+
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    description = char.ToUpper(description[0]) + (description.Length > 1 ? description.Substring(1) : "");
+                }
+
+                return description;
             }
         }
 

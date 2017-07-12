@@ -57,6 +57,42 @@ namespace Sensus.Probes.User.Scripts
 
             return new ScriptTriggerTime(reference, triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime), ToString());
         }
+
+        public string GetReadableDescription(int nonDowTriggerIntervalDays)
+        {
+            string description = "";
+
+            if (DayOfTheWeek.HasValue)
+            {
+                description = "on " + DayOfTheWeek.Value + "s ";
+            }
+            else
+            {
+                if (nonDowTriggerIntervalDays == 1)
+                {
+                    description = "each day ";
+                }
+                else if (nonDowTriggerIntervalDays == 2)
+                {
+                    description = "every other day ";
+                }
+                else
+                {
+                    description = "every " + nonDowTriggerIntervalDays + " days ";
+                }
+            }
+
+            if (Start == End)
+            {
+                description += "at " + Start.ToString("hh\\:mm");
+            }
+            else
+            {
+                description += "between " + Start.ToString("hh\\:mm") + " and " + End.ToString("hh\\:mm");
+            }
+
+            return description;
+        }
         #endregion
     }
 }

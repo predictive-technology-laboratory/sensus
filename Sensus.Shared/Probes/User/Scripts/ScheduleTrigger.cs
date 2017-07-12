@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -22,7 +23,7 @@ namespace Sensus.Probes.User.Scripts
     {
         #region Fields
         private readonly List<TriggerWindow> _windows;
-        private int _intervalDays;
+        private int _nonDowTriggerIntervalDays;
         #endregion
 
         #region Properties
@@ -40,7 +41,9 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 if (value == WindowsString)
+                {
                     return;
+                }
 
                 lock (_windows)
                 {
@@ -60,26 +63,50 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public int IntervalDays
+        public int NonDowTriggerIntervalDays
         {
             get
             {
-                return _intervalDays;
+                return _nonDowTriggerIntervalDays;
             }
             set
             {
-                _intervalDays = value;
+                _nonDowTriggerIntervalDays = value;
             }
         }
 
         public bool WindowExpiration { get; set; }
+
+        [JsonIgnore]
+        public string ReadableDescription
+        {
+            get
+            {
+                if (_windows.Count == 0)
+                {
+                    return "";
+                }
+                else if (_windows.Count == 1)
+                {
+                    return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays);
+                }
+                else if (_windows.Count == 2)
+                {
+                    return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays) + " and " + _windows[1].GetReadableDescription(_nonDowTriggerIntervalDays);
+                }
+                else
+                {
+                    return string.Concat(_windows.Take(_windows.Count - 1).Select(window => window.GetReadableDescription(_nonDowTriggerIntervalDays) + ", ")) + " and " + _windows.Last().GetReadableDescription(_nonDowTriggerIntervalDays);
+                }
+            }
+        }
         #endregion
 
         #region Constructor
         public ScheduleTrigger()
         {
             _windows = new List<TriggerWindow>();
-            _intervalDays = 1;
+            _nonDowTriggerIntervalDays = 1;
         }
         #endregion
 
@@ -101,15 +128,52 @@ namespace Sensus.Probes.User.Scripts
                 // the effect of such latencies.
                 List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
 
-                // return up to 8 trigger times beyond the reference
-                for (; (after - reference).TotalDays < (8 * _intervalDays); after = after.AddDays(_intervalDays))
+                // return 7 triggers for each window
+                for (int triggerNum = 0; triggerNum < 7; ++triggerNum)
                 {
-                    // It is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
-                    foreach (ScriptTriggerTime triggerTime in _windows.Select(window => window.GetNextTriggerTime(reference, after, WindowExpiration, maxAge)).OrderBy(t => t.Trigger))
+                    foreach (TriggerWindow window in _windows)
                     {
+                        DateTime currTriggerAfter;
+
+                        // if the window has a day-of-week specified, ignore the interval days field and go week-by-week instead
+                        if (window.DayOfTheWeek.HasValue)
+                        {
+                            // how many days from the after DOW to the window's DOW?
+                            int daysUntilWindowDOW = 0;
+
+                            // if the after DOW (e.g., Tuesday) precedes the window's DOW (e.g., Thursday), the answer is simple (e.g., 2)
+                            if (after.DayOfWeek < window.DayOfTheWeek.Value)
+                            {
+                                daysUntilWindowDOW = window.DayOfTheWeek.Value - after.DayOfWeek;
+                            }
+                            // if the after DOW (e.g., Wednesday) is after the window's DOW (e.g., Monday), we need to wrap around (e.g., 5)
+                            else if (after.DayOfWeek > window.DayOfTheWeek.Value)
+                            {
+                                // number of days until saturday + number of days from saturday to window's DOW
+                                daysUntilWindowDOW = (DayOfWeek.Saturday - after.DayOfWeek) + (int)window.DayOfTheWeek.Value + 1;
+                            }
+
+                            // each DOW-based window is separated by a week
+                            currTriggerAfter = after.AddDays(triggerNum * 7 + daysUntilWindowDOW);
+
+                            // ensure that the trigger time is not shifted to the next day by removing the time component (i.e., setting is to 12:00am). this
+                            // ensures that any window time (e.g., 1am) will be feasible.
+                            currTriggerAfter = currTriggerAfter.Date;
+                        }
+                        else
+                        {
+                            // the window is interval-based, so skip ahead the current number of days
+                            currTriggerAfter = after.AddDays(triggerNum * _nonDowTriggerIntervalDays);
+                        }
+
+                        ScriptTriggerTime triggerTime = window.GetNextTriggerTime(reference, currTriggerAfter, WindowExpiration, maxAge);
+
                         triggerTimes.Add(triggerTime);
                     }
                 }
+
+                // it is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
+                triggerTimes.Sort((x, y) => x.Trigger.CompareTo(y.Trigger));
 
                 return triggerTimes;
             }
