@@ -15,6 +15,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -40,7 +41,9 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 if (value == WindowsString)
+                {
                     return;
+                }
 
                 lock (_windows)
                 {
@@ -73,6 +76,30 @@ namespace Sensus.Probes.User.Scripts
         }
 
         public bool WindowExpiration { get; set; }
+
+        [JsonIgnore]
+        public string ReadableDescription
+        {
+            get
+            {
+                if (_windows.Count == 0)
+                {
+                    return "";
+                }
+                else if (_windows.Count == 1)
+                {
+                    return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays);
+                }
+                else if (_windows.Count == 2)
+                {
+                    return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays) + " and " + _windows[1].GetReadableDescription(_nonDowTriggerIntervalDays);
+                }
+                else
+                {
+                    return string.Concat(_windows.Take(_windows.Count - 1).Select(window => window.GetReadableDescription(_nonDowTriggerIntervalDays) + ", ")) + " and " + _windows.Last().GetReadableDescription(_nonDowTriggerIntervalDays);
+                }
+            }
+        }
         #endregion
 
         #region Constructor

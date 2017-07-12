@@ -24,6 +24,7 @@ using Sensus.UI.UiProperties;
 using Sensus.Probes.Location;
 using Sensus.Context;
 using Sensus.Callbacks;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -123,6 +124,22 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 _scheduleTrigger.NonDowTriggerIntervalDays = value;
+            }
+        }
+
+        [JsonIgnore]
+        public string ScheduleTriggerReadableDescription
+        {
+            get
+            {
+                string description = _scheduleTrigger.ReadableDescription;
+
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    description = char.ToUpper(description[0]) + (description.Length > 1 ? description.Substring(1) : "");
+                }
+
+                return description;
             }
         }
 
