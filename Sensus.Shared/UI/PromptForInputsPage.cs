@@ -95,27 +95,6 @@ namespace Sensus.UI
                 });
             }
 
-            // for prompts that have been shown before, display the original timestamp.
-            if (firstPromptTimestamp.HasValue)
-            {
-                DateTime firstDisplayDateTime = firstPromptTimestamp.Value.LocalDateTime;
-
-                string displayLapseDayDesc;
-                if (firstDisplayDateTime.Date == DateTime.Now.Date)
-                    displayLapseDayDesc = "earlier today";
-                else if (firstDisplayDateTime.Date == DateTime.Now.AddDays(-1).Date)
-                    displayLapseDayDesc = "yesterday";
-                else
-                    displayLapseDayDesc = ((int)(DateTime.Now - firstDisplayDateTime).TotalDays) + " days ago (" + firstDisplayDateTime.ToShortDateString() + ")";
-
-                contentLayout.Children.Add(new Label
-                {
-                    Text = "This survey was issued " + displayLapseDayDesc + " at " + firstDisplayDateTime.ToShortTimeString() + ".",
-                    FontSize = 20,
-                    HorizontalOptions = LayoutOptions.Start
-                });
-            }
-
             // indicate required fields
             if (inputGroup.Inputs.Any(input => input.Display && input.Required))
                 contentLayout.Children.Add(new Label
