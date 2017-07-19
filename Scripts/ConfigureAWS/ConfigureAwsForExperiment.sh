@@ -1,8 +1,9 @@
 #!/bin/sh
 
-if [ $# -ne 1 ]; then
-    echo "Usage:  ./ConfigureAwsForExperiment.sh [region]"
+if [ $# -ne 2 ]; then
+    echo "Usage:  ./ConfigureAwsForExperiment.sh [region] [root id]"
     echo "\t[region]:  AWS region to use (e.g., us-east-1)"
+    echo "\t[root id]:  Account ID that will own the data (12 digits, no dashes)"
     exit 1
 fi
 
@@ -23,12 +24,13 @@ fi
 ################################
 
 cat ./BucketPolicy.json | sed "s/bucketId/$bucket/" > tmp.json
-aws s3api put-bucket-policy --bucket $bucket --policy file://./tmp.json
+cat tmp.json | sed "s/rootAccountId/$2/" > tmp2.json
+aws s3api put-bucket-policy --bucket $bucket --policy file://./tmp2.json
 if [ $? -ne 0 ]; then
-    rm tmp.json
+    rm tmp.json tmp2.json
     echo "Failed to attach bucket policy."
     exit $?
 fi
-rm tmp.json
+rm tmp.json tmp2.json
 
 echo "All done. Bucket:  $bucket"
