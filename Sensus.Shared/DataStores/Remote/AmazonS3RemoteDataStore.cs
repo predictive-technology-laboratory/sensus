@@ -382,6 +382,7 @@ namespace Sensus.DataStores.Remote
                 PutObjectRequest putRequest = new PutObjectRequest
                 {
                     BucketName = _bucket,
+                    CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
                     Key = key
                 };
 

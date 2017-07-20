@@ -13,12 +13,10 @@
     },
     {
       "Sid": "Stmt1499538755124",
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Effect": "Allow",
-      "Resource": "arn:aws:s3:::bucketId/*ParticipationRewardDatum/*",
-      "Principal": "*"
+      "Effect": "Deny",
+      "NotPrincipal": { "AWS": "arn:aws:iam::rootAccountId:root" },
+      "Action": "s3:GetObject",
+      "NotResource": "arn:aws:s3:::bucketId/*ParticipationRewardDatum/*"
     }
   ]
 }

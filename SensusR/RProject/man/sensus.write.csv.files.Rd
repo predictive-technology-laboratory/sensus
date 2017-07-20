@@ -7,7 +7,7 @@
 sensus.write.csv.files(data, directory, file.name.prefix = "")
 }
 \arguments{
-\item{data}{Data to write, as read using \code{\link{sensus.read.json}}.}
+\item{data}{Data to write, as read using \code{\link{sensus.read.json.files}}.}
 
 \item{directory}{Directory to write CSV files to. Will be created if it does not exist.}
 
@@ -18,6 +18,6 @@ Write data to CSV files.
 }
 \examples{
 data.path = system.file("extdata", "example_data", package="SensusR")
-data = sensus.read.json(data.path)
+data = sensus.read.json.files(data.path)
 # sensus.write.csv.files(data, directory = "/path/to/directory")
 }
