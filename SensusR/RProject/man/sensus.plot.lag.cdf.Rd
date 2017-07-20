@@ -24,6 +24,6 @@ Plot the CDF of inter-reading time lags.
 }
 \examples{
 data.path = system.file("extdata", "example_data", package="SensusR")
-data = sensus.read.json(data.path)
+data = sensus.read.json.files(data.path)
 sensus.plot.lag.cdf(data$AccelerometerDatum)
 }

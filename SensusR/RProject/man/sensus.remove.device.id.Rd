@@ -19,6 +19,6 @@ Removes all data associated with a device ID from a data collection.
 }
 \examples{
 data.path = system.file("extdata", "example_data", package="SensusR")
-data = sensus.read.json(data.path)
+data = sensus.read.json.files(data.path)
 filtered.data = sensus.remove.device.id(data$AccelerometerDatum, "a448s0df98f")
 }
