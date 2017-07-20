@@ -401,7 +401,9 @@ namespace Sensus.Probes.User.Scripts
                     SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
 
                     if (!Probe.Running || !_enabled)
+                    {
                         return;
+                    }
 
                     Run(script);
 
