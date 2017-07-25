@@ -23,6 +23,7 @@ aws ec2 authorize-security-group-ingress --group-name $securityGroupName --proto
 # launch ec2 instance and wait for it to start
 instanceId=$(aws ec2 run-instances --image-id $3 --count 1 --instance-type $4 --key-name $keyPairName --security-groups $securityGroupName | jq -r .Instances[0].InstanceId)
 aws ec2 wait instance-running --instance-ids $instanceId
+sleep 15
 aws ec2 create-tags --resources $instanceId --tags Key=Name,Value=$1
 publicIP=$(aws ec2 describe-instances --instance-ids $instanceId --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
 
@@ -34,7 +35,7 @@ iamAccessKeySecret=$(echo $iamAccessKeyJSON | jq -r .AccessKey.SecretAccessKey)
 # upload IAM credentials to EC2 instance
 cp credentials tmp
 sed -i "" s/keyId/$iamAccessKeyID/ tmp
-sed -i "" s/keySecret/$iamAccessKeySecret/ tmp
+sed -i "" s#keySecret#$iamAccessKeySecret# tmp
 ssh -i $pemFileName ec2-user@$publicIP "mkdir .aws"
 scp -i $pemFileName tmp ec2-user@$publicIP:~/.aws/credentials
 rm tmp
