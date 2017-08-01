@@ -14,7 +14,12 @@
     {
       "Sid": "Stmt1499538755124",
       "Effect": "Deny",
-      "NotPrincipal": { "AWS": "arn:aws:iam::rootAccountId:root" },
+      "NotPrincipal": { 
+        "AWS": [
+          "arn:aws:iam::rootAccountId:root",
+          "iamUserARN"
+        ]
+      },
       "Action": "s3:GetObject",
       "NotResource": "arn:aws:s3:::bucketId/*ParticipationRewardDatum/*"
     }
