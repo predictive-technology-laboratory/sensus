@@ -1318,9 +1318,8 @@ namespace Sensus
                 consent.Add(new LabelOnlyInput(_description));
 
             consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
-
-            consent.Add(new LabelOnlyInput("This study would like to collect the following data from your device:"));
+                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ". ") +
+                                           "The following data will be collected:"));
 
             LabelOnlyInput collectionDescriptionLabel = null;
             int collectionDescriptionFontSize = 15;
@@ -1337,7 +1336,7 @@ namespace Sensus
             consent.Add(collectionDescriptionLabel);
 
             // the name in the following text input is used to grab the UI element when UI testing
-            consent.Add(new SingleLineTextInput("ConsentCode", "To participate in this study as described above, please indicate your consent by entering the following code:  " + consentCode, Keyboard.Numeric)
+            consent.Add(new SingleLineTextInput("ConsentCode", "To participate in this study as described above, please enter the following code:  " + consentCode, Keyboard.Numeric)
             {
                 DisplayNumber = false
             });
