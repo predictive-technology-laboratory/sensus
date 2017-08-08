@@ -81,7 +81,9 @@ namespace Sensus
                 downloadClient.DownloadDataCompleted += (o, e) =>
                 {
                     if (e.Error == null)
+                    {
                         DeserializeAsync(e.Result, callback);
+                    }
                     else
                     {
                         string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + e.Error.Message;
@@ -116,12 +118,17 @@ namespace Sensus
             {
                 string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.Decrypt(bytes));
 
-                DeserializeAsync(json, protocol =>
+                DeserializeAsync(json, async protocol =>
                 {
                     try
                     {
                         // don't reset the protocol id -- received protocols should remain in the same study.
                         protocol.Reset(false);
+
+                        // the selection index for groupable protocols comes from one of two places:  it's either the index corresponding to the 
+                        // protocol that was previously registered (when a groupable protocol is updated), or it's a random one (when a groupable
+                        // protocol is first loaded).
+                        int? groupableProtocolIndex = null;
 
                         // see if we have already registered the newly deserialized protocol. when considering whether a registered
                         // protocol is the match for the newly deserialized one, also check the protocols grouped with the registered
@@ -137,21 +144,74 @@ namespace Sensus
                             }
                         }
 
-                        // if we haven't yet registered the protocol, then set it up and register it
+                        // if we've previously registered the protocol, the user needs to decide what to do:  either keep the previous one or use the new one
+                        if (registeredProtocol != null)
+                        {
+                            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                            {
+                                if (!await Application.Current.MainPage.DisplayAlert("Study Already Loaded", "The study that you just opened has already been loaded into Sensus. Would you like to use the study you just opened or continue using the previous one?", "Use the study I just opened.", "Continue using the previous study."))
+                                {
+                                    // use the previous study
+                                    protocol = registeredProtocol;
+                                }
+                            });
+
+                            // if the user opted to use the new protocol, we need to replace the previous one with the new one.
+                            if (protocol != registeredProtocol)
+                            {
+                                // if the new protocol is groupable, we do not want to randomly select one out of the group. instead, we want to continue using 
+                                // the same protocol that we have been using. 
+                                if (protocol.GroupedProtocols.Count > 0)
+                                {
+                                    if (protocol.Id == registeredProtocol.Id)
+                                    {
+                                        // don't re-group below. use the currently assigned protocol.
+                                        groupableProtocolIndex = 0;
+                                    }
+                                    else
+                                    {
+                                        // locate the index of the new protocol corresponding to the old one.
+                                        groupableProtocolIndex = protocol.GroupedProtocols.FindIndex(groupedProtocol => groupedProtocol.Id == registeredProtocol.Id) + 1;
+
+                                        // it's possible that the new protocol does not include the one we were previously using (e.g., if the study desiger has deleted it
+                                        // from the group). in this case, set the groupable index to null. we'll pick randomly below.
+                                        if (groupableProtocolIndex < 0)
+                                        {
+                                            groupableProtocolIndex = null;
+                                        }
+                                    }
+                                }
+
+                                // store any data that have accumulated locally
+                                SensusServiceHelper.Get().FlashNotificationAsync("Committing data from previous study...");
+                                await registeredProtocol.LocalDataStore.CommitAndReleaseAddedDataAsync(CancellationToken.None);
+
+                                // stop the study and unregister it 
+                                SensusServiceHelper.Get().FlashNotificationAsync("Stopping previous study...");
+                                registeredProtocol.Stop();
+                                SensusServiceHelper.Get().UnregisterProtocol(registeredProtocol);
+                                registeredProtocol = null;
+                            }
+                        }
+
+                        // if we're not using a previously registered protocol, then we need to configure the new one.
                         if (registeredProtocol == null)
                         {
-                            #region if grouped protocols are available, replace the protocol with one randomly selected from those available
+                            #region if grouped protocols are available, consider swapping the currely assigned one with another.
                             if (protocol.GroupedProtocols.Count > 0)
                             {
-                                Random r = new Random();
-                                int numProtocols = 1 + protocol.GroupedProtocols.Count;
-                                int protocolIndex = r.Next(0, numProtocols);
-
-                                // if protocol index == 0, then we should use the deserialized protocol -- no action is needed. if, on the other hand
-                                // the protocol index > 0, then we need to swap in a new protocol.
-                                if (protocolIndex > 0)
+                                // if we didn't select an index above corresponding to the previously registered protocol, generated a random index.
+                                if (groupableProtocolIndex == null)
                                 {
-                                    int replacementIndex = protocolIndex - 1;
+                                    int numProtocols = 1 + protocol.GroupedProtocols.Count;
+                                    groupableProtocolIndex = new Random().Next(0, numProtocols);  // inclusive min, exclusive max
+                                }
+
+                                // if protocol index == 0, then we should use the currently assigned protocol -- no action is needed. if, on 
+                                // the other hand the protocol index > 0, then we need to swap in a new protocol.
+                                if (groupableProtocolIndex.Value > 0)
+                                {
+                                    int replacementIndex = groupableProtocolIndex.Value - 1;
                                     Protocol replacementProtocol = protocol.GroupedProtocols[replacementIndex];
 
                                     // rotate the configuration such that the replacement protocol has the other protocols as grouped protocols
@@ -166,7 +226,9 @@ namespace Sensus
                             }
                             #endregion
 
-                            #region add any probes for the current platform that didn't come through when deserializing. for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will come through on the other platform when deserializing, since the types are not defined.
+                            #region add any probes for the current platform that didn't come through when deserializing.
+                            // for example, android has a listening WLAN probe, but iOS has a polling WLAN probe. neither will 
+                            // come through on the other platform when deserializing, since the types are not defined.
                             List<Type> deserializedProbeTypes = protocol.Probes.Select(p => p.GetType()).ToList();
 
                             foreach (Probe probe in Probe.GetAll())
@@ -180,24 +242,27 @@ namespace Sensus
 
                             #endregion
 
+                            #region remove triggers that reference unavailable probes
                             // when doing cross-platform conversions, there may be triggers that reference probes that aren't available on the
                             // current platform. remove these triggers and warn the user that the script will not run.
                             // https://insights.xamarin.com/app/Sensus-Production/issues/999
                             foreach (ScriptProbe probe in protocol.Probes.Where(probe => probe is ScriptProbe))
+                            {
                                 foreach (ScriptRunner scriptRunner in probe.ScriptRunners)
+                                {
                                     foreach (Probes.User.Scripts.Trigger trigger in scriptRunner.Triggers.ToList())
+                                    {
                                         if (trigger.Probe == null)
                                         {
                                             scriptRunner.Triggers.Remove(trigger);
                                             SensusServiceHelper.Get().FlashNotificationAsync("Warning:  " + scriptRunner.Name + " trigger is not valid on this device.");
                                         }
+                                    }
+                                }
+                            }
+                            #endregion
 
                             SensusServiceHelper.Get().RegisterProtocol(protocol);
-                        }
-                        else
-                        {
-                            SensusServiceHelper.Get().FlashNotificationAsync("The study that you just opened has already been loaded into Sensus.");
-                            protocol = registeredProtocol;
                         }
 
                         // protocols deserialized upon receipt (i.e., those here) are never groupable for experimental integrity reasons. we
@@ -288,7 +353,9 @@ namespace Sensus
             Task.Run(() =>
             {
                 if (protocol == null)
+                {
                     SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
+                }
                 else if (protocol.Running)
                 {
                     // android occasionally kills/restarts the activity, and when it does this it redelivers the intent that originally started the ativity. this 
@@ -307,7 +374,9 @@ namespace Sensus
                         INavigation navigation = Application.Current.MainPage.Navigation;
                         Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
                         if (topPage is ProtocolsPage)
+                        {
                             protocolsPage = topPage as ProtocolsPage;
+                        }
                         else
                         {
                             protocolsPage = new ProtocolsPage();
@@ -493,7 +562,9 @@ namespace Sensus
                 {
                     // test storage directory to ensure that it's valid
                     if (!Directory.Exists(_storageDirectory) || Directory.GetFiles(_storageDirectory).Length == -1)
+                    {
                         throw new Exception("Invalid protocol storage directory.");
+                    }
                 }
                 catch (Exception)
                 {
@@ -503,7 +574,9 @@ namespace Sensus
                         ResetStorageDirectory();
 
                         if (!Directory.Exists(_storageDirectory) || Directory.GetFiles(_storageDirectory).Length == -1)
+                        {
                             throw new Exception("Failed to reset protocol storage directory.");
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1118,7 +1191,9 @@ namespace Sensus
                 protocol.Reset(resetId);
 
                 if (register)
+                {
                     SensusServiceHelper.Get().RegisterProtocol(protocol);
+                }
 
                 callback?.Invoke(protocol);
             });
@@ -1577,7 +1652,9 @@ namespace Sensus
                     Stop();
 
                     if (callback != null)
+                    {
                         callback();
+                    }
 
                 }).Start();
         }
@@ -1587,14 +1664,20 @@ namespace Sensus
             lock (_locker)
             {
                 if (_running)
+                {
                     _running = false;
+                }
                 else
+                {
                     return;
+                }
 
                 SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
                 if (ProtocolRunningChanged != null)
+                {
                     ProtocolRunningChanged(this, _running);
+                }
 
                 // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
                 CancelScheduledStop();

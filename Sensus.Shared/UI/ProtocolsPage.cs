@@ -388,7 +388,10 @@ namespace Sensus.UI
                     });
                 }
                 else if (selectedAction == "Copy")
+                {
+                    // reset the protocol id, as we're creating a new study
                     selectedProtocol.CopyAsync(true, true);
+                }
                 else if (selectedAction == "Share")
                 {
                     Action ShareSelectedProtocol = new Action(() =>
