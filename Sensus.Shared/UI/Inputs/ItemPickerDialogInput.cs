@@ -138,10 +138,14 @@ namespace Sensus.UI.Inputs
                 };
 
                 if (_allowClearSelection)
+                {
                     _picker.Items.Add("[Clear Selection]");
+                }
 
                 foreach (string item in RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items)
+                {
                     _picker.Items.Add(item);
+                }
 
                 _picker.SelectedIndexChanged += (o, e) =>
                 {
