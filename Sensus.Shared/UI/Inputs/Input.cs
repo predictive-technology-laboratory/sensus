@@ -18,9 +18,9 @@ using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using Sensus;
 using Xamarin;
 using Sensus.UI.Inputs;
+using Sensus.Probes.User.Scripts;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -158,13 +158,35 @@ namespace Sensus.UI.Inputs
                 {
                     _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
                 }
+
+                // if this input defines a protocol variable, set that variable here.
+                if (this is IVariableDefiningInput)
+                {
+                    IVariableDefiningInput input = this as IVariableDefiningInput;
+                    string definedVariable = input.DefinedVariable;
+                    if (definedVariable != null)
+                    {
+                        Protocol protocolForInput = GetProtocolForInput();
+
+                        // if the input is complete, set the variable on the protocol
+                        if (_complete)
+                        {
+                            protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
+                        }
+                        // if the input is incomplete, remove the variable from the protocol
+                        else
+                        {
+                            protocolForInput.VariableValue.Remove(definedVariable);
+                        }
+                    }
+                }
             }
         }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="Input"/> is valid. A valid input is one that
-        /// is complete, one that has been viewed but is not required, or one that isn't displayed. In short, it is an
-        /// input state that should not prevent the user from proceeding through an input request.
+        /// is complete, one that has been viewed but is not required, or one that isn't displayed. It is 
+        /// an input in a state that should not prevent the user from proceeding through an input request.
         /// </summary>
         /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
         [JsonIgnore]
@@ -399,7 +421,40 @@ namespace Sensus.UI.Inputs
 
         protected string GetLabelText(int index)
         {
-            return string.IsNullOrWhiteSpace(_labelText) ? "" : (_required ? "*" : "") + (index > 0 && _displayNumber ? index + ") " : "") + _labelText;
+            if (string.IsNullOrWhiteSpace(_labelText))
+            {
+                return "";
+            }
+            else
+            {
+                string requiredStr = _required ? "*" : "";
+                string indexStr = index > 0 && _displayNumber ? index + ") " : "";
+                string labelTextStr = _labelText;
+
+                // get the protocol that contains the current input in a script runner (if any)
+                Protocol protocolForInput = GetProtocolForInput();
+
+                if (protocolForInput != null)
+                {
+                    // replace all variables with their values
+                    foreach (string variable in protocolForInput.VariableValue.Keys)
+                    {
+                        labelTextStr = labelTextStr.Replace("{" + variable + "}", protocolForInput.VariableValue[variable]);
+                    }
+                }
+
+                return requiredStr + indexStr + labelTextStr;
+            }
+        }
+
+        private Protocol GetProtocolForInput()
+        {
+            return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
+                                                                                             .Single()                                         // must be only 1
+                                                                                             .ScriptRunners                                    // get runners
+                                                                                             .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
+                                                                                             .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
+                                                                                             .Any(input => input.Id == _id));                  // check if any inputs are the current one
         }
 
         public virtual View GetView(int index)
@@ -479,7 +534,7 @@ namespace Sensus.UI.Inputs
 
             copy.Reset();
 
-            // the reset on the previous line only resets the state of the input. it does not assign it a new/unique ID, which all inputs require.
+            // the reset on the previous line only resets the state of the input. it does not assign it a new/unique ID, which all inputs normally require.
             if (newId)
             {
                 copy.Id = Guid.NewGuid().ToString();

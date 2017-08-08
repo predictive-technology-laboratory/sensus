@@ -21,13 +21,14 @@ using Newtonsoft.Json;
 
 namespace Sensus.UI.Inputs
 {
-    public class ItemPickerDialogInput : ItemPickerInput
+    public class ItemPickerDialogInput : ItemPickerInput, IVariableDefiningInput
     {
         private string _tipText;
         private List<string> _items;
         private bool _allowClearSelection;
         private Picker _picker;
         private Label _label;
+        private string _definedVariable;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
@@ -66,6 +67,19 @@ namespace Sensus.UI.Inputs
             set
             {
                 _allowClearSelection = value;
+            }
+        }
+
+        [EntryStringUiProperty("Define Variable:", true, 13)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
             }
         }
 

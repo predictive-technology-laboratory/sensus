@@ -140,6 +140,12 @@ namespace Sensus.UI
                                     conditionInputCopy.LabelText = "Value that " + conditionInputCopy.Name + " " + uppercaseSplitter.Replace(condition.ToString(), " ").ToLower() + ":";
                                     conditionInputCopy.Required = true;
 
+                                    // ensure that the copied input cannot define a variable
+                                    if (conditionInputCopy is IVariableDefiningInput)
+                                    {
+                                        (conditionInputCopy as IVariableDefiningInput).DefinedVariable = null;
+                                    }
+
                                     SensusServiceHelper.Get().PromptForInputAsync("Display Condition",
                                         conditionInputCopy,
                                         null,

@@ -34,6 +34,9 @@ namespace Sensus.UI.Inputs
         [OnOffUiProperty(null, true, 1)]
         public bool Geotag { get; set; }
 
+        [OnOffUiProperty("Force Valid Inputs:", true, 2)]
+        public bool ForceValidInputs { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
         /// A valid input group is one in which each <see cref="Input"/> in the group is valid.
@@ -49,8 +52,8 @@ namespace Sensus.UI.Inputs
             Id = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
+            ForceValidInputs = false;
         }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call

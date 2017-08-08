@@ -14,14 +14,29 @@
 
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using Sensus.UI.UiProperties;
 
 namespace Sensus.UI.Inputs
 {
-    public class NumberEntryInput : Input
+    public class NumberEntryInput : Input, IVariableDefiningInput
     {
         private Entry _entry;
         private Label _label;
         private bool _hasFocused;
+        private string _definedVariable;
+
+        [EntryStringUiProperty("Define Variable:", true, 15)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
+            }
+        }
 
         public override object Value
         {

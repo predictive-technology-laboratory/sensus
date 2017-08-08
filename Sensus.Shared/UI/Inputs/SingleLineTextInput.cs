@@ -18,13 +18,14 @@ using Sensus.UI.UiProperties;
 
 namespace Sensus.UI.Inputs
 {
-    public class SingleLineTextInput : Input
+    public class SingleLineTextInput : Input, IVariableDefiningInput
     {
         private Entry _entry;
         private Keyboard _keyboard;
         private Label _label;
         private bool _hasFocused;
         private bool _masked;
+        private string _definedVariable;
 
         [OnOffUiProperty(null, true, 1)]
         public bool Masked
@@ -36,6 +37,19 @@ namespace Sensus.UI.Inputs
             set
             {
                 _masked = value;
+            }
+        }
+
+        [EntryStringUiProperty("Define Variable:", true, 2)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
             }
         }
 

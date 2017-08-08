@@ -225,6 +225,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

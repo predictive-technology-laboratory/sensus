@@ -416,6 +416,7 @@ namespace Sensus
         private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
+        private Dictionary<string, string> _variableValue;
 
         private readonly object _locker = new object();
 
@@ -831,6 +832,52 @@ namespace Sensus
             }
         }
 
+        public Dictionary<string, string> VariableValue
+        {
+            get
+            {
+                return _variableValue;
+            }
+            set
+            {
+                _variableValue = value;
+            }
+        }
+
+        [EditableListUiProperty("Variables:", true, 30)]
+        [JsonIgnore]
+        public List<string> VariableValueUiProperty
+        {
+            get
+            {
+                return _variableValue.Select(kvp => kvp.Key + ": " + kvp.Value).ToList();
+            }
+            set
+            {
+                _variableValue = new Dictionary<string, string>();
+
+                if (value != null)
+                {
+                    foreach (string variableValueStr in value)
+                    {
+                        int colonIndex = variableValueStr.IndexOf(':');
+
+                        // there must be something before and after the colon
+                        if (colonIndex > 0 && colonIndex < variableValueStr.Length - 1)
+                        {
+                            string variable = variableValueStr.Substring(0, colonIndex).Trim();
+                            string variableValue = variableValueStr.Substring(colonIndex + 1).Trim();
+
+                            if (!string.IsNullOrWhiteSpace(variable) && !string.IsNullOrWhiteSpace(variableValue))
+                            {
+                                _variableValue.Add(variable, variableValue);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         #region iOS-specific protocol properties
 
 #if __IOS__
@@ -970,6 +1017,7 @@ namespace Sensus
             _gpsDesiredAccuracyMeters = GPS_DEFAULT_ACCURACY_METERS;
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
+            _variableValue = new Dictionary<string, string>();
         }
 
         /// <summary>
