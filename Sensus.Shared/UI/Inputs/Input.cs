@@ -14,10 +14,8 @@
 
 using System;
 using Xamarin.Forms;
-using Sensus.Exceptions;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
-using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 using Sensus;
@@ -157,7 +155,9 @@ namespace Sensus.UI.Inputs
                 }
 
                 if (StoreCompletionRecords)
+                {
                     _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
+                }
             }
         }
 
@@ -319,11 +319,15 @@ namespace Sensus.UI.Inputs
             {
                 List<InputDisplayCondition> conjuncts = _displayConditions.Where(displayCondition => displayCondition.Conjunctive).ToList();
                 if (conjuncts.Count > 0 && conjuncts.Any(displayCondition => !displayCondition.Satisfied))
+                {
                     return false;
+                }
 
                 List<InputDisplayCondition> disjuncts = _displayConditions.Where(displayCondition => !displayCondition.Conjunctive).ToList();
                 if (disjuncts.Count > 0 && disjuncts.All(displayCondition => !displayCondition.Satisfied))
+                {
                     return false;
+                }
 
                 return true;
             }
@@ -411,10 +415,14 @@ namespace Sensus.UI.Inputs
             };
 
             if (_backgroundColor != null)
+            {
                 viewContainer.BackgroundColor = _backgroundColor.GetValueOrDefault();
+            }
 
             if (_padding != null)
+            {
                 viewContainer.Padding = _padding.GetValueOrDefault();
+            }
 
             _view = viewContainer;
         }
@@ -437,10 +445,14 @@ namespace Sensus.UI.Inputs
         {
             // if either is null, both must be null to be equal
             if (Value == null || conditionValue == null)
+            {
                 return Value == null && conditionValue == null;
+            }
             // if they're of the same type, compare
             else if (Value.GetType().Equals(conditionValue.GetType()))
+            {
                 return Value.Equals(conditionValue);
+            }
             else
             {
                 // this should never happen

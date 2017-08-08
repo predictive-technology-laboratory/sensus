@@ -27,9 +27,9 @@ namespace Sensus.UI.UiProperties
         {
         }
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
         {            
-            targetProperty = Switch.IsToggledProperty;
+            bindingProperty = Switch.IsToggledProperty;
             converter = null;
 
             return new Switch

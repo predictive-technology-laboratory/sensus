@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Threading;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
@@ -120,11 +119,17 @@ namespace Sensus.UI.Inputs
                     int daysAgo = (int)promptAge.TotalDays;
                     string daysAgoStr;
                     if (daysAgo == 0)
+                    {
                         daysAgoStr = "today";
+                    }
                     else if (daysAgo == 1)
+                    {
                         daysAgoStr = "yesterday";
+                    }
                     else
+                    {
                         daysAgoStr = promptAge.TotalDays + " days ago";
+                    }
 
                     outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.LocalDateTime.ToString("h:mm tt"));
                 }
@@ -137,7 +142,9 @@ namespace Sensus.UI.Inputs
                 Viewed = true;
 
                 if (string.IsNullOrWhiteSpace(_response))
+                {
                     _response = null;
+                }
 
                 Complete = _response != null;
 

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
@@ -37,8 +36,10 @@ namespace Sensus.UI.Inputs
             set
             {
                 if (value < 100)
+                {
                     value = 100;
-                
+                }
+
                 _height = value;
             }
         }
@@ -84,7 +85,7 @@ namespace Sensus.UI.Inputs
 
         public MultiLineTextInput(string name, string labelText, Keyboard keyboard)
             : base(name, labelText)
-        {            
+        {
             Construct(keyboard);
         }
 
@@ -107,9 +108,9 @@ namespace Sensus.UI.Inputs
                     HeightRequest = _height
 
                     // set the style ID on the view so that we can retrieve it when UI testing
-                    #if UI_TESTING
+#if UI_TESTING
                     , StyleId = Name
-                    #endif
+#endif
                 };
 
                 Color defaultTextColor = _editor.TextColor;
@@ -133,11 +134,11 @@ namespace Sensus.UI.Inputs
                 _label = CreateLabel(index);
 
                 base.SetView(new StackLayout
-                    {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.Start,
-                        Children = { _label, _editor }
-                    });
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.Start,
+                    Children = { _label, _editor }
+                });
             }
             else
             {
@@ -146,7 +147,9 @@ namespace Sensus.UI.Inputs
 
                 // if the view is not enabled, there should be no tip text since the user can't do anything with the entry.
                 if (!Enabled && !_hasFocused)
+                {
                     _editor.Text = "";
+                }
             }
 
             return base.GetView(index);

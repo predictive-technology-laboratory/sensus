@@ -48,9 +48,9 @@ namespace Sensus.UI.UiProperties
         {
         }
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
         {
-            targetProperty = Label.TextProperty;
+            bindingProperty = Label.TextProperty;
             converter = new ValueConverter();
 
             return new Label

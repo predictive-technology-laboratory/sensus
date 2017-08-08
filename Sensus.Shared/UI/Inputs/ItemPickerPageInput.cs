@@ -15,15 +15,8 @@
 using System;
 using Xamarin.Forms;
 using System.Collections.Generic;
-using Sensus;
-using Sensus.Probes;
-using System.IO;
 using Newtonsoft.Json;
-using System.Threading;
-using Sensus.Exceptions;
-using Sensus.UI.Inputs;
 using System.Linq;
-using System.Globalization;
 using Sensus.UI.UiProperties;
 using Xamarin;
 
@@ -108,7 +101,9 @@ namespace Sensus.UI.Inputs
             set
             {
                 foreach (Label itemLabel in _itemLabels)
+                {
                     itemLabel.IsEnabled = value;
+                }
             }
         }
 
@@ -133,7 +128,9 @@ namespace Sensus.UI.Inputs
             _items = items;
 
             if (!string.IsNullOrWhiteSpace(textBindingPropertyPath))
+            {
                 _textBindingPropertyPath = textBindingPropertyPath.Trim();
+            }
         }
 
         private void Construct()
@@ -148,7 +145,7 @@ namespace Sensus.UI.Inputs
         public override View GetView(int index)
         {
             if (base.GetView(index) == null)
-            {       
+            {
                 _selectedItems.Clear();
                 _itemLabels.Clear();
 
@@ -171,11 +168,11 @@ namespace Sensus.UI.Inputs
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         BindingContext = item
-                                
+
                         // set the style ID on the view so that we can retrieve it when UI testing
-                        #if UI_TESTING
+#if UI_TESTING
                         , StyleId = Name + " " + i
-                        #endif
+#endif
                     };
 
                     _itemLabels.Add(itemLabel);
@@ -192,42 +189,56 @@ namespace Sensus.UI.Inputs
                     tapRecognizer.Tapped += (o, e) =>
                     {
                         if (!itemLabel.IsEnabled)
+                        {
                             return;
-                            
+                        }
+
                         if (_selectedItems.Contains(item))
+                        {
                             _selectedItems.Remove(item);
+                        }
                         else
+                        {
                             _selectedItems.Add(item);
+                        }
 
                         if (!_multiselect)
+                        {
                             _selectedItems.RemoveAll(selectedItem => selectedItem != item);
+                        }
 
                         foreach (Label label in _itemLabels)
+                        {
                             label.BackgroundColor = _selectedItems.Contains(label.BindingContext) ? Color.Accent : defaultBackgroundColor;
+                        }
 
                         Complete = (Value as List<object>).Count > 0;
                     };
-                    
+
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
 
                     // add invisible separator between items for fewer tapping errors
                     if (itemLabelStack.Children.Count > 0)
+                    {
                         itemLabelStack.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = 5 });
-                    
+                    }
+
                     itemLabelStack.Children.Add(itemLabel);
                 }
 
                 _label = CreateLabel(index);
 
                 base.SetView(new StackLayout
-                    {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.Start,
-                        Children = { _label, itemLabelStack }
-                    });
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.Start,
+                    Children = { _label, itemLabelStack }
+                });
             }
             else
+            {
                 _label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
+            }
 
             return base.GetView(index);
         }
@@ -242,10 +253,14 @@ namespace Sensus.UI.Inputs
 
                 // if the matching condition is conjunctive, then the two lists must be identical.
                 if (conjunctive)
+                {
                     return selectedValueList.OrderBy(o => o).SequenceEqual(conditionValueList.OrderBy(o => o));
+                }
                 // if the matching condiction is disjunctive, then any of the condition values may be selected.
                 else
+                {
                     return conditionValueList.Any(o => selectedValueList.Contains(o));
+                }
             }
             else
             {

@@ -18,7 +18,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
-using Sensus.Extensions;
 
 namespace Sensus.UI.Inputs
 {

@@ -15,7 +15,6 @@
 using System;
 using Xamarin.Forms;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
@@ -30,11 +29,15 @@ namespace Sensus.UI.UiProperties
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 if (value == null)
+                {
                     return "";
+                }
 
                 StringBuilder text = new StringBuilder();
                 foreach (object item in value as IEnumerable<object>)
+                {
                     text.AppendLine(item.ToString());
+                }
 
                 return text.ToString();
             }
@@ -57,9 +60,9 @@ namespace Sensus.UI.UiProperties
         {
         }
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
         {
-            targetProperty = Editor.TextProperty;
+            bindingProperty = Editor.TextProperty;
             converter = new ValueConverter();
 
             return new Editor

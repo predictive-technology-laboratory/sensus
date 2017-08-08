@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
@@ -30,9 +29,13 @@ namespace Sensus.UI.Inputs
             {
                 double value;
                 if (_entry == null || !_hasFocused || !double.TryParse(_entry.Text, out value))
+                {
                     return null;
+                }
                 else
+                {
                     return value;
+                }
             }
         }
 
@@ -121,7 +124,9 @@ namespace Sensus.UI.Inputs
 
                 // if the view is not enabled, there should be no tip text since the user can't do anything with the entry.
                 if (!Enabled && !_hasFocused)
+                {
                     _entry.Text = "";
+                }
             }
 
             return base.GetView(index);
