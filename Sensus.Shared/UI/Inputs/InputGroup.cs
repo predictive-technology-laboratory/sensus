@@ -64,6 +64,8 @@ namespace Sensus.UI.Inputs
             Id = inputGroup.Id;
             Name = inputGroup.Name;
             Geotag = inputGroup.Geotag;
+            ForceValidInputs = inputGroup.ForceValidInputs;
+
             Inputs = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(inputGroup.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
             if (newGroupId)

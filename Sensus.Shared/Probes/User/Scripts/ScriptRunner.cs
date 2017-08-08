@@ -25,6 +25,7 @@ using Sensus.Probes.Location;
 using Sensus.Context;
 using Sensus.Callbacks;
 using Newtonsoft.Json;
+using Sensus.UI.Inputs;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -278,6 +279,18 @@ namespace Sensus.Probes.User.Scripts
             foreach (var trigger in Triggers)
             {
                 trigger.Reset();
+            }
+
+            // ensure all variables defined by inputs are listed on the protocol
+            List<string> unknownVariables = Script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
+                                                              .OfType<IVariableDefiningInput>()
+                                                              .Where(input => !string.IsNullOrWhiteSpace(input.DefinedVariable))
+                                                              .Select(input => input.DefinedVariable)
+                                                              .Where(definedVariable => !Probe.Protocol.VariableValue.ContainsKey(definedVariable))
+                                                              .ToList();
+            if (unknownVariables.Count > 0)
+            {
+                throw new Exception("The following input-defined variables are not listed on the protocol:  " + string.Join(", ", unknownVariables));
             }
         }
 

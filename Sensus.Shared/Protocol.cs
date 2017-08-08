@@ -38,6 +38,7 @@ using Sensus.Probes.User.MicrosoftBand;
 using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
 using Sensus.Encryption;
+using System.Text.RegularExpressions;
 
 #if __IOS__
 using HealthKit;
@@ -58,6 +59,7 @@ namespace Sensus
         public const int GPS_DEFAULT_ACCURACY_METERS = 25;
         public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
         public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
+        private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static void Create(string name)
         {
@@ -774,9 +776,9 @@ namespace Sensus
             get
             {
                 double[] participations = _probes.Select(probe => probe.GetParticipation())
-                                                .Where(participation => participation != null)
-                                                .Select(participation => participation.GetValueOrDefault())
-                                                .ToArray();
+                                                 .Where(participation => participation != null)
+                                                 .Select(participation => participation.GetValueOrDefault())
+                                                 .ToArray();
 
                 // there will not be any participations if all probes are disabled -- perfect participation by definition
                 if (participations.Length == 0)
@@ -862,16 +864,30 @@ namespace Sensus
                     {
                         int colonIndex = variableValueStr.IndexOf(':');
 
-                        // there must be something before and after the colon
-                        if (colonIndex > 0 && colonIndex < variableValueStr.Length - 1)
+                        // if there is no colon, use the entire string as the variable
+                        if (colonIndex < 0)
                         {
-                            string variable = variableValueStr.Substring(0, colonIndex).Trim();
-                            string variableValue = variableValueStr.Substring(colonIndex + 1).Trim();
+                            colonIndex = variableValueStr.Length;
+                        }
 
-                            if (!string.IsNullOrWhiteSpace(variable) && !string.IsNullOrWhiteSpace(variableValue))
+                        // get the variable, ignoring non-alphanumeric characters
+                        string variable = NON_ALPHANUMERIC_REGEX.Replace(variableValueStr.Substring(0, colonIndex), "");
+                        if (!string.IsNullOrWhiteSpace(variable))
+                        {
+                            // get the value, which is anything after the colon
+                            string variableValue = null;
+                            if (colonIndex < variableValueStr.Length - 1)
                             {
-                                _variableValue.Add(variable, variableValue);
+                                variableValue = variableValueStr.Substring(colonIndex + 1).Trim();
+
+                                // if the variable value is empty then set it to null
+                                if (string.IsNullOrWhiteSpace(variableValue))
+                                {
+                                    variableValue = null;
+                                }
                             }
+
+                            _variableValue[variable] = variableValue;
                         }
                     }
                 }
@@ -1189,7 +1205,9 @@ namespace Sensus
                                 if (probe.Enabled)
                                 {
                                     if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
+                                    {
                                         continue;
+                                    }
 
                                     try
                                     {
@@ -1215,7 +1233,9 @@ namespace Sensus
                             }
 
                             if (probesEnabled == 0)
+                            {
                                 throw new Exception("No probes were enabled.");
+                            }
                             else
                             {
                                 // on android when the activity is stopped the service is restarted, which restarts the protocols. if the user then 
@@ -1366,8 +1386,8 @@ namespace Sensus
                 consent.Add(new LabelOnlyInput(_description));
 
             consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ". ") +
-                                           "The following data will be collected:"));
+                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
+                                           " The following data will be collected:"));
 
             LabelOnlyInput collectionDescriptionLabel = null;
             int collectionDescriptionFontSize = 15;

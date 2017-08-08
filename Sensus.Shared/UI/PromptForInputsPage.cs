@@ -207,7 +207,7 @@ namespace Sensus.UI
             {
                 if (!inputGroup.Valid && inputGroup.ForceValidInputs)
                 {
-                    await DisplayAlert("Mandatory", "You must provide values for all fields before proceeding.", "Back");
+                    await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
                 }
                 else
                 {

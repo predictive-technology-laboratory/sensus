@@ -173,10 +173,10 @@ namespace Sensus.UI.Inputs
                         {
                             protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
                         }
-                        // if the input is incomplete, remove the variable from the protocol
+                        // if the input is incomplete, set the value to null on the protocol
                         else
                         {
-                            protocolForInput.VariableValue.Remove(definedVariable);
+                            protocolForInput.VariableValue[definedVariable] = null;
                         }
                     }
                 }
@@ -439,7 +439,17 @@ namespace Sensus.UI.Inputs
                     // replace all variables with their values
                     foreach (string variable in protocolForInput.VariableValue.Keys)
                     {
-                        labelTextStr = labelTextStr.Replace("{" + variable + "}", protocolForInput.VariableValue[variable]);
+                        // get the value for the variable as defined on the protocol
+                        string variableValue = protocolForInput.VariableValue[variable];
+
+                        // if the variable's value has not been defined, then just use the variable name as a fallback.
+                        if (variableValue == null)
+                        {
+                            variableValue = variable;
+                        }
+
+                        // replace variable references with its value
+                        labelTextStr = labelTextStr.Replace("{" + variable + "}", variableValue);
                     }
                 }
 
