@@ -15,6 +15,7 @@
 using System;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Sensus.Tests.Core
 {
@@ -41,19 +42,19 @@ namespace Sensus.Tests.Core
         {
             var protocol1 = new Protocol("abc")
             {
-                ContactEmail                          = "ContactEmail",
-                ContinueIndefinitely                  = true,
-                Description                           = "Description",
-                EndDate                               = DateTime.MaxValue,
-                EndTime                               = TimeSpan.MaxValue,
+                ContactEmail = "ContactEmail",
+                ContinueIndefinitely = true,
+                Description = "Description",
+                EndDate = DateTime.MaxValue,
+                EndTime = TimeSpan.MaxValue,
                 ForceProtocolReportsToRemoteDataStore = true,
-                GpsDesiredAccuracyMeters              = 0.1f,
-                GpsMinDistanceDelayMeters             = 0.2f,
-                GpsMinTimeDelayMS                     = 10,
-                Groupable                             = true
+                GpsDesiredAccuracyMeters = 0.1f,
+                GpsMinDistanceDelayMeters = 0.2f,
+                GpsMinTimeDelayMS = 10,
+                Groupable = true,
+                VariableValueUiProperty = new List<string>(new string[] { "var1: val1", "var1:", "var1:val2", "var2", "var2:" })
             };
 
-            
             var protocol2 = JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings), _jsonSerializerSettings);
 
             Assert.AreEqual(protocol1.Name, protocol2.Name);
@@ -67,6 +68,9 @@ namespace Sensus.Tests.Core
             Assert.AreEqual(protocol1.GpsMinDistanceDelayMeters, protocol2.GpsMinDistanceDelayMeters);
             Assert.AreEqual(protocol1.GpsMinTimeDelayMS, protocol2.GpsMinTimeDelayMS);
             Assert.AreEqual(protocol1.Groupable, protocol2.Groupable);
+            Assert.AreEqual(protocol2.VariableValue.Count, 2);
+            Assert.AreEqual(protocol2.VariableValue["var1"], "val2");
+            Assert.AreEqual(protocol2.VariableValue["var2"], null);            
         }
 
         //[Test, Explicit ("Too many dependencies to get this working right now")]
