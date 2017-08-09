@@ -370,7 +370,15 @@ namespace Sensus.Probes
 
                 if (_storeData)
                 {
-                    ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
+                    ChartDataPoint chartDataPoint = null;
+
+                    try
+                    {
+                        chartDataPoint = GetChartDataPointFromDatum(datum);
+                    }
+                    catch (NotImplementedException)
+                    {
+                    }
 
                     if (chartDataPoint != null)
                     {
@@ -482,7 +490,9 @@ namespace Sensus.Probes
             ChartSeries series = GetChartSeries();
 
             if (series == null)
+            {
                 return null;
+            }
 
             // provide the series with a copy of the chart data. if we provide the actual list, then the
             // chart wants to auto-update the display on subsequent additions to the list. if this happens,

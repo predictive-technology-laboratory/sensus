@@ -18,12 +18,12 @@ using Syncfusion.SfChart.XForms;
 using Android.App;
 using Android.Gms.Common.Apis;
 using Android.Gms.Awareness;
-using Android.Gms.Extensions;
 using Android.Content;
 using Android.Gms.Awareness.Fence;
 using Sensus.Exceptions;
 using Sensus.Probes.Movement;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -78,6 +78,7 @@ namespace Sensus.Android.Probes.Movement
         {
             _activityReciever = new Dictionary<string, AndroidActivityProbeBroadcastReceiver>();
 
+            // create a separate broadcast receiver for each activity type
             CreateReceiver(nameof(DetectedActivityFence.InVehicle));
             CreateReceiver(nameof(DetectedActivityFence.OnBicycle));
             CreateReceiver(nameof(DetectedActivityFence.OnFoot));
@@ -104,9 +105,8 @@ namespace Sensus.Android.Probes.Movement
         {
             base.Initialize();
 
-            GoogleApiClient.Builder builder = new GoogleApiClient.Builder(Application.Context);
-
-            _awarenessApiClient = builder.AddApi(Awareness.Api)
+            // connected to the awareness client
+            _awarenessApiClient = new GoogleApiClient.Builder(Application.Context).AddApi(Awareness.Api)
 
                 .AddConnectionCallbacks(
 
@@ -117,12 +117,12 @@ namespace Sensus.Android.Probes.Movement
 
                     status =>
                     {
-                        SensusServiceHelper.Get().Logger.Log("Connection to Google Awareness API suspended.", LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Connection to Google Awareness API suspended. Status:  " + status, LoggingLevel.Normal, GetType());
                     })
 
                 .Build();
 
-            _awarenessApiClient.Connect();
+            _awarenessApiClient.BlockingConnect();
         }
 
         protected override void StartListening()
@@ -141,8 +141,7 @@ namespace Sensus.Android.Probes.Movement
         {
             string id = ACTIVITY_RECOGNITION_ACTION + "." + activityName;
 
-            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(id));
-
+            // create fence
             AwarenessFence activityFence = DetectedActivityFence.During(activityId);
             Intent activityRecognitionCallbackIntent = new Intent(id);
             PendingIntent activityRecognitionCallbackPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, activityRecognitionCallbackIntent, 0);
@@ -150,36 +149,68 @@ namespace Sensus.Android.Probes.Movement
                 .AddFence(id, activityFence, activityRecognitionCallbackPendingIntent)
                 .Build();
 
+            // add fence
             UpdateFences(addFenceRequest);
+
+            // register receiver for fence
+            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(id));
         }
 
         private void UpdateFences(IFenceUpdateRequest updateRequest)
         {
-            Awareness.FenceApi.UpdateFences(_awarenessApiClient, updateRequest).SetResultCallback<Statuses>(status =>
+            ManualResetEvent updateWait = new ManualResetEvent(false);
+
+            try
             {
-                if (status.IsSuccess)
+                // update fences is asynchronous
+                Awareness.FenceApi.UpdateFences(_awarenessApiClient, updateRequest).SetResultCallback<Statuses>(status =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Updated Google Awareness API fences.", LoggingLevel.Normal, GetType());
-                }
-                else if (status.IsCanceled)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update canceled.", LoggingLevel.Normal, GetType());
-                }
-                else if (status.IsInterrupted)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update interrupted", LoggingLevel.Normal, GetType());
-                }
-                else
-                {
-                    string message = "Unrecognized fence update status:  " + status;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    SensusException.Report(message);
-                }
-            });
+                    try
+                    {
+                        if (status.IsSuccess)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Updated Google Awareness API fences.", LoggingLevel.Normal, GetType());
+                        }
+                        else if (status.IsCanceled)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update canceled.", LoggingLevel.Normal, GetType());
+                        }
+                        else if (status.IsInterrupted)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update interrupted", LoggingLevel.Normal, GetType());
+                        }
+                        else
+                        {
+                            string message = "Unrecognized fence update status:  " + status;
+                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                            SensusException.Report(message);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while processing update status:  " + ex, LoggingLevel.Normal, GetType());
+                    }
+                    finally
+                    {
+                        // ensure that wait is always set
+                        updateWait.Set();
+                    }
+                });
+            }
+            // catch any errors from calling UpdateFences
+            catch (Exception ex)
+            {
+                // ensure that wait is always set
+                SensusServiceHelper.Get().Logger.Log("Exception while updating fences:  " + ex, LoggingLevel.Normal, GetType());
+                updateWait.Set();
+            }
+
+            updateWait.WaitOne();
         }
 
         protected override void StopListening()
         {
+            // remove fences
             RemoveFence(nameof(DetectedActivityFence.InVehicle));
             RemoveFence(nameof(DetectedActivityFence.OnBicycle));
             RemoveFence(nameof(DetectedActivityFence.OnFoot));
@@ -189,18 +220,33 @@ namespace Sensus.Android.Probes.Movement
             RemoveFence(nameof(DetectedActivityFence.Unknown));
             RemoveFence(nameof(DetectedActivityFence.Walking));
 
+            // disconnect client
             _awarenessApiClient.Disconnect();
         }
 
         private void RemoveFence(string activityName)
         {
-            IFenceUpdateRequest removeFenceRequest = new FenceUpdateRequestBuilder()
-                .RemoveFence(ACTIVITY_RECOGNITION_ACTION + "." + activityName)
-                .Build();
+            try
+            {
+                IFenceUpdateRequest removeFenceRequest = new FenceUpdateRequestBuilder()
+                    .RemoveFence(ACTIVITY_RECOGNITION_ACTION + "." + activityName)
+                    .Build();
 
-            UpdateFences(removeFenceRequest);
+                UpdateFences(removeFenceRequest);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while removing fence:  " + ex, LoggingLevel.Normal, GetType());
+            }
 
-            Application.Context.UnregisterReceiver(_activityReciever[activityName]);
+            try
+            {
+                Application.Context.UnregisterReceiver(_activityReciever[activityName]);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
