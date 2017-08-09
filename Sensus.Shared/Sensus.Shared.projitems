@@ -225,6 +225,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\Activities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

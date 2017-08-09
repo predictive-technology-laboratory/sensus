@@ -18,7 +18,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Sensus.Probes
 {
@@ -211,6 +210,8 @@ namespace Sensus.Probes
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
             _incomingDataRateCalculator = new DataRateCalculator(100);
+            
+            // store all data to start with. we'll compute a store/drop rate after data have arrived.
             _samplingModulus = 1;
             _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
         }
@@ -262,12 +263,12 @@ namespace Sensus.Probes
 
             float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
 
-            // 0 (or negligible) data per second:  don't store
+            // 0 (or negligible) data per second:  don't store. if max data per second is not set, the following inequality will be false.
             if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
             {
                 store = false;
             }
-            // non-negligible data per second:  check data rate
+            // non-negligible (or default -1) data per second:  check data rate
             else if (maxDataStoresPerSecond > 0)
             {
                 _incomingDataRateCalculator.Add(datum);

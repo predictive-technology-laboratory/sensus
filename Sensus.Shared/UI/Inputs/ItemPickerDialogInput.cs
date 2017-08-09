@@ -21,13 +21,14 @@ using Newtonsoft.Json;
 
 namespace Sensus.UI.Inputs
 {
-    public class ItemPickerDialogInput : ItemPickerInput
+    public class ItemPickerDialogInput : ItemPickerInput, IVariableDefiningInput
     {
         private string _tipText;
         private List<string> _items;
         private bool _allowClearSelection;
         private Picker _picker;
         private Label _label;
+        private string _definedVariable;
 
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
@@ -66,6 +67,19 @@ namespace Sensus.UI.Inputs
             set
             {
                 _allowClearSelection = value;
+            }
+        }
+
+        [EntryStringUiProperty("Define Variable:", true, 13)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
             }
         }
 
@@ -112,7 +126,7 @@ namespace Sensus.UI.Inputs
         public ItemPickerDialogInput(string name, string labelText, string tipText, List<string> items)
             : base(name, labelText)
         {
-            Construct(tipText, items);      
+            Construct(tipText, items);
         }
 
         private void Construct(string tipText, List<string> items)
@@ -132,44 +146,56 @@ namespace Sensus.UI.Inputs
                     HorizontalOptions = LayoutOptions.FillAndExpand
 
                     // set the style ID on the view so that we can retrieve it when UI testing
-                    #if UI_TESTING
+#if UI_TESTING
                     , StyleId = Name
-                    #endif
+#endif
                 };
 
                 if (_allowClearSelection)
+                {
                     _picker.Items.Add("[Clear Selection]");
-                
+                }
+
                 foreach (string item in RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items)
+                {
                     _picker.Items.Add(item);
+                }
 
                 _picker.SelectedIndexChanged += (o, e) =>
                 {
                     if (Value == null)
+                    {
                         Complete = false;
+                    }
                     else if (Value.ToString() == "[Clear Selection]")
+                    {
                         _picker.SelectedIndex = -1;
+                    }
                     else
+                    {
                         Complete = true;
+                    }
                 };
 
                 _label = CreateLabel(index);
 
                 base.SetView(new StackLayout
-                    {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.Start,
-                        Children = { _label, _picker }
-                    });
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.Start,
+                    Children = { _label, _picker }
+                });
             }
             else
             {
                 // if the view was already initialized, just update the label since the index might have changed.
-                _label.Text = GetLabelText(index);  
+                _label.Text = GetLabelText(index);
 
                 // if the view is not enabled, there should be no tip text since the user can't do anything with the picker.
                 if (!Enabled)
+                {
                     _picker.Title = "";
+                }
             }
 
             return base.GetView(index);

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Threading;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
@@ -22,12 +21,13 @@ using System.Threading.Tasks;
 
 namespace Sensus.UI.Inputs
 {
-    public class VoiceInput : Input
+    public class VoiceInput : Input, IVariableDefiningInput
     {
         private string _outputMessage;
         private string _outputMessageRerun;
         private string _response;
         private bool _enabled;
+        private string _definedVariable;
 
         [EntryStringUiProperty("Output Message:", true, 11)]
         public string OutputMessage
@@ -41,6 +41,19 @@ namespace Sensus.UI.Inputs
         {
             get { return _outputMessageRerun; }
             set { _outputMessageRerun = value; }
+        }
+
+        [EntryStringUiProperty("Define Variable:", true, 2)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
+            }
         }
 
         public override object Value
@@ -120,11 +133,17 @@ namespace Sensus.UI.Inputs
                     int daysAgo = (int)promptAge.TotalDays;
                     string daysAgoStr;
                     if (daysAgo == 0)
+                    {
                         daysAgoStr = "today";
+                    }
                     else if (daysAgo == 1)
+                    {
                         daysAgoStr = "yesterday";
+                    }
                     else
+                    {
                         daysAgoStr = promptAge.TotalDays + " days ago";
+                    }
 
                     outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.LocalDateTime.ToString("h:mm tt"));
                 }
@@ -137,7 +156,9 @@ namespace Sensus.UI.Inputs
                 Viewed = true;
 
                 if (string.IsNullOrWhiteSpace(_response))
+                {
                     _response = null;
+                }
 
                 Complete = _response != null;
 

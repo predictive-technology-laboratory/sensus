@@ -73,87 +73,79 @@ namespace Sensus.Android.Probes.Apps
             lock (LoginLocker)
             {
                 if (HasValidAccessToken)
-                    SensusServiceHelper.Get().Logger.Log("Already have valid Facebook access token. No need to initialize.", LoggingLevel.Normal, GetType());
+                {
+                    SensusServiceHelper.Get().Logger.Log("Facebook access token present.", LoggingLevel.Normal, GetType());
+                }
                 else
                 {
-                    #region ensure that facebook sdk is initialized
-                    if (FacebookSdk.IsInitialized)
-                        SensusServiceHelper.Get().Logger.Log("Facebook SDK is already initialized.", LoggingLevel.Normal, GetType());
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Initializing Facebook SDK.", LoggingLevel.Normal, GetType());
-                        FacebookSdk.SdkInitialize(Application.Context);
-                        Thread.Sleep(5000);  // give sdk intialization a few seconds to read the access token
-                    }
-                    #endregion
+                    ManualResetEvent loginWait = new ManualResetEvent(false);
+                    bool loginCancelled = false;
+                    string accessTokenError = null;
 
-                    if (HasValidAccessToken)
-                        SensusServiceHelper.Get().Logger.Log("Facebook access token read from cache.", LoggingLevel.Normal, GetType());
-                    else
+                    #region prompt user to log in from main activity
+                    (SensusServiceHelper.Get() as AndroidSensusServiceHelper).RunActionUsingMainActivityAsync(mainActivity =>
                     {
-                        ManualResetEvent loginWait = new ManualResetEvent(false);
-                        bool loginCancelled = false;
-                        string accessTokenError = null;
-
-                        #region prompt user to log in from main activity
-                        (SensusServiceHelper.Get() as AndroidSensusServiceHelper).RunActionUsingMainActivityAsync(mainActivity =>
+                        try
+                        {
+                            FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
                             {
-                                try
-                                {                            
-                                    FacebookCallback<LoginResult> loginCallback = new FacebookCallback<LoginResult>
-                                    {
-                                        HandleSuccess = loginResult =>
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", LoggingLevel.Normal, GetType());
-                                            AccessToken.CurrentAccessToken = loginResult.AccessToken;
-                                            loginWait.Set();
-                                        },
-
-                                        HandleCancel = () =>
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", LoggingLevel.Normal, GetType());
-                                            AccessToken.CurrentAccessToken = null;
-                                            loginCancelled = true;
-                                            loginWait.Set();
-                                        },
-
-                                        HandleError = loginResult =>
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Facebook login failed.", LoggingLevel.Normal, GetType());
-                                            AccessToken.CurrentAccessToken = null;
-                                            loginWait.Set();
-                                        }
-                                    };
-
-                                    LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
-                                    LoginManager.Instance.LogInWithReadPermissions(mainActivity, permissionNames);
-                                }
-                                catch (Exception ex)
+                                HandleSuccess = loginResult =>
                                 {
-                                    accessTokenError = ex.Message;
+                                    SensusServiceHelper.Get().Logger.Log("Facebook login succeeded.", LoggingLevel.Normal, GetType());
+                                    AccessToken.CurrentAccessToken = loginResult.AccessToken;
+                                    loginWait.Set();
+                                },
+
+                                HandleCancel = () =>
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Facebook login cancelled.", LoggingLevel.Normal, GetType());
+                                    AccessToken.CurrentAccessToken = null;
+                                    loginCancelled = true;
+                                    loginWait.Set();
+                                },
+
+                                HandleError = loginResult =>
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Facebook login failed.", LoggingLevel.Normal, GetType());
+                                    AccessToken.CurrentAccessToken = null;
                                     loginWait.Set();
                                 }
+                            };
 
-                            }, true, false);
-                        #endregion
-
-                        loginWait.WaitOne();
-
-                        if (accessTokenError != null)
-                            SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + accessTokenError, LoggingLevel.Normal, GetType());
-
-                        // if the access token is still not valid after logging in, consider it a fail.
-                        if (!HasValidAccessToken)
+                            LoginManager.Instance.RegisterCallback(mainActivity.FacebookCallbackManager, loginCallback);
+                            LoginManager.Instance.LogInWithReadPermissions(mainActivity, permissionNames);
+                        }
+                        catch (Exception ex)
                         {
-                            string message = "Failed to obtain access token.";
-                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                            accessTokenError = ex.Message;
+                            loginWait.Set();
+                        }
 
-                            // if the user cancelled the login, don't prompt them to log in again
-                            if (loginCancelled)
-                                throw new NotSupportedException(message + " User cancelled login.");
-                            // if the user did not cancel the login, allow the login to be presented again when the health test is run
-                            else
-                                throw new Exception(message);
+                    }, true, false);
+                    #endregion
+
+                    loginWait.WaitOne();
+
+                    if (accessTokenError != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Error while initializing Facebook SDK and/or logging in:  " + accessTokenError, LoggingLevel.Normal, GetType());
+                    }
+
+                    // if the access token is still not valid after logging in, consider it a fail.
+                    if (!HasValidAccessToken)
+                    {
+                        string message = "Failed to obtain access token.";
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
+                        // if the user cancelled the login, don't prompt them to log in again
+                        if (loginCancelled)
+                        {
+                            throw new NotSupportedException(message + " User cancelled login.");
+                        }
+                        // if the user did not cancel the login, allow the login to be presented again when the health test is run
+                        else
+                        {
+                            throw new Exception(message);
                         }
                     }
                 }
@@ -175,13 +167,17 @@ namespace Sensus.Android.Probes.Apps
             {
                 string[] missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Length > 0)
+                {
                     ObtainAccessToken(missingPermissions);
+                }
             }
             else
+            {
                 ObtainAccessToken(GetRequiredPermissionNames());
+            }
 
             if (HasValidAccessToken)
-            {                
+            {
                 GraphRequestBatch graphRequestBatch = new GraphRequestBatch();
 
                 foreach (Tuple<string, List<string>> edgeFieldQuery in GetEdgeFieldQueries())
@@ -189,7 +185,9 @@ namespace Sensus.Android.Probes.Apps
                     Bundle parameters = new Bundle();
 
                     if (edgeFieldQuery.Item2.Count > 0)
+                    {
                         parameters.PutString("fields", string.Concat(edgeFieldQuery.Item2.Select(field => field + ",")).Trim(','));
+                    }
 
                     GraphRequest request = new GraphRequest(
                                                AccessToken.CurrentAccessToken,
@@ -203,7 +201,9 @@ namespace Sensus.Android.Probes.Apps
                 }
 
                 if (graphRequestBatch.Size() == 0)
+                {
                     throw new Exception("User has not granted any Facebook permissions.");
+                }
                 else
                 {
                     foreach (GraphResponse response in graphRequestBatch.ExecuteAndWait())
@@ -225,17 +225,25 @@ namespace Sensus.Android.Probes.Apps
                                     object value = null;
 
                                     if (property.PropertyType == typeof(string))
+                                    {
                                         value = responseJSON.GetString(jsonField);
+                                    }
                                     else if (property.PropertyType == typeof(bool?))
+                                    {
                                         value = responseJSON.GetBoolean(jsonField);
+                                    }
                                     else if (property.PropertyType == typeof(DateTimeOffset?))
+                                    {
                                         value = DateTimeOffset.Parse(responseJSON.GetString(jsonField));
+                                    }
                                     else if (property.PropertyType == typeof(List<string>))
                                     {
                                         List<string> values = new List<string>();
                                         JSONArray jsonValues = responseJSON.GetJSONArray(jsonField);
                                         for (int j = 0; j < jsonValues.Length(); ++j)
+                                        {
                                             values.Add(jsonValues.GetString(j));
+                                        }
 
                                         value = values;
                                     }
@@ -269,7 +277,9 @@ namespace Sensus.Android.Probes.Apps
                 }
             }
             else
+            {
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
+            }
 
             return data;
         }
@@ -279,7 +289,9 @@ namespace Sensus.Android.Probes.Apps
             bool restart = base.TestHealth(ref error, ref warning, ref misc);
 
             if (!HasValidAccessToken)
+            {
                 restart = true;
+            }
 
             return restart;
         }
@@ -287,9 +299,13 @@ namespace Sensus.Android.Probes.Apps
         protected override ICollection<string> GetGrantedPermissions()
         {
             if (HasValidAccessToken)
+            {
                 return AccessToken.CurrentAccessToken.Permissions;
+            }
             else
+            {
                 return new string[0];
+            }
         }
     }
 }

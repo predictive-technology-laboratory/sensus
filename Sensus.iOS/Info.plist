@@ -142,7 +142,7 @@
 		</dict>
 	</array>
 	<key>XSAppIconAssets</key>
-	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>CFBundleShortVersionString</key>
 	<string>14.1.2</string>
 	<key>UIBackgroundModes</key>

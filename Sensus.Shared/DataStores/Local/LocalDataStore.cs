@@ -215,7 +215,9 @@ namespace Sensus.DataStores.Local
 #endif
 
                 if (progressCallback != null)
+                {
                     progressCallback(null, 1);
+                }
 
                 return totalDataCount;
             }

@@ -959,12 +959,12 @@ namespace Sensus
                                     int stepNumber = inputGroupNum + 1;
                                     bool promptPagePopped = false;
 
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, async result =>
                                     {
                                         // catch any exceptions from navigating to the next page
                                         try
                                         {
-                                            // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
+                                            // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did, and there 
                                             // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
                                             INavigation navigation = Application.Current.MainPage.Navigation;
                                             bool pageWasAlreadyPopped;
@@ -987,11 +987,17 @@ namespace Sensus
                                                 }
 
                                                 if (result == PromptForInputsPage.Result.Cancel)
+                                                {
                                                     inputGroups = null;
+                                                }
                                                 else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                                {
                                                     inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                }
                                                 else
+                                                {
                                                     inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
+                                                }
                                             }
                                         }
                                         catch (Exception ex)
@@ -1029,7 +1035,9 @@ namespace Sensus
                                     }
                                     // don't display page if we've been canceled
                                     else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                    {
                                         responseWait.Set();
+                                    }
                                     else
                                     {
                                         // display page, which will handle setting the response wait. only animate the display for the first page.
@@ -1038,7 +1046,9 @@ namespace Sensus
                                         // only run the post-display callback the first time a page is displayed. the caller expects the callback
                                         // to fire only once upon first display.
                                         if (firstPageDisplay && postDisplayCallback != null)
+                                        {
                                             postDisplayCallback();
+                                        }
 
                                         firstPageDisplay = false;
                                     }
@@ -1079,8 +1089,12 @@ namespace Sensus
                     // reflect the time that the user hit submit.
                     DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
                     foreach (InputGroup inputGroup in inputGroups)
+                    {
                         foreach (Input input in inputGroup.Inputs)
+                        {
                             input.SubmissionTimestamp = submissionTimestamp;
+                        }
+                    }
 
                     #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
@@ -1092,9 +1106,13 @@ namespace Sensus
                             Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
                             if (currentPosition != null)
+                            {
                                 foreach (InputGroup inputGroup in inputGroups)
+                                {
                                     if (inputGroup.Geotag)
+                                    {
                                         foreach (Input input in inputGroup.Inputs)
+                                        {
                                             if (input.Complete)
                                             {
                                                 bool locationUpdated = false;
@@ -1112,8 +1130,14 @@ namespace Sensus
                                                 }
 
                                                 if (locationUpdated)
+                                                {
                                                     input.LocationUpdateTimestamp = currentPosition.Timestamp;
+                                                }
                                             }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -1133,7 +1157,9 @@ namespace Sensus
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                {
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                }
                 else
                 {
                     MapPage mapPage = new MapPage(address, newPinName);
@@ -1153,7 +1179,9 @@ namespace Sensus
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                {
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                }
                 else
                 {
                     MapPage mapPage = new MapPage(address, newPinName);
@@ -1186,7 +1214,9 @@ namespace Sensus
                 int fileNum = 0;
                 string path = null;
                 while (path == null || File.Exists(path))
+                {
                     path = Path.Combine(SHARE_DIRECTORY, fileNum++ + (string.IsNullOrWhiteSpace(extension) ? "" : "." + extension.Trim('.')));
+                }
 
                 return path;
             }
@@ -1231,13 +1261,19 @@ namespace Sensus
                     convertedJSON.AppendLine(convertedJsonLine);
                 }
                 else
+                {
                     convertedJSON.AppendLine(jsonLine);
+                }
             }
 
             if (conversionPerformed)
+            {
                 _logger.Log("Performed cross-platform conversion of JSON.", LoggingLevel.Normal, GetType());
+            }
             else
+            {
                 _logger.Log("No cross-platform conversion required for JSON.", LoggingLevel.Normal, GetType());
+            }
 
             return convertedJSON.ToString();
         }
@@ -1248,17 +1284,29 @@ namespace Sensus
             {
                 string rationale = null;
                 if (permission == Permission.Camera)
+                {
                     rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
+                }
                 else if (permission == Permission.Location)
+                {
                     rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
+                }
                 else if (permission == Permission.Microphone)
+                {
                     rationale = "Sensus uses the microphone to collect sound level information for studies you have enrolled in. Sensus will not record audio.";
+                }
                 else if (permission == Permission.Phone)
+                {
                     rationale = "Sensus monitors telephone call metadata for studies you have enrolled in. Sensus will not record audio from calls.";
+                }
                 else if (permission == Permission.Sensors)
+                {
                     rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
+                }
                 else if (permission == Permission.Storage)
+                {
                     rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
+                }
 
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                 {
@@ -1357,7 +1405,6 @@ namespace Sensus
         }
 
         #region Private Methods
-
         private void RemoveScripts(bool issueNotification, params Script[] scripts)
         {
             var removed = false;

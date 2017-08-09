@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
@@ -103,7 +102,9 @@ namespace Sensus.UI.Inputs
         public override View GetView(int index)
         {
             if (base.GetView(index) == null)
+            {
                 base.SetView(CreateLabel(-1));
+            }
 
             return base.GetView(index);
         }
