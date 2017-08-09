@@ -29,9 +29,9 @@ namespace Sensus.iOS.Probes.Movement
 {
     public class iOSActivityProbe : PollingProbe
     {
-        private NSDate _queryStartTime;
+        private DateTimeOffset? _queryStartTime;
 
-        public NSDate QueryStartTime
+        public DateTimeOffset? QueryStartTime
         {
             get { return _queryStartTime; }
             set { _queryStartTime = value; }
@@ -70,7 +70,7 @@ namespace Sensus.iOS.Probes.Movement
 
             if (_queryStartTime == null)
             {
-                _queryStartTime = NSDate.Now.AddSeconds(-TimeSpan.FromDays(7).TotalSeconds);  // only the last 7 days of activities are stored:  https://developer.apple.com/documentation/coremotion/cmmotionactivitymanager/1615929-queryactivitystarting
+                _queryStartTime = DateTimeOffset.UtcNow.AddDays(-7);  // only the last 7 days of activities are stored:  https://developer.apple.com/documentation/coremotion/cmmotionactivitymanager/1615929-queryactivitystarting
             }
 
             ManualResetEvent queryWait = new ManualResetEvent(false);
@@ -81,7 +81,7 @@ namespace Sensus.iOS.Probes.Movement
                 {
                     CMMotionActivityManager activityManager = new CMMotionActivityManager();
 
-                    activityManager.QueryActivity(_queryStartTime, NSDate.Now, NSOperationQueue.CurrentQueue, (activities, error) =>
+                    activityManager.QueryActivity(_queryStartTime.Value.UtcDateTime.ToNSDate(), NSDate.Now, NSOperationQueue.CurrentQueue, (activities, error) =>
                     {
                         try
                         {
@@ -113,6 +113,7 @@ namespace Sensus.iOS.Probes.Movement
                                     }
                                     #endregion
 
+                                    #region get activities
                                     Action<Activities> AddActivityDatum = activityType =>
                                     {
                                         ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityState.Active, confidence);
@@ -148,8 +149,10 @@ namespace Sensus.iOS.Probes.Movement
                                     {
                                         AddActivityDatum(Activities.Unknown);
                                     }
+                                    #endregion
 
-                                    _queryStartTime = activity.StartDate.LaterDate(_queryStartTime).AddSeconds(1);
+                                    NSDate newStartNsDate = activity.StartDate.LaterDate(_queryStartTime.Value.UtcDateTime.ToNSDate()).AddSeconds(1);
+                                    _queryStartTime = new DateTime(newStartNsDate.ToDateTime().Ticks, DateTimeKind.Utc);
                                 }
                             }
                             else
