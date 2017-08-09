@@ -388,15 +388,6 @@ namespace Sensus.Android
                 _activityResultWait.Set();
             }
 
-            // looks like the facebook SDK can become uninitialized during the process of interacting with the Facebook login manager. this 
-            // might happen when Sensus is stopped/destroyed while the user is logging into facebook. check here to ensure that the facebook
-            // SDK is initialized.
-            //
-            // see:  https://insights.xamarin.com/app/Sensus-Production/issues/66
-            //
-            if (!FacebookSdk.IsInitialized)
-                FacebookSdk.SdkInitialize(global::Android.App.Application.Context);
-
             _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
@@ -404,7 +395,7 @@ namespace Sensus.Android
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-            ZXing.Net.Mobile.Forms.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            ZXing.Net.Mobile.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 #endif
 
