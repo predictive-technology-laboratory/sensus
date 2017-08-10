@@ -13,22 +13,34 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Movement
 {
     public class ActivityDatum : Datum
-    {
-        [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Unknown, Activities.Walking })]
+    {        
         public Activities Activity { get; set; }
 
         public ActivityState State { get; set; }
+
+        public double? Confidence { get; set; }
+
+        [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Unknown, Activities.Walking })]
+        [JsonIgnore]
+        public Activities CurrentActivity
+        {
+            get
+            {
+                return State == ActivityState.Active ? Activity : Activities.Unknown;
+            }
+        }
 
         public override string DisplayDetail
         {
             get
             {
-                return "Activity:  " + Activity + " (" + State + ")";
+                return "Activity:  " + Activity + " (" + State + (Confidence.HasValue ? "/" + Math.Round(Confidence.Value, 2) : "") + ")";
             }
         }
 
@@ -39,18 +51,20 @@ namespace Sensus.Probes.Movement
         {
         }
 
-        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityState state)
+        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityState state, double? confidence = null)
             : base(timestamp)
         {
             Activity = activity;
             State = state;
+            Confidence = confidence;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
                    "Activity:  " + Activity + Environment.NewLine +
-                   "State:  " + State;
+                   "State:  " + State + Environment.NewLine +
+                   "Confidence:  " + (Confidence.HasValue ? Confidence.Value.ToString() : "NA");
         }
     }
 }

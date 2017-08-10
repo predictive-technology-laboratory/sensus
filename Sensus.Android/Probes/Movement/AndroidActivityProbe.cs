@@ -24,6 +24,7 @@ using Sensus.Exceptions;
 using Sensus.Probes.Movement;
 using System.Collections.Generic;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -34,6 +35,7 @@ namespace Sensus.Android.Probes.Movement
         private GoogleApiClient _awarenessApiClient;
         private Dictionary<string, AndroidActivityProbeBroadcastReceiver> _activityReciever;
 
+        [JsonIgnore]
         public override Type DatumType
         {
             get
@@ -42,6 +44,7 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
+        [JsonIgnore]
         public override string DisplayName
         {
             get
@@ -50,6 +53,7 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
+        [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
             get
@@ -58,6 +62,7 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
+        [JsonIgnore]
         protected override string DeviceAsleepWarning
         {
             get
@@ -66,6 +71,7 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
+        [JsonIgnore]
         protected override string DeviceAwakeWarning
         {
             get

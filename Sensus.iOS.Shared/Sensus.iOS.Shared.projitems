@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IiOSNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSActivityProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
