@@ -272,9 +272,10 @@ namespace Sensus.Android.Probes.Movement
                     .RemoveFence(ACTIVITY_RECOGNITION_ACTION + "." + activityName)
                     .Build();
 
-                if(!UpdateFences(removeFenceRequest))
+                if (!UpdateFences(removeFenceRequest))
                 {
-                    throw new Exception("Failed to remove fence.");
+                    // we'll catch this immediately
+                    throw new Exception("Failed to remove fence (e.g., timed out).");
                 }
             }
             catch (Exception ex)
