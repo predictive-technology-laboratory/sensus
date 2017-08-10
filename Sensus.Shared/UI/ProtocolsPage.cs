@@ -143,6 +143,12 @@ namespace Sensus.UI
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+
+                if(!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
+                {
+                    actions.Add("Email Study Manager for Help");
+                }
+
                 actions.Add("View Data");
 
                 if (selectedProtocol.Running)
@@ -219,6 +225,16 @@ namespace Sensus.UI
                             Refresh();
                         });
                     }
+                }
+                else if (selectedAction == "Email Study Manager for Help")
+                {
+
+                    SensusServiceHelper.Get().SendEmailAsync(selectedProtocol.ContactEmail, "Help with Sensus study:  " + selectedProtocol.Name,
+                        "Hello - " + Environment.NewLine +
+                        Environment.NewLine +
+                        "I am having trouble with a Sensus study. The name of the study is \"" + selectedProtocol.Name + "\"." + Environment.NewLine +
+                        Environment.NewLine +
+                        "Here is why I am sending this email:  ");
                 }
                 else if (selectedAction == "View Data")
                 {

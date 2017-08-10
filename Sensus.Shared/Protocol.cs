@@ -1213,14 +1213,17 @@ namespace Sensus
             lock (_locker)
             {
                 if (_running)
+                {
                     return;
+                }
                 else
+                {
                     _running = true;
+                }
 
                 _scheduledStartCallback = null;
 
-                if (ProtocolRunningChanged != null)
-                    ProtocolRunningChanged(this, _running);
+                ProtocolRunningChanged?.Invoke(this, _running);
 
                 SensusServiceHelper.Get().AddRunningProtocolId(_id);
 
@@ -1230,7 +1233,9 @@ namespace Sensus
                 try
                 {
                     if (_localDataStore == null)
+                    {
                         throw new Exception("Local data store not defined.");
+                    }
 
                     _localDataStore.Start();
 
@@ -1238,7 +1243,9 @@ namespace Sensus
                     try
                     {
                         if (_remoteDataStore == null)
+                        {
                             throw new Exception("Remote data store not defined.");
+                        }
 
                         _remoteDataStore.Start();
 
@@ -1353,12 +1360,18 @@ namespace Sensus
         public void Start()
         {
             if (_startImmediately || (DateTime.Now > _startTimestamp))
+            {
                 StartInternal();
+            }
             else
+            {
                 ScheduleStart();
+            }
 
             if (!_continueIndefinitely)
+            {
                 ScheduleStop();
+            }
         }
 
         public void ScheduleStart()
@@ -1448,17 +1461,23 @@ namespace Sensus
                 {
                     string probeCollectionDescription = probe.CollectionDescription;
                     if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
+                    {
                         collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probeCollectionDescription);
+                    }
                 }
             }
 
             List<Input> consent = new List<Input>();
 
             if (!string.IsNullOrWhiteSpace(startupMessage))
+            {
                 consent.Add(new LabelOnlyInput(startupMessage));
+            }
 
             if (!string.IsNullOrWhiteSpace(_description))
+            {
                 consent.Add(new LabelOnlyInput(_description));
+            }
 
             consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
                                            " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
@@ -1506,7 +1525,9 @@ namespace Sensus
                             Start();
                         }
                         else
+                        {
                             SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
+                        }
                     }
 
                     callback?.Invoke();
@@ -1549,7 +1570,9 @@ namespace Sensus
                     if (_running)
                     {
                         if (_localDataStore == null)
+                        {
                             error += "No local data store present on protocol." + Environment.NewLine;
+                        }
                         else if (_localDataStore.TestHealth(ref error, ref warning, ref misc))
                         {
                             error += "Restarting local data store...";
@@ -1564,11 +1587,15 @@ namespace Sensus
                             }
 
                             if (!_localDataStore.Running)
+                            {
                                 error += "failed to restart local data store." + Environment.NewLine;
+                            }
                         }
 
                         if (_remoteDataStore == null)
+                        {
                             error += "No remote data store present on protocol." + Environment.NewLine;
+                        }
                         else if (_remoteDataStore.TestHealth(ref error, ref warning, ref misc))
                         {
                             error += "Restarting remote data store...";
@@ -1587,6 +1614,7 @@ namespace Sensus
                         }
 
                         foreach (Probe probe in _probes)
+                        {
                             if (probe.Enabled)
                             {
                                 if (probe.TestHealth(ref error, ref warning, ref misc))
@@ -1603,20 +1631,25 @@ namespace Sensus
                                     }
 
                                     if (!probe.Running)
+                                    {
                                         error += "failed to restart probe \"" + probe.GetType().FullName + "\"." + Environment.NewLine;
+                                    }
                                 }
                                 else
                                 {
                                     // keep track of successful system-initiated health tests within the participation horizon. this 
                                     // tells use how consistently the probe is running.
                                     if (!userInitiated)
+                                    {
                                         lock (probe.SuccessfulHealthTestTimes)
                                         {
                                             probe.SuccessfulHealthTestTimes.Add(DateTime.Now);
                                             probe.SuccessfulHealthTestTimes.RemoveAll(healthTestTime => healthTestTime < ParticipationHorizon);
                                         }
+                                    }
                                 }
                             }
+                        }
                     }
 
 #if __ANDROID__
@@ -1674,10 +1707,7 @@ namespace Sensus
 
                 SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
-                if (ProtocolRunningChanged != null)
-                {
-                    ProtocolRunningChanged(this, _running);
-                }
+                ProtocolRunningChanged?.Invoke(this, _running);
 
                 // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
                 CancelScheduledStop();
@@ -1734,8 +1764,7 @@ namespace Sensus
             {
                 Delete();
 
-                if (callback != null)
-                    callback();
+                callback?.Invoke();
 
             }).Start();
         }
