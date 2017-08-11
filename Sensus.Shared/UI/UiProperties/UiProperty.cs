@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ namespace Sensus.UI.UiProperties
                 View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
                 propertyView.IsEnabled = uiElement.Editable;
 
-#if UI_TESTING
+#if ENABLE_TEST_CLOUD
                 // set style id so we can get the property value when UI testing
                 propertyView.StyleId = propertyLabel.Text + " View";
 #endif
