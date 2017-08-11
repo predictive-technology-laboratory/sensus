@@ -113,6 +113,7 @@ namespace Sensus.UI.Inputs
         }
 
         public ItemPickerDialogInput()
+            : base()
         {
             Construct(null, new List<string>());
         }
@@ -161,6 +162,11 @@ namespace Sensus.UI.Inputs
                     _picker.Items.Add(item);
                 }
 
+                if(IncludeOtherOption && !string.IsNullOrWhiteSpace(OtherOptionText))
+                {
+                    _picker.Items.Add(OtherOptionText);
+                }
+
                 _picker.SelectedIndexChanged += (o, e) =>
                 {
                     if (Value == null)
@@ -203,7 +209,7 @@ namespace Sensus.UI.Inputs
 
         public override string ToString()
         {
-            return base.ToString() + " -- " + _items.Count + " Items";
+            return base.ToString() + " -- " + (_items.Count + (IncludeOtherOption ? 1 : 0)) + " Items";
         }
     }
 }
