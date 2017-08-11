@@ -23,11 +23,7 @@ namespace Sensus.XTC.UiTests
         protected override IApp GetApp()
         {
             // simulator configs
-            return ConfigureApp
-                .iOS
-                .AppBundle("/Users/jordanbuzzell/SensusWorkspace/sensus/Sensus.iOS/bin/iPhoneSimulator/Debug/device-builds/iphone9.1-10.3.1/SensusiOS.app")
-                .DeviceIdentifier("D194D099-DF3D-4698-BED9-010A5F6F2F66")
-                .StartApp();
+            return ConfigureApp.iOS.StartApp();
         }
 
         protected override Func<AppQuery, AppQuery> GetStatusLinesQuery()
