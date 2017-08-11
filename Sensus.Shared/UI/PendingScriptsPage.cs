@@ -114,7 +114,17 @@ namespace Sensus.UI
                 // reset list selection
                 scriptList.SelectedItem = null;
 
-                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTime, script.InputGroups, null, script.Runner.AllowCancel, null, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, null, async inputGroups =>
+                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTime, 
+                                                               script.InputGroups,
+                                                               null, 
+                                                               script.Runner.AllowCancel, 
+                                                               null, 
+                                                               null, 
+                                                               script.Runner.IncompleteSubmissionConfirmation, 
+                                                               "Are you ready to submit your responses?", 
+                                                               script.Runner.DisplayProgress, 
+                                                               null, 
+                                                               async inputGroups =>
                 {
                     bool canceled = inputGroups == null;
 
@@ -160,7 +170,9 @@ namespace Sensus.UI
                     }
 
                     if (!canceled)
+                    {
                         SensusServiceHelper.Get().RemoveScript(script);
+                    }
 
                     SensusServiceHelper.Get().Logger.Log("\"" + script.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
                 });
