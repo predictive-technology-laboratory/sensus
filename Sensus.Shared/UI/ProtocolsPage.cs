@@ -272,7 +272,9 @@ namespace Sensus.UI
                             }
 
                             if (commitFailed)
+                            {
                                 SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+                            }
 
                             // cancel the token to close the input above, but only if the token hasn't already been canceled.
                             if (!cancellationTokenSource.IsCancellationRequested)
@@ -292,7 +294,9 @@ namespace Sensus.UI
                             // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
                             // data store commit (i.e., by the canceled token), then don't cancel the token again.
                             if (!cancellationTokenSource.IsCancellationRequested)
+                            {
                                 cancellationTokenSource.Cancel();
+                            }
                         });
                 }
                 else if (selectedAction == "Scan Participation Barcode")
