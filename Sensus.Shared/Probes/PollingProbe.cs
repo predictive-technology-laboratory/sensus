@@ -119,6 +119,20 @@ namespace Sensus.Probes
         {
             get
             {
+
+#if __IOS__
+                string significantChangeDescription = null;
+                if (_significantChangePoll)
+                {
+                    significantChangeDescription = "On significant changes in the device's location";
+
+                    if (_significantChangePollOverridesScheduledPolls)
+                    {
+                        return DisplayName + ":  " + significantChangeDescription + ".";
+                    }
+                }
+#endif
+
                 TimeSpan interval = new TimeSpan(0, 0, 0, 0, _pollingSleepDurationMS);
 
                 double value = -1;
@@ -149,10 +163,25 @@ namespace Sensus.Probes
 
                 value = Math.Round(value, decimalPlaces);
 
+                string intervalStr;
+
                 if (value == 1)
-                    return DisplayName + ":  Once per " + unit + ".";
+                {
+                    intervalStr = "Once per " + unit + ".";
+                }
                 else
-                    return DisplayName + ":  Every " + value + " " + unit + "s.";
+                {
+                    intervalStr = "Every " + value + " " + unit + "s.";
+                }
+
+#if __IOS__
+                if (_significantChangePoll)
+                {
+                    intervalStr = significantChangeDescription + "; and " + intervalStr.ToLower();
+                }
+#endif
+
+                return DisplayName + ":  " + intervalStr;
             }
         }
 

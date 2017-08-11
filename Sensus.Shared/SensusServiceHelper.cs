@@ -759,7 +759,7 @@ namespace Sensus
                     random.Shuffle(script.InputGroups);
                 }
 
-                // shuff inputs in groups if needed
+                // shuffle inputs in groups if needed
                 foreach(InputGroup inputGroup in script.InputGroups)
                 {
                     if(inputGroup.ShuffleInputs)
