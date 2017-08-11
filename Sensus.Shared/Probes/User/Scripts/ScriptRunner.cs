@@ -162,6 +162,9 @@ namespace Sensus.Probes.User.Scripts
 
         [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
         public string IncompleteSubmissionConfirmation { get; set; }
+
+        [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
+        public bool ShuffleInputGroups { get; set; }
         #endregion
 
         #region Constructor
@@ -182,6 +185,7 @@ namespace Sensus.Probes.User.Scripts
             DisplayProgress = true;
             RunMode = RunMode.SingleKeepNewest;
             IncompleteSubmissionConfirmation = "You have not completed all required fields. Do you want to continue?";
+            ShuffleInputGroups = false;
 
             Triggers.CollectionChanged += (o, e) =>
             {

@@ -143,6 +143,12 @@ namespace Sensus.UI
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+
+                if(!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
+                {
+                    actions.Add("Email Study Manager for Help");
+                }
+
                 actions.Add("View Data");
 
                 if (selectedProtocol.Running)
@@ -220,6 +226,16 @@ namespace Sensus.UI
                         });
                     }
                 }
+                else if (selectedAction == "Email Study Manager for Help")
+                {
+
+                    SensusServiceHelper.Get().SendEmailAsync(selectedProtocol.ContactEmail, "Help with Sensus study:  " + selectedProtocol.Name,
+                        "Hello - " + Environment.NewLine +
+                        Environment.NewLine +
+                        "I am having trouble with a Sensus study. The name of the study is \"" + selectedProtocol.Name + "\"." + Environment.NewLine +
+                        Environment.NewLine +
+                        "Here is why I am sending this email:  ");
+                }
                 else if (selectedAction == "View Data")
                 {
                     await Navigation.PushAsync(new ProbesViewPage(selectedProtocol));
@@ -256,7 +272,9 @@ namespace Sensus.UI
                             }
 
                             if (commitFailed)
+                            {
                                 SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+                            }
 
                             // cancel the token to close the input above, but only if the token hasn't already been canceled.
                             if (!cancellationTokenSource.IsCancellationRequested)
@@ -276,7 +294,9 @@ namespace Sensus.UI
                             // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
                             // data store commit (i.e., by the canceled token), then don't cancel the token again.
                             if (!cancellationTokenSource.IsCancellationRequested)
+                            {
                                 cancellationTokenSource.Cancel();
+                            }
                         });
                 }
                 else if (selectedAction == "Scan Participation Barcode")

@@ -41,6 +41,9 @@ namespace Sensus.Probes.User.Scripts
         public DateTime? ExpirationDate { get; set; }
 
         [JsonIgnore]
+        public bool Submitting { get; set; }
+
+        [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
 
         [JsonIgnore]

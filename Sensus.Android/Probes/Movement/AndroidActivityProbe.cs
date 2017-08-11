@@ -25,6 +25,7 @@ using Sensus.Probes.Movement;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
+using Android.Gms.Common;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -111,6 +112,24 @@ namespace Sensus.Android.Probes.Movement
         {
             base.Initialize();
 
+            int googlePlayServicesAvailability = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(Application.Context);
+
+            if (googlePlayServicesAvailability != ConnectionResult.Success)
+            {
+                string message = "Google Play Services are not available on this device.";
+
+                if (googlePlayServicesAvailability == ConnectionResult.ServiceVersionUpdateRequired)
+                {
+                    message += " Please update your phone's Google Play Services app using the App Store. Then restart your study.";
+                }
+
+                message += " Email the study organizers and tell them you received the following error code:  " + googlePlayServicesAvailability;
+
+                // the problem we've encountered is potentially fixable, so do not throw a NotSupportedException, as doing this would
+                // disable the probe and prevent any future restart attempts from succeeding.
+                throw new Exception(message);
+            }
+
             // connected to the awareness client
             _awarenessApiClient = new GoogleApiClient.Builder(Application.Context).AddApi(Awareness.Api)
 
@@ -129,6 +148,11 @@ namespace Sensus.Android.Probes.Movement
                 .Build();
 
             _awarenessApiClient.BlockingConnect();
+
+            if (!_awarenessApiClient.IsConnected)
+            {
+                throw new Exception("Failed to connect with Google Awareness API.");
+            }
         }
 
         protected override void StartListening()
@@ -155,16 +179,18 @@ namespace Sensus.Android.Probes.Movement
                 .AddFence(id, activityFence, activityRecognitionCallbackPendingIntent)
                 .Build();
 
-            // add fence
-            UpdateFences(addFenceRequest);
-
-            // register receiver for fence
-            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(id));
+            // add fence and register receiver if successful
+            if (UpdateFences(addFenceRequest))
+            {
+                Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(id));
+            }
         }
 
-        private void UpdateFences(IFenceUpdateRequest updateRequest)
+        private bool UpdateFences(IFenceUpdateRequest updateRequest)
         {
             ManualResetEvent updateWait = new ManualResetEvent(false);
+
+            bool success = false;
 
             try
             {
@@ -176,6 +202,7 @@ namespace Sensus.Android.Probes.Movement
                         if (status.IsSuccess)
                         {
                             SensusServiceHelper.Get().Logger.Log("Updated Google Awareness API fences.", LoggingLevel.Normal, GetType());
+                            success = true;
                         }
                         else if (status.IsCanceled)
                         {
@@ -211,7 +238,14 @@ namespace Sensus.Android.Probes.Movement
                 updateWait.Set();
             }
 
-            updateWait.WaitOne();
+            // we've seen cases where the update blocks indefinitely (e.g., due to outdated google play services on the phone). impose
+            // a timeout to avoid such blocks.
+            if (!updateWait.WaitOne(TimeSpan.FromSeconds(60)))
+            {
+                SensusServiceHelper.Get().Logger.Log("Timed out while updating fences.", LoggingLevel.Normal, GetType());
+            }
+
+            return success;
         }
 
         protected override void StopListening()
@@ -238,13 +272,19 @@ namespace Sensus.Android.Probes.Movement
                     .RemoveFence(ACTIVITY_RECOGNITION_ACTION + "." + activityName)
                     .Build();
 
-                UpdateFences(removeFenceRequest);
+                if (!UpdateFences(removeFenceRequest))
+                {
+                    // we'll catch this immediately
+                    throw new Exception("Failed to remove fence (e.g., timed out).");
+                }
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while removing fence:  " + ex, LoggingLevel.Normal, GetType());
             }
 
+            // unconditionally unregister the receiver. we may have failed to remove the fence for a variety of reasons, but 
+            // the caller wishes to discontinue updates from the fence.
             try
             {
                 Application.Context.UnregisterReceiver(_activityReciever[activityName]);

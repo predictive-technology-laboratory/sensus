@@ -33,6 +33,12 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        [OnOffUiProperty("Include \"Other\" Option:", true, 13)]
+        public bool IncludeOtherOption { get; set; }
+
+        [EntryStringUiProperty("Text for \"Other\" Option:", true, 14)]
+        public string OtherOptionText { get; set; }
+
         public ItemPickerInput()
         {
             Construct();
@@ -53,6 +59,8 @@ namespace Sensus.UI.Inputs
         private void Construct()
         {
             _randomizeItemOrder = false;
+            IncludeOtherOption = false;
+            OtherOptionText = "Other";
         }
     }
 }

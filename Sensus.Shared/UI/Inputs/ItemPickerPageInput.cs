@@ -144,7 +144,7 @@ namespace Sensus.UI.Inputs
 
         public override View GetView(int index)
         {
-            if (base.GetView(index) == null)
+            if (base.GetView(index) == null && _items.Count > 0)
             {
                 _selectedItems.Clear();
                 _itemLabels.Clear();
@@ -158,6 +158,12 @@ namespace Sensus.UI.Inputs
                 };
 
                 List<object> itemList = RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
+
+                // an "other" option only makes sense if the item list contains strings, as that's what the user of the input will assume.
+                if (itemList.FirstOrDefault() is string && IncludeOtherOption && !string.IsNullOrWhiteSpace(OtherOptionText))
+                {
+                    itemList.Add(OtherOptionText);
+                }
 
                 for (int i = 0; i < itemList.Count; ++i)
                 {
@@ -278,7 +284,7 @@ namespace Sensus.UI.Inputs
 
         public override string ToString()
         {
-            return base.ToString() + " -- " + _items.Count + " Items";
+            return base.ToString() + " -- " + (_items.Count + (IncludeOtherOption ? 1 : 0)) + " Items";
         }
     }
 }

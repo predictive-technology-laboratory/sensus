@@ -752,6 +752,22 @@ namespace Sensus
             // the user opens the app. execute all additions to the _scriptsToRun collection on the main thread for safety.
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+                // shuffle input groups and inputs if needed
+                Random random = new Random();
+                if (script.Runner.ShuffleInputGroups)
+                {
+                    random.Shuffle(script.InputGroups);
+                }
+
+                // shuffle inputs in groups if needed
+                foreach(InputGroup inputGroup in script.InputGroups)
+                {
+                    if(inputGroup.ShuffleInputs)
+                    {
+                        random.Shuffle(inputGroup.Inputs);
+                    }
+                }
+
                 bool modifiedScriptsToRun = false;
 
                 if (runMode == RunMode.Multiple)
