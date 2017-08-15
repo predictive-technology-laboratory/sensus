@@ -35,9 +35,9 @@ namespace Sensus.UI.UiProperties
             _items = items.ToList();
         }
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
         {
-            targetProperty = null;
+            bindingProperty = null;
             converter = null;
 
             Picker picker = new Picker
@@ -46,14 +46,18 @@ namespace Sensus.UI.UiProperties
             };
 
             foreach (object item in _items)
+            {
                 picker.Items.Add(item.ToString());
+            }
 
             picker.SelectedIndex = _items.IndexOf(property.GetValue(o));
 
             picker.SelectedIndexChanged += (oo, ee) =>
             {
                 if (picker.SelectedIndex >= 0)
+                {
                     property.SetValue(o, _items[picker.SelectedIndex]);
+                }
             };
 
             return picker;

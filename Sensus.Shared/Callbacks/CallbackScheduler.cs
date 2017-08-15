@@ -37,31 +37,31 @@ namespace Sensus.Callbacks
         }
 
         #region platform-specific methods
-        protected abstract void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, int initialDelayMS, int repeatDelayMS, bool repeatLag);
-        protected abstract void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, int delayMS);
+        protected abstract void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag);
+        protected abstract void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, TimeSpan delay);
         protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
         #endregion
 
-        public bool ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag)
+        public bool ScheduleRepeatingCallback(ScheduledCallback callback, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag)
         {
             if (!_idCallback.TryAdd(callback.Id, callback))
             {
                 return false;
             }
 
-            ScheduleRepeatingCallbackPlatformSpecific(callback.Id, initialDelayMS, repeatDelayMS, repeatLag);
+            ScheduleRepeatingCallbackPlatformSpecific(callback.Id, initialDelay, repeatDelay, repeatLag);
 
             return true;
         }
 
-        public bool ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS)
+        public bool ScheduleOneTimeCallback(ScheduledCallback callback, TimeSpan delay)
         {
             if (!_idCallback.TryAdd(callback.Id, callback))
             {
                 return false;
             }
             
-            ScheduleOneTimeCallbackPlatformSpecific(callback.Id, delayMS);
+            ScheduleOneTimeCallbackPlatformSpecific(callback.Id, delay);
 
             return true;
         }
@@ -75,7 +75,9 @@ namespace Sensus.Callbacks
                 return false;
             }
             else
+            {
                 return _idCallback.ContainsKey(callbackId);
+            }
         }
 
         public string GetCallbackUserNotificationMessage(string callbackId)
@@ -99,7 +101,7 @@ namespace Sensus.Callbacks
             return callback?.ProtocolId;
         }
 
-        public virtual Task RaiseCallbackAsync(string callbackId, bool repeating, int repeatDelayMS, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public virtual Task RaiseCallbackAsync(string callbackId, bool repeating, TimeSpan repeatDelay, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
 
@@ -131,13 +133,17 @@ namespace Sensus.Callbacks
                         }
 
                         if (actionAlreadyRunning)
+                        {
                             SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" is already running. Not running again.", LoggingLevel.Normal, GetType());
+                        }
                         else
                         {
                             try
                             {
                                 if (scheduledCallback.Canceller.IsCancellationRequested)
+                                {
                                     SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" was cancelled before it was raised.", LoggingLevel.Normal, GetType());
+                                }
                                 else
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
@@ -149,7 +155,9 @@ namespace Sensus.Callbacks
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
                                     if (scheduledCallback.CallbackTimeout.HasValue)
+                                    {
                                         scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
+                                    }
 
                                     await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
                                 }
@@ -192,17 +200,19 @@ namespace Sensus.Callbacks
                                     }
 
                                     // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
-                                    if (repeating && CallbackIsScheduled(callbackId) && repeatDelayMS >= 0 && scheduleRepeatCallback != null)
+                                    if (repeating && CallbackIsScheduled(callbackId) && repeatDelay.Ticks >= 0 && scheduleRepeatCallback != null)
                                     {
                                         DateTime nextCallbackTime;
 
                                         // if this repeating callback is allowed to lag, schedule the repeat from the current time.
                                         if (repeatLag)
-                                            nextCallbackTime = DateTime.Now.AddMilliseconds(repeatDelayMS);
+                                        {
+                                            nextCallbackTime = DateTime.Now + repeatDelay;
+                                        }
                                         else
                                         {
                                             // otherwise, schedule the repeat from the time at which the current callback was raised.
-                                            nextCallbackTime = callbackStartTime.AddMilliseconds(repeatDelayMS);
+                                            nextCallbackTime = callbackStartTime + repeatDelay;
                                         }
 
                                         scheduleRepeatCallback(nextCallbackTime);

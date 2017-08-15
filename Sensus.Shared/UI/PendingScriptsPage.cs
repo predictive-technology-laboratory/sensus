@@ -51,7 +51,7 @@ namespace Sensus.UI
 
                 Script script = value as Script;
 
-                return script.Runner.Name;
+                return script.Runner.Name + (script.Submitting ? " (Submitting...)" : "");
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -78,6 +78,8 @@ namespace Sensus.UI
             }
         }
 
+        private ListView _scriptList;
+
         private class PendingScriptTextCell : TextCell
         {
             public PendingScriptTextCell()
@@ -99,22 +101,35 @@ namespace Sensus.UI
 
             SensusServiceHelper.Get().RemoveExpiredScripts(true);
 
-            ListView scriptList = new ListView();
-            scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
-            scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
-            scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
-            scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
-            scriptList.ItemTapped += (o, e) =>
+            _scriptList = new ListView();
+            _scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
+            _scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
+            _scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
+            _scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
+            _scriptList.ItemTapped += (o, e) =>
             {
-                if (scriptList.SelectedItem == null)
+                if (_scriptList.SelectedItem == null)
+                {
                     return;
+                }
 
-                Script script = scriptList.SelectedItem as Script;
+                Script script = _scriptList.SelectedItem as Script;
 
-                // reset list selection
-                scriptList.SelectedItem = null;
+                // mark the script as submitting and rebind to pick up the item list changes
+                script.Submitting = true;
+                Bind();
 
-                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTime, script.InputGroups, null, script.Runner.AllowCancel, null, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, null, async inputGroups =>
+                SensusServiceHelper.Get().PromptForInputsAsync(script.RunTime, 
+                                                               script.InputGroups,
+                                                               null, 
+                                                               script.Runner.AllowCancel, 
+                                                               null, 
+                                                               null, 
+                                                               script.Runner.IncompleteSubmissionConfirmation, 
+                                                               "Are you ready to submit your responses?", 
+                                                               script.Runner.DisplayProgress, 
+                                                               null, 
+                                                               async inputGroups =>
                 {
                     bool canceled = inputGroups == null;
 
@@ -159,16 +174,26 @@ namespace Sensus.UI
                         }
                     }
 
-                    if (!canceled)
+                    // mark the script is not submitting
+                    script.Submitting = false;
+
+                    if (canceled)
+                    {
+                        // rebind to pick up item list changes
+                        Bind();
+                    }
+                    else
+                    {
                         SensusServiceHelper.Get().RemoveScript(script);
+                    }
 
                     SensusServiceHelper.Get().Logger.Log("\"" + script.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
                 });
             };
 
             // don't show list when there are no surveys
-            scriptList.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
-            scriptList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));
+            _scriptList.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
+            _scriptList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));
 
             // display an informative message when there are no surveys
             Label noSurveysLabel = new Label
@@ -191,7 +216,7 @@ namespace Sensus.UI
             };
 
             contentGrid.Children.Add(noSurveysLabel, 0, 0);
-            contentGrid.Children.Add(scriptList, 0, 0);
+            contentGrid.Children.Add(_scriptList, 0, 0);
 
             Content = contentGrid;
 
@@ -211,6 +236,15 @@ namespace Sensus.UI
             {
                 filterTimer.Stop();
             };
+        }
+
+        private void Bind()
+        {
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                _scriptList.ItemsSource = null;
+                _scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
+            });
         }
     }
 }

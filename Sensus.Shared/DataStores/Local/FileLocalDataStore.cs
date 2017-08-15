@@ -40,7 +40,9 @@ namespace Sensus.DataStores.Local
                 string directory = Path.Combine(Protocol.StorageDirectory, GetType().FullName);
 
                 if (!Directory.Exists(directory))
+                {
                     Directory.CreateDirectory(directory);
+                }
 
                 return directory;
             }
@@ -100,7 +102,9 @@ namespace Sensus.DataStores.Local
                             foreach (Datum datum in data)
                             {
                                 if (cancellationToken.IsCancellationRequested)
+                                {
                                     break;
+                                }
 
                                 // get JSON for datum
                                 string datumJSON = null;
@@ -158,7 +162,9 @@ namespace Sensus.DataStores.Local
 
                     // switch to a new path if the current one has grown too large
                     if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
+                    {
                         WriteToNewPath();
+                    }
                 }
 
                 await CommitToRemoteIfTooLargeAsync(cancellationToken);
@@ -185,7 +191,9 @@ namespace Sensus.DataStores.Local
                     foreach (string pathToCommit in pathsToCommit)
                     {
                         if (cancellationToken.IsCancellationRequested)
+                        {
                             break;
+                        }
 
                         // wrap in try-catch to ensure that we process all files
                         try
@@ -200,7 +208,9 @@ namespace Sensus.DataStores.Local
                                 {
                                     // if we have been canceled, dump the rest of the file into the uncommitted data file.
                                     if (cancellationToken.IsCancellationRequested)
+                                    {
                                         uncommittedDataFile.WriteLine(datumJSON);
+                                    }
                                     else
                                     {
                                         // wrap in try-catch to ensure that we process all lines
@@ -214,7 +224,9 @@ namespace Sensus.DataStores.Local
                                         }
 
                                         if (batch.Count >= 50000)
+                                        {
                                             CommitAndReleaseBatchToRemote(batch, cancellationToken, uncommittedDataFile);
+                                        }
                                     }
                                 }
 
@@ -241,11 +253,15 @@ namespace Sensus.DataStores.Local
         private void CommitAndReleaseBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
         {
             if (!cancellationToken.IsCancellationRequested)
+            {
                 CommitAndReleaseAsync(batch, Protocol.RemoteDataStore, cancellationToken).Wait();
+            }
 
             // any leftover data should be dumped to the uncommitted file to maintain memory limits. the data will be committed next time.
             foreach (Datum datum in batch)
+            {
                 uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
+            }
 
             // all data were either commmitted or dumped to the uncommitted file. clear the batch.
             batch.Clear();
@@ -322,7 +338,7 @@ namespace Sensus.DataStores.Local
                     }
                     catch (Exception ex)
                     {
-                        throw new SensusException("Failed to get path to local file:  " + ex.Message, ex);
+                        throw SensusException.Report("Failed to get path to local file:  " + ex.Message, ex);
                     }
 
                     // create an empty file at the path if one does not exist
@@ -333,7 +349,9 @@ namespace Sensus.DataStores.Local
                 }
 
                 if (_path == null)
-                    throw new SensusException("Failed to find new path.");
+                {
+                    throw SensusException.Report("Failed to find new path.");
+                }
             }
         }
 

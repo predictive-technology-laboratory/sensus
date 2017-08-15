@@ -51,7 +51,7 @@ namespace Sensus.DataStores.Remote
             _requireWiFi = true;
             _requireCharging = true;
 
-#if DEBUG || UNIT_TESTING
+#if DEBUG || UI_TESTING
             CommitDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
 #else
             CommitDelayMS = 1000 * 60 * 60;  // every 60 minutes
@@ -63,15 +63,25 @@ namespace Sensus.DataStores.Remote
             bool commit = false;
 
             if (cancellationToken.IsCancellationRequested)
+            {
                 SensusServiceHelper.Get().Logger.Log("Cancelled commit to remote data store via token.", LoggingLevel.Normal, GetType());
+            }
             else if (!Protocol.LocalDataStore.UploadToRemoteDataStore)
+            {
                 SensusServiceHelper.Get().Logger.Log("Remote data store upload is disabled.", LoggingLevel.Normal, GetType());
+            }
             else if (_requireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+            {
                 SensusServiceHelper.Get().Logger.Log("Required WiFi but device WiFi is not connected.", LoggingLevel.Normal, GetType());
+            }
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
+            {
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
+            }
             else
+            {
                 commit = true;
+            }
 
             if (commit)
             {

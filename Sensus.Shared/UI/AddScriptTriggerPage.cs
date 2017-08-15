@@ -188,12 +188,16 @@ namespace Sensus.UI
                         Picker conditionValuePicker = new Picker { Title = "Select Condition Value", HorizontalOptions = LayoutOptions.FillAndExpand };
                         object[] items = (datumTriggerAttribute as ListProbeTriggerProperty).Items;
                         foreach (object item in items)
+                        {
                             conditionValuePicker.Items.Add(item.ToString());
+                        }
 
                         conditionValuePicker.SelectedIndexChanged += (ooo, eee) =>
                         {
                             if (conditionValuePicker.SelectedIndex < 0)
+                            {
                                 return;
+                            }
 
                             _conditionValue = items[conditionValuePicker.SelectedIndex];
                         };

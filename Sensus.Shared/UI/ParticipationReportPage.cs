@@ -124,7 +124,7 @@ namespace Sensus.UI
             {
                 Button emailStudyManagerButton = new Button
                 {
-                    Text = "Email Study Manager",
+                    Text = "Email Study Manager for Help",
                     FontSize = 20
                 };
 

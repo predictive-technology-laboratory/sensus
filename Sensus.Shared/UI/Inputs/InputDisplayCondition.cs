@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
@@ -104,7 +103,9 @@ namespace Sensus.UI.Inputs
                     valueDescription = string.Concat((_value as List<object>).Select(o => "," + o).ToArray()).Trim(',');
                 }
                 else
+                {
                     valueDescription = _value.ToString();
+                }
 
                 valueDescription = " " + valueDescription;
             }

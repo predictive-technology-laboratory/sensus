@@ -39,7 +39,9 @@ namespace Sensus.UI
             _inputsList.ItemTapped += async (o, e) =>
             {
                 if (_inputsList.SelectedItem == null)
+                {
                     return;
+                }
 
                 Input selectedInput = _inputsList.SelectedItem as Input;
                 int selectedIndex = inputGroup.Inputs.IndexOf(selectedInput);
@@ -47,27 +49,39 @@ namespace Sensus.UI
                 List<string> actions = new List<string>();
 
                 if (selectedIndex > 0)
+                {
                     actions.Add("Move Up");
+                }
 
                 if (selectedIndex < inputGroup.Inputs.Count - 1)
+                {
                     actions.Add("Move Down");
+                }
 
                 actions.Add("Edit");
 
                 if (previousInputGroups != null && previousInputGroups.Select(previousInputGroup => previousInputGroup.Inputs.Count).Sum() > 0)
+                {
                     actions.Add("Add Display Condition");
+                }
 
                 if (selectedInput.DisplayConditions.Count > 0)
+                {
                     actions.AddRange(new string[] { "View Display Conditions" });
+                }
 
                 actions.Add("Delete");
 
                 string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Move Up")
+                {
                     inputGroup.Inputs.Move(selectedIndex, selectedIndex - 1);
+                }
                 else if (selectedAction == "Move Down")
+                {
                     inputGroup.Inputs.Move(selectedIndex, selectedIndex + 1);
+                }
                 else if (selectedAction == "Edit")
                 {
                     ScriptInputPage inputPage = new ScriptInputPage(selectedInput);
@@ -99,7 +113,9 @@ namespace Sensus.UI
                         inputs =>
                         {
                             if (inputs == null)
+                            {
                                 return;
+                            }
 
                             if (inputs.All(input => input.Valid))
                             {
@@ -108,7 +124,9 @@ namespace Sensus.UI
                                 bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Conjunctive");
 
                                 if (condition == InputValueCondition.IsComplete)
+                                {
                                     selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, null, conjunctive));
+                                }
                                 else
                                 {
                                     Regex uppercaseSplitter = new Regex(@"
@@ -122,6 +140,12 @@ namespace Sensus.UI
                                     conditionInputCopy.LabelText = "Value that " + conditionInputCopy.Name + " " + uppercaseSplitter.Replace(condition.ToString(), " ").ToLower() + ":";
                                     conditionInputCopy.Required = true;
 
+                                    // ensure that the copied input cannot define a variable
+                                    if (conditionInputCopy is IVariableDefiningInput)
+                                    {
+                                        (conditionInputCopy as IVariableDefiningInput).DefinedVariable = null;
+                                    }
+
                                     SensusServiceHelper.Get().PromptForInputAsync("Display Condition",
                                         conditionInputCopy,
                                         null,
@@ -134,7 +158,9 @@ namespace Sensus.UI
                                         input =>
                                         {
                                             if (input?.Valid ?? false)
+                                            {
                                                 selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, input.Value, conjunctive));
+                                            }
                                         });
                                 }
                             }
@@ -158,37 +184,39 @@ namespace Sensus.UI
             };
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
+            {
+                List<Input> inputs = Assembly.GetExecutingAssembly()
+                    .GetTypes()
+                    .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Input)))
+                    .Select(t => Activator.CreateInstance(t))
+                    .Cast<Input>()
+                    .OrderBy(i => i.Name)
+                    .ToList();
+
+                string cancelButtonName = "Cancel";
+                string selected = await DisplayActionSheet("Select Input Type", cancelButtonName, null, inputs.Select((input, index) => (index + 1) + ") " + input.Name).ToArray());
+                if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
+                {
+                    Input input = inputs[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1];
+
+                    if (input is VoiceInput && inputGroup.Inputs.Count > 0 || !(input is VoiceInput) && inputGroup.Inputs.Any(i => i is VoiceInput))
                     {
-                        List<Input> inputs = Assembly.GetExecutingAssembly()
-                            .GetTypes()
-                            .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Input)))
-                            .Select(t => Activator.CreateInstance(t))
-                            .Cast<Input>()
-                            .OrderBy(i => i.Name)
-                            .ToList();
+                        SensusServiceHelper.Get().FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
+                    }
+                    else
+                    {
+                        inputGroup.Inputs.Add(input);
 
-                        string cancelButtonName = "Cancel";
-                        string selected = await DisplayActionSheet("Select Input Type", cancelButtonName, null, inputs.Select((input, index) => (index + 1) + ") " + input.Name).ToArray());
-                        if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
+                        ScriptInputPage inputPage = new ScriptInputPage(input);
+                        inputPage.Disappearing += (o, e) =>
                         {
-                            Input input = inputs[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1];
+                            Bind();
+                        };
 
-                            if (input is VoiceInput && inputGroup.Inputs.Count > 0 || !(input is VoiceInput) && inputGroup.Inputs.Any(i => i is VoiceInput))
-                                SensusServiceHelper.Get().FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
-                            else
-                            {
-                                inputGroup.Inputs.Add(input);
-
-                                ScriptInputPage inputPage = new ScriptInputPage(input);
-                                inputPage.Disappearing += (o, e) =>
-                                {
-                                    Bind();
-                                };
-
-                                await Navigation.PushAsync(inputPage);
-                            }
-                        }
-                    }));
+                        await Navigation.PushAsync(inputPage);
+                    }
+                }
+            }));
 
             Bind();
             Content = _inputsList;

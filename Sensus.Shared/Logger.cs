@@ -49,7 +49,9 @@ namespace Sensus
             // if we're throwing an exception, use the caller's version of the message instead of our modified version below.
             Exception ex = null;
             if (throwException)
+            {
                 ex = new Exception(message);
+            }
             
             if (level <= _level)
             {

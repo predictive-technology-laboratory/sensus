@@ -580,7 +580,9 @@ namespace Sensus.Android
             enableWait.WaitOne();
 
             if (enabled)
+            {
                 _userDeniedBluetoothEnable = false;
+            }
 
             return enabled;
         }
@@ -624,7 +626,9 @@ namespace Sensus.Android
                     try
                     {
                         if (!bluetoothAdapter.Enable())
+                        {
                             enableWait.Set();
+                        }
                     }
                     catch (Exception)
                     {

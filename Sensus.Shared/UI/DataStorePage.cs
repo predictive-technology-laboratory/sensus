@@ -76,7 +76,9 @@ namespace Sensus.UI
                 clearButton.Clicked += async (o, e) =>
                 {
                     if (await DisplayAlert("Clear data from " + protocol.LocalDataStore.DisplayName + "?", "This action cannot be undone.", "Clear", "Cancel"))
+                    {
                         protocol.LocalDataStore.Clear();  // clear the protocol's local data store
+                    }
                 };
 
                 buttonStack.Children.Add(clearButton);

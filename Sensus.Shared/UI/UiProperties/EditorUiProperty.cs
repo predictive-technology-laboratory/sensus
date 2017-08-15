@@ -24,9 +24,9 @@ namespace Sensus.UI.UiProperties
         {
         }
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
         {
-            targetProperty = Editor.TextProperty;
+            bindingProperty = Editor.TextProperty;
             converter = null;
 
             return new Editor

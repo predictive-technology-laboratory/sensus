@@ -249,7 +249,7 @@ namespace Sensus.DataStores
 #endif  
 
                 _commitCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => CommitAndReleaseAddedDataAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
-                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, _commitDelayMS, _commitDelayMS, COMMIT_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_commitCallback, TimeSpan.FromMilliseconds(_commitDelayMS), TimeSpan.FromMilliseconds(_commitDelayMS), COMMIT_CALLBACK_LAG);
             }
         }
 
@@ -260,12 +260,19 @@ namespace Sensus.DataStores
         /// <param name="datum">Datum to add.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <param name="forceCommit">If set to <c>true</c> force immediate commit of added data.</param>
-        public Task AddAsync(Datum datum, CancellationToken cancellationToken, bool forceCommit)
+        public Task<bool> AddAsync(Datum datum, CancellationToken cancellationToken, bool forceCommit)
         {
             lock (_data)
             {
-                _data.Add(datum);
-                ++_addedDataCount;
+                if (_data.Add(datum))
+                {
+                    ++_addedDataCount;
+                }
+                else
+                {
+                    // the datum was already in the collection. ignore duplicates.
+                    return Task.FromResult(false);
+                }
 
                 SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name + " " + datum.Timestamp, LoggingLevel.Debug, GetType());
 
@@ -283,10 +290,12 @@ namespace Sensus.DataStores
                             try
                             {
                                 await CommitAndReleaseAddedDataAsync(cancellationToken);
+                                return true;
                             }
                             catch (Exception ex)
                             {
                                 SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                return false;
                             }
                             finally
                             {
@@ -305,10 +314,12 @@ namespace Sensus.DataStores
                             try
                             {
                                 await CommitAndReleaseAddedDataAsync(cancellationToken);
+                                return true;
                             }
                             catch (Exception ex)
                             {
                                 SensusServiceHelper.Get().Logger.Log("Failed to run forced commit:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                return false;
                             }
                             finally
                             {
@@ -318,16 +329,20 @@ namespace Sensus.DataStores
                     }
                 }
 
-                return Task.FromResult(false);
+                return Task.FromResult(true);
             }
         }
 
         public virtual Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)
         {
             if (_running)
+            {
                 return CommitAndReleaseAsync(_data, this, cancellationToken);
+            }
             else
+            {
                 return Task.FromResult(false);
+            }
         }
 
         public async Task<bool> CommitAsync(Datum datum, CancellationToken cancellationToken)

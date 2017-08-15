@@ -28,7 +28,9 @@ namespace Sensus.UI.UiProperties
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
                 if (value == null)
+                {
                     return "";
+                }
                 
                 return value.ToString();
             }
@@ -42,9 +44,13 @@ namespace Sensus.UI.UiProperties
                 catch (Exception)
                 {
                     if (targetType == typeof(double))
+                    {
                         return 0d;
+                    }
                     else
+                    {
                         return null;
+                    }
                 }
             }
         }
@@ -54,9 +60,9 @@ namespace Sensus.UI.UiProperties
         {
         }
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty targetProperty, out IValueConverter converter)
+        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
         {
-            targetProperty = Entry.TextProperty;
+            bindingProperty = Entry.TextProperty;
             converter = new ValueConverter();
 
             return new Entry

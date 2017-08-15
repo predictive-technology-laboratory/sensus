@@ -24,6 +24,8 @@ using Sensus.UI.UiProperties;
 using Sensus.Probes.Location;
 using Sensus.Context;
 using Sensus.Callbacks;
+using Newtonsoft.Json;
+using Sensus.UI.Inputs;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -96,7 +98,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         [EntryStringUiProperty("Trigger Windows:", true, 8)]
-        public string TriggerWindows
+        public string TriggerWindowsString
         {
             get
             {
@@ -108,12 +110,12 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        [EntryIntegerUiProperty("Trigger Windows Interval (Days):", true, 9)]
-        public int TriggerIntervalDays
+        [EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9)]
+        public int NonDowTriggerIntervalDays
         {
             get
             {
-                return _scheduleTrigger.IntervalDays;
+                return _scheduleTrigger.NonDowTriggerIntervalDays;
             }
             set
             {
@@ -122,7 +124,23 @@ namespace Sensus.Probes.User.Scripts
                     value = 1;
                 }
 
-                _scheduleTrigger.IntervalDays = value;
+                _scheduleTrigger.NonDowTriggerIntervalDays = value;
+            }
+        }
+
+        [JsonIgnore]
+        public string ScheduleTriggerReadableDescription
+        {
+            get
+            {
+                string description = _scheduleTrigger.ReadableDescription;
+
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    description = char.ToUpper(description[0]) + (description.Length > 1 ? description.Substring(1) : "");
+                }
+
+                return description;
             }
         }
 
@@ -139,11 +157,14 @@ namespace Sensus.Probes.User.Scripts
         [OnOffUiProperty("Display Progress:", true, 13)]
         public bool DisplayProgress { get; set; }
 
-        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleUpdate, RunMode.SingleKeepOldest })]
+        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleKeepNewest, RunMode.SingleKeepOldest })]
         public RunMode RunMode { get; set; }
 
         [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
         public string IncompleteSubmissionConfirmation { get; set; }
+
+        [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
+        public bool ShuffleInputGroups { get; set; }
         #endregion
 
         #region Constructor
@@ -162,8 +183,9 @@ namespace Sensus.Probes.User.Scripts
             OneShot = false;
             RunOnStart = false;
             DisplayProgress = true;
-            RunMode = RunMode.SingleUpdate;
+            RunMode = RunMode.SingleKeepNewest;
             IncompleteSubmissionConfirmation = "You have not completed all required fields. Do you want to continue?";
+            ShuffleInputGroups = false;
 
             Triggers.CollectionChanged += (o, e) =>
             {
@@ -196,7 +218,9 @@ namespace Sensus.Probes.User.Scripts
                             // get the value that might trigger the script -- it might be null in the case where the property is nullable and is not set (e.g., facebook fields, input locations, etc.)
                             object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
                             if (currentDatumValue == null)
+                            {
                                 return;
+                            }
 
                             // if we're triggering based on datum value changes/differences instead of absolute values, calculate the change now.
                             if (trigger.Change)
@@ -259,6 +283,18 @@ namespace Sensus.Probes.User.Scripts
             foreach (var trigger in Triggers)
             {
                 trigger.Reset();
+            }
+
+            // ensure all variables defined by inputs are listed on the protocol
+            List<string> unknownVariables = Script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
+                                                              .OfType<IVariableDefiningInput>()
+                                                              .Where(input => !string.IsNullOrWhiteSpace(input.DefinedVariable))
+                                                              .Select(input => input.DefinedVariable)
+                                                              .Where(definedVariable => !Probe.Protocol.VariableValue.ContainsKey(definedVariable))
+                                                              .ToList();
+            if (unknownVariables.Count > 0)
+            {
+                throw new Exception("The following input-defined variables are not listed on the protocol:  " + string.Join(", ", unknownVariables));
             }
         }
 
@@ -342,7 +378,7 @@ namespace Sensus.Probes.User.Scripts
         private void ScheduleScriptRun(ScriptTriggerTime triggerTime)
         {
             // don't bother with the script if it's coming too soon.
-            if (triggerTime.ReferenceTillTrigger <= TimeSpan.FromMinutes(1))
+            if (triggerTime.ReferenceTillTrigger.TotalMinutes <= 1)
             {
                 return;
             }
@@ -360,7 +396,7 @@ namespace Sensus.Probes.User.Scripts
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
             // script run since it was already schedule. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, (int)triggerTime.ReferenceTillTrigger.TotalMilliseconds))
+            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, triggerTime.ReferenceTillTrigger))
             {
                 lock (_scriptRunCallbackIds)
                 {
@@ -382,7 +418,9 @@ namespace Sensus.Probes.User.Scripts
                     SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
 
                     if (!Probe.Running || !_enabled)
+                    {
                         return;
+                    }
 
                     Run(script);
 

@@ -58,19 +58,31 @@ namespace Sensus
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         private const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+
+        /// <summary>
+        /// The Xamarin Insights app key. Generated via Xamarin Insights dashboard.
+        /// </summary>
         public const string XAMARIN_INSIGHTS_APP_KEY = "";
+
+        /// <summary>
+        /// The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:
+        /// 
+        ///     openssl enc -aes-256-cbc -k secret -P -md sha1
+        /// 
+        /// The above was adapted from:  https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html
+        /// </summary>
         public const string ENCRYPTION_KEY = "";
 
         public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
-#if DEBUG || UNIT_TESTING
+#if DEBUG || UI_TESTING
         // test every 30 seconds in debug
-        public const int HEALTH_TEST_DELAY_MS = 30000;
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
         // test every 15 minutes in release
-        public const int HEALTH_TEST_DELAY_MS = 900000;
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(15);
 #endif
 
         /// <summary>
@@ -177,7 +189,7 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.Encryption.Decrypt(encryptedJsonBytes);
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.Decrypt(encryptedJsonBytes);
                 }
                 catch (Exception exception)
                 {
@@ -458,7 +470,7 @@ namespace Sensus
         {
             if (SINGLETON != null)
             {
-                throw new SensusException("Attempted to construct new service helper when singleton already existed.");
+                throw SensusException.Report("Attempted to construct new service helper when singleton already existed.");
             }
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
@@ -496,7 +508,7 @@ namespace Sensus
             if (!Directory.Exists(SHARE_DIRECTORY))
                 Directory.CreateDirectory(SHARE_DIRECTORY);
 
-#if DEBUG || UNIT_TESTING
+#if DEBUG || UI_TESTING
             LoggingLevel loggingLevel = LoggingLevel.Debug;
 #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;
@@ -636,7 +648,7 @@ namespace Sensus
 
                     }, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY_MS, HEALTH_TEST_DELAY_MS, HEALTH_TEST_REPEAT_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG);
                 }
             }
         }
@@ -685,7 +697,7 @@ namespace Sensus
                 try
                 {
                     string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                    byte[] encryptedBytes = SensusContext.Current.Encryption.Encrypt(serviceHelperJSON);
+                    byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
                     File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
                     _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
@@ -740,6 +752,22 @@ namespace Sensus
             // the user opens the app. execute all additions to the _scriptsToRun collection on the main thread for safety.
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+                // shuffle input groups and inputs if needed
+                Random random = new Random();
+                if (script.Runner.ShuffleInputGroups)
+                {
+                    random.Shuffle(script.InputGroups);
+                }
+
+                // shuffle inputs in groups if needed
+                foreach(InputGroup inputGroup in script.InputGroups)
+                {
+                    if(inputGroup.ShuffleInputs)
+                    {
+                        random.Shuffle(inputGroup.Inputs);
+                    }
+                }
+
                 bool modifiedScriptsToRun = false;
 
                 if (runMode == RunMode.Multiple)
@@ -761,7 +789,7 @@ namespace Sensus
                         scriptToKeep = scriptsFromSameRunner.First();
                         scriptsToRemove = scriptsFromSameRunner.Skip(1).ToList();
                     }
-                    else if (runMode == RunMode.SingleUpdate)
+                    else if (runMode == RunMode.SingleKeepNewest)
                     {
                         scriptToKeep = scriptsFromSameRunner.Last();
                         scriptsToRemove = scriptsFromSameRunner.Take(scriptsFromSameRunner.Count - 1).ToList();
@@ -849,8 +877,8 @@ namespace Sensus
         /// <param name="callback">Callback.</param>
         public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, TimeSpan? duration = null, Action callback = null)
         {
-            // do not show flash notifications when unit testing, as they can disrupt UI scripting on iOS.
-#if !UNIT_TESTING
+            // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
+#if !UI_TESTING
 
             if (_flashNotificationsEnabled)
             {
@@ -947,12 +975,12 @@ namespace Sensus
                                     int stepNumber = inputGroupNum + 1;
                                     bool promptPagePopped = false;
 
-                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, firstPromptTimestamp, async result =>
+                                    PromptForInputsPage promptForInputsPage = new PromptForInputsPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, async result =>
                                     {
                                         // catch any exceptions from navigating to the next page
                                         try
                                         {
-                                            // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did so, and there 
+                                            // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did, and there 
                                             // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
                                             INavigation navigation = Application.Current.MainPage.Navigation;
                                             bool pageWasAlreadyPopped;
@@ -975,11 +1003,17 @@ namespace Sensus
                                                 }
 
                                                 if (result == PromptForInputsPage.Result.Cancel)
+                                                {
                                                     inputGroups = null;
+                                                }
                                                 else if (result == PromptForInputsPage.Result.NavigateBackward)
+                                                {
                                                     inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                                                }
                                                 else
+                                                {
                                                     inputGroupNumBackStack.Push(inputGroupNum);  // keep the group in the back stack and move to the next group
+                                                }
                                             }
                                         }
                                         catch (Exception ex)
@@ -1017,7 +1051,9 @@ namespace Sensus
                                     }
                                     // don't display page if we've been canceled
                                     else if (cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                                    {
                                         responseWait.Set();
+                                    }
                                     else
                                     {
                                         // display page, which will handle setting the response wait. only animate the display for the first page.
@@ -1026,7 +1062,9 @@ namespace Sensus
                                         // only run the post-display callback the first time a page is displayed. the caller expects the callback
                                         // to fire only once upon first display.
                                         if (firstPageDisplay && postDisplayCallback != null)
+                                        {
                                             postDisplayCallback();
+                                        }
 
                                         firstPageDisplay = false;
                                     }
@@ -1067,8 +1105,12 @@ namespace Sensus
                     // reflect the time that the user hit submit.
                     DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
                     foreach (InputGroup inputGroup in inputGroups)
+                    {
                         foreach (Input input in inputGroup.Inputs)
+                        {
                             input.SubmissionTimestamp = submissionTimestamp;
+                        }
+                    }
 
                     #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
                     if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
@@ -1080,9 +1122,13 @@ namespace Sensus
                             Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
 
                             if (currentPosition != null)
+                            {
                                 foreach (InputGroup inputGroup in inputGroups)
+                                {
                                     if (inputGroup.Geotag)
+                                    {
                                         foreach (Input input in inputGroup.Inputs)
+                                        {
                                             if (input.Complete)
                                             {
                                                 bool locationUpdated = false;
@@ -1100,8 +1146,14 @@ namespace Sensus
                                                 }
 
                                                 if (locationUpdated)
+                                                {
                                                     input.LocationUpdateTimestamp = currentPosition.Timestamp;
+                                                }
                                             }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -1121,7 +1173,9 @@ namespace Sensus
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                {
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                }
                 else
                 {
                     MapPage mapPage = new MapPage(address, newPinName);
@@ -1141,7 +1195,9 @@ namespace Sensus
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                {
                     FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                }
                 else
                 {
                     MapPage mapPage = new MapPage(address, newPinName);
@@ -1174,7 +1230,9 @@ namespace Sensus
                 int fileNum = 0;
                 string path = null;
                 while (path == null || File.Exists(path))
+                {
                     path = Path.Combine(SHARE_DIRECTORY, fileNum++ + (string.IsNullOrWhiteSpace(extension) ? "" : "." + extension.Trim('.')));
+                }
 
                 return path;
             }
@@ -1195,27 +1253,43 @@ namespace Sensus
                     // convert platform namespace
                     string convertedJsonLine;
                     if (currentTypeName == "AndroidSensusServiceHelper")
+                    {
                         convertedJsonLine = jsonLine.Replace("iOS", "Android").Replace("WinPhone", "Android");
+                    }
                     else if (currentTypeName == "iOSSensusServiceHelper")
+                    {
                         convertedJsonLine = jsonLine.Replace("Android", "iOS").Replace("WinPhone", "iOS");
+                    }
                     else if (currentTypeName == "WinPhoneSensusServiceHelper")
+                    {
                         convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
+                    }
                     else
-                        throw new SensusException("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
+                    {
+                        throw SensusException.Report("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
+                    }
 
                     if (convertedJsonLine != jsonLine)
+                    {
                         conversionPerformed = true;
+                    }
 
                     convertedJSON.AppendLine(convertedJsonLine);
                 }
                 else
+                {
                     convertedJSON.AppendLine(jsonLine);
+                }
             }
 
             if (conversionPerformed)
+            {
                 _logger.Log("Performed cross-platform conversion of JSON.", LoggingLevel.Normal, GetType());
+            }
             else
+            {
                 _logger.Log("No cross-platform conversion required for JSON.", LoggingLevel.Normal, GetType());
+            }
 
             return convertedJSON.ToString();
         }
@@ -1226,17 +1300,29 @@ namespace Sensus
             {
                 string rationale = null;
                 if (permission == Permission.Camera)
+                {
                     rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
+                }
                 else if (permission == Permission.Location)
+                {
                     rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
+                }
                 else if (permission == Permission.Microphone)
+                {
                     rationale = "Sensus uses the microphone to collect sound level information for studies you have enrolled in. Sensus will not record audio.";
+                }
                 else if (permission == Permission.Phone)
+                {
                     rationale = "Sensus monitors telephone call metadata for studies you have enrolled in. Sensus will not record audio from calls.";
+                }
                 else if (permission == Permission.Sensors)
+                {
                     rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
+                }
                 else if (permission == Permission.Storage)
+                {
                     rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
+                }
 
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                 {
@@ -1312,7 +1398,9 @@ namespace Sensus
         public void AssertNotOnMainThread(string actionDescription)
         {
             if (IsOnMainThread)
-                throw new SensusException("Attempted to execute on main thread:  " + actionDescription);
+            {
+                throw SensusException.Report("Attempted to execute on main thread:  " + actionDescription);
+            }
         }
 
         public void StopProtocols()
@@ -1333,7 +1421,6 @@ namespace Sensus
         }
 
         #region Private Methods
-
         private void RemoveScripts(bool issueNotification, params Script[] scripts)
         {
             var removed = false;

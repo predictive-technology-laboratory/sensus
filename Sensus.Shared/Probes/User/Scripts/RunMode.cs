@@ -17,7 +17,7 @@ namespace Sensus.Probes.User.Scripts
     public enum RunMode
     {
         SingleKeepOldest,
-        SingleUpdate,
+        SingleKeepNewest,
         Multiple
     };
 }

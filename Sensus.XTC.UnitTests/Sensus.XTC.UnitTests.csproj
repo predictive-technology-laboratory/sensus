@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">Android</Platform>
+    <ProjectGuid>{306FDC42-BB95-4DFD-B867-654EA3F941E9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Sensus.XTC.UnitTests</RootNamespace>
+    <AssemblyName>Sensus.XTC.UnitTests</AssemblyName>
+    <ReleaseVersion>2.0.0</ReleaseVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Description>Endpoint that runs all Sensus apps (production and unit testing) in a testing environment. It is possible 
+to run and debug this project on physical and virtual devices as well as on the Xamarin Test Cloud.
+
+To target local devices, simply "Run" (or hit the debugger play icon) within Xamarin/Visual studio 
+while targeting a device. The build configuration should be "Debug | iPhone" or 
+"Debug | iPhoneSimulator" (for iOS), or "Debug | Android" (for Android).
+
+To target the Xamarin Test Cloud, the build configuration should be "Debug | iPhone" (for iOS) or 
+"Release | Android" (for Android). Open View -&gt; Test and run the unit tests in the Xamarin Test Cloud.</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Android' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Android\Debug</OutputPath>
+    <DefineConstants>__ANDROID__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|Android' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Android\Release</OutputPath>
+    <DefineConstants>__ANDROID__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>__IOS__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>anycpu</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>__IOS__</DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.UITest">
+      <HintPath>..\packages\Xamarin.UITest.2.0.9.1636-dev\lib\Xamarin.UITest.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Tests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sensus.iOS.Tests\Sensus.iOS.Tests.csproj">
+      <Project>{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}</Project>
+      <Name>Sensus.iOS.Tests</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Sensus.Android.Tests\Sensus.Android.Tests.csproj">
+      <Project>{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}</Project>
+      <Name>Sensus.Android.Tests</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Sensus.Android\Sensus.Android.csproj">
+      <Project>{D33B6CDB-795C-4826-B131-47C526ACE07F}</Project>
+      <Name>Sensus.Android</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Sensus.iOS\Sensus.iOS.csproj">
+      <Project>{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}</Project>
+      <Name>Sensus.iOS</Name>
+      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+</Project>

@@ -18,7 +18,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace Sensus.Probes
 {
@@ -114,19 +113,21 @@ namespace Sensus.Probes
         [JsonIgnore]
         protected abstract string DeviceAsleepWarning { get; }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {
 #if __ANDROID__
                 // compute participation using successful health test times of the probe
-                long dayMS = 60000 * 60 * 24;
-                long participationHorizonMS = Protocol.ParticipationHorizonDays * dayMS;
-                float fullParticipationHealthTests = participationHorizonMS / (float)SensusServiceHelper.HEALTH_TEST_DELAY_MS;
+                long daySeconds = 60 * 60 * 24;
+                long participationHorizonSeconds = Protocol.ParticipationHorizonDays * daySeconds;
+                double fullParticipationHealthTests = participationHorizonSeconds / SensusServiceHelper.HEALTH_TEST_DELAY.TotalSeconds;
 
                 // lock collection because it might be concurrently modified by the test health method running in another thread.
                 lock (SuccessfulHealthTestTimes)
+                {
                     return SuccessfulHealthTestTimes.Count(healthTestTime => healthTestTime >= Protocol.ParticipationHorizon) / fullParticipationHealthTests;
+                }
 #elif __IOS__
                 // on ios, we cannot rely on the health test times to tell us how long the probe has been running. this is
                 // because, unlike in android, ios does not let local notifications return to the app when the app is in the 
@@ -209,6 +210,8 @@ namespace Sensus.Probes
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
             _incomingDataRateCalculator = new DataRateCalculator(100);
+            
+            // store all data to start with. we'll compute a store/drop rate after data have arrived.
             _samplingModulus = 1;
             _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
         }
@@ -254,18 +257,18 @@ namespace Sensus.Probes
 
         protected abstract void StopListening();
 
-        public sealed override Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
+        public sealed override Task<bool> StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
         {
             bool store = true;
 
             float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
 
-            // 0 (or negligible) data per second:  don't store
+            // 0 (or negligible) data per second:  don't store. if max data per second is not set, the following inequality will be false.
             if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
             {
                 store = false;
             }
-            // non-negligible data per second:  check data rate
+            // non-negligible (or default -1) data per second:  check data rate
             else if (maxDataStoresPerSecond > 0)
             {
                 _incomingDataRateCalculator.Add(datum);

@@ -25,7 +25,7 @@ namespace Sensus
         private string _warning;
         private string _misc;
         private string _operatingSystem;
-        private Dictionary<string, float> _probeParticipation;
+        private Dictionary<string, double> _probeParticipation;
 
         public string Error
         {
@@ -57,7 +57,7 @@ namespace Sensus
             }
         }
 
-        public Dictionary<string, float> ProbeParticipation
+        public Dictionary<string, double> ProbeParticipation
         {
             get
             {
@@ -79,7 +79,7 @@ namespace Sensus
         /// </summary>
         private ProtocolReportDatum()
         {
-            _probeParticipation = new Dictionary<string, float>();
+            _probeParticipation = new Dictionary<string, double>();
         }
 
         public ProtocolReportDatum(DateTimeOffset timestamp, string error, string warning, string misc, Protocol protocol)
@@ -89,14 +89,16 @@ namespace Sensus
             _warning = warning == null ? "" : warning;
             _misc = misc == null ? "" : misc;
             _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
-            _probeParticipation = new Dictionary<string, float>();
+            _probeParticipation = new Dictionary<string, double>();
 
-            List<Tuple<Probe, float?>> probeParticipations = protocol.Probes.Select(probe => new Tuple<Probe, float?>(probe, probe.GetParticipation()))
+            List<Tuple<Probe, double?>> probeParticipations = protocol.Probes.Select(probe => new Tuple<Probe, double?>(probe, probe.GetParticipation()))
                                                                             .Where(probeParticipation => probeParticipation.Item2.HasValue)
                                                                             .OrderBy(probeParticipation => probeParticipation.Item1.GetType().FullName).ToList();
 
-            foreach (Tuple<Probe, float?> probeParticipation in probeParticipations)
+            foreach (Tuple<Probe, double?> probeParticipation in probeParticipations)
+            {
                 _probeParticipation.Add(probeParticipation.Item1.GetType().FullName, probeParticipation.Item2.Value);
+            }
         }
 
         public override string ToString()

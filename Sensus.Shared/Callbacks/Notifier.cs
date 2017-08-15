@@ -39,7 +39,9 @@ namespace Sensus.Callbacks
                 Page desiredTopPage = null;
 
                 if (displayPage == DisplayPage.PendingSurveys)
+                {
                     desiredTopPage = new PendingScriptsPage();
+                }
                 else
                 {
                     SensusException.Report("Unrecognized display page:  " + displayPage);

@@ -3,6 +3,8 @@ exportPattern("^[[:alpha:]]+")
 importFrom("graphics", "hist", "par", "pie", "plot.default", "plot")
 importFrom("utils", "tail", "write.csv")
 importFrom("R.utils", "gunzip")
+importFrom("openssl", "read_key", "rsa_decrypt", "aes_cbc_decrypt", "askpass")
+importFrom("stats", "ecdf")
 
 S3method(plot, AccelerometerDatum)
 S3method(plot, AltitudeDatum)

@@ -101,7 +101,7 @@ namespace Sensus.Probes.Location
 
             _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
 
-            await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
+            await _locator.StartListeningAsync(TimeSpan.FromMilliseconds(SensusServiceHelper.Get().GpsMinTimeDelayMS), SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
 
             SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());
         }
@@ -116,7 +116,7 @@ namespace Sensus.Probes.Location
             _listenerHeadings.RemoveAll(t => t.Item1 == listener);
 
             if (ListeningForChanges)
-                await _locator.StartListeningAsync(SensusServiceHelper.Get().GpsMinTimeDelayMS, SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
+                await _locator.StartListeningAsync(TimeSpan.FromMilliseconds(SensusServiceHelper.Get().GpsMinTimeDelayMS), SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
             else
                 SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
         }
@@ -204,7 +204,7 @@ namespace Sensus.Probes.Location
 
                                 DateTimeOffset readingStart = DateTimeOffset.UtcNow;
                                 _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
-                                Position newReading = await _locator.GetPositionAsync(_readingTimeoutMS, cancellationToken);
+                                Position newReading = await _locator.GetPositionAsync(TimeSpan.FromMilliseconds(_readingTimeoutMS), cancellationToken);
                                 DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
 
                                 if (newReading != null)
