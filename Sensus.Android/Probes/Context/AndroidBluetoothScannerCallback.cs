@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Context
 {
-    public class AndroidBluetoothScanCallback : ScanCallback
+    public class AndroidBluetoothScannerCallback : ScanCallback
     {
         public event EventHandler<string> DeviceIdEncountered;
 
@@ -30,8 +30,7 @@ namespace Sensus.Android.Probes.Context
         {
             base.OnScanResult(callbackType, result);
 
-            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(this);
-
+            // result comes in on main thread. run task to release main thread.
             Task.Run(() =>
             {
                 if (result == null)
@@ -39,12 +38,13 @@ namespace Sensus.Android.Probes.Context
                     return;
                 }
 
+                // connect to peripheral
                 AndroidBluetoothGattCallback gattCallback = new AndroidBluetoothGattCallback();
                 BluetoothGatt peripheral = result.Device.ConnectGatt(Application.Context, false, gattCallback);
-
                 gattCallback.WaitForConnect();
-                gattCallback.DiscoverServices(peripheral);
 
+                // discover services and read device id from peripheral
+                gattCallback.DiscoverServices(peripheral);
                 Java.Util.UUID serviceUUID = Java.Util.UUID.FromString(BluetoothDeviceProximityProbe.SERVICE_UUID);
                 BluetoothGattService service = peripheral.GetService(serviceUUID);
                 Java.Util.UUID deviceIdCharacteristicUUID = Java.Util.UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
@@ -53,18 +53,10 @@ namespace Sensus.Android.Probes.Context
                 byte[] deviceIdBytes = deviceIdCharacteristic.GetValue();
                 string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
                 DeviceIdEncountered?.Invoke(this, deviceIdEncountered);
+
+                // disconnect
+                peripheral.Disconnect();
             });
-        }
-
-        public override void OnBatchScanResults(System.Collections.Generic.IList<ScanResult> results)
-        {
-            base.OnBatchScanResults(results);
-        }
-
-
-        public override void OnScanFailed(ScanFailure errorCode)
-        {
-            base.OnScanFailed(errorCode);
         }
     }
 }

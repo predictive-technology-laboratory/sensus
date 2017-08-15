@@ -22,7 +22,6 @@ namespace Sensus.Probes.Context
     public class BluetoothDeviceProximityDatum : Datum
     {
         private string _encounteredDeviceId;
-        private string _identifier;
 
         [StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]

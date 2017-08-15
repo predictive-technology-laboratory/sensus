@@ -340,7 +340,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
     <Compile Include="Callbacks\AndroidNotifier.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothAdvertisingCallback.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothScanCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothScannerCallback.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothGattCallback.cs" />
     <Compile Include="Probes\Movement\AndroidActivityProbe.cs" />

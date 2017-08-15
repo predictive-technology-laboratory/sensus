@@ -17,15 +17,19 @@ using Android.Bluetooth.LE;
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothAdvertisingCallback : AdvertiseCallback
-    {           
+    {
         public override void OnStartSuccess(AdvertiseSettings settingsInEffect)
         {
             base.OnStartSuccess(settingsInEffect);
+
+            SensusServiceHelper.Get().Logger.Log("Started advertising.", LoggingLevel.Normal, GetType());
         }
 
         public override void OnStartFailure(AdvertiseFailure errorCode)
         {
             base.OnStartFailure(errorCode);
+
+            SensusServiceHelper.Get().Logger.Log("Failed to start advertising:" + errorCode, LoggingLevel.Normal, GetType());
         }
     }
 }

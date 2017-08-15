@@ -68,14 +68,26 @@ namespace Sensus.Probes.Context
             get { return typeof(BluetoothDeviceProximityDatum); }
         }
 
+        protected override void StartListening()
+        {
+            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Bluetooth not enabled. Cannot start Bluetooth probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
+        }
+
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()
