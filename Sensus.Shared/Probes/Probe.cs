@@ -359,7 +359,7 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken)
+        public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
             // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
             MostRecentDatum = datum;
