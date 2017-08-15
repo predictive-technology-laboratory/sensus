@@ -1,33 +1,3 @@
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAccelerometerProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitHeightProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\UILocalNotificationCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\UILocalNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IiOSCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\IUILocalNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationDelegate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\IUNUserNotificationNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\IiOSNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
-    
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\" />
-    <Folder Include="$(MSBuildThisFileDirectory)UI\" />
-  </ItemGroup>
-=======
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
