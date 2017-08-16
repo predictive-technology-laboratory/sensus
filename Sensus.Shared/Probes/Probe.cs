@@ -316,7 +316,7 @@ namespace Sensus.Probes
 
                 string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync(message, false, TimeSpan.FromSeconds(4));  // don't save failure messages for later, since they might be confusing at that future time.
+                SensusServiceHelper.Get().FlashNotificationAsync(message, false, TimeSpan.FromSeconds(10));  // don't save failure messages for later, since they might be confusing at that future time.
 
                 // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
@@ -338,7 +338,9 @@ namespace Sensus.Probes
             lock (_locker)
             {
                 if (_running)
+                {
                     SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already running.", LoggingLevel.Normal, GetType());
+                }
                 else
                 {
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
@@ -357,7 +359,7 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken)
+        public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
             // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
             MostRecentDatum = datum;
@@ -435,7 +437,9 @@ namespace Sensus.Probes
                     }
                 }
                 else
+                {
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
+                }
             }
         }
 
@@ -464,7 +468,9 @@ namespace Sensus.Probes
         public virtual void Reset()
         {
             if (_running)
+            {
                 throw new Exception("Cannot reset probe while it is running.");
+            }
 
             lock (_chartData)
             {
