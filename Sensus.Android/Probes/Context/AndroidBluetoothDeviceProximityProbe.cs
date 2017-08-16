@@ -23,6 +23,7 @@ using Java.Util;
 using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Android.App;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -32,6 +33,8 @@ namespace Sensus.Android.Probes.Context
         private AndroidBluetoothScannerCallback _bluetoothScannerCallback;
         private BluetoothLeAdvertiser _bluetoothAdvertiser;
         private AndroidBluetoothAdvertisingCallback _bluetoothAdvertiserCallback;
+        private BluetoothGattServer _bluetoothGattServer;
+        private BluetoothGattService _gattService;
 
         protected override void Initialize()
         {
@@ -56,91 +59,168 @@ namespace Sensus.Android.Probes.Context
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(SERVICE_UUID));
-
-                #region central -- scan for the sensus BLE probe peripheral
                 try
                 {
-                    ScanFilter scanFilter = new ScanFilter.Builder()
-                                                          .SetServiceUuid(serviceUUID)
-                                                          .Build();
-
-                    List<ScanFilter> scanFilters = new List<ScanFilter>();
-                    scanFilters.Add(scanFilter);
-
-                    ScanSettings scanSettings = new ScanSettings.Builder()
-                                                                .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced)
-                                                                .Build();
-
-                    _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
-                    _bluetoothScannerCallback.DeviceIdEncountered += async (sender, deviceIdEncountered) =>
-                    {
-                        await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
-                    };
-
-                    _bluetoothScanner = BluetoothAdapter.DefaultAdapter.BluetoothLeScanner;
-                    _bluetoothScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
+                    StartCentral();
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to start BLE scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting central:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    StopCentral();
                 }
-                #endregion
 
-                #region peripheral -- advertise the sensus BLE probe peripheral. not supported by all hardware models.
-                if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
+                try
                 {
-                    try
-                    {
-                        AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
-                                                                                   .SetAdvertiseMode(AdvertiseMode.Balanced)
-                                                                                   .SetTxPowerLevel(AdvertiseTx.PowerMedium)
-                                                                                   .SetConnectable(true)
-                                                                                   .Build();
-
-                        AdvertiseData advertiseData = new AdvertiseData.Builder()
-                                                                       .SetIncludeDeviceName(false)
-                                                                       .AddServiceUuid(serviceUUID)
-                                                                       .Build();
-
-                        _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
-                        _bluetoothAdvertiser = BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser;
-                        _bluetoothAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to start BLE advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+                    StartPeripheral();
                 }
-                #endregion
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    StopPeripheral();
+                }
             });
+        }
+
+        private void StartCentral()
+        {
+            ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(SERVICE_UUID));
+
+            ScanFilter scanFilter = new ScanFilter.Builder()
+                                                  .SetServiceUuid(serviceUUID)
+                                                  .Build();
+
+            List<ScanFilter> scanFilters = new List<ScanFilter>();
+            scanFilters.Add(scanFilter);
+
+            ScanSettings scanSettings = new ScanSettings.Builder()
+                                                        .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced)
+                                                        .Build();
+
+            _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
+            _bluetoothScannerCallback.DeviceIdEncountered += async (sender, deviceIdEncountered) =>
+            {
+                await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
+            };
+
+            _bluetoothScanner = BluetoothAdapter.DefaultAdapter.BluetoothLeScanner;
+            _bluetoothScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
+        }
+
+        private void StartPeripheral()
+        {
+            if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
+            {
+                UUID serviceUUID = UUID.FromString(SERVICE_UUID);
+
+                // open server with service/characteristic
+                BluetoothGattCharacteristic gattCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),
+                                                                                                 GattProperty.Read,
+                                                                                                 GattPermission.Read);
+
+                _gattService = new BluetoothGattService(serviceUUID, GattServiceType.Primary);
+                _gattService.AddCharacteristic(gattCharacteristic);
+
+                // open gatt server
+                BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as BluetoothManager;
+                AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback();
+                _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
+
+                // add service 
+                _bluetoothGattServer.AddService(_gattService);
+
+                // set server on callback for responding to requests
+                serverCallback.Server = _bluetoothGattServer;
+
+                // start advertisement
+                AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
+                                                                           .SetAdvertiseMode(AdvertiseMode.Balanced)
+                                                                           .SetTxPowerLevel(AdvertiseTx.PowerMedium)
+                                                                           .SetConnectable(true)
+                                                                           .Build();
+
+                AdvertiseData advertiseData = new AdvertiseData.Builder()
+                                                               .SetIncludeDeviceName(false)
+                                                               .AddServiceUuid(new ParcelUuid(serviceUUID))
+                                                               .Build();
+
+                _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
+                _bluetoothAdvertiser = BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser;
+                _bluetoothAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
+            }
+            else
+            {
+                throw new Exception("BLE advertising is not available.");
+            }
         }
 
         protected override void StopListening()
         {
+            StopCentral();
+            StopPeripheral();
+        }
+
+        private void StopCentral()
+        {
+            // stop scanning
             try
             {
-                _bluetoothScanner.StopScan(_bluetoothScannerCallback);
+                _bluetoothScanner?.StopScan(_bluetoothScannerCallback);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to stop scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
+            finally
+            {
+                _bluetoothScanner = null;
+                _bluetoothScannerCallback = null;
+            }
+        }
 
-            _bluetoothScanner = null;
-            _bluetoothScannerCallback = null;
-
+        private void StopPeripheral()
+        {
+            // stop advertising
             try
             {
-                _bluetoothAdvertiser.StopAdvertising(_bluetoothAdvertiserCallback);
+                _bluetoothAdvertiser?.StopAdvertising(_bluetoothAdvertiserCallback);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to stop advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+            finally
+            {
+                _bluetoothAdvertiser = null;
+                _bluetoothAdvertiserCallback = null;
             }
 
-            _bluetoothAdvertiser = null;
-            _bluetoothAdvertiserCallback = null;
+            // remove the service
+            try
+            {
+                _bluetoothGattServer?.RemoveService(_gattService);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while removing service:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+            finally
+            {
+                _gattService = null;
+            }
+
+            // close the server
+            try
+            {
+                _bluetoothGattServer?.Close();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while closing GATT server:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+            finally
+            {
+                _bluetoothGattServer = null;
+            }
         }
     }
 }

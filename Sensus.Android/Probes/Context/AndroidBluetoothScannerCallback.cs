@@ -19,6 +19,7 @@ using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Sensus.Probes.Context;
 using System.Threading.Tasks;
+using Java.Util;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -38,18 +39,18 @@ namespace Sensus.Android.Probes.Context
                     return;
                 }
 
-                // connect to peripheral
-                AndroidBluetoothGattCallback gattCallback = new AndroidBluetoothGattCallback();
-                BluetoothGatt peripheral = result.Device.ConnectGatt(Application.Context, false, gattCallback);
-                gattCallback.WaitForConnect();
+                // connect to peripheral server
+                AndroidBluetoothGattClientCallback gattClientCallback = new AndroidBluetoothGattClientCallback();
+                BluetoothGatt peripheral = result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                gattClientCallback.WaitForConnect();
 
                 // discover services and read device id from peripheral
-                gattCallback.DiscoverServices(peripheral);
-                Java.Util.UUID serviceUUID = Java.Util.UUID.FromString(BluetoothDeviceProximityProbe.SERVICE_UUID);
+                gattClientCallback.DiscoverServices(peripheral);
+                UUID serviceUUID = UUID.FromString(BluetoothDeviceProximityProbe.SERVICE_UUID);
                 BluetoothGattService service = peripheral.GetService(serviceUUID);
-                Java.Util.UUID deviceIdCharacteristicUUID = Java.Util.UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
+                Java.Util.UUID deviceIdCharacteristicUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
                 BluetoothGattCharacteristic deviceIdCharacteristic = service.GetCharacteristic(deviceIdCharacteristicUUID);
-                gattCallback.ReadCharacteristic(peripheral, deviceIdCharacteristic);
+                gattClientCallback.ReadCharacteristic(peripheral, deviceIdCharacteristic);
                 byte[] deviceIdBytes = deviceIdCharacteristic.GetValue();
                 string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
                 DeviceIdEncountered?.Invoke(this, deviceIdEncountered);

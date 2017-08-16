@@ -19,7 +19,7 @@ using System.Threading;
 
 namespace Sensus.Android.Probes.Context
 {
-    public class AndroidBluetoothGattCallback : BluetoothGattCallback
+    public class AndroidBluetoothGattClientCallback : BluetoothGattCallback
     {
         private ManualResetEvent _connectWait = new ManualResetEvent(false);
         private GattStatus _connectResult = GattStatus.Failure;
