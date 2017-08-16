@@ -29,9 +29,7 @@ namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
     {
-        private BluetoothLeScanner _bluetoothScanner;
         private AndroidBluetoothScannerCallback _bluetoothScannerCallback;
-        private BluetoothLeAdvertiser _bluetoothAdvertiser;
         private AndroidBluetoothAdvertisingCallback _bluetoothAdvertiserCallback;
         private BluetoothGattServer _bluetoothGattServer;
         private BluetoothGattService _gattService;
@@ -51,37 +49,7 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
-        protected override void StartListening()
-        {
-            base.StartListening();
-
-            // adapted primarily from:  https://code.tutsplus.com/tutorials/how-to-advertise-android-as-a-bluetooth-le-peripheral--cms-25426
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                try
-                {
-                    StartCentral();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting central:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    StopCentral();
-                }
-
-                try
-                {
-                    StartPeripheral();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    StopPeripheral();
-                }
-            });
-        }
-
-        private void StartCentral()
+        protected override void StartCentral()
         {
             ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(SERVICE_UUID));
 
@@ -102,11 +70,10 @@ namespace Sensus.Android.Probes.Context
                 await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
             };
 
-            _bluetoothScanner = BluetoothAdapter.DefaultAdapter.BluetoothLeScanner;
-            _bluetoothScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
+            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
         }
 
-        private void StartPeripheral()
+        protected override void StartPeripheral()
         {
             if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
             {
@@ -144,8 +111,7 @@ namespace Sensus.Android.Probes.Context
                                                                .Build();
 
                 _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
-                _bluetoothAdvertiser = BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser;
-                _bluetoothAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
+                BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
             }
             else
             {
@@ -153,18 +119,12 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
-        protected override void StopListening()
-        {
-            StopCentral();
-            StopPeripheral();
-        }
-
-        private void StopCentral()
+        protected override void StopCentral()
         {
             // stop scanning
             try
             {
-                _bluetoothScanner?.StopScan(_bluetoothScannerCallback);
+                BluetoothAdapter.DefaultAdapter.BluetoothLeScanner?.StopScan(_bluetoothScannerCallback);
             }
             catch (Exception ex)
             {
@@ -172,17 +132,16 @@ namespace Sensus.Android.Probes.Context
             }
             finally
             {
-                _bluetoothScanner = null;
                 _bluetoothScannerCallback = null;
             }
         }
 
-        private void StopPeripheral()
+        protected override void StopPeripheral()
         {
             // stop advertising
             try
             {
-                _bluetoothAdvertiser?.StopAdvertising(_bluetoothAdvertiserCallback);
+                BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser?.StopAdvertising(_bluetoothAdvertiserCallback);
             }
             catch (Exception ex)
             {
@@ -190,7 +149,6 @@ namespace Sensus.Android.Probes.Context
             }
             finally
             {
-                _bluetoothAdvertiser = null;
                 _bluetoothAdvertiserCallback = null;
             }
 

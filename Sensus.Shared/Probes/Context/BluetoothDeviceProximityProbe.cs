@@ -14,6 +14,7 @@
 
 using System;
 using Newtonsoft.Json;
+using Sensus.Context;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Context
@@ -68,7 +69,7 @@ namespace Sensus.Probes.Context
             get { return typeof(BluetoothDeviceProximityDatum); }
         }
 
-        protected override void StartListening()
+        protected sealed override void StartListening()
         {
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
@@ -78,7 +79,64 @@ namespace Sensus.Probes.Context
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                // attempt to start the central. don't bail if this fails, since we might still be able to start the peripheral.
+                try
+                {
+                    StartCentral();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting central:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    StopCentral();
+                }
+
+                // attempt to start the peripheral.
+                try
+                {
+                    StartPeripheral();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    StopPeripheral();
+                }
+            });
         }
+
+        protected abstract void StartCentral();
+
+        protected abstract void StartPeripheral();
+
+        protected sealed override void StopListening()
+        {
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                try
+                {
+                    StopCentral();
+                }
+                catch(Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping central:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+
+                try
+                {
+                    StopPeripheral();
+                }
+                catch(Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
+        }
+
+        protected abstract void StopCentral();
+
+        protected abstract void StopPeripheral();
 
         protected override ChartSeries GetChartSeries()
         {
