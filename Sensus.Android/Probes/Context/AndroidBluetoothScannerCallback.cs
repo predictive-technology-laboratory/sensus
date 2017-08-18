@@ -13,13 +13,9 @@
 // limitations under the License.
 
 using System;
-using System.Text;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
-using Sensus.Probes.Context;
-using System.Threading.Tasks;
-using Java.Util;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -36,35 +32,21 @@ namespace Sensus.Android.Probes.Context
                 return;
             }
 
-            // result comes in on main thread. run task to release main thread.
-            Task.Run(() =>
+            try
             {
-                try
-                {
-                    // connect to peripheral server
-                    AndroidBluetoothGattClientCallback gattClientCallback = new AndroidBluetoothGattClientCallback();
-                    BluetoothGatt peripheral = result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
-                    gattClientCallback.WaitForConnect();
+                AndroidBluetoothGattClientCallback gattClientCallback = new AndroidBluetoothGattClientCallback();
 
-                    // discover services and read device id from peripheral
-                    gattClientCallback.DiscoverServices(peripheral);
-                    UUID serviceUUID = UUID.FromString(BluetoothDeviceProximityProbe.SERVICE_UUID);
-                    BluetoothGattService service = peripheral.GetService(serviceUUID);
-                    UUID deviceIdCharacteristicUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
-                    BluetoothGattCharacteristic deviceIdCharacteristic = service.GetCharacteristic(deviceIdCharacteristicUUID);
-                    gattClientCallback.ReadCharacteristic(peripheral, deviceIdCharacteristic);
-                    byte[] deviceIdBytes = deviceIdCharacteristic.GetValue();
-                    string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
-                    DeviceIdEncountered?.Invoke(this, deviceIdEncountered);
-
-                    // disconnect
-                    peripheral.Disconnect();
-                }
-                catch (Exception ex)
+                if (DeviceIdEncountered != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while reading device ID from peripheral:  " + ex, LoggingLevel.Normal, GetType());
+                    gattClientCallback.DeviceIdEncountered += DeviceIdEncountered;
                 }
-            });
+
+                BluetoothGatt gatt = result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while reading device ID from peripheral:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
     }
 }

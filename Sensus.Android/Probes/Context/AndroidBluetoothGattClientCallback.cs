@@ -14,27 +14,15 @@
 
 using System;
 using Android.Bluetooth;
-using System.Threading.Tasks;
-using System.Threading;
+using Java.Util;
+using Sensus.Probes.Context;
+using System.Text;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothGattClientCallback : BluetoothGattCallback
     {
-        private ManualResetEvent _connectWait = new ManualResetEvent(false);
-        private GattStatus _connectResult = GattStatus.Failure;
-
-        private ManualResetEvent _discoverWait = new ManualResetEvent(false);
-        private GattStatus _discoverResult = GattStatus.Failure;
-
-        private ManualResetEvent _readCharacteristicWait = new ManualResetEvent(false);
-        private GattStatus _readCharacteristicResult = GattStatus.Failure;
-
-        public GattStatus WaitForConnect()
-        {
-            _connectWait.WaitOne();
-            return _connectResult;
-        }
+        public event EventHandler<string> DeviceIdEncountered;
 
         public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
         {
@@ -42,38 +30,30 @@ namespace Sensus.Android.Probes.Context
 
             if (status == GattStatus.Success && newState == ProfileState.Connected)
             {
-                _connectResult = GattStatus.Success;
-                _connectWait.Set();
+                gatt.DiscoverServices();
             }
-        }
-
-        public void DiscoverServices(BluetoothGatt gatt)
-        {
-            gatt.DiscoverServices();
-            _discoverWait.WaitOne();
         }
 
         public override void OnServicesDiscovered(BluetoothGatt gatt, GattStatus status)
         {
             base.OnServicesDiscovered(gatt, status);
 
-            _discoverResult = status;
-            _discoverWait.Set();
-        }
-
-        public GattStatus ReadCharacteristic(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
-        {
-            gatt.ReadCharacteristic(characteristic);
-            _readCharacteristicWait.WaitOne();
-            return _readCharacteristicResult;
+            UUID serviceUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID);
+            BluetoothGattService service = gatt.GetService(serviceUUID);
+            UUID deviceIdCharacteristicUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
+            BluetoothGattCharacteristic deviceIdCharacteristic = service.GetCharacteristic(deviceIdCharacteristicUUID);
+            gatt.ReadCharacteristic(deviceIdCharacteristic);
         }
 
         public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
         {
             base.OnCharacteristicRead(gatt, characteristic, status);
 
-            _readCharacteristicResult = status;
-            _readCharacteristicWait.Set();
+            byte[] deviceIdBytes = characteristic.GetValue();
+            string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
+            DeviceIdEncountered?.Invoke(this, deviceIdEncountered);
+
+            gatt.Disconnect();
         }
     }
 }

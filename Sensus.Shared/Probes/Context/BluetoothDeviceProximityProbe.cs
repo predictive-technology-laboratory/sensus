@@ -21,7 +21,7 @@ namespace Sensus.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : ListeningProbe
     {
-        public const string SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
+        public const string DEVICE_ID_SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
         public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
         [JsonIgnore]
@@ -85,7 +85,7 @@ namespace Sensus.Probes.Context
                 // attempt to start the central. don't bail if this fails, since we might still be able to start the peripheral.
                 try
                 {
-                    StartCentral();
+                    //StartCentral();
                 }
                 catch (Exception ex)
                 {
@@ -116,7 +116,7 @@ namespace Sensus.Probes.Context
             {
                 try
                 {
-                    StopCentral();
+                    //StopCentral();
                 }
                 catch(Exception ex)
                 {

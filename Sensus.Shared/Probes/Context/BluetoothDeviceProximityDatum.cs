@@ -24,7 +24,7 @@ namespace Sensus.Probes.Context
         private string _encounteredDeviceId;
 
         [StringProbeTriggerProperty]
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
+        [Anonymizable("Encountered Device ID:", typeof(StringHashAnonymizer), false)]
         public string EncounteredDeviceId
         {
             get { return _encounteredDeviceId; }

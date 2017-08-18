@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSActivityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />

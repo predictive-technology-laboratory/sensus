@@ -20,6 +20,8 @@ using CoreFoundation;
 using Sensus.Context;
 using Foundation;
 using System.Text;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.Context
 {
@@ -27,80 +29,98 @@ namespace Sensus.iOS.Probes.Context
     {
         private CBCentralManager _bluetoothCentralManager;
         private CBPeripheralManager _bluetoothPeripheralManager;
-        private CBUUID _deviceIdUUID;
-        private CBCharacteristicProperties _deviceIdProperties;
-        private NSData _deviceIdValue;
-        private CBAttributePermissions _deviceIdPermissions;
-        private CBMutableCharacteristic _deviceId;
-        private CBUUID _serviceUUID;
-        private CBMutableService _service;
+        private CBMutableCharacteristic _deviceIdCharacteristic;
+        private CBMutableService _deviceIdService;
+
+        [JsonIgnore]
+        public CBMutableCharacteristic DeviceIdCharacteristic
+        {
+            get
+            {
+                return _deviceIdCharacteristic;
+            }
+        }
+
+        [JsonIgnore]
+        public CBMutableService DeviceIdService
+        {
+            get
+            {
+                return _deviceIdService;
+            }
+        }
 
         protected override void Initialize()
         {
-            base.Initialize();
-
             // create device id characteristic
-            _deviceIdUUID = CBUUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID);
-            _deviceIdProperties = CBCharacteristicProperties.Read;
-            _deviceIdValue = NSData.FromArray(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
-            _deviceIdPermissions = CBAttributePermissions.Readable;
-            _deviceId = new CBMutableCharacteristic(_deviceIdUUID, _deviceIdProperties, _deviceIdValue, _deviceIdPermissions);
+            _deviceIdCharacteristic = new CBMutableCharacteristic(CBUUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),
+                                                                  CBCharacteristicProperties.Read,
+                                                                  NSData.FromArray(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId)),
+                                                                  CBAttributePermissions.Readable);
 
             // create service with device id characteristic
-            _serviceUUID = CBUUID.FromString(SERVICE_UUID);
-            _service = new CBMutableService(_serviceUUID, true);
-            _service.Characteristics = new CBCharacteristic[] { _deviceId };
+            _deviceIdService = new CBMutableService(CBUUID.FromString(DEVICE_ID_SERVICE_UUID), true);
+            _deviceIdService.Characteristics = new CBCharacteristic[] { _deviceIdCharacteristic };
         }
 
+        #region central
         protected override void StartCentral()
         {
-            _bluetoothCentralManager = new CBCentralManager(DispatchQueue.MainQueue);
-
-            // the central manager may be powered on/off by the user after the probe has been started. cover the case where this happens,
-            // and start scanning if the new central manager state is powered on and the probe is running.
-            _bluetoothCentralManager.UpdatedState += (sender, e) =>
+            if (_bluetoothCentralManager == null)
             {
-                if (_bluetoothCentralManager.State == CBCentralManagerState.PoweredOn && Running)
-                {
-                    StartScanning();
-                }
-            };
+                _bluetoothCentralManager = new CBCentralManager(DispatchQueue.MainQueue);
 
-            // if we discover a sensus peripheral, read and store its device id
-            _bluetoothCentralManager.DiscoveredPeripheral += async (sender, e) =>
-            {
-                try
+                // the central manager may be powered on/off by the user after the probe has been started. cover the case where this happens,
+                // and start scanning if the new central manager state is powered on and the probe is running.
+                _bluetoothCentralManager.UpdatedState += (sender, e) =>
                 {
-                    _bluetoothCentralManager.ConnectPeripheral(e.Peripheral);
-
-                    if (e.Peripheral.IsConnected)
+                    if (_bluetoothCentralManager.State == CBCentralManagerState.PoweredOn && Running)
                     {
-                        CBMutableCharacteristic deviceIdRead = new CBMutableCharacteristic(_deviceIdUUID, _deviceIdProperties, null, _deviceIdPermissions);
-                        e.Peripheral.ReadValue(deviceIdRead);
-                        string encounteredDeviceId = Encoding.UTF8.GetString(deviceIdRead.Value.ToArray());
-                        await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTime.UtcNow, encounteredDeviceId));
+                        StartScanning();
                     }
-                }
-                catch (Exception ex)
+                };
+
+                // if we discover a sensus peripheral, read and store its device id
+                _bluetoothCentralManager.DiscoveredPeripheral += async (sender, e) =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to read device ID characteristic from Sensus BLE peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            };
+                    try
+                    {
+                        _bluetoothCentralManager.ConnectPeripheral(e.Peripheral);
 
-            _bluetoothCentralManager.ConnectedPeripheral += (sender, e) =>
-            {
-                SensusServiceHelper.Get().Logger.Log("Connected peripheral.", LoggingLevel.Normal, GetType());
-            };
+                        if (e.Peripheral.IsConnected)
+                        {
+                            CBMutableCharacteristic deviceIdRead = new CBMutableCharacteristic(_deviceIdCharacteristic.UUID, 
+                                                                                               _deviceIdCharacteristic.Properties, 
+                                                                                               null, 
+                                                                                               _deviceIdCharacteristic.Permissions);
+                            e.Peripheral.ReadValue(deviceIdRead);
+                            string encounteredDeviceId = Encoding.UTF8.GetString(deviceIdRead.Value.ToArray());
+                            await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTime.UtcNow, encounteredDeviceId));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to read device ID characteristic from Sensus BLE peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                };
 
-            _bluetoothCentralManager.FailedToConnectPeripheral += (sender, e) =>
-            {
-                if (e.Error != null)
+                _bluetoothCentralManager.ConnectedPeripheral += (sender, e) =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to connect peripheral:  " + e.Error, LoggingLevel.Normal, GetType());
-                }
-            };
+                    SensusServiceHelper.Get().Logger.Log("Connected peripheral.", LoggingLevel.Normal, GetType());
+                };
 
-            StartScanning();
+                _bluetoothCentralManager.FailedToConnectPeripheral += (sender, e) =>
+                {
+                    if (e.Error != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to connect peripheral:  " + e.Error, LoggingLevel.Normal, GetType());
+                    }
+                };
+            }
+            else
+            {
+                StartScanning();
+            }
         }
 
         private void StartScanning()
@@ -109,107 +129,21 @@ namespace Sensus.iOS.Probes.Context
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    if (_bluetoothCentralManager != null &&  !_bluetoothCentralManager.IsScanning)
+                    if (!_bluetoothCentralManager.IsScanning)
                     {
-                        _bluetoothCentralManager.ScanForPeripherals(_serviceUUID);
+                        _bluetoothCentralManager.ScanForPeripherals(_deviceIdService.UUID);
                     }
                 });
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while starting scan for service " + _serviceUUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-        }
-
-        protected override void StartPeripheral()
-        {
-            _bluetoothPeripheralManager = new CBPeripheralManager();
-
-            // the peripheral manager may be powered on/off by the user after the probe has been started. cover the case where this happens,
-            // and start advertising if the new peripheral manager state is powered on and the probe is running.
-            _bluetoothPeripheralManager.StateUpdated += (sender, e) =>
-            {
-                if (_bluetoothPeripheralManager.State == CBPeripheralManagerState.PoweredOn && Running)
-                {
-                    StartAdvertising();
-                }
-            };
-
-            _bluetoothPeripheralManager.ServiceAdded += (sender, e) =>
-            {
-                if (e.Error == null)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Added service.", LoggingLevel.Normal, GetType());
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Error adding service:  " + e.Error, LoggingLevel.Normal, GetType());
-                }
-            };
-
-            _bluetoothPeripheralManager.AdvertisingStarted += (sender, e) =>
-            {
-                if (e.Error == null)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Advertising started.", LoggingLevel.Normal, GetType());
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Error starting advertising:  " + e.Error, LoggingLevel.Normal, GetType());
-                }
-            };
-
-            // service any read requests from centrals that are for our service and device id characteristic
-            _bluetoothPeripheralManager.ReadRequestReceived += (sender, e) =>
-            {
-                try
-                {
-                    CBATTRequest request = e.Request;
-
-                    if (request.Characteristic.Service.UUID.Equals(_serviceUUID) &&
-                        request.Characteristic.UUID.Equals(_deviceIdUUID))
-                    {
-                        // fill in the device id value for the request and return it to the central
-                        request.Value = _deviceIdValue;
-                        _bluetoothPeripheralManager.RespondToRequest(request, CBATTError.Success);
-                    }
-                    else
-                    {
-                        _bluetoothPeripheralManager.RespondToRequest(request, CBATTError.RequestNotSupported);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to service central read request:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            };
-
-            StartAdvertising();
-        }
-
-        private void StartAdvertising()
-        {
-            try
-            {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    if (_bluetoothPeripheralManager != null && !_bluetoothPeripheralManager.Advertising)
-                    {
-                        _bluetoothPeripheralManager.AddService(_service);
-                        NSDictionary advertisements = new NSDictionary(CBAdvertisement.DataServiceUUIDsKey, NSArray.FromObjects(_serviceUUID));
-                        _bluetoothPeripheralManager.StartAdvertising(advertisements);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while starting advertising for service " + _serviceUUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while starting scan for service " + _deviceIdService.UUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 
         protected override void StopCentral()
         {
-            if (_bluetoothCentralManager?.IsScanning ?? false)
+            if (_bluetoothCentralManager.IsScanning)
             {
                 try
                 {
@@ -217,61 +151,40 @@ namespace Sensus.iOS.Probes.Context
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scanning for service " + _serviceUUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _bluetoothCentralManager = null;
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scanning for service " + _deviceIdService.UUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
+        }
+        #endregion
+
+        #region peripheral
+        protected override void StartPeripheral()
+        {
+            _bluetoothPeripheralManager = new CBPeripheralManager(new iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(this),
+                                                                  DispatchQueue.MainQueue,
+                                                                  NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(true), CBPeripheralManager.OptionShowPowerAlertKey));
         }
 
         protected override void StopPeripheral()
         {
-            if (_bluetoothPeripheralManager?.Advertising ?? false)
+            try
             {
-                try
-                {
-                    _bluetoothPeripheralManager?.StopAdvertising();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising for service " + _serviceUUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                _bluetoothPeripheralManager.RemoveService(_deviceIdService);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while removing service " + _deviceIdService.UUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
             }
 
             try
             {
-                _bluetoothPeripheralManager?.RemoveService(_service);
+                _bluetoothPeripheralManager.StopAdvertising();
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while removing service " + _serviceUUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-            finally
-            {
-                _bluetoothPeripheralManager = null;
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
-
-        protected override ChartSeries GetChartSeries()
-        {
-            return null;
-        }
-
-        protected override ChartAxis GetChartPrimaryAxis()
-        {
-            return null;
-        }
-
-        protected override RangeAxisBase GetChartSecondaryAxis()
-        {
-            return null;
-        }
-
-        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
-        {
-            return null;
-        }
+        #endregion
     }
 }

@@ -17,12 +17,9 @@ using Sensus.Probes.Context;
 using Plugin.Permissions.Abstractions;
 using Android.Bluetooth.LE;
 using Android.Bluetooth;
-using Sensus.Context;
 using Android.OS;
 using Java.Util;
-using System.Text;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Android.App;
 
 namespace Sensus.Android.Probes.Context
@@ -51,7 +48,7 @@ namespace Sensus.Android.Probes.Context
 
         protected override void StartCentral()
         {
-            ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(SERVICE_UUID));
+            ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(DEVICE_ID_SERVICE_UUID));
 
             ScanFilter scanFilter = new ScanFilter.Builder()
                                                   .SetServiceUuid(serviceUUID)
@@ -61,7 +58,7 @@ namespace Sensus.Android.Probes.Context
             scanFilters.Add(scanFilter);
 
             ScanSettings scanSettings = new ScanSettings.Builder()
-                                                        .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced)
+                                                        .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower)
                                                         .Build();
 
             _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
@@ -77,7 +74,7 @@ namespace Sensus.Android.Probes.Context
         {
             if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
             {
-                UUID serviceUUID = UUID.FromString(SERVICE_UUID);
+                UUID serviceUUID = UUID.FromString(DEVICE_ID_SERVICE_UUID);
 
                 // open server with service/characteristic
                 BluetoothGattCharacteristic gattCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),

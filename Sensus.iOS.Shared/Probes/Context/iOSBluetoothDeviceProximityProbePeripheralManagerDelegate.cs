@@ -1,0 +1,125 @@
+﻿﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
+using CoreBluetooth;
+using Foundation;
+
+namespace Sensus.iOS.Probes.Context
+{
+    public class iOSBluetoothDeviceProximityProbePeripheralManagerDelegate : CBPeripheralManagerDelegate
+    {
+        private iOSBluetoothDeviceProximityProbe _probe;
+
+        public iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(iOSBluetoothDeviceProximityProbe probe)
+        {            
+            _probe = probe;
+        }
+
+        public override void StateUpdated(CBPeripheralManager peripheral)
+        {
+            if (peripheral.State == CBPeripheralManagerState.PoweredOn && _probe.Running)
+            {
+                try
+                {
+                    peripheral.AddService(_probe.DeviceIdService);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while adding service:  " + ex, LoggingLevel.Normal, GetType());
+                }
+            }
+        }
+
+        public override void ServiceAdded(CBPeripheralManager peripheral, CBService service, NSError error)
+        {
+            if (error == null)
+            {
+                SensusServiceHelper.Get().Logger.Log("Added service.", LoggingLevel.Normal, GetType());
+
+                try
+                {
+                    peripheral.StartAdvertising(new NSDictionary(CBAdvertisement.DataServiceUUIDsKey, NSArray.FromObjects(_probe.DeviceIdService.UUID)));
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+            else
+            {
+                SensusServiceHelper.Get().Logger.Log("Error adding service:  " + error, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        public override void AdvertisingStarted(CBPeripheralManager peripheral, NSError error)
+        {
+            if (error == null)
+            {
+                SensusServiceHelper.Get().Logger.Log("Advertising started.", LoggingLevel.Normal, GetType());
+            }
+            else
+            {
+                SensusServiceHelper.Get().Logger.Log("Error starting advertising:  " + error, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        public override void ReadRequestReceived(CBPeripheralManager peripheral, CBATTRequest request)
+        {
+            try
+            {
+                if (request.Characteristic.Service.UUID.Equals(_probe.DeviceIdService.UUID) &&
+                    request.Characteristic.UUID.Equals(_probe.DeviceIdCharacteristic.UUID))
+                {
+                    // fill in the device id value for the request and return it to the central
+                    request.Value = _probe.DeviceIdCharacteristic.Value;
+                    peripheral.RespondToRequest(request, CBATTError.Success);
+                }
+                else
+                {
+                    peripheral.RespondToRequest(request, CBATTError.RequestNotSupported);
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while servicing read request:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        public override void WillRestoreState(CBPeripheralManager peripheral, NSDictionary dict)
+        {
+            SensusServiceHelper.Get().Logger.Log("Will restore state.", LoggingLevel.Normal, GetType());
+        }
+
+        public override void WriteRequestsReceived(CBPeripheralManager peripheral, CBATTRequest[] requests)
+        {          
+            SensusServiceHelper.Get().Logger.Log("Write requests received.", LoggingLevel.Normal, GetType());
+        }
+
+        public override void ReadyToUpdateSubscribers(CBPeripheralManager peripheral)
+        {
+            SensusServiceHelper.Get().Logger.Log("Ready to update subscribers.", LoggingLevel.Normal, GetType());
+        }
+
+        public override void CharacteristicSubscribed(CBPeripheralManager peripheral, CBCentral central, CBCharacteristic characteristic)
+        {
+            SensusServiceHelper.Get().Logger.Log("Characteristic subscribed.", LoggingLevel.Normal, GetType());
+        }
+
+        public override void CharacteristicUnsubscribed(CBPeripheralManager peripheral, CBCentral central, CBCharacteristic characteristic)
+        {
+            SensusServiceHelper.Get().Logger.Log("Characteristic unsubscribed.", LoggingLevel.Normal, GetType());
+        }
+    }
+}

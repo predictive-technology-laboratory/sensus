@@ -44,7 +44,7 @@ namespace Sensus.Android.Probes.Context
 
             try
             {
-                if (characteristic.Service.Uuid == UUID.FromString(BluetoothDeviceProximityProbe.SERVICE_UUID) &&
+                if (characteristic.Service.Uuid == UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID) &&
                     characteristic.Uuid == UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID))
                 {
 

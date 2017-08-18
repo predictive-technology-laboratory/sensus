@@ -21,7 +21,9 @@ namespace Sensus.Exceptions
         public static void Initialize(IInsightsInitializer initializer, string insightsKey, bool suppressException = true)
         {
             if (string.IsNullOrWhiteSpace(insightsKey))
+            {
                 return;
+            }
 
             try
             {
@@ -40,7 +42,9 @@ namespace Sensus.Exceptions
             {
                 // If we fail to setup our error report code no reason to throw an exception we'll never see. Godspeed user.
                 if (!suppressException)
+                {
                     throw;
+                }
             }
         }
     }

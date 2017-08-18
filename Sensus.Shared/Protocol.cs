@@ -1029,7 +1029,9 @@ namespace Sensus
             set
             {
                 if (value == AlertExclusionWindowString)
+                {
                     return;
+                }
 
                 lock (_alertExclusionWindows)
                 {
@@ -1258,8 +1260,12 @@ namespace Sensus
                             {
                                 List<iOSHealthKitProbe> enabledHealthKitProbes = new List<iOSHealthKitProbe>();
                                 foreach (Probe probe in _probes)
+                                {
                                     if (probe.Enabled && probe is iOSHealthKitProbe)
+                                    {
                                         enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
+                                    }
+                                }
 
                                 if (enabledHealthKitProbes.Count > 0)
                                 {
@@ -1269,7 +1275,9 @@ namespace Sensus
                                         (success, error) =>
                                         {
                                             if (error != null)
+                                            {
                                                 SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
+                                            }
 
                                             authorizationWait.Set();
                                         });
