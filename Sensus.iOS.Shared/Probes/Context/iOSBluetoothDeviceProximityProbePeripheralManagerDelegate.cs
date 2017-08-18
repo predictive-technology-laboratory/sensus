@@ -33,6 +33,10 @@ namespace Sensus.iOS.Probes.Context
             {
                 try
                 {
+                    // if the user powered BLE off/on, the peripheral will already have the service from before (exception will be thrown
+                    // on the next line and caught), and the peripheral will already be advertising the service. note that the 
+                    // CBPeripheralManager.Advertising property will still show false after the user's off/on setting because we haven't 
+                    // called StartAdvertising ourselves:  https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager/1393291-isadvertising
                     peripheral.AddService(_probe.DeviceIdService);
                 }
                 catch (Exception ex)

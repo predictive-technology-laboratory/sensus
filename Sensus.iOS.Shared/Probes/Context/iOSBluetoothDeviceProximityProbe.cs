@@ -162,7 +162,7 @@ namespace Sensus.iOS.Probes.Context
         {
             _bluetoothPeripheralManager = new CBPeripheralManager(new iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(this),
                                                                   DispatchQueue.MainQueue,
-                                                                  NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(true), CBPeripheralManager.OptionShowPowerAlertKey));
+                                                                  NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBPeripheralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
         }
 
         protected override void StopPeripheral()

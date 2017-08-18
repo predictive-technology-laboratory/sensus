@@ -34,7 +34,7 @@ namespace Sensus.iOS
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
         #region static members
-        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
+        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 15000;
         #endregion
 
         private DateTime _nextToastTime;
