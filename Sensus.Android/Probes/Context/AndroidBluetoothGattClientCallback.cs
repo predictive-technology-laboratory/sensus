@@ -30,7 +30,14 @@ namespace Sensus.Android.Probes.Context
 
             if (status == GattStatus.Success && newState == ProfileState.Connected)
             {
-                gatt.DiscoverServices();
+                try
+                {
+                    gatt.DiscoverServices();
+                }
+                catch(Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while discovering services:  " + ex, LoggingLevel.Normal, GetType());
+                }
             }
         }
 
@@ -38,22 +45,55 @@ namespace Sensus.Android.Probes.Context
         {
             base.OnServicesDiscovered(gatt, status);
 
-            UUID serviceUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID);
-            BluetoothGattService service = gatt.GetService(serviceUUID);
-            UUID deviceIdCharacteristicUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
-            BluetoothGattCharacteristic deviceIdCharacteristic = service.GetCharacteristic(deviceIdCharacteristicUUID);
-            gatt.ReadCharacteristic(deviceIdCharacteristic);
+            BluetoothGattService deviceIdService;
+            try
+            {
+                UUID deviceIdServiceUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID);
+                deviceIdService = gatt.GetService(deviceIdServiceUUID);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while getting device ID service:  " + ex, LoggingLevel.Normal, GetType());
+                return;
+            }
+
+            BluetoothGattCharacteristic deviceIdCharacteristic;
+            try
+            {
+                UUID deviceIdCharacteristicUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
+                deviceIdCharacteristic = deviceIdService.GetCharacteristic(deviceIdCharacteristicUUID);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while getting device ID characteristic:  " + ex, LoggingLevel.Normal, GetType());
+                return;
+            }
+
+            try
+            {
+                gatt.ReadCharacteristic(deviceIdCharacteristic);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while reading device ID characteristic:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
 
         public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
         {
             base.OnCharacteristicRead(gatt, characteristic, status);
 
-            byte[] deviceIdBytes = characteristic.GetValue();
-            string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
-            DeviceIdEncountered?.Invoke(this, deviceIdEncountered);
-
-            gatt.Disconnect();
+            try
+            {
+                byte[] deviceIdBytes = characteristic.GetValue();
+                string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
+                DeviceIdEncountered?.Invoke(this, deviceIdEncountered);
+                gatt.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while getting device ID characteristic value after reading it:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
     }
 }

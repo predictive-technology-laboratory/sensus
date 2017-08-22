@@ -41,7 +41,8 @@ namespace Sensus.Android.Probes.Context
                     gattClientCallback.DeviceIdEncountered += DeviceIdEncountered;
                 }
 
-                BluetoothGatt gatt = result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                // connect as gatt client to read data from peripheral server
+                result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
             }
             catch (Exception ex)
             {

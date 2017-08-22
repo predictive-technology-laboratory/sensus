@@ -31,6 +31,16 @@ namespace Sensus.Android.Probes.Context
         private BluetoothGattServer _bluetoothGattServer;
         private BluetoothGattService _gattService;
 
+        public AndroidBluetoothDeviceProximityProbe()
+        {
+            _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
+
+            _bluetoothScannerCallback.DeviceIdEncountered += async (sender, deviceIdEncountered) =>
+            {
+                await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
+            };
+        }
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -46,30 +56,37 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
+        #region
         protected override void StartCentral()
         {
-            ParcelUuid serviceUUID = new ParcelUuid(UUID.FromString(DEVICE_ID_SERVICE_UUID));
-
             ScanFilter scanFilter = new ScanFilter.Builder()
-                                                  .SetServiceUuid(serviceUUID)
+                                                  .SetServiceUuid(new ParcelUuid(UUID.FromString(DEVICE_ID_SERVICE_UUID)))
                                                   .Build();
 
-            List<ScanFilter> scanFilters = new List<ScanFilter>();
-            scanFilters.Add(scanFilter);
+            List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
 
             ScanSettings scanSettings = new ScanSettings.Builder()
                                                         .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower)
                                                         .Build();
 
-            _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
-            _bluetoothScannerCallback.DeviceIdEncountered += async (sender, deviceIdEncountered) =>
-            {
-                await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
-            };
-
             BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
         }
 
+        protected override void StopCentral()
+        {
+            // stop scanning
+            try
+            {
+                BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+        }
+        #endregion
+
+        #region peripheral
         protected override void StartPeripheral()
         {
             if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
@@ -113,23 +130,6 @@ namespace Sensus.Android.Probes.Context
             else
             {
                 throw new Exception("BLE advertising is not available.");
-            }
-        }
-
-        protected override void StopCentral()
-        {
-            // stop scanning
-            try
-            {
-                BluetoothAdapter.DefaultAdapter.BluetoothLeScanner?.StopScan(_bluetoothScannerCallback);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while stopping scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-            finally
-            {
-                _bluetoothScannerCallback = null;
             }
         }
 
@@ -177,5 +177,6 @@ namespace Sensus.Android.Probes.Context
                 _bluetoothGattServer = null;
             }
         }
+        #endregion
     }
 }

@@ -85,7 +85,7 @@ namespace Sensus.Probes.Context
                 // attempt to start the central. don't bail if this fails, since we might still be able to start the peripheral.
                 try
                 {
-                    //StartCentral();
+                    StartCentral();
                 }
                 catch (Exception ex)
                 {
@@ -116,7 +116,7 @@ namespace Sensus.Probes.Context
             {
                 try
                 {
-                    //StopCentral();
+                    StopCentral();
                 }
                 catch(Exception ex)
                 {
