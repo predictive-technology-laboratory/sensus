@@ -22,7 +22,7 @@ namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothGattClientCallback : BluetoothGattCallback
     {
-        public event EventHandler<string> DeviceIdEncountered;
+        public event EventHandler<BluetoothDeviceProximityDatum> DeviceIdEncountered;
 
         public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
         {
@@ -87,7 +87,7 @@ namespace Sensus.Android.Probes.Context
             {
                 byte[] deviceIdBytes = characteristic.GetValue();
                 string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
-                DeviceIdEncountered?.Invoke(this, deviceIdEncountered);
+                DeviceIdEncountered?.Invoke(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
                 gatt.Disconnect();
             }
             catch (Exception ex)

@@ -16,12 +16,13 @@ using System;
 using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
+using Sensus.Probes.Context;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothScannerCallback : ScanCallback
     {
-        public event EventHandler<string> DeviceIdEncountered;
+        public event EventHandler<BluetoothDeviceProximityDatum> DeviceIdEncountered;
 
         public override void OnScanResult(ScanCallbackType callbackType, ScanResult result)
         {

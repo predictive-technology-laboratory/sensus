@@ -35,9 +35,9 @@ namespace Sensus.Android.Probes.Context
         {
             _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
 
-            _bluetoothScannerCallback.DeviceIdEncountered += async (sender, deviceIdEncountered) =>
+            _bluetoothScannerCallback.DeviceIdEncountered += async (sender, bluetoothDeviceProximityDatum) =>
             {
-                await StoreDatumAsync(new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
+                await StoreDatumAsync(bluetoothDeviceProximityDatum);
             };
         }
 
