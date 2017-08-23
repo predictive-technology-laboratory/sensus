@@ -64,11 +64,7 @@ namespace Sensus.Probes.Context
             try
             {
                 SensusServiceHelper.Get().Logger.Log("Starting advertising.", LoggingLevel.Normal, GetType());
-
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    StartAdvertising();
-                });
+                StartAdvertising();
             }
             catch(Exception ex)
             {
@@ -81,28 +77,25 @@ namespace Sensus.Probes.Context
         protected sealed override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
         {
             // start a new scan
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            try
             {
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
-                    StopScan();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
-                }
+                SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                StopScan();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+            }
 
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Starting scan.", LoggingLevel.Normal, GetType());
-                    StartScan();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
-                }
-            });
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Starting scan.", LoggingLevel.Normal, GetType());
+                StartScan();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
+            }
 
             // create a new list to return
             List<BluetoothDeviceProximityDatum> dataToReturn;
@@ -110,6 +103,7 @@ namespace Sensus.Probes.Context
             lock (EncounteredDeviceData)
             {
                 dataToReturn = EncounteredDeviceData.ToList();
+                EncounteredDeviceData.Clear();
             }
 
             // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
@@ -127,28 +121,25 @@ namespace Sensus.Probes.Context
         {
             base.Stop();
 
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            try
             {
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
-                    StopScan();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
-                }
+                SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                StopScan();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+            }
 
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping advertising.", LoggingLevel.Normal, GetType());
-                    StopAdvertising();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex, LoggingLevel.Normal, GetType());
-                }
-            });
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping advertising.", LoggingLevel.Normal, GetType());
+                StopAdvertising();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
 
         protected abstract void StopScan();

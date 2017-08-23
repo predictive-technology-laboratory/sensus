@@ -41,10 +41,22 @@ namespace Sensus.Android.Probes.Context
                 {
                     gatt.DiscoverServices();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while discovering services:  " + ex, LoggingLevel.Normal, GetType());
                     DisconnectPeripheral(gatt);
+                }
+            }
+            // ensure that all peripherals get closed...
+            else
+            {
+                try
+                {
+                    gatt.Close();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while closing disconnected client:  " + ex, LoggingLevel.Normal, GetType());
                 }
             }
         }

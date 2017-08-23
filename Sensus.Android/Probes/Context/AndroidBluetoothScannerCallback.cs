@@ -18,6 +18,7 @@ using Android.App;
 using Android.Bluetooth.LE;
 using Android.OS;
 using Java.Lang;
+using Sensus.Context;
 using Sensus.Probes.Context;
 
 namespace Sensus.Android.Probes.Context
@@ -55,7 +56,7 @@ namespace Sensus.Android.Probes.Context
 
             try
             {
-                // get actual timestamp of encounter
+                // get actual timestamp of encounter. this may be earlier than the current time because we do batch reporting.
                 long msSinceEpoch = JavaSystem.CurrentTimeMillis() - SystemClock.ElapsedRealtime() + result.TimestampNanos / 1000000;
                 DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
 
@@ -67,8 +68,11 @@ namespace Sensus.Android.Probes.Context
                     gattClientCallback.DeviceIdEncountered += DeviceIdEncountered;
                 }
 
-                // connect as gatt client to read data from peripheral server
-                result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                // connect client to read data from peripheral server
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                {
+                    result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                });
             }
             catch (System.Exception ex)
             {

@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using Android.App;
 using Newtonsoft.Json;
 using System.Text;
+using Sensus.Context;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -81,10 +83,7 @@ namespace Sensus.Android.Probes.Context
                 throw new Exception(error);
             }
 
-            _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),
-                                                                                             GattProperty.Read,
-                                                                                             GattPermission.Read);
-
+            _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
             _deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
 
             _deviceIdService = new BluetoothGattService(UUID.FromString(DEVICE_ID_SERVICE_UUID), GattServiceType.Primary);
@@ -94,119 +93,159 @@ namespace Sensus.Android.Probes.Context
         #region central -- scan
         protected override void StartScan()
         {
-            ScanFilter scanFilter = new ScanFilter.Builder()
-                                                  .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-                                                  .Build();
+            TimeSpan? reportDelay = null;
 
-            List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
-
-            ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
-                                                                       .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
-
-            // batch scan results if supported on the BLE chip
-            if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                scanSettingsBuilder.SetReportDelay((long)TimeSpan.FromSeconds(30).TotalMilliseconds);
-            }
+                try
+                {
+                    ScanFilter scanFilter = new ScanFilter.Builder()
+                                                          .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
+                                                          .Build();
 
-            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+                    List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
+
+                    ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
+                                                                               .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
+
+                    // batch scan results if supported on the BLE chip
+                    if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+                    {
+                        reportDelay = TimeSpan.FromSeconds(10);
+                        scanSettingsBuilder.SetReportDelay((long)reportDelay.Value.TotalMilliseconds);
+                    }
+
+                    BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
+
+            // if we're batching, wait twice the report delay for some results to come in.
+            if (reportDelay != null)
+            {
+                SensusServiceHelper.Get().AssertNotOnMainThread("BLE scan wait.");
+                Thread.Sleep((int)(reportDelay.Value.TotalMilliseconds * 2));
+
+                lock (EncounteredDeviceData)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Encountered " + EncounteredDeviceData.Count + " device(s).", LoggingLevel.Normal, GetType());
+                }
+            }
         }
 
         protected override void StopScan()
         {
-            // stop scanning
-            try
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while stopping scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
+                try
+                {
+                    BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
         #endregion
 
         #region peripheral -- advertise
         protected override void StartAdvertising()
         {
-            if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // open gatt server
-                BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as BluetoothManager;
-                AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback(this);
-                _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
+                try
+                {
+                    if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
+                    {
+                        // open gatt server to service read requests from peripheral clients
+                        BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
+                        AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback(this);
+                        _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
 
-                // set server on callback for responding to requests
-                serverCallback.Server = _bluetoothGattServer;
+                        // set server on callback for responding to requests
+                        serverCallback.Server = _bluetoothGattServer;
 
-                // add service 
-                _bluetoothGattServer.AddService(_deviceIdService);
+                        // add service 
+                        _bluetoothGattServer.AddService(_deviceIdService);
 
-                // start advertisement
-                AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
-                                                                           .SetAdvertiseMode(AdvertiseMode.Balanced)
-                                                                           .SetTxPowerLevel(AdvertiseTx.PowerMedium)
-                                                                           .SetConnectable(true)
-                                                                           .Build();
+                        // start advertisement
+                        AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
+                                                                                   .SetAdvertiseMode(AdvertiseMode.LowPower)
+                                                                                   .SetTxPowerLevel(AdvertiseTx.PowerLow)
+                                                                                   .SetConnectable(true)
+                                                                                   .Build();
 
-                AdvertiseData advertiseData = new AdvertiseData.Builder()
-                                                               .SetIncludeDeviceName(false)
-                                                               .AddServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-                                                               .Build();
+                        AdvertiseData advertiseData = new AdvertiseData.Builder()
+                                                                       .SetIncludeDeviceName(false)
+                                                                       .AddServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
+                                                                       .Build();
 
-                _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
+                        _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
 
-                BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
-            }
-            else
-            {
-                throw new Exception("BLE advertising is not available.");
-            }
+                        BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
+                    }
+                    else
+                    {
+                        throw new Exception("BLE advertising is not available.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
 
         protected override void StopAdvertising()
         {
-            // stop advertising
-            try
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser?.StopAdvertising(_bluetoothAdvertiserCallback);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-            finally
-            {
-                _bluetoothAdvertiserCallback = null;
-            }
+                // stop advertising
+                try
+                {
+                    BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser?.StopAdvertising(_bluetoothAdvertiserCallback);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    _bluetoothAdvertiserCallback = null;
+                }
 
-            // remove the service
-            try
-            {
-                _bluetoothGattServer?.RemoveService(_deviceIdService);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while removing service:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-            finally
-            {
-                _deviceIdService = null;
-            }
+                // remove the service
+                try
+                {
+                    _bluetoothGattServer?.RemoveService(_deviceIdService);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while removing service:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    _deviceIdService = null;
+                }
 
-            // close the server
-            try
-            {
-                _bluetoothGattServer?.Close();
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while closing GATT server:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-            finally
-            {
-                _bluetoothGattServer = null;
-            }
+                // close the server
+                try
+                {
+                    _bluetoothGattServer?.Close();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while closing GATT server:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    _bluetoothGattServer = null;
+                }
+            });
         }
         #endregion
     }
