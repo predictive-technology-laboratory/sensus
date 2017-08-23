@@ -13,55 +13,24 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Sensus.Context;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Context
 {
-    public abstract class BluetoothDeviceProximityProbe : ListeningProbe
+    public abstract class BluetoothDeviceProximityProbe : PollingProbe
     {
         public const string DEVICE_ID_SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
         public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
-        [JsonIgnore]
-        protected override bool DefaultKeepDeviceAwake
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        [JsonIgnore]
-        protected override string DeviceAwakeWarning
-        {
-            get
-            {
-                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
-            }
-        }
-
-        [JsonIgnore]
-        protected override string DeviceAsleepWarning
-        {
-            get
-            {
-                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
-            }
-        }
+        protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
 
         public sealed override string DisplayName
         {
             get { return "Bluetooth Encounters"; }
-        }
-
-        public override string CollectionDescription
-        {
-            get
-            {
-                return "Nearby Bluetooth Devices:  Upon encounter.";
-            }
         }
 
         public sealed override Type DatumType
@@ -69,8 +38,15 @@ namespace Sensus.Probes.Context
             get { return typeof(BluetoothDeviceProximityDatum); }
         }
 
-        protected sealed override void StartListening()
+        public BluetoothDeviceProximityProbe()
         {
+            EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
+        }
+
+        protected sealed override void InternalStart()
+        {
+            base.InternalStart();
+
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
@@ -80,63 +56,99 @@ namespace Sensus.Probes.Context
                 throw new Exception(error);
             }
 
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            try
             {
-                // attempt to start the central. don't bail if this fails, since we might still be able to start the peripheral.
-                try
-                {
-                    StartCentral();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting central:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    StopCentral();
-                }
+                SensusServiceHelper.Get().Logger.Log("Starting advertising.", LoggingLevel.Normal, GetType());
 
-                // attempt to start the peripheral.
-                try
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    StartPeripheral();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    StopPeripheral();
-                }
-            });
+                    StartAdvertising();
+                });
+            }
+            catch(Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
 
-        protected abstract void StartCentral();
+        protected abstract void StartAdvertising();
 
-        protected abstract void StartPeripheral();
-
-        protected sealed override void StopListening()
+        protected sealed override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
         {
+            // start a new scan
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 try
                 {
-                    StopCentral();
+                    SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                    StopScan();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping central:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
                 }
 
                 try
                 {
-                    StopPeripheral();
+                    SensusServiceHelper.Get().Logger.Log("Starting scan.", LoggingLevel.Normal, GetType());
+                    StartScan();
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
+                }
+            });
+
+            // create a new list to return
+            List<BluetoothDeviceProximityDatum> dataToReturn;
+
+            lock (EncounteredDeviceData)
+            {
+                dataToReturn = EncounteredDeviceData.ToList();
+            }
+
+            // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
+            if (dataToReturn.Count == 0)
+            {
+                dataToReturn.Add(null);
+            }
+
+            return dataToReturn;
+        }
+
+        protected abstract void StartScan();
+
+        public sealed override void Stop()
+        {
+            base.Stop();
+
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                    StopScan();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+                }
+
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Stopping advertising.", LoggingLevel.Normal, GetType());
+                    StopAdvertising();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex, LoggingLevel.Normal, GetType());
                 }
             });
         }
 
-        protected abstract void StopCentral();
+        protected abstract void StopScan();
 
-        protected abstract void StopPeripheral();
+        protected abstract void StopAdvertising();
 
         protected override ChartSeries GetChartSeries()
         {

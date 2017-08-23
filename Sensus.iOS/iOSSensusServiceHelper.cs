@@ -282,7 +282,8 @@ namespace Sensus.iOS
             {
                 try
                 {
-                    CBCentralManager manager = new CBCentralManager(DispatchQueue.CurrentQueue);
+                    CBCentralManager manager = new CBCentralManager(DispatchQueue.MainQueue);
+
                     manager.UpdatedState += (sender, e) =>
                     {
                         if (manager.State == CBCentralManagerState.PoweredOn)
