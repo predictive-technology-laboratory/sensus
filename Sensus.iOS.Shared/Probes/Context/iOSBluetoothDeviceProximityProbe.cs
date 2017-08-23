@@ -14,13 +14,10 @@
 
 using System;
 using Sensus.Probes.Context;
-using Syncfusion.SfChart.XForms;
 using CoreBluetooth;
 using CoreFoundation;
-using Sensus.Context;
 using Foundation;
 using System.Text;
-using System.Threading;
 using Newtonsoft.Json;
 
 namespace Sensus.iOS.Probes.Context
@@ -79,7 +76,7 @@ namespace Sensus.iOS.Probes.Context
         #region central
         protected override void StartCentral()
         {
-            _bluetoothCentralManager = new CBCentralManager(new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(this),
+            _bluetoothCentralManager = new CBCentralManager(_bluetoothCentralManagerDelegate,
                                                             DispatchQueue.MainQueue,
                                                             NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
         }
