@@ -13,9 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using Android.App;
-using Android.Bluetooth;
 using Android.Bluetooth.LE;
+using Android.OS;
+using Java.Lang;
 using Sensus.Probes.Context;
 
 namespace Sensus.Android.Probes.Context
@@ -24,10 +26,28 @@ namespace Sensus.Android.Probes.Context
     {
         public event EventHandler<BluetoothDeviceProximityDatum> DeviceIdEncountered;
 
+        private AndroidBluetoothDeviceProximityProbe _probe;
+
+        public AndroidBluetoothScannerCallback(AndroidBluetoothDeviceProximityProbe probe)
+        {
+            _probe = probe;
+        }
+
         public override void OnScanResult(ScanCallbackType callbackType, ScanResult result)
         {
-            base.OnScanResult(callbackType, result);
+            ProcessScanResult(result);
+        }
 
+        public override void OnBatchScanResults(IList<ScanResult> results)
+        {
+            foreach (ScanResult result in results)
+            {
+                ProcessScanResult(result);
+            }
+        }
+
+        private void ProcessScanResult(ScanResult result)
+        {
             if (result == null)
             {
                 return;
@@ -35,7 +55,12 @@ namespace Sensus.Android.Probes.Context
 
             try
             {
-                AndroidBluetoothGattClientCallback gattClientCallback = new AndroidBluetoothGattClientCallback();
+                // get actual timestamp of encounter
+                long msSinceEpoch = JavaSystem.CurrentTimeMillis() - SystemClock.ElapsedRealtime() + result.TimestampNanos / 1000000;
+                DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
+
+                // register client callback
+                AndroidBluetoothGattClientCallback gattClientCallback = new AndroidBluetoothGattClientCallback(_probe, encounterTimestamp);
 
                 if (DeviceIdEncountered != null)
                 {
@@ -45,7 +70,7 @@ namespace Sensus.Android.Probes.Context
                 // connect as gatt client to read data from peripheral server
                 result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while reading device ID from peripheral:  " + ex, LoggingLevel.Normal, GetType());
             }

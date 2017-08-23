@@ -21,6 +21,8 @@ using Android.OS;
 using Java.Util;
 using System.Collections.Generic;
 using Android.App;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -29,15 +31,39 @@ namespace Sensus.Android.Probes.Context
         private AndroidBluetoothScannerCallback _bluetoothScannerCallback;
         private AndroidBluetoothAdvertisingCallback _bluetoothAdvertiserCallback;
         private BluetoothGattServer _bluetoothGattServer;
-        private BluetoothGattService _gattService;
+        private BluetoothGattService _deviceIdService;
+        private BluetoothGattCharacteristic _deviceIdCharacteristic;
+
+        [JsonIgnore]
+        public BluetoothGattService DeviceIdService
+        {
+            get
+            {
+                return _deviceIdService;
+            }
+        }
+
+        [JsonIgnore]
+        public BluetoothGattCharacteristic DeviceIdCharacteristic
+        {
+            get
+            {
+                return _deviceIdCharacteristic;
+            }
+        }
+
+        public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
         public AndroidBluetoothDeviceProximityProbe()
         {
-            _bluetoothScannerCallback = new AndroidBluetoothScannerCallback();
+            _bluetoothScannerCallback = new AndroidBluetoothScannerCallback(this);
 
-            _bluetoothScannerCallback.DeviceIdEncountered += async (sender, bluetoothDeviceProximityDatum) =>
+            _bluetoothScannerCallback.DeviceIdEncountered += (sender, bluetoothDeviceProximityDatum) =>
             {
-                await StoreDatumAsync(bluetoothDeviceProximityDatum);
+                lock (EncounteredDeviceData)
+                {
+                    EncounteredDeviceData.Add(bluetoothDeviceProximityDatum);
+                }
             };
         }
 
@@ -54,25 +80,39 @@ namespace Sensus.Android.Probes.Context
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+
+            _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),
+                                                                                             GattProperty.Read,
+                                                                                             GattPermission.Read);
+
+            _deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
+
+            _deviceIdService = new BluetoothGattService(UUID.FromString(DEVICE_ID_SERVICE_UUID), GattServiceType.Primary);
+            _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
         }
 
-        #region
-        protected override void StartCentral()
+        #region central -- scan
+        protected override void StartScan()
         {
             ScanFilter scanFilter = new ScanFilter.Builder()
-                                                  .SetServiceUuid(new ParcelUuid(UUID.FromString(DEVICE_ID_SERVICE_UUID)))
+                                                  .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
                                                   .Build();
 
             List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
 
-            ScanSettings scanSettings = new ScanSettings.Builder()
-                                                        .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower)
-                                                        .Build();
+            ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
+                                                                       .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
 
-            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettings, _bluetoothScannerCallback);
+            // batch scan results if supported on the BLE chip
+            if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+            {
+                scanSettingsBuilder.SetReportDelay((long)TimeSpan.FromSeconds(30).TotalMilliseconds);
+            }
+
+            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
         }
 
-        protected override void StopCentral()
+        protected override void StopScan()
         {
             // stop scanning
             try
@@ -86,31 +126,21 @@ namespace Sensus.Android.Probes.Context
         }
         #endregion
 
-        #region peripheral
-        protected override void StartPeripheral()
+        #region peripheral -- advertise
+        protected override void StartAdvertising()
         {
             if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
             {
-                UUID serviceUUID = UUID.FromString(DEVICE_ID_SERVICE_UUID);
-
-                // open server with service/characteristic
-                BluetoothGattCharacteristic gattCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),
-                                                                                                 GattProperty.Read,
-                                                                                                 GattPermission.Read);
-
-                _gattService = new BluetoothGattService(serviceUUID, GattServiceType.Primary);
-                _gattService.AddCharacteristic(gattCharacteristic);
-
                 // open gatt server
                 BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as BluetoothManager;
-                AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback();
+                AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback(this);
                 _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
-
-                // add service 
-                _bluetoothGattServer.AddService(_gattService);
 
                 // set server on callback for responding to requests
                 serverCallback.Server = _bluetoothGattServer;
+
+                // add service 
+                _bluetoothGattServer.AddService(_deviceIdService);
 
                 // start advertisement
                 AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
@@ -121,10 +151,11 @@ namespace Sensus.Android.Probes.Context
 
                 AdvertiseData advertiseData = new AdvertiseData.Builder()
                                                                .SetIncludeDeviceName(false)
-                                                               .AddServiceUuid(new ParcelUuid(serviceUUID))
+                                                               .AddServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
                                                                .Build();
 
                 _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
+
                 BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
             }
             else
@@ -133,7 +164,7 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
-        protected override void StopPeripheral()
+        protected override void StopAdvertising()
         {
             // stop advertising
             try
@@ -152,7 +183,7 @@ namespace Sensus.Android.Probes.Context
             // remove the service
             try
             {
-                _bluetoothGattServer?.RemoveService(_gattService);
+                _bluetoothGattServer?.RemoveService(_deviceIdService);
             }
             catch (Exception ex)
             {
@@ -160,7 +191,7 @@ namespace Sensus.Android.Probes.Context
             }
             finally
             {
-                _gattService = null;
+                _deviceIdService = null;
             }
 
             // close the server

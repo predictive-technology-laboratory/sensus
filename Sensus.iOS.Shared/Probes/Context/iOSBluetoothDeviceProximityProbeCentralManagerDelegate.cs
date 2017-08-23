@@ -187,7 +187,7 @@ namespace Sensus.iOS.Probes.Context
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while disconnecting peripheral:  " + ex, LoggingLevel.Normal, GetType());
-            }            
+            }
         }
     }
 }

@@ -24,10 +24,17 @@ namespace Sensus.Android.Probes.Context
     {
         public event EventHandler<BluetoothDeviceProximityDatum> DeviceIdEncountered;
 
+        private AndroidBluetoothDeviceProximityProbe _probe;
+        private DateTimeOffset _encounterTimestamp;
+
+        public AndroidBluetoothGattClientCallback(AndroidBluetoothDeviceProximityProbe probe, DateTimeOffset encounterTimestamp)
+        {
+            _probe = probe;
+            _encounterTimestamp = encounterTimestamp;
+        }
+
         public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
         {
-            base.OnConnectionStateChange(gatt, status, newState);
-
             if (status == GattStatus.Success && newState == ProfileState.Connected)
             {
                 try
@@ -37,35 +44,34 @@ namespace Sensus.Android.Probes.Context
                 catch(Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while discovering services:  " + ex, LoggingLevel.Normal, GetType());
+                    DisconnectPeripheral(gatt);
                 }
             }
         }
 
         public override void OnServicesDiscovered(BluetoothGatt gatt, GattStatus status)
         {
-            base.OnServicesDiscovered(gatt, status);
-
             BluetoothGattService deviceIdService;
             try
             {
-                UUID deviceIdServiceUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID);
-                deviceIdService = gatt.GetService(deviceIdServiceUUID);
+                deviceIdService = gatt.GetService(_probe.DeviceIdService.Uuid);
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while getting device ID service:  " + ex, LoggingLevel.Normal, GetType());
+                DisconnectPeripheral(gatt);
                 return;
             }
 
             BluetoothGattCharacteristic deviceIdCharacteristic;
             try
             {
-                UUID deviceIdCharacteristicUUID = UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID);
-                deviceIdCharacteristic = deviceIdService.GetCharacteristic(deviceIdCharacteristicUUID);
+                deviceIdCharacteristic = deviceIdService.GetCharacteristic(_probe.DeviceIdCharacteristic.Uuid);
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while getting device ID characteristic:  " + ex, LoggingLevel.Normal, GetType());
+                DisconnectPeripheral(gatt);
                 return;
             }
 
@@ -76,23 +82,37 @@ namespace Sensus.Android.Probes.Context
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while reading device ID characteristic:  " + ex, LoggingLevel.Normal, GetType());
+                DisconnectPeripheral(gatt);
             }
         }
 
         public override void OnCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, GattStatus status)
         {
-            base.OnCharacteristicRead(gatt, characteristic, status);
-
             try
             {
                 byte[] deviceIdBytes = characteristic.GetValue();
                 string deviceIdEncountered = Encoding.UTF8.GetString(deviceIdBytes);
-                DeviceIdEncountered?.Invoke(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, deviceIdEncountered));
-                gatt.Disconnect();
+                DeviceIdEncountered?.Invoke(this, new BluetoothDeviceProximityDatum(_encounterTimestamp, deviceIdEncountered));
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while getting device ID characteristic value after reading it:  " + ex, LoggingLevel.Normal, GetType());
+            }
+            finally
+            {
+                DisconnectPeripheral(gatt);
+            }
+        }
+
+        private void DisconnectPeripheral(BluetoothGatt gatt)
+        {
+            try
+            {
+                gatt.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while disconnecting peripheral:  " + ex, LoggingLevel.Normal, GetType());
             }
         }
     }

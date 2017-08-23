@@ -43,9 +43,9 @@ namespace Sensus.Probes.Context
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 
-        protected sealed override void InternalStart()
+        protected override void Initialize()
         {
-            base.InternalStart();
+            base.Initialize();
 
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
@@ -55,6 +55,11 @@ namespace Sensus.Probes.Context
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+        }
+
+        protected sealed override void InternalStart()
+        {
+            base.InternalStart();
 
             try
             {

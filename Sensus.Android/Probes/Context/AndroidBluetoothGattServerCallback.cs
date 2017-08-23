@@ -22,13 +22,13 @@ namespace Sensus.Android.Probes.Context
 {
     public class AndroidBluetoothGattServerCallback : BluetoothGattServerCallback
     {
-        private byte[] _deviceIdValue;
-
         public BluetoothGattServer Server { get; set; }
 
-        public AndroidBluetoothGattServerCallback()
+        private AndroidBluetoothDeviceProximityProbe _probe;
+
+        public AndroidBluetoothGattServerCallback(AndroidBluetoothDeviceProximityProbe probe)
         {
-            _deviceIdValue = Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId);
+            _probe = probe;
         }
 
         public override void OnServiceAdded(ProfileState status, BluetoothGattService service)
@@ -44,11 +44,10 @@ namespace Sensus.Android.Probes.Context
 
             try
             {
-                if (characteristic.Service.Uuid == UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID) &&
-                    characteristic.Uuid == UUID.FromString(BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID))
+                if (characteristic.Service.Uuid == _probe.DeviceIdService.Uuid &&
+                    characteristic.Uuid == _probe.DeviceIdCharacteristic.Uuid)
                 {
-
-                    Server?.SendResponse(device, requestId, GattStatus.Success, offset, _deviceIdValue);
+                    Server?.SendResponse(device, requestId, GattStatus.Success, offset, _probe.DeviceIdCharacteristic.GetValue());
                 }
                 else
                 {
