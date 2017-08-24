@@ -76,7 +76,11 @@ namespace Sensus.Probes.Context
 
         protected sealed override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
         {
-            // start a new scan
+            // restart the scan. on android this will cause the thread to sleep while data accumate. we need to sleep in order
+            // to keep the cpu alive, as we're holding a wakelock for the poll. this is not allowed on ios, where we have a 
+            // limited amount of time to return from the poll. thus, on ios, we just start the scan and return immediately 
+            // without waiting for results to accumulate.
+
             try
             {
                 SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
@@ -97,7 +101,8 @@ namespace Sensus.Probes.Context
                 SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
             }
 
-            // create a new list to return
+            // create a new list to return any data that have accumulated -- this only plays a role in android, where we 
+            // wait for data to accumulate. on ios, data are added directly via Probe.StoreDatumAsync.
             List<BluetoothDeviceProximityDatum> dataToReturn;
 
             lock (EncounteredDeviceData)

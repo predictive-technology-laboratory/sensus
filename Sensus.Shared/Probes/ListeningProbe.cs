@@ -274,7 +274,7 @@ namespace Sensus.Probes
 
         protected abstract void StopListening();
 
-        public sealed override Task<bool> StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
+        public sealed override Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken = default(CancellationToken?))
         {
             bool store = true;
 
