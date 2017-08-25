@@ -102,7 +102,8 @@ namespace Sensus.Probes.Context
             }
 
             // create a new list to return any data that have accumulated -- this only plays a role in android, where we 
-            // wait for data to accumulate. on ios, data are added directly via Probe.StoreDatumAsync.
+            // wait for data to accumulate while holding a wakelock. on ios, data are added directly via Probe.StoreDatumAsync 
+            // because we're not allowed to wait for data to accumulate (background time expiration).
             List<BluetoothDeviceProximityDatum> dataToReturn;
 
             lock (EncounteredDeviceData)

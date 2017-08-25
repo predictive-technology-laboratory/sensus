@@ -97,36 +97,41 @@ namespace Sensus.Android.Probes.Context
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                try
+                // start a scan if bluetooth is present and enabled
+                if (BluetoothAdapter.DefaultAdapter?.IsEnabled ?? false)
                 {
-                    ScanFilter scanFilter = new ScanFilter.Builder()
-                                                          .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-                                                          .Build();
-
-                    List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
-
-                    ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
-                                                                               .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
-
-                    // batch scan results if supported on the BLE chip
-                    if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+                    try
                     {
-                        reportDelay = TimeSpan.FromSeconds(10);
-                        scanSettingsBuilder.SetReportDelay((long)reportDelay.Value.TotalMilliseconds);
-                    }
+                        ScanFilter scanFilter = new ScanFilter.Builder()
+                                                              .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
+                                                              .Build();
 
-                    BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
+
+                        ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
+                                                                                   .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
+
+                        // batch scan results if supported on the BLE chip
+                        if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+                        {
+                            reportDelay = TimeSpan.FromSeconds(10);
+                            scanSettingsBuilder.SetReportDelay((long)reportDelay.Value.TotalMilliseconds);
+                        }
+
+                        BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while starting scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
             });
 
-            // if we're batching, wait twice the report delay for some results to come in.
+            // if we're batching, wait twice the report delay for some results to come in. we sleep below so as not to return from the poll
+            // and release the wakelock we're currently holding.
             if (reportDelay != null)
             {
-                SensusServiceHelper.Get().AssertNotOnMainThread("BLE scan wait.");
+                SensusServiceHelper.Get().AssertNotOnMainThread("Waiting for BLE scan results.");
                 Thread.Sleep((int)(reportDelay.Value.TotalMilliseconds * 2));
 
                 lock (EncounteredDeviceData)
@@ -134,6 +139,9 @@ namespace Sensus.Android.Probes.Context
                     SensusServiceHelper.Get().Logger.Log("Encountered " + EncounteredDeviceData.Count + " device(s).", LoggingLevel.Normal, GetType());
                 }
             }
+
+            // we've scanned and waited for results to come in. stop scanning and wait for next poll.
+            StopScan();
         }
 
         protected override void StopScan()
@@ -142,7 +150,7 @@ namespace Sensus.Android.Probes.Context
             {
                 try
                 {
-                    BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
+                    BluetoothAdapter.DefaultAdapter?.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
                 }
                 catch (Exception ex)
                 {
@@ -159,9 +167,10 @@ namespace Sensus.Android.Probes.Context
             {
                 try
                 {
-                    if (BluetoothAdapter.DefaultAdapter.IsMultipleAdvertisementSupported)
+                    // start advertising if bluetooth is present and supports advertisement
+                    if (BluetoothAdapter.DefaultAdapter?.IsMultipleAdvertisementSupported ?? false)
                     {
-                        // open gatt server to service read requests from peripheral clients
+                        // open gatt server to service read requests from central clients
                         BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
                         AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback(this);
                         _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
@@ -207,7 +216,7 @@ namespace Sensus.Android.Probes.Context
                 // stop advertising
                 try
                 {
-                    BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser?.StopAdvertising(_bluetoothAdvertiserCallback);
+                    BluetoothAdapter.DefaultAdapter?.BluetoothLeAdvertiser.StopAdvertising(_bluetoothAdvertiserCallback);
                 }
                 catch (Exception ex)
                 {

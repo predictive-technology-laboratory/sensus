@@ -47,8 +47,8 @@ namespace Sensus.Android.Probes.Context
                     DisconnectPeripheral(gatt);
                 }
             }
-            // ensure that all peripherals get closed...
-            else
+            // ensure that all disconnected peripherals get closed (released). without closing, we'll use up all the BLE interfaces.
+            else if (newState == ProfileState.Disconnected)
             {
                 try
                 {

@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using Android.App;
+using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.OS;
 using Java.Lang;
@@ -71,7 +72,14 @@ namespace Sensus.Android.Probes.Context
                 // connect client to read data from peripheral server
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                    try
+                    {
+                        result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                    }
+                    catch (System.Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while connecting GATT client:  " + ex, LoggingLevel.Normal, GetType());
+                    }
                 });
             }
             catch (System.Exception ex)
