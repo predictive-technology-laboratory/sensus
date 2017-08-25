@@ -20,7 +20,6 @@ using Android.Bluetooth;
 using Android.OS;
 using Java.Util;
 using System.Collections.Generic;
-using Android.App;
 using Newtonsoft.Json;
 using System.Text;
 using Sensus.Context;
@@ -32,7 +31,6 @@ namespace Sensus.Android.Probes.Context
     {
         private AndroidBluetoothScannerCallback _bluetoothScannerCallback;
         private AndroidBluetoothAdvertisingCallback _bluetoothAdvertiserCallback;
-        private BluetoothGattServer _bluetoothGattServer;
         private BluetoothGattService _deviceIdService;
         private BluetoothGattCharacteristic _deviceIdCharacteristic;
 
@@ -67,6 +65,8 @@ namespace Sensus.Android.Probes.Context
                     EncounteredDeviceData.Add(bluetoothDeviceProximityDatum);
                 }
             };
+
+            _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback(this);
         }
 
         protected override void Initialize()
@@ -111,7 +111,7 @@ namespace Sensus.Android.Probes.Context
                         ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
                                                                                    .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
 
-                        // batch scan results if supported on the BLE chip
+                        // return batched scan results periodically if supported on the BLE chip
                         if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
                         {
                             reportDelay = TimeSpan.FromSeconds(10);
@@ -167,21 +167,8 @@ namespace Sensus.Android.Probes.Context
             {
                 try
                 {
-                    // start advertising if bluetooth is present and supports advertisement
                     if (BluetoothAdapter.DefaultAdapter?.IsMultipleAdvertisementSupported ?? false)
                     {
-                        // open gatt server to service read requests from central clients
-                        BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
-                        AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback(this);
-                        _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
-
-                        // set server on callback for responding to requests
-                        serverCallback.Server = _bluetoothGattServer;
-
-                        // add service 
-                        _bluetoothGattServer.AddService(_deviceIdService);
-
-                        // start advertisement
                         AdvertiseSettings advertiseSettings = new AdvertiseSettings.Builder()
                                                                                    .SetAdvertiseMode(AdvertiseMode.LowPower)
                                                                                    .SetTxPowerLevel(AdvertiseTx.PowerLow)
@@ -192,8 +179,6 @@ namespace Sensus.Android.Probes.Context
                                                                        .SetIncludeDeviceName(false)
                                                                        .AddServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
                                                                        .Build();
-
-                        _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback();
 
                         BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(advertiseSettings, advertiseData, _bluetoothAdvertiserCallback);
                     }
@@ -222,39 +207,23 @@ namespace Sensus.Android.Probes.Context
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while stopping advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
-                finally
-                {
-                    _bluetoothAdvertiserCallback = null;
-                }
 
-                // remove the service
-                try
-                {
-                    _bluetoothGattServer?.RemoveService(_deviceIdService);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while removing service:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _deviceIdService = null;
-                }
-
-                // close the server
-                try
-                {
-                    _bluetoothGattServer?.Close();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while closing GATT server:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _bluetoothGattServer = null;
-                }
+                _bluetoothAdvertiserCallback.CloseServer();
             });
+        }
+
+        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        {
+            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+
+            if (Running)
+            {
+                // if the user disables/enables BT manually, we will no longer be advertising the service. start advertising
+                // on each health test to ensure we're advertising.
+                StartAdvertising();
+            }
+
+            return restart;
         }
         #endregion
     }

@@ -14,7 +14,6 @@
 
 using System;
 using Android.Bluetooth;
-using Java.Util;
 using Sensus.Probes.Context;
 using System.Text;
 
