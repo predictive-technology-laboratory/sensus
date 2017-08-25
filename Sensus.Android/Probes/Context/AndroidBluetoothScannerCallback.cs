@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using Android.App;
-using Android.Bluetooth;
 using Android.Bluetooth.LE;
 using Android.OS;
 using Java.Lang;
