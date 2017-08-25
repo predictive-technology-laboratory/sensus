@@ -256,7 +256,9 @@ namespace Sensus.Callbacks
                 SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
             }
             else
+            {
                 SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
+            }
         }
 
         /// <summary>

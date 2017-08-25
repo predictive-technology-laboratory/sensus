@@ -90,7 +90,9 @@ namespace Sensus.iOS.Callbacks
 
                 // only raise callback if it is still scheduled
                 if (!CallbackIsScheduled(callbackId))
+                {
                     return;
+                }
 
                 SensusServiceHelper.Get().Logger.Log("Servicing callback " + callbackId, LoggingLevel.Normal, GetType());
 
@@ -121,7 +123,9 @@ namespace Sensus.iOS.Callbacks
         {
             DisplayPage displayPage;
             if (Enum.TryParse(notificationInfo?.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
+            {
                 SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
+            }
         }
     }
 }
