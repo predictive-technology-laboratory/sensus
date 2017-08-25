@@ -600,10 +600,10 @@ namespace Sensus.Android
         {
             base.DisableBluetooth(reenable, lowEnergy, rationale);
 
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+
             // check whether bluetooth is enabled
-            BluetoothManager bluetoothManager = _service.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
-            BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
-            if (bluetoothAdapter != null && bluetoothAdapter.IsEnabled)
+            if (bluetoothAdapter?.IsEnabled ?? false)
             {
                 ManualResetEvent disableWait = new ManualResetEvent(false);
                 ManualResetEvent enableWait = new ManualResetEvent(false);
@@ -611,9 +611,13 @@ namespace Sensus.Android
                 EventHandler<global::Android.Bluetooth.State> StateChangedHandler = (sender, newState) =>
                 {
                     if (newState == global::Android.Bluetooth.State.Off)
+                    {
                         disableWait.Set();
+                    }
                     else if (newState == global::Android.Bluetooth.State.On)
+                    {
                         enableWait.Set();
+                    }
                 };
 
                 AndroidBluetoothBroadcastReceiver.STATE_CHANGED += StateChangedHandler;
@@ -621,7 +625,9 @@ namespace Sensus.Android
                 try
                 {
                     if (!bluetoothAdapter.Disable())
+                    {
                         disableWait.Set();
+                    }
                 }
                 catch (Exception)
                 {
@@ -652,11 +658,15 @@ namespace Sensus.Android
 
             bool isEnabled = bluetoothAdapter?.IsEnabled ?? false;
 
-            // dispatch an intent to reenable bluetooth, which will require user interaction
+            // dispatch an intent to reenable bluetooth, which will require user interaction.
             if (reenable && !isEnabled)
+            {
                 return EnableBluetooth(lowEnergy, rationale);
+            }
             else
+            {
                 return isEnabled;
+            }
         }
 
         #region device awake / sleep
