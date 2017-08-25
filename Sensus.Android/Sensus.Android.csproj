@@ -77,12 +77,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="PCLStorage.Abstractions">
       <HintPath>..\packages\PCLStorage.1.0.2\lib\monoandroid\PCLStorage.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Android">
-      <HintPath>..\dependencies\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\dependencies\mapextend\android\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="Plugin.CurrentActivity">
       <HintPath>..\packages\Plugin.CurrentActivity.1.0.1\lib\MonoAndroid10\Plugin.CurrentActivity.dll</HintPath>
