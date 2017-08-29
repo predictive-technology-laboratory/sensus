@@ -13,51 +13,24 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
+using Sensus.Context;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Context
 {
-    public abstract class BluetoothDeviceProximityProbe : ListeningProbe
+    public abstract class BluetoothDeviceProximityProbe : PollingProbe
     {
-        [JsonIgnore]
-        protected override bool DefaultKeepDeviceAwake
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public const string DEVICE_ID_SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
+        public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
-        [JsonIgnore]
-        protected override string DeviceAwakeWarning
-        {
-            get
-            {
-                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
-            }
-        }
-
-        [JsonIgnore]
-        protected override string DeviceAsleepWarning
-        {
-            get
-            {
-                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
-            }
-        }
+        protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
 
         public sealed override string DisplayName
         {
             get { return "Bluetooth Encounters"; }
-        }
-
-        public override string CollectionDescription
-        {
-            get
-            {
-                return "Nearby Bluetooth Devices:  Upon encounter.";
-            }
         }
 
         public sealed override Type DatumType
@@ -65,14 +38,128 @@ namespace Sensus.Probes.Context
             get { return typeof(BluetoothDeviceProximityDatum); }
         }
 
+        public BluetoothDeviceProximityProbe()
+        {
+            EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Bluetooth not enabled. Cannot start Bluetooth probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
+        }
+
+        protected sealed override void InternalStart()
+        {
+            base.InternalStart();
+
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Starting advertising.", LoggingLevel.Normal, GetType());
+                StartAdvertising();
+            }
+            catch(Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        protected abstract void StartAdvertising();
+
+        protected sealed override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
+        {
+            // restart the scan. on android this will cause the thread to sleep while data accumate. we need to sleep in order
+            // to keep the cpu alive, as we're holding a wakelock for the poll. this is not allowed on ios, where we have a 
+            // limited amount of time to return from the poll. thus, on ios, we just start the scan and return immediately 
+            // without waiting for results to accumulate.
+
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                StopScan();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Starting scan.", LoggingLevel.Normal, GetType());
+                StartScan();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            // create a new list to return any data that have accumulated -- this only plays a role in android, where we 
+            // wait for data to accumulate while holding a wakelock. on ios, data are added directly via Probe.StoreDatumAsync 
+            // because we're not allowed to wait for data to accumulate (background time expiration).
+            List<BluetoothDeviceProximityDatum> dataToReturn;
+
+            lock (EncounteredDeviceData)
+            {
+                dataToReturn = EncounteredDeviceData.ToList();
+                EncounteredDeviceData.Clear();
+            }
+
+            // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
+            if (dataToReturn.Count == 0)
+            {
+                dataToReturn.Add(null);
+            }
+
+            return dataToReturn;
+        }
+
+        protected abstract void StartScan();
+
+        public sealed override void Stop()
+        {
+            base.Stop();
+
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                StopScan();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping advertising.", LoggingLevel.Normal, GetType());
+                StopAdvertising();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        protected abstract void StopScan();
+
+        protected abstract void StopAdvertising();
+
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

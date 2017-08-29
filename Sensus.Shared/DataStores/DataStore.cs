@@ -245,7 +245,9 @@ namespace Sensus.DataStores
                 // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
                 // only do this for the remote data store to that we don't get duplicate notifications.
                 if (this is RemoteDataStore)
+                {
                     userNotificationMessage = "Please open this notification to submit your data for the \"" + _protocol.Name + "\" study.";
+                }
 #endif  
 
                 _commitCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => CommitAndReleaseAddedDataAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_commitTimeoutMinutes), userNotificationMessage);
@@ -260,7 +262,7 @@ namespace Sensus.DataStores
         /// <param name="datum">Datum to add.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <param name="forceCommit">If set to <c>true</c> force immediate commit of added data.</param>
-        public Task<bool> AddAsync(Datum datum, CancellationToken cancellationToken, bool forceCommit)
+        public Task<bool> AddAsync(Datum datum, CancellationToken? cancellationToken, bool forceCommit)
         {
             lock (_data)
             {
@@ -276,7 +278,10 @@ namespace Sensus.DataStores
 
                 SensusServiceHelper.Get().Logger.Log("Stored datum:  " + datum.GetType().Name + " " + datum.Timestamp, LoggingLevel.Debug, GetType());
 
-                if (!_sizeTriggeredCommitRunning && !_forcedCommitRunning)
+                // we require a cancellation token below because size and forced commits may take a long time and sometimes need to be cancelled
+                // if background time runs out. the BLE background scanning processes adds data directly to the data store with no associated
+                // cancellation token. thus it should not be allowed to trigger a long-running commit.
+                if (!_sizeTriggeredCommitRunning && !_forcedCommitRunning && cancellationToken != null)
                 {
                     // if we've accumulated a chunk in memory, commit the chunk to reduce memory pressure
                     if (_data.Count >= COMMIT_CHUNK_SIZE)
@@ -289,7 +294,7 @@ namespace Sensus.DataStores
                         {
                             try
                             {
-                                await CommitAndReleaseAddedDataAsync(cancellationToken);
+                                await CommitAndReleaseAddedDataAsync(cancellationToken.Value);
                                 return true;
                             }
                             catch (Exception ex)
@@ -313,7 +318,7 @@ namespace Sensus.DataStores
                         {
                             try
                             {
-                                await CommitAndReleaseAddedDataAsync(cancellationToken);
+                                await CommitAndReleaseAddedDataAsync(cancellationToken.Value);
                                 return true;
                             }
                             catch (Exception ex)

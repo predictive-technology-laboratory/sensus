@@ -95,9 +95,13 @@ namespace Sensus.Probes
                     TimeSpan duration = TimeSpan.FromSeconds(6);
 
                     if (value && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
+                    {
                         SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false, duration);
+                    }
                     else if (!value && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
+                    {
                         SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false, duration);
+                    }
                 }
 
                 _keepDeviceAwake = value;
@@ -154,9 +158,13 @@ namespace Sensus.Probes
                         {
                             // if the current start time came before the participation horizon, use the horizon as the start time.
                             if (startStopTime.Item2 < Protocol.ParticipationHorizon)
+                            {
                                 startTime = Protocol.ParticipationHorizon;
+                            }
                             else
+                            {
                                 startTime = startStopTime.Item2;
+                            }
 
                             // the probe is currently running, so use the current time as the stop time.
                             stopTime = DateTime.Now;
@@ -168,24 +176,33 @@ namespace Sensus.Probes
 
                             // if the previous element is a start time, use it.
                             if (index > 0 && StartStopTimes[index - 1].Item1)
+                            {
                                 startTime = StartStopTimes[index - 1].Item2;
+                            }
 
                             // if we don't have a previous element that's a start time, or we do but the start time was before the participation horizon, then 
                             // use the participation horizon as the start time.
                             if (startTime == null || startTime.Value < Protocol.ParticipationHorizon)
+                            {
                                 startTime = Protocol.ParticipationHorizon;
+                            }
                         }
 
                         // if we've got a start and stop time, return the total number of seconds covered.
                         if (startTime != null && stopTime != null)
+                        {
                             return (stopTime.Value - startTime.Value).TotalSeconds;
+                        }
                         else
+                        {
                             return 0;
+                        }
 
                     }).Sum();
                 }
 
                 double participationHorizonSeconds = TimeSpan.FromDays(Protocol.ParticipationHorizonDays).TotalSeconds;
+
                 return (float)(runningSeconds / participationHorizonSeconds);
 #elif LOCAL_TESTS
                 return 0;
@@ -257,7 +274,7 @@ namespace Sensus.Probes
 
         protected abstract void StopListening();
 
-        public sealed override Task<bool> StoreDatumAsync(Datum datum, CancellationToken cancellationToken = default(CancellationToken))
+        public sealed override Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken = default(CancellationToken?))
         {
             bool store = true;
 

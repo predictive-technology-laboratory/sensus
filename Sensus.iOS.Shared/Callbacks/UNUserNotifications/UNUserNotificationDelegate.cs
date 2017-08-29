@@ -41,7 +41,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             NSDictionary notificationInfo = request?.Content?.UserInfo;
 
             if (notificationInfo == null)
+            {
                 return;
+            }
 
             SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
