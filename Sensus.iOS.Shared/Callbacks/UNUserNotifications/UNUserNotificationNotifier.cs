@@ -159,7 +159,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         public override void CancelNotification(string id)
         {
             if (id == null)
+            {
                 return;
+            }
 
             var ids = new[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);

@@ -26,7 +26,6 @@ using Xamarin;
 using Xamarin.Forms;
 using Xamarin.Facebook;
 using Xamarin.Forms.Platform.Android;
-using Xam.Plugin.MapExtend.Droid;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 
@@ -76,7 +75,6 @@ namespace Sensus.Android
 
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
-            MapExtendRenderer.Init(this, savedInstanceState);
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
             CrossCurrentActivity.Current.Activity = this;
 

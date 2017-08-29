@@ -883,7 +883,9 @@ namespace Sensus
             if (_flashNotificationsEnabled)
             {
                 if (!duration.HasValue)
+                {
                     duration = TimeSpan.FromSeconds(2);
+                }
 
                 ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
             }

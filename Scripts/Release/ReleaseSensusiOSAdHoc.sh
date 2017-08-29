@@ -31,7 +31,7 @@ echo "The following differences will be used to build the iOS ad-hoc release."
 git difftool
 
 # build IPA
-xbuild /p:Configuration=Ad-Hoc /p:Platform=iPhone /p:BuildIpa=true /target:Rebuild ../../Sensus.iOS/Sensus.iOS.csproj
+msbuild /p:Configuration=Ad-Hoc /p:Platform=iPhone /p:BuildIpa=true /target:Rebuild ../../Sensus.iOS/Sensus.iOS.csproj
 if [ $? -ne 0 ]; then
     echo "Error building iOS ad-hoc release."
     exit $?;

@@ -21,28 +21,19 @@ namespace Sensus.Probes.Context
 {
     public class BluetoothDeviceProximityDatum : Datum
     {
-        private string _name;
-        private string _address;
+        private string _encounteredDeviceId;
 
         [StringProbeTriggerProperty]
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        public string Name
+        [Anonymizable("Encountered Device ID:", typeof(StringHashAnonymizer), false)]
+        public string EncounteredDeviceId
         {
-            get { return _name; }
-            set { _name = value; }
-        }
-
-        [StringProbeTriggerProperty]
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        public string Address
-        {
-            get { return _address; }
-            set { _address = value; }
+            get { return _encounteredDeviceId; }
+            set { _encounteredDeviceId = value; }
         }
 
         public override string DisplayDetail
         {
-            get { return _name + " (" + _address + ")"; }
+            get { return _encounteredDeviceId; }
         }
 
         /// <summary>
@@ -50,18 +41,16 @@ namespace Sensus.Probes.Context
         /// </summary>
         private BluetoothDeviceProximityDatum() { }
 
-        public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string name, string address)
+        public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string encounteredDeviceId)
             : base(timestamp)
         {
-            _name = name == null ? "" : name;
-            _address = address == null ? "" : address;
+            _encounteredDeviceId = encounteredDeviceId;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Name:  " + _name + Environment.NewLine +
-                   "Address:  " + _address;
+                   "Encountered device ID:  " + _encounteredDeviceId;
         }
     }
 }
