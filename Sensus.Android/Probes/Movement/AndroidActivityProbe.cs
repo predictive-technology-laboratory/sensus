@@ -29,15 +29,51 @@ using Android.Gms.Common;
 using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using Plugin.Permissions;
+using Android.Gms.Awareness.Snapshot;
+using Sensus.UI.UiProperties;
+using Sensus.Probes.Location;
 
 namespace Sensus.Android.Probes.Movement
 {
     public class AndroidActivityProbe : ListeningProbe
     {
-        public const string ACTIVITY_RECOGNITION_ACTION = "SENSUS_ACTIVITY_RECOGNITION";
+        private enum ActivityPhase
+        {
+            Starting,
+            During,
+            Stopping
+        };
+
+        private enum FenceUpdateAction
+        {
+            Add,
+            Remove
+        }
+
+        public const string ACTION_BASE = "SENSUS_AWARENESS";
+        public const string ACTIVITY_RECOGNITION_LOCATION = "LOCATION";
 
         private GoogleApiClient _awarenessApiClient;
-        private Dictionary<string, AndroidActivityProbeBroadcastReceiver> _activityReciever;
+        private Dictionary<string, AndroidActivityProbeBroadcastReceiver> _nameReciever;
+        private int _locationChangeRadiusMeters;
+
+        [EntryIntegerUiProperty("Location Change Radius (Meters):", true, 30)]
+        public int LocationChangeRadiusMeters
+        {
+            get
+            {
+                return _locationChangeRadiusMeters;
+            }
+            set
+            {
+                if (value <= 0)
+                {
+                    value = 25;
+                }
+
+                _locationChangeRadiusMeters = value;
+            }
+        }
 
         [JsonIgnore]
         public override Type DatumType
@@ -86,42 +122,34 @@ namespace Sensus.Android.Probes.Movement
 
         public AndroidActivityProbe()
         {
-            _activityReciever = new Dictionary<string, AndroidActivityProbeBroadcastReceiver>();
+            _nameReciever = new Dictionary<string, AndroidActivityProbeBroadcastReceiver>();
+            _locationChangeRadiusMeters = 25;
 
-            CreateReceiver(nameof(DetectedActivityFence.InVehicle) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.InVehicle) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.InVehicle) + ".Stopping");
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.InVehicle));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.OnBicycle));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.OnFoot));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Running));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Still));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Tilting));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Unknown));
+            CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Walking));
 
-            CreateReceiver(nameof(DetectedActivityFence.OnBicycle) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.OnBicycle) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.OnBicycle) + ".Stopping");
+            CreateReceiver(ACTIVITY_RECOGNITION_LOCATION);
 
-            CreateReceiver(nameof(DetectedActivityFence.OnFoot) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.OnFoot) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.OnFoot) + ".Stopping");
-
-            CreateReceiver(nameof(DetectedActivityFence.Running) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.Running) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.Running) + ".Stopping");
-
-            CreateReceiver(nameof(DetectedActivityFence.Still) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.Still) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.Still) + ".Stopping");
-
-            CreateReceiver(nameof(DetectedActivityFence.Tilting) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.Tilting) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.Tilting) + ".Stopping");
-
-            CreateReceiver(nameof(DetectedActivityFence.Walking) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.Walking) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.Walking) + ".Stopping");
-
-            CreateReceiver(nameof(DetectedActivityFence.Unknown) + ".Starting");
-            CreateReceiver(nameof(DetectedActivityFence.Unknown) + ".During");
-            CreateReceiver(nameof(DetectedActivityFence.Unknown) + ".Stopping");
+            _nameReciever[ACTIVITY_RECOGNITION_LOCATION].LocationChanged += (sender, e) =>
+            {
+                RequestLocationSnapShot();
+            };
         }
 
-        private void CreateReceiver(string activityName)
+        private void CreateActivityPhaseReceivers(string activity)
+        {
+            CreateReceiver(activity + "." + ActivityPhase.Starting);
+            CreateReceiver(activity + "." + ActivityPhase.During);
+            CreateReceiver(activity + "." + ActivityPhase.Stopping);
+        }
+
+        private void CreateReceiver(string name)
         {
             AndroidActivityProbeBroadcastReceiver receiver = new AndroidActivityProbeBroadcastReceiver();
 
@@ -130,7 +158,7 @@ namespace Sensus.Android.Probes.Movement
                 await StoreDatumAsync(activityDatum);
             };
 
-            _activityReciever.Add(activityName, receiver);
+            _nameReciever.Add(name, receiver);
         }
 
         protected override void Initialize()
@@ -176,6 +204,7 @@ namespace Sensus.Android.Probes.Movement
 
             if (_awarenessApiClient.IsConnected)
             {
+                // we need location permission in order to obtain / fence the user's location.
                 if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                 {
                     string error = "Geolocation is not permitted on this device. Cannot start location fences.";
@@ -190,46 +219,172 @@ namespace Sensus.Android.Probes.Movement
 
         protected override void StartListening()
         {
-            AddFence(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
-            AddFence(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
-            AddFence(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
-            AddFence(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
-            AddFence(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
-            AddFence(DetectedActivityFence.Tilting, nameof(DetectedActivityFence.Tilting));
-            AddFence(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
-            AddFence(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
+            AddPhasedFences(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
+            AddPhasedFences(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
+            AddPhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
+            AddPhasedFences(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
+            AddPhasedFences(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
+            AddPhasedFences(DetectedActivityFence.Tilting, nameof(DetectedActivityFence.Tilting));
+            AddPhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
+            AddPhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 
-            // start monitoring location changes
+
+            RequestLocationSnapShot();
+        }
+
+        private void RequestLocationSnapShot()
+        {
             Task.Run(async () =>
             {
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location) == PermissionStatus.Granted)
                 {
-                    // get current location and start fence when obtained
+                    ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(_awarenessApiClient);
+                    global::Android.Locations.Location location = locationResult.Location;
+
+                    await StoreDatumAsync(new LocationDatum());
+
+                    AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
+                    FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
+                    UpdateRequestBuilder(locationFence, ACTION_BASE + "." + ACTIVITY_RECOGNITION_LOCATION, FenceUpdateAction.Add, ref requestBuilder);
+
+                    if (UpdateFences(requestBuilder.Build()))
+                    {
+                        RegisterReceiver(ACTIVITY_RECOGNITION_LOCATION);
+                    }
                 }
-            });
+
+            }).Wait();
         }
 
-        private void AddFence(int activityId, string activityName)
+        private void AddPhasedFences(int activityId, string activityName)
         {
-            string baseId = ACTIVITY_RECOGNITION_ACTION + "." + activityName;
+            FenceUpdateRequestBuilder addFencesRequestBuilder = new FenceUpdateRequestBuilder();
 
+            UpdateRequestBuilder(activityId, activityName, ActivityPhase.Starting, FenceUpdateAction.Add, ref addFencesRequestBuilder);
+            UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Add, ref addFencesRequestBuilder);
+            UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Add, ref addFencesRequestBuilder);
+
+            if (UpdateFences(addFencesRequestBuilder.Build()))
+            {
+                RegisterReceiver(activityName + "." + ActivityPhase.Starting);
+                RegisterReceiver(activityName + "." + ActivityPhase.During);
+                RegisterReceiver(activityName + "." + ActivityPhase.Stopping);
+            }
+        }
+
+        private void RegisterReceiver(string name)
+        {
+            Application.Context.RegisterReceiver(_nameReciever[name], new IntentFilter(ACTION_BASE + "." + name));
+        }
+
+        protected override void StopListening()
+        {
+            RemovePhasedFences(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
+            RemovePhasedFences(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
+            RemovePhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
+            RemovePhasedFences(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
+            RemovePhasedFences(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
+            RemovePhasedFences(DetectedActivityFence.Tilting, nameof(DetectedActivityFence.Tilting));
+            RemovePhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
+            RemovePhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
+
+            // remove location fence
             FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
-
-            string fenceId;
-
-            fenceId = baseId + ".Starting";
-            requestBuilder.AddFence(fenceId, DetectedActivityFence.Starting(activityId), GetFencePendingIntent(fenceId));
-            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(fenceId));
-
-            fenceId = baseId + ".During";
-            requestBuilder.AddFence(fenceId, DetectedActivityFence.During(activityId), GetFencePendingIntent(fenceId));
-            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(fenceId));
-
-            fenceId = baseId + ".Stopping";
-            requestBuilder.AddFence(fenceId, DetectedActivityFence.Stopping(activityId), GetFencePendingIntent(fenceId));
-            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(fenceId));
-
+            UpdateRequestBuilder(null, ACTION_BASE + "." + ACTIVITY_RECOGNITION_LOCATION, FenceUpdateAction.Remove, ref requestBuilder);
             UpdateFences(requestBuilder.Build());
+            UnregisterReceiver(ACTIVITY_RECOGNITION_LOCATION);
+                               
+            // disconnect client
+            _awarenessApiClient.Disconnect();
+        }
+
+        private void RemovePhasedFences(int activityId, string activityName)
+        {
+            try
+            {
+                FenceUpdateRequestBuilder removeFencesRequestBuilder = new FenceUpdateRequestBuilder();
+
+                UpdateRequestBuilder(activityId, activityName, ActivityPhase.Starting, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
+                UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
+                UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
+
+                if (!UpdateFences(removeFencesRequestBuilder.Build()))
+                {
+                    // we'll catch this immediately
+                    throw new Exception("Failed to remove fence (e.g., timed out).");
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while removing fence:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            // unconditionally unregister the receivers. we may have failed to remove the fence for a variety of reasons, but 
+            // the caller wishes to discontinue updates from the fence.
+
+            try
+            {
+                UnregisterReceiver(activityName + "." + ActivityPhase.Starting);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            try
+            {
+                UnregisterReceiver(activityName + "." + ActivityPhase.During);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            try
+            {
+                UnregisterReceiver(activityName + "." + ActivityPhase.Stopping);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+            }
+        }
+
+        private void UnregisterReceiver(string name)
+        {
+            Application.Context.UnregisterReceiver(_nameReciever[name]);
+        }
+
+        private void UpdateRequestBuilder(int activityId, string activityName, ActivityPhase phase, FenceUpdateAction action, ref FenceUpdateRequestBuilder requestBuilder)
+        {
+            AwarenessFence fence = null;
+
+            if (phase == ActivityPhase.Starting)
+            {
+                fence = DetectedActivityFence.Starting(activityId);
+            }
+            else if (phase == ActivityPhase.During)
+            {
+                fence = DetectedActivityFence.During(activityId);
+            }
+            else if (phase == ActivityPhase.Stopping)
+            {
+                fence = DetectedActivityFence.Stopping(activityId);
+            }
+                
+            UpdateRequestBuilder(fence, ACTION_BASE + "." + activityName + "." + phase, action, ref requestBuilder);
+        }
+
+        private void UpdateRequestBuilder(AwarenessFence fence, string fenceId, FenceUpdateAction action, ref FenceUpdateRequestBuilder requestBuilder)
+        {
+            if (action == FenceUpdateAction.Add)
+            {
+                requestBuilder.AddFence(fenceId, fence, GetFencePendingIntent(fenceId));
+            }
+            else if (action == FenceUpdateAction.Remove)
+            {
+                requestBuilder.RemoveFence(fenceId);
+            }
         }
 
         private PendingIntent GetFencePendingIntent(string fenceId)
@@ -298,53 +453,6 @@ namespace Sensus.Android.Probes.Movement
             }
 
             return success;
-        }
-
-        protected override void StopListening()
-        {
-            // remove fences
-            RemoveFence(nameof(DetectedActivityFence.InVehicle));
-            RemoveFence(nameof(DetectedActivityFence.OnBicycle));
-            RemoveFence(nameof(DetectedActivityFence.OnFoot));
-            RemoveFence(nameof(DetectedActivityFence.Running));
-            RemoveFence(nameof(DetectedActivityFence.Still));
-            RemoveFence(nameof(DetectedActivityFence.Tilting));
-            RemoveFence(nameof(DetectedActivityFence.Unknown));
-            RemoveFence(nameof(DetectedActivityFence.Walking));
-
-            // disconnect client
-            _awarenessApiClient.Disconnect();
-        }
-
-        private void RemoveFence(string activityName)
-        {
-            try
-            {
-                IFenceUpdateRequest removeFenceRequest = new FenceUpdateRequestBuilder()
-                    .RemoveFence(ACTIVITY_RECOGNITION_ACTION + "." + activityName)
-                    .Build();
-
-                if (!UpdateFences(removeFenceRequest))
-                {
-                    // we'll catch this immediately
-                    throw new Exception("Failed to remove fence (e.g., timed out).");
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while removing fence:  " + ex, LoggingLevel.Normal, GetType());
-            }
-
-            // unconditionally unregister the receiver. we may have failed to remove the fence for a variety of reasons, but 
-            // the caller wishes to discontinue updates from the fence.
-            try
-            {
-                Application.Context.UnregisterReceiver(_activityReciever[activityName]);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
-            }
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
