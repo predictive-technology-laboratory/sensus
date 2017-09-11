@@ -26,6 +26,9 @@ using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
 using Android.Gms.Common;
+using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
+using Plugin.Permissions;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -85,15 +88,37 @@ namespace Sensus.Android.Probes.Movement
         {
             _activityReciever = new Dictionary<string, AndroidActivityProbeBroadcastReceiver>();
 
-            // create a separate broadcast receiver for each activity type
-            CreateReceiver(nameof(DetectedActivityFence.InVehicle));
-            CreateReceiver(nameof(DetectedActivityFence.OnBicycle));
-            CreateReceiver(nameof(DetectedActivityFence.OnFoot));
-            CreateReceiver(nameof(DetectedActivityFence.Running));
-            CreateReceiver(nameof(DetectedActivityFence.Still));
-            CreateReceiver(nameof(DetectedActivityFence.Tilting));
-            CreateReceiver(nameof(DetectedActivityFence.Unknown));
-            CreateReceiver(nameof(DetectedActivityFence.Walking));
+            CreateReceiver(nameof(DetectedActivityFence.InVehicle) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.InVehicle) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.InVehicle) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.OnBicycle) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.OnBicycle) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.OnBicycle) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.OnFoot) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.OnFoot) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.OnFoot) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.Running) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.Running) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.Running) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.Still) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.Still) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.Still) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.Tilting) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.Tilting) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.Tilting) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.Walking) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.Walking) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.Walking) + ".Stopping");
+
+            CreateReceiver(nameof(DetectedActivityFence.Unknown) + ".Starting");
+            CreateReceiver(nameof(DetectedActivityFence.Unknown) + ".During");
+            CreateReceiver(nameof(DetectedActivityFence.Unknown) + ".Stopping");
         }
 
         private void CreateReceiver(string activityName)
@@ -149,7 +174,15 @@ namespace Sensus.Android.Probes.Movement
 
             _awarenessApiClient.BlockingConnect();
 
-            if (!_awarenessApiClient.IsConnected)
+            if (_awarenessApiClient.IsConnected)
+            {
+                if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+                {
+                    string error = "Geolocation is not permitted on this device. Cannot start location fences.";
+                    SensusServiceHelper.Get().FlashNotificationAsync(error);
+                }
+            }
+            else
             {
                 throw new Exception("Failed to connect with Google Awareness API.");
             }
@@ -165,25 +198,44 @@ namespace Sensus.Android.Probes.Movement
             AddFence(DetectedActivityFence.Tilting, nameof(DetectedActivityFence.Tilting));
             AddFence(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
             AddFence(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
+
+            // start monitoring location changes
+            Task.Run(async () =>
+            {
+                if (await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location) == PermissionStatus.Granted)
+                {
+                    // get current location and start fence when obtained
+                }
+            });
         }
 
         private void AddFence(int activityId, string activityName)
         {
-            string id = ACTIVITY_RECOGNITION_ACTION + "." + activityName;
+            string baseId = ACTIVITY_RECOGNITION_ACTION + "." + activityName;
 
-            // create fence
-            AwarenessFence activityFence = DetectedActivityFence.During(activityId);
-            Intent activityRecognitionCallbackIntent = new Intent(id);
-            PendingIntent activityRecognitionCallbackPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, activityRecognitionCallbackIntent, 0);
-            IFenceUpdateRequest addFenceRequest = new FenceUpdateRequestBuilder()
-                .AddFence(id, activityFence, activityRecognitionCallbackPendingIntent)
-                .Build();
+            FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
 
-            // add fence and register receiver if successful
-            if (UpdateFences(addFenceRequest))
-            {
-                Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(id));
-            }
+            string fenceId;
+
+            fenceId = baseId + ".Starting";
+            requestBuilder.AddFence(fenceId, DetectedActivityFence.Starting(activityId), GetFencePendingIntent(fenceId));
+            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(fenceId));
+
+            fenceId = baseId + ".During";
+            requestBuilder.AddFence(fenceId, DetectedActivityFence.During(activityId), GetFencePendingIntent(fenceId));
+            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(fenceId));
+
+            fenceId = baseId + ".Stopping";
+            requestBuilder.AddFence(fenceId, DetectedActivityFence.Stopping(activityId), GetFencePendingIntent(fenceId));
+            Application.Context.RegisterReceiver(_activityReciever[activityName], new IntentFilter(fenceId));
+
+            UpdateFences(requestBuilder.Build());
+        }
+
+        private PendingIntent GetFencePendingIntent(string fenceId)
+        {
+            Intent activityRecognitionCallbackIntent = new Intent(fenceId);
+            return PendingIntent.GetBroadcast(Application.Context, 0, activityRecognitionCallbackIntent, 0);
         }
 
         private bool UpdateFences(IFenceUpdateRequest updateRequest)
