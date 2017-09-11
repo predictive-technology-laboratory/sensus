@@ -144,7 +144,7 @@
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>CFBundleShortVersionString</key>
-	<string>14.2.0</string>
+	<string>14.2.1</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -154,7 +154,7 @@
 	<key>CFBundleName</key>
 	<string>Sensus</string>
 	<key>CFBundleVersion</key>
-	<string>14.2.0</string>
+	<string>14.2.1</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Sensus does not use or transmit you calendar information.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
