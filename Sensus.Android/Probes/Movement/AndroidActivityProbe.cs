@@ -50,8 +50,8 @@ namespace Sensus.Android.Probes.Movement
             Remove
         }
 
-        public const string ACTION_BASE = "SENSUS_AWARENESS";
-        public const string ACTIVITY_RECOGNITION_LOCATION = "LOCATION";
+        public const string AWARENESS_ID_BASE = "SENSUS_AWARENESS";
+        public const string AWARENESS_ID_LOCATION = "LOCATION";
 
         private GoogleApiClient _awarenessApiClient;
         private Dictionary<string, AndroidActivityProbeBroadcastReceiver> _nameReciever;
@@ -134,37 +134,44 @@ namespace Sensus.Android.Probes.Movement
             CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Unknown));
             CreateActivityPhaseReceivers(nameof(DetectedActivityFence.Walking));
 
-            CreateReceiver(ACTIVITY_RECOGNITION_LOCATION);
-
-            _nameReciever[ACTIVITY_RECOGNITION_LOCATION].LocationChanged += (sender, e) =>
+            CreateReceiver(AWARENESS_ID_LOCATION).LocationChanged += (sender, e) =>
             {
-                RequestLocationSnapShot();
+                RequestLocationSnapshot();
             };
         }
 
         private void CreateActivityPhaseReceivers(string activity)
         {
-            CreateReceiver(activity + "." + ActivityPhase.Starting);
-            CreateReceiver(activity + "." + ActivityPhase.During);
-            CreateReceiver(activity + "." + ActivityPhase.Stopping);
-        }
-
-        private void CreateReceiver(string name)
-        {
-            AndroidActivityProbeBroadcastReceiver receiver = new AndroidActivityProbeBroadcastReceiver();
-
-            receiver.ActivityChanged += async (sender, activityDatum) =>
+            CreateReceiver(activity + "." + ActivityPhase.Starting).ActivityChanged += async (sender, activityDatum) =>
             {
                 await StoreDatumAsync(activityDatum);
             };
 
+            CreateReceiver(activity + "." + ActivityPhase.During).ActivityChanged += async (sender, activityDatum) =>
+            {
+                await StoreDatumAsync(activityDatum);
+            };
+
+            CreateReceiver(activity + "." + ActivityPhase.Stopping).ActivityChanged += async (sender, activityDatum) =>
+            {
+                await StoreDatumAsync(activityDatum);
+            };
+        }
+
+        private AndroidActivityProbeBroadcastReceiver CreateReceiver(string name)
+        {
+            AndroidActivityProbeBroadcastReceiver receiver = new AndroidActivityProbeBroadcastReceiver();
+
             _nameReciever.Add(name, receiver);
+
+            return receiver;
         }
 
         protected override void Initialize()
         {
             base.Initialize();
 
+            // check for availability of Google Play Services
             int googlePlayServicesAvailability = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(Application.Context);
 
             if (googlePlayServicesAvailability != ConnectionResult.Success)
@@ -183,7 +190,7 @@ namespace Sensus.Android.Probes.Movement
                 throw new Exception(message);
             }
 
-            // connected to the awareness client
+            // connect awareness client
             _awarenessApiClient = new GoogleApiClient.Builder(Application.Context).AddApi(Awareness.Api)
 
                 .AddConnectionCallbacks(
@@ -204,7 +211,7 @@ namespace Sensus.Android.Probes.Movement
 
             if (_awarenessApiClient.IsConnected)
             {
-                // we need location permission in order to obtain / fence the user's location.
+                // we need location permission in order to snapshot / fence the user's location.
                 if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                 {
                     string error = "Geolocation is not permitted on this device. Cannot start location fences.";
@@ -228,53 +235,53 @@ namespace Sensus.Android.Probes.Movement
             AddPhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
             AddPhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 
-
-            RequestLocationSnapShot();
+            RegisterReceiver(AWARENESS_ID_LOCATION);
+            RequestLocationSnapshot();
         }
 
-        private void RequestLocationSnapShot()
+        private void AddPhasedFences(int activityId, string activityName)
+        {
+            RegisterReceiver(activityName + "." + ActivityPhase.Starting);
+            RegisterReceiver(activityName + "." + ActivityPhase.During);
+            RegisterReceiver(activityName + "." + ActivityPhase.Stopping);
+
+            FenceUpdateRequestBuilder addFencesRequestBuilder = new FenceUpdateRequestBuilder();
+            UpdateRequestBuilder(activityId, activityName, ActivityPhase.Starting, FenceUpdateAction.Add, ref addFencesRequestBuilder);
+            UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Add, ref addFencesRequestBuilder);
+            UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Add, ref addFencesRequestBuilder);
+            UpdateFences(addFencesRequestBuilder.Build());
+        }
+
+        private void RequestLocationSnapshot()
         {
             Task.Run(async () =>
             {
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location) == PermissionStatus.Granted)
                 {
+                    // store current location
                     ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(_awarenessApiClient);
                     global::Android.Locations.Location location = locationResult.Location;
+                    DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
+                    await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
 
-                    await StoreDatumAsync(new LocationDatum());
-
-                    AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
+                    // remove the previous location fence
                     FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
-                    UpdateRequestBuilder(locationFence, ACTION_BASE + "." + ACTIVITY_RECOGNITION_LOCATION, FenceUpdateAction.Add, ref requestBuilder);
+                    UpdateRequestBuilder(null, AWARENESS_ID_BASE + "." + AWARENESS_ID_LOCATION, FenceUpdateAction.Remove, ref requestBuilder);
+                    UpdateFences(requestBuilder.Build());
 
-                    if (UpdateFences(requestBuilder.Build()))
-                    {
-                        RegisterReceiver(ACTIVITY_RECOGNITION_LOCATION);
-                    }
+                    // add a fence around the current location
+                    requestBuilder = new FenceUpdateRequestBuilder();
+                    AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
+                    UpdateRequestBuilder(locationFence, AWARENESS_ID_BASE + "." + AWARENESS_ID_LOCATION, FenceUpdateAction.Add, ref requestBuilder);
+                    UpdateFences(requestBuilder.Build());
                 }
 
             }).Wait();
         }
 
-        private void AddPhasedFences(int activityId, string activityName)
-        {
-            FenceUpdateRequestBuilder addFencesRequestBuilder = new FenceUpdateRequestBuilder();
-
-            UpdateRequestBuilder(activityId, activityName, ActivityPhase.Starting, FenceUpdateAction.Add, ref addFencesRequestBuilder);
-            UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Add, ref addFencesRequestBuilder);
-            UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Add, ref addFencesRequestBuilder);
-
-            if (UpdateFences(addFencesRequestBuilder.Build()))
-            {
-                RegisterReceiver(activityName + "." + ActivityPhase.Starting);
-                RegisterReceiver(activityName + "." + ActivityPhase.During);
-                RegisterReceiver(activityName + "." + ActivityPhase.Stopping);
-            }
-        }
-
         private void RegisterReceiver(string name)
         {
-            Application.Context.RegisterReceiver(_nameReciever[name], new IntentFilter(ACTION_BASE + "." + name));
+            Application.Context.RegisterReceiver(_nameReciever[name], new IntentFilter(AWARENESS_ID_BASE + "." + name));
         }
 
         protected override void StopListening()
@@ -290,10 +297,10 @@ namespace Sensus.Android.Probes.Movement
 
             // remove location fence
             FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
-            UpdateRequestBuilder(null, ACTION_BASE + "." + ACTIVITY_RECOGNITION_LOCATION, FenceUpdateAction.Remove, ref requestBuilder);
+            UpdateRequestBuilder(null, AWARENESS_ID_BASE + "." + AWARENESS_ID_LOCATION, FenceUpdateAction.Remove, ref requestBuilder);
             UpdateFences(requestBuilder.Build());
-            UnregisterReceiver(ACTIVITY_RECOGNITION_LOCATION);
-                               
+            UnregisterReceiver(AWARENESS_ID_LOCATION);
+
             // disconnect client
             _awarenessApiClient.Disconnect();
         }
@@ -371,8 +378,13 @@ namespace Sensus.Android.Probes.Movement
             {
                 fence = DetectedActivityFence.Stopping(activityId);
             }
+            else
+            {
+                SensusException.Report("Unknown activity phase:  " + phase);
+                return;
+            }
                 
-            UpdateRequestBuilder(fence, ACTION_BASE + "." + activityName + "." + phase, action, ref requestBuilder);
+            UpdateRequestBuilder(fence, AWARENESS_ID_BASE + "." + activityName + "." + phase, action, ref requestBuilder);
         }
 
         private void UpdateRequestBuilder(AwarenessFence fence, string fenceId, FenceUpdateAction action, ref FenceUpdateRequestBuilder requestBuilder)
@@ -390,7 +402,7 @@ namespace Sensus.Android.Probes.Movement
         private PendingIntent GetFencePendingIntent(string fenceId)
         {
             Intent activityRecognitionCallbackIntent = new Intent(fenceId);
-            return PendingIntent.GetBroadcast(Application.Context, 0, activityRecognitionCallbackIntent, 0);
+            return PendingIntent.GetBroadcast(Application.Context, 0, activityRecognitionCallbackIntent, PendingIntentFlags.UpdateCurrent);
         }
 
         private bool UpdateFences(IFenceUpdateRequest updateRequest)
