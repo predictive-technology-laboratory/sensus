@@ -29,7 +29,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Location information will not be collected at this time. Sensus will ask for your permission again when it is ready to collect location information.</string>
+	<string>Some Sensus studies use your location to understand outcomes of interest. You will be alerted when joining such studies.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -144,7 +144,7 @@
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>CFBundleShortVersionString</key>
-	<string>14.1.2</string>
+	<string>14.2.0</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -154,25 +154,25 @@
 	<key>CFBundleName</key>
 	<string>Sensus</string>
 	<key>CFBundleVersion</key>
-	<string>14.1.2</string>
+	<string>14.2.0</string>
 	<key>NSCalendarsUsageDescription</key>
-	<string>Sensus does not use or transmit you calendar information in any way.</string>
+	<string>Sensus does not use or transmit you calendar information.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Sensus does not use or transmit photos in any way.</string>
+	<string>Sensus does not use or transmit photos.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Certain Sensus studies use Bluetooth sensors to gather data. You will be alerted when joining such studies.</string>
+	<string>Some Sensus studies use Bluetooth sensors to understand outcomes of interest. You will be alerted when joining such studies.</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Certain Sensus studies integrate with HealthKit to gather data. You will be alerted when joining such studies.</string>
+	<string>Some Sensus studies integrate with HealthKit to understand outcomes of interest. You will be alerted when joining such studies.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Sensus does not share health information with other apps.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Certain Sensus studies use the microphone to gather sound data. You will be alerted when joining such studies.</string>
+	<string>Some Sensus studies use the microphone to understand outcomes of interest. You will be alerted when joining such studies.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>Location information will not be collected at this time. Sensus will ask for your permission again when it is ready to collect location information.</string>
+	<string>Some Sensus studies use your location to understand outcomes of interest. You will be alerted when joining such studies.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Sensus is collecting location information for one of the studies you are participating in.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Certain Sensus studies use the accelerometer to gather movement data. You will be alerted when joining such studies.</string>
+	<string>Some Sensus studies use the accelerometer to understand outcomes of interest. You will be alerted when joining such studies.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan QR codes. It will not record any images.</string>
 </dict>
