@@ -37,13 +37,6 @@ namespace Sensus.Android.Probes.Movement
 {
     public class AndroidActivityProbe : ListeningProbe
     {
-        private enum ActivityPhase
-        {
-            Starting,
-            During,
-            Stopping
-        };
-
         private enum FenceUpdateAction
         {
             Add,
@@ -264,19 +257,15 @@ namespace Sensus.Android.Probes.Movement
                     DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
                     await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
 
-                    // remove the previous location fence
+                    // replace the previous location fence with one around the current location. additions and removals are handled
+                    // in the order provided below.
                     FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
                     UpdateRequestBuilder(null, AWARENESS_ID_BASE + "." + AWARENESS_ID_LOCATION, FenceUpdateAction.Remove, ref requestBuilder);
-                    UpdateFences(requestBuilder.Build());
-
-                    // add a fence around the current location
-                    requestBuilder = new FenceUpdateRequestBuilder();
                     AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
                     UpdateRequestBuilder(locationFence, AWARENESS_ID_BASE + "." + AWARENESS_ID_LOCATION, FenceUpdateAction.Add, ref requestBuilder);
                     UpdateFences(requestBuilder.Build());
                 }
-
-            }).Wait();
+            });
         }
 
         private void RegisterReceiver(string name)
@@ -310,7 +299,6 @@ namespace Sensus.Android.Probes.Movement
             try
             {
                 FenceUpdateRequestBuilder removeFencesRequestBuilder = new FenceUpdateRequestBuilder();
-
                 UpdateRequestBuilder(activityId, activityName, ActivityPhase.Starting, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
                 UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
                 UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
@@ -335,7 +323,7 @@ namespace Sensus.Android.Probes.Movement
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering starting receiver:  " + ex, LoggingLevel.Normal, GetType());
             }
 
             try
@@ -344,7 +332,7 @@ namespace Sensus.Android.Probes.Movement
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering during receiver:  " + ex, LoggingLevel.Normal, GetType());
             }
 
             try
@@ -353,7 +341,7 @@ namespace Sensus.Android.Probes.Movement
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while unregistering receiver:  " + ex, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while unregistering stopping receiver:  " + ex, LoggingLevel.Normal, GetType());
             }
         }
 
@@ -401,8 +389,7 @@ namespace Sensus.Android.Probes.Movement
 
         private PendingIntent GetFencePendingIntent(string fenceId)
         {
-            Intent activityRecognitionCallbackIntent = new Intent(fenceId);
-            return PendingIntent.GetBroadcast(Application.Context, 0, activityRecognitionCallbackIntent, PendingIntentFlags.UpdateCurrent);
+            return PendingIntent.GetBroadcast(Application.Context, 0, new Intent(fenceId), 0);
         }
 
         private bool UpdateFences(IFenceUpdateRequest updateRequest)

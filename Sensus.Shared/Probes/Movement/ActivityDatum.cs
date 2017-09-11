@@ -26,6 +26,8 @@ namespace Sensus.Probes.Movement
 
         public double? Confidence { get; set; }
 
+        public ActivityPhase? Phase { get; set; }
+
         [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Unknown, Activities.Walking })]
         [JsonIgnore]
         public Activities CurrentActivity
@@ -51,12 +53,13 @@ namespace Sensus.Probes.Movement
         {
         }
 
-        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityState state, double? confidence = null)
+        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityState state, double? confidence = null, ActivityPhase? phase = null)
             : base(timestamp)
         {
             Activity = activity;
             State = state;
             Confidence = confidence;
+            Phase = phase;
         }
 
         public override string ToString()
@@ -64,7 +67,8 @@ namespace Sensus.Probes.Movement
             return base.ToString() + Environment.NewLine +
                    "Activity:  " + Activity + Environment.NewLine +
                    "State:  " + State + Environment.NewLine +
-                   "Confidence:  " + (Confidence.HasValue ? Confidence.Value.ToString() : "NA");
+                   "Confidence:  " + (Confidence.HasValue ? Confidence.Value.ToString() : "NA") + Environment.NewLine +
+                   "Phase:  " + (Phase.HasValue ? Phase.Value.ToString() : "NA");
         }
     }
 }

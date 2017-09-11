@@ -14,10 +14,10 @@
 
 namespace Sensus.Probes.Movement
 {
-    public enum ActivityState
+    public enum ActivityPhase
     {
-        Active,
-        Inactive,
-        Unknown
+        Starting,
+        During,
+        Stopping
     }
 }

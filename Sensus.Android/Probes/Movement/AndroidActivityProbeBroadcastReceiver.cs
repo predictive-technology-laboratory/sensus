@@ -37,32 +37,42 @@ namespace Sensus.Android.Probes.Movement
 
                     if (awarenessAction == AndroidActivityProbe.AWARENESS_ID_LOCATION)
                     {
-                        LocationChanged?.Invoke(this, fenceState);
+                        if (fenceState.CurrentState == FenceState.True)
+                        {
+                            LocationChanged?.Invoke(this, fenceState);
+                        }
                     }
                     else
                     {
                         Activities activity;
-
-                        if (Enum.TryParse<Activities>(awarenessAction, out activity))
+                        if (!Enum.TryParse(awarenessAction.Substring(0, awarenessAction.IndexOf(".")), out activity))
                         {
-                            DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(fenceState.LastFenceUpdateTimeMillis);
+                            return;
+                        }
 
-                            if (fenceState.CurrentState == FenceState.True)
-                            {
-                                ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Active));
-                            }
-                            else if (fenceState.CurrentState == FenceState.False)
-                            {
-                                ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Inactive));
-                            }
-                            else if (fenceState.CurrentState == FenceState.Unknown)
-                            {
-                                ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Unknown));
-                            }
-                            else
-                            {
-                                SensusException.Report("Unrecognized fence state:  " + fenceState.CurrentState);
-                            }
+                        ActivityPhase phase;
+                        if (!Enum.TryParse(awarenessAction.Substring(awarenessAction.IndexOf(".") + 1), out phase))
+                        {
+                            return;
+                        }
+
+                        DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(fenceState.LastFenceUpdateTimeMillis);
+
+                        if (fenceState.CurrentState == FenceState.True)
+                        {
+                            ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Active, null, phase));
+                        }
+                        else if (fenceState.CurrentState == FenceState.False)
+                        {
+                            ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Inactive, null, phase));
+                        }
+                        else if (fenceState.CurrentState == FenceState.Unknown)
+                        {
+                            ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Unknown, null, phase));
+                        }
+                        else
+                        {
+                            SensusException.Report("Unrecognized fence state:  " + fenceState.CurrentState);
                         }
                     }
                 }
