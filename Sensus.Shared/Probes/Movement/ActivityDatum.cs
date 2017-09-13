@@ -22,6 +22,8 @@ namespace Sensus.Probes.Movement
     {        
         public Activities Activity { get; set; }
 
+        public ActivityPhase Phase { get; set; }
+
         public ActivityState State { get; set; }
 
         public double? Confidence { get; set; }
@@ -32,7 +34,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return State == ActivityState.Active ? Activity : Activities.Unknown;
+                return (Phase == ActivityPhase.Starting || Phase == ActivityPhase.During) && State == ActivityState.Active ? Activity : Activities.Unknown;
             }
         }
 
@@ -40,7 +42,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return "Activity:  " + Activity + " (" + State + (Confidence.HasValue ? "/" + Math.Round(Confidence.Value, 2) : "") + ")";
+                return Phase + " " + Activity + " (" + State + (Confidence.HasValue ? " " + Math.Round(Confidence.Value, 2) : "") + ")";
             }
         }
 
@@ -51,10 +53,11 @@ namespace Sensus.Probes.Movement
         {
         }
 
-        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityState state, double? confidence = null)
+        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityPhase phase, ActivityState state, double? confidence = null)
             : base(timestamp)
         {
             Activity = activity;
+            Phase = phase;
             State = state;
             Confidence = confidence;
         }
@@ -63,6 +66,7 @@ namespace Sensus.Probes.Movement
         {
             return base.ToString() + Environment.NewLine +
                    "Activity:  " + Activity + Environment.NewLine +
+                   "Phase:  " + Phase + Environment.NewLine +
                    "State:  " + State + Environment.NewLine +
                    "Confidence:  " + (Confidence.HasValue ? Confidence.Value.ToString() : "NA");
         }

@@ -49,7 +49,9 @@ namespace Sensus.Android.Callbacks
             Task.Run(() =>
             {
                 if (message == null)
+                {
                     CancelNotification(id);
+                }
                 else
                 {
                     Intent notificationIntent = new Intent(_service, typeof(AndroidSensusService));
