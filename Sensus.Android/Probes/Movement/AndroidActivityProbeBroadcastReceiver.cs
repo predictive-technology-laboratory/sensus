@@ -30,6 +30,11 @@ namespace Sensus.Android.Probes.Movement
             if (intent.Action == AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION)
             {
                 FenceState fenceState = FenceState.Extract(intent);
+                if (fenceState == null)
+                {
+                    SensusException.Report("Null awareness fence state.");
+                    return;
+                }
 
                 if (fenceState.FenceKey == AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY)
                 {
@@ -40,17 +45,24 @@ namespace Sensus.Android.Probes.Movement
                 }
                 else
                 {
-                    string[] fenceKeyParts = fenceState.FenceKey.Split('.');
+                    string[] fenceKeyParts;
+                    if (fenceState.FenceKey == null || (fenceKeyParts = fenceState.FenceKey.Split('.')).Length != 2)
+                    {
+                        SensusException.Report("Awareness fence key \"" + fenceState.FenceKey + "\" does not have two parts.");
+                        return;
+                    }
 
                     Activities activity;
                     if (!Enum.TryParse(fenceKeyParts[0], out activity))
                     {
+                        SensusException.Report("Unrecognized awareness activity:  " + fenceKeyParts[0]);
                         return;
                     }
 
                     ActivityPhase phase;
                     if (!Enum.TryParse(fenceKeyParts[1], out phase))
                     {
+                        SensusException.Report("Unrecognized awareness activity phase:  " + fenceKeyParts[1]);
                         return;
                     }
 
@@ -58,15 +70,15 @@ namespace Sensus.Android.Probes.Movement
 
                     if (fenceState.CurrentState == FenceState.True)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Active, null, phase));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Active));
                     }
                     else if (fenceState.CurrentState == FenceState.False)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Inactive, null, phase));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Inactive));
                     }
                     else if (fenceState.CurrentState == FenceState.Unknown)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Unknown, null, phase));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Unknown));
                     }
                     else
                     {

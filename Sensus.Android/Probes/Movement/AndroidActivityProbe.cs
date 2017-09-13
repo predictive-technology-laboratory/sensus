@@ -190,8 +190,10 @@ namespace Sensus.Android.Probes.Movement
 
         protected override void StartListening()
         {
+            // register receiver for all awareness intent actions
             Application.Context.RegisterReceiver(_awarenessBroadcastReciever, new IntentFilter(AWARENESS_PENDING_INTENT_ACTION));
 
+            // add fences for all phases of all activities
             AddPhasedFences(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
             AddPhasedFences(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
             AddPhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
@@ -201,6 +203,7 @@ namespace Sensus.Android.Probes.Movement
             AddPhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
             AddPhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 
+            // request a location to start location fencing
             RequestLocationSnapshotAsync();
         }
 
@@ -226,12 +229,12 @@ namespace Sensus.Android.Probes.Movement
                     await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
 
                     // replace the previous location fence with one around the current location. additions and removals are handled
-                    // in the order provided below.
-                    FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
-                    UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref requestBuilder);
+                    // in the order specified below.
+                    FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
+                    UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
                     AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
-                    UpdateRequestBuilder(locationFence, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Add, ref requestBuilder);
-                    UpdateFences(requestBuilder.Build());
+                    UpdateRequestBuilder(locationFence, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Add, ref locationFenceRequestBuilder);
+                    UpdateFences(locationFenceRequestBuilder.Build());
                 }
             });
         }
@@ -248,10 +251,11 @@ namespace Sensus.Android.Probes.Movement
             RemovePhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 
             // remove location fence
-            FenceUpdateRequestBuilder requestBuilder = new FenceUpdateRequestBuilder();
-            UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref requestBuilder);
-            UpdateFences(requestBuilder.Build());
+            FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
+            UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
+            UpdateFences(locationFenceRequestBuilder.Build());
 
+            // stop broadcast receiver
             Application.Context.UnregisterReceiver(_awarenessBroadcastReciever);
 
             // disconnect client
