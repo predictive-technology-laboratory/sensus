@@ -18,7 +18,6 @@ using Android.Net;
 using Android.Net.Wifi;
 using Sensus.Probes.Network;
 using System;
-using Sensus;
 
 namespace Sensus.Android.Probes.Network
 {

@@ -87,7 +87,8 @@ namespace Sensus.iOS.Probes.Movement
                         {
                             if (error == null)
                             {
-                                // process each activity
+                                // process each activity, keeping track of most recent
+                                NSDate mostRecentActivityStartTime = null;
                                 foreach (CMMotionActivity activity in activities)
                                 {
                                     DateTimeOffset timestamp = new DateTimeOffset(activity.StartDate.ToDateTime(), TimeSpan.Zero);
@@ -116,7 +117,7 @@ namespace Sensus.iOS.Probes.Movement
                                     #region get activities
                                     Action<Activities> AddActivityDatum = activityType =>
                                     {
-                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityState.Active, confidence);
+                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.During, ActivityState.Active, confidence);
                                         data.Add(activityDatum);
                                     };
 
@@ -151,8 +152,20 @@ namespace Sensus.iOS.Probes.Movement
                                     }
                                     #endregion
 
-                                    NSDate newStartNsDate = activity.StartDate.LaterDate(_queryStartTime.Value.UtcDateTime.ToNSDate()).AddSeconds(1);
-                                    _queryStartTime = new DateTime(newStartNsDate.ToDateTime().Ticks, DateTimeKind.Utc);
+                                    if (mostRecentActivityStartTime == null)
+                                    {
+                                        mostRecentActivityStartTime = activity.StartDate;
+                                    }
+                                    else
+                                    {
+                                        mostRecentActivityStartTime = mostRecentActivityStartTime.LaterDate(activity.StartDate);
+                                    }
+                                }
+
+                                // set the next query start time one second after the most recent activity's start time
+                                if (mostRecentActivityStartTime != null)
+                                {
+                                    _queryStartTime = new DateTime(mostRecentActivityStartTime.ToDateTime().Ticks, DateTimeKind.Utc).AddSeconds(1);
                                 }
                             }
                             else
