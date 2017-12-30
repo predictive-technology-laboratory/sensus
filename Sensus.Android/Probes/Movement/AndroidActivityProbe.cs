@@ -199,7 +199,6 @@ namespace Sensus.Android.Probes.Movement
             AddPhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
             AddPhasedFences(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
             AddPhasedFences(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
-            AddPhasedFences(DetectedActivityFence.Tilting, nameof(DetectedActivityFence.Tilting));
             AddPhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
             AddPhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 
@@ -246,7 +245,6 @@ namespace Sensus.Android.Probes.Movement
             RemovePhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
             RemovePhasedFences(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
             RemovePhasedFences(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
-            RemovePhasedFences(DetectedActivityFence.Tilting, nameof(DetectedActivityFence.Tilting));
             RemovePhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
             RemovePhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 

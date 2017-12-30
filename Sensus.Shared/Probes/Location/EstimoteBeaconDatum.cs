@@ -17,7 +17,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Newtonsoft.Json;
 
 #if __ANDROID__
-using EstimoteSdk;
+using Region = EstimoteSdk.Observation.Region.Beacon.BeaconRegion;
 #elif __IOS__
 using Region = CoreLocation.CLBeaconRegion;
 #endif

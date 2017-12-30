@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+
+#if __IOS__
 using Estimote;
 
 namespace Sensus
@@ -38,3 +40,4 @@ namespace Sensus
         }
     }
 }
+#endif

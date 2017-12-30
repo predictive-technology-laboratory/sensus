@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 #if __ANDROID__
 using Java.Lang;
 using Java.Util;
-using EstimoteSdk;
+using Region = EstimoteSdk.Observation.Region.Beacon.BeaconRegion;
 #elif __IOS__
 using Foundation;
 using Region = CoreLocation.CLBeaconRegion;

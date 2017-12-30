@@ -31,7 +31,7 @@ namespace Sensus.Android.Probes.Context
             _probe = probe;
         }
 
-        public override void OnServiceAdded(ProfileState status, BluetoothGattService service)
+        public override void OnServiceAdded(GattStatus status, BluetoothGattService service)
         {
             base.OnServiceAdded(status, service);
 

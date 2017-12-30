@@ -19,7 +19,9 @@ using System.Linq;
 
 #if __ANDROID__
 using Android.App;
-using EstimoteSdk;
+using EstimoteSdk.Service;
+using Region = EstimoteSdk.Observation.Region.Beacon.BeaconRegion;
+using EstimoteSdk.Recognition.Packets;
 #elif __IOS__
 using Estimote;
 using Region = CoreLocation.CLBeaconRegion;
@@ -28,7 +30,7 @@ using Region = CoreLocation.CLBeaconRegion;
 namespace Sensus.Probes.Location
 {
 #if __ANDROID__
-    public class EstimoteBeaconManager : Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.IMonitoringListener
+    public class EstimoteBeaconManager : Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.IBeaconMonitoringListener, BeaconManager.ITelemetryListener
 #elif __IOS__
     public class EstimoteBeaconManager
 #endif
@@ -50,7 +52,10 @@ namespace Sensus.Probes.Location
 
         private BeaconManager _beaconManager;
         private List<EstimoteBeacon> _beacons;
+
+#if __IOS__
         private DeviceManager _deviceManager;
+#endif
 
         public void Connect(List<EstimoteBeacon> beacons, TimeSpan foregroundScanPeriod, TimeSpan foregroundWaitTime, TimeSpan backgroundScanPeriod, TimeSpan backgroundWaitTime)
         {
@@ -60,7 +65,8 @@ namespace Sensus.Probes.Location
             {
 #if __ANDROID__
                 _beaconManager = new BeaconManager(Application.Context);
-                _beaconManager.SetMonitoringListener(this);
+                _beaconManager.SetBeaconMonitoringListener(this);
+                _beaconManager.SetTelemetryListener(this);
                 _beaconManager.SetForegroundScanPeriod((long)foregroundScanPeriod.TotalMilliseconds, (long)foregroundWaitTime.TotalMilliseconds);
                 _beaconManager.SetBackgroundScanPeriod((long)backgroundScanPeriod.TotalMilliseconds, (long)backgroundWaitTime.TotalMilliseconds);
                 _beaconManager.Connect(this);
@@ -102,6 +108,8 @@ namespace Sensus.Probes.Location
             {
                 _beaconManager.StartMonitoring(beacon.Region);
             }
+
+            _beaconManager.StartTelemetryDiscovery();
         }
 
         public void OnEnteredRegion(Region region, IList<Beacon> beacons)
@@ -119,6 +127,14 @@ namespace Sensus.Probes.Location
                 ExitedRegion?.Invoke(this, region);
             }
         }
+
+        public void OnTelemetriesFound(IList<EstimoteTelemetry> telemetries)
+        {
+            foreach(EstimoteTelemetry telemetry in telemetries)
+            {
+                
+            }
+        }
 #endif
 
         public void Disconnect()
@@ -128,7 +144,7 @@ namespace Sensus.Probes.Location
                 try
                 {
 #if __ANDROID__
-                    _beaconManager.StopMonitoring(beacon.Region);
+                    _beaconManager.StopMonitoring(beacon.Region.Identifier);
 #elif __IOS__
                     _beaconManager.StopMonitoringForRegion(beacon.Region);
 #endif
