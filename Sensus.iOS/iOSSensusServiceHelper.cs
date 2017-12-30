@@ -34,7 +34,7 @@ namespace Sensus.iOS
     public class iOSSensusServiceHelper : SensusServiceHelper
     {
         #region static members
-        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 10000;
+        private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 15000;
         #endregion
 
         private DateTime _nextToastTime;
@@ -162,23 +162,30 @@ namespace Sensus.iOS
                     #region set up dialog
                     ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
-                    UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, null, "Cancel", "OK");
+                    UIAlertView dialog = new UIAlertView("Sensus is requesting input...", prompt, default(IUIAlertViewDelegate), "Cancel", "OK");
                     dialog.AlertViewStyle = UIAlertViewStyle.PlainTextInput;
+
                     dialog.Dismissed += (o, e) =>
                     {
                         dialogDismissWait.Set();
                     };
+
                     dialog.Presented += (o, e) =>
                     {
                         dialogShowWait.Set();
 
                         if (postDisplayCallback != null)
+                        {
                             postDisplayCallback();
+                        }
                     };
+
                     dialog.Clicked += (o, e) =>
                     {
                         if (e.ButtonIndex == 1)
+                        {
                             input = dialog.GetTextField(0).Text;
+                        }
                     };
 
                     dialog.Show();
@@ -217,7 +224,9 @@ namespace Sensus.iOS
                     double delaySeconds = (_nextToastTime - now).TotalSeconds;
 
                     if (delaySeconds > 0)
+                    {
                         delay = TimeSpan.FromSeconds(delaySeconds);
+                    }
 
                     _nextToastTime = now + delay + duration;
                 }
@@ -273,7 +282,8 @@ namespace Sensus.iOS
             {
                 try
                 {
-                    CBCentralManager manager = new CBCentralManager(DispatchQueue.CurrentQueue);
+                    CBCentralManager manager = new CBCentralManager(DispatchQueue.MainQueue);
+
                     manager.UpdatedState += (sender, e) =>
                     {
                         if (manager.State == CBCentralManagerState.PoweredOn)
@@ -298,7 +308,9 @@ namespace Sensus.iOS
 
             // the base class will ensure that we're not on the main thread, making the following wait okay.
             if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
+            {
                 Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
+            }
 
             return enabled;
         }

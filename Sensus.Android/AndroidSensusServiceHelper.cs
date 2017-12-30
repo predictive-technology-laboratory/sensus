@@ -520,23 +520,32 @@ namespace Sensus.Android
 
             bool enabled = false;
 
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+
             // ensure that the device has the required feature
-            if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
+            if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth) ||
+                bluetoothAdapter == null)
             {
                 FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".", false);
                 return enabled;
             }
 
+            // the system has bluetooth. check whether it's enabled.
+
             ManualResetEvent enableWait = new ManualResetEvent(false);
 
-            // check whether bluetooth is enabled
-            BluetoothManager bluetoothManager = _service.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
-            BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
-            if (bluetoothAdapter == null || !bluetoothAdapter.IsEnabled)
+            if (bluetoothAdapter.IsEnabled)
             {
-                // if it's not and if the user has previously denied bluetooth, quit now.
+                enabled = true;
+                enableWait.Set();
+            }
+            else
+            {
+                // if it's not and if the user has previously denied bluetooth, quit now. don't bother the user again.
                 if (_userDeniedBluetoothEnable)
+                {
                     enableWait.Set();
+                }
                 else
                 {
                     // bring up sensus so we can request bluetooth enable
@@ -554,9 +563,13 @@ namespace Sensus.Android
                                 mainActivity.GetActivityResultAsync(enableIntent, AndroidActivityResultRequestCode.EnableBluetooth, resultIntent =>
                                 {
                                     if (resultIntent.Item1 == Result.Canceled)
+                                    {
                                         _userDeniedBluetoothEnable = true;
+                                    }
                                     else if (resultIntent.Item1 == Result.Ok)
+                                    {
                                         enabled = true;
+                                    }
 
                                     enableWait.Set();
                                 });
@@ -571,16 +584,14 @@ namespace Sensus.Android
                     }, true, false);
                 }
             }
-            else
-            {
-                enabled = true;
-                enableWait.Set();
-            }
 
             enableWait.WaitOne();
 
             if (enabled)
+            {
+                // the user enabled bluetooth, so allow one retry at enabling next time we find BLE disabled
                 _userDeniedBluetoothEnable = false;
+            }
 
             return enabled;
         }
@@ -589,10 +600,10 @@ namespace Sensus.Android
         {
             base.DisableBluetooth(reenable, lowEnergy, rationale);
 
+            BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+
             // check whether bluetooth is enabled
-            BluetoothManager bluetoothManager = _service.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
-            BluetoothAdapter bluetoothAdapter = bluetoothManager.Adapter;
-            if (bluetoothAdapter != null && bluetoothAdapter.IsEnabled)
+            if (bluetoothAdapter?.IsEnabled ?? false)
             {
                 ManualResetEvent disableWait = new ManualResetEvent(false);
                 ManualResetEvent enableWait = new ManualResetEvent(false);
@@ -600,9 +611,13 @@ namespace Sensus.Android
                 EventHandler<global::Android.Bluetooth.State> StateChangedHandler = (sender, newState) =>
                 {
                     if (newState == global::Android.Bluetooth.State.Off)
+                    {
                         disableWait.Set();
+                    }
                     else if (newState == global::Android.Bluetooth.State.On)
+                    {
                         enableWait.Set();
+                    }
                 };
 
                 AndroidBluetoothBroadcastReceiver.STATE_CHANGED += StateChangedHandler;
@@ -610,7 +625,9 @@ namespace Sensus.Android
                 try
                 {
                     if (!bluetoothAdapter.Disable())
+                    {
                         disableWait.Set();
+                    }
                 }
                 catch (Exception)
                 {
@@ -624,7 +641,9 @@ namespace Sensus.Android
                     try
                     {
                         if (!bluetoothAdapter.Enable())
+                        {
                             enableWait.Set();
+                        }
                     }
                     catch (Exception)
                     {
@@ -639,11 +658,15 @@ namespace Sensus.Android
 
             bool isEnabled = bluetoothAdapter?.IsEnabled ?? false;
 
-            // dispatch an intent to reenable bluetooth, which will require user interaction
+            // dispatch an intent to reenable bluetooth, which will require user interaction.
             if (reenable && !isEnabled)
+            {
                 return EnableBluetooth(lowEnergy, rationale);
+            }
             else
+            {
                 return isEnabled;
+            }
         }
 
         #region device awake / sleep

@@ -24,7 +24,7 @@ namespace Sensus.Android.Probes.Context
     [IntentFilter(new string[] { BluetoothDevice.ActionFound, BluetoothAdapter.ActionStateChanged }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidBluetoothBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<BluetoothDeviceProximityDatum> DEVICE_FOUND;
+        public static event EventHandler<BluetoothDevice> DEVICE_FOUND;
         public static event EventHandler<State> STATE_CHANGED;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
@@ -34,13 +34,16 @@ namespace Sensus.Android.Probes.Context
                 if (intent.Action == BluetoothDevice.ActionFound && DEVICE_FOUND != null)
                 {
                     BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
-                    DEVICE_FOUND(this, new BluetoothDeviceProximityDatum(DateTimeOffset.UtcNow, device.Name, device.Address));
+                    DEVICE_FOUND(this, device);
                 }
                 else if (intent.Action == BluetoothAdapter.ActionStateChanged && STATE_CHANGED != null)
                 {
                     int stateInt = intent.GetIntExtra(BluetoothAdapter.ExtraState, -1);
+
                     if (stateInt != -1)
+                    {
                         STATE_CHANGED(this, (State)stateInt);
+                    }
                 }
             }
         }

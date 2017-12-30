@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Sensus.Callbacks
 {
     public interface ICallbackScheduler
     {
-        bool ScheduleRepeatingCallback(ScheduledCallback callback, int initialDelayMS, int repeatDelayMS, bool repeatLag);
+        bool ScheduleRepeatingCallback(ScheduledCallback callback, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag);
 
-        bool ScheduleOneTimeCallback(ScheduledCallback callback, int delayMS);
+        bool ScheduleOneTimeCallback(ScheduledCallback callback, TimeSpan delay);
 
         void UnscheduleCallback(string callbackId);
     }

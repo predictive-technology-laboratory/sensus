@@ -33,25 +33,25 @@ namespace Sensus.UI
 
             foreach (Probe probe in protocol.Probes.Where(probe => probe.GetParticipation() != null).OrderBy(probe => probe.GetParticipation()))
             {
-                float participation = probe.GetParticipation().GetValueOrDefault();
+                double participation = probe.GetParticipation().GetValueOrDefault();
 
                 contentLayout.Children.Add(new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Children =
                     {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
-                        Children =
+                        new Label
                         {
-                            new Label
-                            {
-                                Text = probe.DisplayName + ":  " + Math.Round(participation * 100, 0) + "%",
-                                FontSize = 20
-                            },
-                            new ProgressBar
-                            {
-                                Progress = participation
-                            }
+                            Text = probe.DisplayName + ":  " + Math.Round(participation * 100, 0) + "%",
+                            FontSize = 20
+                        },
+                        new ProgressBar
+                        {
+                            Progress = participation
                         }
-                    });
+                    }
+                });
             }
 
             Content = new ScrollView

@@ -24,8 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dispose\Disposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryption.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Encryption\SimpleEncryption.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Encryption\WindowsEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\IInsightsInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
@@ -226,6 +225,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteTelemetryMotion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\Activities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

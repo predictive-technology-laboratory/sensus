@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
@@ -24,33 +24,33 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android.Tests", "Sen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests", "Sensus.iOS.Tests\Sensus.iOS.Tests.csproj", "{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Tests.Cloud", "Sensus.Tests.Cloud\Sensus.Tests.Cloud.csproj", "{306FDC42-BB95-4DFD-B867-654EA3F941E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.XTC.UnitTests", "Sensus.XTC.UnitTests\Sensus.XTC.UnitTests.csproj", "{306FDC42-BB95-4DFD-B867-654EA3F941E9}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared", "Sensus.Shared\Sensus.Shared.shproj", "{B2F65FE8-F266-4C0C-B4A8-D326002B9180}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Android", "Sensus.Shared.Android\Sensus.Shared.Android.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Android.Shared", "Sensus.Android.Shared\Sensus.Android.Shared.shproj", "{B6E23DA5-2716-426B-9F8F-9C47BD6B68D3}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.iOS", "Sensus.Shared.iOS\Sensus.Shared.iOS.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.iOS.Shared", "Sensus.iOS.Shared\Sensus.iOS.Shared.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Tests", "Sensus.Shared.Tests\Sensus.Shared.Tests.shproj", "{542CBE5F-B59A-422D-B0B9-6123121CB203}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13
-		Sensus.Shared.iOS\Sensus.Shared.iOS.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
-		Sensus.Shared.Android\Sensus.Shared.Android.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
-		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{b11b3650-c440-40f2-834d-339d5ff8cd96}*SharedItemsImports = 4
-		Sensus.Shared\Sensus.Shared.projitems*{b11b3650-c440-40f2-834d-339d5ff8cd96}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
-		Sensus.Shared.Android\Sensus.Shared.Android.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
-		Sensus.Shared.iOS\Sensus.Shared.iOS.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
-		Sensus.Shared.iOS\Sensus.Shared.iOS.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
-		Sensus.Shared.Android\Sensus.Shared.Android.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,88 +68,68 @@ Global
 		Release|iPhoneSimulator = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Android.ActiveCfg = Release|Android
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.ActiveCfg = Release|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhone.ActiveCfg = Release|Android
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.ActiveCfg = Debug|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.Build.0 = Debug|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.Deploy.0 = Debug|Android
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.ActiveCfg = Debug|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|iPhone.ActiveCfg = Debug|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|iPhoneSimulator.Deploy.0 = Debug|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Android.ActiveCfg = Release|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Android.Build.0 = Release|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Android.Deploy.0 = Release|Android
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.ActiveCfg = Release|Android
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhone.ActiveCfg = Debug|Android
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhoneSimulator.ActiveCfg = Release|Android
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|Android.ActiveCfg = Ad-Hoc|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|Any CPU.ActiveCfg = Ad-Hoc|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Ad-Hoc|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Android.ActiveCfg = Debug|iPhoneSimulator
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Any CPU.ActiveCfg = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhone.Build.0 = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Android.ActiveCfg = Release|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Any CPU.ActiveCfg = Release|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhone.ActiveCfg = Release|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhone.Build.0 = Release|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhone
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Ad-Hoc|Android.ActiveCfg = Debug|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Ad-Hoc|iPhone.ActiveCfg = Debug|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Android.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Android.Build.0 = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Android.Deploy.0 = Debug|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Any CPU.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|iPhone.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|iPhone.Deploy.0 = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|iPhoneSimulator.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|iPhoneSimulator.Deploy.0 = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.ActiveCfg = Release|Android
+		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Build.0 = Release|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Deploy.0 = Release|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Any CPU.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhone.ActiveCfg = Debug|Android
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhone.Deploy.0 = Debug|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhoneSimulator.ActiveCfg = Debug|Android
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Build.0 = Release|Android
-		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|Android.ActiveCfg = Debug|iPhoneSimulator
-		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|Any CPU.ActiveCfg = Debug|iPhoneSimulator
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
-		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|Android.ActiveCfg = Debug|iPhone
-		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|Any CPU.ActiveCfg = Debug|iPhone
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|iPhone.Build.0 = Debug|iPhone
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Release|Android.ActiveCfg = Debug|iPhoneSimulator
-		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Release|Any CPU.ActiveCfg = Debug|iPhone
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Release|iPhone.ActiveCfg = Debug|iPhoneSimulator
-		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Release|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Ad-Hoc|Android.ActiveCfg = Release|Android
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Android
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|iPhone
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|Android.ActiveCfg = Debug|Android
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|Android.Build.0 = Debug|Android
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|Any CPU.ActiveCfg = Debug|Android
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|iPhone.Build.0 = Debug|iPhone
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Android.ActiveCfg = Release|Android
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Any CPU.ActiveCfg = Debug|Android
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhone.ActiveCfg = Debug|iPhone
-		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|Android.Build.0 = Release|Android
+		{306FDC42-BB95-4DFD-B867-654EA3F941E9}.Release|iPhone.ActiveCfg = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|Android.ActiveCfg = Debug|Android
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|Android.Build.0 = Debug|Android
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|iPhone.Build.0 = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Android.ActiveCfg = Release|Android
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Android.Build.0 = Release|Android
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|iPhone.ActiveCfg = Debug|iPhone
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -158,9 +138,9 @@ Global
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.NoTabsAfterNonTabs = True
-		$1.inheritsSet = VisualStudio
-		$1.inheritsScope = text/plain
 		$1.scope = text/x-csharp
+		$1.FileWidth = 80
+		$1.TabsToSpaces = True
 		$0.CSharpFormattingPolicy = $2
 		$2.IndentSwitchBody = True
 		$2.IndentBlocksInsideExpressions = True
@@ -186,25 +166,9 @@ Global
 		$2.BeforeDelegateDeclarationParentheses = False
 		$2.NewParentheses = False
 		$2.SpacesBeforeBrackets = False
-		$2.inheritsSet = Mono
-		$2.inheritsScope = text/x-csharp
 		$2.scope = text/x-csharp
-		$2.NewLinesForBracesInProperties = True
-		$2.NewLinesForBracesInAccessors = True
-		$2.NewLinesForBracesInAnonymousMethods = True
-		$2.NewLinesForBracesInControlBlocks = True
-		$2.NewLinesForBracesInAnonymousTypes = True
-		$2.NewLinesForBracesInObjectCollectionArrayInitializers = True
-		$2.NewLinesForBracesInLambdaExpressionBody = True
-		$2.NewLineForElse = True
-		$2.NewLineForCatch = True
-		$2.NewLineForFinally = True
-		$2.SpacingAfterMethodDeclarationName = False
-		$2.SpaceAfterMethodCallName = False
-		$2.SpaceBeforeOpenSquareBracket = False
 		$0.StandardHeader = $3
 		$3.Text = @Copyright 2014 The Rector & Visitors of the University of Virginia\n\nLicensed under the Apache License, Version 2.0 (the "License");\nyou may not use this file except in compliance with the License.\nYou may obtain a copy of the License at\n\n    http://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software\ndistributed under the License is distributed on an "AS IS" BASIS,\nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\nSee the License for the specific language governing permissions and\nlimitations under the License.
-		$3.IncludeInNewFiles = True
 		$0.NameConventionPolicy = $4
 		$4.Rules = $5
 		$5.NamingRule = $6

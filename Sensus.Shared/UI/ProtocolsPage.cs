@@ -134,20 +134,32 @@ namespace Sensus.UI
             _protocolsList.ItemTapped += async (o, e) =>
             {
                 if (_protocolsList.SelectedItem == null)
+                {
                     return;
+                }
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+
+                if(!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
+                {
+                    actions.Add("Email Study Manager for Help");
+                }
+
                 actions.Add("View Data");
 
                 if (selectedProtocol.Running)
+                {
                     actions.Add("Display Participation");
+                }
 
                 if (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)
+                {
                     actions.Add("Scan Participation Barcode");
+                }
 
                 actions.AddRange(new string[] { "Edit", "Copy", "Share" });
 
@@ -155,13 +167,19 @@ namespace Sensus.UI
                 if (selectedProtocol.Groupable)
                 {
                     if (selectedProtocol.GroupedProtocols.Count == 0 && groupableProtocols.Count > 0)
+                    {
                         actions.Add("Group");
+                    }
                     else if (selectedProtocol.GroupedProtocols.Count > 0)
+                    {
                         actions.Add("Ungroup");
+                    }
                 }
 
                 if (selectedProtocol.Running)
+                {
                     actions.Add("Status");
+                }
 
                 if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallback != null)
                 {
@@ -208,6 +226,16 @@ namespace Sensus.UI
                         });
                     }
                 }
+                else if (selectedAction == "Email Study Manager for Help")
+                {
+
+                    SensusServiceHelper.Get().SendEmailAsync(selectedProtocol.ContactEmail, "Help with Sensus study:  " + selectedProtocol.Name,
+                        "Hello - " + Environment.NewLine +
+                        Environment.NewLine +
+                        "I am having trouble with a Sensus study. The name of the study is \"" + selectedProtocol.Name + "\"." + Environment.NewLine +
+                        Environment.NewLine +
+                        "Here is why I am sending this email:  ");
+                }
                 else if (selectedAction == "View Data")
                 {
                     await Navigation.PushAsync(new ProbesViewPage(selectedProtocol));
@@ -244,11 +272,15 @@ namespace Sensus.UI
                             }
 
                             if (commitFailed)
+                            {
                                 SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+                            }
 
                             // cancel the token to close the input above, but only if the token hasn't already been canceled.
                             if (!cancellationTokenSource.IsCancellationRequested)
+                            {
                                 cancellationTokenSource.Cancel();
+                            }
 
                             Device.BeginInvokeOnMainThread(async () =>
                             {
@@ -262,7 +294,9 @@ namespace Sensus.UI
                             // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
                             // data store commit (i.e., by the canceled token), then don't cancel the token again.
                             if (!cancellationTokenSource.IsCancellationRequested)
+                            {
                                 cancellationTokenSource.Cancel();
+                            }
                         });
                 }
                 else if (selectedAction == "Scan Participation Barcode")
@@ -282,7 +316,9 @@ namespace Sensus.UI
                             barcodeScannerPage.IsScanning = false;
 
                             if (barcodeResult == null)
+                            {
                                 return;
+                            }
 
                             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                             {
@@ -331,7 +367,9 @@ namespace Sensus.UI
                                             // cancel the token to close the input above, but only if the token hasn't already been canceled. this will be
                                             // used if an exception is thrown while getting the participation reward datum.
                                             if (!cancellationTokenSource.IsCancellationRequested)
+                                            {
                                                 cancellationTokenSource.Cancel();
+                                            }
                                         }
                                     },
                                     inputs =>
@@ -340,7 +378,9 @@ namespace Sensus.UI
                                         // to cancel the datum retrieval. if the prompt was closed by the termination of the remote
                                         // data store get (i.e., by the canceled token), then don't cancel the token again.
                                         if (!cancellationTokenSource.IsCancellationRequested)
+                                        {
                                             cancellationTokenSource.Cancel();
+                                        }
                                     });
                             });
                         };
@@ -368,7 +408,10 @@ namespace Sensus.UI
                     });
                 }
                 else if (selectedAction == "Copy")
+                {
+                    // reset the protocol id, as we're creating a new study
                     selectedProtocol.CopyAsync(true, true);
+                }
                 else if (selectedAction == "Share")
                 {
                     Action ShareSelectedProtocol = new Action(() =>
@@ -385,9 +428,13 @@ namespace Sensus.UI
                     });
 
                     if (selectedProtocol.Shareable)
+                    {
                         ShareSelectedProtocol();
+                    }
                     else
+                    {
                         ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
+                    }
                 }
                 else if (selectedAction == "Group")
                 {
@@ -410,7 +457,9 @@ namespace Sensus.UI
                             List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList();
 
                             if (selectedProtocols.Count == 0)
+                            {
                                 SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
+                            }
                             else
                             {
                                 selectedProtocol.GroupedProtocols.AddRange(selectedProtocols);
@@ -421,7 +470,9 @@ namespace Sensus.UI
                 else if (selectedAction == "Ungroup")
                 {
                     if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))
+                    {
                         selectedProtocol.GroupedProtocols.Clear();
+                    }
                 }
                 else if (selectedAction == "Status")
                 {
@@ -430,12 +481,16 @@ namespace Sensus.UI
                         await selectedProtocol.TestHealthAsync(true);
 
                         Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            if (selectedProtocol.MostRecentReport == null)
                             {
-                                if (selectedProtocol.MostRecentReport == null)
-                                    await DisplayAlert("No Report", "Status check failed.", "OK");
-                                else
-                                    await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null, null));
-                            });
+                                await DisplayAlert("No Report", "Status check failed.", "OK");
+                            }
+                            else
+                            {
+                                await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null, null));
+                            }
+                        });
                     }
                     else
                         await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
@@ -443,82 +498,94 @@ namespace Sensus.UI
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                    {
                         selectedProtocol.DeleteAsync();
+                    }
                 }
             };
 
             Content = _protocolsList;
 
             ToolbarItems.Add(new ToolbarItem(null, "gear_wrench.png", async () =>
-                    {
-                        double shareDirectoryMB = SensusServiceHelper.GetDirectorySizeMB(SensusServiceHelper.SHARE_DIRECTORY);
-                        string clearShareDirectoryAction = "Clear Share Directory (" + Math.Round(shareDirectoryMB, 1) + " MB)";
+            {
+                double shareDirectoryMB = SensusServiceHelper.GetDirectorySizeMB(SensusServiceHelper.SHARE_DIRECTORY);
+                string clearShareDirectoryAction = "Clear Share Directory (" + Math.Round(shareDirectoryMB, 1) + " MB)";
 
-                        List<string> buttons = new string[] { "New Protocol", "View Log", "View Points of Interest", clearShareDirectoryAction }.ToList();
+                List<string> buttons = new string[] { "New Protocol", "View Device ID", "View Log", "View Points of Interest", clearShareDirectoryAction }.ToList();
 
-                        // stopping only makes sense on android, where we use a background service. on ios, there is no concept
-                        // of stopping the app other than the user or system terminating the app.
+                // stopping only makes sense on android, where we use a background service. on ios, there is no concept
+                // of stopping the app other than the user or system terminating the app.
 #if __ANDROID__
-                        buttons.Add("Stop Sensus");
+                buttons.Add("Stop Sensus");
 #endif
 
-                        buttons.Add("About Sensus");
+                buttons.Add("About Sensus");
 
-                        string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
+                string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
 
-                        if (action == "New Protocol")
-                            Protocol.Create("New Protocol");
-                        else if (action == "View Log")
+                if (action == "New Protocol")
+                {
+                    Protocol.Create("New Protocol");
+                }
+                else if (action == "View Device ID")
+                {
+                    await DisplayAlert("Device ID", SensusServiceHelper.Get().DeviceId, "Close");
+                }
+                else if (action == "View Log")
+                {
+                    await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
+                        () =>
                         {
-                            await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
-                                    () =>
-                                    {
-                                        string sharePath = null;
-                                        try
-                                        {
-                                            sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
-                                            SensusServiceHelper.Get().Logger.CopyTo(sharePath);
-                                        }
-                                        catch (Exception)
-                                        {
-                                            sharePath = null;
-                                        }
-
-                                        if (sharePath != null)
-                                            SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
-                                    },
-                                    () => SensusServiceHelper.Get().Logger.Clear()));
-                        }
-                        else if (action == "View Points of Interest")
-                            await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest));
-                        else if (action == clearShareDirectoryAction)
-                        {
-                            foreach (string sharePath in Directory.GetFiles(SensusServiceHelper.SHARE_DIRECTORY))
+                            string sharePath = null;
+                            try
                             {
-                                try
-                                {
-                                    File.Delete(sharePath);
-                                }
-                                catch (Exception ex)
-                                {
-                                    string errorMessage = "Failed to delete shared file \"" + Path.GetFileName(sharePath) + "\":  " + ex.Message;
-                                    SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                                    SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-                                }
+                                sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
+                                SensusServiceHelper.Get().Logger.CopyTo(sharePath);
                             }
+                            catch (Exception)
+                            {
+                                sharePath = null;
+                            }
+
+                            if (sharePath != null)
+                            {
+                                SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
+                            }
+                        },
+                        () => SensusServiceHelper.Get().Logger.Clear()));
+                }
+                else if (action == "View Points of Interest")
+                {
+                    await Navigation.PushAsync(new PointsOfInterestPage(SensusServiceHelper.Get().PointsOfInterest));
+                }
+                else if (action == clearShareDirectoryAction)
+                {
+                    foreach (string sharePath in Directory.GetFiles(SensusServiceHelper.SHARE_DIRECTORY))
+                    {
+                        try
+                        {
+                            File.Delete(sharePath);
                         }
+                        catch (Exception ex)
+                        {
+                            string errorMessage = "Failed to delete shared file \"" + Path.GetFileName(sharePath) + "\":  " + ex.Message;
+                            SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                            SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
+                        }
+                    }
+                }
 #if __ANDROID__
-                        else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                        {
-                            SensusServiceHelper.Get().StopProtocols();
-                            (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
-                        }
+                else if (action == "Stop Sensus" && await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
+                {
+                    SensusServiceHelper.Get().StopProtocols();
+                    (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
+                }
 #endif
-                        else if (action == "About Sensus")
-                        {
-                            await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
-                        }
-                    }));
+                else if (action == "About Sensus")
+                {
+                    await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
+                }
+            }));
 
             Bind();
 
@@ -548,7 +615,9 @@ namespace Sensus.UI
 
             // make sure we have a service helper -- it might get disconnected before we get the OnDisappearing event that calls Bind
             if (serviceHelper != null)
+            {
                 _protocolsList.ItemsSource = serviceHelper.RegisteredProtocols;
+            }
         }
     }
 }

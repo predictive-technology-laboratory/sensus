@@ -37,7 +37,9 @@ namespace Sensus.UI
             _groupsList.ItemTapped += async (o, e) =>
             {
                 if (_groupsList.SelectedItem == null)
+                {
                     return;
+                }
 
                 InputGroup selectedInputGroup = _groupsList.SelectedItem as InputGroup;
                 int selectedIndex = script.InputGroups.IndexOf(selectedInputGroup);
@@ -45,17 +47,25 @@ namespace Sensus.UI
                 List<string> actions = new string[] { "Edit", "Copy", "Delete" }.ToList();
 
                 if (selectedIndex < script.InputGroups.Count - 1)
+                {
                     actions.Insert(0, "Move Down");
+                }
 
                 if (selectedIndex > 0)
+                {
                     actions.Insert(0, "Move Up");
+                }
 
                 string selectedAction = await DisplayActionSheet(selectedInputGroup.Name, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Move Up")
+                {
                     script.InputGroups.Move(selectedIndex, selectedIndex - 1);
+                }
                 else if (selectedAction == "Move Down")
+                {
                     script.InputGroups.Move(selectedIndex, selectedIndex + 1);
+                }
                 else if (selectedAction == "Edit")
                 {
                     List<InputGroup> previousInputGroups = _script.InputGroups.Where((inputGroup, index) => index < selectedIndex).ToList();

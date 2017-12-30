@@ -30,10 +30,20 @@ namespace Sensus.UI
         {
             Probe probe = e.Item as Probe;
 
-            SfChart chart = probe.GetChart();
+            SfChart chart = null;
+
+            try
+            {
+                chart = probe.GetChart();
+            }
+            catch (NotImplementedException)
+            {
+            }
 
             if (chart == null)
+            {
                 SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.", duration: TimeSpan.FromSeconds(2));
+            }
             else
             {
                 ContentPage chartPage = new ContentPage
@@ -50,7 +60,9 @@ namespace Sensus.UI
                 chartPage.ToolbarItems.Add(new ToolbarItem("+", null, () =>
                 {
                     if (probe.MaxChartDataCount < 200)
+                    {
                         probe.MaxChartDataCount += 10;
+                    }
 
                     FlashChartDataCountAsync(probe);
                 }));
@@ -58,7 +70,9 @@ namespace Sensus.UI
                 chartPage.ToolbarItems.Add(new ToolbarItem("-", null, () =>
                 {
                     if (probe.MaxChartDataCount > 10)
+                    {
                         probe.MaxChartDataCount -= 10;
+                    }
 
                     FlashChartDataCountAsync(probe);
                 }));

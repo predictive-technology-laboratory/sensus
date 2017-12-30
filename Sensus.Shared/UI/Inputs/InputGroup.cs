@@ -18,7 +18,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
-using Sensus.Extensions;
 
 namespace Sensus.UI.Inputs
 {
@@ -35,6 +34,12 @@ namespace Sensus.UI.Inputs
         [OnOffUiProperty(null, true, 1)]
         public bool Geotag { get; set; }
 
+        [OnOffUiProperty("Force Valid Inputs:", true, 2)]
+        public bool ForceValidInputs { get; set; }
+
+        [OnOffUiProperty("Shuffle Inputs:", true, 3)]
+        public bool ShuffleInputs { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
         /// A valid input group is one in which each <see cref="Input"/> in the group is valid.
@@ -50,8 +55,9 @@ namespace Sensus.UI.Inputs
             Id = Guid.NewGuid().ToString();
             Inputs = NewObservableCollection();
             Geotag = false;
+            ForceValidInputs = false;
+            ShuffleInputs = false;
         }
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call
@@ -62,6 +68,9 @@ namespace Sensus.UI.Inputs
             Id = inputGroup.Id;
             Name = inputGroup.Name;
             Geotag = inputGroup.Geotag;
+            ForceValidInputs = inputGroup.ForceValidInputs;
+            ShuffleInputs = inputGroup.ShuffleInputs;
+
             Inputs = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(inputGroup.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
             if (newGroupId)

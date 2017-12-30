@@ -12,17 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using Sensus.UI.UiProperties;
 
 namespace Sensus.UI.Inputs
 {
-    public class NumberEntryInput : Input
+    public class NumberEntryInput : Input, IVariableDefiningInput
     {
         private Entry _entry;
         private Label _label;
         private bool _hasFocused;
+        private string _definedVariable;
+
+        [EntryStringUiProperty("Define Variable:", true, 15)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
+            }
+        }
 
         public override object Value
         {
@@ -30,9 +44,13 @@ namespace Sensus.UI.Inputs
             {
                 double value;
                 if (_entry == null || !_hasFocused || !double.TryParse(_entry.Text, out value))
+                {
                     return null;
+                }
                 else
+                {
                     return value;
+                }
             }
         }
 
@@ -82,8 +100,8 @@ namespace Sensus.UI.Inputs
                     Keyboard = Keyboard.Numeric,
                     HorizontalOptions = LayoutOptions.FillAndExpand
 
-                    // set the style ID on the view so that we can retrieve it when unit testing
-#if UNIT_TESTING
+                    // set the style ID on the view so that we can retrieve it when UI testing
+#if UI_TESTING
                     , StyleId = Name
 #endif
                 };
@@ -121,7 +139,9 @@ namespace Sensus.UI.Inputs
 
                 // if the view is not enabled, there should be no tip text since the user can't do anything with the entry.
                 if (!Enabled && !_hasFocused)
+                {
                     _entry.Text = "";
+                }
             }
 
             return base.GetView(index);

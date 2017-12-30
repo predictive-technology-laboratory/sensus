@@ -35,7 +35,9 @@ namespace Sensus.UI.UiProperties
         public static UiProperty GetUiPropertyAttribute(PropertyInfo property)
         {
             if (property == null)
+            {
                 return null;
+            }
 
             UiProperty attribute = property.GetCustomAttribute<UiProperty>();
 
@@ -44,12 +46,18 @@ namespace Sensus.UI.UiProperties
                 Type parentType = property.ReflectedType.BaseType;
 
                 if (parentType == null)
+                {
                     return null;
+                }
                 else
+                {
                     return GetUiPropertyAttribute(parentType.GetProperty(property.Name));
+                }
             }
             else
+            {
                 return attribute;
+            }
         }
 
         /// <summary>
@@ -85,8 +93,8 @@ namespace Sensus.UI.UiProperties
                 View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
                 propertyView.IsEnabled = uiElement.Editable;
 
-#if UNIT_TESTING
-                // set style id so we can get the property value when unit testing
+#if UI_TESTING
+                // set style id so we can get the property value when UI testing
                 propertyView.StyleId = propertyLabel.Text + " View";
 #endif
 

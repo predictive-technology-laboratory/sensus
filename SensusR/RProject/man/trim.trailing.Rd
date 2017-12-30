@@ -18,4 +18,3 @@ Trim trailing white space from a string.
 \examples{
 trim.trailing("asdfasdf  ")
 }
-

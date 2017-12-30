@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 
 namespace Sensus
@@ -27,6 +28,22 @@ namespace Sensus
         public static Xamarin.Forms.Maps.Position ToFormsPosition(this Position position)
         {
             return new Xamarin.Forms.Maps.Position(position.Latitude, position.Longitude);
+        }
+
+        public static void Shuffle<T>(this Random random, Collection<T> array)
+        {
+            int indexToReplace = array.Count;
+
+            while (indexToReplace > 1)
+            {
+                int replacementIndex = random.Next(indexToReplace--);
+
+                T temp = array[indexToReplace];
+
+                array[indexToReplace] = array[replacementIndex];
+
+                array[replacementIndex] = temp;
+            }
         }
     }
 }

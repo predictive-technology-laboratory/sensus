@@ -52,7 +52,7 @@ namespace Sensus.Android
             {
                 Platform = Platform.Android,
                 MainThreadSynchronizer = new MainConcurrent(),
-                Encryption = new SimpleEncryption(SensusServiceHelper.ENCRYPTION_KEY),
+                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY),
                 CallbackScheduler = new AndroidCallbackScheduler(this),
                 Notifier = new AndroidNotifier(this)
             };

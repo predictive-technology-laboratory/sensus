@@ -40,7 +40,7 @@ namespace Sensus.Probes.User.Scripts
             get { return typeof(ScriptDatum); }
         }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {
@@ -76,32 +76,25 @@ namespace Sensus.Probes.User.Scripts
                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
 
                 foreach (ScriptRunner scriptRunner in _scriptRunners)
+                {
                     if (scriptRunner.Enabled)
                     {
                         foreach (Trigger trigger in scriptRunner.Triggers)
+                        {
                             collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
+                        }
 
                         if (scriptRunner.RunOnStart)
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
-
-                        if (scriptRunner.TriggerWindows != "")
                         {
-                            string windows = scriptRunner.TriggerWindows;
-                            string collectionDescriptionPrefix = "Randomly during hours ";
-                            int commaCount = windows.Count(c => c == ',');
-                            if (commaCount == 0)
-                            {
-                                if (!windows.Contains('-'))
-                                    collectionDescriptionPrefix = "At ";
-                            }
-                            else if (commaCount == 1)
-                                windows = windows.Replace(",", " and");
-                            else if (commaCount > 1)
-                                windows = windows.Insert(windows.LastIndexOf(',') + 1, " and");
+                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
+                        }
 
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + collectionDescriptionPrefix + windows + ".");
+                        if (scriptRunner.TriggerWindowsString != "")
+                        {
+                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
                         }
                     }
+                }
 
                 return collectionDescription.ToString();
             }
@@ -117,8 +110,12 @@ namespace Sensus.Probes.User.Scripts
             base.Initialize();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
+            {
                 if (scriptRunner.Enabled)
+                {
                     scriptRunner.Initialize();
+                }
+            }
         }
 
         protected override void InternalStart()
@@ -126,8 +123,12 @@ namespace Sensus.Probes.User.Scripts
             base.InternalStart();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
+            {
                 if (scriptRunner.Enabled)
+                {
                     scriptRunner.Start();
+                }
+            }
         }
 
         public override bool TestHealth(ref string error, ref string warning, ref string misc)
@@ -137,6 +138,7 @@ namespace Sensus.Probes.User.Scripts
             if (Running)
             {
                 foreach (ScriptRunner scriptRunner in _scriptRunners)
+                {
                     if (scriptRunner.Enabled && scriptRunner.TestHealth(ref error, ref warning, ref misc))
                     {
                         warning += "Restarting script runner \"" + scriptRunner.Name + "\"." + Environment.NewLine;
@@ -151,6 +153,7 @@ namespace Sensus.Probes.User.Scripts
                             SensusServiceHelper.Get().Logger.Log(warning, LoggingLevel.Normal, GetType());
                         }
                     }
+                }
             }
 
             return restart;
@@ -171,7 +174,9 @@ namespace Sensus.Probes.User.Scripts
             base.Stop();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
+            {
                 scriptRunner.Stop();
+            }
         }
 
         protected override ChartSeries GetChartSeries()

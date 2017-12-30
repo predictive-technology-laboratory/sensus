@@ -31,7 +31,9 @@ namespace Sensus.UI
             };
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(input))
+            {
                 contentLayout.Children.Add(stack);
+            }
 
             Content = new ScrollView
             {

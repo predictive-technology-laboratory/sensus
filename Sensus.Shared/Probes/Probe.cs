@@ -138,8 +138,7 @@ namespace Sensus.Probes
 
                     _mostRecentDatum = value;
 
-                    if (MostRecentDatumChanged != null)
-                        MostRecentDatumChanged(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
+                    MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
                 }
             }
         }
@@ -167,7 +166,7 @@ namespace Sensus.Probes
         public abstract Type DatumType { get; }
 
         [JsonIgnore]
-        protected abstract float RawParticipation { get; }
+        protected abstract double RawParticipation { get; }
 
         /// <summary>
         /// Gets a list of times at which the probe was started (tuple bool = True) and stopped (tuple bool = False). Only includes 
@@ -259,12 +258,16 @@ namespace Sensus.Probes
         /// to trigger scripts but not told to store its data.
         /// </summary>
         /// <returns>The participation level (null, or somewhere 0-1).</returns>
-        public float? GetParticipation()
+        public double? GetParticipation()
         {
             if (_originallyEnabled && _storeData)
+            {
                 return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
+            }
             else
+            {
                 return null;
+            }
         }
 
         protected void StartAsync()
@@ -310,7 +313,7 @@ namespace Sensus.Probes
 
                 string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync(message, false, TimeSpan.FromSeconds(4));  // don't save failure messages for later, since they might be confusing at that future time.
+                SensusServiceHelper.Get().FlashNotificationAsync(message, false, TimeSpan.FromSeconds(10));  // don't save failure messages for later, since they might be confusing at that future time.
 
                 // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
@@ -332,7 +335,9 @@ namespace Sensus.Probes
             lock (_locker)
             {
                 if (_running)
+                {
                     SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already running.", LoggingLevel.Normal, GetType());
+                }
                 else
                 {
                     SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
@@ -351,7 +356,7 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual Task StoreDatumAsync(Datum datum, CancellationToken cancellationToken)
+        public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken)
         {
             // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
             MostRecentDatum = datum;
@@ -364,7 +369,15 @@ namespace Sensus.Probes
 
                 if (_storeData)
                 {
-                    ChartDataPoint chartDataPoint = GetChartDataPointFromDatum(datum);
+                    ChartDataPoint chartDataPoint = null;
+
+                    try
+                    {
+                        chartDataPoint = GetChartDataPointFromDatum(datum);
+                    }
+                    catch (NotImplementedException)
+                    {
+                    }
 
                     if (chartDataPoint != null)
                     {
@@ -373,7 +386,9 @@ namespace Sensus.Probes
                             _chartData.Add(chartDataPoint);
 
                             while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                            {
                                 _chartData.RemoveAt(0);
+                            }
                         }
                     }
 
@@ -419,7 +434,9 @@ namespace Sensus.Probes
                     }
                 }
                 else
+                {
                     SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
+                }
             }
         }
 
@@ -448,7 +465,9 @@ namespace Sensus.Probes
         public virtual void Reset()
         {
             if (_running)
+            {
                 throw new Exception("Cannot reset probe while it is running.");
+            }
 
             lock (_chartData)
             {
@@ -474,7 +493,9 @@ namespace Sensus.Probes
             ChartSeries series = GetChartSeries();
 
             if (series == null)
+            {
                 return null;
+            }
 
             // provide the series with a copy of the chart data. if we provide the actual list, then the
             // chart wants to auto-update the display on subsequent additions to the list. if this happens,

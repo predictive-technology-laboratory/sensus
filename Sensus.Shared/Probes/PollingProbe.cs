@@ -41,7 +41,7 @@ namespace Sensus.Probes
         private ScheduledCallback _pollCallback;
 #if __IOS__
         private bool _significantChangePoll;
-        private bool _significantChangeOverrideScheduledPolls;
+        private bool _significantChangePollOverridesScheduledPolls;
         private CLLocationManager _locationManager;
 #endif
 
@@ -79,7 +79,7 @@ namespace Sensus.Probes
         [JsonIgnore]
         public abstract int DefaultPollingSleepDurationMS { get; }
 
-        protected override float RawParticipation
+        protected override double RawParticipation
         {
             get
             {
@@ -107,11 +107,11 @@ namespace Sensus.Probes
             set { _significantChangePoll = value; }
         }
 
-        [OnOffUiProperty("Significant Change Override Scheduled Polls:", true, 8)]
-        public bool SignificantChangeOverrideScheduledPolls
+        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 8)]
+        public bool SignificantChangePollOverridesScheduledPolls
         {
-            get { return _significantChangeOverrideScheduledPolls; }
-            set { _significantChangeOverrideScheduledPolls = value; }
+            get { return _significantChangePollOverridesScheduledPolls; }
+            set { _significantChangePollOverridesScheduledPolls = value; }
         }
 #endif
 
@@ -119,6 +119,20 @@ namespace Sensus.Probes
         {
             get
             {
+
+#if __IOS__
+                string significantChangeDescription = null;
+                if (_significantChangePoll)
+                {
+                    significantChangeDescription = "On significant changes in the device's location";
+
+                    if (_significantChangePollOverridesScheduledPolls)
+                    {
+                        return DisplayName + ":  " + significantChangeDescription + ".";
+                    }
+                }
+#endif
+
                 TimeSpan interval = new TimeSpan(0, 0, 0, 0, _pollingSleepDurationMS);
 
                 double value = -1;
@@ -149,10 +163,25 @@ namespace Sensus.Probes
 
                 value = Math.Round(value, decimalPlaces);
 
+                string intervalStr;
+
                 if (value == 1)
-                    return DisplayName + ":  Once per " + unit + ".";
+                {
+                    intervalStr = "Once per " + unit + ".";
+                }
                 else
-                    return DisplayName + ":  Every " + value + " " + unit + "s.";
+                {
+                    intervalStr = "Every " + value + " " + unit + "s.";
+                }
+
+#if __IOS__
+                if (_significantChangePoll)
+                {
+                    intervalStr = significantChangeDescription + "; and " + intervalStr.ToLower();
+                }
+#endif
+
+                return DisplayName + ":  " + intervalStr;
             }
         }
 
@@ -165,11 +194,29 @@ namespace Sensus.Probes
 
 #if __IOS__
             _significantChangePoll = false;
-            _significantChangeOverrideScheduledPolls = false;
+            _significantChangePollOverridesScheduledPolls = false;
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += (sender, e) =>
             {
-                SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_pollCallback, 0);
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        CancellationTokenSource canceller = new CancellationTokenSource();
+
+                        // if the callback specified a timeout, request cancellation at the specified time.
+                        if (_pollCallback.CallbackTimeout.HasValue)
+                        {
+                            canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        }
+
+                        _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed significant change poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                });
             };
 #endif
 
@@ -224,7 +271,9 @@ namespace Sensus.Probes
                                 foreach (Datum datum in data)
                                 {
                                     if (cancellationToken.IsCancellationRequested)
+                                    {
                                         break;
+                                    }
 
                                     try
                                     {
@@ -262,12 +311,12 @@ namespace Sensus.Probes
                 }
 
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
-                if (!_significantChangePoll || !_significantChangeOverrideScheduledPolls)
+                if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
                 {
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
                 }
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, 0, _pollingSleepDurationMS, POLL_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
 #endif
             }
         }
@@ -282,7 +331,9 @@ namespace Sensus.Probes
 
 #if __IOS__
                 if (_significantChangePoll)
+                {
                     _locationManager.StopMonitoringSignificantLocationChanges();
+                }
 #endif
 
                 SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback?.Id);
@@ -296,12 +347,23 @@ namespace Sensus.Probes
 
             if (Running)
             {
+
+#if __IOS__
+                // on ios we do significant-change polling, which can override scheduled polls. don't check for polling delays if the scheduled polls are overridden.
+                if (_significantChangePoll && _significantChangePollOverridesScheduledPolls)
+                {
+                    return restart;
+                }
+#endif
+
                 double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp.GetValueOrDefault(DateTimeOffset.MinValue)).TotalMilliseconds;
                 int allowedLagMS = 5000;
                 if (!_isPolling &&
                     _pollingSleepDurationMS <= int.MaxValue - allowedLagMS && // some probes (iOS HealthKit) have polling delays set to int.MaxValue. if we add to this (as we're about to do in the next check), we'll wrap around to 0 resulting in incorrect statuses. only do the check if we won't wrap around.
                     msElapsedSincePreviousStore > (_pollingSleepDurationMS + allowedLagMS))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
+                {
                     warning += "Probe \"" + GetType().FullName + "\" has not stored data in " + msElapsedSincePreviousStore + "ms (polling delay = " + _pollingSleepDurationMS + "ms)." + Environment.NewLine;
+                }
             }
 
             return restart;

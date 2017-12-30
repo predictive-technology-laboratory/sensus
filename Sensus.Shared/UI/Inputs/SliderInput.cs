@@ -19,7 +19,7 @@ using Sensus.UI.UiProperties;
 
 namespace Sensus.UI.Inputs
 {
-    public class SliderInput : Input
+    public class SliderInput : Input, IVariableDefiningInput
     {
         public const string EFFECT_RESOLUTION_EFFECT_NAME = "SliderInputEffect";
         public const string EFFECT_RESOLUTION_NAME = EFFECT_RESOLUTION_GROUP_NAME + "." + EFFECT_RESOLUTION_EFFECT_NAME;
@@ -36,6 +36,7 @@ namespace Sensus.UI.Inputs
         private double _incrementalValue;
         private bool _incrementalValueHasChanged;
         private Label _sliderLabel;
+        private string _definedVariable;
 
         [EntryStringUiProperty("Tip Text:", true, 9)]
         public string TipText
@@ -141,6 +142,19 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        [EntryStringUiProperty("Define Variable:", true, 2)]
+        public string DefinedVariable
+        {
+            get
+            {
+                return _definedVariable;
+            }
+            set
+            {
+                _definedVariable = value?.Trim();
+            }
+        }
+
         public override object Value
         {
             get
@@ -213,8 +227,8 @@ namespace Sensus.UI.Inputs
                     Minimum = double.MinValue,
                     Maximum = double.MaxValue
 
-                    // set the style ID on the view so that we can retrieve it when unit testing
-#if UNIT_TESTING
+                    // set the style ID on the view so that we can retrieve it when UI testing
+#if UI_TESTING
                     , StyleId = Name
 #endif
                 };

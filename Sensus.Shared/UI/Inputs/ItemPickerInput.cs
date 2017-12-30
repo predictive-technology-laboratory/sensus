@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Sensus.UI.UiProperties;
 
 namespace Sensus.UI.Inputs
@@ -34,6 +33,12 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        [OnOffUiProperty("Include \"Other\" Option:", true, 13)]
+        public bool IncludeOtherOption { get; set; }
+
+        [EntryStringUiProperty("Text for \"Other\" Option:", true, 14)]
+        public string OtherOptionText { get; set; }
+
         public ItemPickerInput()
         {
             Construct();
@@ -54,6 +59,8 @@ namespace Sensus.UI.Inputs
         private void Construct()
         {
             _randomizeItemOrder = false;
+            IncludeOtherOption = false;
+            OtherOptionText = "Other";
         }
     }
 }
