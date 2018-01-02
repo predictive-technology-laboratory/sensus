@@ -21,6 +21,11 @@ using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
 using EstimoteSdk.Observation.Region;
 using EstimoteSdk.Common.Config;
+using System.Net;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
+using System.Text;
 
 #if __ANDROID__
 using Android.App;
@@ -63,6 +68,9 @@ namespace Sensus.Probes.Location
 
         [EntryStringUiProperty("Estimote Cloud App Token:", true, 36)]
         public string EstimoteCloudAppToken { get; set; }
+
+        [EditableListUiProperty("Beacon Tags (One Regex Per Line):", true, 37)]
+        public List<string> BeaconTags { get; set; }
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -114,9 +122,9 @@ namespace Sensus.Probes.Location
             _beaconManager = new EstimoteBeaconManager();
             _beacons = new List<EstimoteBeacon>();
 
-            ForegroundScanPeriodSeconds = 20;
+            ForegroundScanPeriodSeconds = 10;
             ForegroundWaitPeriodSeconds = 30;
-            BackgroundScanPeriodSeconds = 20;
+            BackgroundScanPeriodSeconds = 10;
             BackgroundWaitPeriodSeconds = 30;
 
             _beaconManager.LocationFound += async (sender, location) =>
@@ -175,10 +183,67 @@ namespace Sensus.Probes.Location
 #elif __IOS__
                     asdf
 #endif
+
+                    if (BeaconTags.Count > 0)
+                    {
+                        GetBeaconsFromCloud();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while initializing Cloud:  " + ex, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while initializing Estimote Cloud:  " + ex, LoggingLevel.Normal, GetType());
+                }
+            }
+        }
+
+        private void GetBeaconsFromCloud()
+        {
+            WebRequest request = WebRequest.Create("https://cloud.estimote.com/v2/devices");
+            request.ContentType = "application/json";
+            request.Method = "GET";
+            request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
+
+            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            {
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return;
+                }
+
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    string content = reader.ReadToEnd();
+
+                    if (string.IsNullOrWhiteSpace(content))
+                    {
+                        return;
+                    }
+
+                    List<Regex> tagREs = BeaconTags.Select(tag => new Regex(tag)).ToList();
+
+                    foreach (JObject device in JArray.Parse(content))
+                    {
+                        try
+                        {
+                            string identifier = device.GetValue("identifier").ToString();
+                            string[] sensusTag = device.Value<JObject>("shadow").Value<JArray>("tags").Select(tag => tag.ToString()).Where(tag => tag.StartsWith("sensus")).Select(tag => tag.Split(':')).FirstOrDefault();
+                            if (sensusTag != null)
+                            {
+                                if (tagREs.Any(tagRE => tagRE.IsMatch(sensusTag[1])))
+                                {
+                                    EstimoteBeacon beacon = EstimoteBeacon.FromString(identifier + ":" + sensusTag[2]);
+
+                                    if (!_beacons.Contains(beacon))
+                                    {
+                                        _beacons.Add(beacon);
+                                    }
+                                }
+                            }
+                        }
+                        catch(Exception)
+                        {
+                        }
+                    }
                 }
             }
         }

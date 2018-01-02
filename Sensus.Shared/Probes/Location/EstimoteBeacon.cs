@@ -75,16 +75,23 @@ namespace Sensus.Probes.Location
             ProximityCondition = proximity;
         }
 
-        public override string ToString()
-        {
-            return Identifier + ":" + ProximityCondition;
-        }
-
         public bool ProximityConditionSatisfiedBy(Proximity proximity)
         {
             return ProximityCondition == Proximity.Immediate && proximity == Proximity.Immediate ||
                    ProximityCondition == Proximity.Near && (proximity == Proximity.Immediate || proximity == Proximity.Near) ||
                    ProximityCondition == Proximity.Far && (proximity == Proximity.Immediate || proximity == Proximity.Near || proximity == Proximity.Far);
+        }
+
+        public override string ToString()
+        {
+            return Identifier + ":" + ProximityCondition;
+        }
+
+        public override bool Equals(object obj)
+        {
+            EstimoteBeacon beacon = obj as EstimoteBeacon;
+
+            return beacon != null && Identifier == beacon.Identifier;
         }
     }
 }
