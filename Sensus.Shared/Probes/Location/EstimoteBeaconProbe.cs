@@ -19,8 +19,6 @@ using Syncfusion.SfChart.XForms;
 using System.Linq;
 using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
-using EstimoteSdk.Observation.Region;
-using EstimoteSdk.Common.Config;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json.Linq;
@@ -28,7 +26,11 @@ using System.Text.RegularExpressions;
 using System.Text;
 
 #if __ANDROID__
+using EstimoteSdk.Observation.Region;
+using EstimoteSdk.Common.Config;
 using Android.App;
+#elif __IOS__
+using Estimote;
 #endif
 
 namespace Sensus.Probes.Location
@@ -181,7 +183,7 @@ namespace Sensus.Probes.Location
 #if __ANDROID__
                     Estimote.Initialize(Application.Context, EstimoteCloudAppId, EstimoteCloudAppToken);
 #elif __IOS__
-                    asdf
+                    Config.Setup(EstimoteCloudAppId, EstimoteCloudAppToken);
 #endif
 
                     if (BeaconTags.Count > 0)

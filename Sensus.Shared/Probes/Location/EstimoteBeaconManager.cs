@@ -73,36 +73,9 @@ namespace Sensus.Probes.Location
             }
         }
 #elif __IOS__
-        private DeviceManager _deviceManager;
-
         public void ConnectAndStartScanning()
         {
-                _beaconManager = new BeaconManager();
-
-                _beaconManager.EnteredRegion += (sender, e) =>
-                {
-                    if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, e.Region)))
-                    {
-                        EnteredRegion?.Invoke(this, e.Region);
-                    }
-                };
-
-                _beaconManager.ExitedRegion += (sender, e) =>
-                {
-                    if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, e.Region)))
-                    {
-                        ExitedRegion?.Invoke(this, e.Region);
-                    }
-                };
-
-                foreach (EstimoteBeacon beacon in _beacons)
-                {
-                    _beaconManager.StartMonitoringForRegion(beacon.Region);
-                }
-
-                _deviceManager = new DeviceManager();
-                _deviceManager.
-                _deviceManager.RegisterForTelemetryNotification(new EstimoteTelemetryMotion());
+            throw new NotImplementedException();
         }
 #endif
 
@@ -114,7 +87,7 @@ namespace Sensus.Probes.Location
                 _beaconManager.StopLocationDiscovery();
                 _beaconManager.StopTelemetryDiscovery();
 #elif __IOS__
-                _beaconManager.StopMonitoringForRegion(beacon.Region);
+                throw new NotImplementedException();
 #endif
             }
             catch (Exception ex)
@@ -131,9 +104,11 @@ namespace Sensus.Probes.Location
             {
 
             }
-#endif
 
             _beaconManager = null;
+#elif __IOS__
+            throw new NotImplementedException();
+#endif
         }
     }
 }

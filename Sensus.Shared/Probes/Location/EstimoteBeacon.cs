@@ -14,7 +14,12 @@
 
 using System;
 using System.Linq;
+
+#if __ANDROID__
 using EstimoteSdk.Observation.Utils;
+#elif __IOS__
+using Sensus.iOS.Probes.Location;
+#endif
 
 namespace Sensus.Probes.Location
 {
@@ -34,7 +39,7 @@ namespace Sensus.Probes.Location
                 string identifier = parts[0];
                 string proximityString = parts[1].ToLower();
 
-                Proximity proximity = null;
+                Proximity proximity;
 
                 if (proximityString == Proximity.Immediate.ToString().ToLower())
                 {
@@ -92,6 +97,11 @@ namespace Sensus.Probes.Location
             EstimoteBeacon beacon = obj as EstimoteBeacon;
 
             return beacon != null && Identifier == beacon.Identifier;
+        }
+
+        public override int GetHashCode()
+        {
+            return Identifier.GetHashCode();
         }
     }
 }
