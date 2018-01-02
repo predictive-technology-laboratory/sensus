@@ -15,38 +15,27 @@
 using System;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Newtonsoft.Json;
-
-#if __ANDROID__
-using Region = EstimoteSdk.Observation.Region.Beacon.BeaconRegion;
-#elif __IOS__
-using Region = CoreLocation.CLBeaconRegion;
-#endif
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
 
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeaconDatum : Datum
     {
         [StringProbeTriggerProperty]
-        public string Identifier { get; set; }
+        [Anonymizable("Beacon Identifier:", typeof(StringHashAnonymizer), false)]
+        public string BeaconIdentifier { get; set; }
 
         [StringProbeTriggerProperty]
-        public string UUID { get; set; }
-
-        [DoubleProbeTriggerProperty]
-        public int? Major { get; set; }
-
-        [DoubleProbeTriggerProperty]
-        public int? Minor { get; set; }
-
-        [BooleanProbeTriggerProperty]
-        public bool Entering { get; set; }
+        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
+        public string Value { get; set; }
 
         [JsonIgnore]
         public override string DisplayDetail
         {
             get
             {
-                return Identifier + ":" + UUID + ":" + Major + ":" + Minor + ":" + (Entering ? "In Range" : "Out of Range");
+                return BeaconIdentifier + ":  " + Value;
             }
         }
 
@@ -57,31 +46,18 @@ namespace Sensus.Probes.Location
         {
         }
 
-        public EstimoteBeaconDatum(DateTimeOffset timestamp, Region region, bool entering)
+        public EstimoteBeaconDatum(DateTimeOffset timestamp, string beaconIdentifier, string value)
             : base(timestamp)
         {
-            Identifier = region.Identifier;
-            Entering = entering;
-
-#if __ANDROID__
-            UUID = region.ProximityUUID.ToString();
-            Major = region.Major;
-            Minor = region.Minor;
-#elif __IOS__
-            UUID = region.ProximityUuid.ToString();
-            Major = region.Major.Int32Value;
-            Minor = region.Minor.Int32Value;
-#endif
+            BeaconIdentifier = beaconIdentifier;
+            Value = value;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Identifier:  " + Identifier + Environment.NewLine +
-                   "UUID:  " + UUID + Environment.NewLine +
-                   "Major:  " + Major + Environment.NewLine +
-                   "Minor:  " + Minor + Environment.NewLine +
-                   "Entering:  " + Entering;
+                   "Beacon Identifier:  " + BeaconIdentifier + Environment.NewLine +
+                   "Value:  " + Value;
         }
     }
 }

@@ -15,62 +15,68 @@
 using System;
 using System.Collections.Generic;
 using Sensus.Context;
-using System.Linq;
 
 #if __ANDROID__
 using Android.App;
 using EstimoteSdk.Service;
-using Region = EstimoteSdk.Observation.Region.Beacon.BeaconRegion;
 using EstimoteSdk.Recognition.Packets;
 #elif __IOS__
 using Estimote;
-using Region = CoreLocation.CLBeaconRegion;
 #endif
 
 namespace Sensus.Probes.Location
 {
 #if __ANDROID__
-    public class EstimoteBeaconManager : Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.IBeaconMonitoringListener, BeaconManager.ITelemetryListener
+    public class EstimoteBeaconManager : Java.Lang.Object, BeaconManager.IServiceReadyCallback, BeaconManager.ILocationListener, BeaconManager.ITelemetryListener
 #elif __IOS__
     public class EstimoteBeaconManager
 #endif
     {
-        public static bool RegionsAreEqual(Region region1, Region region2)
-        {
-            return region1.Identifier == region2.Identifier &&
+        public event EventHandler<EstimoteLocation> LocationFound;
+        public event EventHandler<EstimoteTelemetry> TelemetryReceived;
+
 #if __ANDROID__
-                   region1.ProximityUUID.ToString() == region2.ProximityUUID.ToString() &&
-#elif __IOS__
-                   region1.ProximityUuid.ToString() == region2.ProximityUuid.ToString() &&
-#endif
-                   region1.Major == region2.Major &&
-                   region1.Minor == region2.Minor;
-        }
-
-        public event EventHandler<Region> EnteredRegion;
-        public event EventHandler<Region> ExitedRegion;
-
         private BeaconManager _beaconManager;
-        private List<EstimoteBeacon> _beacons;
 
-#if __IOS__
-        private DeviceManager _deviceManager;
-#endif
-
-        public void Connect(List<EstimoteBeacon> beacons, TimeSpan foregroundScanPeriod, TimeSpan foregroundWaitTime, TimeSpan backgroundScanPeriod, TimeSpan backgroundWaitTime)
+        public void ConnectAndStartScanning(TimeSpan foregroundScanPeriod, TimeSpan foregroundWaitTime, TimeSpan backgroundScanPeriod, TimeSpan backgroundWaitTime)
         {
-            _beacons = beacons;
-
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-#if __ANDROID__
                 _beaconManager = new BeaconManager(Application.Context);
-                _beaconManager.SetBeaconMonitoringListener(this);
+                _beaconManager.SetLocationListener(this);
                 _beaconManager.SetTelemetryListener(this);
                 _beaconManager.SetForegroundScanPeriod((long)foregroundScanPeriod.TotalMilliseconds, (long)foregroundWaitTime.TotalMilliseconds);
                 _beaconManager.SetBackgroundScanPeriod((long)backgroundScanPeriod.TotalMilliseconds, (long)backgroundWaitTime.TotalMilliseconds);
                 _beaconManager.Connect(this);
+            });
+        }
+
+        public void OnServiceReady()
+        {
+            _beaconManager.StartLocationDiscovery();
+            _beaconManager.StartTelemetryDiscovery();
+        }
+
+        public void OnLocationsFound(IList<EstimoteLocation> locations)
+        {
+            foreach (EstimoteLocation location in locations)
+            {
+                LocationFound?.Invoke(this, location);
+            }
+        }
+
+        public void OnTelemetriesFound(IList<EstimoteTelemetry> telemetries)
+        {
+            foreach (EstimoteTelemetry telemetry in telemetries)
+            {
+                TelemetryReceived?.Invoke(this, telemetry);
+            }
+        }
 #elif __IOS__
+        private DeviceManager _deviceManager;
+
+        public void ConnectAndStartScanning()
+        {
                 _beaconManager = new BeaconManager();
 
                 _beaconManager.EnteredRegion += (sender, e) =>
@@ -97,62 +103,23 @@ namespace Sensus.Probes.Location
                 _deviceManager = new DeviceManager();
                 _deviceManager.
                 _deviceManager.RegisterForTelemetryNotification(new EstimoteTelemetryMotion());
-#endif
-            });
-        }
-
-#if __ANDROID__
-        public void OnServiceReady()
-        {
-            foreach (EstimoteBeacon beacon in _beacons)
-            {
-                _beaconManager.StartMonitoring(beacon.Region);
-            }
-
-            _beaconManager.StartTelemetryDiscovery();
-        }
-
-        public void OnEnteredRegion(Region region, IList<Beacon> beacons)
-        {
-            if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, region)))
-            {
-                EnteredRegion?.Invoke(this, region);
-            }
-        }
-
-        public void OnExitedRegion(Region region)
-        {
-            if (_beacons.Any(beacon => RegionsAreEqual(beacon.Region, region)))
-            {
-                ExitedRegion?.Invoke(this, region);
-            }
-        }
-
-        public void OnTelemetriesFound(IList<EstimoteTelemetry> telemetries)
-        {
-            foreach(EstimoteTelemetry telemetry in telemetries)
-            {
-                
-            }
         }
 #endif
 
         public void Disconnect()
         {
-            foreach (EstimoteBeacon beacon in _beacons)
+            try
             {
-                try
-                {
 #if __ANDROID__
-                    _beaconManager.StopMonitoring(beacon.Region.Identifier);
+                _beaconManager.StopLocationDiscovery();
+                _beaconManager.StopTelemetryDiscovery();
 #elif __IOS__
-                    _beaconManager.StopMonitoringForRegion(beacon.Region);
+                _beaconManager.StopMonitoringForRegion(beacon.Region);
 #endif
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Error stopping Estimote monitoring:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Error stopping Estimote monitoring:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
 
 #if __ANDROID__
@@ -165,14 +132,6 @@ namespace Sensus.Probes.Location
 
             }
 #endif
-
-            try
-            {
-                _beaconManager.Dispose();
-            }
-            catch (Exception)
-            {
-            }
 
             _beaconManager = null;
         }

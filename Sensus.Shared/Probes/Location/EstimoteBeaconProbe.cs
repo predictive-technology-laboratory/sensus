@@ -19,9 +19,15 @@ using Syncfusion.SfChart.XForms;
 using System.Linq;
 using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
+using EstimoteSdk.Observation.Region;
+using EstimoteSdk.Common.Config;
+
+#if __ANDROID__
+using Android.App;
+#endif
 
 namespace Sensus.Probes.Location
-{    
+{
     public class EstimoteBeaconProbe : ListeningProbe
     {
         private EstimoteBeaconManager _beaconManager;
@@ -51,6 +57,12 @@ namespace Sensus.Probes.Location
 
         [EntryIntegerUiProperty("Background Wait Period (Seconds):", true, 34)]
         public int BackgroundWaitPeriodSeconds { get; set; }
+
+        [EntryStringUiProperty("Estimote Cloud App Id:", true, 35)]
+        public string EstimoteCloudAppId { get; set; }
+
+        [EntryStringUiProperty("Estimote Cloud App Token:", true, 36)]
+        public string EstimoteCloudAppToken { get; set; }
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -107,14 +119,37 @@ namespace Sensus.Probes.Location
             BackgroundScanPeriodSeconds = 20;
             BackgroundWaitPeriodSeconds = 30;
 
-            _beaconManager.EnteredRegion += async (sender, region) =>
+            _beaconManager.LocationFound += async (sender, location) =>
             {
-                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, region, true));
+                foreach (EstimoteBeacon beacon in _beacons)
+                {
+                    if (beacon.Identifier == location.Id.ToString().Trim('[', ']') && beacon.ProximityConditionSatisfiedBy(RegionUtils.ComputeProximity(location)))
+                    {
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon.Identifier, "EnteredProximity"));
+                    }
+                }
             };
 
-            _beaconManager.ExitedRegion += async (sender, region) =>
+            _beaconManager.TelemetryReceived += async (sender, telemetry) =>
             {
-                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, region, false));
+                string beaconIdentifier = telemetry.DeviceId.ToString().Trim('[', ']');
+
+                // check if the telemetry is from a beacon we are scanning for
+                if (!_beacons.Any(beacon => beacon.Identifier == beaconIdentifier))
+                {
+                    return;
+                }
+
+                DateTimeOffset telemetryTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(telemetry.Timestamp.Time);
+
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Accelerometer) + ":" + telemetry.Accelerometer));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.AmbientLight) + ":" + telemetry.AmbientLight));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Magnetometer) + ":" + telemetry.Magnetometer));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.MotionDuration) + ":" + telemetry.MotionDuration));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.MotionState) + ":" + telemetry.MotionState));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Pressure) + ":" + telemetry.Pressure));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.PreviousMotionDuration) + ":" + telemetry.PreviousMotionDuration));
+                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Temperature) + ":" + telemetry.Temperature));
             };
         }
 
@@ -130,6 +165,22 @@ namespace Sensus.Probes.Location
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+
+            if (!string.IsNullOrWhiteSpace(EstimoteCloudAppId) && !string.IsNullOrEmpty(EstimoteCloudAppToken))
+            {
+                try
+                {
+#if __ANDROID__
+                    Estimote.Initialize(Application.Context, EstimoteCloudAppId, EstimoteCloudAppToken);
+#elif __IOS__
+                    asdf
+#endif
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while initializing Cloud:  " + ex, LoggingLevel.Normal, GetType());
+                }
+            }
         }
 
         protected override void StartListening()
@@ -139,7 +190,7 @@ namespace Sensus.Probes.Location
                 throw new Exception("Bluetooth not enabled.");
             }
 
-            _beaconManager.Connect(_beacons, TimeSpan.FromSeconds(ForegroundScanPeriodSeconds), TimeSpan.FromSeconds(ForegroundWaitPeriodSeconds), TimeSpan.FromSeconds(BackgroundScanPeriodSeconds), TimeSpan.FromSeconds(BackgroundWaitPeriodSeconds));
+            _beaconManager.ConnectAndStartScanning(TimeSpan.FromSeconds(ForegroundScanPeriodSeconds), TimeSpan.FromSeconds(ForegroundWaitPeriodSeconds), TimeSpan.FromSeconds(BackgroundScanPeriodSeconds), TimeSpan.FromSeconds(BackgroundWaitPeriodSeconds));
         }
 
         protected override void StopListening()
