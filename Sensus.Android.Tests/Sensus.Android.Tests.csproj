@@ -251,9 +251,6 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <Reference Include="Xamarin.Android.Support.v7.MediaRouter">
       <HintPath>..\packages\Xamarin.Android.Support.v7.MediaRouter.26.1.0.1\lib\MonoAndroid80\Xamarin.Android.Support.v7.MediaRouter.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Estimote.Android">
-      <HintPath>..\packages\Xamarin.Estimote.Android.1.0.3\lib\MonoAndroid50\Xamarin.Estimote.Android.dll</HintPath>
-    </Reference>
     <Reference Include="FormsViewGroup">
       <HintPath>..\packages\Xamarin.Forms.2.5.0.121934\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
     </Reference>
@@ -311,6 +308,9 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <Reference Include="ZXing.Net.Mobile.Forms">
       <HintPath>..\packages\ZXing.Net.Mobile.Forms.2.3.2\lib\MonoAndroid403\ZXing.Net.Mobile.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="Estimote.Android.Proximity">
+      <HintPath>..\dependencies\estimote\android\Estimote.Android.Proximity.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -328,7 +328,6 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <None Include="..\Sensus.Android\Properties\AndroidManifest.xml">
       <Link>Properties\AndroidManifest.xml</Link>
     </None>
-    <None Include="MainActivity.cs.txt" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\ic_launcher.png" />

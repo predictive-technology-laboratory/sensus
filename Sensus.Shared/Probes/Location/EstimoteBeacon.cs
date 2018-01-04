@@ -15,12 +15,6 @@
 using System;
 using System.Linq;
 
-#if __ANDROID__
-using EstimoteSdk.Observation.Utils;
-#elif __IOS__
-using Sensus.iOS.Probes.Location;
-#endif
-
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeacon
@@ -31,34 +25,7 @@ namespace Sensus.Probes.Location
             {
                 string[] parts = value.Split(new char[] { ':' }, StringSplitOptions.None).Select(s => s.Trim()).ToArray();
 
-                if (parts.Length != 2)
-                {
-                    throw new Exception("Invalid beacon:  " + value);
-                }
-
-                string identifier = parts[0];
-                string proximityString = parts[1].ToLower();
-
-                Proximity proximity;
-
-                if (proximityString == Proximity.Immediate.ToString().ToLower())
-                {
-                    proximity = Proximity.Immediate;
-                }
-                else if (proximityString == Proximity.Near.ToString().ToLower())
-                {
-                    proximity = Proximity.Near;
-                }
-                else if (proximityString == Proximity.Far.ToString().ToLower())
-                {
-                    proximity = Proximity.Far;
-                }
-                else
-                {
-                    return null;
-                }
-
-                return new EstimoteBeacon(identifier, proximity);
+                return new EstimoteBeacon(parts[0].Trim(), double.Parse(parts[1]));
             }
             catch (Exception)
             {
@@ -67,9 +34,9 @@ namespace Sensus.Probes.Location
         }
 
         public string Identifier { get; set; }
-        public Proximity ProximityCondition { get; set; }
+        public double ProximityMeters { get; set; }
 
-        public EstimoteBeacon(string identifier, Proximity proximity)
+        public EstimoteBeacon(string identifier, double proximityMeters)
         {
             if (string.IsNullOrWhiteSpace(identifier))
             {
@@ -77,31 +44,12 @@ namespace Sensus.Probes.Location
             }
 
             Identifier = identifier;
-            ProximityCondition = proximity;
-        }
-
-        public bool ProximityConditionSatisfiedBy(Proximity proximity)
-        {
-            return ProximityCondition == Proximity.Immediate && proximity == Proximity.Immediate ||
-                   ProximityCondition == Proximity.Near && (proximity == Proximity.Immediate || proximity == Proximity.Near) ||
-                   ProximityCondition == Proximity.Far && (proximity == Proximity.Immediate || proximity == Proximity.Near || proximity == Proximity.Far);
+            ProximityMeters = proximityMeters;
         }
 
         public override string ToString()
         {
-            return Identifier + ":" + ProximityCondition;
-        }
-
-        public override bool Equals(object obj)
-        {
-            EstimoteBeacon beacon = obj as EstimoteBeacon;
-
-            return beacon != null && Identifier == beacon.Identifier;
-        }
-
-        public override int GetHashCode()
-        {
-            return Identifier.GetHashCode();
+            return Identifier + ":" + ProximityMeters;
         }
     }
 }

@@ -19,16 +19,13 @@ using Syncfusion.SfChart.XForms;
 using System.Linq;
 using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
-using System.Net;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
-using System.Text;
+using Sensus.Context;
 
 #if __ANDROID__
-using EstimoteSdk.Observation.Region;
-using EstimoteSdk.Common.Config;
+using Estimote.Android.Proximity;
+using Estimote.Android.Cloud;
 using Android.App;
+using Sensus.Android;
 #elif __IOS__
 using Estimote;
 #endif
@@ -37,10 +34,35 @@ namespace Sensus.Probes.Location
 {
     public class EstimoteBeaconProbe : ListeningProbe
     {
-        private EstimoteBeaconManager _beaconManager;
-        private List<EstimoteBeacon> _beacons;
+        private class EnterProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
+        {
+            public Java.Lang.Object Invoke(Java.Lang.Object p0)
+            {
+                return null;
+            }
+        }
 
-        [EditorUiProperty("Beacons (One Per Line):", true, 30)]
+        private class ExitProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
+        {
+            public Java.Lang.Object Invoke(Java.Lang.Object p0)
+            {
+                return null;
+            }
+        }
+
+        private class ErrorHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
+        {
+            public Java.Lang.Object Invoke(Java.Lang.Object p0)
+            {
+                return null;
+            }
+        }
+
+        private List<EstimoteBeacon> _beacons;
+        IProximityObserver _proximityObserver;
+        IProximityObserverHandler _proximityObservationHandler;
+
+        [EditorUiProperty("Beacons (One \"Identifier:Meters\" Per Line):", true, 30)]
         public string Beacons
         {
             get
@@ -53,26 +75,11 @@ namespace Sensus.Probes.Location
             }
         }
 
-        [EntryIntegerUiProperty("Foreground Scan Period (Seconds):", true, 31)]
-        public int ForegroundScanPeriodSeconds { get; set; }
-
-        [EntryIntegerUiProperty("Foreground Wait Period (Seconds):", true, 32)]
-        public int ForegroundWaitPeriodSeconds { get; set; }
-
-        [EntryIntegerUiProperty("Background Scan Period (Seconds):", true, 33)]
-        public int BackgroundScanPeriodSeconds { get; set; }
-
-        [EntryIntegerUiProperty("Background Wait Period (Seconds):", true, 34)]
-        public int BackgroundWaitPeriodSeconds { get; set; }
-
         [EntryStringUiProperty("Estimote Cloud App Id:", true, 35)]
         public string EstimoteCloudAppId { get; set; }
 
         [EntryStringUiProperty("Estimote Cloud App Token:", true, 36)]
         public string EstimoteCloudAppToken { get; set; }
-
-        [EditableListUiProperty("Beacon Tags (One Regex Per Line):", true, 37)]
-        public List<string> BeaconTags { get; set; }
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -121,46 +128,7 @@ namespace Sensus.Probes.Location
 
         public EstimoteBeaconProbe()
         {
-            _beaconManager = new EstimoteBeaconManager();
             _beacons = new List<EstimoteBeacon>();
-
-            ForegroundScanPeriodSeconds = 10;
-            ForegroundWaitPeriodSeconds = 30;
-            BackgroundScanPeriodSeconds = 10;
-            BackgroundWaitPeriodSeconds = 30;
-
-            _beaconManager.LocationFound += async (sender, location) =>
-            {
-                foreach (EstimoteBeacon beacon in _beacons)
-                {
-                    if (beacon.Identifier == location.Id.ToString().Trim('[', ']') && beacon.ProximityConditionSatisfiedBy(RegionUtils.ComputeProximity(location)))
-                    {
-                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon.Identifier, "EnteredProximity"));
-                    }
-                }
-            };
-
-            _beaconManager.TelemetryReceived += async (sender, telemetry) =>
-            {
-                string beaconIdentifier = telemetry.DeviceId.ToString().Trim('[', ']');
-
-                // check if the telemetry is from a beacon we are scanning for
-                if (!_beacons.Any(beacon => beacon.Identifier == beaconIdentifier))
-                {
-                    return;
-                }
-
-                DateTimeOffset telemetryTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(telemetry.Timestamp.Time);
-
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Accelerometer) + ":" + telemetry.Accelerometer));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.AmbientLight) + ":" + telemetry.AmbientLight));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Magnetometer) + ":" + telemetry.Magnetometer));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.MotionDuration) + ":" + telemetry.MotionDuration));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.MotionState) + ":" + telemetry.MotionState));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Pressure) + ":" + telemetry.Pressure));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.PreviousMotionDuration) + ":" + telemetry.PreviousMotionDuration));
-                await StoreDatumAsync(new EstimoteBeaconDatum(telemetryTimestamp, beaconIdentifier, nameof(telemetry.Temperature) + ":" + telemetry.Temperature));
-            };
         }
 
         protected override void Initialize()
@@ -176,77 +144,9 @@ namespace Sensus.Probes.Location
                 throw new Exception(error);
             }
 
-            if (!string.IsNullOrWhiteSpace(EstimoteCloudAppId) && !string.IsNullOrEmpty(EstimoteCloudAppToken))
+            if (string.IsNullOrWhiteSpace(EstimoteCloudAppId) || string.IsNullOrEmpty(EstimoteCloudAppToken))
             {
-                try
-                {
-#if __ANDROID__
-                    Estimote.Initialize(Application.Context, EstimoteCloudAppId, EstimoteCloudAppToken);
-#elif __IOS__
-                    Config.Setup(EstimoteCloudAppId, EstimoteCloudAppToken);
-#endif
-
-                    if (BeaconTags.Count > 0)
-                    {
-                        GetBeaconsFromCloud();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while initializing Estimote Cloud:  " + ex, LoggingLevel.Normal, GetType());
-                }
-            }
-        }
-
-        private void GetBeaconsFromCloud()
-        {
-            WebRequest request = WebRequest.Create("https://cloud.estimote.com/v2/devices");
-            request.ContentType = "application/json";
-            request.Method = "GET";
-            request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
-
-            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    return;
-                }
-
-                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                {
-                    string content = reader.ReadToEnd();
-
-                    if (string.IsNullOrWhiteSpace(content))
-                    {
-                        return;
-                    }
-
-                    List<Regex> tagREs = BeaconTags.Select(tag => new Regex(tag)).ToList();
-
-                    foreach (JObject device in JArray.Parse(content))
-                    {
-                        try
-                        {
-                            string identifier = device.GetValue("identifier").ToString();
-                            string[] sensusTag = device.Value<JObject>("shadow").Value<JArray>("tags").Select(tag => tag.ToString()).Where(tag => tag.StartsWith("sensus")).Select(tag => tag.Split(':')).FirstOrDefault();
-                            if (sensusTag != null)
-                            {
-                                if (tagREs.Any(tagRE => tagRE.IsMatch(sensusTag[1])))
-                                {
-                                    EstimoteBeacon beacon = EstimoteBeacon.FromString(identifier + ":" + sensusTag[2]);
-
-                                    if (!_beacons.Contains(beacon))
-                                    {
-                                        _beacons.Add(beacon);
-                                    }
-                                }
-                            }
-                        }
-                        catch(Exception)
-                        {
-                        }
-                    }
-                }
+                throw new Exception("Must provide Estimote Cloud application ID and token.");
             }
         }
 
@@ -257,12 +157,42 @@ namespace Sensus.Probes.Location
                 throw new Exception("Bluetooth not enabled.");
             }
 
-            _beaconManager.ConnectAndStartScanning(TimeSpan.FromSeconds(ForegroundScanPeriodSeconds), TimeSpan.FromSeconds(ForegroundWaitPeriodSeconds), TimeSpan.FromSeconds(BackgroundScanPeriodSeconds), TimeSpan.FromSeconds(BackgroundWaitPeriodSeconds));
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                _proximityObserver = new ProximityObserverFactory().Create(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken));
+
+                List<IProximityZone> zones = new List<IProximityZone>();
+
+                foreach (EstimoteBeacon beacon in _beacons)
+                {
+                    IProximityZone zone = _proximityObserver
+                        .ZoneBuilder()
+                        .ForAttachmentKeyAndValue("sensus", beacon.Identifier)
+                        .InCustomRange(beacon.ProximityMeters)
+                        .WithOnEnterAction(new EnterProximityHandler())
+                        .WithOnExitAction(new ExitProximityHandler())
+                        .Create();
+
+                    zones.Add(zone);
+                }
+
+                Notification notification = new Notification.Builder(Application.Context)
+                                                            //.SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                            .SetContentTitle("Beacon scan")
+                                                            .SetContentText("Scan is running...")
+                                                            .Build();
+
+                _proximityObservationHandler = _proximityObserver
+                    .AddProximityZones(zones.ToArray())
+                    .WithBalancedPowerMode()
+                    .WithOnErrorAction(new ErrorHandler())
+                    .StartWithScannerInForegroundService(notification);
+            });
         }
 
         protected override void StopListening()
         {
-            _beaconManager.Disconnect();
+            _proximityObservationHandler.Stop();
         }
 
         protected override ChartSeries GetChartSeries()

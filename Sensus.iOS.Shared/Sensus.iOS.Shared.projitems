@@ -40,7 +40,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSActivityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbeCentralManagerDelegate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\Proximity.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
