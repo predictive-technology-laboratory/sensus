@@ -19,51 +19,17 @@ using Syncfusion.SfChart.XForms;
 using System.Linq;
 using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
-using Sensus.Context;
-
-#if __ANDROID__
-using Estimote.Android.Proximity;
-using Estimote.Android.Cloud;
-using Android.App;
-using Sensus.Android;
-#elif __IOS__
-using Estimote;
-#endif
 
 namespace Sensus.Probes.Location
 {
-    public class EstimoteBeaconProbe : ListeningProbe
+    public abstract class EstimoteBeaconProbe : ListeningProbe
     {
-        private class EnterProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
-        {
-            public Java.Lang.Object Invoke(Java.Lang.Object p0)
-            {
-                return null;
-            }
-        }
-
-        private class ExitProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
-        {
-            public Java.Lang.Object Invoke(Java.Lang.Object p0)
-            {
-                return null;
-            }
-        }
-
-        private class ErrorHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
-        {
-            public Java.Lang.Object Invoke(Java.Lang.Object p0)
-            {
-                return null;
-            }
-        }
-
         private List<EstimoteBeacon> _beacons;
-        IProximityObserver _proximityObserver;
-        IProximityObserverHandler _proximityObservationHandler;
+
+        protected List<EstimoteBeacon> Beacons { get { return _beacons; }}
 
         [EditorUiProperty("Beacons (One \"Identifier:Meters\" Per Line):", true, 30)]
-        public string Beacons
+        public string BeaconStrings
         {
             get
             {
@@ -135,6 +101,11 @@ namespace Sensus.Probes.Location
         {
             base.Initialize();
 
+            if (string.IsNullOrWhiteSpace(EstimoteCloudAppId) || string.IsNullOrEmpty(EstimoteCloudAppToken))
+            {
+                throw new Exception("Must provide Estimote Cloud application ID and token.");
+            }
+
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
@@ -144,55 +115,10 @@ namespace Sensus.Probes.Location
                 throw new Exception(error);
             }
 
-            if (string.IsNullOrWhiteSpace(EstimoteCloudAppId) || string.IsNullOrEmpty(EstimoteCloudAppToken))
-            {
-                throw new Exception("Must provide Estimote Cloud application ID and token.");
-            }
-        }
-
-        protected override void StartListening()
-        {
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to identify beacons, which are being used in one of your studies."))
             {
                 throw new Exception("Bluetooth not enabled.");
             }
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                _proximityObserver = new ProximityObserverFactory().Create(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken));
-
-                List<IProximityZone> zones = new List<IProximityZone>();
-
-                foreach (EstimoteBeacon beacon in _beacons)
-                {
-                    IProximityZone zone = _proximityObserver
-                        .ZoneBuilder()
-                        .ForAttachmentKeyAndValue("sensus", beacon.Identifier)
-                        .InCustomRange(beacon.ProximityMeters)
-                        .WithOnEnterAction(new EnterProximityHandler())
-                        .WithOnExitAction(new ExitProximityHandler())
-                        .Create();
-
-                    zones.Add(zone);
-                }
-
-                Notification notification = new Notification.Builder(Application.Context)
-                                                            //.SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                            .SetContentTitle("Beacon scan")
-                                                            .SetContentText("Scan is running...")
-                                                            .Build();
-
-                _proximityObservationHandler = _proximityObserver
-                    .AddProximityZones(zones.ToArray())
-                    .WithBalancedPowerMode()
-                    .WithOnErrorAction(new ErrorHandler())
-                    .StartWithScannerInForegroundService(notification);
-            });
-        }
-
-        protected override void StopListening()
-        {
-            _proximityObservationHandler.Stop();
         }
 
         protected override ChartSeries GetChartSeries()

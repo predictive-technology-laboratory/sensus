@@ -353,6 +353,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Movement\AndroidActivityProbe.cs" />
     <Compile Include="Probes\Movement\AndroidActivityProbeBroadcastReceiver.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothGattServerCallback.cs" />
+    <Compile Include="Probes\Location\AndroidEstimoteBeaconProbe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AndroidClassDiagram.cd" />
