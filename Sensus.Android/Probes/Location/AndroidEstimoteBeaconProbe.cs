@@ -60,10 +60,21 @@ namespace Sensus.Android.Probes.Location
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                _proximityObserver = new ProximityObserverFactory().Create(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken));
+                Notification notification = new Notification.Builder(Application.Context)
+                                                            .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                            .SetContentTitle("Beacon scan")
+                                                            .SetContentText("Scan is running...")
+                                                            .Build();
+
+                _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
+                    .WithBalancedPowerMode()
+                    .WithTelemetryReporting()
+                    //.WithScannerInForegroundService(notification)
+                    .WithOnErrorAction(new ErrorHandler())
+                    .Build();
 
                 List<IProximityZone> zones = new List<IProximityZone>();
-                  
+
                 foreach (EstimoteBeacon beacon in Beacons)
                 {
                     IProximityZone zone = _proximityObserver
@@ -77,17 +88,9 @@ namespace Sensus.Android.Probes.Location
                     zones.Add(zone);
                 }
 
-                Notification notification = new Notification.Builder(Application.Context)
-                                                            .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                            .SetContentTitle("Beacon scan")
-                                                            .SetContentText("Scan is running...")
-                                                            .Build();
-
                 _proximityObservationHandler = _proximityObserver
                     .AddProximityZones(zones.ToArray())
-                    .WithBalancedPowerMode()
-                    .WithOnErrorAction(new ErrorHandler())
-                    .StartWithScannerInForegroundService(notification);
+                    .Start();
             });
         }
 
