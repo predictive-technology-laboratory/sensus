@@ -712,16 +712,12 @@ namespace Sensus
             }
         }
 
-        public void StartAsync(Action callback)
+        public Task StartAsync()
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 Start();
-
-                if (callback != null)
-                    callback();
-
-            }).Start();
+            });
         }
 
         /// <summary>
@@ -729,11 +725,11 @@ namespace Sensus
         /// </summary>
         public void Start()
         {
-            foreach (var protocol in _registeredProtocols)
+            foreach (Protocol registeredProtocol in _registeredProtocols)
             {
-                if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
+                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    protocol.Start();
+                    registeredProtocol.Start();
                 }
             }
         }
