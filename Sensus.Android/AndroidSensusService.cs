@@ -120,7 +120,7 @@ namespace Sensus.Android
                 if (_foregroundServiceNotificationBuilder == null)
                 {
                     PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(this, 0, new Intent(this, typeof(AndroidMainActivity)), 0);
-                    _foregroundServiceNotificationBuilder = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(this, true)
+                    _foregroundServiceNotificationBuilder = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(this, AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                                                                                .SetSmallIcon(Resource.Drawable.ic_launcher)
                                                                                                                .SetContentIntent(mainActivityPendingIntent)
                                                                                                                .SetOngoing(true);

@@ -23,5 +23,7 @@ namespace Sensus.Android
         void StopAndroidSensusService();
 
         SensorManager GetSensorManager();
+
+        void ReissueForegroundServiceNotification();
     }
 }

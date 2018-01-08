@@ -20,6 +20,7 @@ using Sensus.Android;
 using Sensus.Context;
 using System.Collections.Generic;
 using Sensus.Probes.Location;
+using Sensus.Android.Callbacks;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -58,40 +59,36 @@ namespace Sensus.Android.Probes.Location
 
         protected override void StartListening()
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
+                                                                                           .SetSmallIcon(Resource.Drawable.notification_icon_background)
+                                                                                           .SetContentTitle("Beacon Scan")
+                                                                                           .SetContentText("Scanning...")
+                                                                                           .SetOngoing(true)
+                                                                                           .Build();
+
+            _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
+                .WithBalancedPowerMode()
+                .WithTelemetryReporting()
+                .WithScannerInForegroundService(notification)
+                .WithOnErrorAction(new ErrorHandler())
+                .Build();
+
+            List<IProximityZone> zones = new List<IProximityZone>();
+
+            foreach (EstimoteBeacon beacon in Beacons)
             {
-                Notification notification = new Notification.Builder(Application.Context)
-                                                            .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                            .SetContentTitle("Beacon scan")
-                                                            .SetContentText("Scan is running...")
-                                                            .Build();
+                IProximityZone zone = _proximityObserver.ZoneBuilder()
+                                                        .ForAttachmentKeyAndValue("sensus", beacon.Identifier)
+                                                        .InCustomRange(beacon.ProximityMeters)
+                                                        .WithOnEnterAction(new EnterProximityHandler())
+                                                        .WithOnExitAction(new ExitProximityHandler())
+                                                        .Create();
 
-                _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
-                    .WithBalancedPowerMode()
-                    .WithTelemetryReporting()
-                    //.WithScannerInForegroundService(notification)
-                    .WithOnErrorAction(new ErrorHandler())
-                    .Build();
+                zones.Add(zone);
+            }
 
-                List<IProximityZone> zones = new List<IProximityZone>();
-
-                foreach (EstimoteBeacon beacon in Beacons)
-                {
-                    IProximityZone zone = _proximityObserver
-                        .ZoneBuilder()
-                        .ForAttachmentKeyAndValue("sensus", beacon.Identifier)
-                        .InCustomRange(beacon.ProximityMeters)
-                        .WithOnEnterAction(new EnterProximityHandler())
-                        .WithOnExitAction(new ExitProximityHandler())
-                        .Create();
-
-                    zones.Add(zone);
-                }
-
-                _proximityObservationHandler = _proximityObserver
-                    .AddProximityZones(zones.ToArray())
-                    .Start();
-            });
+            _proximityObservationHandler = _proximityObserver.AddProximityZones(zones.ToArray())
+                                                             .Start();
         }
 
         protected override void StopListening()

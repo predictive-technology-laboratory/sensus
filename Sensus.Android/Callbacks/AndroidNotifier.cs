@@ -24,10 +24,13 @@ namespace Sensus.Android.Callbacks
 {
     public class AndroidNotifier : Notifier
     {
-        private const string CHANNEL_SILENT_ID = "SENSUS_NOTIFICATION_CHANNEL_SILENT";
-        private const string CHANNEL_NONSILENT_ID = "SENSUS_NOTIFICATION_CHANNEL_NONSILENT";
-        private const string CHANNEL_NAME = "Sensus";
-        private const NotificationImportance CHANNEL_IMPORTANCE = NotificationImportance.Min;
+        public enum SensusNotificationChannel
+        {
+            Silent,
+            Survey,
+            ForegroundService,
+            Default
+        }
 
         private AndroidSensusService _service;
         private NotificationManager _notificationManager;
@@ -38,15 +41,17 @@ namespace Sensus.Android.Callbacks
             _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
         }
 
-        public Notification.Builder CreateNotificationBuilder(global::Android.Content.Context context, bool silent)
+        public Notification.Builder CreateNotificationBuilder(global::Android.Content.Context context, SensusNotificationChannel channel)
         {
             global::Android.Net.Uri notificationSoundURI = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
 
             AudioAttributes notificationAudioAttributes = new AudioAttributes.Builder()
                                                                              .SetContentType(AudioContentType.Unknown)
                                                                              .SetUsage(AudioUsageKind.NotificationEvent).Build();
-            
-            long[] vibrationPattern = new long[] { 0, 250, 50, 250 };
+
+            long[] vibrationPattern = { 0, 250, 50, 250 };
+
+            bool silent = GetChannelSilent(channel);
 
             Notification.Builder builder;
 
@@ -56,13 +61,13 @@ namespace Sensus.Android.Callbacks
             {
                 NotificationManager notificationManager = context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
 
-                string channelId = silent ? CHANNEL_SILENT_ID : CHANNEL_NONSILENT_ID;
+                string channelId = channel.ToString();
 
                 if (notificationManager.GetNotificationChannel(channelId) == null)
                 {
-                    NotificationChannel notificationChannel = new NotificationChannel(channelId, CHANNEL_NAME, CHANNEL_IMPORTANCE)
+                    NotificationChannel notificationChannel = new NotificationChannel(channelId, GetChannelName(channel), GetChannelImportance(channel))
                     {
-                        Description = "Sensus notifications.",
+                        Description = GetChannelDescription(channel)
                     };
 
                     if (silent)
@@ -104,6 +109,63 @@ namespace Sensus.Android.Callbacks
             return builder;
         }
 
+        private string GetChannelName(SensusNotificationChannel channel)
+        {
+            if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return "Background Services";
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return "Surveys";
+            }
+            else
+            {
+                return "Notifications";
+            }
+        }
+
+        private string GetChannelDescription(SensusNotificationChannel channel)
+        {
+            if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return "Notifications about Sensus services that are running in the background";
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return "Notifications about Sensus surveys you can take";
+            }
+            else
+            {
+                return "General Sensus notifications";
+            }
+        }
+
+        private NotificationImportance GetChannelImportance(SensusNotificationChannel channel)
+        {
+            if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return NotificationImportance.Min;
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return NotificationImportance.Max;
+            }
+            else if (channel == SensusNotificationChannel.Silent)
+            {
+                return NotificationImportance.Min;
+            }
+            else
+            {
+                return NotificationImportance.Default;
+            }
+        }
+
+        private bool GetChannelSilent(SensusNotificationChannel channel)
+        {
+            return channel != SensusNotificationChannel.Survey;
+        }
+
         /// <summary>
         /// Issues the notification.
         /// </summary>
@@ -132,9 +194,20 @@ namespace Sensus.Android.Callbacks
                     notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
                     PendingIntent notificationPendingIntent = PendingIntent.GetService(_service, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
 
-                    bool silent = !alertUser || Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay);
+                    SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
 
-                    Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, silent)
+                    if (displayPage == DisplayPage.PendingSurveys)
+                    {
+                        notificationChannel = SensusNotificationChannel.Survey;
+                    }
+
+                    // reset channel to silent if we're not alerting or if we're in an exclusion window
+                    if (!alertUser || Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
+                    {
+                        notificationChannel = SensusNotificationChannel.Silent;
+                    }
+
+                    Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, notificationChannel)
                         .SetContentTitle(title)
                         .SetContentText(message)
                         .SetSmallIcon(Resource.Drawable.ic_launcher)

@@ -609,7 +609,7 @@ namespace Sensus
                     _runningProtocolIds.Add(id);
 
 #if __ANDROID__
-                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+                    (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
                 }
 
@@ -665,7 +665,7 @@ namespace Sensus
                 }
 
 #if __ANDROID__
-                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+                (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
             }
         }
