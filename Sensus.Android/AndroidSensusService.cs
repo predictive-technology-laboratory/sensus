@@ -26,6 +26,7 @@ using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
 using Sensus.Android.Concurrent;
 using Sensus.Encryption;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sensus.Android
@@ -68,6 +69,7 @@ namespace Sensus.Android
         public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
 
         private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
+        private Notification.Builder _foregroundServiceNotificationBuilder;
 
         public override void OnCreate()
         {
@@ -112,6 +114,24 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
+                // promote this service to a foreground, for several reasons:  it's honest and transparent. it lets us work effectively with the 
+                // android 8.0 restrictions on background services (we can run forever without being killed, we receive background location 
+                // updates). it's okay to call this multiple times. doing so will simply update the notification.
+                if (_foregroundServiceNotificationBuilder == null)
+                {
+                    PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(this, 0, new Intent(this, typeof(AndroidMainActivity)), 0);
+                    _foregroundServiceNotificationBuilder = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(this, true)
+                                                                                                               .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                                                                               .SetContentIntent(mainActivityPendingIntent)
+                                                                                                               .SetOngoing(true);
+                    UpdateForegroundServiceNotificationBuilder();
+                    StartForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotificationBuilder.Build());
+                }
+                else
+                {
+                    ReissueForegroundServiceNotification();
+                }
+
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
                 serviceHelper.KeepDeviceAwake();
 
@@ -152,27 +172,38 @@ namespace Sensus.Android
                             serviceHelper.LetDeviceSleep();
                         }
                     }
-
-                    // promote this service to a foreground, for several reasons:  it's honest and transparent. it lets us work effectively with the 
-                    // android 8.0 restrictions on background services (we can run forever without being killed, we receive background location 
-                    // updates). it's okay to call this multiple times. doing so will simply update the notification.
-                    PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(this, 0, new Intent(this, typeof(AndroidMainActivity)), PendingIntentFlags.OneShot);
-                    int numRunningStudies = serviceHelper.RunningProtocolIds.Count;
-                    Notification foregroundServiceNotification = new Notification.Builder(this)
-                        .SetContentTitle(Resources.GetString(Resource.String.app_name))
-                        .SetContentText("You are enrolled in " + numRunningStudies + " Sensus " + (numRunningStudies == 1 ? "study" : "studies") + ".")
-                        .SetSmallIcon(Resource.Drawable.ic_launcher)
-                        .SetContentIntent(mainActivityPendingIntent)
-                        .SetOngoing(true)
-                        .Build();
-
-                    StartForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, foregroundServiceNotification);
                 });
             }
 
             // if the service is killed by the system (e.g., due to resource constraints), ask the system to restart
             // the service when possible.
             return StartCommandResult.Sticky;
+        }
+
+        private void UpdateForegroundServiceNotificationBuilder()
+        {
+            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+            int numRunningStudies = serviceHelper.RunningProtocolIds.Count;
+            _foregroundServiceNotificationBuilder.SetContentTitle("You are enrolled in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
+
+            string contentText = "";
+
+            if (numRunningStudies > 0)
+            {
+                double avgParticipation = serviceHelper.GetRunningProtocols().Average(protocol => protocol.Participation) * 100;
+                contentText += "Your overall participation level is " + Math.Round(avgParticipation, 0) + "%. ";
+            }
+
+            contentText += "Tap to open Sensus.";
+
+            _foregroundServiceNotificationBuilder.SetContentText(contentText);
+        }
+
+        public void ReissueForegroundServiceNotification()
+        {
+            UpdateForegroundServiceNotificationBuilder();
+            (GetSystemService(NotificationService) as NotificationManager).Notify(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotificationBuilder.Build());
         }
 
         public override IBinder OnBind(Intent intent)

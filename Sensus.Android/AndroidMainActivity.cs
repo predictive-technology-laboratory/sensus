@@ -147,7 +147,7 @@ namespace Sensus.Android
             // make sure that the service is running and bound any time the activity is resumed. the service is both started
             // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
             Intent serviceIntent = AndroidSensusService.StartService(this);
-            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate | Bind.AboveClient);
+            BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
 
             // prevent the user from interacting with the UI by displaying a progress dialog until 
             // the service has been bound. if the service has already bound, the wait handle below 

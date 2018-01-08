@@ -120,7 +120,7 @@ namespace Sensus
         /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
         /// </summary>
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
-        public static void Initialize(Func<SensusServiceHelper> createNew, bool delay = true)
+        public static void Initialize(Func<SensusServiceHelper> createNew)
         {
             if (SINGLETON != null)
             {
@@ -132,42 +132,35 @@ namespace Sensus
             Exception deserializeException;
             if (!TryDeserializeSingleton(out deserializeException))
             {
-                // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
-                // app-load sequence, which is not allowed to take too much time.
-                if (delay) Thread.Sleep(5000);
-
-                if (!TryDeserializeSingleton(out deserializeException))
+                // we really couldn't deserialize the service helper! try to create a new service helper...
+                try
                 {
-                    // we really couldn't deserialize the service helper! try to create a new service helper...
+                    SINGLETON = createNew();
+                }
+                catch (Exception singletonCreationException)
+                {
+                    #region crash app and report to insights
+
+                    string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
+                    Console.Error.WriteLine(error);
+                    Exception exceptionToReport = new Exception(error);
+
                     try
                     {
-                        SINGLETON = createNew();
+                        Insights.Report(exceptionToReport, Insights.Severity.Error);
                     }
-                    catch (Exception singletonCreationException)
+                    catch (Exception insightsReportException)
                     {
-                        #region crash app and report to insights
-
-                        string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
-                        Console.Error.WriteLine(error);
-                        Exception exceptionToReport = new Exception(error);
-
-                        try
-                        {
-                            Insights.Report(exceptionToReport, Insights.Severity.Error);
-                        }
-                        catch (Exception insightsReportException)
-                        {
-                            Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
-                        }
-
-                        throw exceptionToReport;
-
-                        #endregion
+                        Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
                     }
 
-                    SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
-                    SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
+                    throw exceptionToReport;
+
+                    #endregion
                 }
+
+                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
             }
         }
 
@@ -612,7 +605,13 @@ namespace Sensus
             lock (_runningProtocolIds)
             {
                 if (!_runningProtocolIds.Contains(id))
+                {
                     _runningProtocolIds.Add(id);
+
+#if __ANDROID__
+                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+#endif
+                }
 
                 if (_healthTestCallback == null)
                 {
@@ -664,6 +663,10 @@ namespace Sensus
                     SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback?.Id);
                     _healthTestCallback = null;
                 }
+
+#if __ANDROID__
+                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+#endif
             }
         }
 

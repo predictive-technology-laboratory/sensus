@@ -67,7 +67,9 @@ namespace Sensus.Android
                     // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
 #if __ANDROID_21__
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    {
                         _textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);
+                    }
                     else
 #endif
                     {
