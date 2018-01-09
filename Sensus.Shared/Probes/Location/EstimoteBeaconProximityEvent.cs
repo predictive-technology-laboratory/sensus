@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,14 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Probes.User.Scripts
+namespace Sensus.Probes.Location
 {
-    public enum TriggerValueCondition
+    public enum EstimoteBeaconProximityEvent
     {
-        LessThan,
-        LessThanOrEqualTo,
-        EqualTo,
-        GreaterThanOrEqualTo,
-        GreaterThan
+        /// <summary>
+        /// Entered within the given distance of the given beacon.
+        /// </summary>
+        Entered,
+
+        /// <summary>
+        /// Exited the given distance of the given beacon.
+        /// </summary>
+        Exited
     }
 }

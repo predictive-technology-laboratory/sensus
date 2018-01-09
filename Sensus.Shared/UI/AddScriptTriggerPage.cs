@@ -138,12 +138,16 @@ namespace Sensus.UI
                 Picker conditionPicker = new Picker { Title = "Select Condition", HorizontalOptions = LayoutOptions.FillAndExpand };
                 TriggerValueCondition[] conditions = Enum.GetValues(typeof(TriggerValueCondition)) as TriggerValueCondition[];
                 foreach (TriggerValueCondition condition in conditions)
+                {
                     conditionPicker.Items.Add(condition.ToString());
+                }
 
                 conditionPicker.SelectedIndexChanged += (oo, ee) =>
                 {
                     if (conditionPicker.SelectedIndex < 0)
+                    {
                         return;
+                    }
 
                     _selectedCondition = conditions[conditionPicker.SelectedIndex];
                 };
@@ -173,7 +177,9 @@ namespace Sensus.UI
                     conditionValueStack.Children.Clear();
 
                     if (datumPropertyPicker.SelectedIndex < 0)
+                    {
                         return;
+                    }
 
                     _selectedDatumProperty = datumProperties[datumPropertyPicker.SelectedIndex];
 
@@ -216,7 +222,9 @@ namespace Sensus.UI
                         {
                             double value;
                             if (double.TryParse(eee.NewTextValue, out value))
+                            {
                                 _conditionValue = value;
+                            }
                         };
 
                         conditionValueStackView = entry;

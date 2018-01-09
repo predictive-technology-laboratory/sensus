@@ -28,7 +28,7 @@ namespace Sensus.Probes.Location
 
         protected List<EstimoteBeacon> Beacons { get { return _beacons; }}
 
-        [EditorUiProperty("Beacons (One \"Identifier:Meters\" Per Line):", true, 30)]
+        [EditorUiProperty("Beacons (One \"Name:Meters\" Per Line):", true, 30)]
         public string BeaconStrings
         {
             get

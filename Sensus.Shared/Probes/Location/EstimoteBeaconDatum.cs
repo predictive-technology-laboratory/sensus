@@ -23,19 +23,28 @@ namespace Sensus.Probes.Location
     public class EstimoteBeaconDatum : Datum
     {
         [StringProbeTriggerProperty]
-        [Anonymizable("Beacon Identifier:", typeof(StringHashAnonymizer), false)]
-        public string BeaconIdentifier { get; set; }
-
-        [StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        public string Value { get; set; }
+        public string Name { get; set; }
+
+        [DoubleProbeTriggerProperty("Distance (Meters)")]
+        [Anonymizable("Distance (Meters)", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        public double DistanceMeters { get; set; }
+
+        public EstimoteBeaconProximityEvent ProximityEvent { get; set; }
+
+        [StringProbeTriggerProperty("Event Summary")]
+        [JsonIgnore]
+        public string EventSummary
+        {
+            get { return ProximityEvent + " " + Name; }
+        }
 
         [JsonIgnore]
         public override string DisplayDetail
         {
             get
             {
-                return BeaconIdentifier + ":  " + Value;
+                return Name + ":  " + ProximityEvent;
             }
         }
 
@@ -46,18 +55,20 @@ namespace Sensus.Probes.Location
         {
         }
 
-        public EstimoteBeaconDatum(DateTimeOffset timestamp, string beaconIdentifier, string value)
+        public EstimoteBeaconDatum(DateTimeOffset timestamp, string name, double distanceMeters, EstimoteBeaconProximityEvent proximityEvent)
             : base(timestamp)
         {
-            BeaconIdentifier = beaconIdentifier;
-            Value = value;
+            Name = name;
+            DistanceMeters = distanceMeters;
+            ProximityEvent = proximityEvent;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Beacon Identifier:  " + BeaconIdentifier + Environment.NewLine +
-                   "Value:  " + Value;
+                   "Name:  " + Name + Environment.NewLine +
+                   "Distance (Meters):  " + DistanceMeters + Environment.NewLine +
+                   "Proximity Event:  " + ProximityEvent;
         }
     }
 }

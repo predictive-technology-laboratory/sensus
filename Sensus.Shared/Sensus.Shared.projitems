@@ -229,6 +229,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\Activities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProximityEvent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

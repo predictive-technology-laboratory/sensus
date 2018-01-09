@@ -26,18 +26,22 @@ namespace Sensus.Android.Probes.Location
 {
     public class AndroidEstimoteBeaconProbe : EstimoteBeaconProbe
     {
-        private class EnterProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
+        private class ProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
         {
-            public Java.Lang.Object Invoke(Java.Lang.Object p0)
-            {
-                return null;
-            }
-        }
+            public AndroidEstimoteBeaconProbe _probe;
+            public EstimoteBeacon _beacon;
+            public EstimoteBeaconProximityEvent _proximityEvent;
 
-        private class ExitProximityHandler : Java.Lang.Object, Kotlin.Jvm.Functions.IFunction1
-        {
+            public ProximityHandler(AndroidEstimoteBeaconProbe probe, EstimoteBeacon beacon, EstimoteBeaconProximityEvent proximityEvent)
+            {
+                _probe = probe;
+                _beacon = beacon;
+                _proximityEvent = proximityEvent;
+            }
+
             public Java.Lang.Object Invoke(Java.Lang.Object p0)
             {
+                _probe.StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon.Name, _beacon.ProximityMeters, _proximityEvent));
                 return null;
             }
         }
@@ -46,6 +50,7 @@ namespace Sensus.Android.Probes.Location
         {
             public Java.Lang.Object Invoke(Java.Lang.Object p0)
             {
+                SensusServiceHelper.Get().Logger.Log("Error while observing Estimote beacons:  " + p0, LoggingLevel.Normal, GetType());
                 return null;
             }
         }
@@ -78,10 +83,10 @@ namespace Sensus.Android.Probes.Location
             foreach (EstimoteBeacon beacon in Beacons)
             {
                 IProximityZone zone = _proximityObserver.ZoneBuilder()
-                                                        .ForAttachmentKeyAndValue("sensus", beacon.Identifier)
+                                                        .ForAttachmentKeyAndValue("sensus", beacon.Name)
                                                         .InCustomRange(beacon.ProximityMeters)
-                                                        .WithOnEnterAction(new EnterProximityHandler())
-                                                        .WithOnExitAction(new ExitProximityHandler())
+                                                        .WithOnEnterAction(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Entered))
+                                                        .WithOnExitAction(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Exited))
                                                         .Create();
 
                 zones.Add(zone);

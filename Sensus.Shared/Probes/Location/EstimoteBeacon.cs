@@ -33,23 +33,23 @@ namespace Sensus.Probes.Location
             }
         }
 
-        public string Identifier { get; set; }
+        public string Name { get; set; }
         public double ProximityMeters { get; set; }
 
-        public EstimoteBeacon(string identifier, double proximityMeters)
+        public EstimoteBeacon(string name, double proximityMeters)
         {
-            if (string.IsNullOrWhiteSpace(identifier))
+            if (string.IsNullOrWhiteSpace(name))
             {
-                throw new ArgumentException("Cannot be null or white space.", nameof(identifier));
+                throw new ArgumentException("Cannot be null or white space.", nameof(name));
             }
 
-            Identifier = identifier;
+            Name = name;
             ProximityMeters = proximityMeters;
         }
 
         public override string ToString()
         {
-            return Identifier + ":" + ProximityMeters;
+            return Name + ":" + ProximityMeters;
         }
     }
 }
