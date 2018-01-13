@@ -16,30 +16,21 @@ using System;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using Syncfusion.SfChart.XForms;
-using System.Linq;
 using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
+using System.Net;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Sensus.Concurrent;
 
 namespace Sensus.Probes.Location
 {
     public abstract class EstimoteBeaconProbe : ListeningProbe
     {
-        private List<EstimoteBeacon> _beacons;
+        private ConcurrentObservableCollection<EstimoteBeacon> _beacons;
 
-        protected List<EstimoteBeacon> Beacons { get { return _beacons; }}
-
-        [EditorUiProperty("Beacons (One \"Name:Meters\" Per Line):", true, 30)]
-        public string BeaconStrings
-        {
-            get
-            {
-                return string.Join(Environment.NewLine, _beacons.Select(beacon => beacon.ToString()));
-            }
-            set
-            {
-                _beacons = value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(beaconString => EstimoteBeacon.FromString(beaconString)).Where(beacon => beacon != null).ToList();
-            }
-        }
+        public ConcurrentObservableCollection<EstimoteBeacon> Beacons { get { return _beacons; }}
 
         [EntryStringUiProperty("Estimote Cloud App Id:", true, 35)]
         public string EstimoteCloudAppId { get; set; }
@@ -94,7 +85,7 @@ namespace Sensus.Probes.Location
 
         public EstimoteBeaconProbe()
         {
-            _beacons = new List<EstimoteBeacon>();
+            _beacons = new ConcurrentObservableCollection<EstimoteBeacon>();
         }
 
         protected override void Initialize()
@@ -119,6 +110,67 @@ namespace Sensus.Probes.Location
             {
                 throw new Exception("Bluetooth not enabled.");
             }
+        }
+
+        public List<string> GetSensusBeaconNamesFromCloud()
+        {
+            List<string> sensusBeaconNames = new List<string>();
+
+            try
+            {
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v2/devices");
+                request.ContentType = "application/json";
+                request.Method = "GET";
+                request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
+
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception("Received non-OK status code:  " + response.StatusCode);
+                    }
+
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        string content = reader.ReadToEnd();
+
+                        if (string.IsNullOrWhiteSpace(content))
+                        {
+                            throw new Exception("Received empty response content.");
+                        }
+
+                        foreach (JObject device in JArray.Parse(content))
+                        {
+                            JArray tags = device.Value<JObject>("shadow").Value<JArray>("tags");
+                            foreach (JValue tag in tags)
+                            {
+                                try
+                                {
+                                    // there might be other tags on the beacon. skip those that aren't objects by catching exception.
+                                    JObject tagObject = JObject.Parse(tag.ToString());
+
+                                    // there might be other objects. catch exception to skip those that aren't attachments.
+                                    string deviceName = tagObject.Value<JObject>("attachment").Value<JValue>("sensus").ToString();
+
+                                    if (!sensusBeaconNames.Contains(deviceName))
+                                    {
+                                        sensusBeaconNames.Add(deviceName);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to get Estimote beacons from Cloud:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            return sensusBeaconNames;
         }
 
         protected override ChartSeries GetChartSeries()

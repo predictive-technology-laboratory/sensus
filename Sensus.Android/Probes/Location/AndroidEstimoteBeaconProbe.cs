@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes.Location
 
             public Java.Lang.Object Invoke(Java.Lang.Object p0)
             {
-                _probe.StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon.Name, _beacon.ProximityMeters, _proximityEvent));
+                _probe.StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon, _proximityEvent));
                 return null;
             }
         }

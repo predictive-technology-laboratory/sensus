@@ -13,43 +13,54 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
 
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeacon
     {
-        public static EstimoteBeacon FromString(string value)
-        {
-            try
-            {
-                string[] parts = value.Split(new char[] { ':' }, StringSplitOptions.None).Select(s => s.Trim()).ToArray();
-
-                return new EstimoteBeacon(parts[0].Trim(), double.Parse(parts[1]));
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public string Name { get; set; }
         public double ProximityMeters { get; set; }
+        public string EventName { get; set; }
 
-        public EstimoteBeacon(string name, double proximityMeters)
+        public EstimoteBeacon(string name, double proximityMeters, string eventName)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException("Cannot be null or white space.", nameof(name));
             }
 
+            name = name.Trim();
+
+            if (eventName == null)
+            {
+                eventName = name;
+            }
+
             Name = name;
             ProximityMeters = proximityMeters;
+            EventName = eventName;
         }
 
         public override string ToString()
         {
-            return Name + ":" + ProximityMeters;
+            return "Beacon \"" + Name + "\" @ " + Math.Round(ProximityMeters, 1) + " meters raises event \"" + EventName + "\"";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is EstimoteBeacon))
+            {
+                return false;
+            }
+
+            EstimoteBeacon beacon = obj as EstimoteBeacon;
+
+            return Name == beacon.Name && Math.Abs(ProximityMeters - beacon.ProximityMeters) < 0.000001 && EventName == beacon.EventName;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

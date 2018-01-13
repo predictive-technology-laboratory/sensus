@@ -22,21 +22,25 @@ namespace Sensus.Probes.Location
 {
     public class EstimoteBeaconDatum : Datum
     {
-        [StringProbeTriggerProperty]
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        public string Name { get; set; }
+        [StringProbeTriggerProperty("Beacon Name")]
+        [Anonymizable("Beacon Name:", typeof(StringHashAnonymizer), false)]
+        public string BeaconName { get; set; }
+
+        [StringProbeTriggerProperty("Event Name")]
+        [Anonymizable("Event Name:", typeof(StringHashAnonymizer), false)]
+        public string EventName { get; set; }
 
         [DoubleProbeTriggerProperty("Distance (Meters)")]
-        [Anonymizable("Distance (Meters)", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double DistanceMeters { get; set; }
 
         public EstimoteBeaconProximityEvent ProximityEvent { get; set; }
 
-        [StringProbeTriggerProperty("Event Summary")]
+        [StringProbeTriggerProperty("Entered/Exited [Event Name]")]
         [JsonIgnore]
         public string EventSummary
         {
-            get { return ProximityEvent + " " + Name; }
+            get { return ProximityEvent + " " + EventName; }
         }
 
         [JsonIgnore]
@@ -44,7 +48,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return Name + ":  " + ProximityEvent;
+                return ProximityEvent + " " + EventName;
             }
         }
 
@@ -55,18 +59,20 @@ namespace Sensus.Probes.Location
         {
         }
 
-        public EstimoteBeaconDatum(DateTimeOffset timestamp, string name, double distanceMeters, EstimoteBeaconProximityEvent proximityEvent)
+        public EstimoteBeaconDatum(DateTimeOffset timestamp, EstimoteBeacon beacon, EstimoteBeaconProximityEvent proximityEvent)
             : base(timestamp)
         {
-            Name = name;
-            DistanceMeters = distanceMeters;
+            BeaconName = beacon.Name;
+            EventName = beacon.EventName;
+            DistanceMeters = beacon.ProximityMeters;
             ProximityEvent = proximityEvent;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Name:  " + Name + Environment.NewLine +
+                   "Beacon Name:  " + BeaconName + Environment.NewLine +
+                   "Event Name:  " + EventName + Environment.NewLine +
                    "Distance (Meters):  " + DistanceMeters + Environment.NewLine +
                    "Proximity Event:  " + ProximityEvent;
         }
