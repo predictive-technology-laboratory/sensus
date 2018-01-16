@@ -48,7 +48,7 @@ namespace Sensus.iOS.Tests
             SetUp.SetUpFixture.SetUp();
 
             // This will load all tests within the current project
-            var nunit = new NUnit.Runner.App { AutoRun = false };
+            var nunit = new NUnit.Runner.App();
 
             LoadApplication(nunit);
 

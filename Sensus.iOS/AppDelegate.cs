@@ -162,8 +162,10 @@ namespace Sensus.iOS
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            serviceHelper.StartAsync(async () =>
+            System.Threading.Tasks.Task.Run(async () =>
             {
+                await serviceHelper.StartAsync();
+
                 await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
 #if UI_TESTING

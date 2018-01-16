@@ -16,7 +16,6 @@ using System;
 using Estimote.Android.Proximity;
 using Estimote.Android.Cloud;
 using Android.App;
-using Sensus.Android;
 using Sensus.Context;
 using System.Collections.Generic;
 using Sensus.Probes.Location;
