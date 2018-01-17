@@ -13,12 +13,16 @@
 // limitations under the License.
 
 using System;
+using Sensus.Probes.Location;
+using Estimote.iOS.Proximity;
+using System.Collections.Generic;
+using Sensus.Context;
 
 namespace Sensus.iOS.Probes.Location
 {
-    /*public class iOSEstimoteBeaconProbe : EstimoteBeaconProbe
+    public class iOSEstimoteBeaconProbe : EstimoteBeaconProbe
     {
-        private EPXProximityObserver _proximityObserver;
+        private EPXProximityObserver _observer;
 
         public iOSEstimoteBeaconProbe()
         {
@@ -26,35 +30,42 @@ namespace Sensus.iOS.Probes.Location
 
         protected override void StartListening()
         {
+            _observer = new EPXProximityObserver(new EPXCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error => 
+            {                
+                SensusServiceHelper.Get().Logger.Log("Error while initializing proximiy observer:  " + error, LoggingLevel.Normal, GetType());
+            });
 
-            _proximityObserver = new ProximityObserverBuilder(Application.Context, new EPXCloudCredentials())
-                .WithBalancedPowerMode()
-                .WithTelemetryReporting()
-                .WithScannerInForegroundService(notification)
-                .WithOnErrorAction(new ErrorHandler())
-                .Build();
-
-            List<IProximityZone> zones = new List<IProximityZone>();
+            List<EPXProximityZone> zones = new List<EPXProximityZone>();
 
             foreach (EstimoteBeacon beacon in Beacons)
             {
-                IProximityZone zone = _proximityObserver.ZoneBuilder()
-                                                        .ForAttachmentKeyAndValue("sensus", beacon.Name)
-                                                        .InCustomRange(beacon.ProximityMeters)
-                                                        .WithOnEnterAction(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Entered))
-                                                        .WithOnExitAction(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Exited))
-                                                        .Create();
+                EPXProximityZone zone = new EPXProximityZone(new EPXProximityRange(beacon.ProximityMeters), "sensus", beacon.Name);
+
+                zone.OnEnterAction = async (triggeringDeviceAttachment) =>
+                {
+                    await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                };
+
+                zone.OnExitAction = async (triggeringDeviceAttachment) =>
+                {
+                    await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                };
 
                 zones.Add(zone);
             }
 
-            _proximityObservationHandler = _proximityObserver.AddProximityZones(zones.ToArray())
-                                                             .Start();
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                _observer.StartObservingZones(zones.ToArray());
+            });
         }
 
         protected override void StopListening()
         {
-            _proximityObservationHandler.Stop();
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                _observer.StopObservingZones();
+            });
         }
-    }*/
+    }
 }

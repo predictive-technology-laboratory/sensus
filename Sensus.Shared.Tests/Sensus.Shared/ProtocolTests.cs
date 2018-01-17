@@ -27,7 +27,7 @@ namespace Sensus.Tests.Core
         #endregion
 
         #region SetUp
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestFixtureSetUp()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;

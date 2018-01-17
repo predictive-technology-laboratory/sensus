@@ -21,6 +21,8 @@ using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using Sensus.Context;
 using Sensus.Callbacks;
+using Plugin.Permissions.Abstractions;
+
 #if __IOS__
 using CoreLocation;
 #endif

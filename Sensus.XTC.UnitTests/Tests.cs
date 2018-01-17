@@ -30,7 +30,7 @@ namespace Sensus.Tests.Cloud
         #endregion
 
         #region Setup
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestFixtureSetUp()
         {
 #if __ANDROID__
