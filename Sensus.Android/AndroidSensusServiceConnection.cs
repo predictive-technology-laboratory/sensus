@@ -39,16 +39,17 @@ namespace Sensus.Android
         {
             _binder = binder as AndroidSensusServiceBinder;
 
-            if (_binder != null && ServiceConnected != null)
-                ServiceConnected(this, new AndroidServiceConnectedEventArgs(_binder));
+            if (_binder != null)
+            {
+                ServiceConnected?.Invoke(this, new AndroidServiceConnectedEventArgs(_binder));
+            }
         }
 
         public void OnServiceDisconnected(ComponentName name)
         {
             if (_binder != null)
             {
-                if (ServiceDisconnected != null)
-                    ServiceDisconnected(this, new AndroidServiceConnectedEventArgs(_binder));
+                ServiceDisconnected?.Invoke(this, new AndroidServiceConnectedEventArgs(_binder));
 
                 _binder.SensusServiceHelper = null;
             }

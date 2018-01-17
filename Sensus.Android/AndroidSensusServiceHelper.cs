@@ -710,6 +710,11 @@ namespace Sensus.Android
 
         #endregion
 
+        public void ReissueForegroundServiceNotification()
+        {
+            _service.ReissueForegroundServiceNotification();
+        }
+
         public void StopAndroidSensusService()
         {
             _service.Stop();

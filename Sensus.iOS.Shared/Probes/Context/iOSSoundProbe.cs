@@ -57,7 +57,9 @@ namespace Sensus.iOS.Probes.Context
             try
             {
                 if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+                {
                     throw new Exception("Cannot access microphone.");
+                }
                 
                 AVAudioSession audioSession = AVAudioSession.SharedInstance();
 
@@ -67,11 +69,15 @@ namespace Sensus.iOS.Probes.Context
 
                 error = audioSession.SetActive(true);
                 if (error != null)
+                {
                     throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
+                }
                 
                 recorder = AVAudioRecorder.Create(NSUrl.FromFilename(recordPath), new AudioSettings(_settings), out error);
                 if (error != null)
+                {
                     throw new Exception("Failed to create sound recorder:  " + error.LocalizedDescription);
+                }
 
                 recorder.MeteringEnabled = true;
 
@@ -83,7 +89,9 @@ namespace Sensus.iOS.Probes.Context
                     return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 100 * (recorder.PeakPower(0) + 160) / 160f) };  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
                 }
                 else
+                {
                     throw new Exception("Failed to start recording.");
+                }
             }
             finally
             {

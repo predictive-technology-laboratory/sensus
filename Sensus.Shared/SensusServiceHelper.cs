@@ -120,7 +120,7 @@ namespace Sensus
         /// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
         /// </summary>
         /// <param name="createNew">Function for creating a new service helper, if one is needed.</param>
-        public static void Initialize(Func<SensusServiceHelper> createNew, bool delay = true)
+        public static void Initialize(Func<SensusServiceHelper> createNew)
         {
             if (SINGLETON != null)
             {
@@ -132,42 +132,35 @@ namespace Sensus
             Exception deserializeException;
             if (!TryDeserializeSingleton(out deserializeException))
             {
-                // we failed to deserialize. wait a bit and try again. but don't wait too long since we're holding up the 
-                // app-load sequence, which is not allowed to take too much time.
-                if (delay) Thread.Sleep(5000);
-
-                if (!TryDeserializeSingleton(out deserializeException))
+                // we really couldn't deserialize the service helper! try to create a new service helper...
+                try
                 {
-                    // we really couldn't deserialize the service helper! try to create a new service helper...
+                    SINGLETON = createNew();
+                }
+                catch (Exception singletonCreationException)
+                {
+                    #region crash app and report to insights
+
+                    string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
+                    Console.Error.WriteLine(error);
+                    Exception exceptionToReport = new Exception(error);
+
                     try
                     {
-                        SINGLETON = createNew();
+                        Insights.Report(exceptionToReport, Insights.Severity.Error);
                     }
-                    catch (Exception singletonCreationException)
+                    catch (Exception insightsReportException)
                     {
-                        #region crash app and report to insights
-
-                        string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
-                        Console.Error.WriteLine(error);
-                        Exception exceptionToReport = new Exception(error);
-
-                        try
-                        {
-                            Insights.Report(exceptionToReport, Insights.Severity.Error);
-                        }
-                        catch (Exception insightsReportException)
-                        {
-                            Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
-                        }
-
-                        throw exceptionToReport;
-
-                        #endregion
+                        Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
                     }
 
-                    SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
-                    SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
+                    throw exceptionToReport;
+
+                    #endregion
                 }
+
+                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
             }
         }
 
@@ -612,7 +605,13 @@ namespace Sensus
             lock (_runningProtocolIds)
             {
                 if (!_runningProtocolIds.Contains(id))
+                {
                     _runningProtocolIds.Add(id);
+
+#if __ANDROID__
+                    (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+#endif
+                }
 
                 if (_healthTestCallback == null)
                 {
@@ -664,6 +663,10 @@ namespace Sensus
                     SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback?.Id);
                     _healthTestCallback = null;
                 }
+
+#if __ANDROID__
+                (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+#endif
             }
         }
 
@@ -712,16 +715,12 @@ namespace Sensus
             }
         }
 
-        public void StartAsync(Action callback)
+        public Task StartAsync()
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 Start();
-
-                if (callback != null)
-                    callback();
-
-            }).Start();
+            });
         }
 
         /// <summary>
@@ -729,11 +728,11 @@ namespace Sensus
         /// </summary>
         public void Start()
         {
-            foreach (var protocol in _registeredProtocols)
+            foreach (Protocol registeredProtocol in _registeredProtocols)
             {
-                if (!protocol.Running && _runningProtocolIds.Contains(protocol.Id))
+                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    protocol.Start();
+                    registeredProtocol.Start();
                 }
             }
         }
@@ -1298,76 +1297,112 @@ namespace Sensus
 
         public Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
-                string rationale = null;
-                if (permission == Permission.Camera)
+                return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
-                }
-                else if (permission == Permission.Location)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you have enrolled in.";
-                }
-                else if (permission == Permission.Microphone)
-                {
-                    rationale = "Sensus uses the microphone to collect sound level information for studies you have enrolled in. Sensus will not record audio.";
-                }
-                else if (permission == Permission.Phone)
-                {
-                    rationale = "Sensus monitors telephone call metadata for studies you have enrolled in. Sensus will not record audio from calls.";
-                }
-                else if (permission == Permission.Sensors)
-                {
-                    rationale = "Sensus uses movement sensors to collect various types of information for studies you have enrolled in.";
-                }
-                else if (permission == Permission.Storage)
-                {
-                    rationale = "Sensus must be able to write to your device's storage for proper operation. Please grant this permission.";
-                }
+                    // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
+                    // before using the plugin.
+                    BringToForeground();
 
-                if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
-                {
-                    return PermissionStatus.Granted;
-                }
-
-                // the Permissions plugin requires a main activity to be present on android. ensure this below.
-                BringToForeground();
-
-                // display rationale for request to the user if needed
-                if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-                {
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                     {
-                        Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK").Wait();
-                    });
-                }
-
-                // request permission from the user                    
-                try
-                {
-                    PermissionStatus status;
-
-                    // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that(https://insights.xamarin.com/app/Sensus-Production/issues/903).a
-                    if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out status))
-                    {
-                        throw new Exception($"Permission status not returned for request:  {permission}");
+                        return PermissionStatus.Granted;
                     }
 
-                    return status;
-                }
-                catch (Exception ex)
-                {
-                    _logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
+                    string rationale = null;
 
-                    return PermissionStatus.Unknown;
-                }
+                    if (permission == Permission.Calendar)
+                    {
+                        rationale = "Sensus collects calendar information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Camera)
+                    {
+                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
+                    }
+                    else if(permission == Permission.Contacts)
+                    {
+                        rationale = "Sensus collects calendar information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Location)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.LocationAlways)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.LocationWhenInUse)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.MediaLibrary)
+                    {
+                        rationale = "Sensus collects media for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Microphone)
+                    {
+                        rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+                    }
+                    else if (permission == Permission.Phone)
+                    {
+                        rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+                    }
+                    else if (permission == Permission.Photos)
+                    {
+                        rationale = "Sensus collects photos for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Reminders)
+                    {
+                        rationale = "Sensus collects reminder information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Sensors)
+                    {
+                        rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Sms)
+                    {
+                        rationale = "Sensus collects text messages for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Speech)
+                    {
+                        rationale = "Sensus uses the microphone for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Storage)
+                    {
+                        rationale = "Sensus must be able to write to your device's storage for proper operation.";
+                    }
+
+                    if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
+                    }
+
+                    try
+                    {
+                        PermissionStatus permissionStatus;
+
+                        // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that.
+                        if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out permissionStatus))
+                        {
+                            throw new Exception($"Permission status not returned for request:  {permission}");
+                        }
+
+                        return permissionStatus;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
+
+                        return PermissionStatus.Unknown;
+                    }
+                });
             });
         }
 
         /// <summary>
-        /// Obtains a permission. Must not call this method from the UI thread, since it blocks waiting for prompts that run on the UI thread (deadlock). If it
-        /// is necessary to call from the UI thread, call ObtainPermissionAsync instead.
+        /// Obtains a permission synchronously. Must not call this method from the UI thread, since it blocks waiting for prompts 
+        /// that run on the UI thread (deadlock). If it is necessary to call from the UI thread, call ObtainPermissionAsync instead.
         /// </summary>
         /// <returns>The permission status.</returns>
         /// <param name="permission">Permission.</param>
@@ -1382,19 +1417,18 @@ namespace Sensus
                 return PermissionStatus.Unknown;
             }
 
-            PermissionStatus status = PermissionStatus.Unknown;
+            PermissionStatus permissionStatus = PermissionStatus.Unknown;
             ManualResetEvent wait = new ManualResetEvent(false);
 
-            new Thread(async () =>
+            Task.Run(async () =>
             {
-                status = await ObtainPermissionAsync(permission);
+                permissionStatus = await ObtainPermissionAsync(permission);
                 wait.Set();
-
-            }).Start();
+            });
 
             wait.WaitOne();
 
-            return status;
+            return permissionStatus;
         }
 
         public void AssertNotOnMainThread(string actionDescription)

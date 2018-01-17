@@ -39,7 +39,9 @@ namespace Sensus.UI
             triggerList.ItemTapped += async (o, e) =>
             {
                 if (triggerList.SelectedItem == null)
+                {
                     return;
+                }
 
                 PointOfInterestProximityTrigger selectedTrigger = triggerList.SelectedItem as PointOfInterestProximityTrigger;
 
@@ -58,12 +60,16 @@ namespace Sensus.UI
             Content = triggerList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
-                    {
-                        if (SensusServiceHelper.Get().PointsOfInterest.Union(proximityProbe.Protocol.PointsOfInterest).Count() > 0)
-                            await Navigation.PushAsync(new AddProximityTriggerPage(proximityProbe));
-                        else
-                            SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
-                    }));
+            {
+                if (SensusServiceHelper.Get().PointsOfInterest.Union(proximityProbe.Protocol.PointsOfInterest).Count() > 0)
+                {
+                    await Navigation.PushAsync(new AddProximityTriggerPage(proximityProbe));
+                }
+                else
+                {
+                    SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
+                }
+            }));
         }
     }
 }

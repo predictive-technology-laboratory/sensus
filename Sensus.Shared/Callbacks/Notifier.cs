@@ -32,7 +32,9 @@ namespace Sensus.Callbacks
         public void OpenDisplayPage(DisplayPage displayPage)
         {
             if (displayPage == DisplayPage.None)
+            {
                 return;
+            }
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
@@ -51,7 +53,9 @@ namespace Sensus.Callbacks
                 Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
 
                 if (currentTopPage == null || desiredTopPage.GetType() != currentTopPage.GetType())
+                {
                     await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
+                }
             });
         }
     }

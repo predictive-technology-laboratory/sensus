@@ -44,7 +44,9 @@ namespace Sensus.Android.Probes.Communication
                             // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
 #if __ANDROID_23__
                             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                            {
                                 message = SmsMessage.CreateFromPdu((byte[])pdus[i], intent.GetStringExtra("format"));  // API 23
+                            }
                             else
 #endif
                             {

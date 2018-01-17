@@ -511,7 +511,7 @@ namespace Sensus.UI
                 double shareDirectoryMB = SensusServiceHelper.GetDirectorySizeMB(SensusServiceHelper.SHARE_DIRECTORY);
                 string clearShareDirectoryAction = "Clear Share Directory (" + Math.Round(shareDirectoryMB, 1) + " MB)";
 
-                List<string> buttons = new string[] { "New Protocol", "View Device ID", "View Log", "View Points of Interest", clearShareDirectoryAction }.ToList();
+                List<string> buttons = new string[] { "Create Protocol", "Download Protocol", "View Device ID", "View Log", "View Points of Interest", clearShareDirectoryAction }.ToList();
 
                 // stopping only makes sense on android, where we use a background service. on ios, there is no concept
                 // of stopping the app other than the user or system terminating the app.
@@ -523,9 +523,23 @@ namespace Sensus.UI
 
                 string action = await DisplayActionSheet("Other Actions", "Back", null, buttons.ToArray());
 
-                if (action == "New Protocol")
+                if (action == "Create Protocol")
                 {
                     Protocol.Create("New Protocol");
+                }
+                else if (action == "Download Protocol")
+                {
+                    SensusServiceHelper.Get().PromptForInputAsync(
+                        "Download Protocol",
+                        new SingleLineTextInput("Protocol URL:", Keyboard.Url),
+                        null, true, null, null, null, null, false, input =>
+                    {
+                        // input might be null (user cancelled), or the value might be null (blank input submitted)
+                        if (!string.IsNullOrEmpty(input?.Value?.ToString()))
+                        {
+                            Protocol.DeserializeAsync(new Uri(input.Value.ToString()), Protocol.DisplayAndStartAsync);
+                        }
+                    });
                 }
                 else if (action == "View Device ID")
                 {

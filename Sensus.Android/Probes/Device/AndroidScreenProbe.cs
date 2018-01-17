@@ -36,16 +36,18 @@ namespace Sensus.Android.Probes.Device
             bool screenOn;
 
             // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
-            #if __ANDROID_20__
+#if __ANDROID_20__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            {
                 screenOn = _powerManager.IsInteractive;  // API level 20
+            }
             else
-            #endif
+#endif
             {
                 // ignore deprecation warning
-                #pragma warning disable 618
+#pragma warning disable 618
                 screenOn = _powerManager.IsScreenOn;
-                #pragma warning restore 618
+#pragma warning restore 618
             }
 
             return new Datum[] { new ScreenDatum(DateTimeOffset.UtcNow, screenOn) };
