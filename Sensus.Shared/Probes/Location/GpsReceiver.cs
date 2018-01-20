@@ -80,20 +80,23 @@ namespace Sensus.Probes.Location
             {
                 SensusServiceHelper.Get().Logger.Log("GPS position has changed.", LoggingLevel.Verbose, GetType());
 
-                if (PositionChanged != null)
-                    PositionChanged(o, e);
+                PositionChanged?.Invoke(o, e);
             };
         }
 
         public async void AddListener(EventHandler<PositionEventArgs> listener, bool includeHeading)
         {
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            {
                 throw new Exception("Could not access GPS.");
+            }
 
             // if we're already listening, stop listening first so that the locator can be configured with
             // the most recent listening settings below.
             if (ListeningForChanges)
+            {
                 await _locator.StopListeningAsync();
+            }
 
             // add new listener
             PositionChanged += listener;
@@ -109,16 +112,22 @@ namespace Sensus.Probes.Location
         public async void RemoveListener(EventHandler<PositionEventArgs> listener)
         {
             if (ListeningForChanges)
+            {
                 await _locator.StopListeningAsync();
+            }
 
             PositionChanged -= listener;
 
             _listenerHeadings.RemoveAll(t => t.Item1 == listener);
 
             if (ListeningForChanges)
+            {
                 await _locator.StartListeningAsync(TimeSpan.FromMilliseconds(SensusServiceHelper.Get().GpsMinTimeDelayMS), SensusServiceHelper.Get().GpsMinDistanceDelayMeters, _listenerHeadings.Any(t => t.Item2), GetListenerSettings());
+            }
             else
+            {
                 SensusServiceHelper.Get().Logger.Log("All listeners removed from GPS receiver. Stopped listening.", LoggingLevel.Normal, GetType());
+            }
         }
 
         private ListenerSettings GetListenerSettings()
@@ -176,7 +185,9 @@ namespace Sensus.Probes.Location
                 }
 
                 if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+                {
                     return null;
+                }
 
                 // reuse existing reading if it isn't too old
                 if (_reading != null && maxReadingAgeForReuseMS > 0)
@@ -190,48 +201,52 @@ namespace Sensus.Probes.Location
                 }
 
                 if (_readingIsComing)
+                {
                     SensusServiceHelper.Get().Logger.Log("A GPS reading is coming. Will wait for it.", LoggingLevel.Debug, GetType());
+                }
                 else
                 {
                     _readingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
                     _readingWait.Reset();  // make them wait
 
                     new Thread(async () =>
+                    {
+                        try
                         {
-                            try
+                            SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
+
+                            DateTimeOffset readingStart = DateTimeOffset.UtcNow;
+                            _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
+                            Position newReading = await _locator.GetPositionAsync(TimeSpan.FromMilliseconds(_readingTimeoutMS), cancellationToken);
+                            DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
+
+                            if (newReading != null)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
+                                // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
+                                _reading = new Position(newReading);
 
-                                DateTimeOffset readingStart = DateTimeOffset.UtcNow;
-                                _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
-                                Position newReading = await _locator.GetPositionAsync(TimeSpan.FromMilliseconds(_readingTimeoutMS), cancellationToken);
-                                DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
-
-                                if (newReading != null)
-                                {
-                                    // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
-                                    _reading = new Position(newReading);
-
-                                    SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
-                                }
+                                SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
                             }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("GPS reading failed:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                _reading = null;
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("GPS reading failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            _reading = null;
+                        }
 
-                            _readingWait.Set();  // tell anyone waiting on the shared reading that it is ready
-                            _readingIsComing = false;  // direct any future calls to this method to get their own reading
+                        _readingWait.Set();  // tell anyone waiting on the shared reading that it is ready
+                        _readingIsComing = false;  // direct any future calls to this method to get their own reading
 
-                        }).Start();
+                    }).Start();
                 }
             }
 
             _readingWait.WaitOne(_readingTimeoutMS);
 
             if (_reading == null)
+            {
                 SensusServiceHelper.Get().Logger.Log("GPS reading is null.", LoggingLevel.Normal, GetType());
+            }
 
             return _reading;
         }

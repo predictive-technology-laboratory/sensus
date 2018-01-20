@@ -30,7 +30,9 @@ namespace Sensus.Android.Probes.Context
             try
             {
                 if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+                {
                     throw new Exception("Cannot access microphone.");
+                }
 
                 recorder = new MediaRecorder();
                 recorder.SetAudioSource(AudioSource.Mic);

@@ -39,7 +39,7 @@ namespace Sensus.Android.Tests
             SetUp.SetUpFixture.SetUp();
 
             // This will load all tests within the current project
-            var nunit = new NUnit.Runner.App { AutoRun = false };
+            var nunit = new NUnit.Runner.App();
 
             // If you want to add tests in another assembly
             //nunit.AddTestAssembly(typeof(MyTests).Assembly);

@@ -17,9 +17,9 @@ namespace Sensus.Probes.User.Scripts
     public enum TriggerValueCondition
     {
         LessThan,
-        LessThanOrEqual,
-        Equal,
-        GreaterThanOrEqual,
+        LessThanOrEqualTo,
+        EqualTo,
+        GreaterThanOrEqualTo,
         GreaterThan
     }
 }

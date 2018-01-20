@@ -44,8 +44,6 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public class AppDelegate : FormsApplicationDelegate
     {
-        private CLLocationManager _locationManager = new CLLocationManager();
-
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             // insights should be initialized first to maximize coverage of exception reporting
@@ -102,13 +100,6 @@ namespace Sensus.iOS
             Calabash.Start();
 #endif
 
-            // background authorization will be done implicitly when the location manager is used in probes, but the authorization is
-            // done asynchronously so it's likely that the probes will believe that GPS is not enabled/authorized even though the user
-            // is about to grant access (if they choose). now, the health test should fix this up by checking for GPS and restarting
-            // the probes, but the whole thing will seem strange to the user. instead, prompt the user for background authorization
-            // immediately. this is only done one time after the app is installed and started.
-            _locationManager.RequestAlwaysAuthorization();
-
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
@@ -162,8 +153,10 @@ namespace Sensus.iOS
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            serviceHelper.StartAsync(async () =>
+            System.Threading.Tasks.Task.Run(async () =>
             {
+                await serviceHelper.StartAsync();
+
                 await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
 #if ENABLE_TEST_CLOUD

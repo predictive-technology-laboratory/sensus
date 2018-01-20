@@ -226,7 +226,9 @@ namespace Sensus.Probes.User.MicrosoftBand
                 foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
                 {
                     if (cancellationToken.IsCancellationRequested)
+                    {
                         break;
+                    }
 
                     try
                     {

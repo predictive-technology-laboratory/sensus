@@ -16,41 +16,27 @@ using System;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using Syncfusion.SfChart.XForms;
-using System.Linq;
 using Newtonsoft.Json;
 using Plugin.Permissions.Abstractions;
+using System.Net;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Sensus.Concurrent;
 
 namespace Sensus.Probes.Location
-{    
-    public class EstimoteBeaconProbe : ListeningProbe
+{
+    public abstract class EstimoteBeaconProbe : ListeningProbe
     {
-        private EstimoteBeaconManager _beaconManager;
-        private List<EstimoteBeacon> _beacons;
+        private ConcurrentObservableCollection<EstimoteBeacon> _beacons;
 
-        [EditorUiProperty("Beacons (One Per Line):", true, 30)]
-        public string Beacons
-        {
-            get
-            {
-                return string.Join(Environment.NewLine, _beacons.Select(beacon => beacon.ToString()));
-            }
-            set
-            {
-                _beacons = value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(beaconString => EstimoteBeacon.FromString(beaconString)).Where(beacon => beacon != null).ToList();
-            }
-        }
+        public ConcurrentObservableCollection<EstimoteBeacon> Beacons { get { return _beacons; }}
 
-        [EntryIntegerUiProperty("Foreground Scan Period (Seconds):", true, 31)]
-        public int ForegroundScanPeriodSeconds { get; set; }
+        [EntryStringUiProperty("Estimote Cloud App Id:", true, 35)]
+        public string EstimoteCloudAppId { get; set; }
 
-        [EntryIntegerUiProperty("Foreground Wait Period (Seconds):", true, 32)]
-        public int ForegroundWaitPeriodSeconds { get; set; }
-
-        [EntryIntegerUiProperty("Background Scan Period (Seconds):", true, 33)]
-        public int BackgroundScanPeriodSeconds { get; set; }
-
-        [EntryIntegerUiProperty("Background Wait Period (Seconds):", true, 34)]
-        public int BackgroundWaitPeriodSeconds { get; set; }
+        [EntryStringUiProperty("Estimote Cloud App Token:", true, 36)]
+        public string EstimoteCloudAppToken { get; set; }
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -99,28 +85,17 @@ namespace Sensus.Probes.Location
 
         public EstimoteBeaconProbe()
         {
-            _beaconManager = new EstimoteBeaconManager();
-            _beacons = new List<EstimoteBeacon>();
-
-            ForegroundScanPeriodSeconds = 20;
-            ForegroundWaitPeriodSeconds = 30;
-            BackgroundScanPeriodSeconds = 20;
-            BackgroundWaitPeriodSeconds = 30;
-
-            _beaconManager.EnteredRegion += async (sender, region) =>
-            {
-                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, region, true));
-            };
-
-            _beaconManager.ExitedRegion += async (sender, region) =>
-            {
-                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, region, false));
-            };
+            _beacons = new ConcurrentObservableCollection<EstimoteBeacon>();
         }
 
         protected override void Initialize()
         {
             base.Initialize();
+
+            if (string.IsNullOrWhiteSpace(EstimoteCloudAppId) || string.IsNullOrEmpty(EstimoteCloudAppToken))
+            {
+                throw new Exception("Must provide Estimote Cloud application ID and token.");
+            }
 
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
             {
@@ -130,21 +105,72 @@ namespace Sensus.Probes.Location
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-        }
 
-        protected override void StartListening()
-        {
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to identify beacons, which are being used in one of your studies."))
             {
                 throw new Exception("Bluetooth not enabled.");
             }
-
-            _beaconManager.Connect(_beacons, TimeSpan.FromSeconds(ForegroundScanPeriodSeconds), TimeSpan.FromSeconds(ForegroundWaitPeriodSeconds), TimeSpan.FromSeconds(BackgroundScanPeriodSeconds), TimeSpan.FromSeconds(BackgroundWaitPeriodSeconds));
         }
 
-        protected override void StopListening()
+        public List<string> GetSensusBeaconNamesFromCloud()
         {
-            _beaconManager.Disconnect();
+            List<string> sensusBeaconNames = new List<string>();
+
+            try
+            {
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v2/devices");
+                request.ContentType = "application/json";
+                request.Method = "GET";
+                request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
+
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception("Received non-OK status code:  " + response.StatusCode);
+                    }
+
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        string content = reader.ReadToEnd();
+
+                        if (string.IsNullOrWhiteSpace(content))
+                        {
+                            throw new Exception("Received empty response content.");
+                        }
+
+                        foreach (JObject device in JArray.Parse(content))
+                        {
+                            JArray tags = device.Value<JObject>("shadow").Value<JArray>("tags");
+                            foreach (JValue tag in tags)
+                            {
+                                try
+                                {
+                                    // there might be other tags on the beacon. skip those that aren't objects by catching exception.
+                                    JObject tagObject = JObject.Parse(tag.ToString());
+
+                                    // there might be other objects. catch exception to skip those that aren't attachments.
+                                    string deviceName = tagObject.Value<JObject>("attachment").Value<JValue>("sensus").ToString();
+
+                                    if (!sensusBeaconNames.Contains(deviceName))
+                                    {
+                                        sensusBeaconNames.Add(deviceName);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to get Estimote beacons from Cloud:  " + ex, LoggingLevel.Normal, GetType());
+            }
+
+            return sensusBeaconNames;
         }
 
         protected override ChartSeries GetChartSeries()

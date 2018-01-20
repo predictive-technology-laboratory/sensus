@@ -15,38 +15,40 @@
 using System;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Newtonsoft.Json;
-
-#if __ANDROID__
-using EstimoteSdk;
-#elif __IOS__
-using Region = CoreLocation.CLBeaconRegion;
-#endif
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
 
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeaconDatum : Datum
     {
-        [StringProbeTriggerProperty]
-        public string Identifier { get; set; }
+        [StringProbeTriggerProperty("Beacon Name")]
+        [Anonymizable("Beacon Name:", typeof(StringHashAnonymizer), false)]
+        public string BeaconName { get; set; }
 
-        [StringProbeTriggerProperty]
-        public string UUID { get; set; }
+        [StringProbeTriggerProperty("Event Name")]
+        [Anonymizable("Event Name:", typeof(StringHashAnonymizer), false)]
+        public string EventName { get; set; }
 
-        [DoubleProbeTriggerProperty]
-        public int? Major { get; set; }
+        [DoubleProbeTriggerProperty("Distance (Meters)")]
+        [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        public double DistanceMeters { get; set; }
 
-        [DoubleProbeTriggerProperty]
-        public int? Minor { get; set; }
+        public EstimoteBeaconProximityEvent ProximityEvent { get; set; }
 
-        [BooleanProbeTriggerProperty]
-        public bool Entering { get; set; }
+        [StringProbeTriggerProperty("Entered/Exited [Event Name]")]
+        [JsonIgnore]
+        public string EventSummary
+        {
+            get { return ProximityEvent + " " + EventName; }
+        }
 
         [JsonIgnore]
         public override string DisplayDetail
         {
             get
             {
-                return Identifier + ":" + UUID + ":" + Major + ":" + Minor;
+                return ProximityEvent + " " + EventName;
             }
         }
 
@@ -57,31 +59,22 @@ namespace Sensus.Probes.Location
         {
         }
 
-        public EstimoteBeaconDatum(DateTimeOffset timestamp, Region region, bool entering)
+        public EstimoteBeaconDatum(DateTimeOffset timestamp, EstimoteBeacon beacon, EstimoteBeaconProximityEvent proximityEvent)
             : base(timestamp)
         {
-            Identifier = region.Identifier;
-            Entering = entering;
-
-#if __ANDROID__
-            UUID = region.ProximityUUID.ToString();
-            Major = region.Major;
-            Minor = region.Minor;
-#elif __IOS__
-            UUID = region.ProximityUuid.ToString();
-            Major = region.Major.Int32Value;
-            Minor = region.Minor.Int32Value;
-#endif
+            BeaconName = beacon.Name;
+            EventName = beacon.EventName;
+            DistanceMeters = beacon.ProximityMeters;
+            ProximityEvent = proximityEvent;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Identifier:  " + Identifier + Environment.NewLine +
-                   "UUID:  " + UUID + Environment.NewLine +
-                   "Major:  " + Major + Environment.NewLine +
-                   "Minor:  " + Minor + Environment.NewLine +
-                   "Entering:  " + Entering;
+                   "Beacon Name:  " + BeaconName + Environment.NewLine +
+                   "Event Name:  " + EventName + Environment.NewLine +
+                   "Distance (Meters):  " + DistanceMeters + Environment.NewLine +
+                   "Proximity Event:  " + ProximityEvent;
         }
     }
 }

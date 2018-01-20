@@ -9,6 +9,16 @@
     <AssemblyName>Sensus.XTC.UiTests</AssemblyName>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Description>Endpoint that runs the Sensus UI testing app in a testing environment. It is possible to run and 
+debug this project on physical and virtual devices as well as on the Xamarin Test Cloud.
+
+To target local devices, simply "Run" (or hit the debugger play icon) within Xamarin/Visual studio 
+while targeting a device. The build configuration should be "Debug | iPhone" or 
+"Debug | iPhoneSimulator" (for iOS), or "Debug | Android" (for Android).
+
+To target the Xamarin Test Cloud, the build configuration should be "Debug | iPhone" (for iOS) or 
+"Release | Android" (for Android). Open View -&gt; Test and run the unit tests in the Xamarin Test Cloud.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Android' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,4 +86,5 @@
   <ItemGroup>
     <AndroidAsset Include="Protocols\PromptForUnitTestingProtocol.sh" />
   </ItemGroup>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>

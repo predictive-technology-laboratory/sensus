@@ -30,7 +30,9 @@ namespace Sensus.UI.UiProperties
             : base(labelText, editable, order)
         {
             if (items == null)
+            {
                 items = new object[0];
+            }
 
             _items = items.ToList();
         }

@@ -165,11 +165,11 @@ namespace Sensus.Probes.User.Scripts
                 {
                     var compareTo = ((IComparable)value).CompareTo(_conditionValue);
 
-                    if (Condition == TriggerValueCondition.Equal) return compareTo == 0;
+                    if (Condition == TriggerValueCondition.EqualTo) return compareTo == 0;
                     if (Condition == TriggerValueCondition.GreaterThan) return compareTo > 0;
-                    if (Condition == TriggerValueCondition.GreaterThanOrEqual) return compareTo >= 0;
+                    if (Condition == TriggerValueCondition.GreaterThanOrEqualTo) return compareTo >= 0;
                     if (Condition == TriggerValueCondition.LessThan) return compareTo < 0;
-                    if (Condition == TriggerValueCondition.LessThanOrEqual) return compareTo <= 0;
+                    if (Condition == TriggerValueCondition.LessThanOrEqualTo) return compareTo <= 0;
 
                     throw new Exception($"Trigger failed recognize Condition:  {Condition}");
                 }

@@ -144,10 +144,10 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
-            // make sure that the service is running and bound any time the activity is resumed.
-            Intent serviceIntent = new Intent(this, typeof(AndroidSensusService));
-            StartService(serviceIntent);
-            BindService(serviceIntent, _serviceConnection, Bind.AutoCreate | Bind.AboveClient);
+            // make sure that the service is running and bound any time the activity is resumed. the service is both started
+            // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
+            Intent serviceIntent = AndroidSensusService.StartService(this);
+            BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
 
             // prevent the user from interacting with the UI by displaying a progress dialog until 
             // the service has been bound. if the service has already bound, the wait handle below 
@@ -210,7 +210,9 @@ namespace Sensus.Android
             // if the activity is destroyed, reset the service connection stop action to be null so that the service doesn't try to
             // finish a destroyed activity if/when the service stops.
             if (_serviceConnection.Binder != null)
+            {
                 _serviceConnection.Binder.ServiceStopAction = null;
+            }
         }
 
         private void DisconnectFromService()
@@ -252,7 +254,7 @@ namespace Sensus.Android
             }
         }
 
-        #region intent handling
+#region intent handling
 
         protected override void OnNewIntent(Intent intent)
         {
@@ -336,9 +338,9 @@ namespace Sensus.Android
             }).Start();
         }
 
-        #endregion
+#endregion
 
-        #region activity results
+#region activity results
 
         public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
         {
@@ -397,6 +399,6 @@ namespace Sensus.Android
         }
 #endif
 
-        #endregion
+#endregion
     }
 }
