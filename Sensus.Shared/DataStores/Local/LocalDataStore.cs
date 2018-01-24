@@ -12,25 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Probes;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 using System.Threading;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-#if __ANDROID__
-using Java.Util.Zip;
-#elif __IOS__
-using MiniZip.ZipArchive;
-#elif LOCAL_TESTS
-#else
-#warning "Unrecognized platform"
-#endif
+using System.IO.Compression;
 
 namespace Sensus.DataStores.Local
 {
@@ -112,153 +102,51 @@ namespace Sensus.DataStores.Local
         public abstract void CommitToRemote(CancellationToken cancellationToken);
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
-        {
-            // create a zip file to hold all data
-#if __ANDROID__
-            ZipOutputStream zipFile = null;
-#elif __IOS__
-            ZipArchive zipFile = null;
-#endif
-
-            // write all data to separate JSON files. zip files for convenience.
-            string directory = null;
-            Dictionary<string, StreamWriter> datumTypeFile = new Dictionary<string, StreamWriter>();
-
-            try
+        {            
+            using (FileStream zipFile = new FileStream(zipPath, FileMode.Create))
             {
-                string directoryName = Protocol.Name + "_Data_" + DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToShortTimeString();
-                directoryName = new Regex("[^a-zA-Z0-9]").Replace(directoryName, "_");
-                directory = Path.Combine(SensusServiceHelper.SHARE_DIRECTORY, directoryName);
-
-                if (Directory.Exists(directory))
-                    Directory.Delete(directory, true);
-
-                Directory.CreateDirectory(directory);
-
-                if (progressCallback != null)
-                    progressCallback("Gathering data...", 0);
-
-                int totalDataCount = 0;
-
-                foreach (Tuple<string, string> datumTypeLine in GetDataLinesToWrite(cancellationToken, progressCallback))
+                using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create))
                 {
-                    string datumType = datumTypeLine.Item1;
-                    string line = datumTypeLine.Item2;
+                    string zipArchiveDirectoryName = Protocol.Name + "_Data_" + DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToShortTimeString();
+                    zipArchiveDirectoryName = new Regex("[^a-zA-Z0-9]").Replace(zipArchiveDirectoryName, "_");
 
-                    StreamWriter file;
-                    if (datumTypeFile.TryGetValue(datumType, out file))
-                        file.WriteLine(",");
-                    else
+                    progressCallback?.Invoke("Writing data...", 0);
+
+                    Dictionary<string, StreamWriter> datumTypeFile = new Dictionary<string, StreamWriter>();
+                    int writtenDataCount = 0;
+                    foreach (Tuple<string, string> datumTypeLine in GetDataLinesToWrite(cancellationToken, progressCallback))
                     {
-                        file = new StreamWriter(Path.Combine(directory, datumType + ".json"));
-                        file.WriteLine("[");
-                        datumTypeFile.Add(datumType, file);
-                    }
+                        string datumType = datumTypeLine.Item1;
+                        string line = datumTypeLine.Item2;
 
-                    file.Write(line);
-                    ++totalDataCount;
-                }
-
-                // close all files
-                foreach (StreamWriter file in datumTypeFile.Values)
-                {
-                    file.Write(Environment.NewLine + "]");
-                    file.Close();
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (progressCallback != null)
-                    progressCallback("Compressing data...", 0);
-
-#if __ANDROID__
-
-                directoryName += '/';
-                zipFile = new ZipOutputStream(new FileStream(zipPath, FileMode.Create, FileAccess.Write));
-                zipFile.PutNextEntry(new ZipEntry(directoryName));
-
-                int dataWritten = 0;
-
-                foreach (string path in Directory.GetFiles(directory))
-                {
-                    // start json file for data of current type
-                    zipFile.PutNextEntry(new ZipEntry(directoryName + Path.GetFileName(path)));
-
-                    using (StreamReader file = new StreamReader(path))
-                    {
-                        string line;
-                        while ((line = file.ReadLine()) != null)
+                        StreamWriter file;
+                        if (datumTypeFile.TryGetValue(datumType, out file))
                         {
-                            if (progressCallback != null && totalDataCount >= 10 && (dataWritten % (totalDataCount / 10)) == 0)
-                                progressCallback(null, dataWritten / (double)totalDataCount);
-
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            zipFile.Write(file.CurrentEncoding.GetBytes(line + Environment.NewLine));
-
-                            if (line != "[" && line != "]")
-                                ++dataWritten;
+                            file.WriteLine(",");
                         }
+                        else
+                        {
+                            ZipArchiveEntry zipFileEntry = zipArchive.CreateEntry(Path.Combine(zipArchiveDirectoryName, datumType + ".json"), CompressionLevel.Optimal);
+                            file = new StreamWriter(zipFileEntry.Open());
+                            file.WriteLine("[");
+                            datumTypeFile.Add(datumType, file);
+                        }
+
+                        file.Write(line);
+                        ++writtenDataCount;
                     }
 
-                    zipFile.CloseEntry();
-                    System.IO.File.Delete(path);
-                }
-
-                // close entry for directory
-                zipFile.CloseEntry();
-
-#elif __IOS__
-                zipFile = new ZipArchive();
-                zipFile.CreateZipFile(zipPath);
-                zipFile.AddFolder(directory, null);
-#endif
-
-                if (progressCallback != null)
-                {
-                    progressCallback(null, 1);
-                }
-
-                return totalDataCount;
-            }
-            finally
-            {
-                // ensure that zip file is closed.
-                try
-                {
-#if __ANDROID__ || __IOS__
-                    if (zipFile != null)
+                    foreach (StreamWriter file in datumTypeFile.Values)
                     {
-#if __ANDROID__
-                        zipFile.Close();
-#elif __IOS__
-                        zipFile.CloseZipFile();
-#endif
+                        file.Write(Environment.NewLine + "]");
+                        file.Close();
                     }
-#endif
-                }
-                catch (Exception)
-                {
-                }
 
-                // ensure that all temporary files are closed/deleted.
-                foreach (string datumType in datumTypeFile.Keys)
-                {
-                    try
-                    {
-                        datumTypeFile[datumType].Close();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                try
-                {
-                    Directory.Delete(directory, true);
-                }
-                catch (Exception)
-                {
+                    progressCallback?.Invoke(null, 1);
+
+                    return writtenDataCount;
                 }
             }
         }

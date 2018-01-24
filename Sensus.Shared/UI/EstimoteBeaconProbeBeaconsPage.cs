@@ -71,7 +71,7 @@ namespace Sensus.UI
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve Estimote beacons from Cloud:  " + ex, false, TimeSpan.FromSeconds(10));
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve Estimote beacons from Cloud:  " + ex);
                         return;
                     }
 
@@ -101,7 +101,7 @@ namespace Sensus.UI
                             }
                             catch (Exception)
                             {
-                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon.", false, TimeSpan.FromSeconds(5));
+                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon.");
                             }
                         }
                     });

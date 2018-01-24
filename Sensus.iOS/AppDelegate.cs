@@ -25,7 +25,6 @@ using Sensus.Exceptions;
 using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
-using CoreLocation;
 using Facebook.CoreKit;
 using Sensus.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
@@ -35,6 +34,7 @@ using UserNotifications;
 using Sensus.iOS.Callbacks.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
+using Plugin.Toasts;
 
 namespace Sensus.iOS
 {
@@ -87,6 +87,9 @@ namespace Sensus.iOS
             MapExtendRenderer.Init();
             new SfChartRenderer();
             ZXing.Net.Mobile.Forms.iOS.Platform.Init();
+
+            DependencyService.Register<ToastNotification>();
+            ToastNotification.Init();
 
             LoadApplication(new App());
 
@@ -212,7 +215,7 @@ namespace Sensus.iOS
                                 // provide some generic feedback if the user responded to a silent notification
                                 if ((notification.UserInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
                                 {
-                                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+                                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                                 }
                             }
                         });

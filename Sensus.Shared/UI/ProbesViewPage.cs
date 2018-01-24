@@ -42,7 +42,7 @@ namespace Sensus.UI
 
             if (chart == null)
             {
-                SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.", duration: TimeSpan.FromSeconds(2));
+                SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.");
             }
             else
             {
@@ -83,7 +83,7 @@ namespace Sensus.UI
 
         private void FlashChartDataCountAsync(Probe probe)
         {
-            SensusServiceHelper.Get().FlashNotificationAsync("Displaying " + probe.MaxChartDataCount + " point" + (probe.MaxChartDataCount == 1 ? "" : "s") + ".", false, TimeSpan.FromSeconds(2));
+            SensusServiceHelper.Get().FlashNotificationAsync("Displaying " + probe.MaxChartDataCount + " point" + (probe.MaxChartDataCount == 1 ? "" : "s") + ".");
         }
     }
 }

@@ -468,26 +468,6 @@ namespace Sensus.Android
 
         #endregion
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
-        {
-            Task.Run(() =>
-            {
-                RunActionUsingMainActivityAsync(mainActivity =>
-                {
-                    mainActivity.RunOnUiThread(() =>
-                    {
-                        int shortToasts = (int)Math.Ceiling(duration.TotalSeconds / 2);  // each short toast is 2 seconds.
-
-                        for (int i = 0; i < shortToasts; ++i)
-                            Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
-
-                        callback?.Invoke();
-                    });
-
-                }, false, flashLaterIfNotVisible);
-            });
-        }
-
         public override bool EnableProbeWhenEnablingAll(Probe probe)
         {
             // listening for locations doesn't work very well in android, since it conflicts with polling and uses more power. don't enable probes that need location listening by default.
@@ -526,7 +506,7 @@ namespace Sensus.Android
             if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth) ||
                 bluetoothAdapter == null)
             {
-                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".", false);
+                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
                 return enabled;
             }
 

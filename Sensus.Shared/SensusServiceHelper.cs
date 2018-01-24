@@ -41,6 +41,7 @@ using Sensus.Callbacks;
 
 #if __ANDROID__ || __IOS__
 using ZXing;
+using Plugin.Toasts;
 #endif
 
 #if __IOS__
@@ -541,8 +542,6 @@ namespace Sensus
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform. we are gradually migrating this functionality into the ISensusContext object.
 
-        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback);
-
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
         public abstract void ShareFileAsync(string path, string subject, string mimeType);
@@ -871,23 +870,28 @@ namespace Sensus
         /// </summary>
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
-        /// <param name="flashLaterIfNotVisible">Flash later if not visible.</param>
-        /// <param name="duration">Duration. Increments of 2 seconds are best displayed.</param>
         /// <param name="callback">Callback.</param>
-        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, TimeSpan? duration = null, Action callback = null)
+        public void FlashNotificationAsync(string message, Action callback = null)
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
 
-            if (_flashNotificationsEnabled)
+            Task.Run(async () =>
             {
-                if (!duration.HasValue)
+                if (_flashNotificationsEnabled)
                 {
-                    duration = TimeSpan.FromSeconds(2);
-                }
+                    var notificator = DependencyService.Get<IToastNotificator>();
 
-                ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
-            }
+                    var options = new NotificationOptions()
+                    {
+                        Description = message
+                    };
+
+                    await notificator.Notify(options);
+
+                    callback?.Invoke();
+                }
+            });
 #endif
         }
 

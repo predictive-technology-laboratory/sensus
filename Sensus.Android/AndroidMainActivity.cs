@@ -28,6 +28,7 @@ using Xamarin.Facebook;
 using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
+using Plugin.Toasts;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -77,6 +78,9 @@ namespace Sensus.Android
             FormsMaps.Init(this, savedInstanceState);
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
             CrossCurrentActivity.Current.Activity = this;
+
+            DependencyService.Register<ToastNotification>();
+            ToastNotification.Init(this);
 
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>

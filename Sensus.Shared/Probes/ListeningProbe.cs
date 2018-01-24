@@ -96,11 +96,11 @@ namespace Sensus.Probes
 
                     if (value && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning, false, duration);
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning);
                     }
                     else if (!value && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning, false, duration);
+                        SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning);
                     }
                 }
 

@@ -175,9 +175,6 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
       <HintPath>..\packages\XLabs.Serialization.2.0.5782\lib\Xamarin.iOS10\XLabs.Serialization.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ZipArchive">
-      <HintPath>..\Components\ZipArchive-1.4.0.1\lib\ios-unified\ZipArchive.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.Estimote.iOS">
       <HintPath>..\packages\Xamarin.Estimote.iOS.4.7.3.2\lib\Xamarin.iOS10\Xamarin.Estimote.iOS.dll</HintPath>
     </Reference>
@@ -343,12 +340,6 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <Reference Include="AWSSDK.Core">
       <HintPath>..\packages\AWSSDK.Core.3.3.21.7\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <XamarinComponentReference Include="ZipArchive">
-      <Version>1.4.0.1</Version>
-      <Visible>False</Visible>
-    </XamarinComponentReference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />

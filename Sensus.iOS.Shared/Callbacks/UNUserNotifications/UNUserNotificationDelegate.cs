@@ -52,7 +52,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             // provide some generic feedback if the user responded to a silent notification
             if ((notificationInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
             {
-                SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+                SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
             }
         }
     }

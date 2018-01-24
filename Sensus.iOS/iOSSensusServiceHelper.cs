@@ -27,7 +27,6 @@ using AVFoundation;
 using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
-using ToastIOS;
 
 namespace Sensus.iOS
 {
@@ -208,40 +207,6 @@ namespace Sensus.iOS
                 dialogDismissWait.WaitOne();
 
                 return input;
-            });
-        }
-
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
-        {
-            Task.Run(async () =>
-            {
-                TimeSpan delay = TimeSpan.FromSeconds(0);
-
-                lock (_toastLocker)
-                {
-                    DateTime now = DateTime.Now;
-
-                    double delaySeconds = (_nextToastTime - now).TotalSeconds;
-
-                    if (delaySeconds > 0)
-                    {
-                        delay = TimeSpan.FromSeconds(delaySeconds);
-                    }
-
-                    _nextToastTime = now + delay + duration;
-                }
-
-                if (delay.TotalSeconds > 0)
-                {
-                    await Task.Delay(delay);
-                }
-
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    Toast.MakeText(message, (nint)duration.TotalMilliseconds).SetFontSize(13).Show(ToastType.Info);
-                });
-
-                callback?.Invoke();
             });
         }
 
