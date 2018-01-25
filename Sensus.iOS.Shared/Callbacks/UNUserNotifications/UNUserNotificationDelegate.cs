@@ -26,19 +26,6 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         {
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
-            // don't alert the user for callback notifications presented when the app is not in the background state.
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                if(iOSCallbackScheduler.IsCallback(notification?.Request?.Content?.UserInfo) && UIApplication.SharedApplication.ApplicationState != UIApplicationState.Background)
-                {
-                    completionHandler(UNNotificationPresentationOptions.None);                    
-                }
-                else
-                {
-                    completionHandler(UNNotificationPresentationOptions.Alert);
-                }
-            });
-
             // common scenario:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
             // dismisses the tapped notification and brings up sensus. upon activation sensus then updates and reissues all notifications. these reissued
             // notifications will come directly to the app as long as it's in the foreground. the original notifications that were in the iOS notification
