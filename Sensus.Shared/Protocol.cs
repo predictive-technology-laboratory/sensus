@@ -358,10 +358,6 @@ namespace Sensus
                 }
                 else if (protocol.Running)
                 {
-                    // android occasionally kills/restarts the activity, and when it does this it redelivers the intent that originally started the ativity. this 
-                    // intent will contain a protocol in cases where the user originally launched the activity by opening the protocol from URL, attachment, etc. 
-                    // if we save the below flash for later, then when the user opens the activity at a later time they'll be confused by the message. so, don't store
-                    // the flash below.
                     SensusServiceHelper.Get().FlashNotificationAsync("The following study is currently running:  \"" + protocol.Name + "\".");
                 }
                 else
@@ -1328,9 +1324,6 @@ namespace Sensus
                             }
                             else
                             {
-                                // on android when the activity is stopped the service is restarted, which restarts the protocols. if the user then 
-                                // restarts the activity it can be confusing to see the flash message below since the user believes the protocol
-                                // was always running. so, don't retain the message for flashing later if it's not currently visibile.
                                 SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
                             }
                         }

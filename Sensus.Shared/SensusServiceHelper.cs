@@ -38,11 +38,9 @@ using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Sensus.Callbacks;
-
-#if __ANDROID__ || __IOS__
 using ZXing;
-using Plugin.Toasts;
-#endif
+using ZXing.Net.Mobile.Forms;
+using ZXing.Mobile;
 
 #if __IOS__
 using XLabs.Platform.Device;
@@ -542,6 +540,8 @@ namespace Sensus
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform. we are gradually migrating this functionality into the ISensusContext object.
 
+        protected abstract void ProtectedFlashNotificationAsync(string message, Action callback);
+
         public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
         public abstract void ShareFileAsync(string path, string subject, string mimeType);
@@ -875,24 +875,50 @@ namespace Sensus
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
-
-            Task.Run(async () =>
+            if (_flashNotificationsEnabled)
             {
-                if (_flashNotificationsEnabled)
-                {
-                    var notificator = DependencyService.Get<IToastNotificator>();
+                ProtectedFlashNotificationAsync(message, callback);
+            }
+#endif
+        }
 
-                    var options = new NotificationOptions()
+        public Task<Result> ScanQrCodeAsync(INavigation navigation)
+        {
+            return Task.Run(() =>
+            {
+                Result result = null;
+                ManualResetEvent resultWait = new ManualResetEvent(false);
+
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
                     {
-                        Description = message
+                        PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
+                    });
+
+                    barcodeScannerPage.OnScanResult += r =>
+                    {
+                        result = r;
+
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {                            
+                            barcodeScannerPage.IsScanning = false;
+                            await navigation.PopAsync();
+                        });
                     };
 
-                    await notificator.Notify(options);
+                    barcodeScannerPage.Disappearing += (sender, e) => 
+                    {
+                        resultWait.Set();
+                    };
 
-                    callback?.Invoke();
-                }
+                    await navigation.PushAsync(barcodeScannerPage);
+                });
+
+                resultWait.WaitOne();
+
+                return result;
             });
-#endif
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)

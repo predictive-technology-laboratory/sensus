@@ -101,7 +101,9 @@ namespace Sensus.UI
                     });
 
                     if (numDataWritten == 0)
+                    {
                         throw new Exception("No data to share.");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -117,7 +119,9 @@ namespace Sensus.UI
                     try
                     {
                         if (File.Exists(sharePath))
+                        {
                             File.Delete(sharePath);
+                        }
                     }
                     catch (Exception)
                     {
@@ -125,7 +129,9 @@ namespace Sensus.UI
 
                     // if the window has already been popped then the token will have been cancelled. pop the window if needed.
                     if (!_cancellationTokenSource.IsCancellationRequested)
+                    {
                         SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () => await Navigation.PopAsync());
+                    }
                 }
                 else
                 {

@@ -310,8 +310,10 @@ namespace Sensus.DataStores.Local
                                 storageDirectoryMbRead += (localFile.BaseStream.Position - localFilePosition) / (1024d * 1024d);
                                 int newMbRead = (int)storageDirectoryMbRead;
 
-                                if (newMbRead > oldMbRead && progressCallback != null && storageDirectoryMbToRead > 0)
-                                    progressCallback(null, storageDirectoryMbRead / storageDirectoryMbToRead);
+                                if (newMbRead > oldMbRead && storageDirectoryMbToRead > 0)
+                                {
+                                    progressCallback?.Invoke(null, storageDirectoryMbRead / storageDirectoryMbToRead);
+                                }
 
                                 localFilePosition = localFile.BaseStream.Position;
                             }
@@ -319,8 +321,7 @@ namespace Sensus.DataStores.Local
                     }
                 }
 
-                if (progressCallback != null)
-                    progressCallback(null, 1);
+                progressCallback?.Invoke(null, 1);
             }
         }
 
@@ -343,9 +344,13 @@ namespace Sensus.DataStores.Local
 
                     // create an empty file at the path if one does not exist
                     if (File.Exists(_path))
+                    {
                         _path = null;
+                    }
                     else
+                    {
                         File.Create(_path).Dispose();
+                    }
                 }
 
                 if (_path == null)

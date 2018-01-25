@@ -25,6 +25,12 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
+        public static bool IsCallback(NSDictionary callbackInfo)
+        {
+            NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
+            return isCallback?.BoolValue ?? false;
+        }
+
         protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag)
         {
             ScheduleCallbackAsync(callbackId, initialDelay, true, repeatDelay, repeatLag);
@@ -70,8 +76,7 @@ namespace Sensus.iOS.Callbacks
             return Task.Run(async () =>
             {
                 // check whether the passed information describes a callback
-                NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
-                if (!(isCallback?.BoolValue ?? false))
+                if(!IsCallback(callbackInfo))
                 {
                     return;
                 }

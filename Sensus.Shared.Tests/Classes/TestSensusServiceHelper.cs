@@ -119,7 +119,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
+        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
         {
             throw new NotImplementedException();
         }

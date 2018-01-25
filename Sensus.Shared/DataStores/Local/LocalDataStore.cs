@@ -102,51 +102,121 @@ namespace Sensus.DataStores.Local
         public abstract void CommitToRemote(CancellationToken cancellationToken);
 
         public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
-        {            
-            using (FileStream zipFile = new FileStream(zipPath, FileMode.Create))
+        {
+            string zipArchiveDirectoryName = Protocol.Name + "_Data_" + DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToShortTimeString();
+            zipArchiveDirectoryName = new Regex("[^a-zA-Z0-9]").Replace(zipArchiveDirectoryName, "_");
+            string directory = Path.Combine(SensusServiceHelper.SHARE_DIRECTORY, zipArchiveDirectoryName);
+
+            Dictionary<string, StreamWriter> datumTypeFile = new Dictionary<string, StreamWriter>();
+
+            try
             {
-                using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create))
+                if (Directory.Exists(directory))
                 {
-                    string zipArchiveDirectoryName = Protocol.Name + "_Data_" + DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToShortTimeString();
-                    zipArchiveDirectoryName = new Regex("[^a-zA-Z0-9]").Replace(zipArchiveDirectoryName, "_");
+                    Directory.Delete(directory, true);
+                }
 
-                    progressCallback?.Invoke("Writing data...", 0);
+                Directory.CreateDirectory(directory);
 
-                    Dictionary<string, StreamWriter> datumTypeFile = new Dictionary<string, StreamWriter>();
-                    int writtenDataCount = 0;
-                    foreach (Tuple<string, string> datumTypeLine in GetDataLinesToWrite(cancellationToken, progressCallback))
+                progressCallback?.Invoke("Gathering data...", 0);
+
+                int totalDataCount = 0;
+                foreach (Tuple<string, string> datumTypeLine in GetDataLinesToWrite(cancellationToken, progressCallback))
+                {
+                    string datumType = datumTypeLine.Item1;
+                    string line = datumTypeLine.Item2;
+
+                    StreamWriter file;
+                    if (datumTypeFile.TryGetValue(datumType, out file))
                     {
-                        string datumType = datumTypeLine.Item1;
-                        string line = datumTypeLine.Item2;
-
-                        StreamWriter file;
-                        if (datumTypeFile.TryGetValue(datumType, out file))
-                        {
-                            file.WriteLine(",");
-                        }
-                        else
-                        {
-                            ZipArchiveEntry zipFileEntry = zipArchive.CreateEntry(Path.Combine(zipArchiveDirectoryName, datumType + ".json"), CompressionLevel.Optimal);
-                            file = new StreamWriter(zipFileEntry.Open());
-                            file.WriteLine("[");
-                            datumTypeFile.Add(datumType, file);
-                        }
-
-                        file.Write(line);
-                        ++writtenDataCount;
+                        file.WriteLine(",");
+                    }
+                    else
+                    {
+                        file = new StreamWriter(Path.Combine(directory, datumType + ".json"));
+                        file.WriteLine("[");
+                        datumTypeFile.Add(datumType, file);
                     }
 
-                    foreach (StreamWriter file in datumTypeFile.Values)
+                    file.Write(line);
+                    ++totalDataCount;
+                }
+
+                foreach (StreamWriter file in datumTypeFile.Values)
+                {
+                    file.Write(Environment.NewLine + "]");
+                    file.Close();
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                progressCallback?.Invoke("Compressing data...", 0);
+
+                using (FileStream zipFile = new FileStream(zipPath, FileMode.Create))
+                {
+                    using (ZipArchive zipArchive = new ZipArchive(zipFile, ZipArchiveMode.Create))
                     {
-                        file.Write(Environment.NewLine + "]");
-                        file.Close();
+                        int dataWritten = 0;
+
+                        foreach (string path in Directory.GetFiles(directory))
+                        {
+                            ZipArchiveEntry zipEntry = zipArchive.CreateEntry(Path.Combine(zipArchiveDirectoryName, Path.GetFileName(path)), CompressionLevel.Optimal);
+
+                            using (StreamWriter zipEntryFile = new StreamWriter(zipEntry.Open()))
+                            {
+                                using (StreamReader file = new StreamReader(path))
+                                {
+                                    string line;
+                                    while ((line = file.ReadLine()) != null)
+                                    {
+                                        if (totalDataCount >= 10 && (dataWritten % (totalDataCount / 10)) == 0)
+                                        {
+                                            progressCallback?.Invoke(null, dataWritten / (double)totalDataCount);
+                                        }
+
+                                        cancellationToken.ThrowIfCancellationRequested();
+
+                                        zipEntryFile.WriteLine(line);
+
+                                        if (line != "[" && line != "]")
+                                        {
+                                            ++dataWritten;
+                                        }
+                                    }
+
+                                    file.Close();
+                                }
+
+                                zipEntryFile.Close();
+                                File.Delete(path);
+                            }
+                        }
                     }
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    zipFile.Close();
+                }
 
-                    progressCallback?.Invoke(null, 1);
+                return totalDataCount;
+            }
+            finally
+            {
+                foreach (string datumType in datumTypeFile.Keys)
+                {
+                    try
+                    {
+                        datumTypeFile[datumType].Close();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
 
-                    return writtenDataCount;
+                try
+                {
+                    Directory.Delete(directory, true);
+                }
+                catch (Exception)
+                {
                 }
             }
         }

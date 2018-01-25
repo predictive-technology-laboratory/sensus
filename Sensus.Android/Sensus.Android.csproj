@@ -285,9 +285,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Plugin.Geolocator">
       <HintPath>..\packages\Xam.Plugin.Geolocator.4.2.0\lib\MonoAndroid10\Plugin.Geolocator.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.21.7\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
-    </Reference>
     <Reference Include="FormsViewGroup">
       <HintPath>..\packages\Xamarin.Forms.2.5.0.122203\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
     </Reference>
@@ -309,11 +306,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.2.5.0.122203\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-    <Reference Include="Toasts.Forms.Plugin.Abstractions">
-      <HintPath>..\packages\Toasts.Forms.Plugin.3.3.1\lib\MonoAndroid10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Toasts.Forms.Plugin.Droid">
-      <HintPath>..\packages\Toasts.Forms.Plugin.3.3.1\lib\MonoAndroid10\Toasts.Forms.Plugin.Droid.dll</HintPath>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.3.21.8\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

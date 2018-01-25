@@ -468,6 +468,22 @@ namespace Sensus.Android
 
         #endregion
 
+        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
+        {
+            Task.Run(() =>
+            {
+                RunActionUsingMainActivityAsync(mainActivity =>
+                {
+                    mainActivity.RunOnUiThread(() =>
+                    {
+                        Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
+                        callback?.Invoke();
+                    });
+
+                }, false, false);
+            });
+        }
+
         public override bool EnableProbeWhenEnablingAll(Probe probe)
         {
             // listening for locations doesn't work very well in android, since it conflicts with polling and uses more power. don't enable probes that need location listening by default.

@@ -113,16 +113,17 @@ namespace Sensus.DataStores.Local
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (progressCallback != null && _data.Count >= 10 && (count % (_data.Count / 10)) == 0)
-                        progressCallback(null, count / (double)_data.Count);
+                    if (_data.Count >= 10 && (count % (_data.Count / 10)) == 0)
+                    {
+                        progressCallback?.Invoke(null, count / (double)_data.Count);
+                    }
 
                     yield return new Tuple<string, string>(datum.GetType().Name, datum.GetJSON(Protocol.JsonAnonymizer, false));
 
                     ++count;
                 }
 
-                if (progressCallback != null)
-                    progressCallback(null, 1);
+                progressCallback?.Invoke(null, 1);
             }
         }
 

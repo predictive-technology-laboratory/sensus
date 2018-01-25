@@ -16,6 +16,7 @@ using System;
 using Foundation;
 using Sensus.Context;
 using UserNotifications;
+using UIKit;
 
 namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
@@ -24,6 +25,19 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
+
+            // don't alert the user for callback notifications presented when the app is not in the background state.
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                if(iOSCallbackScheduler.IsCallback(notification?.Request?.Content?.UserInfo) && UIApplication.SharedApplication.ApplicationState != UIApplicationState.Background)
+                {
+                    completionHandler(UNNotificationPresentationOptions.None);                    
+                }
+                else
+                {
+                    completionHandler(UNNotificationPresentationOptions.Alert);
+                }
+            });
 
             // common scenario:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
             // dismisses the tapped notification and brings up sensus. upon activation sensus then updates and reissues all notifications. these reissued
@@ -40,20 +54,21 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             UNNotificationRequest request = response?.Notification?.Request;
             NSDictionary notificationInfo = request?.Content?.UserInfo;
 
-            if (notificationInfo == null)
+            if (notificationInfo != null)
             {
-                return;
+                SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
+
+                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(notificationInfo);
+
+                // provide some generic feedback if the user responded to a silent notification. this should only happen in race cases where
+                // a silent notification is issued just before we enter background.
+                if ((notificationInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                {
+                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
+                }
             }
 
-            SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
-
-            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(notificationInfo);
-
-            // provide some generic feedback if the user responded to a silent notification
-            if ((notificationInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
-            {
-                SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
-            }
+            completionHandler();
         }
     }
 }

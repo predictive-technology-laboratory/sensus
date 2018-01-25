@@ -125,13 +125,14 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 return;
             }
 
-            // don't issue silent notifications from the background, as they will be delivered and will confuse the user (they're 
-            // not designed to be seen).
+            // don't issue silent notifications from the background, as they will be displayed to the user upon delivery, and this will confuse the user (they're 
+            // not designed to be seen). this can happen in a race condition where sensus transitions to the background but has a small amount of time to execute,
+            // and in that time a silent callback (e.g., for local data store) is schedule. checking for background state below will help mitigate this.
             bool abort = false;
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                abort = IsSilent(request?.Content?.UserInfo) && UIApplication.SharedApplication.ApplicationState != UIApplicationState.Active;
+                abort = IsSilent(request?.Content?.UserInfo) && UIApplication.SharedApplication.ApplicationState == UIApplicationState.Background;
             });
 
             if (abort)

@@ -195,9 +195,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Validation">
       <HintPath>..\packages\Validation.2.4.18\lib\netstandard1.3\Validation.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.21.6\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.16.2\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
     </Reference>
@@ -321,11 +318,11 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Xamarin.Swift4.Foundation">
       <HintPath>..\packages\Xamarin.Swift4.Foundation.4.0.3\lib\xamarinios10\Xamarin.Swift4.Foundation.dll</HintPath>
     </Reference>
-    <Reference Include="Toasts.Forms.Plugin.Abstractions">
-      <HintPath>..\packages\Toasts.Forms.Plugin.3.3.1\lib\Xamarin.iOS10\Toasts.Forms.Plugin.Abstractions.dll</HintPath>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.3.21.8\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Toasts.Forms.Plugin.iOS">
-      <HintPath>..\packages\Toasts.Forms.Plugin.3.3.1\lib\Xamarin.iOS10\Toasts.Forms.Plugin.iOS.dll</HintPath>
+    <Reference Include="TTGSnackbar">
+      <HintPath>..\packages\TTGSnackbar.1.3.5\lib\Xamarin.iOS10\TTGSnackbar.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

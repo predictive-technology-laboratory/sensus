@@ -27,6 +27,7 @@ using AVFoundation;
 using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
+using TTGSnackBar;
 
 namespace Sensus.iOS
 {
@@ -88,6 +89,20 @@ namespace Sensus.iOS
         {
             _nextToastTime = DateTime.Now;
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
+        }
+
+        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
+        {
+            Task.Run(() =>
+            {
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                {
+                    TTGSnackbar snackbar = new TTGSnackbar(message);
+                    snackbar.Duration = TimeSpan.FromSeconds(5);
+                    snackbar.Show();
+                    callback?.Invoke();
+                });
+            });
         }
 
         public override void ShareFileAsync(string path, string subject, string mimeType)
