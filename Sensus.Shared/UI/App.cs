@@ -22,5 +22,11 @@ namespace Sensus.UI
         {
             MainPage = new NavigationPage(new HomePage());
         }
+
+        protected override void OnStart()
+        {
+
+            base.OnStart();
+        }
     }
 }

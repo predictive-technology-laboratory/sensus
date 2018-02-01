@@ -345,7 +345,9 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
+    <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <Import Project="..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems')" />
   <Import Project="..\Sensus.Shared.Tests\Sensus.Shared.Tests.projitems" Label="Shared" />

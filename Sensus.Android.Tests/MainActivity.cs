@@ -24,6 +24,10 @@
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using System;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.Android.Tests
 {
@@ -45,6 +49,22 @@ namespace Sensus.Android.Tests
             //nunit.AddTestAssembly(typeof(MyTests).Assembly);
 
             LoadApplication(nunit);
+        }
+
+        protected override void OnStart()
+        {
+
+            // set up app center integration
+
+            Console.Error.WriteLine("Setting up App Center integration for Sensus.Android.Tests...");
+
+            AppCenter.Start("c10ac82a-653f-4e51-bacf-3a4437b37dac",
+                   typeof(Analytics), typeof(Crashes));
+            AppCenter.Start("c10ac82a-653f-4e51-bacf-3a4437b37dac", typeof(Analytics), typeof(Crashes));
+
+            Console.Error.WriteLine("Succesfully set up app center integration for Sensus.Android.Tests.");
+
+            base.OnStart();
         }
     }
 }
