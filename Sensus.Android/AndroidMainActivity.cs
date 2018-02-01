@@ -29,6 +29,12 @@ using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 
+// APP center integrations, testing with native Xamarin Android
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+
+
 #if __ANDROID_23__
 using Plugin.Permissions;
 #endif
@@ -130,6 +136,15 @@ namespace Sensus.Android
         protected override void OnStart()
         {
             Console.Error.WriteLine("--------------------------- Starting activity ---------------------------");
+
+            Console.Error.WriteLine("Setting up Microsoft App Center integration for Sensus.Android...");
+
+            // allow communication with remote app center
+            AppCenter.Start("c10ac82a-653f-4e51-bacf-3a4437b37dac",
+                   typeof(Analytics), typeof(Crashes));
+            AppCenter.Start("c10ac82a-653f-4e51-bacf-3a4437b37dac", typeof(Analytics), typeof(Crashes));
+
+            Console.Error.WriteLine("Succesfully set up app center integration for Sensus.Android.");
 
             base.OnStart();
 
