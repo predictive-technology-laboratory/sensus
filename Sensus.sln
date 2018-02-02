@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.XTC.UiTests", "Sensu
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.iOS.Shared", "Sensus.iOS.Shared\Sensus.iOS.Shared.shproj", "{CA15DD76-C484-4A56-A03F-9EF242294D55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android.Tests.AppCenter", "Sensus.Android.Tests.AppCenter\Sensus.Android.Tests.AppCenter.csproj", "{5E5091C9-CFD3-4449-8223-430022119AC5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13
@@ -130,6 +132,30 @@ Global
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Android.ActiveCfg = Release|Android
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|Android.Build.0 = Release|Android
 		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|iPhone.ActiveCfg = Debug|iPhone
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|Android.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|Android.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|Android.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Android.ActiveCfg = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Android.Build.0 = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|iPhone.Build.0 = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
