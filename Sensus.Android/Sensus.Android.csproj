@@ -304,9 +304,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.2.5.0.122203\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.21.8\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AppCenter.Android.Bindings">
       <HintPath>..\packages\Microsoft.AppCenter.1.3.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
     </Reference>
@@ -324,6 +321,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     </Reference>
     <Reference Include="Microsoft.AppCenter.Crashes">
       <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.3.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.3.21.9\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

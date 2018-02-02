@@ -94,6 +94,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <NoWarn>1701</NoWarn>
 <MtouchUseLlvm>true</MtouchUseLlvm>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Band.iOS">
       <HintPath>..\dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
