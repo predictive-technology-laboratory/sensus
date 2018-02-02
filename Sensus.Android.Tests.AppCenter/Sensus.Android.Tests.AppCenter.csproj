@@ -8,6 +8,7 @@
     <RootNamespace>Sensus.Android.Tests.AppCenter</RootNamespace>
     <AssemblyName>Sensus.Android.Tests.AppCenter</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <ReleaseVersion>2.0.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
