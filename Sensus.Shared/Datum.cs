@@ -148,7 +148,9 @@ namespace Sensus
 
             // if the json should not be indented, replace all newlines with white space
             if (!indented)
+            {
                 json = json.Replace('\n', ' ').Replace('\r', ' ');
+            }
 
             return json;
         }
