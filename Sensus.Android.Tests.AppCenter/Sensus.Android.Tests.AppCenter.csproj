@@ -52,5 +52,6 @@ project will also run in the App Center.</Description>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\Sensus.AppCenter.Shared\Sensus.AppCenter.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.AppCenter.Shared\Sensus.AppCenter.Shared.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
