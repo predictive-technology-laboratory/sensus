@@ -26,7 +26,6 @@ using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
 using Facebook.CoreKit;
-using Sensus.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 using Sensus.iOS.Callbacks.UILocalNotifications;
 using Sensus.iOS.Callbacks;
@@ -45,9 +44,6 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            // insights should be initialized first to maximize coverage of exception reporting
-            InsightsInitialization.Initialize(new iOSInsightsInitializer(UIDevice.CurrentDevice.IdentifierForVendor.AsString()), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
-
             #region configure context
             SensusContext.Current = new iOSSensusContext
             {

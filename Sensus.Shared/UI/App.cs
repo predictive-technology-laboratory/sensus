@@ -13,6 +13,9 @@
 // limitations under the License.
 
 using Xamarin.Forms;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.UI
 {
@@ -21,6 +24,16 @@ namespace Sensus.UI
         public App()
         {
             MainPage = new NavigationPage(new HomePage());
+        }
+
+        protected override void OnStart()
+        {
+            base.OnStart();
+
+            AppCenter.Start("ios=" + SensusServiceHelper.APP_CENTER_KEY_IOS + ";" + 
+                            "android=" + SensusServiceHelper.APP_CENTER_KEY_ANDROID, 
+                            typeof(Analytics), 
+                            typeof(Crashes));
         }
     }
 }

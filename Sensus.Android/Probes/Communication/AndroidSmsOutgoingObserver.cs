@@ -94,7 +94,7 @@ namespace Sensus.Android.Probes.Communication
                     // if anything goes wrong, report exception to Insights
                     try
                     {
-                        Insights.Report(ex, Insights.Severity.Error);
+                        // TODO:  Report
                     }
                     catch
                     {

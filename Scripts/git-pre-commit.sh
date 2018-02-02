@@ -2,15 +2,21 @@
 
 # make sure sensitive keys are not committed
 
-currentKey=$(grep "public const string ENCRYPTION_KEY = \"\";" ./Sensus.Shared/SensusServiceHelper.cs)
-if [ "$currentKey" == "" ]; then
+shouldNotBeBlank=$(grep "public const string ENCRYPTION_KEY = \"\";" ./Sensus.Shared/SensusServiceHelper.cs)
+if [ "$shouldNotBeBlank" == "" ]; then
     echo "[ERROR] You are not allowed to commit an encryption key."
     exit 1
 fi
 
-currentKey=$(grep "public const string XAMARIN_INSIGHTS_APP_KEY = \"\"" ./Sensus.Shared/SensusServiceHelper.cs)
-if [ "$currentKey" == "" ]; then
-    echo "[ERROR] You are not allowed to commit a Xamarin Insights API key."
+shouldNotBeBlank=$(grep "public const string APP_CENTER_KEY_ANDROID = \"\"" ./Sensus.Shared/SensusServiceHelper.cs)
+if [ "$shouldNotBeBlank" == "" ]; then
+    echo "[ERROR] You are not allowed to commit an App Center key."
+    exit 1
+fi
+
+shouldNotBeBlank=$(grep "public const string APP_CENTER_KEY_IOS = \"\"" ./Sensus.Shared/SensusServiceHelper.cs)
+if [ "$shouldNotBeBlank" == "" ]; then
+    echo "[ERROR] You are not allowed to commit an App Center key."
     exit 1
 fi
 

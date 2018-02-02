@@ -25,7 +25,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Dispose\Disposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\IInsightsInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
@@ -210,8 +209,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />

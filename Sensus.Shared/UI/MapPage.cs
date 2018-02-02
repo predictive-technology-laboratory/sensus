@@ -89,7 +89,7 @@ namespace Sensus.UI
                         {
                             try
                             {
-                                Insights.Report(ex, Insights.Severity.Warning);
+                                // TODO:  App Center
                             }
                             catch (Exception)
                             {

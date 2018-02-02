@@ -234,7 +234,7 @@ namespace Sensus.Callbacks
 
                     try
                     {
-                        Insights.Report(new Exception(errorMessage, ex), Insights.Severity.Critical);
+                        // TODO:  Report
                     }
                     catch (Exception)
                     {

@@ -59,9 +59,14 @@ namespace Sensus
         private const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
 
         /// <summary>
-        /// The Xamarin Insights app key. Generated via Xamarin Insights dashboard.
+        /// App Center key for Android app.
         /// </summary>
-        public const string XAMARIN_INSIGHTS_APP_KEY = "";
+        public const string APP_CENTER_KEY_ANDROID = "";
+                                                      
+        /// <summary>
+        /// App Center key for iOS app.
+        /// </summary>
+        public const string APP_CENTER_KEY_IOS = "";
 
         /// <summary>
         /// The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:
@@ -146,7 +151,7 @@ namespace Sensus
 
                     try
                     {
-                        Insights.Report(exceptionToReport, Insights.Severity.Error);
+                        // TODO:  Report exception to app center?
                     }
                     catch (Exception insightsReportException)
                     {
@@ -510,19 +515,6 @@ namespace Sensus
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
-
-            if (!Insights.IsInitialized && string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
-            {
-                _logger.Log("Xamarin Insights key is empty -- not initialized.", LoggingLevel.Normal, GetType());
-            }
-            else if (!Insights.IsInitialized)
-            {
-                _logger.Log("Xamarin Insights failed to initialize.", LoggingLevel.Normal, GetType());
-            }
-            else
-            {
-                _logger.Log("Xamarin Insights sucessfully initialized.", LoggingLevel.Normal, GetType());
-            }
         }
         #endregion
 
@@ -986,7 +978,7 @@ namespace Sensus
                                 {
                                     try
                                     {
-                                        Insights.Report(ex, Insights.Severity.Critical);
+                                        // TODO:  Report
                                     }
                                     catch { }
                                 }
@@ -1052,7 +1044,7 @@ namespace Sensus
                                             // report exception and set wait handle if anything goes wrong while processing the current input group.
                                             try
                                             {
-                                                Insights.Report(ex, Insights.Severity.Critical);
+                                                // TODO:  Report
                                             }
                                             catch { }
                                         }
@@ -1104,7 +1096,7 @@ namespace Sensus
                                 {
                                     try
                                     {
-                                        Insights.Report(ex, Insights.Severity.Critical);
+                                        // TODO:  Report
                                     }
                                     catch { }
 
@@ -1119,7 +1111,7 @@ namespace Sensus
                         // report exception and set wait handle if anything goes wrong while processing the current input group.
                         try
                         {
-                            Insights.Report(ex, Insights.Severity.Critical);
+                            // TODO:  Report
                         }
                         catch { }
 

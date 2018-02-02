@@ -272,7 +272,8 @@ namespace Sensus.UI.Inputs
             {
                 try
                 {
-                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
+                    // Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
+                    // TODO:  Report
                 }
                 catch (Exception)
                 {

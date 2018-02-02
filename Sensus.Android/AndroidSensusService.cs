@@ -17,11 +17,8 @@ using Android.Content;
 using Android.OS;
 using System;
 using System.Collections.Generic;
-using Android.Provider;
 using Sensus.Context;
-using Sensus.Exceptions;
 using Sensus.Android.Context;
-using Sensus.Android.Exceptions;
 using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
 using Sensus.Android.Concurrent;
@@ -74,9 +71,6 @@ namespace Sensus.Android
         public override void OnCreate()
         {
             base.OnCreate();
-
-            // insights should be initialized first to maximize coverage of exception reporting
-            InsightsInitialization.Initialize(new AndroidInsightsInitializer(Settings.Secure.GetString(ContentResolver, Settings.Secure.AndroidId)), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
             SensusContext.Current = new AndroidSensusContext
             {

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using Xamarin;
 
 namespace Sensus.Exceptions
 {
@@ -27,7 +26,7 @@ namespace Sensus.Exceptions
 
             try
             {
-                Insights.Report(sensusException, "Stack Trace", Environment.StackTrace, Insights.Severity.Critical);
+                // TODO:  Can we report this to app center?
             }
             catch (Exception ex)
             {

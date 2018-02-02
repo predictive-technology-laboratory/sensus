@@ -361,7 +361,7 @@ namespace Sensus.Android
                     {
                         try
                         {
-                            Insights.Report(ex, Insights.Severity.Error);
+                            // TODO:  Report
                         }
                         catch (Exception)
                         {
