@@ -13,45 +13,23 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.Queries;
-using System.Collections.Generic;
 
-namespace Sensus.Tests.Cloud
+namespace Sensus.AppCenter.Shared
 {
-    [TestFixture]
-    public class Tests
+    public class UiTesting
     {
-        #region Fields
-        private IApp _app;
-        private string _labelClass;
-        #endregion
-
-        #region Setup
-        [OneTimeSetUp]
-        public void TestFixtureSetUp()
-        {
-#if __ANDROID__
-            _app = ConfigureApp.Android.StartApp();
-            _labelClass = "FormsTextView";
-#elif __IOS__
-            _app = ConfigureApp.iOS.StartApp();
-            _labelClass = "UILabel";
-#endif
-        }
-        #endregion
-
-        [Test]
-        public void TestApp()
+        public static void TestApp(IApp app, string labelClass)
         {
             // run tests and wait for results
-            _app.Tap(c => c.Text("Run Tests"));
-            _app.WaitForElement(c => c.Text("Overall result:"), timeout: TimeSpan.FromSeconds(90));
+            app.Tap(c => c.Text("Run Tests"));
+            app.WaitForElement(c => c.Text("Overall result:"), timeout: TimeSpan.FromSeconds(90));
 
             // get and parse label content
-            List<AppResult> labels = _app.Query(q => q.Class(_labelClass)).ToList();
+            List<AppResult> labels = app.Query(q => q.Class(labelClass)).ToList();
             string overallResult = labels[labels.FindIndex(label => label.Text.Trim() == "Overall result:") + 1].Text;
             int testsRun = int.Parse(labels[labels.FindIndex(label => label.Text.Trim() == "Tests run:") + 1].Text);
             int testsPassed = int.Parse(labels[labels.FindIndex(label => label.Text.Trim() == "Passed:") + 1].Text);
@@ -59,8 +37,8 @@ namespace Sensus.Tests.Cloud
             // check results
             if (overallResult != "Passed" || testsPassed != testsRun)
             {
-                _app.Tap(c => c.Text("Failed Results"));
-                _app.Screenshot("Failures");
+                app.Tap(c => c.Text("Failed Results"));
+                app.Screenshot("Failures");
                 throw new Exception($"{testsPassed} of {testsRun} passed.");
             }
         }
