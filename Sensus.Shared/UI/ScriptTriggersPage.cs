@@ -38,7 +38,9 @@ namespace Sensus.UI
             triggerList.ItemTapped += async (o, e) =>
             {
                 if (triggerList.SelectedItem == null)
+                {
                     return;
+                }
 
                 Probes.User.Scripts.Trigger selectedTrigger = triggerList.SelectedItem as Probes.User.Scripts.Trigger;
 
@@ -53,16 +55,20 @@ namespace Sensus.UI
                     }
                 }
             };
-            
+
             Content = triggerList;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
-                    {
-                        if (scriptRunner.Probe.Protocol.Probes.Where(p => p != scriptRunner.Probe && p.Enabled).Count() > 0)
-                            await Navigation.PushAsync(new AddScriptTriggerPage(scriptRunner));
-                        else
-                            SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
-                    }));
+            {
+                if (scriptRunner.Probe.Protocol.Probes.Where(p => p != scriptRunner.Probe && p.Enabled).Count() > 0)
+                {
+                    await Navigation.PushAsync(new AddScriptTriggerPage(scriptRunner));
+                }
+                else
+                {
+                    SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
+                }
+            }));
         }
     }
 }

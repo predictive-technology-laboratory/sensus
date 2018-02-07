@@ -13,120 +13,54 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
-using Newtonsoft.Json;
-
-#if __ANDROID__
-using Java.Lang;
-using Java.Util;
-using EstimoteSdk;
-#elif __IOS__
-using Foundation;
-using Region = CoreLocation.CLBeaconRegion;
-#endif
 
 namespace Sensus.Probes.Location
 {
     public class EstimoteBeacon
     {
-        public static EstimoteBeacon FromString(string value)
+        public string Name { get; set; }
+        public double ProximityMeters { get; set; }
+        public string EventName { get; set; }
+
+        public EstimoteBeacon(string name, double proximityMeters, string eventName)
         {
-            try
+            if (string.IsNullOrWhiteSpace(name))
             {
-                string[] parts = value.Split(new char[] { ':' }, StringSplitOptions.None).Select(s => s.Trim()).ToArray();
-
-                if (parts.Length != 4)
-                {
-                    throw new System.Exception("Invalid beacon:  " + value);
-                }
-
-                string identifier = string.IsNullOrWhiteSpace(parts[0]) ? Guid.NewGuid().ToString() : parts[0];  // identifier cannot be null
-
-                string proximityUUID = string.IsNullOrWhiteSpace(parts[1]) ? null : parts[1];
-
-                int? major = null;
-                int majorInt;
-                if (int.TryParse(parts[2], out majorInt))
-                {
-                    major = majorInt;
-                }
-
-                int? minor = null;
-                int minorInt;
-                if (int.TryParse(parts[3], out minorInt))
-                {
-                    minor = minorInt;
-                }
-
-                return new EstimoteBeacon(identifier, proximityUUID, major, minor);
-            }
-            catch (System.Exception)
-            {
-                return null;
-            }
-        }
-
-        public string Identifier { get; set; }
-        public string ProximityUUID { get; set; }
-        public int? Major { get; set; }
-        public int? Minor { get; set; }
-
-        [JsonIgnore]
-        public Region Region
-        {
-            get
-            {
-
-#if __ANDROID__
-                UUID proximityUUID = ProximityUUID == null ? null : UUID.FromString(ProximityUUID);
-                Integer major = Major == null ? null : Integer.ValueOf(Major.Value);
-                Integer minor = Minor == null ? null : Integer.ValueOf(Minor.Value);
-                return new Region(Identifier, proximityUUID, major, minor);
-#elif __IOS__
-                NSUuid proximityUUID = ProximityUUID == null ? null : new NSUuid(ProximityUUID);
-
-                if (Major != null && Minor == null)
-                {
-                    return new Region(proximityUUID, (ushort)Major.Value, Identifier);
-                }
-                else if (Major != null && Minor != null)
-                {
-                    return new Region(proximityUUID, (ushort)Major.Value, (ushort)Minor.Value, Identifier);
-                }
-                else
-                {
-                    return new Region(proximityUUID, Identifier);
-                }
-#endif
-            }
-        }
-
-        public EstimoteBeacon(string identifier, string proximityUUID, int? major, int? minor)
-        {
-            if (string.IsNullOrWhiteSpace(identifier))
-            {
-                throw new ArgumentException("Cannot be null or white space.", nameof(identifier));
+                throw new ArgumentException("Cannot be null or white space.", nameof(name));
             }
 
-            bool valid = proximityUUID == null && major == null && minor == null ||
-                         proximityUUID != null && major == null && minor == null ||
-                         proximityUUID != null && major != null && minor == null ||
-                         proximityUUID != null && major != null && minor != null;
+            name = name.Trim();
 
-            if (!valid)
+            if (eventName == null)
             {
-                throw new ArgumentException("Invalid beacon specification");
+                eventName = name;
             }
 
-            Identifier = identifier;
-            ProximityUUID = proximityUUID;
-            Major = major;
-            Minor = minor;
+            Name = name;
+            ProximityMeters = proximityMeters;
+            EventName = eventName;
         }
 
         public override string ToString()
         {
-            return Identifier + ":" + ProximityUUID + ":" + Major + ":" + Minor;
+            return "Beacon \"" + Name + "\" @ " + Math.Round(ProximityMeters, 1) + " meters raises event \"" + EventName + "\"";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is EstimoteBeacon))
+            {
+                return false;
+            }
+
+            EstimoteBeacon beacon = obj as EstimoteBeacon;
+
+            return Name == beacon.Name && Math.Abs(ProximityMeters - beacon.ProximityMeters) < 0.000001 && EventName == beacon.EventName;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

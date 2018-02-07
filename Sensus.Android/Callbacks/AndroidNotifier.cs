@@ -17,12 +17,21 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Media;
+using Android.OS;
 using Sensus.Callbacks;
 
 namespace Sensus.Android.Callbacks
 {
     public class AndroidNotifier : Notifier
     {
+        public enum SensusNotificationChannel
+        {
+            Silent,
+            Survey,
+            ForegroundService,
+            Default
+        }
+
         private AndroidSensusService _service;
         private NotificationManager _notificationManager;
 
@@ -30,6 +39,131 @@ namespace Sensus.Android.Callbacks
         {
             _service = service;
             _notificationManager = _service.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
+        }
+
+        public Notification.Builder CreateNotificationBuilder(global::Android.Content.Context context, SensusNotificationChannel channel)
+        {
+            global::Android.Net.Uri notificationSoundURI = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
+
+            AudioAttributes notificationAudioAttributes = new AudioAttributes.Builder()
+                                                                             .SetContentType(AudioContentType.Unknown)
+                                                                             .SetUsage(AudioUsageKind.NotificationEvent).Build();
+
+            long[] vibrationPattern = { 0, 250, 50, 250 };
+
+            bool silent = GetChannelSilent(channel);
+
+            Notification.Builder builder;
+
+            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+#if __ANDROID_26__
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                NotificationManager notificationManager = context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
+
+                string channelId = channel.ToString();
+
+                if (notificationManager.GetNotificationChannel(channelId) == null)
+                {
+                    NotificationChannel notificationChannel = new NotificationChannel(channelId, GetChannelName(channel), GetChannelImportance(channel))
+                    {
+                        Description = GetChannelDescription(channel)
+                    };
+
+                    if (silent)
+                    {
+                        notificationChannel.SetSound(null, null);
+                        notificationChannel.EnableVibration(false);
+                    }
+                    else
+                    {
+                        notificationChannel.SetSound(notificationSoundURI, notificationAudioAttributes);
+                        notificationChannel.EnableVibration(true);
+                        notificationChannel.SetVibrationPattern(vibrationPattern);
+                    }
+
+                    notificationManager.CreateNotificationChannel(notificationChannel);
+                }
+
+                builder = new Notification.Builder(context, channelId);
+            }
+            else
+#endif
+            {
+                builder = new Notification.Builder(context);
+
+#pragma warning disable 618
+                if (silent)
+                {
+                    builder.SetSound(null);
+                    builder.SetVibrate(null);
+                }
+                else
+                {
+                    builder.SetSound(notificationSoundURI, notificationAudioAttributes);
+                    builder.SetVibrate(vibrationPattern);
+                }
+#pragma warning restore 618
+            }
+
+            return builder;
+        }
+
+        private string GetChannelName(SensusNotificationChannel channel)
+        {
+            if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return "Background Services";
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return "Surveys";
+            }
+            else
+            {
+                return "Notifications";
+            }
+        }
+
+        private string GetChannelDescription(SensusNotificationChannel channel)
+        {
+            if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return "Notifications about Sensus services that are running in the background";
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return "Notifications about Sensus surveys you can take";
+            }
+            else
+            {
+                return "General Sensus notifications";
+            }
+        }
+
+        private NotificationImportance GetChannelImportance(SensusNotificationChannel channel)
+        {
+            if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return NotificationImportance.Min;
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return NotificationImportance.Max;
+            }
+            else if (channel == SensusNotificationChannel.Silent)
+            {
+                return NotificationImportance.Min;
+            }
+            else
+            {
+                return NotificationImportance.Default;
+            }
+        }
+
+        private bool GetChannelSilent(SensusNotificationChannel channel)
+        {
+            return channel != SensusNotificationChannel.Survey;
         }
 
         /// <summary>
@@ -44,32 +178,42 @@ namespace Sensus.Android.Callbacks
         public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
         {
             if (_notificationManager == null)
+            {
                 return;
+            }
 
             Task.Run(() =>
             {
                 if (message == null)
+                {
                     CancelNotification(id);
+                }
                 else
                 {
                     Intent notificationIntent = new Intent(_service, typeof(AndroidSensusService));
                     notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
-
                     PendingIntent notificationPendingIntent = PendingIntent.GetService(_service, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
 
-                    Notification.Builder notificationBuilder = new Notification.Builder(_service)
+                    SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
+
+                    if (displayPage == DisplayPage.PendingSurveys)
+                    {
+                        notificationChannel = SensusNotificationChannel.Survey;
+                    }
+
+                    // reset channel to silent if we're not alerting or if we're in an exclusion window
+                    if (!alertUser || Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
+                    {
+                        notificationChannel = SensusNotificationChannel.Silent;
+                    }
+
+                    Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, notificationChannel)
                         .SetContentTitle(title)
                         .SetContentText(message)
                         .SetSmallIcon(Resource.Drawable.ic_launcher)
                         .SetContentIntent(notificationPendingIntent)
                         .SetAutoCancel(true)
                         .SetOngoing(false);
-
-                    if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
-                    {
-                        notificationBuilder.SetSound(RingtoneManager.GetDefaultUri(RingtoneType.Notification));
-                        notificationBuilder.SetVibrate(new long[] { 0, 250, 50, 250 });
-                    }
 
                     _notificationManager.Notify(id, 0, notificationBuilder.Build());
                 }

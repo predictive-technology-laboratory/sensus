@@ -29,7 +29,9 @@ namespace Sensus.UI
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 if (value == null)
+                {
                     return false;
+                }
 
                 int count = (int)value;
                 bool zeroMeansVisible = (bool)parameter;
@@ -47,7 +49,9 @@ namespace Sensus.UI
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 if (value == null)
+                {
                     return "";
+                }
 
                 Script script = value as Script;
 
@@ -65,7 +69,9 @@ namespace Sensus.UI
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
                 if (value == null)
+                {
                     return "";
+                }
 
                 Script script = value as Script;
 

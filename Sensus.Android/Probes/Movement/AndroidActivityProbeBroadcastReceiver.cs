@@ -23,29 +23,62 @@ namespace Sensus.Android.Probes.Movement
     public class AndroidActivityProbeBroadcastReceiver : BroadcastReceiver
     {
         public event EventHandler<ActivityDatum> ActivityChanged;
+        public event EventHandler<FenceState> LocationChanged;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (intent.Action.StartsWith(AndroidActivityProbe.ACTIVITY_RECOGNITION_ACTION))
+            if (intent.Action == AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION)
             {
                 FenceState fenceState = FenceState.Extract(intent);
-
-                if (fenceState.FenceKey.StartsWith(AndroidActivityProbe.ACTIVITY_RECOGNITION_ACTION))
+                if (fenceState == null)
                 {
-                    Activities activity = (Activities)Enum.Parse(typeof(Activities), fenceState.FenceKey.Substring(fenceState.FenceKey.IndexOf(".") + 1));
+                    SensusException.Report("Null awareness fence state.");
+                    return;
+                }
+
+                if (fenceState.FenceKey == AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY)
+                {
+                    if (fenceState.CurrentState == FenceState.True)
+                    {
+                        LocationChanged?.Invoke(this, fenceState);
+                    }
+                }
+                else
+                {
+                    string[] fenceKeyParts;
+                    if (fenceState.FenceKey == null || (fenceKeyParts = fenceState.FenceKey.Split('.')).Length != 2)
+                    {
+                        SensusException.Report("Awareness fence key \"" + fenceState.FenceKey + "\" does not have two parts.");
+                        return;
+                    }
+
+                    Activities activity;
+                    if (!Enum.TryParse(fenceKeyParts[0], out activity))
+                    {
+                        SensusException.Report("Unrecognized awareness activity:  " + fenceKeyParts[0]);
+                        return;
+                    }
+
+                    ActivityPhase phase;
+                    if (!Enum.TryParse(fenceKeyParts[1], out phase))
+                    {
+                        SensusException.Report("Unrecognized awareness activity phase:  " + fenceKeyParts[1]);
+                        return;
+                    }
+
                     DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(fenceState.LastFenceUpdateTimeMillis);
 
                     if (fenceState.CurrentState == FenceState.True)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Active));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Active));
                     }
                     else if (fenceState.CurrentState == FenceState.False)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Inactive));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Inactive));
                     }
                     else if (fenceState.CurrentState == FenceState.Unknown)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, ActivityState.Unknown));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Unknown));
                     }
                     else
                     {

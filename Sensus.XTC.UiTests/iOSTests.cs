@@ -22,6 +22,7 @@ namespace Sensus.XTC.UiTests
     {
         protected override IApp GetApp()
         {
+            // simulator configs
             return ConfigureApp.iOS.StartApp();
         }
 

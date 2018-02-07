@@ -48,9 +48,13 @@ namespace Sensus.UI
 
             string type = "";
             if (probe is ListeningProbe)
+            {
                 type = "Listening";
+            }
             else if (probe is PollingProbe)
+            {
                 type = "Polling";
+            }
 
             contentLayout.Children.Add(new ContentView
             {
@@ -66,7 +70,9 @@ namespace Sensus.UI
             });
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(probe))
+            {
                 contentLayout.Children.Add(stack);
+            }
 
             #region script probes
             if (probe is ScriptProbe)
@@ -127,6 +133,25 @@ namespace Sensus.UI
             }
             #endregion
 
+            #region estimote probe
+            if (probe is EstimoteBeaconProbe)
+            {
+                Button editBeaconsButton = new Button
+                {
+                    Text = "Edit Beacons",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                contentLayout.Children.Add(editBeaconsButton);
+
+                editBeaconsButton.Clicked += async (sender, e) => 
+                {
+                    await Navigation.PushAsync(new EstimoteBeaconProbeBeaconsPage(probe as EstimoteBeaconProbe));
+                };
+            }
+            #endregion
+
             #region anonymization
             List<PropertyInfo> anonymizableProperties = probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null).ToList();
 
@@ -163,13 +188,17 @@ namespace Sensus.UI
 
                     anonymizerPicker.Items.Add("Do Not Anonymize");
                     foreach (Anonymizer anonymizer in anonymizableAttribute.AvailableAnonymizers)
+                    {
                         anonymizerPicker.Items.Add(anonymizer.DisplayText);
+                    }
 
                     anonymizerPicker.SelectedIndexChanged += (o, e) =>
                     {
                         Anonymizer selectedAnonymizer = null;
                         if (anonymizerPicker.SelectedIndex > 0)
+                        {
                             selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];  // subtract one from the selected index since the JsonAnonymizer's collection of anonymizers start after the "None" option within the picker.
+                        }
 
                         probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                     };
@@ -178,7 +207,9 @@ namespace Sensus.UI
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
                     if (currentAnonymizer != null)
+                    {
                         currentIndex = anonymizableAttribute.AvailableAnonymizers.IndexOf(currentAnonymizer) + 1;
+                    }
 
                     anonymizerPicker.SelectedIndex = currentIndex;
 
@@ -193,7 +224,9 @@ namespace Sensus.UI
                 }
 
                 foreach (StackLayout anonymizablePropertyStack in anonymizablePropertyStacks.OrderBy(s => (s.Children[0] as Label).Text))
+                {
                     contentLayout.Children.Add(anonymizablePropertyStack);
+                }
             }
             #endregion
 

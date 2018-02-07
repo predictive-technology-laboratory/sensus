@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ namespace Sensus.DataStores.Local
             _uploadToRemoteDataStore = true;
             _sizeTriggeredRemoteCommitRunning = false;
 
-#if DEBUG || UI_TESTING
+#if DEBUG || ENABLE_TEST_CLOUD
             CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
 #else
             CommitDelayMS = 1000 * 60 * 15;  // 15 minutes

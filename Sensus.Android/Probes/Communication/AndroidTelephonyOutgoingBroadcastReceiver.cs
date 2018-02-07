@@ -27,7 +27,9 @@ namespace Sensus.Android.Probes.Communication
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
             if (OUTGOING_CALL != null && intent != null && intent.Action == Intent.ActionNewOutgoingCall)
+            {
                 OUTGOING_CALL(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
+            }
         }
     }
 }
