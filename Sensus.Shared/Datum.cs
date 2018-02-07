@@ -168,8 +168,8 @@ namespace Sensus
         public override string ToString()
         {
             return "Type:  " + GetType().Name + Environment.NewLine +
-            "Device ID:  " + _deviceId + Environment.NewLine +
-            "Timestamp:  " + _timestamp;
+                   "Device ID:  " + _deviceId + Environment.NewLine +
+                   "Timestamp:  " + _timestamp;
         }
     }
 }
