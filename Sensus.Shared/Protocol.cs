@@ -51,7 +51,7 @@ namespace Sensus
 {
     /// <summary>
     /// 
-    /// A Protocol defines a plan for collecting (via <see cref="Probe"/>s, anonymizing (via <see cref="Anonymization.Anonymizers.Anonymizer"/>s), and 
+    /// A Protocol defines a plan for collecting (via <see cref="Probe"/>s), anonymizing (via <see cref="Anonymization.Anonymizers.Anonymizer"/>s), and 
     /// storing (via <see cref="LocalDataStore"/>s and <see cref="RemoteDataStore"/>s) data from a device. Study organizers use Sensus to configure the 
     /// study's Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.
     /// 

@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Namespace Sensus.DataStores.Local
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Namespace Sensus.DataStores.Local
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.DataStores.Local">
+  
+  <h1 id="Sensus_DataStores_Local" data-uid="Sensus.DataStores.Local" class="text-break">Namespace Sensus.DataStores.Local
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">Classes
+  </h3>
+      <h4><a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a></h4>
+      <section><p>When using the File Local Data Store, all data coming off the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s  are stored as JSON objects in a plain-text file. 
+This data store is non-volatile (i.e., it will persist even when the device loses power) and does not rely on a local database system.</p>
+</section>
+      <h4><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a></h4>
+      <section><p>A Local Data Store accumulates probed data internally in RAM. Periodically, the Local Data Store transfers these data to the device&apos;s 
+non-volatile storage system (e.g., a flat file). The job of the Local Data Store is to ensure that data coming off the Probes are not 
+lost if, for example, the device is powered off or Sensus crashes. Sensus defines the following Local Data Stores:</p>
+<ol>
+<li><a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a>:  All data coming off the probes are stored in a plain-text file.</li>
+<li><a class="xref" href="Sensus.DataStores.Local.RamLocalDataStore.html">RamLocalDataStore</a>: All data coming off the probes are stored in RAM. This is useful for debugging purposes and 
+is not recommended for practical Sensus deployments since it is a volatile storage mechanism.</li>
+</ol>
+</section>
+      <h4><a class="xref" href="Sensus.DataStores.Local.RamLocalDataStore.html">RamLocalDataStore</a></h4>
+      <section><p>When using the RAM Local Data Store, all data coming off the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s are stored in RAM. Since RAM is 
+volatile storage, any stored data will be lost if Sensus is turned off or crashes. Thus, most practical Sensus deployments 
+will probably want to avoid this local data store, opting instead for the <a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a>.</p>
+</section>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,688 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class AmazonS3RemoteDataStore
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class AmazonS3RemoteDataStore
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore">
+  
+  
+  <h1 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore" class="text-break">Class AmazonS3RemoteDataStore
+  </h1>
+  <div class="markdown level0 summary"><p>The Amazon S3 Remote Data Store allows Sensus to upload data from the device to <a href="https://aws.amazon.com/s3">Amazon&apos;s Simple Storage Service (S3)</a>. The 
+S3 service is a simple, non-relational storage system that is relatively cheap, easy to use, and robust.</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>Sign up for an account with Amazon Web Services, if you don&apos;t have one already. The <a href="https://aws.amazon.com/free">Free Tier</a> is sufficient.</li>
+<li>Install the <a href="https://aws.amazon.com/cli">AWS Command Line Interface(CLI)</a>.</li>
+<li>Install the <a href="https://stedolan.github.io/jq">jq</a> command-line utility.</li>
+<li>Download and unzip our <a href="https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip">AWS configuration scripts</a>.</li>
+<li>Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where <code>REGION</code> is the region in which 
+your bucket will reside (e.g., <code>us-east-1</code>), and <code>ROOT_ID</code> is the 12-digit (no dashes) AWS account identifier that will own your data:</li>
+</ul>
+<pre><code>./ConfigureAwsForExperiment.sh REGION ROOT_ID
+</code></pre><ul>
+<li>The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
+like the following:</li>
+</ul>
+<pre><code>All done. Bucket:  21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+</code></pre><ul>
+<li>The bucket ID should be kept confidential. Use this value as <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a>.</li>
+</ul>
+<h1 id="downloading-data-from-amazon-s3">Downloading Data from Amazon S3</h1>
+<p>Install the <a href="http://aws.amazon.com/cli">AWS Command Line Interface</a>. Assuming you have created and populated an S3 bucket named <code>BUCKET</code> and 
+a folder named <code>FOLDER</code>, you can download all of your Sensus data in a few different ways:</p>
+<ol>
+<li>You can use the functions (e.g., <code>sensus.sync.from.aws.s3</code>) in the <a href="https://cran.r-project.org/web/packages/SensusR/index.html">SensusR</a> package.</li>
+<li>You can execute the following command to download everything to a directory named <code>data</code> on your desktop:</li>
+</ol>
+<pre><code>aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
+</code></pre><ol>
+<li>You can run <a href="https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh">DownloadFromAmazonS3</a>.</li>
+<li>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</li>
+</ol>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a></div>
+    <div class="level2"><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a></div>
+    <div class="level3"><span class="xref">AmazonS3RemoteDataStore</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CommitAndReleaseAddedDataAsync_System_Threading_CancellationToken_">RemoteDataStore.CommitAndReleaseAddedDataAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireWiFi">RemoteDataStore.RequireWiFi</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireCharging">RemoteDataStore.RequireCharging</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAsync_System_Collections_Generic_HashSet_Sensus_Datum__Sensus_DataStores_DataStore_System_Threading_CancellationToken_">DataStore.CommitAndReleaseAsync(HashSet&lt;Datum&gt;, DataStore, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__System_Boolean_">DataStore.AddAsync(Datum, Nullable&lt;CancellationToken&gt;, Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_Sensus_Datum_System_Threading_CancellationToken_">DataStore.CommitAsync(Datum, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clear">DataStore.Clear()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Restart">DataStore.Restart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_String__System_String__System_String__">DataStore.TestHealth(String, String, String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Reset">DataStore.Reset()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy">DataStore.Copy()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitDelayMS">DataStore.CommitDelayMS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitTimeoutMinutes">DataStore.CommitTimeoutMinutes</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Protocol">DataStore.Protocol</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Running">DataStore.Running</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommittedDataCount">DataStore.CommittedDataCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddedDataCount">DataStore.AddedDataCount</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.DataStores.Remote.html">Sensus.DataStores.Remote</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AmazonS3RemoteDataStore : RemoteDataStore</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore__ctor_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.#ctor*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore__ctor" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.#ctor">AmazonS3RemoteDataStore()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AmazonS3RemoteDataStore()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Bucket*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Bucket">Bucket</h4>
+  <div class="markdown level1 summary"><p>The AWS S3 bucket in which data should be stored. This is the bucket identifier output by the steps described in the summary for this class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, true, 2)]
+public string Bucket { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The bucket.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CanRetrieveCommittedData_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CanRetrieveCommittedData" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData">CanRetrieveCommittedData</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool CanRetrieveCommittedData { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveCommittedData">RemoteDataStore.CanRetrieveCommittedData</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Clearable_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Clearable" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable">Clearable</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Clearable { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clearable">DataStore.Clearable</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Compress_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Compress" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress">Compress</h4>
+  <div class="markdown level1 summary"><p>Whether or not to compress the files submitted to S3 via gzip compression.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(null, true, 5)]
+public bool Compress { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to compress; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DisplayName_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DisplayName*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DisplayName" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DisplayName">DisplayName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string DisplayName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_DisplayName">DataStore.DisplayName</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Encrypt_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Encrypt" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt">Encrypt</h4>
+  <div class="markdown level1 summary"><p>Whether or not to apply asymmetric key encryption to S3 data payloads. If this is enabled, then you must provide a public encryption 
+key to <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>. You can generate a public encryption key following the instructions
+provided with <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Encrypt (must set public encryption key on protocol in order to use):&quot;, true, 6)]
+public bool Encrypt { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to encrypt; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Folder_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Folder*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Folder" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Folder">Folder</h4>
+  <div class="markdown level1 summary"><p>The folder within <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a> where data should be stored.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, true, 3)]
+public string Folder { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The folder.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedPublicKey*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedPublicKey">PinnedPublicKey</h4>
+  <div class="markdown level1 summary"><p>Pinned SSL public encryption key associated with <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL">PinnedServiceURL</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Pinned Public Key:&quot;, true, 8)]
+public string PinnedPublicKey { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The pinned public key.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedServiceURL*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedServiceURL">PinnedServiceURL</h4>
+  <div class="markdown level1 summary"><p>Alternative URL to use for S3, instead of the default. Use this to set up SSL certificate pinning.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Pinned Service URL:&quot;, true, 7)]
+public string PinnedServiceURL { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The pinned service URL.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Region_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Region" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region">Region</h4>
+  <div class="markdown level1 summary"><p>The AWS region in which <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a> resides.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;})]
+public string Region { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The region.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CommitAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)">CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task&lt;List&lt;Datum&gt;&gt; CommitAsync(IEnumerable&lt;Datum&gt; data, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_">DataStore.CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatum_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)">GetDatum&lt;T&gt;(String, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task&lt;T&gt; GetDatum&lt;T&gt;(string datumKey, CancellationToken cancellationToken)where T : Datum</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">datumKey</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_">RemoteDataStore.GetDatum&lt;T&gt;(String, CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatumKey_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatumKey_Sensus_Datum_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey(Sensus.Datum)">GetDatumKey(Datum)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string GetDatumKey(Datum datum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumKey_Sensus_Datum_">RemoteDataStore.GetDatumKey(Datum)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Start_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Start*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Start" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Start">Start()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Start()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Start">DataStore.Start()</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Stop_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Stop" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop">Stop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Stop">DataStore.Stop()</a></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

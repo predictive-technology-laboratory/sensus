@@ -1,0 +1,669 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ScriptDatum
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ScriptDatum
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.User.Scripts.ScriptDatum">
+  
+  
+  <h1 id="Sensus_Probes_User_Scripts_ScriptDatum" data-uid="Sensus.Probes.User.Scripts.ScriptDatum" class="text-break">Class ScriptDatum
+  </h1>
+  <div class="markdown level0 summary"><p>The <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> field of a <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> indicates the time when the particular input (e.g., text box) was 
+completed by the user. Compare this with <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_LocationTimestamp">LocationTimestamp</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp">RunTimestamp</a>, and <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_SubmissionTimestamp">SubmissionTimestamp</a>.</p>
+<p>When a user submits a survey, a <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> object is submitted for each input in the survey (e.g., each text entry, 
+multiple-choice item, etc.). However, if the user does not submit the survey, no such objects will be submitted. As a means of tracking 
+the deployment and response/non-response of surveys, Sensus also submits an additional <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a>  object each time 
+the survey is displayed to the user, regardless of whether the user ends up submitting their survey answers.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
+    <div class="level2"><span class="xref">ScriptDatum</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_FromJSON_System_String_">Datum.FromJSON(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_GetJSON_Sensus_Anonymization_AnonymizedJsonContractResolver_System_Boolean_">Datum.GetJSON(AnonymizedJsonContractResolver, Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_GetHashCode">Datum.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Equals_System_Object_">Datum.Equals(Object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Datum.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_DeviceId">Datum.DeviceId</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Datum.Timestamp</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_ProtocolId">Datum.ProtocolId</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Anonymized">Datum.Anonymized</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Probes_User_Scripts_ScriptDatum_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ScriptDatum : Datum</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum__ctor_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.#ctor*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum__ctor_System_DateTimeOffset_System_String_System_String_System_String_System_String_System_String_System_Object_System_String_System_Nullable_System_Double__System_Nullable_System_Double__System_Nullable_System_DateTimeOffset__System_DateTimeOffset_System_Collections_Generic_List_Sensus_UI_Inputs_InputCompletionRecord__System_DateTimeOffset_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String,System.String,System.Object,System.String,System.Nullable{System.Double},System.Nullable{System.Double},System.Nullable{System.DateTimeOffset},System.DateTimeOffset,System.Collections.Generic.List{Sensus.UI.Inputs.InputCompletionRecord},System.DateTimeOffset)">ScriptDatum(DateTimeOffset, String, String, String, String, String, Object, String, Nullable&lt;Double&gt;, Nullable&lt;Double&gt;, Nullable&lt;DateTimeOffset&gt;, DateTimeOffset, List&lt;InputCompletionRecord&gt;, DateTimeOffset)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, Nullable&lt;double&gt; latitude, Nullable&lt;double&gt; longitude, Nullable&lt;DateTimeOffset&gt; locationTimestamp, DateTimeOffset runTimestamp, List&lt;InputCompletionRecord&gt; completionRecords, DateTimeOffset submissionTimestamp)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><span class="parametername">timestamp</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">scriptId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">scriptName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">groupId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">inputId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">runId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">response</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">triggerDatumId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><span class="parametername">latitude</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><span class="parametername">longitude</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;</td>
+        <td><span class="parametername">locationTimestamp</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><span class="parametername">runTimestamp</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.UI.Inputs.InputCompletionRecord.html">InputCompletionRecord</a>&gt;</td>
+        <td><span class="parametername">completionRecords</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><span class="parametername">submissionTimestamp</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_CompletionRecords_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.CompletionRecords*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_CompletionRecords" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.CompletionRecords">CompletionRecords</h4>
+  <div class="markdown level1 summary"><p>A trace of activity for the input.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;InputCompletionRecord&gt; CompletionRecords { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.UI.Inputs.InputCompletionRecord.html">InputCompletionRecord</a>&gt;</td>
+        <td><p>The completion records.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_DisplayDetail_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.DisplayDetail*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_DisplayDetail" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.DisplayDetail">DisplayDetail</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string DisplayDetail { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_DisplayDetail">Datum.DisplayDetail</a></div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_GroupId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.GroupId*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_GroupId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.GroupId">GroupId</h4>
+  <div class="markdown level1 summary"><p>Identifier for a set of inputs within the script. This does not change across invocations of the script.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GroupId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The group identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_InputId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.InputId*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_InputId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.InputId">InputId</h4>
+  <div class="markdown level1 summary"><p>Identifier for an input within the script. This does not change across invocations of the script.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string InputId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The input identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_Latitude_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Latitude*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_Latitude" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Latitude">Latitude</h4>
+  <div class="markdown level1 summary"><p>Latitude of GPS reading taken when user submitted the response (if enabled).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty]
+[Anonymizable]
+public Nullable&lt;double&gt; Latitude { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><p>The latitude.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_LocationTimestamp_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.LocationTimestamp*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_LocationTimestamp" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.LocationTimestamp">LocationTimestamp</h4>
+  <div class="markdown level1 summary"><p>Timestamp of GPS reading (if enabled).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;DateTimeOffset&gt; LocationTimestamp { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;</td>
+        <td><p>The location timestamp.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_Longitude_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Longitude*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_Longitude" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Longitude">Longitude</h4>
+  <div class="markdown level1 summary"><p>Longitude of GPS reading taken when user submitted the response (if enabled).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty]
+[Anonymizable]
+public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><p>The longitude.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_Response_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Response*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_Response" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Response">Response</h4>
+  <div class="markdown level1 summary"><p>User&apos;s response to an input within the script.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object Response { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><p>The response.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_RunId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunId*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_RunId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunId">RunId</h4>
+  <div class="markdown level1 summary"><p>Identifier for a particular invocation of a script. This changes for each new invocation of the script.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string RunId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The run identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunTimestamp*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunTimestamp">RunTimestamp</h4>
+  <div class="markdown level1 summary"><p>Timestamp of when a script survey was made available to the user for completion.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTimeOffset RunTimestamp { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><p>The run timestamp.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptId*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptId">ScriptId</h4>
+  <div class="markdown level1 summary"><p>Identifier for a script. This does not change across invocations of the script.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ScriptId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The script identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptName_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptName*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptName" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptName">ScriptName</h4>
+  <div class="markdown level1 summary"><p>Descriptive name for a script.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ScriptName { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The name of the script.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_SubmissionTimestamp_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.SubmissionTimestamp*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_SubmissionTimestamp" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.SubmissionTimestamp">SubmissionTimestamp</h4>
+  <div class="markdown level1 summary"><p>Timestamp of when the user tapped the Submit button on the survey form.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTimeOffset SubmissionTimestamp { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><p>The submission timestamp.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_TriggerDatumId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.TriggerDatumId*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_TriggerDatumId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.TriggerDatumId">TriggerDatumId</h4>
+  <div class="markdown level1 summary"><p>If the script is triggered by a <a class="xref" href="Sensus.Datum.html">Datum</a> from another probe, this is the <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Id</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Anonymizable]
+public string TriggerDatumId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The trigger datum identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptDatum_ToString_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ToString*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_ToString" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

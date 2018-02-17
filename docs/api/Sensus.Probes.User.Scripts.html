@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Namespace Sensus.Probes.User.Scripts
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Namespace Sensus.Probes.User.Scripts
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.User.Scripts">
+  
+  <h1 id="Sensus_Probes_User_Scripts" data-uid="Sensus.Probes.User.Scripts" class="text-break">Namespace Sensus.Probes.User.Scripts
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">Classes
+  </h3>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.RunMode.html">RunMode</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScheduleTrigger.html">ScheduleTrigger</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a></h4>
+      <section><p>The <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> field of a <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> indicates the time when the particular input (e.g., text box) was 
+completed by the user. Compare this with <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_LocationTimestamp">LocationTimestamp</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp">RunTimestamp</a>, and <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_SubmissionTimestamp">SubmissionTimestamp</a>.</p>
+<p>When a user submits a survey, a <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> object is submitted for each input in the survey (e.g., each text entry, 
+multiple-choice item, etc.). However, if the user does not submit the survey, no such objects will be submitted. As a means of tracking 
+the deployment and response/non-response of surveys, Sensus also submits an additional <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a>  object each time 
+the survey is displayed to the user, regardless of whether the user ends up submitting their survey answers.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></h4>
+      <section><p>The Script Probe allows Sensus to deliver custom surveys to the user in response to either a schedule or the data coming off other probes. For 
+example, one could configure a survey to display at particular times or randomly within particular time blocks. One could also configure a survey 
+to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from another probe meets particular criteria.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a></h4>
+      <section><p>Note:  The <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> field indicates the time when the script survey was made available to the user for 
+completion. It will equal <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> for any <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>  objects that end up being 
+submitted by the user.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html">ScriptRunner</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptTriggerTime.html">ScriptTriggerTime</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.Trigger.html">Trigger</a></h4>
+      <section><p>Represents a condition under which a scripted probe is run.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.TriggerValueCondition.html">TriggerValueCondition</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.TriggerWindow.html">TriggerWindow</a></h4>
+      <section></section>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

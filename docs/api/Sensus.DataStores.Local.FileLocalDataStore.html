@@ -1,0 +1,545 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class FileLocalDataStore
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class FileLocalDataStore
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.DataStores.Local.FileLocalDataStore">
+  
+  
+  <h1 id="Sensus_DataStores_Local_FileLocalDataStore" data-uid="Sensus.DataStores.Local.FileLocalDataStore" class="text-break">Class FileLocalDataStore
+  </h1>
+  <div class="markdown level0 summary"><p>When using the File Local Data Store, all data coming off the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s  are stored as JSON objects in a plain-text file. 
+This data store is non-volatile (i.e., it will persist even when the device loses power) and does not rely on a local database system.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a></div>
+    <div class="level2"><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a></div>
+    <div class="level3"><span class="xref">FileLocalDataStore</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CommitToRemoteIfTooLargeAsync_System_Threading_CancellationToken_">LocalDataStore.CommitToRemoteIfTooLargeAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDataToZipFile_System_String_System_Threading_CancellationToken_System_Action_System_String_System_Double__">LocalDataStore.WriteDataToZipFile(String, CancellationToken, Action&lt;String, Double&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore">LocalDataStore.UploadToRemoteDataStore</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAsync_System_Collections_Generic_HashSet_Sensus_Datum__Sensus_DataStores_DataStore_System_Threading_CancellationToken_">DataStore.CommitAndReleaseAsync(HashSet&lt;Datum&gt;, DataStore, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__System_Boolean_">DataStore.AddAsync(Datum, Nullable&lt;CancellationToken&gt;, Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAddedDataAsync_System_Threading_CancellationToken_">DataStore.CommitAndReleaseAddedDataAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_Sensus_Datum_System_Threading_CancellationToken_">DataStore.CommitAsync(Datum, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Stop">DataStore.Stop()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Restart">DataStore.Restart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy">DataStore.Copy()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitDelayMS">DataStore.CommitDelayMS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitTimeoutMinutes">DataStore.CommitTimeoutMinutes</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Protocol">DataStore.Protocol</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Running">DataStore.Running</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommittedDataCount">DataStore.CommittedDataCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddedDataCount">DataStore.AddedDataCount</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.DataStores.Local.html">Sensus.DataStores.Local</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_DataStores_Local_FileLocalDataStore_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class FileLocalDataStore : LocalDataStore</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore__ctor_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.#ctor*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore__ctor" data-uid="Sensus.DataStores.Local.FileLocalDataStore.#ctor">FileLocalDataStore()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FileLocalDataStore()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_Clearable_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Clearable*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Clearable" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Clearable">Clearable</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Clearable { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clearable">DataStore.Clearable</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_DisplayName_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.DisplayName*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_DisplayName" data-uid="Sensus.DataStores.Local.FileLocalDataStore.DisplayName">DisplayName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string DisplayName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_DisplayName">DataStore.DisplayName</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_SizeDescription_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.SizeDescription*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_SizeDescription" data-uid="Sensus.DataStores.Local.FileLocalDataStore.SizeDescription">SizeDescription</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SizeDescription { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_SizeDescription">LocalDataStore.SizeDescription</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_StorageDirectory_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StorageDirectory*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_StorageDirectory" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StorageDirectory">StorageDirectory</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string StorageDirectory { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_Clear_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Clear*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Clear" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Clear">Clear()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Clear()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clear">DataStore.Clear()</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_CommitAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CommitAsync*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)">CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task&lt;List&lt;Datum&gt;&gt; CommitAsync(IEnumerable&lt;Datum&gt; data, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
+        <td><span class="parametername">data</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_">DataStore.CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_CommitToRemote_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_CommitToRemote_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote(System.Threading.CancellationToken)">CommitToRemote(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void CommitToRemote(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CommitToRemote_System_Threading_CancellationToken_">LocalDataStore.CommitToRemote(CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_GetDataLinesToWrite_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_GetDataLinesToWrite_System_Threading_CancellationToken_System_Action_System_String_System_Double__" data-uid="Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})">GetDataLinesToWrite(CancellationToken, Action&lt;String, Double&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IEnumerable&lt;Tuple&lt;string, string&gt;&gt; GetDataLinesToWrite(CancellationToken cancellationToken, Action&lt;string, double&gt; progressCallback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Double</span>&gt;</td>
+        <td><span class="parametername">progressCallback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_GetDataLinesToWrite_System_Threading_CancellationToken_System_Action_System_String_System_Double__">LocalDataStore.GetDataLinesToWrite(CancellationToken, Action&lt;String, Double&gt;)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_Reset_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Reset*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Reset" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Reset">Reset()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Reset()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Reset">DataStore.Reset()</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_Start_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Start*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Start" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Start">Start()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Start()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Start">DataStore.Start()</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_TestHealth_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TestHealth*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TestHealth_System_String__System_String__System_String__" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TestHealth(System.String@,System.String@,System.String@)">TestHealth(ref String, ref String, ref String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref string error, ref string warning, ref string misc)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">error</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">warning</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">misc</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_TestHealth_System_String__System_String__System_String__">LocalDataStore.TestHealth(ref String, ref String, ref String)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_TooLarge_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TooLarge*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TooLarge" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TooLarge">TooLarge()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool TooLarge()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_TooLarge">LocalDataStore.TooLarge()</a></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,758 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ScriptRunner
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ScriptRunner
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.User.Scripts.ScriptRunner">
+  
+  
+  <h1 id="Sensus_Probes_User_Scripts_ScriptRunner" data-uid="Sensus.Probes.User.Scripts.ScriptRunner" class="text-break">Class ScriptRunner
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ScriptRunner</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Probes_User_Scripts_ScriptRunner_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ScriptRunner : Object</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner__ctor_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.#ctor*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner__ctor_System_String_Sensus_Probes_User_Scripts_ScriptProbe_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.#ctor(System.String,Sensus.Probes.User.Scripts.ScriptProbe)">ScriptRunner(String, ScriptProbe)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScriptRunner(string name, ScriptProbe probe)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></td>
+        <td><span class="parametername">probe</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_AllowCancel_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.AllowCancel*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_AllowCancel" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.AllowCancel">AllowCancel</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Cancel:&quot;, true, 3)]
+public bool AllowCancel { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_CompletionTimes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.CompletionTimes*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_CompletionTimes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.CompletionTimes">CompletionTimes</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;DateTime&gt; CompletionTimes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_DisplayProgress_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DisplayProgress*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_DisplayProgress" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DisplayProgress">DisplayProgress</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Display Progress:&quot;, true, 13)]
+public bool DisplayProgress { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Enabled_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Enabled*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Enabled" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Enabled">Enabled</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Enabled:&quot;, true, 2)]
+public bool Enabled { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation">IncompleteSubmissionConfirmation</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Incomplete Submission Confirmation:&quot;, true, 15)]
+public string IncompleteSubmissionConfirmation { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_MaxAgeMinutes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.MaxAgeMinutes*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_MaxAgeMinutes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.MaxAgeMinutes">MaxAgeMinutes</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryDoubleUiProperty(&quot;Maximum Age (Mins.):&quot;, true, 7)]
+public Nullable&lt;double&gt; MaxAgeMinutes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Name_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Name*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Name" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Name">Name</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Name:&quot;, true, 1)]
+public string Name { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_NonDowTriggerIntervalDays_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.NonDowTriggerIntervalDays*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_NonDowTriggerIntervalDays" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.NonDowTriggerIntervalDays">NonDowTriggerIntervalDays</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Non-DOW Trigger Interval (Days):&quot;, true, 9)]
+public int NonDowTriggerIntervalDays { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_OneShot_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.OneShot*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_OneShot" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.OneShot">OneShot</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;One Shot:&quot;, true, 10)]
+public bool OneShot { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Probe_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Probe*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Probe" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Probe">Probe</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScriptProbe Probe { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_RunMode_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunMode*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_RunMode" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunMode">RunMode</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListUiProperty]
+public RunMode RunMode { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.RunMode.html">RunMode</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_RunOnStart_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunOnStart*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_RunOnStart" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunOnStart">RunOnStart</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Run On Start:&quot;, true, 11)]
+public bool RunOnStart { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_RunTimes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunTimes*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_RunTimes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunTimes">RunTimes</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;DateTime&gt; RunTimes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription">ScheduleTriggerReadableDescription</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ScheduleTriggerReadableDescription { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Script_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Script*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Script" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Script">Script</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Script Script { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups">ShuffleInputGroups</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Shuffle Input Groups:&quot;, true, 16)]
+public bool ShuffleInputGroups { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Triggers_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Triggers*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Triggers" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Triggers">Triggers</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConcurrentObservableCollection&lt;Trigger&gt; Triggers { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Concurrent.ConcurrentObservableCollection-1.html">ConcurrentObservableCollection</a>&lt;<a class="xref" href="Sensus.Probes.User.Scripts.Trigger.html">Trigger</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_TriggerWindowsString_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.TriggerWindowsString*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_TriggerWindowsString" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.TriggerWindowsString">TriggerWindowsString</h4>
+  <div class="markdown level1 summary"><p>Daily time windows during which the survey should be deployed to the user. For example, if you want two surveys, one randomly 
+between 9am-10am (e.g., 9:32am) and one randomly between 1pm-2pm (e.g., 1:56pm), then you would enter the following into 
+Trigger Windows: 9:00-10:00,13:00-14:00. Note that the survey will be deployed at a random time during each future window (e.g., 
+9:32am and 1:56pm on day 1, 9:57am and 1:28pm on day 2, etc.). Alternatively, you may specify an exact time as 
+follows:  9:00-10:00,11:32,13:00-14:00. The survey thus configured will also fire exactly at 11:32am each day.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Trigger Windows:&quot;, true, 8)]
+public string TriggerWindowsString { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The trigger windows string.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_WindowExpiration_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.WindowExpiration*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_WindowExpiration" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.WindowExpiration">WindowExpiration</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Expire Script When Window Ends:&quot;, true, 15)]
+public bool WindowExpiration { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Initialize_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Initialize*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Initialize" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Initialize">Initialize()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Initialize()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Reset_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Reset*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Reset" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Reset">Reset()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Restart_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Restart*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Restart" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Restart">Restart()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Restart()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Start_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Start*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Start" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Start">Start()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Stop_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Stop*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Stop" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Stop">Stop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Stop()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_TestHealth_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.TestHealth*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_TestHealth_System_String__System_String__System_String__" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.TestHealth(System.String@,System.String@,System.String@)">TestHealth(ref String, ref String, ref String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TestHealth(ref string error, ref string warning, ref string misc)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">error</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">warning</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">misc</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

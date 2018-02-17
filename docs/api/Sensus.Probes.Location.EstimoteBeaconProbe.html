@@ -1,0 +1,637 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class EstimoteBeaconProbe
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class EstimoteBeaconProbe
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe">
+  
+  
+  <h1 id="Sensus_Probes_Location_EstimoteBeaconProbe" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe" class="text-break">Class EstimoteBeaconProbe
+  </h1>
+  <div class="markdown level0 summary"><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Proximity Beacons</a> to track fine-grained locations. This Probe is available for 
+Android and iOS and runs while the Sensus app is in the foreground and background. Generates proximity event data in the form 
+of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> readings.</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>You must purchase Proximity or Location beacons.</li>
+<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a> to have the following JSON attachment:</li>
+</ul>
+<pre><code>{ &amp;quot;attachment&amp;quot;: { &amp;quot;sensus&amp;quot;: &amp;quot;test&amp;quot; } }
+</code></pre><p>More details are available <a href="http://developer.estimote.com/proximity/android-tutorial">here</a>.</p>
+<ul>
+<li><p>Having entered the App Id and App Token, the list of beacons can be edited via the <code>Edit Beacons</code> button in the Estimote Beacon Probe 
+configuration. Each beacon definition contains the following:</p>
+</li>
+<li><p><code>Beacon Name</code>:  Name of the beacon, as specified in the attachment value.</p>
+</li>
+<li><code>Proximity (Meters)</code>:  Number of meters desired for proximity.</li>
+<li><code>Event Name</code>:  Name to be given to the proximity event.</li>
+</ul>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.Probes.Probe.html">Probe</a></div>
+    <div class="level2"><a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a></div>
+    <div class="level3"><span class="xref">EstimoteBeaconProbe</span></div>
+      <div class="level4"><a class="xref" href="Sensus.Android.Probes.Location.AndroidEstimoteBeaconProbe.html">AndroidEstimoteBeaconProbe</a></div>
+      <div class="level4"><a class="xref" href="Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html">iOSEstimoteBeaconProbe</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_InternalStart">ListeningProbe.InternalStart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StartListening">ListeningProbe.StartListening()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_Stop">ListeningProbe.Stop()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopListening">ListeningProbe.StopListening()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">ListeningProbe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_Reset">ListeningProbe.Reset()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">ListeningProbe.MaxDataStoresPerSecond</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MinDataStoreDelay">ListeningProbe.MinDataStoreDelay</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">ListeningProbe.KeepDeviceAwake</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_RawParticipation">ListeningProbe.RawParticipation</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_CollectionDescription">ListeningProbe.CollectionDescription</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_String__System_String__System_String__">Probe.TestHealth(String, String, String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Enabled">Probe.Enabled</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatum">Probe.MostRecentDatum</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Protocol">Probe.Protocol</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Probe.StoreData</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartStopTimes">Probe.StartStopTimes</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SuccessfulHealthTestTimes">Probe.SuccessfulHealthTestTimes</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RunLocalCommitOnStore">Probe.RunLocalCommitOnStore</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Location.html">Sensus.Probes.Location</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Probes_Location_EstimoteBeaconProbe_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class EstimoteBeaconProbe : ListeningProbe</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe__ctor_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.#ctor*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe__ctor" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.#ctor">EstimoteBeaconProbe()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EstimoteBeaconProbe()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_Beacons_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.Beacons*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_Beacons" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.Beacons">Beacons</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConcurrentObservableCollection&lt;EstimoteBeacon&gt; Beacons { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Concurrent.ConcurrentObservableCollection-1.html">ConcurrentObservableCollection</a>&lt;<a class="xref" href="Sensus.Probes.Location.EstimoteBeacon.html">EstimoteBeacon</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_DatumType_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DatumType*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_DatumType" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DatumType">DatumType</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Type DatumType { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DatumType">Probe.DatumType</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_DefaultKeepDeviceAwake_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DefaultKeepDeviceAwake*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_DefaultKeepDeviceAwake" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DefaultKeepDeviceAwake">DefaultKeepDeviceAwake</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool DefaultKeepDeviceAwake { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_DefaultKeepDeviceAwake">ListeningProbe.DefaultKeepDeviceAwake</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_DeviceAsleepWarning_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DeviceAsleepWarning*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_DeviceAsleepWarning" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DeviceAsleepWarning">DeviceAsleepWarning</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override string DeviceAsleepWarning { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_DeviceAsleepWarning">ListeningProbe.DeviceAsleepWarning</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_DeviceAwakeWarning_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DeviceAwakeWarning*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_DeviceAwakeWarning" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DeviceAwakeWarning">DeviceAwakeWarning</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override string DeviceAwakeWarning { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_DeviceAwakeWarning">ListeningProbe.DeviceAwakeWarning</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_DisplayName_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DisplayName*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_DisplayName" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.DisplayName">DisplayName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string DisplayName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DisplayName">Probe.DisplayName</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_EstimoteCloudAppId_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppId*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_EstimoteCloudAppId" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppId">EstimoteCloudAppId</h4>
+  <div class="markdown level1 summary"><p>The App Id from the <a href="https://cloud.estimote.com/#/apps">Estimote Cloud console</a> that is associated with the beacons to be tracked.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Estimote Cloud App Id:&quot;, true, 35)]
+public string EstimoteCloudAppId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The Estimote Cloud app identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_EstimoteCloudAppToken_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppToken*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_EstimoteCloudAppToken" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppToken">EstimoteCloudAppToken</h4>
+  <div class="markdown level1 summary"><p>The App Token from the <a href="https://cloud.estimote.com/#/apps">Estimote Cloud console</a> that is associated with the beacons to be tracked.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Estimote Cloud App Token:&quot;, true, 36)]
+public string EstimoteCloudAppToken { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The Estimote Cloud app token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartDataPointFromDatum_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartDataPointFromDatum*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartDataPointFromDatum_Sensus_Datum_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartDataPointFromDatum(Sensus.Datum)">GetChartDataPointFromDatum(Datum)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.ChartDataPoint</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartDataPointFromDatum_Sensus_Datum_">Probe.GetChartDataPointFromDatum(Datum)</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartPrimaryAxis_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartPrimaryAxis*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartPrimaryAxis" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartPrimaryAxis">GetChartPrimaryAxis()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override ChartAxis GetChartPrimaryAxis()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.ChartAxis</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartPrimaryAxis">Probe.GetChartPrimaryAxis()</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartSecondaryAxis_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSecondaryAxis*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartSecondaryAxis" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSecondaryAxis">GetChartSecondaryAxis()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override RangeAxisBase GetChartSecondaryAxis()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.RangeAxisBase</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSecondaryAxis">Probe.GetChartSecondaryAxis()</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartSeries_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetChartSeries" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries">GetChartSeries()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override ChartSeries GetChartSeries()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.ChartSeries</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSeries">Probe.GetChartSeries()</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetSensusBeaconNamesFromCloud_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetSensusBeaconNamesFromCloud" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud">GetSensusBeaconNamesFromCloud()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;string&gt; GetSensusBeaconNamesFromCloud()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_Initialize_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.Initialize*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_Initialize" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.Initialize">Initialize()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void Initialize()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Initialize">Probe.Initialize()</a></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

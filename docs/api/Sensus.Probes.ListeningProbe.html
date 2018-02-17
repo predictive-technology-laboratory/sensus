@@ -1,0 +1,565 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ListeningProbe
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ListeningProbe
+   ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.ListeningProbe">
+  
+  
+  <h1 id="Sensus_Probes_ListeningProbe" data-uid="Sensus.Probes.ListeningProbe" class="text-break">Class ListeningProbe
+  </h1>
+  <div class="markdown level0 summary"><p>Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. Listening Probes do not generate
+data unless such state changes occur.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.Probes.Probe.html">Probe</a></div>
+    <div class="level2"><span class="xref">ListeningProbe</span></div>
+      <div class="level3"><a class="xref" href="Sensus.Android.Probes.Movement.AndroidActivityProbe.html">AndroidActivityProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Communication.ListeningTelephonyProbe.html">ListeningTelephonyProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Communication.SmsProbe.html">SmsProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Context.LightProbe.html">LightProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Context.ListeningAmbientTemperatureProbe.html">ListeningAmbientTemperatureProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Location.AltitudeProbe.html">AltitudeProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Location.CompassProbe.html">CompassProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProbe.html">EstimoteBeaconProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Location.ListeningLocationProbe.html">ListeningLocationProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.html">ListeningPointsOfInterestProximityProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Movement.ListeningSpeedProbe.html">ListeningSpeedProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Network.CellTowerProbe.html">CellTowerProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Network.ListeningWlanProbe.html">ListeningWlanProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html">MicrosoftBandProbeBase</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Initialize">Probe.Initialize()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_String__System_String__System_String__">Probe.TestHealth(String, String, String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSeries">Probe.GetChartSeries()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartPrimaryAxis">Probe.GetChartPrimaryAxis()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSecondaryAxis">Probe.GetChartSecondaryAxis()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartDataPointFromDatum_Sensus_Datum_">Probe.GetChartDataPointFromDatum(Datum)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DisplayName">Probe.DisplayName</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Enabled">Probe.Enabled</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatum">Probe.MostRecentDatum</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Protocol">Probe.Protocol</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Probe.StoreData</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DatumType">Probe.DatumType</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartStopTimes">Probe.StartStopTimes</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SuccessfulHealthTestTimes">Probe.SuccessfulHealthTestTimes</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RunLocalCommitOnStore">Probe.RunLocalCommitOnStore</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.html">Sensus.Probes</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Probes_ListeningProbe_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class ListeningProbe : Probe</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe__ctor_" data-uid="Sensus.Probes.ListeningProbe.#ctor*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe__ctor" data-uid="Sensus.Probes.ListeningProbe.#ctor">ListeningProbe()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected ListeningProbe()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_CollectionDescription_" data-uid="Sensus.Probes.ListeningProbe.CollectionDescription*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_CollectionDescription" data-uid="Sensus.Probes.ListeningProbe.CollectionDescription">CollectionDescription</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string CollectionDescription { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_CollectionDescription">Probe.CollectionDescription</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_DefaultKeepDeviceAwake_" data-uid="Sensus.Probes.ListeningProbe.DefaultKeepDeviceAwake*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_DefaultKeepDeviceAwake" data-uid="Sensus.Probes.ListeningProbe.DefaultKeepDeviceAwake">DefaultKeepDeviceAwake</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract bool DefaultKeepDeviceAwake { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_DeviceAsleepWarning_" data-uid="Sensus.Probes.ListeningProbe.DeviceAsleepWarning*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_DeviceAsleepWarning" data-uid="Sensus.Probes.ListeningProbe.DeviceAsleepWarning">DeviceAsleepWarning</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract string DeviceAsleepWarning { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_DeviceAwakeWarning_" data-uid="Sensus.Probes.ListeningProbe.DeviceAwakeWarning*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_DeviceAwakeWarning" data-uid="Sensus.Probes.ListeningProbe.DeviceAwakeWarning">DeviceAwakeWarning</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract string DeviceAwakeWarning { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_KeepDeviceAwake_" data-uid="Sensus.Probes.ListeningProbe.KeepDeviceAwake*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_KeepDeviceAwake" data-uid="Sensus.Probes.ListeningProbe.KeepDeviceAwake">KeepDeviceAwake</h4>
+  <div class="markdown level1 summary"><p>This parameter only affects Android, and it determines whether or not to keep the device awake while listening for readings while Sensus is 
+backgrounded. If turned on, readings will be delivered to Sensus in the backgrounded; however, more power will be consumed because the processor 
+will not be allowed to sleep. If turned off, readings will be paused when Sensus is backgrounded. This will conserve power because the processor 
+will be allowed to sleep, but readings will be delayed and possibly dropped entirely. When the device wakes up, some readings that were cached 
+while asleep may be delivered in bulk to Sensus. This bulk delivery may not include all readings, and the readings delivered in bulk will have 
+their <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> fields set to the time of bulk delivery rather than the time the reading originated. Even a single listening 
+probe with this setting turned on will be sufficient to keep the processor awake and delivering readings to all listening probes in all protocols
+within Sensus.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Keep Device Awake:&quot;, true, 2147483646)]
+public bool KeepDeviceAwake { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to keep device awake; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond_" data-uid="Sensus.Probes.ListeningProbe.MaxDataStoresPerSecond*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond" data-uid="Sensus.Probes.ListeningProbe.MaxDataStoresPerSecond">MaxDataStoresPerSecond</h4>
+  <div class="markdown level1 summary"><p>The maximum number of readings that will be stored in one second.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;Max Data / Second:&quot;, true, 2147483647)]
+public Nullable&lt;float&gt; MaxDataStoresPerSecond { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Single</span>&gt;</td>
+        <td><p>Maximum data stores per second.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_MinDataStoreDelay_" data-uid="Sensus.Probes.ListeningProbe.MinDataStoreDelay*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_MinDataStoreDelay" data-uid="Sensus.Probes.ListeningProbe.MinDataStoreDelay">MinDataStoreDelay</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; MinDataStoreDelay { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_RawParticipation_" data-uid="Sensus.Probes.ListeningProbe.RawParticipation*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_RawParticipation" data-uid="Sensus.Probes.ListeningProbe.RawParticipation">RawParticipation</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override double RawParticipation { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RawParticipation">Probe.RawParticipation</a></div>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_InternalStart_" data-uid="Sensus.Probes.ListeningProbe.InternalStart*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_InternalStart" data-uid="Sensus.Probes.ListeningProbe.InternalStart">InternalStart()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override sealed void InternalStart()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_InternalStart">Probe.InternalStart()</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_Reset_" data-uid="Sensus.Probes.ListeningProbe.Reset*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_Reset" data-uid="Sensus.Probes.ListeningProbe.Reset">Reset()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Reset()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Reset">Probe.Reset()</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_StartListening_" data-uid="Sensus.Probes.ListeningProbe.StartListening*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_StartListening" data-uid="Sensus.Probes.ListeningProbe.StartListening">StartListening()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void StartListening()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_Stop_" data-uid="Sensus.Probes.ListeningProbe.Stop*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_Stop" data-uid="Sensus.Probes.ListeningProbe.Stop">Stop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override sealed void Stop()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Stop">Probe.Stop()</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_StopListening_" data-uid="Sensus.Probes.ListeningProbe.StopListening*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_StopListening" data-uid="Sensus.Probes.ListeningProbe.StopListening">StopListening()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void StopListening()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_StoreDatumAsync_" data-uid="Sensus.Probes.ListeningProbe.StoreDatumAsync*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.ListeningProbe.StoreDatumAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override sealed Task&lt;bool&gt; StoreDatumAsync(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Threading.CancellationToken</span>&gt;</td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
