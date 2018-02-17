@@ -23,7 +23,7 @@ namespace Sensus.Probes.Movement
     /// 
     /// Acceleration in x, y, and z directions according to the following coordinate system:
     /// 
-    ///   ![Accelerometer Coordiates](/images/axis_device.png)
+    ///   ![Accelerometer Coordiates](/sensus/images/axis_device.png)
     /// 
     ///   * Lying flat on its back, the phone will register an acceleration vector of approximately &lt;0,0,-1&gt;.
     ///   * Lying flat on its face, the phone will register an acceleration vector of approximately &lt;0,0,1&gt;.
