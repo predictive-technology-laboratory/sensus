@@ -1,11 +1,11 @@
-![Sensus Banner](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Graphics/GitHubBanner.png)
+![Sensus Banner](/sensus/images/GitHubBanner.png)
 
 Sensus is an end-to-end system for mobile sensing using iOS and Android devices. Sensus is able to monitor a wide range of sensors and data events, and it is designed to interact with the user to solicit additional information via scheduled or sensor-triggered surveys. It coordinates the collection, anonymization, and storage of this information locally on the device and remotely on cloud servers. Sensus has been designed and implemented at the University of Virginia [Predictive Technology Laboratory](http://ptl.sys.virginia.edu/ptl) for research in public health and personal safety. However, Sensus is a general-purpose system. Researchers in other fields, industrial companies, and individuals interested in self-monitoring might find it useful.
 
 Sensus's key features include the following:
 
 * **Cross-platform with native performance** Most apps like Sensus are available for either Android or iOS but not both. This limits the target audience and threatens the validity of any study that requires a representative population of smartphone users. Sensus runs on Android and iOS and emphasizes a uniform user experience.
-* **Comprehensive sensing** A complete list of internal hardware and software sensors, as well as external wearable and beacon-based sensors, can be found [here](https://github.com/predictive-technology-laboratory/sensus/wiki/Probe#current-sensus-probes).
+* **Comprehensive sensing** A complete list of internal hardware and software sensors, as well as external wearable and beacon-based sensors, can be found [here](xref:Sensus.Probes.Probe).
 * **Device-initiated custom surveys** Sensus can prompt users to complete custom surveys that are scheduled or triggered by sensed data. For example, surveys can be triggered on the basis of GPS location, proximity to points of interest, speed, acceleration, light levels, sound levels, after phone calls or text messages, and so on. Virtually any [probed data](https://github.com/predictive-technology-laboratory/sensus/wiki/Probe#current-sensus-probes) can be used to trigger surveys, or you can schedule surveys to run during particular time blocks.
 * **Fine-grained anonymization controls** Each type of sensed data has several fine-grained facets that can be individually anonymized.
 * **Minimal infrastructure requirements** Sensus is entirely self-contained. No external servers are required unless you would like to push data to the cloud (e.g., Amazon) for centralized storage, which is supported with minimal effort through configuration scripts that are provided with Sensus.

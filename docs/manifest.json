@@ -4613,6 +4613,17 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "images/GitHubBanner.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/GitHubBanner.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "images/axis_device.png",
       "output": {
         "resource": {
@@ -4628,7 +4639,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "kqYsKRUD5Nb9Qh3NrIr77A=="
+          "hash": "gI+tK7jU03uBYP+ZtU9big=="
         }
       },
       "is_incremental": true,
@@ -4659,16 +4670,16 @@
           "details": "Processor TocDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": true,
-          "incrementalPhase": "build"
-        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
         "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         }
