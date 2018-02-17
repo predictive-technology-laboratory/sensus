@@ -50,7 +50,11 @@ using Plugin.Geolocator.Abstractions;
 namespace Sensus
 {
     /// <summary>
-    /// Container for probes, data stores, and all other information needed to run a collection experiment.
+    /// 
+    /// A Protocol defines a plan for collecting (via <see cref="Probe"/>s, anonymizing (via <see cref="Anonymization.Anonymizers.Anonymizer"/>s), and 
+    /// storing (via <see cref="LocalDataStore"/>s and <see cref="RemoteDataStore"/>s) data from a device. Study organizers use Sensus to configure the 
+    /// study's Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.
+    /// 
     /// </summary>
     public class Protocol
     {
@@ -66,7 +70,9 @@ namespace Sensus
             Protocol protocol = new Protocol(name);
 
             foreach (Probe probe in Probe.GetAll())
+            {
                 protocol.AddProbe(probe);
+            }
 
             SensusServiceHelper.Get().RegisterProtocol(protocol);
         }
@@ -1055,7 +1061,44 @@ namespace Sensus
                 return _alertExclusionWindows;
             }
         }
-
+        
+        /// <summary>
+        /// Sensus is able to use asymmetric key encryption to secure data before transmission from the device to a remote endpoint (e.g., AWS S3). This 
+        /// provides a layer of security on top of SSL encryption and certificate pinning. For example, even if an attacker is able to intercept 
+        /// and decrypt a service request (e.g., write data) to AWS S3 via a man-in-the-middle attack, the attacker would not be able to decrypt 
+        /// the Sensus data payload, which is encrypted with an additional public/private key pair that you control. This protects against two 
+        /// threats. First, it protects against the case where a man-in-the-middle has gained access to your pinned private encryption key and 
+        /// intercepts data. Second, it protects against unauthorized access to Sensus data payloads after storage within the intended system 
+        /// (e.g., within AWS S3). In the latter case, the data payloads are transferred to the correct server, but they live unencrypted on 
+        /// that system. Asymmetric encryption prevents unauthorized access to the data by ensuring that Sensus data payloads can only be decrypted 
+        /// by those who have the asymmetric private encryption key. To use asymmetric data encryption within Sensus, you must generate a public/private 
+        /// key pair and enter the public key within <see cref="AsymmetricEncryptionPublicKey"/>. You can generate a public/private key pair in the 
+        /// appropriate format using the following steps (on Mac):
+        /// 
+        ///   * Generate a 2048-bit `RSA PRIVATE KEY`: 
+        ///  
+        ///     ```
+        ///     openssl genrsa -des3 -out private.pem 2048
+        ///     ```
+        /// 
+        ///   * Convert the `RSA PRIVATE KEY` to a `PRIVATE KEY`:  
+        /// 
+        ///     ```
+        ///     openssl pkcs8 -topk8 -nocrypt -in private.pem
+        ///     ```
+        /// 
+        ///   * Extract the `PUBLIC KEY` for entering into your Sensus[[Protocol]]:
+        /// 
+        ///     ```
+        ///     openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+        ///     ```
+        /// 
+        ///   * Use the `PUBLIC KEY` (public.pem) as <see cref="AsymmetricEncryptionPublicKey"/>.
+        ///   * Enable <see cref="AmazonS3RemoteDataStore.Encrypt"/>.
+        /// 
+        /// Keep all `PRIVATE KEY` information safe and secure. Never share it.
+        /// </summary>
+        /// <value>The asymmetric encryption public key.</value>
         [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37)]
         public string AsymmetricEncryptionPublicKey
         {

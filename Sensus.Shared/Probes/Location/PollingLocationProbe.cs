@@ -22,7 +22,7 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Location
 {
     /// <summary>
-    /// Probes location information.
+    /// Periodically takes a location reading.
     /// </summary>
     public class PollingLocationProbe : PollingProbe
     {

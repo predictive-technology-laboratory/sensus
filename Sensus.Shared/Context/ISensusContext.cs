@@ -19,7 +19,7 @@ using Sensus.Encryption;
 namespace Sensus.Context
 {
     /// <summary>
-    /// Defines platform-specific fields that should not be serialized as part of the service helper
+    /// Defines platform-specific fields that should not be serialized as part of the service helper.
     /// </summary>
     public interface ISensusContext
     {

@@ -22,6 +22,16 @@ using Sensus.UI.Inputs;
 
 namespace Sensus.Probes.User.Scripts
 {
+    /// <summary>
+    /// The <see cref="Datum.Timestamp"/> field of a <see cref="ScriptDatum"/> indicates the time when the particular input (e.g., text box) was 
+    /// completed by the user. Compare this with <see cref="LocationTimestamp"/>, <see cref="RunTimestamp"/>, and <see cref="SubmissionTimestamp"/>.
+    /// 
+    /// When a user submits a survey, a <see cref="ScriptDatum"/> object is submitted for each input in the survey (e.g., each text entry, 
+    /// multiple-choice item, etc.). However, if the user does not submit the survey, no such objects will be submitted. As a means of tracking 
+    /// the deployment and response/non-response of surveys, Sensus also submits an additional <see cref="ScriptRunDatum"/>  object each time 
+    /// the survey is displayed to the user, regardless of whether the user ends up submitting their survey answers.
+    /// 
+    /// </summary>
     public class ScriptDatum : Datum
     {
         private string _scriptId;
@@ -38,6 +48,10 @@ namespace Sensus.Probes.User.Scripts
         private List<InputCompletionRecord> _completionRecords;
         private DateTimeOffset _submissionTimestamp;
 
+        /// <summary>
+        /// Identifier for a script. This does not change across invocations of the script.
+        /// </summary>
+        /// <value>The script identifier.</value>
         public string ScriptId
         {
             get
@@ -50,6 +64,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Descriptive name for a script.
+        /// </summary>
+        /// <value>The name of the script.</value>
         public string ScriptName
         {
             get
@@ -62,6 +80,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Identifier for a set of inputs within the script. This does not change across invocations of the script.
+        /// </summary>
+        /// <value>The group identifier.</value>
         public string GroupId
         {
             get
@@ -74,6 +96,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Identifier for an input within the script. This does not change across invocations of the script.
+        /// </summary>
+        /// <value>The input identifier.</value>
         public string InputId
         {
             get
@@ -86,6 +112,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Identifier for a particular invocation of a script. This changes for each new invocation of the script.
+        /// </summary>
+        /// <value>The run identifier.</value>
         public string RunId
         {
             get
@@ -98,12 +128,20 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// User's response to an input within the script.
+        /// </summary>
+        /// <value>The response.</value>
         public object Response
         {
             get { return _response; }
             set { _response = value; }
         }
 
+        /// <summary>
+        /// If the script is triggered by a <see cref="Datum"/> from another probe, this is the <see cref="Datum.Id"/>.
+        /// </summary>
+        /// <value>The trigger datum identifier.</value>
         [Anonymizable("Triggering Datum ID:", typeof(StringHashAnonymizer), false)]
         public string TriggerDatumId
         {
@@ -111,6 +149,10 @@ namespace Sensus.Probes.User.Scripts
             set { _triggerDatumId = value; }
         }
 
+        /// <summary>
+        /// Latitude of GPS reading taken when user submitted the response (if enabled).
+        /// </summary>
+        /// <value>The latitude.</value>
         [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double? Latitude
@@ -119,6 +161,10 @@ namespace Sensus.Probes.User.Scripts
             set { _latitude = value; }
         }
 
+        /// <summary>
+        /// Longitude of GPS reading taken when user submitted the response (if enabled).
+        /// </summary>
+        /// <value>The longitude.</value>
         [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double? Longitude
@@ -127,6 +173,10 @@ namespace Sensus.Probes.User.Scripts
             set { _longitude = value; }
         }
 
+        /// <summary>
+        /// Timestamp of when a script survey was made available to the user for completion.
+        /// </summary>
+        /// <value>The run timestamp.</value>
         public DateTimeOffset RunTimestamp
         {
             get
@@ -139,6 +189,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Timestamp of GPS reading (if enabled).
+        /// </summary>
+        /// <value>The location timestamp.</value>
         public DateTimeOffset? LocationTimestamp
         {
             get
@@ -151,6 +205,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// A trace of activity for the input.
+        /// </summary>
+        /// <value>The completion records.</value>
         public List<InputCompletionRecord> CompletionRecords
         {
             get
@@ -164,6 +222,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Timestamp of when the user tapped the Submit button on the survey form.
+        /// </summary>
+        /// <value>The submission timestamp.</value>
         public DateTimeOffset SubmissionTimestamp
         {
             get

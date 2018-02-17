@@ -18,10 +18,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sensus.Context;
 using Sensus.Exceptions;
-using Xamarin;
 
 namespace Sensus.Callbacks
 {
+    /// <summary>
+    /// Sensus schedules operations via a scheduler.
+    /// </summary>
     public abstract class CallbackScheduler : ICallbackScheduler
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";

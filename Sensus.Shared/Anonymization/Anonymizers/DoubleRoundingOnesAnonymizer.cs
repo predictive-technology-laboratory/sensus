@@ -16,6 +16,9 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Rounds numeric values to the ones place (e.g., 123.65 becomes 124).
+    /// </summary>
     public class DoubleRoundingOnesAnonymizer : DoubleRoundingAnonymizer
     {
         public override string DisplayText

@@ -16,6 +16,11 @@ using System;
 
 namespace Sensus.Probes.User.Scripts
 {
+    /// <summary>
+    /// Note:  The <see cref="Datum.Timestamp"/> field indicates the time when the script survey was made available to the user for 
+    /// completion. It will equal <see cref="Datum.Timestamp"/> for any <see cref="ScriptDatum"/>  objects that end up being 
+    /// submitted by the user.
+    /// </summary>
     public class ScriptRunDatum : Datum
     {
         private string _scriptId;
@@ -27,6 +32,10 @@ namespace Sensus.Probes.User.Scripts
         private double? _longitude;
         private DateTimeOffset? _locationTimestamp;
 
+        /// <summary>
+        /// Identifier for a script. This does not change across invocations of the script.
+        /// </summary>
+        /// <value>The script identifier.</value>
         public string ScriptId
         {
             get
@@ -39,6 +48,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Descriptive name for a script.
+        /// </summary>
+        /// <value>The name of the script.</value>
         public string ScriptName
         {
             get
@@ -51,6 +64,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Identifier for a particular invocation of a script. This changes for each new invocation of the script.
+        /// </summary>
+        /// <value>The run identifier.</value>
         public string RunId
         {
             get
@@ -63,6 +80,11 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Some scripts are triggered by other probes, and some scripts are scheduled. If the script is of the latter type, 
+        /// this field indicates when the script was scheduled to run.
+        /// </summary>
+        /// <value>The scheduled timestamp.</value>
         public DateTimeOffset? ScheduledTimestamp
         {
             get
@@ -75,24 +97,40 @@ namespace Sensus.Probes.User.Scripts
             } 
         }
 
+        /// <summary>
+        /// If the script is triggered by a Datum from another probe, this is the Id of that datum.
+        /// </summary>
+        /// <value>The trigger datum identifier.</value>
         public string TriggerDatumId
         {
             get { return _triggerDatumId; }
             set { _triggerDatumId = value; }
         }
 
+        /// <summary>
+        /// Latitude of GPS reading taken when the survey was displayed to the user (if enabled).
+        /// </summary>
+        /// <value>The latitude.</value>
         public double? Latitude
         {
             get { return _latitude; }
             set { _latitude = value; }
         }
 
+        /// <summary>
+        /// Longitude of GPS reading taken when the survey was displayed to the user (if enabled).
+        /// </summary>
+        /// <value>The longitude.</value>
         public double? Longitude
         {
             get { return _longitude; }
             set { _longitude = value; }
         }
 
+        /// <summary>
+        /// Timestamp of GPS reading (if enabled).
+        /// </summary>
+        /// <value>The location timestamp.</value>
         public DateTimeOffset? LocationTimestamp
         {
             get

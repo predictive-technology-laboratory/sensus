@@ -78,6 +78,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// An identifier that is unique to the particular device running Sensus.
+        /// </summary>
+        /// <value>The device identifier.</value>
         [Anonymizable("Device ID:", typeof(StringHashAnonymizer), false)]
         public string DeviceId
         {
@@ -85,6 +89,10 @@ namespace Sensus
             set { _deviceId = value; }
         }
 
+        /// <summary>
+        /// Date and time at which a data element from the Probe was read.
+        /// </summary>
+        /// <value>The timestamp.</value>
         [Anonymizable(null, typeof(DateTimeOffsetTimelineAnonymizer), false)]
         public DateTimeOffset Timestamp
         {

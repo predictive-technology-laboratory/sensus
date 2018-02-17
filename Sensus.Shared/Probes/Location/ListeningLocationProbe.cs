@@ -20,6 +20,9 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Location
 {
+    /// <summary>
+    /// Listens continuously for location changes.
+    /// </summary>
     public class ListeningLocationProbe : ListeningProbe
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;

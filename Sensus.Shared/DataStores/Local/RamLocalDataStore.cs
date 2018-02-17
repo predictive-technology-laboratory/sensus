@@ -20,6 +20,11 @@ using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Local
 {
+    /// <summary>
+    /// When using the RAM Local Data Store, all data coming off the <see cref="Probes.Probe"/>s are stored in RAM. Since RAM is 
+    /// volatile storage, any stored data will be lost if Sensus is turned off or crashes. Thus, most practical Sensus deployments 
+    /// will probably want to avoid this local data store, opting instead for the <see cref="FileLocalDataStore"/>.
+    /// </summary>
     public class RamLocalDataStore : LocalDataStore
     {
         private const int REMOTE_COMMIT_TRIGGER_DATA_COUNT = 50000;

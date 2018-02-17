@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Linq;
 using Sensus.Context;
 using Sensus.Exceptions;
@@ -21,6 +20,9 @@ using Xamarin.Forms;
 
 namespace Sensus.Callbacks
 {
+    /// <summary>
+    /// Exposes the user-facing notification functionality of a platform.
+    /// </summary>
     public abstract class Notifier : INotifier
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";

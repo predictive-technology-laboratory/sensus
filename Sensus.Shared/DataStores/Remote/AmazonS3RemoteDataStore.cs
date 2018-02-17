@@ -33,6 +33,49 @@ using System.Net.Security;
 
 namespace Sensus.DataStores.Remote
 {
+    /// <summary>
+    /// 
+    /// The Amazon S3 Remote Data Store allows Sensus to upload data from the device to [Amazon's Simple Storage Service (S3)](https://aws.amazon.com/s3). The 
+    /// S3 service is a simple, non-relational storage system that is relatively cheap, easy to use, and robust.
+    /// 
+    /// # Prerequisites
+    /// 
+    ///   * Sign up for an account with Amazon Web Services, if you don't have one already. The [Free Tier](https://aws.amazon.com/free) is sufficient.
+    ///   * Install the [AWS Command Line Interface(CLI)](https://aws.amazon.com/cli).
+    ///   * Install the [jq](https://stedolan.github.io/jq) command-line utility.
+    ///   * Download and unzip our [AWS configuration scripts](https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip).
+    ///   * Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where `REGION` is the region in which 
+    ///     your bucket will reside (e.g., `us-east-1`), and `ROOT_ID` is the 12-digit (no dashes) AWS account identifier that will own your data:
+    /// 
+    ///     ```
+    ///     ./ConfigureAwsForExperiment.sh REGION ROOT_ID
+    ///     ```
+    /// 
+    ///   * The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
+    ///     like the following:
+    /// 
+    ///     ```
+    ///     All done. Bucket:  21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+    ///     ```
+    /// 
+    ///   * The bucket ID should be kept confidential. Use this value as <see cref="Bucket"/>.
+    /// 
+    /// # Downloading Data from Amazon S3
+    /// 
+    /// Install the [AWS Command Line Interface](http://aws.amazon.com/cli). Assuming you have created and populated an S3 bucket named `BUCKET` and 
+    /// a folder named `FOLDER`, you can download all of your Sensus data in a few different ways:
+    /// 
+    ///   1. You can use the functions (e.g., `sensus.sync.from.aws.s3`) in the [SensusR](https://cran.r-project.org/web/packages/SensusR/index.html) package.
+    ///   1. You can execute the following command to download everything to a directory named `data` on your desktop:
+    /// 
+    ///      ```
+    ///      aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
+    ///      ```
+    /// 
+    ///   1. You can run [DownloadFromAmazonS3](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh).
+    ///   1. You can use a third-party application like [Bucket Explorer](http://www.bucketexplorer.com) to browse and download data from Amazon S3.
+    /// 
+    /// </summary>
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
         private string _region;
@@ -43,6 +86,10 @@ namespace Sensus.DataStores.Remote
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
 
+        /// <summary>
+        /// The AWS region in which <see cref="Bucket"/> resides.
+        /// </summary>
+        /// <value>The region.</value>
         [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" })]
         public string Region
         {
@@ -56,6 +103,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// The AWS S3 bucket in which data should be stored. This is the bucket identifier output by the steps described in the summary for this class.
+        /// </summary>
+        /// <value>The bucket.</value>
         [EntryStringUiProperty(null, true, 2)]
         public string Bucket
         {
@@ -74,6 +125,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// The folder within <see cref="Bucket"/> where data should be stored.
+        /// </summary>
+        /// <value>The folder.</value>
         [EntryStringUiProperty(null, true, 3)]
         public string Folder
         {
@@ -92,6 +147,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// Whether or not to compress the files submitted to S3 via gzip compression.
+        /// </summary>
+        /// <value><c>true</c> to compress; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 5)]
         public bool Compress
         {
@@ -105,6 +164,12 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// Whether or not to apply asymmetric key encryption to S3 data payloads. If this is enabled, then you must provide a public encryption 
+        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. You can generate a public encryption key following the instructions
+        /// provided with <see cref="Protocol.AsymmetricEncryptionPublicKey"/>.
+        /// </summary>
+        /// <value><c>true</c> to encrypt; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
         public bool Encrypt
         {
@@ -118,6 +183,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// Alternative URL to use for S3, instead of the default. Use this to set up SSL certificate pinning.
+        /// </summary>
+        /// <value>The pinned service URL.</value>
         [EntryStringUiProperty("Pinned Service URL:", true, 7)]
         public string PinnedServiceURL
         {
@@ -148,6 +217,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>.
+        /// </summary>
+        /// <value>The pinned public key.</value>
         [EntryStringUiProperty("Pinned Public Key:", true, 8)]
         public string PinnedPublicKey
         {

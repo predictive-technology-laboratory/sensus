@@ -23,6 +23,10 @@ using System.Text.RegularExpressions;
 
 namespace Sensus.DataStores.Local
 {
+    /// <summary>
+    /// When using the File Local Data Store, all data coming off the <see cref="Probes.Probe"/>s  are stored as JSON objects in a plain-text file. 
+    /// This data store is non-volatile (i.e., it will persist even when the device loses power) and does not rely on a local database system.
+    /// </summary>
     public class FileLocalDataStore : LocalDataStore
     {
         private const double REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;

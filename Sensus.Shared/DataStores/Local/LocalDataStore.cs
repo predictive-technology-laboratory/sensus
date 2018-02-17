@@ -25,7 +25,13 @@ using System.IO.Compression;
 namespace Sensus.DataStores.Local
 {
     /// <summary>
-    /// Responsible for transferring data from probes to local media.
+    /// A Local Data Store accumulates probed data internally in RAM. Periodically, the Local Data Store transfers these data to the device's 
+    /// non-volatile storage system (e.g., a flat file). The job of the Local Data Store is to ensure that data coming off the Probes are not 
+    /// lost if, for example, the device is powered off or Sensus crashes. Sensus defines the following Local Data Stores:
+    /// 
+    ///   1. <see cref="FileLocalDataStore"/>:  All data coming off the probes are stored in a plain-text file.
+    ///   1. <see cref="RamLocalDataStore"/>: All data coming off the probes are stored in RAM. This is useful for debugging purposes and 
+    ///      is not recommended for practical Sensus deployments since it is a volatile storage mechanism.
     /// </summary>
     public abstract class LocalDataStore : DataStore
     {
@@ -34,6 +40,12 @@ namespace Sensus.DataStores.Local
 
         private readonly object _sizeTriggeredRemoteCommitLocker = new object();
 
+        /// <summary>
+        /// Whether or not to upload data to the <see cref="Remote.RemoteDataStore"/> defined for the Protocol. If this is <c>false</c>, then 
+        /// data will accumulate in the Local Data Store and will never be transferred to a remote server. The data can still be manually 
+        /// transferred off of the device by sharing the Local Data Store from the device to another endpoint (e.g., an email address or Dropbox
+        /// directory).
+        /// </summary>
         [OnOffUiProperty("Upload to Remote:", true, 3)]
         public bool UploadToRemoteDataStore
         {

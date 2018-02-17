@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Omits the data field altogether, resulting in a <see cref="Datum"/> that does not contain the field.
+    /// </summary>
     public class ValueOmittingAnonymizer : Anonymizer
     {
         public override string DisplayText

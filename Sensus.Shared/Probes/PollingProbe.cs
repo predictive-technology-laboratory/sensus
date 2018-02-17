@@ -21,7 +21,6 @@ using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using Sensus.Context;
 using Sensus.Callbacks;
-using Plugin.Permissions.Abstractions;
 
 #if __IOS__
 using CoreLocation;
@@ -29,6 +28,26 @@ using CoreLocation;
 
 namespace Sensus.Probes
 {
+    /// <summary>
+    /// 
+    /// Polling Probes are triggered at regular intervals. When triggered, Polling Probes ask the device (and perhaps the user) for some type of 
+    /// information and store the resulting information in the <see cref="LocalDataStore"/>.
+    /// 
+    /// # Background Considerations
+    /// On Android, all Polling Probes are able to periodically wake up in the background, take a reading, and allow the system to go back to 
+    /// sleep. The Android operating system will occasionally delay the wake-up signal in order to batch wake-ups and thereby conserve energy; however, 
+    /// this delay is usually only 5-10 seconds. So, if you configure a Polling Probe to poll every 60 seconds, you may see actual polling delays of 
+    /// 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.
+    /// 
+    /// Polling on iOS is much less reliable. By design, iOS apps cannot perform processing in the background, with the exception of 
+    /// <see cref="Location.ListeningLocationProbe"/>. All other processing within Sensus must be halted when the user backgrounds the app. Furthermore, 
+    /// Sensus cannot wake itself up from the background in order to execute polling operations. Thus, Sensus has no reliable mechanism to support polling-style
+    /// operations. Sensus does its best to support Polling Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking 
+    /// a GPS reading) should execute. This relies on the user to open the notification from the tray and bring Sensus to the foreground so that the polling 
+    /// operation can execute. Of course, the user might not see the notification or might choose not to open it. The polling operation will not be executed
+    /// in such cases. You should assume that Polling Probes will not produce data reliably on iOS.
+    /// 
+    /// </summary>
     public abstract class PollingProbe : Probe
     {
         /// <summary>
@@ -41,6 +60,7 @@ namespace Sensus.Probes
         private bool _isPolling;
         private List<DateTime> _pollTimes;
         private ScheduledCallback _pollCallback;
+
 #if __IOS__
         private bool _significantChangePoll;
         private bool _significantChangePollOverridesScheduledPolls;
@@ -49,6 +69,10 @@ namespace Sensus.Probes
 
         private readonly object _locker = new object();
 
+        /// <summary>
+        /// How long to sleep (become inactive) between successive polling operations.
+        /// </summary>
+        /// <value>The polling sleep duration in milliseconds.</value>
         [EntryIntegerUiProperty("Sleep Duration (MS):", true, 5)]
         public virtual int PollingSleepDurationMS
         {
@@ -56,12 +80,18 @@ namespace Sensus.Probes
             set
             {
                 if (value <= 1000)
+                {
                     value = 1000;
+                }
 
                 _pollingSleepDurationMS = value;
             }
         }
 
+        /// <summary>
+        /// How long the probe has to complete a single poll operation before being cancelled.
+        /// </summary>
+        /// <value>The polling timeout minutes.</value>
         [EntryIntegerUiProperty("Timeout (Mins.):", true, 6)]
         public int PollingTimeoutMinutes
         {
@@ -102,6 +132,12 @@ namespace Sensus.Probes
         }
 
 #if __IOS__
+        /// <summary>
+        /// Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
+        /// [here](https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for 
+        /// more information on significant changes.
+        /// </summary>
+        /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Significant Change Poll:", true, 7)]
         public bool SignificantChangePoll
         {
@@ -109,6 +145,12 @@ namespace Sensus.Probes
             set { _significantChangePoll = value; }
         }
 
+        /// <summary>
+        /// Available on iOS only. Has no effect if significant-change polling is disabled. If significant-change polling is enabled:  (1) If this 
+        /// is on, polling will only occur on significant changes. (2) If this is off, polling will occur based on <see cref="PollingSleepDurationMS"/> and 
+        /// on significant changes.
+        /// </summary>
+        /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 8)]
         public bool SignificantChangePollOverridesScheduledPolls
         {

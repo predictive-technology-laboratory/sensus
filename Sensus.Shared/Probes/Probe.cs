@@ -27,7 +27,10 @@ using Sensus.Probes.User.MicrosoftBand;
 namespace Sensus.Probes
 {
     /// <summary>
-    /// An abstract probe.
+    /// Each Probe collects data of a particular type from the device. Sensus contains Probes for many of the hardware sensors present on many 
+    /// smartphones. Sensus also contains Probes that can prompt the user for information, which the user supplies via speech or textual input.
+    /// Sensus defines a variety of Probes, with platform availability and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, 
+    /// etc.). Availability and reliability of Probes will depend on the device being used.
     /// </summary>
     public abstract class Probe
     {
@@ -74,6 +77,10 @@ namespace Sensus.Probes
         [JsonIgnore]
         public abstract string CollectionDescription { get; }
 
+        /// <summary>
+        /// Whether the probe is enabled.
+        /// </summary>
+        /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
         {
@@ -155,6 +162,11 @@ namespace Sensus.Probes
             set { _protocol = value; }
         }
 
+        /// <summary>
+        /// Whether the Probe should store the data it collects. This might be turned off if the Probe is used to trigger the <see cref="User.Scripts.ScriptProbe"/> but 
+        /// the probed data are not needed.
+        /// </summary>
+        /// <value><c>true</c> if store data; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Store Data:", true, 3)]
         public bool StoreData
         {
@@ -188,6 +200,10 @@ namespace Sensus.Probes
             get { return _successfulHealthTestTimes; }
         }
 
+        /// <summary>
+        /// How much data to save from the probe for the purpose of charting.
+        /// </summary>
+        /// <value>The maximum chart data count.</value>
         [EntryIntegerUiProperty("Max Chart Data Count:", true, 50)]
         public int MaxChartDataCount
         {
@@ -198,7 +214,9 @@ namespace Sensus.Probes
             set
             {
                 if (value > 0)
+                {
                     _maxChartDataCount = value;
+                }
 
                 // trim chart data collection
                 lock (_chartData)
@@ -209,6 +227,10 @@ namespace Sensus.Probes
             }
         }
 
+        /// <summary>
+        /// Whether the Probe should run a local commit cycle each time the Probe generates data.
+        /// </summary>
+        /// <value><c>true</c> to run local commit on each store; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Run Local Commit On Store:", true, 14)]
         public bool RunLocalCommitOnStore
         {

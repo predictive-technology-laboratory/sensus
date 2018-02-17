@@ -15,7 +15,6 @@
 using System;
 using Newtonsoft.Json.Serialization;
 using System.Reflection;
-using Sensus.Anonymization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
@@ -25,6 +24,9 @@ using Sensus.Exceptions;
 
 namespace Sensus.Anonymization
 {
+    /// <summary>
+    /// Applies declared anonymizers to property values when serializing data to JSON.
+    /// </summary>
     public class AnonymizedJsonContractResolver : DefaultContractResolver
     {
         private class AnonymizedPropertyValueProvider : IValueProvider
@@ -58,7 +60,9 @@ namespace Sensus.Anonymization
 
                     // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has been passed through an anonymizer (this regardless of whether an anonymization transformation was actually applied).
                     if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
+                    {
                         return true;
+                    }
                     else
                     {
                         // first get the property's value in the default way
@@ -120,7 +124,9 @@ namespace Sensus.Anonymization
                         string anonymizerTypeStr = "";
                         Anonymizer anonymizer = _propertyAnonymizer[property];
                         if (anonymizer != null)
+                        {
                             anonymizerTypeStr = anonymizer.GetType().FullName;
+                        }
 
                         propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
                     }

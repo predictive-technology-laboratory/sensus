@@ -16,6 +16,11 @@ using Newtonsoft.Json;
 
 namespace Sensus.Anonymization.Anonymizers
 {    
+    /// <summary>
+    /// In-app anonymization is provided by applying various transformations to facets of the data
+    /// that are generated. For example, numeric values can be rounded and textual data can be 
+    /// passed through one-way hash functions.
+    /// </summary>
     public abstract class Anonymizer
     {
         [JsonIgnore]
@@ -31,7 +36,9 @@ namespace Sensus.Anonymization.Anonymizers
         public override bool Equals(object obj)
         {
             if (obj == null)
+            {
                 return false;
+            }
             
             // compare most-derived types of current and passed object -- this comparison is used in the UI when the user is selecting the 
             // anonymizer to apply to a datum property.

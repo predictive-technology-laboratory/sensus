@@ -25,7 +25,7 @@ namespace Sensus.UI
     public class ProximityTriggersPage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ProximityTriggersPage"/> class.
+        /// Initializes a new instance of the <see cref="ProximityTriggersPage"/> class.
         /// </summary>
         /// <param name="proximityProbe">Proximity probe to display triggers for.</param>
         public ProximityTriggersPage(IPointsOfInterestProximityProbe proximityProbe)

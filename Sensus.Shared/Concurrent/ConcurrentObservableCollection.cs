@@ -23,11 +23,13 @@ using Sensus.Context;
 namespace Sensus.Concurrent
 {
     /// <summary>
-    /// This is terrifying and a bad idea on many levels. However, I think it is still better than sprinkling lock code throughout the entire system.
-    /// Someday Microsoft might come up with a clever lock free way to design random access data structures. When that happens we'll get rid of this.
+    /// Provides thread-safe concurrent access to an observable collection.
     /// </summary>
     public class ConcurrentObservableCollection<T>: INotifyCollectionChanged, INotifyPropertyChanged, ICollection<T>
     {
+        // This is terrifying and a bad idea on many levels. However, I think it is still better than sprinkling lock code throughout the entire system.
+        // Someday Microsoft might come up with a clever lock free way to design random access data structures. When that happens we'll get rid of this.
+
         private readonly IConcurrent _concurrent;
 
         #region Fields

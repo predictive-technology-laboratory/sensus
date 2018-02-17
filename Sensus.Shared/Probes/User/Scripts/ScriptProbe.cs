@@ -21,6 +21,11 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.User.Scripts
 {
+    /// <summary>
+    /// The Script Probe allows Sensus to deliver custom surveys to the user in response to either a schedule or the data coming off other probes. For 
+    /// example, one could configure a survey to display at particular times or randomly within particular time blocks. One could also configure a survey 
+    /// to display when a <see cref="Datum"/> from another probe meets particular criteria.
+    /// </summary>
     public class ScriptProbe : Probe
     {
         private ObservableCollection<ScriptRunner> _scriptRunners;

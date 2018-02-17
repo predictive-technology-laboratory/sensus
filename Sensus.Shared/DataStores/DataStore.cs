@@ -26,7 +26,7 @@ using Sensus.Callbacks;
 namespace Sensus.DataStores
 {
     /// <summary>
-    /// An abstract repository for probed data.
+    /// Data Stores play an integral part in the Sensus system. They are the storage location for data that come off of <see cref="Probes.Probe"/>s.
     /// </summary>
     public abstract class DataStore
     {
@@ -133,6 +133,10 @@ namespace Sensus.DataStores
         private bool _forcedCommitRunning;
         private bool _committing;
 
+        /// <summary>
+        /// How long to pause between each commit operation (milliseconds).
+        /// </summary>
+        /// <value>The commit delay in milliseconds.</value>
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
         public int CommitDelayMS
         {
@@ -140,12 +144,18 @@ namespace Sensus.DataStores
             set
             {
                 if (value <= 1000)
+                {
                     value = 1000;
+                }
 
                 _commitDelayMS = value;
             }
         }
 
+        /// <summary>
+        /// How many minutes the data store has to complete the commit operation before being cancelled.
+        /// </summary>
+        /// <value>The commit timeout in minutes.</value>
         [EntryIntegerUiProperty("Commit Timeout (Mins.):", true, 3)]
         public int CommitTimeoutMinutes
         {

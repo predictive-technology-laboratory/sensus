@@ -33,7 +33,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,12 +52,13 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </IpaPackageName>
     <BuildIpa>false</BuildIpa>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <NoWarn>1701</NoWarn>
+    <DocumentationFile>bin\iPhone\Debug\SensusiOS.xml</DocumentationFile>
+    <NoWarn>1701, 1591</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignProvision>
     </CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
-<MtouchFastDev>true</MtouchFastDev>
+<MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>

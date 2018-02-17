@@ -15,12 +15,18 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading;
-using Sensus.UI.UiProperties;
 using System;
 using System.Threading.Tasks;
 
 namespace Sensus.DataStores.Remote
 {
+    /// <summary>
+    /// When using the Console Remote Data Store, all data accumulated in <see cref="Local.LocalDataStore"/> are simply written to the logging console. This 
+    /// is useful for debugging purposes and is not recommended for practical Sensus deployments since it provides no means of moving the data 
+    /// off of the device. There is, however, one important exception to this: If you wish for the participants to store all data locally 
+    /// until the end of the study, then using the Console Remote Data Store makes sense since it will not upload any data to a remote system. To 
+    /// make this work, you must disable <see cref="Local.LocalDataStore.UploadToRemoteDataStore"/>.
+    /// </summary>
     public class ConsoleRemoteDataStore : RemoteDataStore
     {
         [JsonIgnore]

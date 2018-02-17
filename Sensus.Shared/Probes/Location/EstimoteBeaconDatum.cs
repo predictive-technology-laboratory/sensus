@@ -20,16 +20,31 @@ using Sensus.Anonymization.Anonymizers;
 
 namespace Sensus.Probes.Location
 {
+    /// <summary>
+    /// Event proximity for named beacons at specified distance thresholds.
+    /// </summary>
     public class EstimoteBeaconDatum : Datum
     {
+        /// <summary>
+        /// The name assigned to the beacon.
+        /// </summary>
+        /// <value>The name of the beacon.</value>
         [StringProbeTriggerProperty("Beacon Name")]
         [Anonymizable("Beacon Name:", typeof(StringHashAnonymizer), false)]
         public string BeaconName { get; set; }
 
+        /// <summary>
+        /// Name of the proximity event.
+        /// </summary>
+        /// <value>The name of the event.</value>
         [StringProbeTriggerProperty("Event Name")]
         [Anonymizable("Event Name:", typeof(StringHashAnonymizer), false)]
         public string EventName { get; set; }
 
+        /// <summary>
+        /// Proximity detection threshold.
+        /// </summary>
+        /// <value>The distance in meters.</value>
         [DoubleProbeTriggerProperty("Distance (Meters)")]
         [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double DistanceMeters { get; set; }

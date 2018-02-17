@@ -16,6 +16,9 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Rounds numeric values to various levels of precision.
+    /// </summary>
     public abstract class DoubleRoundingAnonymizer : Anonymizer
     {
         private int _places;

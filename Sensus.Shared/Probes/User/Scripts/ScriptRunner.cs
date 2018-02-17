@@ -97,6 +97,14 @@ namespace Sensus.Probes.User.Scripts
             set { _scheduleTrigger.WindowExpiration = value; }
         }
 
+        /// <summary>
+        /// Daily time windows during which the survey should be deployed to the user. For example, if you want two surveys, one randomly 
+        /// between 9am-10am (e.g., 9:32am) and one randomly between 1pm-2pm (e.g., 1:56pm), then you would enter the following into 
+        /// Trigger Windows: 9:00-10:00,13:00-14:00. Note that the survey will be deployed at a random time during each future window (e.g., 
+        /// 9:32am and 1:56pm on day 1, 9:57am and 1:28pm on day 2, etc.). Alternatively, you may specify an exact time as 
+        /// follows:  9:00-10:00,11:32,13:00-14:00. The survey thus configured will also fire exactly at 11:32am each day.
+        /// </summary>
+        /// <value>The trigger windows string.</value>
         [EntryStringUiProperty("Trigger Windows:", true, 8)]
         public string TriggerWindowsString
         {
