@@ -176,6 +176,6 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>15.0.0</string>
+	<string>15.0.1</string>
 </dict>
 </plist>
