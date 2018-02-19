@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Privacy Policy | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Privacy Policy | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="privacy">
+<h1 id="privacy-policy">Privacy Policy</h1>
+
+<p>View the Sensus privacy policy <a class="xref" href="privacy_policy.html">here</a>.</p>
+<h1 id="anonymization">Anonymization</h1>
+<p>Once Sensus is configured with a <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>, it will be able to collect, save, and upload information 
+from the device on which it is running. Sensus provides anonymization controls on a per-probe basis. For example, 
+the <a class="xref" href="../api/Sensus.Probes.Location.ListeningLocationProbe.html">ListeningLocationProbe</a> emits latitude-longitude coordinates. Each of these values 
+can be anonymized by rounding off decimal places, thereby reducing the precision of the coordinates. For 
+example, 73.438373758 degrees west longitude might become 73.43 degrees west longitude, resulting in a precision 
+reduction of approximately 0.72 kilometers. See the individual <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> pages for more information 
+about anonymization controls that are specific to each Probe. In general the following anonymization methods are available:</p>
+<ul>
+<li><code>Anonymous Timeline</code>:  This anonymizer places timestamps on a timeline that is arbitrarily anchored at some starting time. Timestamps 
+thus anonymized do not have any absolute meaning. They are only meaningful relative to each other.</li>
+<li><code>Round to Thousandths/Hundredths/Tenths/Ones/Tens/Hundreds</code>:  Rounds numbers to the associated place.</li>
+<li><code>Hash</code>:  Computes a cryptographic, one-way hash of text.</li>
+<li><code>Omit</code>:  Omits data value entirely.</li>
+</ul>
+<h1 id="ssl-certificate-pinning">SSL Certificate Pinning</h1>
+<p>Sensus is able to transmit data from the device to remote servers (e.g., AWS S3). Sensus implements SSL certificate pinning 
+to prevent man-in-the-middle attacks in which a third party poses as the remote server to intercept data. Certificate pinning 
+is achieved by embedding the expected SSL public encryption key within the Sensus <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>. Upon connecting to 
+the AWS S3 server, Sensus receives the SSL public encryption key that the server wishes to use to secure the connection. If 
+the server provides the expected public key (i.e., the one embedded within the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>, then we can be more 
+confident that either (1) the server is actually our AWS S3 server, or (2) the server is a man-in-the-middle that is trying 
+to use our public encryption key. In the latter case, as long as we have maintained control of the private key, the 
+man-in-the-middle will not be able to decrypt data encrypted with the public encryption key. If the server does not provide 
+the expected public key, Sensus will refuse to transmit data over the connection because it could potentially be decrypted 
+by a man-in-the-middle server that holds the associated private encryption key.</p>
+<p>Do the following to implement SSL certificate pinning within Sensus for the AWS S3 remote data store:</p>
+<ul>
+<li>Set up an AWS CloudFront reverse proxy from a domain name that you own to the official AWS S3 endpoint (s3.amazonaws.com).</li>
+<li>Install a new certificate into your CloudFront server using the AWS Certificate Manager.</li>
+<li>Extract the public encryption key from your CloudFront endpoint (e.g., using the developer tools in Chrome on Windows).</li>
+<li>Use your domain name as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL">PinnedServiceURL</a>.</li>
+<li>Use the extracted public key as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey">PinnedPublicKey</a>.</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/privacy_and_anonymization.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Backwards Compatibility | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Backwards Compatibility | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="backwards_compat">
+<h1 id="backwards-compatibility">Backwards Compatibility</h1>
+
+<p>All platforms change over time. The developers do their best to ensure that the most recent version of the platform 
+is compatible with devices running older versions of the platform; however, this cannot always be perfectly achieved. 
+This page describes our approach to ensuring that Sensus development proceeds safely as the various platforms mature.</p>
+<h2 id="android">Android</h2>
+<p>We have the following goals:</p>
+<ol>
+<li>Provide compile-time checks on invalid use of Android APIs. For example, if we believe that Sensus is compatible 
+with version 5 and higher of the Android framework, then the build should fail if we compile against, say, version 
+4.0. If the build does not fail, then we should lower our minimum required Android API level. If the build fails 
+against Android version 4.1 or higher, then we either need to raise the minimum required API level or add backwards 
+compatible code (the latter is preferred). Ensuring that Sensus compiles at our presumed minimum compatibility level 
+is one easy way to help ensure that all compatible devices will run Sensus properly. Of course, there&#39;s no replacement
+for on-device testing.</li>
+<li>Sensus should run with no errors on any version of the Android framework that is greater than or equal to the minimum. </li>
+</ol>
+<p>To achieve the above goals, we use a combination of compiler directives and runtime checks on the Android API. An example 
+is the <a class="xref" href="../api/Sensus.Android.Probes.Device.AndroidScreenProbe.html">AndroidScreenProbe</a> class, a snippet of which is shown below:</p>
+<pre><code>#if __ANDROID_20__
+if (Build.VERSION.SdkInt &gt;= BuildVersionCodes.Lollipop)
+    screenOn = _powerManager.IsInteractive;  // API level 20
+else
+#endif
+{
+    // ignore deprecation warning
+    #pragma warning disable 618
+    screenOn = _powerManager.IsScreenOn;
+    #pragma warning restore 618
+}
+</code></pre><p>The <code>PowerManager.IsInteractive</code> property was introduced at API level 20. Thus, it cannot be referenced when compiling against 
+anything less than API level 20. To satisfy goal (1) above, we build Sensus against our presumed minimum compatible API level. 
+The compiler directive in the snippet above allows us to do this while at the same time making use of the newest API features 
+in our deployed apps, which are built against the latest Android framework. The <code>Build.VERSION.SdkInt</code> check ensures that, 
+at runtime, Sensus will only use APIs that are actually installed on the device. This achieves goal (2) above. Lastly, we treat
+all compilation warnings as compilation errors within Sensus. Since the reference to <code>IsScreenOn</code> has been deprecated, this 
+would normally produce a compile-time error. We use the <code>#pragma</code> statements to selectively ignore deprecation errors that we 
+know should be ignored. This approach maximizes compile-time errors (giving us a chance to fix them before deployment) and
+minimizes runtime errors.</p>
+<h2 id="ios">iOS</h2>
+<p>At this point, we do not have specific guidelines on backwards compatibility for iOS.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/backwards_compatibility.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
