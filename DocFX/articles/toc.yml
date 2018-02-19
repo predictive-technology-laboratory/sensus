@@ -1,5 +1,51 @@
 - name: Introduction
   href: intro.md
 
-- name: Protocol Distribution
-  href: protocol_distribution.md
+- name: Study Configuration
+  href: study_configuration.md
+  items:
+
+  - name: Protocol Creation
+    href: protocol_creation.md
+
+  - name: Protocol Distribution
+    href: protocol_distribution.md
+
+- name: Data Protection
+  items:
+
+    - name: Privacy Policy
+      href: privacy_policy.md
+
+    - name: Anonymization
+      href: anonymization.md
+
+    - name: Asymmetric Key Encryption
+      href: encryption.md
+
+    - name: SSL Certificate Pinning
+      href: ssl_pinning.md
+
+- name: Developing Sensus
+  items:
+
+    - name: Configuring GitHub
+      href: github.md
+
+    - name: Configuring a Development System
+      href: configuring_a_development_system.md        
+
+    - name: Coding Conventions
+      href: coding_conventions.md
+
+    - name: Backwards Compatibility
+      href: backwards_compatibility.md  
+
+    - name: Common Problems
+      href: build_problems.md
+
+- name: SensusR
+  href: sensus_r.md
+
+- name: Contributed Resources
+  href: contributed_resources.md

@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ using System.Threading;
 using System.Collections.Generic;
 using Android.OS;
 using Android.App;
-using Sensus;
 using Sensus.Probes.Device;
 
 namespace Sensus.Android.Probes.Device
@@ -35,7 +34,7 @@ namespace Sensus.Android.Probes.Device
         {
             bool screenOn;
 
-            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+            // see the Backwards Compatibility article for more information
 #if __ANDROID_20__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
             {

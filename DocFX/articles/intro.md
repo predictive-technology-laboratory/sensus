@@ -1,2 +1,6 @@
+---
+uid: intro
+---
+
 # Welcome
-This is the user manual and code reference for the Sensus system.
+Welcome to the Sensus knowledgebase. Please select an article from the left.

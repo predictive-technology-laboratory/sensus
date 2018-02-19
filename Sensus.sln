@@ -38,7 +38,39 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests.AppCenter"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.AppCenter.Shared", "Sensus.AppCenter.Shared\Sensus.AppCenter.Shared.shproj", "{A4450252-8B3F-4066-8921-C277A7DC7DEF}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{1A5E454B-250A-4F03-BE82-D9B13585B63D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8603D3F-6823-47C7-90D1-024B226A5229}"
+	ProjectSection(SolutionItems) = preProject
+		DocFX\articles\intro.md = DocFX\articles\intro.md
+		DocFX\articles\protocol_distribution.md = DocFX\articles\protocol_distribution.md
+		DocFX\articles\toc.yml = DocFX\articles\toc.yml
+		DocFX\articles\backwards_compatibility.md = DocFX\articles\backwards_compatibility.md
+		DocFX\articles\configuring_a_development_system.md = DocFX\articles\configuring_a_development_system.md
+		DocFX\articles\contributed_resources.md = DocFX\articles\contributed_resources.md
+		DocFX\articles\sensus_r.md = DocFX\articles\sensus_r.md
+		DocFX\articles\privacy_policy.md = DocFX\articles\privacy_policy.md
+		DocFX\articles\coding_conventions.md = DocFX\articles\coding_conventions.md
+		DocFX\articles\build_problems.md = DocFX\articles\build_problems.md
+		DocFX\articles\github.md = DocFX\articles\github.md
+		DocFX\articles\anonymization.md = DocFX\articles\anonymization.md
+		DocFX\articles\ssl_pinning.md = DocFX\articles\ssl_pinning.md
+		DocFX\articles\encryption.md = DocFX\articles\encryption.md
+		DocFX\articles\study_configuration.md = DocFX\articles\study_configuration.md
+		DocFX\articles\protocol_creation.md = DocFX\articles\protocol_creation.md
+	EndProjectSection
+EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{51FFF6FF-086B-4DBE-BFC3-2D550D603347}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
+	ProjectSection(SolutionItems) = preProject
+		DocFX\docfx.json = DocFX\docfx.json
+		DocFX\index.md = DocFX\index.md
+		DocFX\toc.yml = DocFX\toc.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1833108D-29EF-4FE0-9D3C-7E2B5FCCBA02}"
+	ProjectSection(SolutionItems) = preProject
+		DocFX\api\index.md = DocFX\api\index.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -150,12 +182,12 @@ Global
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{1A5E454B-250A-4F03-BE82-D9B13585B63D}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
-		{1A5E454B-250A-4F03-BE82-D9B13585B63D}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{1A5E454B-250A-4F03-BE82-D9B13585B63D}.Debug|iPhone.Build.0 = Debug|iPhone
-		{1A5E454B-250A-4F03-BE82-D9B13585B63D}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{1A5E454B-250A-4F03-BE82-D9B13585B63D}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{1A5E454B-250A-4F03-BE82-D9B13585B63D}.Release|iPhone.ActiveCfg = Debug|iPhone
+		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
+		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhone.Build.0 = Debug|iPhone
+		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Release|iPhone.ActiveCfg = Debug|iPhone
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -205,5 +237,10 @@ Global
 		$6.IncludeStaticEntities = True
 		description = Sensus
 		version = 2.0.0
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B8603D3F-6823-47C7-90D1-024B226A5229} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
+		{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5} = {56DC9286-7449-4F64-8C94-C6B4543F125D}
+		{1833108D-29EF-4FE0-9D3C-7E2B5FCCBA02} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
 	EndGlobalSection
 EndGlobal

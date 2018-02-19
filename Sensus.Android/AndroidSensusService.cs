@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace Sensus.Android
             //
             // also see notes on backwards compatibility for how the compiler directives are used below:
             //
-            //    https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+            //    see the Backwards Compatibility article for more information
 #if __ANDROID_26__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {

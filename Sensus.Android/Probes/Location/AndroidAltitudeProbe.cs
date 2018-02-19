@@ -39,7 +39,6 @@ namespace Sensus.Android.Probes.Location
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                // more detail here:  https://github.com/predictive-technology-laboratory/sensus/wiki/Listening-Probe#configuration
                 await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
             });
         }

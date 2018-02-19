@@ -1,6 +1,42 @@
 ### YamlMime:XRefMap
 sorted: true
 references:
+- uid: anonymization
+  name: Anonymization
+  href: articles/anonymization.html
+- uid: backwards_compat
+  name: Backwards Compatibility
+  href: articles/backwards_compatibility.html
+- uid: build_problems
+  name: Common Problems
+  href: articles/build_problems.html
+- uid: coding_conventions
+  name: Coding Conventions
+  href: articles/coding_conventions.html
+- uid: contributed
+  name: contributed
+  href: articles/contributed_resources.html
+- uid: dev_config
+  name: Configuring a Development System
+  href: articles/configuring_a_development_system.html
+- uid: encryption
+  name: Asymmetric Key Encryption
+  href: articles/encryption.html
+- uid: github
+  name: Configuring GitHub
+  href: articles/github.html
+- uid: intro
+  name: Welcome
+  href: articles/intro.html
+- uid: privacy_policy
+  name: Privacy Policy
+  href: articles/privacy_policy.html
+- uid: protocol_creation
+  name: Protocol Creation
+  href: articles/protocol_creation.html
+- uid: protocol_distribution
+  name: Protocol Distribution
+  href: articles/protocol_distribution.html
 - uid: Sensus
   name: Sensus
   href: api/Sensus.html
@@ -42206,3 +42242,12 @@ references:
   commentId: Overload:Sensus.Window.ToString
   fullName: Sensus.Window.ToString
   nameWithType: Window.ToString
+- uid: sensus_r
+  name: SensusR
+  href: articles/sensus_r.html
+- uid: ssl_pinning
+  name: SSL Certificate Pinning
+  href: articles/ssl_pinning.html
+- uid: study_config
+  name: Study Configuration
+  href: articles/study_configuration.html
