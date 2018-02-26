@@ -8,6 +8,11 @@
   width: 60px;
   height: 34px;
 }
+.probe_name{
+color: #f35b3f;
+font-weight: 450;
+font-size: 20px;
+}
 
 .switch input {display:none;}
 

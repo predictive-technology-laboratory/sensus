@@ -48,8 +48,6 @@ $myjson = json_encode($_POST);
 	
 
 
-	
-//forceDownloadQR("https://s3.amazonaws.com/sensus-protocols/$name.json",$name);
 
 	
 	$data = [ 'res' => "https://s3.amazonaws.com/sensus-protocols/$name.json",'name' =>"$name.png" ]; 
@@ -58,34 +56,11 @@ $myjson = json_encode($_POST);
 
    
 
-  /* // Download the contents of the object.
-  $result = $s3Client->getObject([
-      'Bucket' => 'mousetracker',
-      'Key'    => 'data.txt'
-  ]);
-  echo $result['ObjectURL'] . "allo";
-  // Print the body of the result by indexing into the result object.
-  echo $result['Body']; */ 
+ 
   
 
   
-   
-
-
-  function forceDownloadQR($url,$name, $width = 300, $height = 300) {
-    $url    = urlencode($url);
-    $image  = 'http://chart.apis.google.com/chart?chs='.$width.'x'.$height.'&cht=qr&chl='.$url;
-    $file = file_get_contents($image);
-    header("Content-type: image/png");
-    header("Content-Disposition: attachment; filename=".$name.".png;");
-	header("Content-Transfer-Encoding: Binary");
-	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	header('Expires: 0');
-    header("Content-length: " . strlen($file)); // tells file size
-    header("Pragma: no-cache");
-    echo $file;
-    die;
-}  
+ 
 
   
 ?>
