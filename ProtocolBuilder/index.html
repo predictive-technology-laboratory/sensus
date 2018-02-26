@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sensus protocol creator</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="assets/css/form-elements.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+		<link rel="stylesheet" href="assets/css/mystyle.css">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <!-- Favicon and touch icons -->
+        <link rel="shortcut icon" href="assets/ico/favicon.png">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    </head>
+
+    <body>
+
+		<!-- Top menu -->
+		<nav class="navbar navbar-inverse navbar-no-bg" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navbar-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<!-- <a class="navbar-brand" href="index.html">Sensus protocol wizard</a> -->
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="top-navbar-1">
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<!-- <span class="li-text">
+								Put some text or
+							</span> 
+							<a href="#"><strong>links</strong></a> 
+							<span class="li-text">
+								here, or some icons: 
+							</span> 
+							<span class="li-social">
+								<a href="https://www.facebook.com/pages/Azmindcom/196582707093191" target="_blank"><i class="fa fa-facebook"></i></a> 
+								<a href="https://twitter.com/anli_zaimi" target="_blank"><i class="fa fa-twitter"></i></a> 
+								<a href="https://plus.google.com/+AnliZaimi_azmind" target="_blank"><i class="fa fa-google-plus"></i></a> 
+								<a href="https://github.com/AZMIND" target="_blank"><i class="fa fa-github"></i></a>
+							</span> -->
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+        <!-- Top content -->
+        <div class="top-content">
+            <div class="container">
+                
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text">
+                        <h1><strong>Sensus Protocols Wizard</strong></h1>
+                        <div class="description">
+                       	    <p>
+                                Please use the following form to customize your Sensus protocol. A QR code will be generated at the end of this...Use the generated QR code to load the protocol on partcipants smartphones
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12 form-box">
+                    	<form  class="f1" id="protocol_form" >
+
+                    		<h3>Register To Our App</h3>
+                    		<p>Fill in the form to create your own Sensus protocol</p>
+                    		<div class="f1-steps">
+                    			<div class="f1-progress">
+                    			    <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
+                    			</div>
+                    			<div class="f1-step active">
+                    				<div class="f1-step-icon"><i class="fa fa-user"></i></div>
+                    				<p>Study</p>
+                    			</div>
+                    			<div class="f1-step">
+                    				<div class="f1-step-icon"><i class="fa fa-key"></i></div>
+                    				<p>Probes</p>
+                    			</div>
+                    		    <div class="f1-step">
+                    				<div class="f1-step-icon"><i class="fa fa-twitter"></i></div>
+                    				<p>Storage</p>
+                    			</div>
+                    		</div>
+                    		
+                    		<fieldset>
+                    		    
+ 
+								<div class="form-group row"> 
+								<div class="col-md-3">Study</div>	
+								<div class="col-md-3"><input type="text" name="name"   class="form-control"></div>
+								<div class="col-md-3">Organization</div>	
+								<div class="col-md-3"><input type="text" name="organization"   class="form-control"></div>
+                                </div>
+								<div class="form-group row"> 
+								<div class="col-md-3">Contact Email</div>
+								<div class="col-md-3">
+									 <input type="text" name="contact_email" class="form-control" >
+								</div>
+								<div class="col-md-3">Phone Number</div>
+								<div class="col-md-3">
+									 <input type="text" name="phone_number" class="form-control" >
+								</div>								    
+                                </div>
+								<div class="form-group row"> 
+								<div class="col-md-3">Description</div>	
+								<div class="col-md-9"><textarea name="description" rows="1" style="resize: none;height:50px;" class=" form-control" ></textarea></div>
+								
+                                </div>
+
+                                <div class="form-group row">
+								
+								  <div class="col-md-3">Shareable</div>
+								  <div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+									<div class="col-md-3">Force Reports to Remote</div>
+								  <div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="force_reports_to_remote">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+								</div>   
+								<div class="form-group row">
+								  <div class="col-md-3">Start Immediately</div>
+								  <div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="start_immediately">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+									<div class="col-md-3">Continue Indefinilty</div>
+								  <div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="continue_indefinitely">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+								</div>
+								<div class="form-group row">
+								  <div class="col-md-3">Start Date</div>
+								  <div class="col-md-3">
+									 <input type="date" name="start_date"  class="form-control">
+									</div>
+									<div class="col-md-3">Start Time</div>
+								  <div class="col-md-3">
+									 <input type="time" name="start_time"  class="form-control">
+									</div>
+								</div>
+								<div class="form-group row">
+								  <div class="col-md-3">End Date</div>
+								  <div class="col-md-3">
+									 <input type="date" name="end_date"  class="form-control">
+									</div>
+									<div class="col-md-3">End Time</div>
+								  <div class="col-md-3">
+									 <input type="time" name="end_time"  class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group row"> 
+								<div class="col-md-3">Participation Horizon (days)</div>
+								<div class="col-md-3">
+									 <input type="number" name="participation_horizon" min="1" value="1" class="form-control" >
+								</div>								
+                                <div class="col-md-3">Reward Threshold</div>
+								<div class="col-md-3">
+									 <input type="number" name="reward_threshold" min="0"  class="form-control" >
+								</div>	    
+                                </div>
+
+								<div class="form-group row">
+								  <div class="col-md-3">Groupable</div>
+								  <div class="col-md-9">
+									  <label class="switch">
+										  <input type="checkbox" name="groupable" class="form-control" >
+										  <span class="slider round"></span>
+									</label>
+									</div>
+								</div>
+								<div class="form-group row"> 
+								<div class="col-md-3">Variables</div>	
+								
+                                    <input type="text" class="col-md-9" name="variables"   class="form-control">
+                                </div>
+								<div class="form-group row"> 
+								<div class="col-md-3">Alert Exclusion Windows</div>	
+								
+                                    <input type="text" class="col-md-9" name="alert_exclusion_windows"   class=" form-control">
+                                </div>
+								<div class="form-group row"> 
+								<div class="col-md-3">Asymmetric Encryption Public Key</div>	
+                                    <input type="text" class="col-md-9" name="asymmetric_encryption_public_key"   class=" form-control">
+                                </div>
+                                
+                                <div class="f1-buttons row">
+                                    <button type="button" class="btn btn-next">Next</button>
+                                </div>
+                            </fieldset>
+
+                            <fieldset>
+                               
+                                
+
+								<div class="form-group row">
+								
+								  <div class="col-md-3" ><strong>Acceleration (Listening)</strong></div>
+								  <div class="col-md-9">
+									  <label class="switch">
+										  <input type="checkbox" name="acceleration-listening" id="probe" class="probe">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+								</div>
+								<div id="acceleration-listening_probe_div" class="probe_div">
+									<hr>								
+									<div class="form-group row">
+									<div class="col-md-3">Store Data</div>
+									<div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="acceleration-listening_store_data" class="form-control" >
+										  <span class="slider round"></span>
+										</label>
+									</div>
+									<div class="col-md-3">Run Local Commit On Store</div>
+									<div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="acceleration-listening_run_local_commit_on_store" class="form-control" >
+										  <span class="slider round"></span>
+										</label>
+									</div>
+									</div>
+									<div class="form-group row">
+									<div class="col-md-3">Max Chart Data Count</div>
+									<div class="col-md-3">
+									  <input type="number" name="acceleration-listening_max_chart_data_count"  value="10" class="form-control" >
+									</div>
+									<div class="col-md-3">Max Data / Second</div>
+									<div class="col-md-3">
+									  <input type="number" name="acceleration-listening_max_data_second"   class="form-control" >
+									</div>
+									</div>
+									<div class="form-group row">
+								
+									<div class="col-md-3">Keep Device Awake</div>
+									<div class="col-md-9">
+									  <label class="switch">
+										  <input type="checkbox" name="acceleration-listening_keep_device_awake">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+									</div>
+									<hr>
+								</div>
+
+								<div class="form-group row">
+								
+								  <div class="col-md-3">Bluetooth</div>
+								  <div class="col-md-9">
+									  <label class="switch">
+										  <input type="checkbox" name="bluetooth" class="probe">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+
+								</div>
+                                <div class="f1-buttons row">
+                                    <button type="button" class="btn btn-previous">Previous</button>
+                                    <button type="button" class="btn btn-next">Next</button>
+                                </div>
+								
+                            </fieldset>
+
+                            <fieldset>
+                                <h4>Define your storage setting:</h4>
+                                <div class="row">
+								<div class="form-group">
+								<div class="col-md-2">Local storage</div>
+								  <div class="col-md-6">
+									 <select class="form-control" name="local storage">
+									<option>File</option>
+									<option>Ram</option>
+								  </select>
+									</div>
+                                    
+                                </div>
+								</div>
+								<div class="row">
+                                <div class="form-group">
+                                   <div class="form-group">
+								<div class="col-md-2">Local storage</div>
+								  <div class="col-md-6">
+									 <select class="form-control" name="Remote storage">
+									<option>Amazon s3</option>
+									<option>Console</option>
+								  </select>
+									</div>
+                                    
+                                </div>
+                                </div>
+								</div>
+                                <div class="row">
+								<div class="form-group">
+                                <div class="f1-buttons">
+                                    <button type="button" class="btn btn-previous">Previous</button>
+                                    <button type="submit" class="btn btn-submit">Submit</button>
+                                </div>
+								</div>
+								</div>
+								<div class="text-center">
+								<img src=""
+									 class="qr-code img-thumbnail img-responsive">
+							  </div>
+                            </fieldset>
+                    	
+                    	</form>
+                    </div>
+                </div>
+                    
+            </div>
+        </div>
+
+
+        <!-- Javascript -->
+        <script src="assets/js/jquery-1.11.1.min.js"></script>
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/js/jquery.backstretch.min.js"></script>
+        <script src="assets/js/retina-1.1.0.min.js"></script>
+        <script src="assets/js/scripts.js?v=1.7"></script>
+
+        
+        <!--[if lt IE 10]>
+            <script src="assets/js/placeholder.js"></script>
+        <![endif]-->
+
+    </body>
+
+</html>
