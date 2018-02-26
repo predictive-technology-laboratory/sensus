@@ -94,7 +94,7 @@ jQuery(document).ready(function() {
 			scroll_to_class( $('.f1'), 20 );
     	});
     });
-
+	$(".probe_div").hide();
 	$(document).on('change', '.probe', function() {
 		 if(!this.checked) {
 			$("#"+this.name+"_probe_div").hide(100);

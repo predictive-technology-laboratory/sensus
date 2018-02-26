@@ -6,7 +6,7 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sensus protocol creator</title>
+        <title>Sensus protocol builder</title>
 
         <!-- CSS -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
@@ -284,14 +284,58 @@
 
 								<div class="form-group row">
 								
-								  <div class="col-md-3">Bluetooth</div>
+								  <div class="col-md-3"><strong>Activity (Listening)</strong></div>
 								  <div class="col-md-9">
 									  <label class="switch">
-										  <input type="checkbox" name="bluetooth" class="probe">
+										  <input type="checkbox" name="activity-listening" class="probe">
 										  <span class="slider round"></span>
 									</label>
 									</div>
 
+								</div>
+								<div id="activity-listening_probe_div" class="probe_div">
+									<hr>								
+									<div class="form-group row">
+									<div class="col-md-3">Store Data</div>
+									<div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="activity-listening_store_data" class="form-control" >
+										  <span class="slider round"></span>
+										</label>
+									</div>
+									<div class="col-md-3">Run Local Commit On Store</div>
+									<div class="col-md-3">
+									  <label class="switch">
+										  <input type="checkbox" name="activity-listening_run_local_commit_on_store" class="form-control" >
+										  <span class="slider round"></span>
+										</label>
+									</div>
+									</div>
+									<div class="form-group row">
+									<div class="col-md-3">Max Chart Data Count</div>
+									<div class="col-md-3">
+									  <input type="number" name="activity-listening_max_chart_data_count"  value="10" class="form-control" >
+									</div>
+									<div class="col-md-3">Max Data / Second</div>
+									<div class="col-md-3">
+									  <input type="number" name="activity-listening_max_data_second"   class="form-control" >
+									</div>
+									</div>
+									<div class="form-group row">
+								
+									<div class="col-md-3">Keep Device Awake</div>
+									<div class="col-md-9">
+									  <label class="switch">
+										  <input type="checkbox" name="activity-listening_keep_device_awake">
+										  <span class="slider round"></span>
+									</label>
+									</div>
+									<div class="col-md-3">Location Change Radius (Meters)</div>
+									<div class="col-md-3">
+									  <input type="number" name="activity-listening_location_change_radius"   class="form-control" >
+									</div>
+									</div>
+									<hr>
 								</div>
                                 <div class="f1-buttons row">
                                     <button type="button" class="btn btn-previous">Previous</button>
