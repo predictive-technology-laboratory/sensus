@@ -144,15 +144,13 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
+            // temporarily disable UI while we bind to service
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+
             // make sure that the service is running and bound any time the activity is resumed. the service is both started
             // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
             Intent serviceIntent = AndroidSensusService.StartService(this);
             BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
-
-            // prevent the user from interacting with the UI by displaying a progress dialog until 
-            // the service has been bound. if the service has already bound, the wait handle below 
-            // will already be set and the dialog will immediately be dismissed.
-            ProgressDialog serviceBindWaitDialog = ProgressDialog.Show(this, "Please Wait", "Binding to Sensus", true, false);
 
             // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             Task.Run(() =>
@@ -161,12 +159,13 @@ namespace Sensus.Android
 
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
-                // now that the service connection has been established, dismiss the wait dialog. wrap this in a try-catch in 
-                // case the screen orientation changes before we get here, which will disconnect the dialog from the window manager 
-                // and will throw an exception.
+                // now that the service connection has been established, reenable UI.
                 try
                 {
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        Window.ClearFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+                    });
                 }
                 catch (Exception)
                 {

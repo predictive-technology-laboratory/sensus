@@ -497,7 +497,7 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
             {
-                List<string> buttons = new string[] { "From QR Code", "From URL", "From Scratch"}.ToList();
+                List<string> buttons = new string[] { "From QR Code", "From URL", "From Blank Template"}.ToList();
 
                 string action = await DisplayActionSheet("Add Study", "Back", null, buttons.ToArray());
 
@@ -524,7 +524,7 @@ namespace Sensus.UI
                             }
                         });
                 }
-                else if (action == "From Scratch")
+                else if (action == "From Blank Template")
                 {
                     Protocol.Create("New Protocol");
                 }

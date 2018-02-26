@@ -16,9 +16,7 @@ using System;
 using System.Threading;
 using System.Collections.Generic;
 using Android.Media;
-using Sensus;
 using Sensus.Probes.Context;
-using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -27,13 +25,9 @@ namespace Sensus.Android.Probes.Context
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             MediaRecorder recorder = null;
+
             try
             {
-                if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
-                {
-                    throw new Exception("Cannot access microphone.");
-                }
-
                 recorder = new MediaRecorder();
                 recorder.SetAudioSource(AudioSource.Mic);
                 recorder.SetOutputFormat(OutputFormat.ThreeGpp);
