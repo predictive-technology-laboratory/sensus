@@ -155,7 +155,12 @@ namespace Sensus.Android
             // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             Task.Run(() =>
             {
-                _serviceBindWait.WaitOne();
+                // we've not seen the binding take more than a second or two; however, we want to be very careful not to block indefinitely
+                // here becaus the UI is currently disabled. if for some strange reason the binding does not work, bail out after 10 seconds
+                // and let the user interact with the UI. most likely, a crash will be coming very soon in this case, as the sensus service
+                // will probably not be running. again, this has not occurred in practice, but allowing the crash to occur will send us information
+                // through the crash analytics service and we'll be able to track it
+                _serviceBindWait.WaitOne(TimeSpan.FromSeconds(10000));
 
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
