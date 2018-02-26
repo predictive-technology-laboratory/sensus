@@ -14,10 +14,24 @@
 
 namespace Sensus.Probes.User.Scripts
 {
+    /// <summary>
+    /// Modes for handling multiple deliveries of the same survey.
+    /// </summary>
     public enum RunMode
     {
+        /// <summary>
+        /// Keep the survey delivery that is oldest.
+        /// </summary>
         SingleKeepOldest,
+
+        /// <summary>
+        /// Keep the survey delivery that is newest.
+        /// </summary>
         SingleKeepNewest,
+
+        /// <summary>
+        /// Keep all deliveries of the survey.
+        /// </summary>
         Multiple
     };
 }
