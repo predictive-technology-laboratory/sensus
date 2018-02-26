@@ -86,6 +86,7 @@ namespace Sensus.Callbacks
         /// <param name="action">Action</param>
         /// <param name="id">Identifier for callback</param>
         /// <param name="domain">Domain of scheduled callback</param>
+        /// <param name="protocolId">Protocol ID of scheduled callback</param>
         /// <param name="callbackTimeout">Callback Timeout</param>
         /// <param name="userNotificationMessage">User notification message</param>
         public ScheduledCallback(ActionDelegate action, string id, string domain, string protocolId, TimeSpan? callbackTimeout = null, string userNotificationMessage = null)
