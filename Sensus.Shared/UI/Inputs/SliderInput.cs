@@ -38,6 +38,10 @@ namespace Sensus.UI.Inputs
         private Label _sliderLabel;
         private string _definedVariable;
 
+        /// <summary>
+        /// A short tip that explains how to pick an item from the dialog window.
+        /// </summary>
+        /// <value>The tip text.</value>
         [EntryStringUiProperty("Tip Text:", true, 9)]
         public string TipText
         {
@@ -51,6 +55,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Minimum value available on the slider.
+        /// </summary>
+        /// <value>The minimum.</value>
         [EntryDoubleUiProperty(null, true, 10)]
         public double Minimum
         {
@@ -64,6 +72,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Maximum value available on the slider.
+        /// </summary>
+        /// <value>The maximum.</value>
         [EntryDoubleUiProperty(null, true, 11)]
         public double Maximum
         {
@@ -77,6 +89,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// How much the slider's value should change between points.
+        /// </summary>
+        /// <value>The increment.</value>
         [EntryDoubleUiProperty(null, true, 12)]
         public double Increment
         {
@@ -90,6 +106,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Label to display at the left end of the slider range.
+        /// </summary>
+        /// <value>The left label.</value>
         [EntryStringUiProperty("Left Label:", true, 13)]
         public string LeftLabel
         {
@@ -103,6 +123,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Label to display at the right end of the slider range.
+        /// </summary>
+        /// <value>The left label.</value>
         [EntryStringUiProperty("Right Label:", true, 14)]
         public string RightLabel
         {
@@ -116,6 +140,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Whether or not the slider's current value should be displayed.
+        /// </summary>
+        /// <value><c>true</c> to display slider value; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Display Slider Value:", true, 15)]
         public bool DisplaySliderValue
         {
@@ -129,6 +157,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Whether or not to display the minimum and maximum values of the slider.
+        /// </summary>
+        /// <value><c>true</c> to display the minimum and maximum; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Display Min and Max:", true, 16)]
         public bool DisplayMinMax
         {
@@ -142,6 +174,13 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
+        /// define the value for. For example, if you wanted this input to supply the value for a variable
+        /// named `study-name`, then set this field to `study-name` and the user's selection will be used as
+        /// the value for this variable. 
+        /// </summary>
+        /// <value>The defined variable.</value>
         [EntryStringUiProperty("Define Variable:", true, 2)]
         public string DefinedVariable
         {

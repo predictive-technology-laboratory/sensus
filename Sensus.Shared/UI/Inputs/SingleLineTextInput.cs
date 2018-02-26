@@ -27,6 +27,10 @@ namespace Sensus.UI.Inputs
         private bool _masked;
         private string _definedVariable;
 
+        /// <summary>
+        /// Whether or not to mask the entered text with asterisks (e.g., for passwords or other sensitive information).
+        /// </summary>
+        /// <value><c>true</c> to mask; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 1)]
         public bool Masked
         {
@@ -40,6 +44,13 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
+        /// define the value for. For example, if you wanted this input to supply the value for a variable
+        /// named `study-name`, then set this field to `study-name` and the user's selection will be used as
+        /// the value for this variable. 
+        /// </summary>
+        /// <value>The defined variable.</value>
         [EntryStringUiProperty("Define Variable:", true, 2)]
         public string DefinedVariable
         {

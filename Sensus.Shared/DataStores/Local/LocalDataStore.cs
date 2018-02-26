@@ -41,7 +41,7 @@ namespace Sensus.DataStores.Local
         private readonly object _sizeTriggeredRemoteCommitLocker = new object();
 
         /// <summary>
-        /// Whether or not to upload data to the <see cref="Remote.RemoteDataStore"/> defined for the Protocol. If this is <c>false</c>, then 
+        /// Whether or not to upload data to the <see cref="Remote.RemoteDataStore"/> defined for the <see cref="Protocol"/>. If this is <c>false</c>, then 
         /// data will accumulate in the Local Data Store and will never be transferred to a remote server. The data can still be manually 
         /// transferred off of the device by sharing the Local Data Store from the device to another endpoint (e.g., an email address or Dropbox
         /// directory).

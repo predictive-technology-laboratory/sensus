@@ -319,7 +319,11 @@
   
   <a id="Sensus_UI_Inputs_SingleLineTextInput_DefinedVariable_" data-uid="Sensus.UI.Inputs.SingleLineTextInput.DefinedVariable*"></a>
   <h4 id="Sensus_UI_Inputs_SingleLineTextInput_DefinedVariable" data-uid="Sensus.UI.Inputs.SingleLineTextInput.DefinedVariable">DefinedVariable</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The name of the variable in <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_VariableValueUiProperty">VariableValueUiProperty</a> that this input should
+define the value for. For example, if you wanted this input to supply the value for a variable
+named <code>study-name</code>, then set this field to <code>study-name</code> and the user&apos;s selection will be used as
+the value for this variable. </p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -337,7 +341,8 @@ public string DefinedVariable { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The defined variable.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -372,7 +377,8 @@ public string DefinedVariable { get; set; }</code></pre>
   
   <a id="Sensus_UI_Inputs_SingleLineTextInput_Masked_" data-uid="Sensus.UI.Inputs.SingleLineTextInput.Masked*"></a>
   <h4 id="Sensus_UI_Inputs_SingleLineTextInput_Masked" data-uid="Sensus.UI.Inputs.SingleLineTextInput.Masked">Masked</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether or not to mask the entered text with asterisks (e.g., for passwords or other sensitive information).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -390,7 +396,8 @@ public bool Masked { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> to mask; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>

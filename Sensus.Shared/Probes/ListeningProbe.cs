@@ -46,7 +46,7 @@ namespace Sensus.Probes
         private readonly object _locker = new object();
 
         /// <summary>
-        /// The maximum number of readings that will be stored in one second.
+        /// The maximum number of readings that may be stored in one second.
         /// </summary>
         /// <value>Maximum data stores per second.</value>
         [EntryFloatUiProperty("Max Data / Second:", true, int.MaxValue)]

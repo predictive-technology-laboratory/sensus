@@ -27,17 +27,19 @@ namespace Sensus.UI.UiProperties
     public abstract class UiProperty : Attribute
     {
         /// <summary>
-        /// Gets the UiProperty attribute associated with a property. For some reason, PropertyInfo.GetCustomAttributes doesn't return the 
-        /// UiProperty attribute placed on abstract properties that are overridden.
+        /// Gets the <see cref="UiProperty"/> attribute associated with a property.
         /// </summary>
         /// <returns>The user interface property attribute.</returns>
         /// <param name="property">Property.</param>
-        public static UiProperty GetUiPropertyAttribute(PropertyInfo property)
-        {
+        private static UiProperty GetUiPropertyAttribute(PropertyInfo property)
+        {            
             if (property == null)
             {
                 return null;
             }
+
+            // For some reason, PropertyInfo.GetCustomAttributes doesn't return the UiProperty attribute placed on abstract 
+            // properties that are overridden, so we have to navigate the inheritance tree to search for attributes.
 
             UiProperty attribute = property.GetCustomAttribute<UiProperty>();
 
@@ -87,6 +89,22 @@ namespace Sensus.UI.UiProperties
                     Text = uiElement.LabelText ?? property.Name + ":",
                     FontSize = 20
                 };
+
+                TapGestureRecognizer labelTapRecognizer = new TapGestureRecognizer()
+                {
+                    NumberOfTapsRequired = 1
+                };
+
+                labelTapRecognizer.Tapped += (sender, e) => 
+                {
+                    // https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS
+                    Device.OpenUri(new Uri("https://predictive-technology-laboratory.github.io/sensus/api/" + 
+                                           property.DeclaringType + 
+                                           ".html#" + 
+                                           property.DeclaringType.ToString().Replace('.', '_') + "_" + property.Name));
+                };
+
+                propertyLabel.GestureRecognizers.Add(labelTapRecognizer);
 
                 BindableProperty targetProperty = null;
                 IValueConverter converter = null;

@@ -50,6 +50,10 @@ namespace Sensus.Android.Probes.Movement
         private int _locationChangeRadiusMeters;
         private PendingIntent _fencePendingIntent;
 
+        /// <summary>
+        /// How far in meters the device must travel before issuing a location-changed event.
+        /// </summary>
+        /// <value>The location change radius, in meters.</value>
         [EntryIntegerUiProperty("Location Change Radius (Meters):", true, 30)]
         public int LocationChangeRadiusMeters
         {

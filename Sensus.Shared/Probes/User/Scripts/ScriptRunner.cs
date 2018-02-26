@@ -48,9 +48,17 @@ namespace Sensus.Probes.User.Scripts
 
         public Script Script { get; set; }
 
+        /// <summary>
+        /// Name of the survey.
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Whether or not the survey is enabled.
+        /// </summary>
+        /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
         {
@@ -72,11 +80,19 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Whether or not the user should be allowed to cancel the survey after starting it.
+        /// </summary>
+        /// <value><c>true</c> if allow cancel; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Cancel:", true, 3)]
         public bool AllowCancel { get; set; }
 
         public ConcurrentObservableCollection<Trigger> Triggers { get; }
 
+        /// <summary>
+        /// The maximum number of minutes, following delivery to the user, that this survey should remain available for completion.
+        /// </summary>
+        /// <value>The max age minutes.</value>
         [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7)]
         public double? MaxAgeMinutes
         {
@@ -90,6 +106,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Whether or not the survey should be removed from availability when the survey's window ends. See <see cref="TriggerWindowsString"/> for more information.
+        /// </summary>
+        /// <value><c>true</c> if window expiration should be used; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Expire Script When Window Ends:", true, 15)]
         public bool WindowExpiration
         {
@@ -98,11 +118,28 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Daily time windows during which the survey should be deployed to the user. For example, if you want two surveys, one randomly 
-        /// between 9am-10am (e.g., 9:32am) and one randomly between 1pm-2pm (e.g., 1:56pm), then you would enter the following into 
-        /// Trigger Windows: 9:00-10:00,13:00-14:00. Note that the survey will be deployed at a random time during each future window (e.g., 
-        /// 9:32am and 1:56pm on day 1, 9:57am and 1:28pm on day 2, etc.). Alternatively, you may specify an exact time as 
-        /// follows:  9:00-10:00,11:32,13:00-14:00. The survey thus configured will also fire exactly at 11:32am each day.
+        /// 
+        /// A comma-separated list of times at (in the case of exact times) or during (in the case of time windows) which the survey should
+        /// be delievered. For example, if you want the survey to be delivered twice per day, once randomly between 9am-10am (e.g., 9:32am) 
+        /// and once randomly between 1pm-2pm (e.g., 1:56pm), then you would enter the following into this field:
+        /// 
+        ///     9:00-10:00,13:00-14:00
+        /// 
+        /// Note that the survey will be deployed at a random time during each future window (e.g., 9:32am and 1:56pm on day 1, 9:57am and 
+        /// 1:28pm on day 2, etc.). Alternatively, you may specify an exact time as follows:
+        /// 
+        ///     9:00-10:00,11:32,13:00-14:00
+        /// 
+        /// The survey thus configured will also fire exactly at 11:32am each day. See <see cref="NonDowTriggerIntervalDays"/> 
+        /// for how to put additional days between each survey.
+        /// 
+        /// If you want the survey to be fired on particular days of the week, you can prepend the day of week ("Su", "Mo", "Tu", "We", "Th", 
+        /// "Fr", "Sa") to the time as follows:
+        /// 
+        ///     9:00-10:00,Su-11:32,13:00-14:00
+        /// 
+        /// In contrast to the previous example, this one would would only fire at 11:32am on Sundays.
+        /// 
         /// </summary>
         /// <value>The trigger windows string.</value>
         [EntryStringUiProperty("Trigger Windows:", true, 8)]
@@ -118,6 +155,14 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// For surveys that are not associated with a specific day of the week, this field indicates how 
+        /// many days to should pass between subsequent surveys. For example, if this is set to 1 and 
+        /// <see cref="TriggerWindowsString"/> is set to `9:00-10:00`, then the survey would be fired each
+        /// day at some time between 9am and 10am. If this field were set to 2, then the survey would be 
+        /// fired every other day at some time between 9am and 10am.
+        /// </summary>
+        /// <value>The non-DOW trigger interval days.</value>
         [EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9)]
         public int NonDowTriggerIntervalDays
         {
@@ -156,21 +201,46 @@ namespace Sensus.Probes.User.Scripts
 
         public List<DateTime> CompletionTimes { get; set; }
 
+        /// <summary>
+        /// Whether or not to run the survey exactly once.
+        /// </summary>
+        /// <value><c>true</c> if one shot; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("One Shot:", true, 10)]
         public bool OneShot { get; set; }
 
+        /// <summary>
+        /// Whether or not to run the survey immediately upon starting the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> if run on start; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Run On Start:", true, 11)]
         public bool RunOnStart { get; set; }
 
+        /// <summary>
+        /// Whether or not to display progress (% complete) to the user when they are working on the survey.
+        /// </summary>
+        /// <value><c>true</c> if display progress; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Display Progress:", true, 13)]
         public bool DisplayProgress { get; set; }
 
+        /// <summary>
+        /// How to handle multiple instances of the survey. Options are <see cref="RunMode.Multiple"/>, 
+        /// <see cref="RunMode.SingleKeepNewest"/>, and <see cref="RunMode.SingleKeepOldest"/>.
+        /// </summary>
+        /// <value>The run mode.</value>
         [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleKeepNewest, RunMode.SingleKeepOldest })]
         public RunMode RunMode { get; set; }
 
+        /// <summary>
+        /// The message to display to the user if a required field is invalid.
+        /// </summary>
+        /// <value>The incomplete submission confirmation.</value>
         [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
         public string IncompleteSubmissionConfirmation { get; set; }
 
+        /// <summary>
+        /// Whether or not to shuffle the order of the survey's input groups prior to displaying them to the user.
+        /// </summary>
+        /// <value><c>true</c> if shuffle input groups; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
         public bool ShuffleInputGroups { get; set; }
         #endregion

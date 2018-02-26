@@ -134,7 +134,7 @@ namespace Sensus.DataStores
         private bool _committing;
 
         /// <summary>
-        /// How long to pause between each commit operation (milliseconds).
+        /// How many milliseconds to pause between each committing data.
         /// </summary>
         /// <value>The commit delay in milliseconds.</value>
         [EntryIntegerUiProperty("Commit Delay (MS):", true, 2)]
@@ -153,7 +153,7 @@ namespace Sensus.DataStores
         }
 
         /// <summary>
-        /// How many minutes the data store has to complete the commit operation before being cancelled.
+        /// How many minutes the data store has to complete a commit before being cancelled.
         /// </summary>
         /// <value>The commit timeout in minutes.</value>
         [EntryIntegerUiProperty("Commit Timeout (Mins.):", true, 3)]

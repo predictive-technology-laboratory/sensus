@@ -30,6 +30,10 @@ namespace Sensus.UI.Inputs
         private Label _label;
         private string _definedVariable;
 
+        /// <summary>
+        /// A short tip that explains how to pick an item from the dialog window.
+        /// </summary>
+        /// <value>The tip text.</value>
         [EntryStringUiProperty("Tip Text:", true, 10)]
         public string TipText
         {
@@ -43,6 +47,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// These are the items that the user will have to select from.
+        /// </summary>
+        /// <value>The items.</value>
         [EditableListUiProperty(null, true, 11)]
         public List<string> Items
         {
@@ -57,6 +65,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Whether or not to allow the user to clear the current selection.
+        /// </summary>
+        /// <value><c>true</c> to allow clear selection; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Clear Selection:", true, 12)]
         public bool AllowClearSelection
         {
@@ -70,6 +82,13 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
+        /// define the value for. For example, if you wanted this input to supply the value for a variable
+        /// named `study-name`, then set this field to `study-name` and the user's selection will be used as
+        /// the value for this variable. 
+        /// </summary>
+        /// <value>The defined variable.</value>
         [EntryStringUiProperty("Define Variable:", true, 13)]
         public string DefinedVariable
         {

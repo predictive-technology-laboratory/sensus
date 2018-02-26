@@ -5099,7 +5099,6 @@
   "Sensus.UI.UiProperties.UiProperty.#ctor(System.String,System.Boolean,System.Int32)": "Sensus.UI.UiProperties.UiProperty.yml",
   "Sensus.UI.UiProperties.UiProperty.Editable": "Sensus.UI.UiProperties.UiProperty.yml",
   "Sensus.UI.UiProperties.UiProperty.GetPropertyStacks(System.Object)": "Sensus.UI.UiProperties.UiProperty.yml",
-  "Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute(System.Reflection.PropertyInfo)": "Sensus.UI.UiProperties.UiProperty.yml",
   "Sensus.UI.UiProperties.UiProperty.GetView(System.Reflection.PropertyInfo,System.Object,Xamarin.Forms.BindableProperty@,Xamarin.Forms.IValueConverter@)": "Sensus.UI.UiProperties.UiProperty.yml",
   "Sensus.UI.UiProperties.UiProperty.LabelText": "Sensus.UI.UiProperties.UiProperty.yml",
   "Sensus.UI.VerifiedParticipationPage": "Sensus.UI.VerifiedParticipationPage.yml",

@@ -184,7 +184,7 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Alternative URL to use for S3, instead of the default. Use this to set up SSL certificate pinning.
+        /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
         [EntryStringUiProperty("Pinned Service URL:", true, 7)]
@@ -218,7 +218,7 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>.
+        /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned public key.</value>
         [EntryStringUiProperty("Pinned Public Key:", true, 8)]

@@ -499,6 +499,10 @@ namespace Sensus
             set { _id = value; }
         }
 
+        /// <summary>
+        /// A descriptive name for the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 1)]
         public string Name
         {
@@ -643,6 +647,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Whether the user should be permitted to share the <see cref="Protocol"/> with another device.
+        /// </summary>
+        /// <value><c>true</c> if shareable; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shareable:", true, 10)]
         public bool Shareable
         {
@@ -661,6 +669,10 @@ namespace Sensus
             get { return _pointsOfInterest; }
         }
 
+        /// <summary>
+        /// A detailed description of the <see cref="Protocol"/> (e.g., what it does, who it is intended for, etc.).
+        /// </summary>
+        /// <value>The description.</value>
         [EditorUiProperty("Description:", true, 15)]
         public string Description
         {
@@ -674,6 +686,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Whether or not to start the <see cref="Protocol"/> immediately after the user has opted into it.
+        /// </summary>
+        /// <value><c>true</c> to start immediately; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Start Immediately:", true, 16)]
         public bool StartImmediately
         {
@@ -687,6 +703,11 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The date on which the <see cref="Protocol"/> will start running. Only has an effect if <see cref="StartImmediately"/> 
+        /// is `false`.
+        /// </summary>
+        /// <value>The start date.</value>
         [DateUiProperty("Start Date:", true, 17)]
         public DateTime StartDate
         {
@@ -700,6 +721,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The time at which the <see cref="Protocol"/> will start running. Only has an effect if <see cref="StartImmediately"/> is `false`.
+        /// </summary>
+        /// <value>The start time.</value>
         [TimeUiProperty("Start Time:", true, 18)]
         public TimeSpan StartTime
         {
@@ -713,6 +738,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Whether or not to execute the <see cref="Protocol"/> forever after it has started.
+        /// </summary>
+        /// <value><c>true</c> to execute forever; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Continue Indefinitely:", true, 19)]
         public bool ContinueIndefinitely
         {
@@ -726,6 +755,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The date on which the <see cref="Protocol"/> will stop running. Only has an effect if <see cref="ContinueIndefinitely"/> is `false`.
+        /// </summary>
+        /// <value>The end date.</value>
         [DateUiProperty("End Date:", true, 20)]
         public DateTime EndDate
         {
@@ -739,6 +772,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The time at which the <see cref="Protocol"/> will stop running. Only has an effect if <see cref="ContinueIndefinitely"/> is `false`.
+        /// </summary>
+        /// <value>The end time.</value>
         [TimeUiProperty("End Time:", true, 21)]
         public TimeSpan EndTime
         {
@@ -752,6 +789,11 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Whether or not to submit <see cref="Protocol"/> status reports to the <see cref="RemoteDataStore"/> regardless of the setting
+        /// for <see cref="DataStores.Local.LocalDataStore.UploadToRemoteDataStore"/>.
+        /// </summary>
+        /// <value><c>true</c> if force protocol reports to remote data store; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Force Reports to Remote:", true, 22)]
         public bool ForceProtocolReportsToRemoteDataStore
         {
@@ -759,6 +801,13 @@ namespace Sensus
             set { _forceProtocolReportsToRemoteDataStore = value; }
         }
 
+        /// <summary>
+        /// The number of days used to calculate the participation percentage. For example, if the participation horizon is
+        /// 7 days, and the user has been running a <see cref="ListeningProbe"/> for 1 day, then the participation percentage
+        /// would be 1/7 (~14%). On the other hand, if the participation horizon is 1 day, then the same user would have a 
+        /// participation percentage of 1/1 (100%).
+        /// </summary>
+        /// <value>The participation horizon, in days.</value>
         [EntryIntegerUiProperty("Participation Horizon (Days):", true, 23)]
         public int ParticipationHorizonDays
         {
@@ -778,6 +827,11 @@ namespace Sensus
             get { return DateTime.Now.AddDays(-_participationHorizonDays); }
         }
 
+        /// <summary>
+        /// An email address for the individual who is responsible for handling questions
+        /// associated with this study.
+        /// </summary>
+        /// <value>The contact email.</value>
         [EntryStringUiProperty("Contact Email:", true, 24)]
         public string ContactEmail
         {
@@ -791,6 +845,11 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Whether the user should be allowed to group the <see cref="Protocol"/> with other <see cref="Protocol"/>s to form a 
+        /// bundle that participant's are randomized into.
+        /// </summary>
+        /// <value><c>true</c> if groupable; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 25)]
         public bool Groupable
         {
@@ -816,6 +875,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The participation percentage required for a user to be considered eligible for rewards.
+        /// </summary>
+        /// <value>The reward threshold.</value>
         [EntryFloatUiProperty("Reward Threshold:", true, 26)]
         public float? RewardThreshold
         {
@@ -867,6 +930,11 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The desired accuracy in meters of the collected GPS readings. There are no guarantees that this accuracy
+        /// will be achieved.
+        /// </summary>
+        /// <value>The GPS desired accuracy, in meters.</value>
         [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27)]
         public float GpsDesiredAccuracyMeters
         {
@@ -874,12 +942,18 @@ namespace Sensus
             set
             {
                 if (value <= 0)
+                {
                     value = GPS_DEFAULT_ACCURACY_METERS;
+                }
 
                 _gpsDesiredAccuracyMeters = value;
             }
         }
 
+        /// <summary>
+        /// The minimum amount of time in milliseconds to wait between deliveries of GPS readings.
+        /// </summary>
+        /// <value>The GPS minimum time delay, in milliseconds.</value>
         [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28)]
         public int GpsMinTimeDelayMS
         {
@@ -887,12 +961,18 @@ namespace Sensus
             set
             {
                 if (value < 0)
+                {
                     value = GPS_DEFAULT_MIN_TIME_DELAY_MS;
+                }
 
                 _gpsMinTimeDelayMS = value;
             }
         }
 
+        /// <summary>
+        /// The minimum distance in meters to wait between deliveries of GPS readings.
+        /// </summary>
+        /// <value>The GPS minimum distance delay, in meters.</value>
         [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29)]
         public float GpsMinDistanceDelayMeters
         {
@@ -903,7 +983,9 @@ namespace Sensus
             set
             {
                 if (value < 0)
+                {
                     value = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
+                }
 
                 _gpsMinDistanceDelayMeters = value;
             }
@@ -921,6 +1003,14 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// A <see cref="Protocol"/> may delare variables whose values can be easily reused throughout the
+        /// system. For example, if many of the survey inputs share a particular substring (e.g., the study 
+        /// name), consider defining a variable named `study-name` that holds the study name. You can then
+        /// reference this variable when defining the survey input label via `{study-name}`. The format
+        /// of this field is `variable-name:variable-value`.
+        /// </summary>
+        /// <value>The variable value user interface property.</value>
         [EditableListUiProperty("Variables:", true, 30)]
         [JsonIgnore]
         public List<string> VariableValueUiProperty
@@ -1018,6 +1108,13 @@ namespace Sensus
         }
 #endif
 
+        /// <summary>
+        /// A comma-separated list of time windows during which alerts from Sensus (e.g., notifications
+        /// about new surveys) should not have a sound or vibration associated with them. The format
+        /// is the same as described for <see cref="ScriptRunner.TriggerWindowsString"/>, except that 
+        /// exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.
+        /// </summary>
+        /// <value>The alert exclusion window string.</value>
         [EntryStringUiProperty("Alert Exclusion Windows:", true, 36)]
         public string AlertExclusionWindowString
         {
@@ -1087,7 +1184,7 @@ namespace Sensus
         ///     openssl pkcs8 -topk8 -nocrypt -in private.pem
         ///     ```
         /// 
-        ///   * Extract the `PUBLIC KEY` for entering into your Sensus[[Protocol]]:
+        ///   * Extract the `PUBLIC KEY` for entering into your Sensus <see cref="Protocol"/>:
         /// 
         ///     ```
         ///     openssl rsa -in private.pem -outform PEM -pubout -out public.pem

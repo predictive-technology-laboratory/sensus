@@ -29,6 +29,10 @@ namespace Sensus.UI.Inputs
         private bool _enabled;
         private string _definedVariable;
 
+        /// <summary>
+        /// Message to generate speech for when displaying this input.
+        /// </summary>
+        /// <value>The output message.</value>
         [EntryStringUiProperty("Output Message:", true, 11)]
         public string OutputMessage
         {
@@ -36,6 +40,10 @@ namespace Sensus.UI.Inputs
             set { _outputMessage = value; }
         }
 
+        /// <summary>
+        /// Message to generate speech for when displaying this input for a second time.
+        /// </summary>
+        /// <value>The output message.</value>
         [EntryStringUiProperty("Output Message Rerun:", true, 12)]
         public string OutputMessageRerun
         {
@@ -43,6 +51,13 @@ namespace Sensus.UI.Inputs
             set { _outputMessageRerun = value; }
         }
 
+        /// <summary>
+        /// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
+        /// define the value for. For example, if you wanted this input to supply the value for a variable
+        /// named `study-name`, then set this field to `study-name` and the user's selection will be used as
+        /// the value for this variable. 
+        /// </summary>
+        /// <value>The defined variable.</value>
         [EntryStringUiProperty("Define Variable:", true, 2)]
         public string DefinedVariable
         {

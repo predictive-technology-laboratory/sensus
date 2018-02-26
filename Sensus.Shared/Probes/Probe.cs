@@ -78,7 +78,7 @@ namespace Sensus.Probes
         public abstract string CollectionDescription { get; }
 
         /// <summary>
-        /// Whether the probe is enabled.
+        /// Whether the <see cref="Probe"/> should be turned on when the user starts the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Enabled:", true, 2)]
@@ -163,8 +163,8 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Whether the Probe should store the data it collects. This might be turned off if the Probe is used to trigger the <see cref="User.Scripts.ScriptProbe"/> but 
-        /// the probed data are not needed.
+        /// Whether the Probe should store the data it collects. This might be turned off if the <see cref="Probe"/> is used to trigger 
+        /// the <see cref="User.Scripts.ScriptProbe"/> but the probed data are not needed.
         /// </summary>
         /// <value><c>true</c> if store data; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Store Data:", true, 3)]
@@ -201,7 +201,7 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// How much data to save from the probe for the purpose of charting.
+        /// How much data to save from the <see cref="Probe"/>  for the purpose of charting within the Sensus app.
         /// </summary>
         /// <value>The maximum chart data count.</value>
         [EntryIntegerUiProperty("Max Chart Data Count:", true, 50)]
@@ -228,7 +228,7 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Whether the Probe should run a local commit cycle each time the Probe generates data.
+        /// Whether the <see cref="Probe"/> should run a local commit each time the <see cref="Probe"/> generates data.
         /// </summary>
         /// <value><c>true</c> to run local commit on each store; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Run Local Commit On Store:", true, 14)]

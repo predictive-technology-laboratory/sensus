@@ -42026,18 +42026,6 @@ references:
   commentId: Overload:Sensus.UI.UiProperties.UiProperty.GetPropertyStacks
   fullName: Sensus.UI.UiProperties.UiProperty.GetPropertyStacks
   nameWithType: UiProperty.GetPropertyStacks
-- uid: Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute(System.Reflection.PropertyInfo)
-  name: GetUiPropertyAttribute(PropertyInfo)
-  href: api/Sensus.UI.UiProperties.UiProperty.html#Sensus_UI_UiProperties_UiProperty_GetUiPropertyAttribute_System_Reflection_PropertyInfo_
-  commentId: M:Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute(System.Reflection.PropertyInfo)
-  fullName: Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute(System.Reflection.PropertyInfo)
-  nameWithType: UiProperty.GetUiPropertyAttribute(PropertyInfo)
-- uid: Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute*
-  name: GetUiPropertyAttribute
-  href: api/Sensus.UI.UiProperties.UiProperty.html#Sensus_UI_UiProperties_UiProperty_GetUiPropertyAttribute_
-  commentId: Overload:Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute
-  fullName: Sensus.UI.UiProperties.UiProperty.GetUiPropertyAttribute
-  nameWithType: UiProperty.GetUiPropertyAttribute
 - uid: Sensus.UI.UiProperties.UiProperty.GetView(System.Reflection.PropertyInfo,System.Object,Xamarin.Forms.BindableProperty@,Xamarin.Forms.IValueConverter@)
   name: GetView(PropertyInfo, Object, out BindableProperty, out IValueConverter)
   href: api/Sensus.UI.UiProperties.UiProperty.html#Sensus_UI_UiProperties_UiProperty_GetView_System_Reflection_PropertyInfo_System_Object_Xamarin_Forms_BindableProperty__Xamarin_Forms_IValueConverter__

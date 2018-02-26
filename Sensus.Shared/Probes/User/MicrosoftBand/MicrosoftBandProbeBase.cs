@@ -285,6 +285,11 @@ namespace Sensus.Probes.User.MicrosoftBand
         private bool _stopWhenNotWorn;
         private bool _stoppedBecauseNotWorn;
 
+        /// <summary>
+        /// The sampling rate for the sensor. Options are <see cref="BandSensorSampleRate.Ms16"/>, <see cref="BandSensorSampleRate.Ms32"/>, and
+        /// <see cref="BandSensorSampleRate.Ms128"/>.
+        /// </summary>
+        /// <value>The sampling rate.</value>
         [ListUiProperty("Sampling Rate:", true, 5, new object[] { BandSensorSampleRate.Ms16, BandSensorSampleRate.Ms32, BandSensorSampleRate.Ms128 })]
         public BandSensorSampleRate SamplingRate
         {
@@ -298,6 +303,10 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
+        /// <summary>
+        /// Whether or not to stop this Probe when the user is not wearing the Band.
+        /// </summary>
+        /// <value><c>true</c> to stop when not worn; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Stop When Not Worn (Must Enable Contact Probe):", true, 6)]
         public bool StopWhenNotWorn
         {

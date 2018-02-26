@@ -26,6 +26,10 @@ namespace Sensus.UI.Inputs
         private bool _hasFocused;
         private int _height;
 
+        /// <summary>
+        /// Height in pixels of the multi-line text input.
+        /// </summary>
+        /// <value>The height.</value>
         [EntryIntegerUiProperty(null, true, 5)]
         public int Height
         {

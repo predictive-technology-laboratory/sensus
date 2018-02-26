@@ -22,6 +22,11 @@ namespace Sensus.Probes.Context
     {
         private int _sampleLengthMS;
 
+        /// <summary>
+        /// How many milliseconds to sample audio from the microphone when computing the 
+        /// decibel level.
+        /// </summary>
+        /// <value>The sample length ms.</value>
         [EntryIntegerUiProperty("Sample Length (MS):", true, 5)]
         public int SampleLengthMS
         {

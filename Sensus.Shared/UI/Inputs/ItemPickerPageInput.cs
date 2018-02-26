@@ -40,7 +40,7 @@ namespace Sensus.UI.Inputs
         }
 
         /// <summary>
-        /// Provides a means of setting the items via a UI property (e.g., when configuring this input for a script).
+        /// These are the items that the user will have to select from.
         /// </summary>
         /// <value>The string items.</value>
         [EditableListUiProperty("Items:", true, 10)]
@@ -78,6 +78,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Whether or not to allow the user to select multiple items simultaneously.
+        /// </summary>
+        /// <value><c>true</c> if multiselect; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 11)]
         public bool Multiselect
         {

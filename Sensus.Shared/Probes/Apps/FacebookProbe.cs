@@ -14,11 +14,8 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Reflection;
 using System.Collections.Generic;
-using Sensus.UI.UiProperties;
-using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Syncfusion.SfChart.XForms;
 

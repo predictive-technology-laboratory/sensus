@@ -20,6 +20,10 @@ namespace Sensus.UI.Inputs
     {
         private bool _randomizeItemOrder;
 
+        /// <summary>
+        /// Whether or not to randomize the order of items to choose from.
+        /// </summary>
+        /// <value><c>true</c> to randomize item order; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Randomize Item Order:", true, 12)]
         public bool RandomizeItemOrder
         {
@@ -33,9 +37,17 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Whether or not to include an `Other` option in the list of items.
+        /// </summary>
+        /// <value><c>true</c> if include other option; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Include \"Other\" Option:", true, 13)]
         public bool IncludeOtherOption { get; set; }
 
+        /// <summary>
+        /// The text to show for the "Other" option in a multiple-choice list.
+        /// </summary>
+        /// <value>The other option text.</value>
         [EntryStringUiProperty("Text for \"Other\" Option:", true, 14)]
         public string OtherOptionText { get; set; }
 

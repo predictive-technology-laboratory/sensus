@@ -17,6 +17,10 @@ using System.Reflection;
 
 namespace Sensus.UI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as editor fields that support
+    /// multi-line editing.
+    /// </summary>
     public class EditorUiProperty : UiProperty
     {
         public EditorUiProperty(string labelText, bool editable, int order)

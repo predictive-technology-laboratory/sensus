@@ -89,7 +89,7 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// How long the probe has to complete a single poll operation before being cancelled.
+        /// How long the <see cref="PollingProbe"/>  has to complete a single poll operation before being cancelled.
         /// </summary>
         /// <value>The polling timeout minutes.</value>
         [EntryIntegerUiProperty("Timeout (Mins.):", true, 6)]

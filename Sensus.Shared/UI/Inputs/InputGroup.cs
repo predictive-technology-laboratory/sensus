@@ -28,15 +28,32 @@ namespace Sensus.UI.Inputs
 
         public ObservableCollection<Input> Inputs { get; }
 
+        /// <summary>
+        /// Name of the input group.
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty(null, true, 0)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Whether or not to tag inputs in this group with the device's current GPS location.
+        /// </summary>
+        /// <value><c>true</c> if geotag; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 1)]
         public bool Geotag { get; set; }
 
+        /// <summary>
+        /// Whether or not to force valid input values (e.g., all required fields completed, etc.)
+        /// before allowing the user to move to the next input group.
+        /// </summary>
+        /// <value><c>true</c> if force valid inputs; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Force Valid Inputs:", true, 2)]
         public bool ForceValidInputs { get; set; }
 
+        /// <summary>
+        /// Whether or not to randomly shuffle the inputs in this group when displaying them to the user.
+        /// </summary>
+        /// <value><c>true</c> if shuffle inputs; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Inputs:", true, 3)]
         public bool ShuffleInputs { get; set; }
 

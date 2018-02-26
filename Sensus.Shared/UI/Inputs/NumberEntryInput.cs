@@ -25,6 +25,13 @@ namespace Sensus.UI.Inputs
         private bool _hasFocused;
         private string _definedVariable;
 
+        /// <summary>
+        /// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
+        /// define the value for. For example, if you wanted this input to supply the value for a variable
+        /// named `study-name`, then set this field to `study-name` and the user's selection will be used as
+        /// the value for this variable. 
+        /// </summary>
+        /// <value>The defined variable.</value>
         [EntryStringUiProperty("Define Variable:", true, 15)]
         public string DefinedVariable
         {

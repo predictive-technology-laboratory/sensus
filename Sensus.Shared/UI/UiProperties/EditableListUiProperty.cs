@@ -22,6 +22,9 @@ using System.Reflection;
 
 namespace Sensus.UI.UiProperties
 {
+    /// <summary>
+    /// Decorated members should be rendered as editable lists.
+    /// </summary>
     public class EditableListUiProperty : UiProperty
     {
         public class ValueConverter : IValueConverter

@@ -53,6 +53,10 @@ namespace Sensus.UI.Inputs
         private List<InputCompletionRecord> _completionRecords;
         private DateTimeOffset? _submissionTimestamp;
 
+        /// <summary>
+        /// The name by which this input will be referred to within the Sensus app.
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
         {
@@ -84,6 +88,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// The text to display next to the input when showing the field to the user for completion.
+        /// </summary>
+        /// <value>The label text.</value>
         [EntryStringUiProperty("Label Text:", true, 1)]
         public string LabelText
         {
@@ -240,6 +248,10 @@ namespace Sensus.UI.Inputs
         [JsonIgnore]
         public abstract string DefaultName { get; }
 
+        /// <summary>
+        /// Whether or not a valid value is required for this input. Also see <see cref="InputGroup.ForceValidInputs"/>.
+        /// </summary>
+        /// <value><c>true</c> if required; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 5)]
         public bool Required
         {

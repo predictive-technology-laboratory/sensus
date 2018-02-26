@@ -233,7 +233,11 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   
   <a id="Sensus_Protocol_AlertExclusionWindowString_" data-uid="Sensus.Protocol.AlertExclusionWindowString*"></a>
   <h4 id="Sensus_Protocol_AlertExclusionWindowString" data-uid="Sensus.Protocol.AlertExclusionWindowString">AlertExclusionWindowString</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A comma-separated list of time windows during which alerts from Sensus (e.g., notifications
+about new surveys) should not have a sound or vibration associated with them. The format
+is the same as described for <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_TriggerWindowsString">TriggerWindowsString</a>, except that 
+exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -251,7 +255,8 @@ public string AlertExclusionWindowString { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The alert exclusion window string.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -304,7 +309,7 @@ appropriate format using the following steps (on Mac):</p>
 </ul>
 <pre><code>openssl pkcs8 -topk8 -nocrypt -in private.pem
 </code></pre><ul>
-<li>Extract the <code>PUBLIC KEY</code> for entering into your Sensus[[Protocol]]:</li>
+<li>Extract the <code>PUBLIC KEY</code> for entering into your Sensus <a class="xref" href="Sensus.Protocol.html">Protocol</a>:</li>
 </ul>
 <pre><code>openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 </code></pre><ul>
@@ -339,7 +344,9 @@ public string AsymmetricEncryptionPublicKey { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_ContactEmail_" data-uid="Sensus.Protocol.ContactEmail*"></a>
   <h4 id="Sensus_Protocol_ContactEmail" data-uid="Sensus.Protocol.ContactEmail">ContactEmail</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>An email address for the individual who is responsible for handling questions
+associated with this study.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -357,7 +364,8 @@ public string ContactEmail { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The contact email.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -365,7 +373,8 @@ public string ContactEmail { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_ContinueIndefinitely_" data-uid="Sensus.Protocol.ContinueIndefinitely*"></a>
   <h4 id="Sensus_Protocol_ContinueIndefinitely" data-uid="Sensus.Protocol.ContinueIndefinitely">ContinueIndefinitely</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether or not to execute the <a class="xref" href="Sensus.Protocol.html">Protocol</a> forever after it has started.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -383,7 +392,8 @@ public bool ContinueIndefinitely { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> to execute forever; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -391,7 +401,8 @@ public bool ContinueIndefinitely { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_Description_" data-uid="Sensus.Protocol.Description*"></a>
   <h4 id="Sensus_Protocol_Description" data-uid="Sensus.Protocol.Description">Description</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A detailed description of the <a class="xref" href="Sensus.Protocol.html">Protocol</a> (e.g., what it does, who it is intended for, etc.).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -409,7 +420,8 @@ public string Description { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The description.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -417,7 +429,8 @@ public string Description { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_EndDate_" data-uid="Sensus.Protocol.EndDate*"></a>
   <h4 id="Sensus_Protocol_EndDate" data-uid="Sensus.Protocol.EndDate">EndDate</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The date on which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will stop running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ContinueIndefinitely">ContinueIndefinitely</a> is <code>false</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -435,7 +448,8 @@ public DateTime EndDate { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
-        <td></td>
+        <td><p>The end date.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -443,7 +457,8 @@ public DateTime EndDate { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_EndTime_" data-uid="Sensus.Protocol.EndTime*"></a>
   <h4 id="Sensus_Protocol_EndTime" data-uid="Sensus.Protocol.EndTime">EndTime</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The time at which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will stop running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ContinueIndefinitely">ContinueIndefinitely</a> is <code>false</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -461,7 +476,8 @@ public TimeSpan EndTime { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
-        <td></td>
+        <td><p>The end time.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -469,7 +485,9 @@ public TimeSpan EndTime { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_ForceProtocolReportsToRemoteDataStore_" data-uid="Sensus.Protocol.ForceProtocolReportsToRemoteDataStore*"></a>
   <h4 id="Sensus_Protocol_ForceProtocolReportsToRemoteDataStore" data-uid="Sensus.Protocol.ForceProtocolReportsToRemoteDataStore">ForceProtocolReportsToRemoteDataStore</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether or not to submit <a class="xref" href="Sensus.Protocol.html">Protocol</a> status reports to the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_RemoteDataStore">RemoteDataStore</a> regardless of the setting
+for <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore">UploadToRemoteDataStore</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -487,7 +505,8 @@ public bool ForceProtocolReportsToRemoteDataStore { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> if force protocol reports to remote data store; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -495,7 +514,9 @@ public bool ForceProtocolReportsToRemoteDataStore { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_GpsDesiredAccuracyMeters_" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters*"></a>
   <h4 id="Sensus_Protocol_GpsDesiredAccuracyMeters" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters">GpsDesiredAccuracyMeters</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The desired accuracy in meters of the collected GPS readings. There are no guarantees that this accuracy
+will be achieved.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -513,7 +534,8 @@ public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Single</span></td>
-        <td></td>
+        <td><p>The GPS desired accuracy, in meters.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -521,7 +543,8 @@ public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_GpsMinDistanceDelayMeters_" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters*"></a>
   <h4 id="Sensus_Protocol_GpsMinDistanceDelayMeters" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters">GpsMinDistanceDelayMeters</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The minimum distance in meters to wait between deliveries of GPS readings.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -539,7 +562,8 @@ public float GpsMinDistanceDelayMeters { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Single</span></td>
-        <td></td>
+        <td><p>The GPS minimum distance delay, in meters.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -547,7 +571,8 @@ public float GpsMinDistanceDelayMeters { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_GpsMinTimeDelayMS_" data-uid="Sensus.Protocol.GpsMinTimeDelayMS*"></a>
   <h4 id="Sensus_Protocol_GpsMinTimeDelayMS" data-uid="Sensus.Protocol.GpsMinTimeDelayMS">GpsMinTimeDelayMS</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The minimum amount of time in milliseconds to wait between deliveries of GPS readings.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -565,7 +590,8 @@ public int GpsMinTimeDelayMS { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
-        <td></td>
+        <td><p>The GPS minimum time delay, in milliseconds.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -573,7 +599,9 @@ public int GpsMinTimeDelayMS { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_Groupable_" data-uid="Sensus.Protocol.Groupable*"></a>
   <h4 id="Sensus_Protocol_Groupable" data-uid="Sensus.Protocol.Groupable">Groupable</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether the user should be allowed to group the <a class="xref" href="Sensus.Protocol.html">Protocol</a> with other <a class="xref" href="Sensus.Protocol.html">Protocol</a>s to form a 
+bundle that participant&apos;s are randomized into.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -591,7 +619,8 @@ public bool Groupable { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> if groupable; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -749,7 +778,8 @@ public bool Groupable { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_Name_" data-uid="Sensus.Protocol.Name*"></a>
   <h4 id="Sensus_Protocol_Name" data-uid="Sensus.Protocol.Name">Name</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A descriptive name for the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -767,7 +797,8 @@ public string Name { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The name.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -825,7 +856,11 @@ public string Name { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_ParticipationHorizonDays_" data-uid="Sensus.Protocol.ParticipationHorizonDays*"></a>
   <h4 id="Sensus_Protocol_ParticipationHorizonDays" data-uid="Sensus.Protocol.ParticipationHorizonDays">ParticipationHorizonDays</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The number of days used to calculate the participation percentage. For example, if the participation horizon is
+7 days, and the user has been running a <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a> for 1 day, then the participation percentage
+would be 1/7 (~14%). On the other hand, if the participation horizon is 1 day, then the same user would have a 
+participation percentage of 1/1 (100%).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -843,7 +878,8 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
-        <td></td>
+        <td><p>The participation horizon, in days.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -951,7 +987,8 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_RewardThreshold_" data-uid="Sensus.Protocol.RewardThreshold*"></a>
   <h4 id="Sensus_Protocol_RewardThreshold" data-uid="Sensus.Protocol.RewardThreshold">RewardThreshold</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The participation percentage required for a user to be considered eligible for rewards.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -969,7 +1006,8 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Single</span>&gt;</td>
-        <td></td>
+        <td><p>The reward threshold.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1052,7 +1090,8 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_Shareable_" data-uid="Sensus.Protocol.Shareable*"></a>
   <h4 id="Sensus_Protocol_Shareable" data-uid="Sensus.Protocol.Shareable">Shareable</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether the user should be permitted to share the <a class="xref" href="Sensus.Protocol.html">Protocol</a> with another device.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1070,7 +1109,8 @@ public bool Shareable { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> if shareable; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1078,7 +1118,9 @@ public bool Shareable { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_StartDate_" data-uid="Sensus.Protocol.StartDate*"></a>
   <h4 id="Sensus_Protocol_StartDate" data-uid="Sensus.Protocol.StartDate">StartDate</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The date on which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will start running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_StartImmediately">StartImmediately</a> 
+is <code>false</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1096,7 +1138,8 @@ public DateTime StartDate { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
-        <td></td>
+        <td><p>The start date.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1104,7 +1147,8 @@ public DateTime StartDate { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_StartImmediately_" data-uid="Sensus.Protocol.StartImmediately*"></a>
   <h4 id="Sensus_Protocol_StartImmediately" data-uid="Sensus.Protocol.StartImmediately">StartImmediately</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether or not to start the <a class="xref" href="Sensus.Protocol.html">Protocol</a> immediately after the user has opted into it.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1122,7 +1166,8 @@ public bool StartImmediately { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> to start immediately; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1130,7 +1175,8 @@ public bool StartImmediately { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_StartTime_" data-uid="Sensus.Protocol.StartTime*"></a>
   <h4 id="Sensus_Protocol_StartTime" data-uid="Sensus.Protocol.StartTime">StartTime</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The time at which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will start running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_StartImmediately">StartImmediately</a> is <code>false</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1148,7 +1194,8 @@ public TimeSpan StartTime { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
-        <td></td>
+        <td><p>The start time.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1206,7 +1253,12 @@ public TimeSpan StartTime { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_VariableValueUiProperty_" data-uid="Sensus.Protocol.VariableValueUiProperty*"></a>
   <h4 id="Sensus_Protocol_VariableValueUiProperty" data-uid="Sensus.Protocol.VariableValueUiProperty">VariableValueUiProperty</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>A <a class="xref" href="Sensus.Protocol.html">Protocol</a> may delare variables whose values can be easily reused throughout the
+system. For example, if many of the survey inputs share a particular substring (e.g., the study 
+name), consider defining a variable named <code>study-name</code> that holds the study name. You can then
+reference this variable when defining the survey input label via <code>{study-name}</code>. The format
+of this field is <code>variable-name:variable-value</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -1224,7 +1276,8 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
-        <td></td>
+        <td><p>The variable value user interface property.</p>
+</td>
       </tr>
     </tbody>
   </table>
