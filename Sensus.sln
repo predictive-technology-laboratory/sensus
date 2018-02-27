@@ -58,8 +58,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8
 		DocFX\articles\toc.yml = DocFX\articles\toc.yml
 	EndProjectSection
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{51FFF6FF-086B-4DBE-BFC3-2D550D603347}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
 	ProjectSection(SolutionItems) = preProject
 		DocFX\docfx.json = DocFX\docfx.json
@@ -71,6 +69,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1833108D-29E
 	ProjectSection(SolutionItems) = preProject
 		DocFX\api\index.md = DocFX\api\index.md
 	EndProjectSection
+EndProject
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{13AB7FF7-7414-44F4-A05A-794A04ED282E}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -182,12 +182,12 @@ Global
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
-		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhone.Build.0 = Debug|iPhone
-		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{51FFF6FF-086B-4DBE-BFC3-2D550D603347}.Release|iPhone.ActiveCfg = Debug|iPhone
+		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
+		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhone.Build.0 = Debug|iPhone
+		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Release|iPhone.ActiveCfg = Debug|iPhone
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

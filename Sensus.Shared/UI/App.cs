@@ -23,7 +23,7 @@ namespace Sensus.UI
     {
         public App()
         {
-            MainPage = new NavigationPage(new HomePage());
+            MainPage = new SensusMasterDetailPage();
         }
 
         protected override void OnStart()

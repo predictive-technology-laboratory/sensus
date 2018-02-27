@@ -158,7 +158,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddScriptTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\HomePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputCompletionRecord.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputDisplayCondition.cs" />
@@ -228,6 +227,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProximityEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
