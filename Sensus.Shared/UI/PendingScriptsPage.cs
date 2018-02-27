@@ -85,6 +85,7 @@ namespace Sensus.UI
         }
 
         private ListView _scriptList;
+        private Label _noSurveysLabel;
 
         private class PendingScriptTextCell : TextCell
         {
@@ -105,13 +106,10 @@ namespace Sensus.UI
         {
             Title = "Pending Surveys";
 
-            SensusServiceHelper.Get().RemoveExpiredScripts(true);
-
             _scriptList = new ListView();
             _scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
             _scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ScriptTextConverter()));
             _scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ScriptDetailConverter()));
-            _scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
             _scriptList.ItemTapped += (o, e) =>
             {
                 if (_scriptList.SelectedItem == null)
@@ -198,11 +196,10 @@ namespace Sensus.UI
             };
 
             // don't show list when there are no surveys
-            _scriptList.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
             _scriptList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));
 
             // display an informative message when there are no surveys
-            Label noSurveysLabel = new Label
+            _noSurveysLabel = new Label
             {
                 Text = "You have no pending surveys.",
                 TextColor = Color.Accent,
@@ -211,9 +208,9 @@ namespace Sensus.UI
                 HorizontalOptions = LayoutOptions.Center
             };
 
-            noSurveysLabel.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
-            noSurveysLabel.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: true));
+            _noSurveysLabel.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: true));
 
+            // create grid showing surveys
             Grid contentGrid = new Grid
             {
                 RowDefinitions = { new RowDefinition { Height = new GridLength(1, GridUnitType.Star) } },
@@ -221,11 +218,12 @@ namespace Sensus.UI
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            contentGrid.Children.Add(noSurveysLabel, 0, 0);
+            contentGrid.Children.Add(_noSurveysLabel, 0, 0);
             contentGrid.Children.Add(_scriptList, 0, 0);
 
             Content = contentGrid;
 
+            // use timer to update available surveys
             System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
 
             filterTimer.Elapsed += (sender, e) =>
@@ -235,6 +233,13 @@ namespace Sensus.UI
 
             Appearing += (sender, e) =>
             {
+                // the filter timer will take a second to fire. ensure an up-to-date initial view by clearing expired scripts just before the window appears.
+                SensusServiceHelper.Get().RemoveExpiredScripts(true); 
+
+                // bind the views
+                Bind();
+
+                // start filtering out expired scripts
                 filterTimer.Start();
             };
 
@@ -248,8 +253,11 @@ namespace Sensus.UI
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+                _scriptList.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
                 _scriptList.ItemsSource = null;
                 _scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
+
+                _noSurveysLabel.BindingContext = SensusServiceHelper.Get().ScriptsToRun;
             });
         }
     }
