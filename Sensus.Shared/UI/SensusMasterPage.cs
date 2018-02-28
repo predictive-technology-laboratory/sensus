@@ -76,7 +76,7 @@ namespace Sensus.UI
 
                     return new ViewCell { View = grid };
                 }),
-                BackgroundColor = Color.Gray,
+                
                 SeparatorVisibility = SeparatorVisibility.None
             };
 
@@ -86,74 +86,6 @@ namespace Sensus.UI
             {
                 Children = { _masterPageItemsListView }
             };
-
-            ToolbarItems.Add(new ToolbarItem("View Device ID", null, async () =>
-            {
-                await DisplayAlert("Device ID", SensusServiceHelper.Get().DeviceId, "Close");
-
-            }, ToolbarItemOrder.Secondary));
-
-            ToolbarItems.Add(new ToolbarItem("Share Log", null, async () =>
-            {
-                await Task.Run(() =>
-                {
-                    string sharePath = null;
-                    try
-                    {
-                        sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
-                        SensusServiceHelper.Get().Logger.CopyTo(sharePath);
-                    }
-                    catch (Exception)
-                    {
-                        sharePath = null;
-                    }
-
-                    if (sharePath != null)
-                    {
-                        SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
-                    }
-                });
-
-            }, ToolbarItemOrder.Secondary));
-
-            ToolbarItems.Add(new ToolbarItem("Clear Share Directory", null, async () =>
-            {
-                await Task.Run(() =>
-                {
-                    foreach (string sharePath in Directory.GetFiles(SensusServiceHelper.SHARE_DIRECTORY))
-                    {
-                        try
-                        {
-                            File.Delete(sharePath);
-                        }
-                        catch (Exception ex)
-                        {
-                            string errorMessage = "Failed to delete shared file \"" + Path.GetFileName(sharePath) + "\":  " + ex.Message;
-                            SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                            SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-                        }
-                    }
-                });
-
-            }, ToolbarItemOrder.Secondary));
-
-#if __ANDROID__
-            ToolbarItems.Add(new ToolbarItem("Stop Sensus", null, async () =>
-            {
-                if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                {
-                    SensusServiceHelper.Get().StopProtocols();
-                    (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
-                }
-
-            }, ToolbarItemOrder.Secondary));
-#endif
-
-            ToolbarItems.Add(new ToolbarItem("About Sensus", null, async () =>
-            {
-                await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
-
-            }, ToolbarItemOrder.Secondary));
         }
     }
 }

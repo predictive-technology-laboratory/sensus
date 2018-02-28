@@ -359,29 +359,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\minus.png">
-      <Link>Resources\minus.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\pencil.png">
-      <Link>Resources\pencil.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\plus.png">
-      <Link>Resources\plus.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\share.png">
-      <Link>Resources\share.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\check.png">
-      <Link>Resources\check.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\x.png">
-      <Link>Resources\x.png</Link>
-    </BundleResource>
-    <BundleResource Include="..\Sensus.Shared\UI\Icons\gear_wrench.png">
-      <Link>Resources\gear_wrench.png</Link>
-    </BundleResource>
-  </ItemGroup>
-  <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%401x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%402x.png" />
@@ -401,6 +378,19 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%401x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-1024x1024%401x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\check.png" />
+    <BundleResource Include="Resources\hamburger.png" />
+    <BundleResource Include="Resources\hamburger%402x.png" />
+    <BundleResource Include="Resources\plus.png" />
+    <BundleResource Include="Resources\privacy.png" />
+    <BundleResource Include="Resources\privacy%402x.png" />
+    <BundleResource Include="Resources\studies.png" />
+    <BundleResource Include="Resources\studies%402x.png" />
+    <BundleResource Include="Resources\surveys.png" />
+    <BundleResource Include="Resources\surveys%402x.png" />
+    <BundleResource Include="Resources\x.png" />
   </ItemGroup>
   <Import Project="..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems')" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared\Sensus.Shared.projitems')" />
