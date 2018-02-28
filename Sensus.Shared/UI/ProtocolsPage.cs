@@ -24,6 +24,7 @@ using Sensus.Exceptions;
 using ZXing.Mobile;
 using ZXing.Net.Mobile.Forms;
 using ZXing;
+using System.Threading.Tasks;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -539,6 +540,58 @@ namespace Sensus.UI
                     Protocol.Create("New Protocol");
                 }
             }));
+
+            ToolbarItems.Add(new ToolbarItem("ID", null, async () =>
+            {
+                await DisplayAlert("Device ID", SensusServiceHelper.Get().DeviceId, "Close");
+
+            }, ToolbarItemOrder.Secondary));
+
+            ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
+            {
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
+                                                                 
+                    () =>
+                    {
+                        string sharePath = null;
+                        try
+                        {
+                            sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
+                            SensusServiceHelper.Get().Logger.CopyTo(sharePath);
+                        }
+                        catch (Exception)
+                        {
+                            sharePath = null;
+                        }
+
+                        if (sharePath != null)
+                        {
+                            SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
+                        }
+                    },
+                                                                 
+                    () => SensusServiceHelper.Get().Logger.Clear()));
+
+            }, ToolbarItemOrder.Secondary));
+
+#if __ANDROID__
+            ToolbarItems.Add(new ToolbarItem("Stop", null, async () =>
+            {
+                if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
+                {
+                    SensusServiceHelper.Get().StopProtocols();
+
+                    (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
+                }
+
+            }, ToolbarItemOrder.Secondary));
+#endif
+
+            ToolbarItems.Add(new ToolbarItem("About", null, async () =>
+            {
+                await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
+
+            }, ToolbarItemOrder.Secondary));
 
             Bind();
 
