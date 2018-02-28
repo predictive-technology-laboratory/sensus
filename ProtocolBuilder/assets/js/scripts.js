@@ -105,6 +105,36 @@ jQuery(document).ready(function() {
 		}
 
 	});
+	$(document).on('change', '#remote_storage', function() {
+		
+		if($("#remote_storage").val()=="None") {
+			 
+			$("#s3_div").hide(100);
+			$("#console_div").hide(100);
+            
+        }else{
+			 if($("#remote_storage").val()=="Amazon S3") {
+			$("#s3_div").show(100);
+			$("#console_div").hide(100);
+			}else{
+			$("#console_div").show(100);
+			$("#s3_div").hide(100);
+			}
+			
+			
+		}
+
+	});
+	
+	$(document).on('change', '#local_storage', function() {
+		
+		if($("#local_storage").val()=="None") {	 
+			$("#local_storage_div").hide(100);    
+        }else{	
+			$("#local_storage_div").show(100);	
+		}
+
+	});
 	
     
     // submit
