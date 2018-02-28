@@ -54,7 +54,7 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
     <MtouchDebug>true</MtouchDebug>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
