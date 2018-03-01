@@ -48,7 +48,7 @@ namespace Sensus.DataStores.Remote
     ///     your bucket will reside (e.g., `us-east-1`), and `ROOT_ID` is the 12-digit (no dashes) AWS account identifier that will own your data:
     /// 
     ///     ```
-    ///     ./ConfigureAwsForExperiment.sh REGION ROOT_ID
+    ///     ./ConfigureS3.sh REG    ION ROOT_ID
     ///     ```
     /// 
     ///   * The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
