@@ -103,8 +103,7 @@ namespace Sensus.UI
                     {
                         if (input == null)
                         {
-                            if (failAction != null)
-                                failAction();
+                            failAction?.Invoke();
                         }
                         else
                         {
@@ -115,9 +114,7 @@ namespace Sensus.UI
                             else
                             {
                                 SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
-
-                                if (failAction != null)
-                                    failAction();
+                                failAction?.Invoke();
                             }
                         }
                     });
@@ -313,7 +310,7 @@ namespace Sensus.UI
                 else if (selectedAction == "Scan Participation Barcode")
                 {
                     try
-                    {
+                    {                        
                         Result barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(Navigation);
 
                         if (barcodeResult == null)

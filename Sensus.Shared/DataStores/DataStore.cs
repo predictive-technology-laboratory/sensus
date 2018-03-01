@@ -166,7 +166,9 @@ namespace Sensus.DataStores
             set
             {
                 if (value <= 0)
+                {
                     value = 1;
+                }
 
                 _commitTimeoutMinutes = value;
             }

@@ -407,7 +407,9 @@ namespace Sensus
             {
                 // delete all current protocols -- we don't want them interfering with the one we're about to load/run.
                 foreach (Protocol protocol in SensusServiceHelper.Get().RegisteredProtocols)
+                {
                     protocol.Delete();
+                }
 
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
@@ -416,7 +418,9 @@ namespace Sensus
                     DeserializeAsync(protocolJSON, protocol =>
                     {
                         if (protocol == null)
+                        {
                             throw new Exception("Failed to deserialize UI testing protocol.");
+                        }
 
                         foreach (Probe probe in protocol.Probes)
                         {
@@ -424,22 +428,32 @@ namespace Sensus
                             // interaction outside of Sensus. disable any probes that might take us away from Sensus.
 
                             if (probe is FacebookProbe)
+                            {
                                 probe.Enabled = false;
+                            }
 
 #if __IOS__
                             if (probe is iOSHealthKitProbe)
+                            {
                                 probe.Enabled = false;
+                            }
 #endif
 
                             // clear the run-times collection from any script runners. need a clean start, just in case we have one-shot scripts
                             // that need to run every UI testing execution.
                             if (probe is ScriptProbe)
+                            {
                                 foreach (ScriptRunner scriptRunner in (probe as ScriptProbe).ScriptRunners)
+                                {
                                     scriptRunner.RunTimes.Clear();
+                                }
+                            }
 
                             // disable the accelerometer probe, since we use it to trigger a test script that can interrupt UI scripting.
                             if (probe is AccelerometerProbe)
+                            {
                                 probe.Enabled = false;
+                            }
                         }
 
                         DisplayAndStartAsync(protocol);
