@@ -883,6 +883,9 @@ namespace Sensus
 
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
+                    // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
+                    // to take care of. the library does ask for permission, but if it's denied we get an exception
+                    // kicked back. ask explicitly here, and bail out if permission is not granted.
                     if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
                     {
                         resultWait.Set();
