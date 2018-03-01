@@ -231,6 +231,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
