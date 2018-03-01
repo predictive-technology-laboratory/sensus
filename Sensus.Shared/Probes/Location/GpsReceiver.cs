@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Location
 {
@@ -159,9 +160,10 @@ namespace Sensus.Probes.Location
         /// </summary>
         /// <returns>The reading.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public Position GetReading(CancellationToken cancellationToken)
+        /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading.</param>
+        public Position GetReading(CancellationToken cancellationToken, bool checkAndObtainPermission)
         {
-            return GetReading(0, cancellationToken);
+            return GetReading(0, cancellationToken, checkAndObtainPermission);
         }
 
         /// <summary>
@@ -171,20 +173,14 @@ namespace Sensus.Probes.Location
         /// <returns>The reading.</returns>
         /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken)
+        /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading. Note that, on Android, this
+        /// may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user's permission prior to
+        /// calling this method.</param>
+        public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken, bool checkAndObtainPermission)
         {
             lock (_locker)
             {
-                try
-                {
-                    SensusServiceHelper.Get().AssertNotOnMainThread(GetType() + " GetReading");
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-
-                if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+                if (checkAndObtainPermission && SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                 {
                     return null;
                 }
@@ -209,7 +205,7 @@ namespace Sensus.Probes.Location
                     _readingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
                     _readingWait.Reset();  // make them wait
 
-                    new Thread(async () =>
+                    Task.Run(async () =>
                     {
                         try
                         {
@@ -236,8 +232,7 @@ namespace Sensus.Probes.Location
 
                         _readingWait.Set();  // tell anyone waiting on the shared reading that it is ready
                         _readingIsComing = false;  // direct any future calls to this method to get their own reading
-
-                    }).Start();
+                    });
                 }
             }
 

@@ -26,6 +26,7 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -374,6 +375,12 @@ namespace Sensus.Probes.User.Scripts
             {
                 throw new Exception("The following input-defined variables are not listed on the protocol:  " + string.Join(", ", unknownVariables));
             }
+
+            // TODO:  What happens later when we take a GPS reading, if the user does not provide permissions here?
+            if (Script.InputGroups.Any(inputGroup => inputGroup.Geotag))
+            {
+                SensusServiceHelper.Get().ObtainPermission(Permission.Location);
+            }
         }
 
         public void Start()
@@ -627,7 +634,7 @@ namespace Sensus.Probes.User.Scripts
                 {
                     try
                     {
-                        var currentPosition = GpsReceiver.Get().GetReading(new CancellationToken());
+                        var currentPosition = GpsReceiver.Get().GetReading(new CancellationToken(), false);
 
                         if (currentPosition == null)
                         {

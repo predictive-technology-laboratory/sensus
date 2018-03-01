@@ -157,7 +157,7 @@ namespace Sensus.Android
                         // should we display a page?
                         else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
                         {
-                            serviceHelper.BringToForeground();
+                            await serviceHelper.BringToForegroundAsync();
                             SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
                             serviceHelper.LetDeviceSleep();
                         }

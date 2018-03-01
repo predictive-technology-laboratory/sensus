@@ -183,49 +183,53 @@ namespace Sensus.Android
         /// or not to hold the action for later when the activity is refocused.</param>
         public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
         {
-            // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
-            new Thread(() =>
+            Task.Run(() =>
+            {
+                lock (_focusedMainActivityLocker)
                 {
-                    lock (_focusedMainActivityLocker)
+                    // run actions now only if the main activity is focused. this is a stronger requirement than merely started/resumed since it
+                    // implies that the user interface is up. this is important because if certain actions (e.g., speech recognition) are run
+                    // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
+                    // action's window.
+                    if (_focusedMainActivity == null)
                     {
-                        // run actions now only if the main activity is focused. this is a stronger requirement than merely started/resumed since it
-                        // implies that the user interface is up. this is important because if certain actions (e.g., speech recognition) are run
-                        // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
-                        // action's window.
-                        if (_focusedMainActivity == null)
+                        if (startMainActivityIfNotFocused)
                         {
-                            if (startMainActivityIfNotFocused)
-                            {
-                                // we'll run the action when the activity is focused
-                                lock (_actionsToRunUsingMainActivity)
-                                    _actionsToRunUsingMainActivity.Add(action);
-
-                                Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
-
-                                // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
-                                // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
-                                Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
-                                _service.StartActivity(intent);
-                            }
-                            else if (holdActionIfNoActivity)
-                            {
-                                // we'll run the action the next time the activity is focused
-                                lock (_actionsToRunUsingMainActivity)
-                                    _actionsToRunUsingMainActivity.Add(action);
-                            }
-                        }
-                        else
-                        {
-                            // we'll run the action now
+                            // we'll run the action when the activity is focused
                             lock (_actionsToRunUsingMainActivity)
+                            {
                                 _actionsToRunUsingMainActivity.Add(action);
+                            }
 
-                            RunActionsUsingMainActivity();
+                            Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
+
+                            // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
+                            // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
+                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                            intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
+                            _service.StartActivity(intent);
+                        }
+                        else if (holdActionIfNoActivity)
+                        {
+                            // we'll run the action the next time the activity is focused
+                            lock (_actionsToRunUsingMainActivity)
+                            {
+                                _actionsToRunUsingMainActivity.Add(action);
+                            }
                         }
                     }
+                    else
+                    {
+                        // we'll run the action now
+                        lock (_actionsToRunUsingMainActivity)
+                        {
+                            _actionsToRunUsingMainActivity.Add(action);
+                        }
 
-                }).Start();
+                        RunActionsUsingMainActivity();
+                    }
+                }
+            });
         }
 
         public void SetFocusedMainActivity(AndroidMainActivity focusedMainActivity)
@@ -235,7 +239,9 @@ namespace Sensus.Android
                 _focusedMainActivity = focusedMainActivity;
 
                 if (_focusedMainActivity == null)
+                {
                     Logger.Log("Main activity not focused.", LoggingLevel.Normal, GetType());
+                }
                 else
                 {
                     Logger.Log("Main activity focused.", LoggingLevel.Normal, GetType());
@@ -253,7 +259,9 @@ namespace Sensus.Android
                     Logger.Log("Running " + _actionsToRunUsingMainActivity.Count + " actions using main activity.", LoggingLevel.Debug, GetType());
 
                     foreach (Action<AndroidMainActivity> action in _actionsToRunUsingMainActivity)
+                    {
                         action(_focusedMainActivity);
+                    }
 
                     _actionsToRunUsingMainActivity.Clear();
                 }
@@ -691,17 +699,20 @@ namespace Sensus.Android
             }
         }
 
-        public override void BringToForeground()
+        /// <summary>
+        /// Brings the Sensus UI to the foreground.
+        /// </summary>
+        public override Task BringToForegroundAsync()
         {
-            ManualResetEvent foregroundWait = new ManualResetEvent(false);
+            TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
 
             RunActionUsingMainActivityAsync(mainActivity =>
             {
-                foregroundWait.Set();
+                taskCompletionSource.SetResult(true);
 
             }, true, false);
 
-            foregroundWait.WaitOne();
+            return taskCompletionSource.Task;
         }
 
         #endregion
