@@ -72,16 +72,20 @@ namespace Sensus.Probes.Movement
         {
             SpeedDatum datum = null;
 
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
 
             if (currentPosition == null)
+            {
                 throw new Exception("Failed to get GPS reading.");
+            }
             else
             {
                 lock (_previousPositionLocker)
                 {
                     if (_previousPosition == null)
+                    {
                         _previousPosition = currentPosition;
+                    }
                     else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
                     {
                         datum = new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition);
@@ -91,9 +95,13 @@ namespace Sensus.Probes.Movement
             }
 
             if (datum == null)
+            {
                 return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
+            }
             else
+            {
                 return new Datum[] { datum };
+            }
         }
 
         protected override ChartSeries GetChartSeries()

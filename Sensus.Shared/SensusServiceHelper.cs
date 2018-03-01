@@ -548,7 +548,7 @@ namespace Sensus
 
         public abstract void LetDeviceSleep();
 
-        public abstract void BringToForeground();
+        public abstract Task BringToForegroundAsync();
 
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
@@ -947,7 +947,7 @@ namespace Sensus
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
-            new Thread(async () =>
+            Task.Run(async () =>
             {
                 if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                 {
@@ -997,7 +997,7 @@ namespace Sensus
                         }
                         else
                         {
-                            BringToForeground();
+                            await BringToForegroundAsync();
 
                             await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
@@ -1151,7 +1151,7 @@ namespace Sensus
 
                         try
                         {
-                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault(), true);
 
                             if (currentPosition != null)
                             {
@@ -1196,8 +1196,7 @@ namespace Sensus
                 }
 
                 callback(inputGroups);
-
-            }).Start();
+            });
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
@@ -1334,7 +1333,7 @@ namespace Sensus
                 {
                     // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
                     // before using the plugin.
-                    BringToForeground();
+                    await BringToForegroundAsync();
 
                     if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                     {

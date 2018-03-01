@@ -252,9 +252,13 @@ namespace Sensus.Android
             if (serviceHelper != null)
             {
                 if (hasFocus)
+                {
                     serviceHelper.SetFocusedMainActivity(this);
+                }
                 else
+                {
                     serviceHelper.SetFocusedMainActivity(null);
+                }
             }
         }
 

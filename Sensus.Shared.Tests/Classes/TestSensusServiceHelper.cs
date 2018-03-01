@@ -69,7 +69,7 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override void BringToForeground()
+        public override Task BringToForegroundAsync()
         {
             throw new NotImplementedException();
         }
