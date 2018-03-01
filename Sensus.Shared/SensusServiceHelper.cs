@@ -245,7 +245,9 @@ namespace Sensus
                 }
 
                 if (totalBytesRead != fileBytes.Length)
+                {
                     throw new Exception("Mismatch between file length (" + file.Length + ") and bytes read (" + totalBytesRead + ").");
+                }
             }
 
             return fileBytes;
@@ -256,7 +258,9 @@ namespace Sensus
             double directorySizeMB = 0;
 
             foreach (string path in Directory.GetFiles(directory))
+            {
                 directorySizeMB += GetFileSizeMB(path);
+            }
 
             return directorySizeMB;
         }

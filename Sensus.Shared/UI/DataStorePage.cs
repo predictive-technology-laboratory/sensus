@@ -112,9 +112,13 @@ namespace Sensus.UI
             okayButton.Clicked += async (o, e) =>
             {
                 if (local)
+                {
                     protocol.LocalDataStore = dataStore as LocalDataStore;
+                }
                 else
+                {
                     protocol.RemoteDataStore = dataStore as RemoteDataStore;
+                }
 
                 await Navigation.PopAsync();
             };
@@ -128,7 +132,9 @@ namespace Sensus.UI
             };
 
             foreach (View view in views)
+            {
                 contentLayout.Children.Add(view);
+            }
 
             Content = new ScrollView
             {

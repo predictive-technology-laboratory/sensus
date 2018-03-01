@@ -512,15 +512,11 @@ namespace Sensus.DataStores.Remote
 
                     MemoryStream putRequestInputStream = new MemoryStream();
 
+                    // zip json string if option is selected
                     if (compress)
                     {
-                        // zip json string if option is selected -- from https://stackoverflow.com/questions/2798467/c-sharp-code-to-gzip-and-upload-a-string-to-amazon-s3
-                        using (GZipStream zip = new GZipStream(putRequestInputStream, CompressionMode.Compress, true))
-                        {
-                            zip.Write(inputStreamBytes, 0, inputStreamBytes.Length);
-                            zip.Flush();
-                        }
-
+                        Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
+                        compressor.Compress(inputStreamBytes, putRequestInputStream);
                         putRequest.ContentType = "application/gzip";
                         putRequest.Key += ".gz";
                     }
