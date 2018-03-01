@@ -21,7 +21,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-using Xamarin;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
@@ -112,7 +111,7 @@ namespace Sensus
             {
                 if (Get() != null)
                 {
-                    Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
+                    Get().Logger.Log("Failed to (de)serialize some part of the JSON:  " + e.ErrorContext.Error, LoggingLevel.Normal, typeof(SensusServiceHelper));
                     e.ErrorContext.Handled = true;
                 }
             },
@@ -285,16 +284,10 @@ namespace Sensus
         private ScheduledCallback _healthTestCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
-
-#if __IOS__ || __ANDROID__
-        private ZXing.Mobile.BarcodeWriter _barcodeWriter;
-#endif
-
+        private BarcodeWriter _barcodeWriter;
         private bool _flashNotificationsEnabled;
-
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
-
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
 
@@ -319,16 +312,14 @@ namespace Sensus
             get { return _pointsOfInterest; }
         }
 
-#if __IOS__ || __ANDROID__
         [JsonIgnore]
-        public ZXing.Mobile.BarcodeWriter BarcodeWriter
+        public BarcodeWriter BarcodeWriter
         {
             get
             {
                 return _barcodeWriter;
             }
         }
-#endif
 
         public bool FlashNotificationsEnabled
         {
@@ -496,8 +487,7 @@ namespace Sensus
 #warning "Unrecognized platform"
 #endif
 
-#if __IOS__ || __ANDROID__
-            _barcodeWriter = new ZXing.Mobile.BarcodeWriter
+            _barcodeWriter = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
 
@@ -507,12 +497,13 @@ namespace Sensus
                     Width = qrCodeSize
                 }
             };
-#endif
+
             _flashNotificationsEnabled = true;
 
-
             if (!Directory.Exists(SHARE_DIRECTORY))
+            {
                 Directory.CreateDirectory(SHARE_DIRECTORY);
+            }
 
 #if DEBUG || UI_TESTING
             LoggingLevel loggingLevel = LoggingLevel.Debug;
@@ -892,6 +883,12 @@ namespace Sensus
 
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
+                    if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    {
+                        resultWait.Set();
+                        return;
+                    }
+
                     ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
                     {
                         PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
@@ -1349,7 +1346,7 @@ namespace Sensus
                     }
                     else if (permission == Permission.Camera)
                     {
-                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
+                        rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
                     }
                     else if(permission == Permission.Contacts)
                     {
