@@ -38,7 +38,7 @@ namespace Sensus.Callbacks
                 return;
             }
 
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 Page desiredTopPage = null;
 
@@ -52,12 +52,7 @@ namespace Sensus.Callbacks
                     return;
                 }
 
-                Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-
-                if (currentTopPage == null || desiredTopPage.GetType() != currentTopPage.GetType())
-                {
-                    await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
-                }
+                (Application.Current.MainPage as SensusMasterDetailPage).Detail = new NavigationPage(desiredTopPage);
             });
         }
     }

@@ -26,7 +26,6 @@ namespace Sensus.UI
             _masterPage = new SensusMasterPage();
             _masterPage.MasterPageItemsListView.ItemSelected += OnItemSelected;
 
-            Title = "asdf";
             Master = _masterPage;
             Detail = new NavigationPage(new ProtocolsPage());
         }
