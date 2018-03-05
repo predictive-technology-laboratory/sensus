@@ -13,27 +13,78 @@
 // limitations under the License.
 
 using System;
+using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.Exceptions
 {
+    /// <summary>
+    /// Convenience class for creating and tracking errors via the app center.
+    /// </summary>
     public class SensusException : Exception
     {
-        public static SensusException Report(string message, Exception innerException = null)
+        /// <summary>
+        /// Report the specified exception to the app center error tracker.
+        /// </summary>
+        /// <param name="exceptionToReport">Exception to report.</param>
+        public static void Report(Exception exceptionToReport)
         {
-            SensusServiceHelper.Get().Logger.Log("Sensus exception being reported:  " + message + Environment.NewLine + "Stack:  " + Environment.StackTrace, LoggingLevel.Normal, typeof(SensusException));
-
-            SensusException sensusException = new SensusException(message, innerException);
+            // the service helper isn't always initialized (e.g., upon startup), so make sure to catch any exceptions.
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Reporting Sensus exception:  " + exceptionToReport.Message, LoggingLevel.Normal, typeof(SensusException));
+            }
+            catch (Exception)
+            { }
 
             try
             {
-                // TODO:  Can we report this to app center?
+                Crashes.TrackError(exceptionToReport);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to report new exception to Xamarin Insights:  " + ex.Message, LoggingLevel.Normal, typeof(SensusException));
+                // the service helper isn't always initialized (e.g., upon startup), so make sure to catch any exceptions.
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to report Sensus exception:  " + ex.Message, LoggingLevel.Normal, typeof(SensusException));
+                }
+                catch(Exception)
+                {}
+            }
+        }
+
+        /// <summary>
+        /// Report the specified message and an associated inner exception to the app center error tracker.
+        /// </summary>
+        /// <returns>The report.</returns>
+        /// <param name="message">Message.</param>
+        /// <param name="innerException">Inner exception.</param>
+        public static SensusException Report(string message, Exception innerException = null)
+        {
+            SensusException exceptionToReport = new SensusException(message, innerException);
+
+            // the service helper isn't always initialized (e.g., upon startup), so make sure to catch any exceptions.
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Reporting Sensus exception:  " + exceptionToReport.Message, LoggingLevel.Normal, typeof(SensusException));
+            }
+            catch (Exception)
+            { }
+
+            try
+            {
+                Crashes.TrackError(exceptionToReport);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to report exception:  " + ex.Message, LoggingLevel.Normal, typeof(SensusException));
+                }
+                catch(Exception)
+                {}
             }
 
-            return sensusException;
+            return exceptionToReport;
         }
 
         protected SensusException(string message, Exception innerException = null)

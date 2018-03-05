@@ -21,6 +21,7 @@ using System.Linq;
 using Xamarin;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
+using Sensus.Exceptions;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -533,14 +534,7 @@ namespace Sensus.UI.Inputs
             else
             {
                 // this should never happen
-                try
-                {
-                    // Insights.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."), Insights.Severity.Critical);
-                    // TODO:  App Center
-                }
-                catch (Exception)
-                {
-                }
+                SensusException.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."));
 
                 return false;
             }

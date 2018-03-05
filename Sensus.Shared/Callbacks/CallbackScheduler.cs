@@ -230,17 +230,7 @@ namespace Sensus.Callbacks
                 }
                 catch (Exception ex)
                 {
-                    string errorMessage = "Failed to raise callback:  " + ex.Message;
-
-                    SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-
-                    try
-                    {
-                        // TODO:  Report
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    SensusException.Report("Failed to raise callback:  " + ex.Message, ex);
                 }
             });
         }

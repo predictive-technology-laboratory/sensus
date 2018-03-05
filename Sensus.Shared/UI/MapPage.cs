@@ -72,6 +72,7 @@ namespace Sensus.UI
                 {
                     try
                     {
+                        // TODO:  Add this back
                         //_map.SearchAdress(_searchEntry.Text);
                     }
                     catch (Exception ex)
@@ -84,16 +85,6 @@ namespace Sensus.UI
                         }
                         catch (Exception)
                         {
-                        }
-                        finally
-                        {
-                            try
-                            {
-                                // TODO:  App Center
-                            }
-                            catch (Exception)
-                            {
-                            }
                         }
                     }
                 }

@@ -28,6 +28,7 @@ using Xamarin.Facebook;
 using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
+using Sensus.Exceptions;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -346,13 +347,13 @@ namespace Sensus.Android
             }).Start();
         }
 
-#endregion
+        #endregion
 
-#region activity results
+        #region activity results
 
         public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
         {
-            new Thread(() =>
+            Task.Run(() =>
             {
                 lock (_locker)
                 {
@@ -367,14 +368,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        try
-                        {
-                            // TODO:  Report
-                        }
-                        catch (Exception)
-                        {
-                        }
-
+                        SensusException.Report(ex);
                         _activityResultWait.Set();
                     }
 
@@ -382,8 +376,7 @@ namespace Sensus.Android
 
                     callback(_activityResult);
                 }
-
-            }).Start();
+            });
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
