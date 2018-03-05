@@ -1813,18 +1813,12 @@ namespace Sensus
             });
         }
 
-        public void StopAsync(Action callback = null)
+        public Task StopAsync()
         {
-            new Thread(() =>
-                {
-                    Stop();
-
-                    if (callback != null)
-                    {
-                        callback();
-                    }
-
-                }).Start();
+            return Task.Run(() =>
+            {
+                Stop();
+            });
         }
 
         public void Stop()

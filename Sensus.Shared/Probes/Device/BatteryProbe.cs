@@ -22,7 +22,7 @@ namespace Sensus.Probes.Device
     /// <summary>
     /// Obtains the device's current battery level on the scale of [0,100] percent.
     /// </summary>
-    public abstract class BatteryProbe : PollingProbe
+    public class BatteryProbe : PollingProbe
     {
         public sealed override string DisplayName
         {

@@ -53,7 +53,7 @@ namespace Sensus.iOS
             get
             {
                 UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
-                return UIDevice.CurrentDevice.BatteryLevel * 100;
+                return UIDevice.CurrentDevice.BatteryLevel * 100f;
             }
         }
 
