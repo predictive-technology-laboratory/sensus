@@ -164,7 +164,7 @@ namespace Sensus.UI
                     actions.Add("Display Participation");
                 }
 
-                if (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)
+                if (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)
                 {
                     actions.Add("Scan Participation Barcode");
                 }
@@ -268,11 +268,10 @@ namespace Sensus.UI
                             // add participation reward datum to remote data store and commit immediately
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
 
-                            bool commitFailed;
-
+                            bool commitFailed = false;
                             try
                             {
-                                commitFailed = !await selectedProtocol.RemoteDataStore.CommitAsync(participationRewardDatum, cancellationTokenSource.Token);
+                                await selectedProtocol.RemoteDataStore.WriteAsync(participationRewardDatum, cancellationTokenSource.Token);
                             }
                             catch (Exception)
                             {
@@ -293,7 +292,7 @@ namespace Sensus.UI
                             Device.BeginInvokeOnMainThread(async () =>
                             {
                                 // only show the QR code for the reward datum if the datum was committed to the remote data store and if the data store can retrieve it.
-                                await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveCommittedData ?? false)));
+                                await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)));
                             });
                         },
                         inputs =>

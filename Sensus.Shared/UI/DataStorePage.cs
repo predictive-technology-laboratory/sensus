@@ -64,7 +64,7 @@ namespace Sensus.UI
             views.Add(buttonStack);
 
             // clearing only applies to local data stores that already exist on protocols and are clearable. new local data stores don't have this option.
-            if (local && !newDataStore && protocol.LocalDataStore.Clearable)
+            if (local && !newDataStore && protocol.LocalDataStore is IClearableDataStore)
             {
                 Button clearButton = new Button
                 {
@@ -77,29 +77,11 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Clear data from " + protocol.LocalDataStore.DisplayName + "?", "This action cannot be undone.", "Clear", "Cancel"))
                     {
-                        protocol.LocalDataStore.Clear();  // clear the protocol's local data store
+                        (protocol.LocalDataStore as IClearableDataStore).Clear();  // clear the protocol's local data store
                     }
                 };
 
                 buttonStack.Children.Add(clearButton);
-            }
-
-            // sharing only applies to local data stores that already exist on protocols. new local data stores don't have this option.
-            if (local && !newDataStore)
-            {
-                Button shareLocalDataButton = new Button
-                {
-                    Text = "Share",
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    FontSize = 20
-                };
-
-                shareLocalDataButton.Clicked += async (o, e) =>
-                {
-                    await Navigation.PushAsync(new ShareLocalDataStorePage(protocol.LocalDataStore));
-                };
-
-                buttonStack.Children.Add(shareLocalDataButton);
             }
 
             Button okayButton = new Button

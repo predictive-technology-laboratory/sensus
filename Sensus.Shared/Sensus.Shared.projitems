@@ -18,7 +18,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\FileLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\RamLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ConsoleRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
@@ -192,7 +191,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptTriggersPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ShareLocalDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DateUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayYesNoUiProperty.cs" />
@@ -232,6 +230,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

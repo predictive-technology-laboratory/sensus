@@ -29,8 +29,6 @@ namespace Sensus.UI
             string howToIncreaseScore = "You can increase your score by opening Sensus more often and responding to questions that Sensus asks you.";
 #elif __ANDROID__
             string howToIncreaseScore = "You can increase your score by allowing Sensus to run continuously and responding to questions that Sensus asks you.";
-#elif WINDOWS_PHONE
-            string userNotificationMessage = null; // TODO:  How to increase score?
 #elif LOCAL_TESTS
             string howToIncreaseScore = null;
 #else

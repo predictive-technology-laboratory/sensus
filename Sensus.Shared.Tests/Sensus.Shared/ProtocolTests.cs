@@ -47,7 +47,6 @@ namespace Sensus.Tests.Core
                 Description = "Description",
                 EndDate = DateTime.MaxValue,
                 EndTime = TimeSpan.MaxValue,
-                ForceProtocolReportsToRemoteDataStore = true,
                 GpsDesiredAccuracyMeters = 0.1f,
                 GpsMinDistanceDelayMeters = 0.2f,
                 GpsMinTimeDelayMS = 10,
@@ -63,7 +62,6 @@ namespace Sensus.Tests.Core
             Assert.AreEqual(protocol1.Description, protocol2.Description);
             Assert.AreEqual(protocol1.EndDate, protocol2.EndDate);
             Assert.AreEqual(protocol1.EndTime, protocol2.EndTime);
-            Assert.AreEqual(protocol1.ForceProtocolReportsToRemoteDataStore, protocol2.ForceProtocolReportsToRemoteDataStore);
             Assert.AreEqual(protocol1.GpsDesiredAccuracyMeters, protocol2.GpsDesiredAccuracyMeters);
             Assert.AreEqual(protocol1.GpsMinDistanceDelayMeters, protocol2.GpsMinDistanceDelayMeters);
             Assert.AreEqual(protocol1.GpsMinTimeDelayMS, protocol2.GpsMinTimeDelayMS);

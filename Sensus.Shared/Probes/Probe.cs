@@ -67,7 +67,6 @@ namespace Sensus.Probes
         private List<DateTime> _successfulHealthTestTimes;
         private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
-        private bool _runLocalCommitOnStore;
 
         private readonly object _locker = new object();
 
@@ -224,23 +223,6 @@ namespace Sensus.Probes
                     while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
                         _chartData.RemoveAt(0);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Whether the <see cref="Probe"/> should run a local commit each time the <see cref="Probe"/> generates data.
-        /// </summary>
-        /// <value><c>true</c> to run local commit on each store; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Run Local Commit On Store:", true, 14)]
-        public bool RunLocalCommitOnStore
-        {
-            get
-            {
-                return _runLocalCommitOnStore;
-            }
-            set
-            {
-                _runLocalCommitOnStore = value;
             }
         }
 
@@ -414,7 +396,7 @@ namespace Sensus.Probes
                         }
                     }
 
-                    return _protocol.LocalDataStore.AddAsync(datum, cancellationToken, _runLocalCommitOnStore);
+                    return _protocol.LocalDataStore.WriteAsync(datum, cancellationToken.GetValueOrDefault());
                 }
             }
 
