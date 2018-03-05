@@ -28,14 +28,40 @@ using System.Linq;
 namespace Sensus.DataStores.Local
 {
     /// <summary>
-    /// Stores each <see cref="Datum"/> as plain-text JSON in a gzip-compressed file on the device's local storage media.
+    /// Stores each <see cref="Datum"/> as plain-text JSON in a gzip-compressed file on the device's local storage media. Also
+    /// supports encryption.
     /// </summary>
     public class FileLocalDataStore : LocalDataStore, IClearableDataStore
     {
+        /// <summary>
+        /// Number of <see cref="Datum"/> to write before checking the size of the data store.
+        /// </summary>
+        private const int NUM_DATA_PER_SIZE_CHECK = 10000;
+
+        /// <summary>
+        /// Threshold on the size of the local storage directory in MB. When this is exceeded, a write to the <see cref="Remote.RemoteDataStore"/> 
+        /// will be forced.
+        /// </summary>
         private const double REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;
+
+        /// <summary>
+        /// Threshold on the size of files within the local storage directory. When this is exceeded, a new file will be started.
+        /// </summary>
         private const double MAX_FILE_SIZE_MB = 1;
+
+        /// <summary>
+        /// File-based storage uses a <see cref="BufferedStream"/> for efficiency. This is the default buffer size in bytes.
+        /// </summary>
         private const int DEFAULT_BUFFER_SIZE_BYTES = 4096;
+
+        /// <summary>
+        /// File extension to use for GZip files.
+        /// </summary>
         private const string GZIP_FILE_EXTENSION = ".gz";
+
+        /// <summary>
+        /// Files extension to use for encrypted files.
+        /// </summary>
         private const string ENCRYPTED_FILE_EXTENSION = ".bin";
 
         private string _path;
@@ -44,7 +70,7 @@ namespace Sensus.DataStores.Local
         private int _bufferSizeBytes;
         private bool _encrypt;
         private Task _writeToRemoteTask;
-        private long _dataWritten;
+        private long _numDataWritten;
 
         private readonly object _locker = new object();
 
@@ -88,7 +114,8 @@ namespace Sensus.DataStores.Local
         /// <summary>
         /// Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must provide a public encryption 
         /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. You can generate a public encryption key following the instructions
-        /// provided for <see cref="Protocol.AsymmetricEncryptionPublicKey"/>.
+        /// provided for <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. Note that data are not encrypted immediately. They are first
+        /// written to a compressed file on the device where they live unencrypted for a period of time.
         /// </summary>
         /// <value><c>true</c> to encrypt; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
@@ -150,14 +177,11 @@ namespace Sensus.DataStores.Local
             _compressionLevel = CompressionLevel.Optimal;
             _bufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
             _encrypt = false;
-            _dataWritten = 0;
+            _numDataWritten = 0;
         }
 
         public override void Start()
         {
-            // file needs to be ready to accept data immediately, so open new file before calling base.Start
-            SwitchToNewFile();
-
             // ensure that we have a valid encryption setup if one is requested
             if (_encrypt)
             {
@@ -171,6 +195,9 @@ namespace Sensus.DataStores.Local
                 }
             }
 
+            // file needs to be ready to accept data immediately, so open new file before calling base.Start
+            SwitchToNewFile();
+
             base.Start();
         }
 
@@ -180,6 +207,7 @@ namespace Sensus.DataStores.Local
             {
                 bool written = false;
 
+                // only 1 write operation at once
                 lock (_locker)
                 {
                     // get anonymized JSON for datum
@@ -223,9 +251,9 @@ namespace Sensus.DataStores.Local
                 }
 
                 // every so often, check the size of the file and data store
-                if ((++_dataWritten % 10000) == 0)
+                if ((++_numDataWritten % NUM_DATA_PER_SIZE_CHECK) == 0)
                 {
-                    // switch to a new path if the current one has grown too large
+                    // switch to a new file if the current one has grown too large
                     if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
                     {
                         SwitchToNewFile();
@@ -243,16 +271,27 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
-                if (_writeToRemoteTask == null)
+                // if this is the first write or the previous write is finished, run a new task.
+                if (_writeToRemoteTask == null ||
+                    _writeToRemoteTask.Status == TaskStatus.Canceled ||
+                    _writeToRemoteTask.Status == TaskStatus.Faulted ||
+                    _writeToRemoteTask.Status == TaskStatus.RanToCompletion)
                 {
-                    _writeToRemoteTask = new Task(async () =>
+                    _writeToRemoteTask = Task.Run(async () =>
                     {
                         // close/encrypt the current file and switch to a new one
                         SwitchToNewFile();
 
-                        // get all completed .gz (compressed) and .gz.bin (compressed/encrypted) file paths
-                        string[] pathsToWrite = Directory.GetFiles(StorageDirectory, "*" + GZIP_FILE_EXTENSION)
-                                                         .Union(Directory.GetFiles(StorageDirectory, "*" + GZIP_FILE_EXTENSION + ENCRYPTED_FILE_EXTENSION)).ToArray();
+                        // get all completed .gz (compressed) or .gz.bin (compressed+encrypted) file paths
+                        string[] pathsToWrite;
+                        if (_encrypt)
+                        {
+                            pathsToWrite = Directory.GetFiles(StorageDirectory, "*" + GZIP_FILE_EXTENSION + ENCRYPTED_FILE_EXTENSION).ToArray();
+                        }
+                        else
+                        {
+                            pathsToWrite = Directory.GetFiles(StorageDirectory, "*" + GZIP_FILE_EXTENSION);
+                        }
 
                         // write each file
                         foreach (string pathToWrite in pathsToWrite)
@@ -285,6 +324,7 @@ namespace Sensus.DataStores.Local
                                     await Protocol.RemoteDataStore.WriteDatumStreamAsync(fileToWrite, name, contentType, cancellationToken);
                                 }
 
+                                // file was written remotely. delete it locally.
                                 File.Delete(pathToWrite);
                             }
                             catch (Exception ex)
@@ -293,8 +333,7 @@ namespace Sensus.DataStores.Local
                             }
                         }
 
-                        _writeToRemoteTask = null;
-                    });
+                    }, cancellationToken);
                 }
 
                 return _writeToRemoteTask;
@@ -313,70 +352,74 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
-                // close the current stream and encrypt if desired
-                try
+                // close the current file if there is one
+                if (_bufferedGzipStream != null)
                 {
-                    _bufferedGzipStream.Dispose();
-
-                    // add the .gz extension to the path
-                    string gzPath = _path + GZIP_FILE_EXTENSION;
-                    File.Move(_path, gzPath);
-                    _path = gzPath;
-
-                    // encrypt the file we just closed
-                    if (_encrypt)
+                    try
                     {
-                        // apply symmetric-key encryption to the file, and send the symmetric key encrypted using the asymmetric public key
-                        using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+                        _bufferedGzipStream.Flush();
+                        _bufferedGzipStream.Dispose();
+
+                        // add the .gz extension to the path, marking it as completed.
+                        string gzPath = _path + GZIP_FILE_EXTENSION;
+                        File.Move(_path, gzPath);
+                        _path = gzPath;
+
+                        // encrypt the file we just closed
+                        if (_encrypt)
                         {
-                            // ensure that we generate a 32-byte symmetric key and 16-byte IV (IV length is block size / 8)
-                            aes.KeySize = 256;
-                            aes.BlockSize = 128;
-                            aes.GenerateKey();
-                            aes.GenerateIV();
-
-                            // apply symmetric-key encryption to our file
-                            SymmetricEncryption symmetricEncryption = new SymmetricEncryption(aes.Key, aes.IV);
-                            byte[] encryptedFileBytes = symmetricEncryption.Encrypt(File.ReadAllBytes(_path));
-
-                            // encrypt the symmetric key and initialization vector using our asymmetric public key
-                            byte[] encryptedKeyBytes = Protocol.AsymmetricEncryption.Encrypt(aes.Key);
-                            byte[] encryptedIVBytes = Protocol.AsymmetricEncryption.Encrypt(aes.IV);
-
-                            // write the encrypted file
-                            string encryptedPath = _path + ENCRYPTED_FILE_EXTENSION;
-                            try
+                            // apply symmetric-key encryption to the file, and send the symmetric key encrypted using the asymmetric public key
+                            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
                             {
-                                using (FileStream encryptedFile = new FileStream(encryptedPath, FileMode.Create, FileAccess.Write))
+                                // ensure that we generate a 32-byte symmetric key and 16-byte IV (IV length is block size / 8)
+                                aes.KeySize = 256;
+                                aes.BlockSize = 128;
+                                aes.GenerateKey();
+                                aes.GenerateIV();
+
+                                // apply symmetric-key encryption to our file
+                                SymmetricEncryption symmetricEncryption = new SymmetricEncryption(aes.Key, aes.IV);
+                                byte[] encryptedFileBytes = symmetricEncryption.Encrypt(File.ReadAllBytes(_path));
+
+                                // encrypt the symmetric key and initialization vector using our asymmetric public key
+                                byte[] encryptedKeyBytes = Protocol.AsymmetricEncryption.Encrypt(aes.Key);
+                                byte[] encryptedIVBytes = Protocol.AsymmetricEncryption.Encrypt(aes.IV);
+
+                                // write the encrypted file
+                                string encryptedPath = _path + ENCRYPTED_FILE_EXTENSION;
+                                try
                                 {
-                                    // ...encrypted symmetric key
-                                    byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
-                                    encryptedFile.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
-                                    encryptedFile.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
+                                    using (FileStream encryptedFile = new FileStream(encryptedPath, FileMode.Create, FileAccess.Write))
+                                    {
+                                        // ...encrypted symmetric key length and bytes
+                                        byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
+                                        encryptedFile.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
+                                        encryptedFile.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
 
-                                    // ...encrypted initialization vector
-                                    byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
-                                    encryptedFile.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
-                                    encryptedFile.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
+                                        // ...encrypted initialization vector length and bytes
+                                        byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
+                                        encryptedFile.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
+                                        encryptedFile.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
 
-                                    // ...encrypted file
-                                    encryptedFile.Write(encryptedFileBytes, 0, encryptedFileBytes.Length);
+                                        // ...encrypted file bytes
+                                        encryptedFile.Write(encryptedFileBytes, 0, encryptedFileBytes.Length);
+                                    }
+
+                                    // if everything went through okay, delete the unencrypted file and switch to encrypted file.
+                                    File.Delete(_path);
+                                    _path = encryptedPath;
                                 }
-
-                                // if everything went through okay, delete the unencrypted file and switch to encrypted file.
-                                File.Delete(_path);
-                                _path = encryptedPath;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusException.Report("Failed to encrypt file.", ex);
+                                catch (Exception ex)
+                                {
+                                    SensusException.Report("Failed to encrypt file.", ex);
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Failed to close/encrypt file.", ex);
+                    catch (Exception ex)
+                    {
+                        SensusException.Report("Failed to close/encrypt file.", ex);
+                    }
                 }
 
                 // open new file
