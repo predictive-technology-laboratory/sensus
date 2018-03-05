@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using Sensus.UI.UiProperties;
 using Xamarin;
+using Sensus.Exceptions;
 
 namespace Sensus.UI.Inputs
 {
@@ -274,14 +275,7 @@ namespace Sensus.UI.Inputs
             }
             else
             {
-                try
-                {
-                    // Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
-                    // TODO:  Report
-                }
-                catch (Exception)
-                {
-                }
+                SensusException.Report("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>.");
 
                 return false;
             }

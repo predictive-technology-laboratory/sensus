@@ -312,8 +312,9 @@ namespace Sensus.iOS
         {
         }
 
-        public override void BringToForeground()
+        public override Task BringToForegroundAsync()
         {
+            return Task.CompletedTask;
         }
 
         #endregion

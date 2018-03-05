@@ -40,6 +40,7 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
+using Microsoft.AppCenter.Crashes;
 
 #if __IOS__
 using XLabs.Platform.Device;
@@ -147,24 +148,12 @@ namespace Sensus
                 }
                 catch (Exception singletonCreationException)
                 {
-                    #region crash app and report to insights
-
+                    // report exception and crash app
                     string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
                     Console.Error.WriteLine(error);
                     Exception exceptionToReport = new Exception(error);
-
-                    try
-                    {
-                        // TODO:  Report exception to app center?
-                    }
-                    catch (Exception insightsReportException)
-                    {
-                        Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
-                    }
-
+                    SensusException.Report(exceptionToReport);
                     throw exceptionToReport;
-
-                    #endregion
                 }
 
                 SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
@@ -987,7 +976,7 @@ namespace Sensus
                                 {
                                     try
                                     {
-                                        // TODO:  Report
+                                        SensusException.Report("Voice input failed to run.", ex);
                                     }
                                     catch { }
                                 }
@@ -1050,12 +1039,7 @@ namespace Sensus
                                         }
                                         catch (Exception ex)
                                         {
-                                            // report exception and set wait handle if anything goes wrong while processing the current input group.
-                                            try
-                                            {
-                                                // TODO:  Report
-                                            }
-                                            catch { }
+                                            SensusException.Report(ex);
                                         }
                                         finally
                                         {
@@ -1103,11 +1087,7 @@ namespace Sensus
                                 }
                                 catch (Exception ex)
                                 {
-                                    try
-                                    {
-                                        // TODO:  Report
-                                    }
-                                    catch { }
+                                    SensusException.Report(ex);
 
                                     // if anything bad happens, set the wait handle to ensure we get out of the prompt.
                                     responseWait.Set();
@@ -1118,12 +1098,7 @@ namespace Sensus
                     catch (Exception ex)
                     {
                         // report exception and set wait handle if anything goes wrong while processing the current input group.
-                        try
-                        {
-                            // TODO:  Report
-                        }
-                        catch { }
-
+                        SensusException.Report(ex);
                         responseWait.Set();
                     }
 

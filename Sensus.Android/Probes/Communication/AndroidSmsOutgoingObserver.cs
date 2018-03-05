@@ -16,6 +16,7 @@ using System;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
+using Sensus.Exceptions;
 using Sensus.Probes.Communication;
 using Xamarin;
 
@@ -91,14 +92,8 @@ namespace Sensus.Android.Probes.Communication
                 }
                 catch (Exception ex)
                 {
-                    // if anything goes wrong, report exception to Insights
-                    try
-                    {
-                        // TODO:  Report
-                    }
-                    catch
-                    {
-                    }
+                    // something is wrong with our implementation
+                    SensusException.Report(ex);
                 }
                 finally
                 {
