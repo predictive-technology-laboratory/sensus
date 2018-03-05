@@ -22,7 +22,7 @@ using System.IO;
 namespace Sensus.DataStores.Remote
 {
     /// <summary>
-    /// When using the Console Remote Data Store, all data accumulated in <see cref="Local.LocalDataStore"/> are simply ignored. This 
+    /// When using the <see cref="ConsoleRemoteDataStore"/>, all data accumulated in <see cref="Local.LocalDataStore"/> are simply ignored. This 
     /// is useful for debugging purposes and is not recommended for practical Sensus deployments since it provides no means of moving the data 
     /// off of the device.
     /// </summary>
@@ -43,24 +43,24 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override Task WriteAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
+        public override Task WriteDatumStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
 
-        public override Task WriteAsync(Datum datum, CancellationToken cancellationToken)
+        public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            throw new NotImplementedException();
         }
 
         public override string GetDatumKey(Datum datum)
         {
-            throw new Exception("Cannot retrieve datum key from Console Remote Data Store.");
+            throw new NotImplementedException();
         }
 
-        public override Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken)
+        public override Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)
         {
-            throw new Exception("Cannot retrieve datum from Console Remote Data Store.");
+            throw new NotImplementedException();
         }
     }
 }

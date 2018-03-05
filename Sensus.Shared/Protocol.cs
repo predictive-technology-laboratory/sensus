@@ -1804,7 +1804,7 @@ namespace Sensus
                 #endregion
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                await _localDataStore.WriteAsync(report, cancellationToken);
+                await _localDataStore.WriteDatumAsync(report, cancellationToken);
 
                 lock (_locker)
                 {

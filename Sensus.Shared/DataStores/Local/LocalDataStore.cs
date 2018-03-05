@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.UI.UiProperties;
 using System;
 using Newtonsoft.Json;
 using System.Threading;
@@ -21,8 +20,8 @@ using System.Threading.Tasks;
 namespace Sensus.DataStores.Local
 {
     /// <summary>
-    /// A Local Data Store accumulates data on the device. Periodically, data are written from the Local Data Store to a 
-    /// <see cref="Remote.RemoteDataStore"/> for permanent storage.
+    /// A <see cref="LocalDataStore"/> accumulates data on the device. Periodically, data are written from 
+    /// the <see cref="LocalDataStore"/> to a <see cref="Remote.RemoteDataStore"/> for permanent storage.
     /// </summary>
     public abstract class LocalDataStore : DataStore
     {
@@ -38,13 +37,19 @@ namespace Sensus.DataStores.Local
             _sizeTriggeredRemoteWriteRunning = false;
         }
 
-        public abstract Task<bool> WriteAsync(Datum datum, CancellationToken cancellationToken);
+        /// <summary>
+        /// Writes a single <see cref="Datum"/> asynchronously to the <see cref="LocalDataStore"/>.
+        /// </summary>
+        /// <returns><c>true</c> if the <see cref="Datum"/> was written and <c>false</c> otherwise.</returns>
+        /// <param name="datum">Datum.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task<bool> WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Checks whether the current local data store has grown too large, and (if it has) writes the data to the remote data store.
-        /// This relieves pressure on local in cases where the remote data store is not triggered frequently enough by its own callback 
-        /// delays. It makes sense to call this method after writing data to the current local data
-        /// store. This method will have no effect if the local data store is configured to not upload data to the remote data store.
+        /// Checks whether the current <see cref="LocalDataStore"/> has grown too large, and (if it has) writes the data to the 
+        /// <see cref="Remote.RemoteDataStore"/>. This relieves pressure on local resources in cases where the <see cref="Remote.RemoteDataStore"/> 
+        /// is not triggered frequently enough by its own schedule. It makes sense to call this method periodically after writing 
+        /// data.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token.</param>
         protected Task WriteToRemoteIfTooLargeAsync(CancellationToken cancellationToken)
@@ -67,7 +72,7 @@ namespace Sensus.DataStores.Local
                     if (commit)
                     {
                         SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
-                        await Protocol.RemoteDataStore.WriteAsync(cancellationToken);
+                        await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken);
                     }
                 }
                 catch (Exception ex)

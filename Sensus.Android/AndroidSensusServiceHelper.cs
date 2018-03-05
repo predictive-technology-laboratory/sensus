@@ -97,6 +97,33 @@ namespace Sensus.Android
             }
         }
 
+        public override float BatteryChargePercent
+        {
+            get
+            {
+                Intent batteryIntent = Application.Context.RegisterReceiver(null, new IntentFilter(Intent.ActionBatteryChanged));
+
+                if (batteryIntent == null)
+                {
+                    throw new Exception("Failed to poll battery status.");
+                }
+                else
+                {
+                    float level = batteryIntent.GetIntExtra(BatteryManager.ExtraLevel, -1);
+                    float scale = batteryIntent.GetIntExtra(BatteryManager.ExtraScale, -1);
+
+                    if (level >= 0 && scale >= 0)
+                    {
+                        return level / scale;
+                    }
+                    else
+                    {
+                        throw new Exception("Failed to obtain battery charge percent. Level or scale <= 0.");
+                    }
+                }
+            }
+        }
+
         public override string OperatingSystem
         {
             get

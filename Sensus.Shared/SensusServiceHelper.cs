@@ -366,6 +366,9 @@ namespace Sensus
         public abstract bool IsCharging { get; }
 
         [JsonIgnore]
+        public abstract float BatteryChargePercent { get; }
+
+        [JsonIgnore]
         public abstract bool WiFiConnected { get; }
 
         [JsonIgnore]

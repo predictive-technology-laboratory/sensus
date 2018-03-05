@@ -28,5 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\Local\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\Remote\" />
   </ItemGroup>
 </Project>

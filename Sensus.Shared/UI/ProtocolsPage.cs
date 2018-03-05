@@ -271,7 +271,7 @@ namespace Sensus.UI
                             bool commitFailed = false;
                             try
                             {
-                                await selectedProtocol.RemoteDataStore.WriteAsync(participationRewardDatum, cancellationTokenSource.Token);
+                                await selectedProtocol.RemoteDataStore.WriteDatumAsync(participationRewardDatum, cancellationTokenSource.Token);
                             }
                             catch (Exception)
                             {
@@ -337,7 +337,7 @@ namespace Sensus.UI
                                     // after the page shows up, attempt to retrieve the participation reward datum.
                                     try
                                     {
-                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatum<ParticipationRewardDatum>(barcodeResult.Text, cancellationTokenSource.Token);
+                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult.Text, cancellationTokenSource.Token);
 
                                         // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
                                         if (!cancellationTokenSource.IsCancellationRequested)
