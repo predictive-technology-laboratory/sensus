@@ -240,6 +240,7 @@ namespace Sensus.DataStores.Remote
 
                     // instruct the local data store to write its data to the remote data store.
                     await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
+                    _mostRecentSuccessfulWriteTime = DateTime.Now; 
 
 #if __IOS__
                     // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.

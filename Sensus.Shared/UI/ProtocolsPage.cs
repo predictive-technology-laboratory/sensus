@@ -227,11 +227,10 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
-                        selectedProtocol.StopAsync(() =>
-                        {
-                            // rebind to pick up color and running status changes
-                            Refresh();
-                        });
+                        await selectedProtocol.StopAsync();
+
+                        // rebind to pick up color and running status changes
+                        Refresh();
                     }
                 }
                 else if (selectedAction == "Email Study Manager for Help")
