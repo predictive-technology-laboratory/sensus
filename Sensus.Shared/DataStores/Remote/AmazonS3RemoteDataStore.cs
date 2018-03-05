@@ -13,23 +13,19 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using Sensus.UI.UiProperties;
-using System.Text;
 using System.Threading;
 using Amazon.S3;
 using Amazon;
 using Amazon.S3.Model;
 using System.Threading.Tasks;
 using System.IO;
-using System.IO.Compression;
 using Newtonsoft.Json;
 using System.Net;
-using System.Security.Cryptography;
-using Sensus.Encryption;
 using Sensus.Exceptions;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using System.Text;
 
 namespace Sensus.DataStores.Remote
 {
@@ -81,8 +77,6 @@ namespace Sensus.DataStores.Remote
         private string _region;
         private string _bucket;
         private string _folder;
-        private bool _compress;
-        private bool _encrypt;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
 
@@ -148,42 +142,6 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Whether or not to compress the files submitted to S3 via gzip compression.
-        /// </summary>
-        /// <value><c>true</c> to compress; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty(null, true, 5)]
-        public bool Compress
-        {
-            get
-            {
-                return _compress;
-            }
-            set
-            {
-                _compress = value;
-            }
-        }
-
-        /// <summary>
-        /// Whether or not to apply asymmetric key encryption to S3 data payloads. If this is enabled, then you must provide a public encryption 
-        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. You can generate a public encryption key following the instructions
-        /// provided with <see cref="Protocol.AsymmetricEncryptionPublicKey"/>.
-        /// </summary>
-        /// <value><c>true</c> to encrypt; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
-        public bool Encrypt
-        {
-            get
-            {
-                return _encrypt;
-            }
-            set
-            {
-                _encrypt = value;
-            }
-        }
-
-        /// <summary>
         /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
@@ -235,7 +193,7 @@ namespace Sensus.DataStores.Remote
         }
 
         [JsonIgnore]
-        public override bool CanRetrieveCommittedData
+        public override bool CanRetrieveWrittenData
         {
             get
             {
@@ -252,39 +210,15 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [JsonIgnore]
-        public override bool Clearable
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public AmazonS3RemoteDataStore()
         {
             _region = _bucket = _folder = null;
-            _compress = false;
-            _encrypt = false;
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
         }
 
         public override void Start()
         {
-            // ensure that we have a valid encryption setup if one is requested
-            if (_encrypt)
-            {
-                try
-                {
-                    Protocol.AsymmetricEncryption.Encrypt("testing");
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Ensure that a valid public key is set on the Protocol.");
-                }
-            }
-
             if (_pinnedServiceURL != null)
             {
                 // ensure that we have a pinned public key if we're pinning the service URL
@@ -337,7 +271,7 @@ namespace Sensus.DataStores.Remote
             return new AmazonS3Client(null, clientConfig);
         }
 
-        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        public override Task WriteAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
@@ -347,99 +281,16 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    DateTimeOffset commitStartTime = DateTimeOffset.UtcNow;
+                    DateTimeOffset writeStartTime = DateTimeOffset.UtcNow;
 
-                    List<Datum> committedData = new List<Datum>();
-
-                    #region group data by type and get JSON for each datum
-                    Dictionary<string, List<Datum>> datumTypeData = new Dictionary<string, List<Datum>>();
-                    Dictionary<string, StringBuilder> datumTypeJSON = new Dictionary<string, StringBuilder>();
-
-                    foreach (Datum datum in data)
+                    if (await PutJsonAsync(s3, stream, name, contentType, cancellationToken) == HttpStatusCode.OK)
                     {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        string datumType = datum.GetType().Name;
-
-                        // upload all participation reward data as individual S3 objects so we can retrieve them individually at a later time for participation verification.
-                        if (datum is ParticipationRewardDatum)
-                        {
-                            // the JSON for each participation reward datum must be indented so that cross-platform type conversion will work if/when the datum is retrieved.
-                            string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
-
-                            try
-                            {
-                                // do not compress the json. it's too small to do much good.
-                                if ((await PutJsonAsync(s3, GetDatumKey(datum), "[" + Environment.NewLine + datumJSON + Environment.NewLine + "]", false, false, cancellationToken)) == HttpStatusCode.OK)
-                                {
-                                    committedData.Add(datum);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
-                        }
-                        else
-                        {
-                            string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-
-                            // group all other data (i.e., other than participation reward data) by type for batch committal
-                            List<Datum> dataSubset;
-                            if (!datumTypeData.TryGetValue(datumType, out dataSubset))
-                            {
-                                dataSubset = new List<Datum>();
-                                datumTypeData.Add(datumType, dataSubset);
-                            }
-
-                            dataSubset.Add(datum);
-
-                            // add datum to its JSON array string
-                            StringBuilder json;
-                            if (!datumTypeJSON.TryGetValue(datumType, out json))
-                            {
-                                json = new StringBuilder("[" + Environment.NewLine);
-                                datumTypeJSON.Add(datumType, json);
-                            }
-
-                            json.Append((dataSubset.Count == 1 ? "" : "," + Environment.NewLine) + datumJSON);
-                        }
+                        SensusServiceHelper.Get().Logger.Log("Wrote data to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - writeStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
                     }
-                    #endregion
-
-                    #region commit all data, batched by type
-                    foreach (string datumType in datumTypeJSON.Keys)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        string key = (_folder + "/" + datumType + "/" + Guid.NewGuid() + ".json").Trim('/');  // trim '/' in case folder is blank
-
-                        StringBuilder json = datumTypeJSON[datumType];
-                        json.Append(Environment.NewLine + "]");
-
-                        try
-                        {
-                            if ((await PutJsonAsync(s3, key, json.ToString(), _compress, _encrypt, cancellationToken)) == HttpStatusCode.OK)
-                            {
-                                committedData.AddRange(datumTypeData[datumType]);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
-                    #endregion
-
-                    SensusServiceHelper.Get().Logger.Log("Committed " + committedData.Count + " data items to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - commitStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
-
-                    return committedData;
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
                 finally
                 {
@@ -448,91 +299,49 @@ namespace Sensus.DataStores.Remote
             });
         }
 
-        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, string key, string json, bool compress, bool encrypt, CancellationToken cancellationToken)
+        public override Task WriteAsync(Datum datum, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
-                PutObjectRequest putRequest = new PutObjectRequest
-                {
-                    BucketName = _bucket,
-                    CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
-                    Key = key
-                };
-
-                if (!compress && !encrypt)
-                {
-                    putRequest.ContentBody = json;
-                    putRequest.ContentType = "application/json";
-                }
-                else
-                {
-                    byte[] inputStreamBytes = Encoding.UTF8.GetBytes(json);
-
-                    if (encrypt)
-                    {
-                        // apply symmetric-key encryption to the JSON, and send the symmetric key to S3 encrypted using the public key we have
-                        using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-                        {
-                            // ensure that we generate a 32-byte symmetric key and 16-byte IV (IV length is block size / 8)
-                            aes.KeySize = 256;
-                            aes.BlockSize = 128;
-                            aes.GenerateKey();
-                            aes.GenerateIV();
-
-                            // apply symmetric-key encryption to our JSON
-                            SymmetricEncryption symmetricEncryption = new SymmetricEncryption(aes.Key, aes.IV);
-                            byte[] encryptedInputStreamBytes = symmetricEncryption.Encrypt(inputStreamBytes);
-
-                            // encrypt the symmetric key and initialization vector using our asymmetric public key
-                            byte[] encryptedKeyBytes = Protocol.AsymmetricEncryption.Encrypt(aes.Key);
-                            byte[] encryptedIVBytes = Protocol.AsymmetricEncryption.Encrypt(aes.IV);
-
-                            // write the new input stream...
-                            using (MemoryStream newInputStream = new MemoryStream())
-                            {
-                                // ...encrypted symmetric key
-                                byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
-                                newInputStream.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
-                                newInputStream.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
-
-                                // ...encrypted initialization vector
-                                byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
-                                newInputStream.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
-                                newInputStream.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
-
-                                // ...encrypted JSON
-                                newInputStream.Write(encryptedInputStreamBytes, 0, encryptedInputStreamBytes.Length);
-
-                                // change the input stream bytes to those we just generated
-                                inputStreamBytes = newInputStream.ToArray();
-                                putRequest.Key += ".bin";
-                            }
-                        }
-                    }
-
-                    MemoryStream putRequestInputStream = new MemoryStream();
-
-                    // zip json string if option is selected
-                    if (compress)
-                    {
-                        Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-                        compressor.Compress(inputStreamBytes, putRequestInputStream);
-                        putRequest.ContentType = "application/gzip";
-                        putRequest.Key += ".gz";
-                    }
-                    else
-                    {
-                        putRequestInputStream.Write(inputStreamBytes, 0, inputStreamBytes.Length);
-                        putRequest.ContentType = "application/octet-stream";
-                    }
-
-                    // reset the stream and use it for the put request input
-                    putRequestInputStream.Position = 0;
-                    putRequest.InputStream = putRequestInputStream;
-                }
+                AmazonS3Client s3 = null;
 
                 try
                 {
+                    s3 = InitializeS3();
+                    string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
+                    byte[] bytes = Encoding.UTF8.GetBytes(datumJSON);
+                    MemoryStream stream = new MemoryStream();
+                    stream.Write(bytes, 0, bytes.Length);
+                    stream.Position = 0;
+
+                    await PutJsonAsync(s3, stream, GetDatumKey(datum), "application/json", cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    PutObjectRequest putRequest = new PutObjectRequest
+                    {
+                        BucketName = _bucket,
+                        CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
+                        Key = key,
+                        InputStream = stream,
+                        ContentType = contentType
+                    };
+
                     return (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
                 }
                 catch (WebException ex)

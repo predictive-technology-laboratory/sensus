@@ -357,7 +357,7 @@ namespace Sensus.Probes
 
             if (store)
             {
-                return base.StoreDatumAsync(datum, cancellationToken);
+                return base.StoreDatumAsync(datum, cancellationToken.GetValueOrDefault());
             }
             else
             {

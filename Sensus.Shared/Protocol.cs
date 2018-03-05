@@ -190,7 +190,7 @@ namespace Sensus
 
                                 // store any data that have accumulated locally
                                 SensusServiceHelper.Get().FlashNotificationAsync("Committing data from previous study...");
-                                await registeredProtocol.LocalDataStore.CommitAndReleaseAddedDataAsync(CancellationToken.None);
+                                await registeredProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
 
                                 // stop the study and unregister it 
                                 SensusServiceHelper.Get().FlashNotificationAsync("Stopping previous study...");
@@ -482,7 +482,6 @@ namespace Sensus
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
         private ProtocolReportDatum _mostRecentReport;
-        private bool _forceProtocolReportsToRemoteDataStore;
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _randomTimeAnchor;
@@ -801,18 +800,6 @@ namespace Sensus
             {
                 _endTimestamp = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
             }
-        }
-
-        /// <summary>
-        /// Whether or not to submit <see cref="Protocol"/> status reports to the <see cref="RemoteDataStore"/> regardless of the setting
-        /// for <see cref="DataStores.Local.LocalDataStore.UploadToRemoteDataStore"/>.
-        /// </summary>
-        /// <value><c>true</c> if force protocol reports to remote data store; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Force Reports to Remote:", true, 22)]
-        public bool ForceProtocolReportsToRemoteDataStore
-        {
-            get { return _forceProtocolReportsToRemoteDataStore; }
-            set { _forceProtocolReportsToRemoteDataStore = value; }
         }
 
         /// <summary>
@@ -1205,7 +1192,7 @@ namespace Sensus
         ///     ```
         /// 
         ///   * Use the `PUBLIC KEY` (public.pem) as <see cref="AsymmetricEncryptionPublicKey"/>.
-        ///   * Enable <see cref="AmazonS3RemoteDataStore.Encrypt"/>.
+        ///   * Enable <see cref="FileLocalDataStore.Encrypt"/>.
         /// 
         /// Keep all `PRIVATE KEY` information safe and secure. Never share it.
         /// </summary>
@@ -1240,7 +1227,6 @@ namespace Sensus
         private Protocol()
         {
             _running = false;
-            _forceProtocolReportsToRemoteDataStore = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _shareable = false;
@@ -1818,13 +1804,7 @@ namespace Sensus
                 #endregion
 
                 SensusServiceHelper.Get().Logger.Log("Storing protocol report locally.", LoggingLevel.Normal, GetType());
-                await _localDataStore.AddAsync(report, cancellationToken, false);
-
-                if (!_localDataStore.UploadToRemoteDataStore && _forceProtocolReportsToRemoteDataStore)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Local data aren't pushed to remote, so we're copying the report datum directly to the remote cache.", LoggingLevel.Normal, GetType());
-                    await _remoteDataStore.AddAsync(report, cancellationToken, false);
-                }
+                await _localDataStore.WriteAsync(report, cancellationToken);
 
                 lock (_locker)
                 {
