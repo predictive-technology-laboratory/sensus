@@ -81,7 +81,7 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
 
         /// <summary>
-        /// The AWS region in which <see cref="Bucket"/> resides.
+        /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
         /// <value>The region.</value>
         [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" })]
@@ -271,7 +271,7 @@ namespace Sensus.DataStores.Remote
             return new AmazonS3Client(null, clientConfig);
         }
 
-        public override Task WriteAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
+        public override Task WriteDatumStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
@@ -299,7 +299,7 @@ namespace Sensus.DataStores.Remote
             });
         }
 
-        public override Task WriteAsync(Datum datum, CancellationToken cancellationToken)
+        public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
@@ -318,7 +318,7 @@ namespace Sensus.DataStores.Remote
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to write datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
                 finally
                 {
@@ -337,8 +337,8 @@ namespace Sensus.DataStores.Remote
                     {
                         BucketName = _bucket,
                         CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
-                        Key = key,
                         InputStream = stream,
+                        Key = key,
                         ContentType = contentType
                     };
 
@@ -362,7 +362,7 @@ namespace Sensus.DataStores.Remote
             return (_folder + "/" + datum.GetType().Name + "/" + datum.Id + ".json").Trim('/');
         }
 
-        public override async Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken)
+        public override async Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 

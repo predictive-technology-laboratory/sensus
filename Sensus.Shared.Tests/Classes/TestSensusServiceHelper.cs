@@ -37,6 +37,14 @@ namespace Sensus.Tests.Classes
             }
         }
 
+        public override float BatteryChargePercent
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override string OperatingSystem
         {
             get

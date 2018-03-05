@@ -396,7 +396,7 @@ namespace Sensus.Probes
                         }
                     }
 
-                    return _protocol.LocalDataStore.WriteAsync(datum, cancellationToken.GetValueOrDefault());
+                    return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
                 }
             }
 

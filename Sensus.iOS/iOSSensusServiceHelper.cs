@@ -48,6 +48,15 @@ namespace Sensus.iOS
             }
         }
 
+        public override float BatteryChargePercent
+        {
+            get
+            {
+                UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
+                return UIDevice.CurrentDevice.BatteryLevel * 100;
+            }
+        }
+
         public override bool WiFiConnected
         {
             get

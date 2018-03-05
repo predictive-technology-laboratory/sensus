@@ -64,10 +64,15 @@ namespace Sensus.UI
                 if (_protocol.LocalDataStore != null)
                 {
                     DataStore copy = _protocol.LocalDataStore.Copy();
+
                     if (copy == null)
+                    {
                         SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
+                    }
                     else
+                    {
                         await Navigation.PushAsync(new DataStorePage(_protocol, copy, true, false));
+                    }
                 }
             };
 
@@ -103,10 +108,15 @@ namespace Sensus.UI
                 if (_protocol.RemoteDataStore != null)
                 {
                     DataStore copy = _protocol.RemoteDataStore.Copy();
+
                     if (copy == null)
+                    {
                         SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
+                    }
                     else
+                    {
                         await Navigation.PushAsync(new DataStorePage(_protocol, copy, false, false));
+                    }
                 }
             };
 
@@ -175,7 +185,9 @@ namespace Sensus.UI
             };
 
             foreach (View view in views)
+            {
                 stack.Children.Add(view);
+            }
 
             Button lockButton = new Button
             {
@@ -206,7 +218,9 @@ namespace Sensus.UI
                             string password = input.Value as string;
 
                             if (string.IsNullOrWhiteSpace(password))
+                            {
                                 SensusServiceHelper.Get().FlashNotificationAsync("Please enter a non-empty password.");
+                            }
                             else
                             {
                                 _protocol.LockPasswordHash = SensusServiceHelper.Get().GetHash(password);
@@ -251,7 +265,9 @@ namespace Sensus.UI
             string cancelButtonName = "Cancel";
             string selected = await DisplayActionSheet("Select " + (local ? "Local" : "Remote") + " Data Store", cancelButtonName, null, dataStores.Select((d, i) => (i + 1) + ") " + d.DisplayName).ToArray());
             if (!string.IsNullOrWhiteSpace(selected) && selected != cancelButtonName)
+            {
                 await Navigation.PushAsync(new DataStorePage(_protocol, dataStores[int.Parse(selected.Substring(0, selected.IndexOf(")"))) - 1], local, true));
+            }
         }
 
         protected override void OnDisappearing()

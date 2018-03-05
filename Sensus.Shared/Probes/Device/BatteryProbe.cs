@@ -13,12 +13,14 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Device
 {
     /// <summary>
-    /// Probes information about the battery.
+    /// Obtains the device's current battery level on the scale of [0,100] percent.
     /// </summary>
     public abstract class BatteryProbe : PollingProbe
     {
@@ -38,6 +40,11 @@ namespace Sensus.Probes.Device
         public sealed override Type DatumType
         {
             get { return typeof(BatteryDatum); }
+        }
+
+        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        {
+            return new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, SensusServiceHelper.Get().BatteryChargePercent) };
         }
 
         protected override ChartSeries GetChartSeries()

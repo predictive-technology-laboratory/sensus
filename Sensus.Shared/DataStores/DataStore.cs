@@ -14,19 +14,13 @@
 
 using Newtonsoft.Json;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Sensus.UI.UiProperties;
 using Sensus.Exceptions;
-using Sensus.DataStores.Remote;
-using Sensus.Context;
-using Sensus.Callbacks;
 
 namespace Sensus.DataStores
 {
     /// <summary>
-    /// Data Stores play an integral part in the Sensus system. They are the storage location for data that come off of <see cref="Probes.Probe"/>s.
+    /// <see cref="DataStore"/>s coordinate the compression, encryption, and transmission of data produced by <see cref="Probes.Probe"/>s, both
+    /// on the user's device as well as remotely.
     /// </summary>
     public abstract class DataStore
     {

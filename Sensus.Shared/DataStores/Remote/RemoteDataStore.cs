@@ -45,6 +45,7 @@ namespace Sensus.DataStores.Remote
         private ScheduledCallback _writeCallback;
         private bool _requireWiFi;
         private bool _requireCharging;
+        private float _requiredBatteryChargeLevelPercent;
 
         /// <summary>
         /// How many milliseconds to pause between each writing data.
@@ -110,6 +111,30 @@ namespace Sensus.DataStores.Remote
             set { _requireCharging = value; }
         }
 
+        /// <summary>
+        /// The battery charge percent required to write data to the <see cref="RemoteDataStore"/>. This value is 
+        /// only considered when <see cref="RequireCharging"/> is <c>false</c>. Since remote data storage relies on wireless
+        /// data transmission, significant battery consumption may result. This value provides flexibility when combined with 
+        /// <see cref="RequireCharging"/>. For example, when <see cref="RequireCharging"/> is <c>false</c> and 
+        /// <see cref="RequiredBatteryChargeLevelPercent"/> is 95%, Sensus will be allowed to transfer data without an external
+        /// power source only when the battery is almost fully charged. This will minimize user irritation.
+        /// </summary>
+        /// <value>The required battery charge level percent.</value>
+        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, int.MaxValue)]
+        public float RequiredBatteryChargeLevelPercent
+        {
+            get { return _requiredBatteryChargeLevelPercent; }
+            set
+            {
+                if (value < 0)
+                {
+                    value = 0;
+                }
+
+                _requiredBatteryChargeLevelPercent = value;
+            }
+        }
+
         [JsonIgnore]
         public abstract bool CanRetrieveWrittenData { get; }
 
@@ -120,6 +145,7 @@ namespace Sensus.DataStores.Remote
             _mostRecentSuccessfulWriteTime = null;
             _requireWiFi = true;
             _requireCharging = true;
+            _requiredBatteryChargeLevelPercent = 95;
 
 #if DEBUG || UI_TESTING
             WriteDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
@@ -144,7 +170,7 @@ namespace Sensus.DataStores.Remote
             userNotificationMessage = "Please open this notification to submit your data for the \"" + Protocol.Name + "\" study.";
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
+            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
             SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_writeCallback, TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG);
         }
 
@@ -177,7 +203,7 @@ namespace Sensus.DataStores.Remote
             return restart;
         }
 
-        public Task WriteAsync(CancellationToken cancellationToken)
+        public Task WriteLocalDataStoreAsync(CancellationToken cancellationToken)
         {
             bool write = false;
 
@@ -192,6 +218,10 @@ namespace Sensus.DataStores.Remote
             else if (_requireCharging && !SensusServiceHelper.Get().IsCharging)
             {
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
+            }
+            else if (!_requireCharging && SensusServiceHelper.Get().BatteryChargePercent < _requiredBatteryChargeLevelPercent)
+            {
+                SensusServiceHelper.Get().Logger.Log("Charging not required, but the battery charge percent is lower than required.", LoggingLevel.Normal, GetType());
             }
             else
             {
@@ -224,12 +254,38 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public abstract Task WriteAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken);
+        /// <summary>
+        /// Writes a stream of <see cref="Datum"/>.
+        /// </summary>
+        /// <returns>The stream.</returns>
+        /// <param name="stream">Stream.</param>
+        /// <param name="name">Descriptive name for the stream.</param>
+        /// <param name="contentType">MIME content type for the stream.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task WriteDatumStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken);
 
-        public abstract Task WriteAsync(Datum datum, CancellationToken cancellationToken);
+        /// <summary>
+        /// Writes a single <see cref="Datum"/> to the <see cref="RemoteDataStore"/>.
+        /// </summary>
+        /// <returns>The datum.</returns>
+        /// <param name="datum">Datum.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Gets the key (identifier) value for a <see cref="Datum"/>. Used within <see cref="WriteDatumAsync"/> and <see cref="GetDatumAsync"/>.
+        /// </summary>
+        /// <returns>The datum key.</returns>
+        /// <param name="datum">Datum.</param>
         public abstract string GetDatumKey(Datum datum);
 
-        public abstract Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken) where T : Datum;
+        /// <summary>
+        /// Retrieves a single <see cref="Datum"/> from the <see cref="RemoteDataStore"/>.
+        /// </summary>
+        /// <returns>The datum.</returns>
+        /// <param name="datumKey">Datum key.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <typeparam name="T">The type of <see cref="Datum"/> to retrieve.</typeparam>
+        public abstract Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken) where T : Datum;
     }
 }

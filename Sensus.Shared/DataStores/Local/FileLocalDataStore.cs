@@ -174,7 +174,7 @@ namespace Sensus.DataStores.Local
             base.Start();
         }
 
-        public override Task<bool> WriteAsync(Datum datum, CancellationToken cancellationToken)
+        public override Task<bool> WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
@@ -282,7 +282,7 @@ namespace Sensus.DataStores.Local
 
                                 using (FileStream fileToWrite = new FileStream(pathToWrite, FileMode.Open, FileAccess.Read))
                                 {
-                                    await Protocol.RemoteDataStore.WriteAsync(fileToWrite, name, contentType, cancellationToken);
+                                    await Protocol.RemoteDataStore.WriteDatumStreamAsync(fileToWrite, name, contentType, cancellationToken);
                                 }
 
                                 File.Delete(pathToWrite);

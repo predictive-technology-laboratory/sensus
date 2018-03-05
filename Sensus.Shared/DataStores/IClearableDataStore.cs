@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace Sensus.DataStores
 {
+    /// <summary>
+    /// Implemented by <see cref="DataStore"/>s that are able to clear their content. For example,
+    /// the <see cref="Local.FileLocalDataStore"/> accumulates data within files on the device's local storage. Periodically,
+    /// these files are transferred to a <see cref="Remote.RemoteDataStore"/> and the files are deleted. If the user wishes
+    /// to free up space prior to such deletions, he or she may do so via user interface elements provided by classes that
+    /// implement this interface.
+    /// </summary>
     public interface IClearableDataStore
     {
         void Clear();
