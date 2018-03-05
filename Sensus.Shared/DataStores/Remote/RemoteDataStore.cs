@@ -140,7 +140,6 @@ namespace Sensus.DataStores.Remote
 
         protected RemoteDataStore()
         {
-            _writeDelayMS = 10000;
             _writeTimeoutMinutes = 5;
             _mostRecentSuccessfulWriteTime = null;
             _requireWiFi = true;
@@ -267,7 +266,7 @@ namespace Sensus.DataStores.Remote
         /// <summary>
         /// Writes a single <see cref="Datum"/> to the <see cref="RemoteDataStore"/>.
         /// </summary>
-        /// <returns>The datum.</returns>
+        /// <returns>Task.</returns>
         /// <param name="datum">Datum.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
