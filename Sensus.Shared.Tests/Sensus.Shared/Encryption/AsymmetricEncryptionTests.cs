@@ -16,6 +16,9 @@ using NUnit.Framework;
 using Sensus.Encryption;
 using System;
 using System.Security.Cryptography;
+using System.Text;
+using System.IO;
+using System.Linq;
 
 namespace Sensus.Tests.Encryption
 {
@@ -61,7 +64,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, _privateKey);
 
-            Assert.AreEqual("aw3lrifos83fusoi3fjsofisjfo", encryption.Decrypt(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
+            Assert.AreEqual("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
         }
 
         [Test]
@@ -83,7 +86,36 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, null);
 
-            Assert.Throws(typeof(CryptographicException), () => { encryption.Decrypt(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")); });
+            Assert.Throws(typeof(CryptographicException), () => { encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")); });
+        }
+
+        [Test]
+        public void SymmetricEncryptionEqualsTest()
+        {
+            string message = "aw3lrifos83fusoi3fjsofisjfo";
+            byte[] messageBytes = Encoding.Unicode.GetBytes(message);
+
+            var asymmetricEncryption = new AsymmetricEncryption(_publicKey, _privateKey);
+            string path = Path.GetTempFileName();
+            string outputPath = Path.GetTempFileName();
+            asymmetricEncryption.EncryptSymmetrically(messageBytes, 256, 128, outputPath);
+
+            byte[] encryptedBytes = File.ReadAllBytes(outputPath);
+
+            int keyLen = BitConverter.ToInt32(encryptedBytes.Take(4).ToArray(), 0);
+            byte[] key = encryptedBytes.Skip(4).Take(keyLen).ToArray();
+
+            int ivLen = BitConverter.ToInt32(encryptedBytes.Skip(4 + key.Length).Take(4).ToArray(), 0);
+            byte[] iv = encryptedBytes.Skip(4 + key.Length + 4).Take(ivLen).ToArray();
+
+            key = asymmetricEncryption.DecryptToBytes(key);
+            iv = asymmetricEncryption.DecryptToBytes(iv);
+
+            byte[] encryptedMessageBytes = encryptedBytes.Skip(4 + keyLen + 4 + ivLen).ToArray();
+
+            SymmetricEncryption symmetricEncryption = new SymmetricEncryption(key, iv);
+            string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes); 
+            Assert.AreEqual(message, decryptedMessage);
         }
     }
 }

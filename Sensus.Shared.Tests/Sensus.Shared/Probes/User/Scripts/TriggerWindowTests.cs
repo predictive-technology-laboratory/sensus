@@ -16,7 +16,7 @@ using System;
 using NUnit.Framework;
 using Sensus.Probes.User.Scripts;
 
-namespace Sensus.Tests
+namespace Sensus.Tests.Probes.User.Scripts
 {
     [TestFixture]
     public class TriggerWindowTests

@@ -60,7 +60,7 @@ namespace Sensus.DataStores.Local
 
                 lock (_sizeTriggeredRemoteWriteLocker)
                 {
-                    if (TooLarge() && !_sizeTriggeredRemoteWriteRunning)
+                    if (IsTooLarge() && !_sizeTriggeredRemoteWriteRunning)
                     {
                         _sizeTriggeredRemoteWriteRunning = true;
                         commit = true;
@@ -86,7 +86,7 @@ namespace Sensus.DataStores.Local
             });
         }
 
-        protected abstract bool TooLarge();
+        protected abstract bool IsTooLarge();
 
         public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
 

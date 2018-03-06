@@ -186,7 +186,7 @@ namespace Sensus
                 json = json.Replace('\n', ' ').Replace('\r', ' ');
             }
 
-            return json;
+            return json.Trim();
         }
 
         public override int GetHashCode()

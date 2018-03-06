@@ -21,12 +21,9 @@ namespace Sensus.Encryption
 {
     public class SymmetricEncryption : IEncryption
     {
-        #region Fields
         private readonly byte[] _encryptionKeyBytes;
         private readonly byte[] _initializationVectorBytes;
-        #endregion
 
-        #region Constructor
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses zero-valued initialization vector.
         /// 
@@ -60,9 +57,7 @@ namespace Sensus.Encryption
             _encryptionKeyBytes = encryptionKeyBytes;
             _initializationVectorBytes = initializationVectorBytes;
         }
-        #endregion
 
-        #region Private Methods
         public static byte[] ConvertHexStringToByteArray(string hexString)
         {
             byte[] bytes = new byte[hexString.Length / 2];
@@ -74,9 +69,7 @@ namespace Sensus.Encryption
 
             return bytes;
         }
-        #endregion
 
-        #region Public Methods
         public byte[] Encrypt(string unencryptedValue)
         {
             return Encrypt(Encoding.Unicode.GetBytes(unencryptedValue));
@@ -96,7 +89,7 @@ namespace Sensus.Encryption
             }
         }
 
-        public string Decrypt(byte[] encryptedBytes)
+        public string DecryptToString(byte[] encryptedBytes)
         {
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
@@ -109,6 +102,5 @@ namespace Sensus.Encryption
                 }
             }
         }
-        #endregion
     }
 }

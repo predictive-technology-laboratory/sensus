@@ -271,7 +271,7 @@ namespace Sensus.DataStores.Remote
             return new AmazonS3Client(null, clientConfig);
         }
 
-        public override Task WriteDatumStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
+        public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {

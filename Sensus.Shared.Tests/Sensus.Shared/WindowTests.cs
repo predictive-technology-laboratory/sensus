@@ -15,7 +15,7 @@
 using System;
 using NUnit.Framework;
 
-namespace Sensus.Tests.Core
+namespace Sensus.Tests
 {
     [TestFixture]
     public class WindowTests

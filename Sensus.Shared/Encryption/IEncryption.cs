@@ -18,6 +18,6 @@ namespace Sensus.Encryption
     {
         byte[] Encrypt(string unencryptedValue);
         byte[] Encrypt(byte[] unencryptedBytes);
-        string Decrypt(byte[] encryptedBytes);
+        string DecryptToString(byte[] encryptedBytes);
     }
 }

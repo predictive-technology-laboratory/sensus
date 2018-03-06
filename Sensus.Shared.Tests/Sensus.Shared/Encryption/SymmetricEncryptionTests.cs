@@ -45,7 +45,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new SymmetricEncryption("21759BBC6FD5F9AB7012F8BF6C998080F3C5A5A168C3ADCE13CB872F28598A44");
 
-            Assert.AreEqual("asl3j3lkfjwlkj3lwk3jflwk3j", encryption.Decrypt(encryption.Encrypt("asl3j3lkfjwlkj3lwk3jflwk3j")));
+            Assert.AreEqual("asl3j3lkfjwlkj3lwk3jflwk3j", encryption.DecryptToString(encryption.Encrypt("asl3j3lkfjwlkj3lwk3jflwk3j")));
         }
     }
 }

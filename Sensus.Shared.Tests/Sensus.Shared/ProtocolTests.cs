@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Sensus.Tests.Core
+namespace Sensus.Tests
 {
     [TestFixture]
     public class ProtocolTests

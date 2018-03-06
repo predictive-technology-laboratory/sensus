@@ -122,7 +122,7 @@ namespace Sensus
         {
             try
             {
-                string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.Decrypt(bytes));
+                string json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(bytes));
 
                 DeserializeAsync(json, async protocol =>
                 {
@@ -414,7 +414,7 @@ namespace Sensus
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
                     uiTestingProtocolFile.CopyTo(protocolStream);
-                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.Decrypt(protocolStream.ToArray()));
+                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray()));
                     DeserializeAsync(protocolJSON, protocol =>
                     {
                         if (protocol == null)
@@ -1278,7 +1278,9 @@ namespace Sensus
         {
             // reset id and storage directory (directory might exist if deserializing the same protocol multiple times)
             if (resetId)
+            {
                 _id = Guid.NewGuid().ToString();
+            }
 
             ResetStorageDirectory();
 
@@ -1300,10 +1302,14 @@ namespace Sensus
             }
 
             if (_localDataStore != null)
+            {
                 _localDataStore.Reset();
+            }
 
             if (_remoteDataStore != null)
+            {
                 _remoteDataStore.Reset();
+            }
 
             _mostRecentReport = null;
         }

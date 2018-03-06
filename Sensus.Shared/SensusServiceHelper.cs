@@ -179,7 +179,7 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.SymmetricEncryption.Decrypt(encryptedJsonBytes);
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes);
                 }
                 catch (Exception exception)
                 {
@@ -255,7 +255,7 @@ namespace Sensus
 
         public static double GetFileSizeMB(string path)
         {
-            return new FileInfo(path).Length / (1024d * 1024d);
+            return new FileInfo(path).Length / Math.Pow(1024d, 2);
         }
 
         /// <remarks>

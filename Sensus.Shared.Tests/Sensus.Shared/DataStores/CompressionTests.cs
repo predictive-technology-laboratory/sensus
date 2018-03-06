@@ -17,7 +17,7 @@ using System.IO;
 using NUnit.Framework;
 using Sensus.DataStores;
 
-namespace Sensus.Tests.Sensus.Shared.DataStores
+namespace Sensus.Tests.DataStores
 {
     [TestFixture]
     public class CompressionTests

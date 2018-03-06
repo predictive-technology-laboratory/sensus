@@ -19,7 +19,7 @@ using Sensus.Tests.Classes;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 
-namespace Sensus.Tests.Core
+namespace Sensus.Tests
 {
     [TestFixture]
     public class SensusServiceHelperTests
