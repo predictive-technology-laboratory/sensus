@@ -224,6 +224,8 @@ namespace Sensus.DataStores.Local
 
         public override void Start()
         {
+            base.Start();
+
             // ensure that we have a valid encryption setup if one is requested
             if (_encrypt)
             {
@@ -239,8 +241,6 @@ namespace Sensus.DataStores.Local
 
             // file needs to be ready to accept data immediately, so write new file before calling base.Start
             OpenFile();
-
-            base.Start();
         }
 
         private void OpenFile()

@@ -233,6 +233,7 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
+            // start base last so we're set up for any callbacks that get scheduled
             base.Start();
         }
 
