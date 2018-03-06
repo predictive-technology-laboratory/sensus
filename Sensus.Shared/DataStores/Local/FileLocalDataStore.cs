@@ -247,6 +247,12 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
+                // it's possible to stop the datastore before entering this lock.
+                if (!Running)
+                {
+                    return;
+                }
+
                 // open new file
                 _path = null;
                 Exception mostRecentException = null;
@@ -298,6 +304,13 @@ namespace Sensus.DataStores.Local
                 // only 1 write operation at once
                 lock (_locker)
                 {
+                    // it's possible to stop the datastore before entering this lock, in which case we won't
+                    // have a file to write to. check for a running data store here.
+                    if(!Running)
+                    {
+                        return written;
+                    }
+
                     // get anonymized JSON for datum
                     string datumJSON = null;
                     try
@@ -370,6 +383,12 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
+                // it's possible to stop the datastore before entering this lock.
+                if (!Running)
+                {
+                    return Task.CompletedTask;
+                }
+
                 CloseFile();
                 PromoteFiles();
                 OpenFile();
