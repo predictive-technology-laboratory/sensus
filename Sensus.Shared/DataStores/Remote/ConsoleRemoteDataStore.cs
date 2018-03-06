@@ -43,7 +43,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override Task WriteDatumStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
+        public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

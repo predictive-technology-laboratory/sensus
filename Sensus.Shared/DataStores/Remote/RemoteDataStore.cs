@@ -262,7 +262,7 @@ namespace Sensus.DataStores.Remote
         /// <param name="name">Descriptive name for the stream.</param>
         /// <param name="contentType">MIME content type for the stream.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task WriteDatumStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken);
+        public abstract Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a single <see cref="Datum"/> to the <see cref="RemoteDataStore"/>.
