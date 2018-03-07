@@ -505,18 +505,30 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.#ctor
   fullName: Sensus.Android.AndroidSensusServiceHelper.AndroidSensusServiceHelper
   nameWithType: AndroidSensusServiceHelper.AndroidSensusServiceHelper
-- uid: Sensus.Android.AndroidSensusServiceHelper.BringToForeground
-  name: BringToForeground()
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BringToForeground
-  commentId: M:Sensus.Android.AndroidSensusServiceHelper.BringToForeground
-  fullName: Sensus.Android.AndroidSensusServiceHelper.BringToForeground()
-  nameWithType: AndroidSensusServiceHelper.BringToForeground()
-- uid: Sensus.Android.AndroidSensusServiceHelper.BringToForeground*
-  name: BringToForeground
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BringToForeground_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.BringToForeground
-  fullName: Sensus.Android.AndroidSensusServiceHelper.BringToForeground
-  nameWithType: AndroidSensusServiceHelper.BringToForeground
+- uid: Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
+  name: BatteryChargePercent
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BatteryChargePercent
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
+  fullName: Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
+  nameWithType: AndroidSensusServiceHelper.BatteryChargePercent
+- uid: Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent*
+  name: BatteryChargePercent
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BatteryChargePercent_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
+  fullName: Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
+  nameWithType: AndroidSensusServiceHelper.BatteryChargePercent
+- uid: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
+  name: BringToForegroundAsync()
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync
+  commentId: M:Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
+  fullName: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync()
+  nameWithType: AndroidSensusServiceHelper.BringToForegroundAsync()
+- uid: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync*
+  name: BringToForegroundAsync
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
+  fullName: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
+  nameWithType: AndroidSensusServiceHelper.BringToForegroundAsync
 - uid: Sensus.Android.AndroidSensusServiceHelper.DeviceId
   name: DeviceId
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DeviceId
@@ -1423,15 +1435,12 @@ references:
   commentId: Overload:Sensus.Android.Probes.Apps.AndroidFacebookProbe.Poll
   fullName: Sensus.Android.Probes.Apps.AndroidFacebookProbe.Poll
   nameWithType: AndroidFacebookProbe.Poll
-- uid: Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Android.Probes.Apps.AndroidFacebookProbe.html#Sensus_Android_Probes_Apps_AndroidFacebookProbe_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: AndroidFacebookProbe.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: AndroidFacebookProbe.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth
+  name: TestHealth()
+  href: api/Sensus.Android.Probes.Apps.AndroidFacebookProbe.html#Sensus_Android_Probes_Apps_AndroidFacebookProbe_TestHealth
+  commentId: M:Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth
+  fullName: Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth()
+  nameWithType: AndroidFacebookProbe.TestHealth()
 - uid: Sensus.Android.Probes.Apps.AndroidFacebookProbe.TestHealth*
   name: TestHealth
   href: api/Sensus.Android.Probes.Apps.AndroidFacebookProbe.html#Sensus_Android_Probes_Apps_AndroidFacebookProbe_TestHealth_
@@ -1975,15 +1984,12 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan
   nameWithType: AndroidBluetoothDeviceProximityProbe.StopScan
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: AndroidBluetoothDeviceProximityProbe.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: AndroidBluetoothDeviceProximityProbe.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth
+  name: TestHealth()
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth()
+  nameWithType: AndroidBluetoothDeviceProximityProbe.TestHealth()
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth*
   name: TestHealth
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth_
@@ -2245,36 +2251,6 @@ references:
   commentId: N:Sensus.Android.Probes.Device
   fullName: Sensus.Android.Probes.Device
   nameWithType: Sensus.Android.Probes.Device
-- uid: Sensus.Android.Probes.Device.AndroidBatteryProbe
-  name: AndroidBatteryProbe
-  href: api/Sensus.Android.Probes.Device.AndroidBatteryProbe.html
-  commentId: T:Sensus.Android.Probes.Device.AndroidBatteryProbe
-  fullName: Sensus.Android.Probes.Device.AndroidBatteryProbe
-  nameWithType: AndroidBatteryProbe
-- uid: Sensus.Android.Probes.Device.AndroidBatteryProbe.#ctor
-  name: AndroidBatteryProbe()
-  href: api/Sensus.Android.Probes.Device.AndroidBatteryProbe.html#Sensus_Android_Probes_Device_AndroidBatteryProbe__ctor
-  commentId: M:Sensus.Android.Probes.Device.AndroidBatteryProbe.#ctor
-  fullName: Sensus.Android.Probes.Device.AndroidBatteryProbe.AndroidBatteryProbe()
-  nameWithType: AndroidBatteryProbe.AndroidBatteryProbe()
-- uid: Sensus.Android.Probes.Device.AndroidBatteryProbe.#ctor*
-  name: AndroidBatteryProbe
-  href: api/Sensus.Android.Probes.Device.AndroidBatteryProbe.html#Sensus_Android_Probes_Device_AndroidBatteryProbe__ctor_
-  commentId: Overload:Sensus.Android.Probes.Device.AndroidBatteryProbe.#ctor
-  fullName: Sensus.Android.Probes.Device.AndroidBatteryProbe.AndroidBatteryProbe
-  nameWithType: AndroidBatteryProbe.AndroidBatteryProbe
-- uid: Sensus.Android.Probes.Device.AndroidBatteryProbe.Poll(System.Threading.CancellationToken)
-  name: Poll(CancellationToken)
-  href: api/Sensus.Android.Probes.Device.AndroidBatteryProbe.html#Sensus_Android_Probes_Device_AndroidBatteryProbe_Poll_System_Threading_CancellationToken_
-  commentId: M:Sensus.Android.Probes.Device.AndroidBatteryProbe.Poll(System.Threading.CancellationToken)
-  fullName: Sensus.Android.Probes.Device.AndroidBatteryProbe.Poll(System.Threading.CancellationToken)
-  nameWithType: AndroidBatteryProbe.Poll(CancellationToken)
-- uid: Sensus.Android.Probes.Device.AndroidBatteryProbe.Poll*
-  name: Poll
-  href: api/Sensus.Android.Probes.Device.AndroidBatteryProbe.html#Sensus_Android_Probes_Device_AndroidBatteryProbe_Poll_
-  commentId: Overload:Sensus.Android.Probes.Device.AndroidBatteryProbe.Poll
-  fullName: Sensus.Android.Probes.Device.AndroidBatteryProbe.Poll
-  nameWithType: AndroidBatteryProbe.Poll
 - uid: Sensus.Android.Probes.Device.AndroidScreenProbe
   name: AndroidScreenProbe
   href: api/Sensus.Android.Probes.Device.AndroidScreenProbe.html
@@ -8617,12 +8593,6 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.design_snackbar_background
   fullName: Sensus.Android.Resource.Drawable.design_snackbar_background
   nameWithType: Resource.Drawable.design_snackbar_background
-- uid: Sensus.Android.Resource.Drawable.gear_wrench
-  name: gear_wrench
-  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_gear_wrench
-  commentId: F:Sensus.Android.Resource.Drawable.gear_wrench
-  fullName: Sensus.Android.Resource.Drawable.gear_wrench
-  nameWithType: Resource.Drawable.gear_wrench
 - uid: Sensus.Android.Resource.Drawable.googleg_disabled_color_18
   name: googleg_disabled_color_18
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_googleg_disabled_color_18
@@ -8635,6 +8605,12 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.googleg_standard_color_18
   fullName: Sensus.Android.Resource.Drawable.googleg_standard_color_18
   nameWithType: Resource.Drawable.googleg_standard_color_18
+- uid: Sensus.Android.Resource.Drawable.hamburger
+  name: hamburger
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_hamburger
+  commentId: F:Sensus.Android.Resource.Drawable.hamburger
+  fullName: Sensus.Android.Resource.Drawable.hamburger
+  nameWithType: Resource.Drawable.hamburger
 - uid: Sensus.Android.Resource.Drawable.ic_audiotrack_dark
   name: ic_audiotrack_dark
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_ic_audiotrack_dark
@@ -9757,12 +9733,6 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.messenger_button_white_bg_selector
   fullName: Sensus.Android.Resource.Drawable.messenger_button_white_bg_selector
   nameWithType: Resource.Drawable.messenger_button_white_bg_selector
-- uid: Sensus.Android.Resource.Drawable.minus
-  name: minus
-  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_minus
-  commentId: F:Sensus.Android.Resource.Drawable.minus
-  fullName: Sensus.Android.Resource.Drawable.minus
-  nameWithType: Resource.Drawable.minus
 - uid: Sensus.Android.Resource.Drawable.mr_button_connected_dark
   name: mr_button_connected_dark
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_mr_button_connected_dark
@@ -9961,12 +9931,6 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.notify_panel_notification_icon_bg
   fullName: Sensus.Android.Resource.Drawable.notify_panel_notification_icon_bg
   nameWithType: Resource.Drawable.notify_panel_notification_icon_bg
-- uid: Sensus.Android.Resource.Drawable.pencil
-  name: pencil
-  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_pencil
-  commentId: F:Sensus.Android.Resource.Drawable.pencil
-  fullName: Sensus.Android.Resource.Drawable.pencil
-  nameWithType: Resource.Drawable.pencil
 - uid: Sensus.Android.Resource.Drawable.places_ic_clear
   name: places_ic_clear
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_places_ic_clear
@@ -9997,12 +9961,24 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.powered_by_google_light
   fullName: Sensus.Android.Resource.Drawable.powered_by_google_light
   nameWithType: Resource.Drawable.powered_by_google_light
-- uid: Sensus.Android.Resource.Drawable.share
-  name: share
-  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_share
-  commentId: F:Sensus.Android.Resource.Drawable.share
-  fullName: Sensus.Android.Resource.Drawable.share
-  nameWithType: Resource.Drawable.share
+- uid: Sensus.Android.Resource.Drawable.privacy
+  name: privacy
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_privacy
+  commentId: F:Sensus.Android.Resource.Drawable.privacy
+  fullName: Sensus.Android.Resource.Drawable.privacy
+  nameWithType: Resource.Drawable.privacy
+- uid: Sensus.Android.Resource.Drawable.studies
+  name: studies
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_studies
+  commentId: F:Sensus.Android.Resource.Drawable.studies
+  fullName: Sensus.Android.Resource.Drawable.studies
+  nameWithType: Resource.Drawable.studies
+- uid: Sensus.Android.Resource.Drawable.surveys
+  name: surveys
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_surveys
+  commentId: F:Sensus.Android.Resource.Drawable.surveys
+  fullName: Sensus.Android.Resource.Drawable.surveys
+  nameWithType: Resource.Drawable.surveys
 - uid: Sensus.Android.Resource.Drawable.tooltip_frame_dark
   name: tooltip_frame_dark
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_tooltip_frame_dark
@@ -11443,6 +11419,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.tabMode
   fullName: Sensus.Android.Resource.Id.tabMode
   nameWithType: Resource.Id.tabMode
+- uid: Sensus.Android.Resource.Id.tag_transition_group
+  name: tag_transition_group
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_tag_transition_group
+  commentId: F:Sensus.Android.Resource.Id.tag_transition_group
+  fullName: Sensus.Android.Resource.Id.tag_transition_group
+  nameWithType: Resource.Id.tag_transition_group
 - uid: Sensus.Android.Resource.Id.technicalIndicatorLayout
   name: technicalIndicatorLayout
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_technicalIndicatorLayout
@@ -11767,12 +11749,6 @@ references:
   commentId: F:Sensus.Android.Resource.Layout.abc_action_bar_up_container
   fullName: Sensus.Android.Resource.Layout.abc_action_bar_up_container
   nameWithType: Resource.Layout.abc_action_bar_up_container
-- uid: Sensus.Android.Resource.Layout.abc_action_bar_view_list_nav_layout
-  name: abc_action_bar_view_list_nav_layout
-  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_abc_action_bar_view_list_nav_layout
-  commentId: F:Sensus.Android.Resource.Layout.abc_action_bar_view_list_nav_layout
-  fullName: Sensus.Android.Resource.Layout.abc_action_bar_view_list_nav_layout
-  nameWithType: Resource.Layout.abc_action_bar_view_list_nav_layout
 - uid: Sensus.Android.Resource.Layout.abc_action_menu_item_layout
   name: abc_action_menu_item_layout
   href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_abc_action_menu_item_layout
@@ -12331,18 +12307,6 @@ references:
   commentId: F:Sensus.Android.Resource.String.abc_action_bar_home_description
   fullName: Sensus.Android.Resource.String.abc_action_bar_home_description
   nameWithType: Resource.String.abc_action_bar_home_description
-- uid: Sensus.Android.Resource.String.abc_action_bar_home_description_format
-  name: abc_action_bar_home_description_format
-  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_abc_action_bar_home_description_format
-  commentId: F:Sensus.Android.Resource.String.abc_action_bar_home_description_format
-  fullName: Sensus.Android.Resource.String.abc_action_bar_home_description_format
-  nameWithType: Resource.String.abc_action_bar_home_description_format
-- uid: Sensus.Android.Resource.String.abc_action_bar_home_subtitle_description_format
-  name: abc_action_bar_home_subtitle_description_format
-  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_abc_action_bar_home_subtitle_description_format
-  commentId: F:Sensus.Android.Resource.String.abc_action_bar_home_subtitle_description_format
-  fullName: Sensus.Android.Resource.String.abc_action_bar_home_subtitle_description_format
-  nameWithType: Resource.String.abc_action_bar_home_subtitle_description_format
 - uid: Sensus.Android.Resource.String.abc_action_bar_up_description
   name: abc_action_bar_up_description
   href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_abc_action_bar_up_description
@@ -14527,66 +14491,6 @@ references:
   commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Menu
   fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Menu
   nameWithType: Resource.Style.TextAppearance_AppCompat_Menu
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification
-  name: TextAppearance_AppCompat_Notification
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Info
-  name: TextAppearance_AppCompat_Notification_Info
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Info
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Info
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Info
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Info
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Info_Media
-  name: TextAppearance_AppCompat_Notification_Info_Media
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Info_Media
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Info_Media
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Info_Media
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Info_Media
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Line2
-  name: TextAppearance_AppCompat_Notification_Line2
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Line2
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Line2
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Line2
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Line2
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Line2_Media
-  name: TextAppearance_AppCompat_Notification_Line2_Media
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Line2_Media
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Line2_Media
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Line2_Media
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Line2_Media
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Media
-  name: TextAppearance_AppCompat_Notification_Media
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Media
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Media
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Media
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Media
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Time
-  name: TextAppearance_AppCompat_Notification_Time
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Time
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Time
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Time
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Time
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Time_Media
-  name: TextAppearance_AppCompat_Notification_Time_Media
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Time_Media
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Time_Media
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Time_Media
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Time_Media
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Title
-  name: TextAppearance_AppCompat_Notification_Title
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Title
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Title
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Title
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Title
-- uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Title_Media
-  name: TextAppearance_AppCompat_Notification_Title_Media
-  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_Notification_Title_Media
-  commentId: F:Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Title_Media
-  fullName: Sensus.Android.Resource.Style.TextAppearance_AppCompat_Notification_Title_Media
-  nameWithType: Resource.Style.TextAppearance_AppCompat_Notification_Title_Media
 - uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat_SearchResult_Subtitle
   name: TextAppearance_AppCompat_SearchResult_Subtitle
   href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat_SearchResult_Subtitle
@@ -17611,6 +17515,24 @@ references:
   commentId: F:Sensus.Android.Resource.Styleable.FontFamilyFont
   fullName: Sensus.Android.Resource.Styleable.FontFamilyFont
   nameWithType: Resource.Styleable.FontFamilyFont
+- uid: Sensus.Android.Resource.Styleable.FontFamilyFont_android_font
+  name: FontFamilyFont_android_font
+  href: api/Sensus.Android.Resource.Styleable.html#Sensus_Android_Resource_Styleable_FontFamilyFont_android_font
+  commentId: F:Sensus.Android.Resource.Styleable.FontFamilyFont_android_font
+  fullName: Sensus.Android.Resource.Styleable.FontFamilyFont_android_font
+  nameWithType: Resource.Styleable.FontFamilyFont_android_font
+- uid: Sensus.Android.Resource.Styleable.FontFamilyFont_android_fontStyle
+  name: FontFamilyFont_android_fontStyle
+  href: api/Sensus.Android.Resource.Styleable.html#Sensus_Android_Resource_Styleable_FontFamilyFont_android_fontStyle
+  commentId: F:Sensus.Android.Resource.Styleable.FontFamilyFont_android_fontStyle
+  fullName: Sensus.Android.Resource.Styleable.FontFamilyFont_android_fontStyle
+  nameWithType: Resource.Styleable.FontFamilyFont_android_fontStyle
+- uid: Sensus.Android.Resource.Styleable.FontFamilyFont_android_fontWeight
+  name: FontFamilyFont_android_fontWeight
+  href: api/Sensus.Android.Resource.Styleable.html#Sensus_Android_Resource_Styleable_FontFamilyFont_android_fontWeight
+  commentId: F:Sensus.Android.Resource.Styleable.FontFamilyFont_android_fontWeight
+  fullName: Sensus.Android.Resource.Styleable.FontFamilyFont_android_fontWeight
+  nameWithType: Resource.Styleable.FontFamilyFont_android_fontWeight
 - uid: Sensus.Android.Resource.Styleable.FontFamilyFont_font
   name: FontFamilyFont_font
   href: api/Sensus.Android.Resource.Styleable.html#Sensus_Android_Resource_Styleable_FontFamilyFont_font
@@ -20870,6 +20792,69 @@ references:
   commentId: N:Sensus.DataStores
   fullName: Sensus.DataStores
   nameWithType: Sensus.DataStores
+- uid: Sensus.DataStores.Compressor
+  name: Compressor
+  href: api/Sensus.DataStores.Compressor.html
+  commentId: T:Sensus.DataStores.Compressor
+  fullName: Sensus.DataStores.Compressor
+  nameWithType: Compressor
+- uid: Sensus.DataStores.Compressor.#ctor(Sensus.DataStores.Compressor.CompressionMethod)
+  name: Compressor(Compressor.CompressionMethod)
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor__ctor_Sensus_DataStores_Compressor_CompressionMethod_
+  commentId: M:Sensus.DataStores.Compressor.#ctor(Sensus.DataStores.Compressor.CompressionMethod)
+  fullName: Sensus.DataStores.Compressor.Compressor(Sensus.DataStores.Compressor.CompressionMethod)
+  nameWithType: Compressor.Compressor(Compressor.CompressionMethod)
+- uid: Sensus.DataStores.Compressor.#ctor*
+  name: Compressor
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor__ctor_
+  commentId: Overload:Sensus.DataStores.Compressor.#ctor
+  fullName: Sensus.DataStores.Compressor.Compressor
+  nameWithType: Compressor.Compressor
+- uid: Sensus.DataStores.Compressor.Compress(System.Byte[],System.IO.Stream)
+  name: Compress(Byte[], Stream)
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Compress_System_Byte___System_IO_Stream_
+  commentId: M:Sensus.DataStores.Compressor.Compress(System.Byte[],System.IO.Stream)
+  name.vb: Compress(Byte(), Stream)
+  fullName: Sensus.DataStores.Compressor.Compress(System.Byte[], System.IO.Stream)
+  fullName.vb: Sensus.DataStores.Compressor.Compress(System.Byte(), System.IO.Stream)
+  nameWithType: Compressor.Compress(Byte[], Stream)
+  nameWithType.vb: Compressor.Compress(Byte(), Stream)
+- uid: Sensus.DataStores.Compressor.Compress*
+  name: Compress
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Compress_
+  commentId: Overload:Sensus.DataStores.Compressor.Compress
+  fullName: Sensus.DataStores.Compressor.Compress
+  nameWithType: Compressor.Compress
+- uid: Sensus.DataStores.Compressor.CompressionMethod
+  name: Compressor.CompressionMethod
+  href: api/Sensus.DataStores.Compressor.CompressionMethod.html
+  commentId: T:Sensus.DataStores.Compressor.CompressionMethod
+  fullName: Sensus.DataStores.Compressor.CompressionMethod
+  nameWithType: Compressor.CompressionMethod
+- uid: Sensus.DataStores.Compressor.CompressionMethod.GZip
+  name: GZip
+  href: api/Sensus.DataStores.Compressor.CompressionMethod.html#Sensus_DataStores_Compressor_CompressionMethod_GZip
+  commentId: F:Sensus.DataStores.Compressor.CompressionMethod.GZip
+  fullName: Sensus.DataStores.Compressor.CompressionMethod.GZip
+  nameWithType: Compressor.CompressionMethod.GZip
+- uid: Sensus.DataStores.Compressor.CompressionMethod.value__
+  name: value__
+  href: api/Sensus.DataStores.Compressor.CompressionMethod.html#Sensus_DataStores_Compressor_CompressionMethod_value__
+  commentId: F:Sensus.DataStores.Compressor.CompressionMethod.value__
+  fullName: Sensus.DataStores.Compressor.CompressionMethod.value__
+  nameWithType: Compressor.CompressionMethod.value__
+- uid: Sensus.DataStores.Compressor.Decompress(System.IO.Stream)
+  name: Decompress(Stream)
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Decompress_System_IO_Stream_
+  commentId: M:Sensus.DataStores.Compressor.Decompress(System.IO.Stream)
+  fullName: Sensus.DataStores.Compressor.Decompress(System.IO.Stream)
+  nameWithType: Compressor.Decompress(Stream)
+- uid: Sensus.DataStores.Compressor.Decompress*
+  name: Decompress
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Decompress_
+  commentId: Overload:Sensus.DataStores.Compressor.Decompress
+  fullName: Sensus.DataStores.Compressor.Decompress
+  nameWithType: Compressor.Decompress
 - uid: Sensus.DataStores.DataStore
   name: DataStore
   href: api/Sensus.DataStores.DataStore.html
@@ -20888,141 +20873,6 @@ references:
   commentId: Overload:Sensus.DataStores.DataStore.#ctor
   fullName: Sensus.DataStores.DataStore.DataStore
   nameWithType: DataStore.DataStore
-- uid: Sensus.DataStores.DataStore.AddAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken},System.Boolean)
-  name: AddAsync(Datum, Nullable<CancellationToken>, Boolean)
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__System_Boolean_
-  commentId: M:Sensus.DataStores.DataStore.AddAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken},System.Boolean)
-  name.vb: AddAsync(Datum, Nullable(Of CancellationToken), Boolean)
-  fullName: Sensus.DataStores.DataStore.AddAsync(Sensus.Datum, System.Nullable<System.Threading.CancellationToken>, System.Boolean)
-  fullName.vb: Sensus.DataStores.DataStore.AddAsync(Sensus.Datum, System.Nullable(Of System.Threading.CancellationToken), System.Boolean)
-  nameWithType: DataStore.AddAsync(Datum, Nullable<CancellationToken>, Boolean)
-  nameWithType.vb: DataStore.AddAsync(Datum, Nullable(Of CancellationToken), Boolean)
-- uid: Sensus.DataStores.DataStore.AddAsync*
-  name: AddAsync
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddAsync_
-  commentId: Overload:Sensus.DataStores.DataStore.AddAsync
-  fullName: Sensus.DataStores.DataStore.AddAsync
-  nameWithType: DataStore.AddAsync
-- uid: Sensus.DataStores.DataStore.AddedDataCount
-  name: AddedDataCount
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddedDataCount
-  commentId: P:Sensus.DataStores.DataStore.AddedDataCount
-  fullName: Sensus.DataStores.DataStore.AddedDataCount
-  nameWithType: DataStore.AddedDataCount
-- uid: Sensus.DataStores.DataStore.AddedDataCount*
-  name: AddedDataCount
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddedDataCount_
-  commentId: Overload:Sensus.DataStores.DataStore.AddedDataCount
-  fullName: Sensus.DataStores.DataStore.AddedDataCount
-  nameWithType: DataStore.AddedDataCount
-- uid: Sensus.DataStores.DataStore.Clear
-  name: Clear()
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clear
-  commentId: M:Sensus.DataStores.DataStore.Clear
-  fullName: Sensus.DataStores.DataStore.Clear()
-  nameWithType: DataStore.Clear()
-- uid: Sensus.DataStores.DataStore.Clear*
-  name: Clear
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clear_
-  commentId: Overload:Sensus.DataStores.DataStore.Clear
-  fullName: Sensus.DataStores.DataStore.Clear
-  nameWithType: DataStore.Clear
-- uid: Sensus.DataStores.DataStore.Clearable
-  name: Clearable
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clearable
-  commentId: P:Sensus.DataStores.DataStore.Clearable
-  fullName: Sensus.DataStores.DataStore.Clearable
-  nameWithType: DataStore.Clearable
-- uid: Sensus.DataStores.DataStore.Clearable*
-  name: Clearable
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clearable_
-  commentId: Overload:Sensus.DataStores.DataStore.Clearable
-  fullName: Sensus.DataStores.DataStore.Clearable
-  nameWithType: DataStore.Clearable
-- uid: Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)
-  name: CommitAndReleaseAddedDataAsync(CancellationToken)
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAddedDataAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)
-  nameWithType: DataStore.CommitAndReleaseAddedDataAsync(CancellationToken)
-- uid: Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync*
-  name: CommitAndReleaseAddedDataAsync
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAddedDataAsync_
-  commentId: Overload:Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync
-  fullName: Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync
-  nameWithType: DataStore.CommitAndReleaseAddedDataAsync
-- uid: Sensus.DataStores.DataStore.CommitAndReleaseAsync(System.Collections.Generic.HashSet{Sensus.Datum},Sensus.DataStores.DataStore,System.Threading.CancellationToken)
-  name: CommitAndReleaseAsync(HashSet<Datum>, DataStore, CancellationToken)
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAsync_System_Collections_Generic_HashSet_Sensus_Datum__Sensus_DataStores_DataStore_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.DataStore.CommitAndReleaseAsync(System.Collections.Generic.HashSet{Sensus.Datum},Sensus.DataStores.DataStore,System.Threading.CancellationToken)
-  name.vb: CommitAndReleaseAsync(HashSet(Of Datum), DataStore, CancellationToken)
-  fullName: Sensus.DataStores.DataStore.CommitAndReleaseAsync(System.Collections.Generic.HashSet<Sensus.Datum>, Sensus.DataStores.DataStore, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.DataStore.CommitAndReleaseAsync(System.Collections.Generic.HashSet(Of Sensus.Datum), Sensus.DataStores.DataStore, System.Threading.CancellationToken)
-  nameWithType: DataStore.CommitAndReleaseAsync(HashSet<Datum>, DataStore, CancellationToken)
-  nameWithType.vb: DataStore.CommitAndReleaseAsync(HashSet(Of Datum), DataStore, CancellationToken)
-- uid: Sensus.DataStores.DataStore.CommitAndReleaseAsync*
-  name: CommitAndReleaseAsync
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAsync_
-  commentId: Overload:Sensus.DataStores.DataStore.CommitAndReleaseAsync
-  fullName: Sensus.DataStores.DataStore.CommitAndReleaseAsync
-  nameWithType: DataStore.CommitAndReleaseAsync
-- uid: Sensus.DataStores.DataStore.CommitAsync(Sensus.Datum,System.Threading.CancellationToken)
-  name: CommitAsync(Datum, CancellationToken)
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_Sensus_Datum_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.DataStore.CommitAsync(Sensus.Datum,System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.DataStore.CommitAsync(Sensus.Datum, System.Threading.CancellationToken)
-  nameWithType: DataStore.CommitAsync(Datum, CancellationToken)
-- uid: Sensus.DataStores.DataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name: CommitAsync(IEnumerable<Datum>, CancellationToken)
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.DataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name.vb: CommitAsync(IEnumerable(Of Datum), CancellationToken)
-  fullName: Sensus.DataStores.DataStore.CommitAsync(System.Collections.Generic.IEnumerable<Sensus.Datum>, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.DataStore.CommitAsync(System.Collections.Generic.IEnumerable(Of Sensus.Datum), System.Threading.CancellationToken)
-  nameWithType: DataStore.CommitAsync(IEnumerable<Datum>, CancellationToken)
-  nameWithType.vb: DataStore.CommitAsync(IEnumerable(Of Datum), CancellationToken)
-- uid: Sensus.DataStores.DataStore.CommitAsync*
-  name: CommitAsync
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_
-  commentId: Overload:Sensus.DataStores.DataStore.CommitAsync
-  fullName: Sensus.DataStores.DataStore.CommitAsync
-  nameWithType: DataStore.CommitAsync
-- uid: Sensus.DataStores.DataStore.CommitDelayMS
-  name: CommitDelayMS
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitDelayMS
-  commentId: P:Sensus.DataStores.DataStore.CommitDelayMS
-  fullName: Sensus.DataStores.DataStore.CommitDelayMS
-  nameWithType: DataStore.CommitDelayMS
-- uid: Sensus.DataStores.DataStore.CommitDelayMS*
-  name: CommitDelayMS
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitDelayMS_
-  commentId: Overload:Sensus.DataStores.DataStore.CommitDelayMS
-  fullName: Sensus.DataStores.DataStore.CommitDelayMS
-  nameWithType: DataStore.CommitDelayMS
-- uid: Sensus.DataStores.DataStore.CommittedDataCount
-  name: CommittedDataCount
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommittedDataCount
-  commentId: P:Sensus.DataStores.DataStore.CommittedDataCount
-  fullName: Sensus.DataStores.DataStore.CommittedDataCount
-  nameWithType: DataStore.CommittedDataCount
-- uid: Sensus.DataStores.DataStore.CommittedDataCount*
-  name: CommittedDataCount
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommittedDataCount_
-  commentId: Overload:Sensus.DataStores.DataStore.CommittedDataCount
-  fullName: Sensus.DataStores.DataStore.CommittedDataCount
-  nameWithType: DataStore.CommittedDataCount
-- uid: Sensus.DataStores.DataStore.CommitTimeoutMinutes
-  name: CommitTimeoutMinutes
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitTimeoutMinutes
-  commentId: P:Sensus.DataStores.DataStore.CommitTimeoutMinutes
-  fullName: Sensus.DataStores.DataStore.CommitTimeoutMinutes
-  nameWithType: DataStore.CommitTimeoutMinutes
-- uid: Sensus.DataStores.DataStore.CommitTimeoutMinutes*
-  name: CommitTimeoutMinutes
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitTimeoutMinutes_
-  commentId: Overload:Sensus.DataStores.DataStore.CommitTimeoutMinutes
-  fullName: Sensus.DataStores.DataStore.CommitTimeoutMinutes
-  nameWithType: DataStore.CommitTimeoutMinutes
 - uid: Sensus.DataStores.DataStore.Copy
   name: Copy()
   href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy
@@ -21119,21 +20969,36 @@ references:
   commentId: Overload:Sensus.DataStores.DataStore.Stop
   fullName: Sensus.DataStores.DataStore.Stop
   nameWithType: DataStore.Stop
-- uid: Sensus.DataStores.DataStore.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.DataStores.DataStore.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.DataStores.DataStore.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.DataStores.DataStore.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: DataStore.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: DataStore.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.DataStores.DataStore.TestHealth
+  name: TestHealth()
+  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth
+  commentId: M:Sensus.DataStores.DataStore.TestHealth
+  fullName: Sensus.DataStores.DataStore.TestHealth()
+  nameWithType: DataStore.TestHealth()
 - uid: Sensus.DataStores.DataStore.TestHealth*
   name: TestHealth
   href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_
   commentId: Overload:Sensus.DataStores.DataStore.TestHealth
   fullName: Sensus.DataStores.DataStore.TestHealth
   nameWithType: DataStore.TestHealth
+- uid: Sensus.DataStores.IClearableDataStore
+  name: IClearableDataStore
+  href: api/Sensus.DataStores.IClearableDataStore.html
+  commentId: T:Sensus.DataStores.IClearableDataStore
+  fullName: Sensus.DataStores.IClearableDataStore
+  nameWithType: IClearableDataStore
+- uid: Sensus.DataStores.IClearableDataStore.Clear
+  name: Clear()
+  href: api/Sensus.DataStores.IClearableDataStore.html#Sensus_DataStores_IClearableDataStore_Clear
+  commentId: M:Sensus.DataStores.IClearableDataStore.Clear
+  fullName: Sensus.DataStores.IClearableDataStore.Clear()
+  nameWithType: IClearableDataStore.Clear()
+- uid: Sensus.DataStores.IClearableDataStore.Clear*
+  name: Clear
+  href: api/Sensus.DataStores.IClearableDataStore.html#Sensus_DataStores_IClearableDataStore_Clear_
+  commentId: Overload:Sensus.DataStores.IClearableDataStore.Clear
+  fullName: Sensus.DataStores.IClearableDataStore.Clear
+  nameWithType: IClearableDataStore.Clear
 - uid: Sensus.DataStores.Local
   name: Sensus.DataStores.Local
   href: api/Sensus.DataStores.Local.html
@@ -21158,6 +21023,30 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.#ctor
   fullName: Sensus.DataStores.Local.FileLocalDataStore.FileLocalDataStore
   nameWithType: FileLocalDataStore.FileLocalDataStore
+- uid: Sensus.DataStores.Local.FileLocalDataStore.BufferSizeBytes
+  name: BufferSizeBytes
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_BufferSizeBytes
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.BufferSizeBytes
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.BufferSizeBytes
+  nameWithType: FileLocalDataStore.BufferSizeBytes
+- uid: Sensus.DataStores.Local.FileLocalDataStore.BufferSizeBytes*
+  name: BufferSizeBytes
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_BufferSizeBytes_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.BufferSizeBytes
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.BufferSizeBytes
+  nameWithType: FileLocalDataStore.BufferSizeBytes
+- uid: Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile
+  name: BytesWrittenToCurrentFile
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_BytesWrittenToCurrentFile
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile
+  nameWithType: FileLocalDataStore.BytesWrittenToCurrentFile
+- uid: Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile*
+  name: BytesWrittenToCurrentFile
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_BytesWrittenToCurrentFile_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile
+  nameWithType: FileLocalDataStore.BytesWrittenToCurrentFile
 - uid: Sensus.DataStores.Local.FileLocalDataStore.Clear
   name: Clear()
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Clear
@@ -21170,45 +21059,30 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Clear
   fullName: Sensus.DataStores.Local.FileLocalDataStore.Clear
   nameWithType: FileLocalDataStore.Clear
-- uid: Sensus.DataStores.Local.FileLocalDataStore.Clearable
-  name: Clearable
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Clearable
-  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.Clearable
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.Clearable
-  nameWithType: FileLocalDataStore.Clearable
-- uid: Sensus.DataStores.Local.FileLocalDataStore.Clearable*
-  name: Clearable
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Clearable_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Clearable
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.Clearable
-  nameWithType: FileLocalDataStore.Clearable
-- uid: Sensus.DataStores.Local.FileLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name: CommitAsync(IEnumerable<Datum>, CancellationToken)
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name.vb: CommitAsync(IEnumerable(Of Datum), CancellationToken)
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable<Sensus.Datum>, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Local.FileLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable(Of Sensus.Datum), System.Threading.CancellationToken)
-  nameWithType: FileLocalDataStore.CommitAsync(IEnumerable<Datum>, CancellationToken)
-  nameWithType.vb: FileLocalDataStore.CommitAsync(IEnumerable(Of Datum), CancellationToken)
-- uid: Sensus.DataStores.Local.FileLocalDataStore.CommitAsync*
-  name: CommitAsync
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CommitAsync_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CommitAsync
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.CommitAsync
-  nameWithType: FileLocalDataStore.CommitAsync
-- uid: Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  name: CommitToRemote(CancellationToken)
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CommitToRemote_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  nameWithType: FileLocalDataStore.CommitToRemote(CancellationToken)
-- uid: Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote*
-  name: CommitToRemote
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CommitToRemote_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.CommitToRemote
-  nameWithType: FileLocalDataStore.CommitToRemote
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
+  name: CompressionLevel
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CompressionLevel
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
+  nameWithType: FileLocalDataStore.CompressionLevel
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel*
+  name: CompressionLevel
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CompressionLevel_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
+  nameWithType: FileLocalDataStore.CompressionLevel
+- uid: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
+  name: DataWrittenToCurrentFile
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
+  nameWithType: FileLocalDataStore.DataWrittenToCurrentFile
+- uid: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile*
+  name: DataWrittenToCurrentFile
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
+  nameWithType: FileLocalDataStore.DataWrittenToCurrentFile
 - uid: Sensus.DataStores.Local.FileLocalDataStore.DisplayName
   name: DisplayName
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_DisplayName
@@ -21221,21 +21095,42 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.DisplayName
   fullName: Sensus.DataStores.Local.FileLocalDataStore.DisplayName
   nameWithType: FileLocalDataStore.DisplayName
-- uid: Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name: GetDataLinesToWrite(CancellationToken, Action<String, Double>)
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_GetDataLinesToWrite_System_Threading_CancellationToken_System_Action_System_String_System_Double__
-  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name.vb: GetDataLinesToWrite(CancellationToken, Action(Of String, Double))
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken, System.Action<System.String, System.Double>)
-  fullName.vb: Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken, System.Action(Of System.String, System.Double))
-  nameWithType: FileLocalDataStore.GetDataLinesToWrite(CancellationToken, Action<String, Double>)
-  nameWithType.vb: FileLocalDataStore.GetDataLinesToWrite(CancellationToken, Action(Of String, Double))
-- uid: Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite*
-  name: GetDataLinesToWrite
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_GetDataLinesToWrite_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.GetDataLinesToWrite
-  nameWithType: FileLocalDataStore.GetDataLinesToWrite
+- uid: Sensus.DataStores.Local.FileLocalDataStore.Encrypt
+  name: Encrypt
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Encrypt
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.Encrypt
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.Encrypt
+  nameWithType: FileLocalDataStore.Encrypt
+- uid: Sensus.DataStores.Local.FileLocalDataStore.Encrypt*
+  name: Encrypt
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Encrypt_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Encrypt
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.Encrypt
+  nameWithType: FileLocalDataStore.Encrypt
+- uid: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
+  name: IsTooLarge()
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_IsTooLarge
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge()
+  nameWithType: FileLocalDataStore.IsTooLarge()
+- uid: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge*
+  name: IsTooLarge
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_IsTooLarge_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
+  nameWithType: FileLocalDataStore.IsTooLarge
+- uid: Sensus.DataStores.Local.FileLocalDataStore.Path
+  name: Path
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Path
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.Path
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.Path
+  nameWithType: FileLocalDataStore.Path
+- uid: Sensus.DataStores.Local.FileLocalDataStore.Path*
+  name: Path
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Path_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Path
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.Path
+  nameWithType: FileLocalDataStore.Path
 - uid: Sensus.DataStores.Local.FileLocalDataStore.Reset
   name: Reset()
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Reset
@@ -21272,6 +21167,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Start
   fullName: Sensus.DataStores.Local.FileLocalDataStore.Start
   nameWithType: FileLocalDataStore.Start
+- uid: Sensus.DataStores.Local.FileLocalDataStore.Stop
+  name: Stop()
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Stop
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.Stop
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.Stop()
+  nameWithType: FileLocalDataStore.Stop()
+- uid: Sensus.DataStores.Local.FileLocalDataStore.Stop*
+  name: Stop
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Stop_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Stop
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.Stop
+  nameWithType: FileLocalDataStore.Stop
 - uid: Sensus.DataStores.Local.FileLocalDataStore.StorageDirectory
   name: StorageDirectory
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_StorageDirectory
@@ -21284,33 +21191,42 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.StorageDirectory
   fullName: Sensus.DataStores.Local.FileLocalDataStore.StorageDirectory
   nameWithType: FileLocalDataStore.StorageDirectory
-- uid: Sensus.DataStores.Local.FileLocalDataStore.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.DataStores.Local.FileLocalDataStore.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: FileLocalDataStore.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: FileLocalDataStore.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.DataStores.Local.FileLocalDataStore.TestHealth
+  name: TestHealth()
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_TestHealth
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.TestHealth
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.TestHealth()
+  nameWithType: FileLocalDataStore.TestHealth()
 - uid: Sensus.DataStores.Local.FileLocalDataStore.TestHealth*
   name: TestHealth
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_TestHealth_
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.TestHealth
   fullName: Sensus.DataStores.Local.FileLocalDataStore.TestHealth
   nameWithType: FileLocalDataStore.TestHealth
-- uid: Sensus.DataStores.Local.FileLocalDataStore.TooLarge
-  name: TooLarge()
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_TooLarge
-  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.TooLarge
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.TooLarge()
-  nameWithType: FileLocalDataStore.TooLarge()
-- uid: Sensus.DataStores.Local.FileLocalDataStore.TooLarge*
-  name: TooLarge
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_TooLarge_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.TooLarge
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.TooLarge
-  nameWithType: FileLocalDataStore.TooLarge
+- uid: Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  name: WriteDatumAsync(Datum, CancellationToken)
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync(Sensus.Datum, System.Threading.CancellationToken)
+  nameWithType: FileLocalDataStore.WriteDatumAsync(Datum, CancellationToken)
+- uid: Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync*
+  name: WriteDatumAsync
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_WriteDatumAsync_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync
+  nameWithType: FileLocalDataStore.WriteDatumAsync
+- uid: Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
+  name: WriteToRemoteAsync(CancellationToken)
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_WriteToRemoteAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
+  nameWithType: FileLocalDataStore.WriteToRemoteAsync(CancellationToken)
+- uid: Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync*
+  name: WriteToRemoteAsync
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_WriteToRemoteAsync_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync
+  nameWithType: FileLocalDataStore.WriteToRemoteAsync
 - uid: Sensus.DataStores.Local.LocalDataStore
   name: LocalDataStore
   href: api/Sensus.DataStores.Local.LocalDataStore.html
@@ -21329,45 +21245,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.#ctor
   fullName: Sensus.DataStores.Local.LocalDataStore.LocalDataStore
   nameWithType: LocalDataStore.LocalDataStore
-- uid: Sensus.DataStores.Local.LocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  name: CommitToRemote(CancellationToken)
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CommitToRemote_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Local.LocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  nameWithType: LocalDataStore.CommitToRemote(CancellationToken)
-- uid: Sensus.DataStores.Local.LocalDataStore.CommitToRemote*
-  name: CommitToRemote
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CommitToRemote_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CommitToRemote
-  fullName: Sensus.DataStores.Local.LocalDataStore.CommitToRemote
-  nameWithType: LocalDataStore.CommitToRemote
-- uid: Sensus.DataStores.Local.LocalDataStore.CommitToRemoteIfTooLargeAsync(System.Threading.CancellationToken)
-  name: CommitToRemoteIfTooLargeAsync(CancellationToken)
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CommitToRemoteIfTooLargeAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.CommitToRemoteIfTooLargeAsync(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Local.LocalDataStore.CommitToRemoteIfTooLargeAsync(System.Threading.CancellationToken)
-  nameWithType: LocalDataStore.CommitToRemoteIfTooLargeAsync(CancellationToken)
-- uid: Sensus.DataStores.Local.LocalDataStore.CommitToRemoteIfTooLargeAsync*
-  name: CommitToRemoteIfTooLargeAsync
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CommitToRemoteIfTooLargeAsync_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CommitToRemoteIfTooLargeAsync
-  fullName: Sensus.DataStores.Local.LocalDataStore.CommitToRemoteIfTooLargeAsync
-  nameWithType: LocalDataStore.CommitToRemoteIfTooLargeAsync
-- uid: Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name: GetDataLinesToWrite(CancellationToken, Action<String, Double>)
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_GetDataLinesToWrite_System_Threading_CancellationToken_System_Action_System_String_System_Double__
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name.vb: GetDataLinesToWrite(CancellationToken, Action(Of String, Double))
-  fullName: Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken, System.Action<System.String, System.Double>)
-  fullName.vb: Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken, System.Action(Of System.String, System.Double))
-  nameWithType: LocalDataStore.GetDataLinesToWrite(CancellationToken, Action<String, Double>)
-  nameWithType.vb: LocalDataStore.GetDataLinesToWrite(CancellationToken, Action(Of String, Double))
-- uid: Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite*
-  name: GetDataLinesToWrite
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_GetDataLinesToWrite_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite
-  fullName: Sensus.DataStores.Local.LocalDataStore.GetDataLinesToWrite
-  nameWithType: LocalDataStore.GetDataLinesToWrite
+- uid: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
+  name: IsTooLarge()
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_IsTooLarge
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.IsTooLarge
+  fullName: Sensus.DataStores.Local.LocalDataStore.IsTooLarge()
+  nameWithType: LocalDataStore.IsTooLarge()
+- uid: Sensus.DataStores.Local.LocalDataStore.IsTooLarge*
+  name: IsTooLarge
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_IsTooLarge_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.IsTooLarge
+  fullName: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
+  nameWithType: LocalDataStore.IsTooLarge
 - uid: Sensus.DataStores.Local.LocalDataStore.SizeDescription
   name: SizeDescription
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_SizeDescription
@@ -21380,192 +21269,42 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.SizeDescription
   fullName: Sensus.DataStores.Local.LocalDataStore.SizeDescription
   nameWithType: LocalDataStore.SizeDescription
-- uid: Sensus.DataStores.Local.LocalDataStore.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.DataStores.Local.LocalDataStore.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.DataStores.Local.LocalDataStore.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: LocalDataStore.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: LocalDataStore.TestHealth(ByRef String, ByRef String, ByRef String)
-- uid: Sensus.DataStores.Local.LocalDataStore.TestHealth*
-  name: TestHealth
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_TestHealth_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.TestHealth
-  fullName: Sensus.DataStores.Local.LocalDataStore.TestHealth
-  nameWithType: LocalDataStore.TestHealth
-- uid: Sensus.DataStores.Local.LocalDataStore.TooLarge
-  name: TooLarge()
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_TooLarge
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.TooLarge
-  fullName: Sensus.DataStores.Local.LocalDataStore.TooLarge()
-  nameWithType: LocalDataStore.TooLarge()
-- uid: Sensus.DataStores.Local.LocalDataStore.TooLarge*
-  name: TooLarge
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_TooLarge_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.TooLarge
-  fullName: Sensus.DataStores.Local.LocalDataStore.TooLarge
-  nameWithType: LocalDataStore.TooLarge
-- uid: Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore
-  name: UploadToRemoteDataStore
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore
-  commentId: P:Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore
-  fullName: Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore
-  nameWithType: LocalDataStore.UploadToRemoteDataStore
-- uid: Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore*
-  name: UploadToRemoteDataStore
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore
-  fullName: Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore
-  nameWithType: LocalDataStore.UploadToRemoteDataStore
-- uid: Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile(System.String,System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name: WriteDataToZipFile(String, CancellationToken, Action<String, Double>)
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDataToZipFile_System_String_System_Threading_CancellationToken_System_Action_System_String_System_Double__
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile(System.String,System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name.vb: WriteDataToZipFile(String, CancellationToken, Action(Of String, Double))
-  fullName: Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile(System.String, System.Threading.CancellationToken, System.Action<System.String, System.Double>)
-  fullName.vb: Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile(System.String, System.Threading.CancellationToken, System.Action(Of System.String, System.Double))
-  nameWithType: LocalDataStore.WriteDataToZipFile(String, CancellationToken, Action<String, Double>)
-  nameWithType.vb: LocalDataStore.WriteDataToZipFile(String, CancellationToken, Action(Of String, Double))
-- uid: Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile*
-  name: WriteDataToZipFile
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDataToZipFile_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile
-  fullName: Sensus.DataStores.Local.LocalDataStore.WriteDataToZipFile
-  nameWithType: LocalDataStore.WriteDataToZipFile
-- uid: Sensus.DataStores.Local.RamLocalDataStore
-  name: RamLocalDataStore
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html
-  commentId: T:Sensus.DataStores.Local.RamLocalDataStore
-  fullName: Sensus.DataStores.Local.RamLocalDataStore
-  nameWithType: RamLocalDataStore
-- uid: Sensus.DataStores.Local.RamLocalDataStore.#ctor
-  name: RamLocalDataStore()
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore__ctor
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.#ctor
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.RamLocalDataStore()
-  nameWithType: RamLocalDataStore.RamLocalDataStore()
-- uid: Sensus.DataStores.Local.RamLocalDataStore.#ctor*
-  name: RamLocalDataStore
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore__ctor_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.#ctor
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.RamLocalDataStore
-  nameWithType: RamLocalDataStore.RamLocalDataStore
-- uid: Sensus.DataStores.Local.RamLocalDataStore.Clear
-  name: Clear()
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_Clear
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.Clear
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.Clear()
-  nameWithType: RamLocalDataStore.Clear()
-- uid: Sensus.DataStores.Local.RamLocalDataStore.Clear*
-  name: Clear
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_Clear_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.Clear
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.Clear
-  nameWithType: RamLocalDataStore.Clear
-- uid: Sensus.DataStores.Local.RamLocalDataStore.Clearable
-  name: Clearable
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_Clearable
-  commentId: P:Sensus.DataStores.Local.RamLocalDataStore.Clearable
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.Clearable
-  nameWithType: RamLocalDataStore.Clearable
-- uid: Sensus.DataStores.Local.RamLocalDataStore.Clearable*
-  name: Clearable
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_Clearable_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.Clearable
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.Clearable
-  nameWithType: RamLocalDataStore.Clearable
-- uid: Sensus.DataStores.Local.RamLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name: CommitAsync(IEnumerable<Datum>, CancellationToken)
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name.vb: CommitAsync(IEnumerable(Of Datum), CancellationToken)
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable<Sensus.Datum>, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Local.RamLocalDataStore.CommitAsync(System.Collections.Generic.IEnumerable(Of Sensus.Datum), System.Threading.CancellationToken)
-  nameWithType: RamLocalDataStore.CommitAsync(IEnumerable<Datum>, CancellationToken)
-  nameWithType.vb: RamLocalDataStore.CommitAsync(IEnumerable(Of Datum), CancellationToken)
-- uid: Sensus.DataStores.Local.RamLocalDataStore.CommitAsync*
-  name: CommitAsync
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_CommitAsync_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.CommitAsync
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.CommitAsync
-  nameWithType: RamLocalDataStore.CommitAsync
-- uid: Sensus.DataStores.Local.RamLocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  name: CommitToRemote(CancellationToken)
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_CommitToRemote_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.CommitToRemote(System.Threading.CancellationToken)
-  nameWithType: RamLocalDataStore.CommitToRemote(CancellationToken)
-- uid: Sensus.DataStores.Local.RamLocalDataStore.CommitToRemote*
-  name: CommitToRemote
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_CommitToRemote_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.CommitToRemote
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.CommitToRemote
-  nameWithType: RamLocalDataStore.CommitToRemote
-- uid: Sensus.DataStores.Local.RamLocalDataStore.DisplayName
-  name: DisplayName
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_DisplayName
-  commentId: P:Sensus.DataStores.Local.RamLocalDataStore.DisplayName
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.DisplayName
-  nameWithType: RamLocalDataStore.DisplayName
-- uid: Sensus.DataStores.Local.RamLocalDataStore.DisplayName*
-  name: DisplayName
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_DisplayName_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.DisplayName
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.DisplayName
-  nameWithType: RamLocalDataStore.DisplayName
-- uid: Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name: GetDataLinesToWrite(CancellationToken, Action<String, Double>)
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_GetDataLinesToWrite_System_Threading_CancellationToken_System_Action_System_String_System_Double__
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken,System.Action{System.String,System.Double})
-  name.vb: GetDataLinesToWrite(CancellationToken, Action(Of String, Double))
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken, System.Action<System.String, System.Double>)
-  fullName.vb: Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite(System.Threading.CancellationToken, System.Action(Of System.String, System.Double))
-  nameWithType: RamLocalDataStore.GetDataLinesToWrite(CancellationToken, Action<String, Double>)
-  nameWithType.vb: RamLocalDataStore.GetDataLinesToWrite(CancellationToken, Action(Of String, Double))
-- uid: Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite*
-  name: GetDataLinesToWrite
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_GetDataLinesToWrite_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.GetDataLinesToWrite
-  nameWithType: RamLocalDataStore.GetDataLinesToWrite
-- uid: Sensus.DataStores.Local.RamLocalDataStore.Reset
-  name: Reset()
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_Reset
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.Reset
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.Reset()
-  nameWithType: RamLocalDataStore.Reset()
-- uid: Sensus.DataStores.Local.RamLocalDataStore.Reset*
-  name: Reset
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_Reset_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.Reset
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.Reset
-  nameWithType: RamLocalDataStore.Reset
-- uid: Sensus.DataStores.Local.RamLocalDataStore.SizeDescription
-  name: SizeDescription
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_SizeDescription
-  commentId: P:Sensus.DataStores.Local.RamLocalDataStore.SizeDescription
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.SizeDescription
-  nameWithType: RamLocalDataStore.SizeDescription
-- uid: Sensus.DataStores.Local.RamLocalDataStore.SizeDescription*
-  name: SizeDescription
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_SizeDescription_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.SizeDescription
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.SizeDescription
-  nameWithType: RamLocalDataStore.SizeDescription
-- uid: Sensus.DataStores.Local.RamLocalDataStore.TooLarge
-  name: TooLarge()
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_TooLarge
-  commentId: M:Sensus.DataStores.Local.RamLocalDataStore.TooLarge
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.TooLarge()
-  nameWithType: RamLocalDataStore.TooLarge()
-- uid: Sensus.DataStores.Local.RamLocalDataStore.TooLarge*
-  name: TooLarge
-  href: api/Sensus.DataStores.Local.RamLocalDataStore.html#Sensus_DataStores_Local_RamLocalDataStore_TooLarge_
-  commentId: Overload:Sensus.DataStores.Local.RamLocalDataStore.TooLarge
-  fullName: Sensus.DataStores.Local.RamLocalDataStore.TooLarge
-  nameWithType: RamLocalDataStore.TooLarge
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  name: WriteDatumAsync(Datum, CancellationToken)
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync(Sensus.Datum, System.Threading.CancellationToken)
+  nameWithType: LocalDataStore.WriteDatumAsync(Datum, CancellationToken)
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync*
+  name: WriteDatumAsync
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDatumAsync_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync
+  nameWithType: LocalDataStore.WriteDatumAsync
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
+  name: WriteToRemoteAsync(CancellationToken)
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
+  nameWithType: LocalDataStore.WriteToRemoteAsync(CancellationToken)
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync*
+  name: WriteToRemoteAsync
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteAsync_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync
+  nameWithType: LocalDataStore.WriteToRemoteAsync
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteIfTooLargeAsync(System.Threading.CancellationToken)
+  name: WriteToRemoteIfTooLargeAsync(CancellationToken)
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteIfTooLargeAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.WriteToRemoteIfTooLargeAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteIfTooLargeAsync(System.Threading.CancellationToken)
+  nameWithType: LocalDataStore.WriteToRemoteIfTooLargeAsync(CancellationToken)
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteIfTooLargeAsync*
+  name: WriteToRemoteIfTooLargeAsync
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteIfTooLargeAsync_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteToRemoteIfTooLargeAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteIfTooLargeAsync
+  nameWithType: LocalDataStore.WriteToRemoteIfTooLargeAsync
 - uid: Sensus.DataStores.Remote
   name: Sensus.DataStores.Remote
   href: api/Sensus.DataStores.Remote.html
@@ -21602,57 +21341,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Bucket
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Bucket
   nameWithType: AmazonS3RemoteDataStore.Bucket
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData
-  name: CanRetrieveCommittedData
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CanRetrieveCommittedData
-  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData
-  nameWithType: AmazonS3RemoteDataStore.CanRetrieveCommittedData
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData*
-  name: CanRetrieveCommittedData
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CanRetrieveCommittedData_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveCommittedData
-  nameWithType: AmazonS3RemoteDataStore.CanRetrieveCommittedData
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable
-  name: Clearable
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Clearable
-  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable
-  nameWithType: AmazonS3RemoteDataStore.Clearable
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable*
-  name: Clearable
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Clearable_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Clearable
-  nameWithType: AmazonS3RemoteDataStore.Clearable
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name: CommitAsync(IEnumerable<Datum>, CancellationToken)
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name.vb: CommitAsync(IEnumerable(Of Datum), CancellationToken)
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable<Sensus.Datum>, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable(Of Sensus.Datum), System.Threading.CancellationToken)
-  nameWithType: AmazonS3RemoteDataStore.CommitAsync(IEnumerable<Datum>, CancellationToken)
-  nameWithType.vb: AmazonS3RemoteDataStore.CommitAsync(IEnumerable(Of Datum), CancellationToken)
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync*
-  name: CommitAsync
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CommitAsync_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CommitAsync
-  nameWithType: AmazonS3RemoteDataStore.CommitAsync
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress
-  name: Compress
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Compress
-  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress
-  nameWithType: AmazonS3RemoteDataStore.Compress
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress*
-  name: Compress
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Compress_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Compress
-  nameWithType: AmazonS3RemoteDataStore.Compress
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
+  name: CanRetrieveWrittenData
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CanRetrieveWrittenData
+  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
+  nameWithType: AmazonS3RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData*
+  name: CanRetrieveWrittenData
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_CanRetrieveWrittenData_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
+  nameWithType: AmazonS3RemoteDataStore.CanRetrieveWrittenData
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DisplayName
   name: DisplayName
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DisplayName
@@ -21665,18 +21365,6 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DisplayName
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DisplayName
   nameWithType: AmazonS3RemoteDataStore.DisplayName
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt
-  name: Encrypt
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Encrypt
-  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt
-  nameWithType: AmazonS3RemoteDataStore.Encrypt
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt*
-  name: Encrypt
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Encrypt_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Encrypt
-  nameWithType: AmazonS3RemoteDataStore.Encrypt
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Folder
   name: Folder
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Folder
@@ -21689,21 +21377,21 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Folder
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Folder
   nameWithType: AmazonS3RemoteDataStore.Folder
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum*
-  name: GetDatum
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatum_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum
-  nameWithType: AmazonS3RemoteDataStore.GetDatum
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)
-  name: GetDatum<T>(String, CancellationToken)
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)
-  name.vb: GetDatum(Of T)(String, CancellationToken)
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum<T>(System.String, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatum(Of T)(System.String, System.Threading.CancellationToken)
-  nameWithType: AmazonS3RemoteDataStore.GetDatum<T>(String, CancellationToken)
-  nameWithType.vb: AmazonS3RemoteDataStore.GetDatum(Of T)(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync*
+  name: GetDatumAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatumAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync
+  nameWithType: AmazonS3RemoteDataStore.GetDatumAsync
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)
+  name: GetDatumAsync<T>(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatumAsync__1_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)
+  name.vb: GetDatumAsync(Of T)(String, CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync<T>(System.String, System.Threading.CancellationToken)
+  fullName.vb: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumAsync(Of T)(System.String, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.GetDatumAsync<T>(String, CancellationToken)
+  nameWithType.vb: AmazonS3RemoteDataStore.GetDatumAsync(Of T)(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey(Sensus.Datum)
   name: GetDatumKey(Datum)
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetDatumKey_Sensus_Datum_
@@ -21776,6 +21464,42 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop
   nameWithType: AmazonS3RemoteDataStore.Stop
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth
+  name: TestHealth()
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_TestHealth
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth()
+  nameWithType: AmazonS3RemoteDataStore.TestHealth()
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth*
+  name: TestHealth
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_TestHealth_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth
+  nameWithType: AmazonS3RemoteDataStore.TestHealth
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
+  name: WriteDataStreamAsync(Stream, String, String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDataStreamAsync(System.IO.Stream, System.String, System.String, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.WriteDataStreamAsync(Stream, String, String, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDataStreamAsync*
+  name: WriteDataStreamAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_WriteDataStreamAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDataStreamAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDataStreamAsync
+  nameWithType: AmazonS3RemoteDataStore.WriteDataStreamAsync
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  name: WriteDatumAsync(Datum, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDatumAsync(Sensus.Datum, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.WriteDatumAsync(Datum, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDatumAsync*
+  name: WriteDatumAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_WriteDatumAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDatumAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.WriteDatumAsync
+  nameWithType: AmazonS3RemoteDataStore.WriteDatumAsync
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore
   name: ConsoleRemoteDataStore
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html
@@ -21794,45 +21518,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.#ctor
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.ConsoleRemoteDataStore
   nameWithType: ConsoleRemoteDataStore.ConsoleRemoteDataStore
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData
-  name: CanRetrieveCommittedData
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveCommittedData
-  commentId: P:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData
-  nameWithType: ConsoleRemoteDataStore.CanRetrieveCommittedData
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData*
-  name: CanRetrieveCommittedData
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveCommittedData_
-  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData
-  nameWithType: ConsoleRemoteDataStore.CanRetrieveCommittedData
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable
-  name: Clearable
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_Clearable
-  commentId: P:Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable
-  nameWithType: ConsoleRemoteDataStore.Clearable
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable*
-  name: Clearable
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_Clearable_
-  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable
-  nameWithType: ConsoleRemoteDataStore.Clearable
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name: CommitAsync(IEnumerable<Datum>, CancellationToken)
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)
-  name.vb: CommitAsync(IEnumerable(Of Datum), CancellationToken)
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable<Sensus.Datum>, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable(Of Sensus.Datum), System.Threading.CancellationToken)
-  nameWithType: ConsoleRemoteDataStore.CommitAsync(IEnumerable<Datum>, CancellationToken)
-  nameWithType.vb: ConsoleRemoteDataStore.CommitAsync(IEnumerable(Of Datum), CancellationToken)
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync*
-  name: CommitAsync
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_CommitAsync_
-  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync
-  nameWithType: ConsoleRemoteDataStore.CommitAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
+  name: CanRetrieveWrittenData
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveWrittenData
+  commentId: P:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
+  nameWithType: ConsoleRemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData*
+  name: CanRetrieveWrittenData
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveWrittenData_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
+  nameWithType: ConsoleRemoteDataStore.CanRetrieveWrittenData
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DisplayName
   name: DisplayName
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_DisplayName
@@ -21845,21 +21542,21 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.DisplayName
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DisplayName
   nameWithType: ConsoleRemoteDataStore.DisplayName
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum*
-  name: GetDatum
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatum_
-  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum
-  nameWithType: ConsoleRemoteDataStore.GetDatum
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)
-  name: GetDatum<T>(String, CancellationToken)
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)
-  name.vb: GetDatum(Of T)(String, CancellationToken)
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum<T>(System.String, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum(Of T)(System.String, System.Threading.CancellationToken)
-  nameWithType: ConsoleRemoteDataStore.GetDatum<T>(String, CancellationToken)
-  nameWithType.vb: ConsoleRemoteDataStore.GetDatum(Of T)(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync*
+  name: GetDatumAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatumAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync
+  nameWithType: ConsoleRemoteDataStore.GetDatumAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)
+  name: GetDatumAsync<T>(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatumAsync__1_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)
+  name.vb: GetDatumAsync(Of T)(String, CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync<T>(System.String, System.Threading.CancellationToken)
+  fullName.vb: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync(Of T)(System.String, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.GetDatumAsync<T>(String, CancellationToken)
+  nameWithType.vb: ConsoleRemoteDataStore.GetDatumAsync(Of T)(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey(Sensus.Datum)
   name: GetDatumKey(Datum)
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatumKey_Sensus_Datum_
@@ -21872,6 +21569,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   nameWithType: ConsoleRemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
+  name: WriteDataStreamAsync(Stream, String, String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream, System.String, System.String, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.WriteDataStreamAsync(Stream, String, String, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync*
+  name: WriteDataStreamAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync
+  nameWithType: ConsoleRemoteDataStore.WriteDataStreamAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  name: WriteDatumAsync(Datum, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync(Sensus.Datum, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.WriteDatumAsync(Datum, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync*
+  name: WriteDatumAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDatumAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync
+  nameWithType: ConsoleRemoteDataStore.WriteDatumAsync
 - uid: Sensus.DataStores.Remote.RemoteDataStore
   name: RemoteDataStore
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html
@@ -21890,45 +21611,33 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.#ctor
   fullName: Sensus.DataStores.Remote.RemoteDataStore.RemoteDataStore
   nameWithType: RemoteDataStore.RemoteDataStore
-- uid: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveCommittedData
-  name: CanRetrieveCommittedData
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveCommittedData
-  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveCommittedData
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveCommittedData
-  nameWithType: RemoteDataStore.CanRetrieveCommittedData
-- uid: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveCommittedData*
-  name: CanRetrieveCommittedData
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveCommittedData_
-  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveCommittedData
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveCommittedData
-  nameWithType: RemoteDataStore.CanRetrieveCommittedData
-- uid: Sensus.DataStores.Remote.RemoteDataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)
-  name: CommitAndReleaseAddedDataAsync(CancellationToken)
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CommitAndReleaseAddedDataAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)
-  nameWithType: RemoteDataStore.CommitAndReleaseAddedDataAsync(CancellationToken)
-- uid: Sensus.DataStores.Remote.RemoteDataStore.CommitAndReleaseAddedDataAsync*
-  name: CommitAndReleaseAddedDataAsync
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CommitAndReleaseAddedDataAsync_
-  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.CommitAndReleaseAddedDataAsync
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.CommitAndReleaseAddedDataAsync
-  nameWithType: RemoteDataStore.CommitAndReleaseAddedDataAsync
-- uid: Sensus.DataStores.Remote.RemoteDataStore.GetDatum*
-  name: GetDatum
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatum_
-  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.GetDatum
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetDatum
-  nameWithType: RemoteDataStore.GetDatum
-- uid: Sensus.DataStores.Remote.RemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)
-  name: GetDatum<T>(String, CancellationToken)
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)
-  name.vb: GetDatum(Of T)(String, CancellationToken)
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetDatum<T>(System.String, System.Threading.CancellationToken)
-  fullName.vb: Sensus.DataStores.Remote.RemoteDataStore.GetDatum(Of T)(System.String, System.Threading.CancellationToken)
-  nameWithType: RemoteDataStore.GetDatum<T>(String, CancellationToken)
-  nameWithType.vb: RemoteDataStore.GetDatum(Of T)(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
+  name: CanRetrieveWrittenData
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveWrittenData
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
+  nameWithType: RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData*
+  name: CanRetrieveWrittenData
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveWrittenData_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
+  nameWithType: RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync*
+  name: GetDatumAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync
+  nameWithType: RemoteDataStore.GetDatumAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)
+  name: GetDatumAsync<T>(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumAsync__1_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)
+  name.vb: GetDatumAsync(Of T)(String, CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync<T>(System.String, System.Threading.CancellationToken)
+  fullName.vb: Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync(Of T)(System.String, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.GetDatumAsync<T>(String, CancellationToken)
+  nameWithType.vb: RemoteDataStore.GetDatumAsync(Of T)(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.RemoteDataStore.GetDatumKey(Sensus.Datum)
   name: GetDatumKey(Datum)
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumKey_Sensus_Datum_
@@ -21953,6 +21662,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.RequireCharging
   fullName: Sensus.DataStores.Remote.RemoteDataStore.RequireCharging
   nameWithType: RemoteDataStore.RequireCharging
+- uid: Sensus.DataStores.Remote.RemoteDataStore.RequiredBatteryChargeLevelPercent
+  name: RequiredBatteryChargeLevelPercent
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequiredBatteryChargeLevelPercent
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.RequiredBatteryChargeLevelPercent
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.RequiredBatteryChargeLevelPercent
+  nameWithType: RemoteDataStore.RequiredBatteryChargeLevelPercent
+- uid: Sensus.DataStores.Remote.RemoteDataStore.RequiredBatteryChargeLevelPercent*
+  name: RequiredBatteryChargeLevelPercent
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequiredBatteryChargeLevelPercent_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.RequiredBatteryChargeLevelPercent
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.RequiredBatteryChargeLevelPercent
+  nameWithType: RemoteDataStore.RequiredBatteryChargeLevelPercent
 - uid: Sensus.DataStores.Remote.RemoteDataStore.RequireWiFi
   name: RequireWiFi
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireWiFi
@@ -21965,6 +21686,114 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.RequireWiFi
   fullName: Sensus.DataStores.Remote.RemoteDataStore.RequireWiFi
   nameWithType: RemoteDataStore.RequireWiFi
+- uid: Sensus.DataStores.Remote.RemoteDataStore.Reset
+  name: Reset()
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Reset
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.Reset
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.Reset()
+  nameWithType: RemoteDataStore.Reset()
+- uid: Sensus.DataStores.Remote.RemoteDataStore.Reset*
+  name: Reset
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Reset_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Reset
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.Reset
+  nameWithType: RemoteDataStore.Reset
+- uid: Sensus.DataStores.Remote.RemoteDataStore.Start
+  name: Start()
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Start
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.Start
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.Start()
+  nameWithType: RemoteDataStore.Start()
+- uid: Sensus.DataStores.Remote.RemoteDataStore.Start*
+  name: Start
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Start_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Start
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.Start
+  nameWithType: RemoteDataStore.Start
+- uid: Sensus.DataStores.Remote.RemoteDataStore.Stop
+  name: Stop()
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Stop
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.Stop
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.Stop()
+  nameWithType: RemoteDataStore.Stop()
+- uid: Sensus.DataStores.Remote.RemoteDataStore.Stop*
+  name: Stop
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Stop_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Stop
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.Stop
+  nameWithType: RemoteDataStore.Stop
+- uid: Sensus.DataStores.Remote.RemoteDataStore.TestHealth
+  name: TestHealth()
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_TestHealth
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.TestHealth
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.TestHealth()
+  nameWithType: RemoteDataStore.TestHealth()
+- uid: Sensus.DataStores.Remote.RemoteDataStore.TestHealth*
+  name: TestHealth
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_TestHealth_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.TestHealth
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.TestHealth
+  nameWithType: RemoteDataStore.TestHealth
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
+  name: WriteDataStreamAsync(Stream, String, String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync(System.IO.Stream, System.String, System.String, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.WriteDataStreamAsync(Stream, String, String, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync*
+  name: WriteDataStreamAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDataStreamAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync
+  nameWithType: RemoteDataStore.WriteDataStreamAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  name: WriteDatumAsync(Datum, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteDatumAsync(Sensus.Datum, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.WriteDatumAsync(Datum, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteDatumAsync*
+  name: WriteDatumAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDatumAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteDatumAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteDatumAsync
+  nameWithType: RemoteDataStore.WriteDatumAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS
+  name: WriteDelayMS
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS
+  nameWithType: RemoteDataStore.WriteDelayMS
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS*
+  name: WriteDelayMS
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS
+  nameWithType: RemoteDataStore.WriteDelayMS
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync(System.Threading.CancellationToken)
+  name: WriteLocalDataStoreAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteLocalDataStoreAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync(System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync*
+  name: WriteLocalDataStoreAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteLocalDataStoreAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync
+  nameWithType: RemoteDataStore.WriteLocalDataStoreAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
+  name: WriteTimeoutMinutes
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteTimeoutMinutes
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
+  nameWithType: RemoteDataStore.WriteTimeoutMinutes
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes*
+  name: WriteTimeoutMinutes
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteTimeoutMinutes_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
+  nameWithType: RemoteDataStore.WriteTimeoutMinutes
 - uid: Sensus.Datum
   name: Datum
   href: api/Sensus.Datum.html
@@ -22001,6 +21830,18 @@ references:
   commentId: Overload:Sensus.Datum.Anonymized
   fullName: Sensus.Datum.Anonymized
   nameWithType: Datum.Anonymized
+- uid: Sensus.Datum.BuildId
+  name: BuildId
+  href: api/Sensus.Datum.html#Sensus_Datum_BuildId
+  commentId: P:Sensus.Datum.BuildId
+  fullName: Sensus.Datum.BuildId
+  nameWithType: Datum.BuildId
+- uid: Sensus.Datum.BuildId*
+  name: BuildId
+  href: api/Sensus.Datum.html#Sensus_Datum_BuildId_
+  commentId: Overload:Sensus.Datum.BuildId
+  fullName: Sensus.Datum.BuildId
+  nameWithType: Datum.BuildId
 - uid: Sensus.Datum.DeviceId
   name: DeviceId
   href: api/Sensus.Datum.html#Sensus_Datum_DeviceId
@@ -22217,21 +22058,36 @@ references:
   commentId: Overload:Sensus.Encryption.AsymmetricEncryption.#ctor
   fullName: Sensus.Encryption.AsymmetricEncryption.AsymmetricEncryption
   nameWithType: AsymmetricEncryption.AsymmetricEncryption
-- uid: Sensus.Encryption.AsymmetricEncryption.Decrypt(System.Byte[])
-  name: Decrypt(Byte[])
-  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_Decrypt_System_Byte___
-  commentId: M:Sensus.Encryption.AsymmetricEncryption.Decrypt(System.Byte[])
-  name.vb: Decrypt(Byte())
-  fullName: Sensus.Encryption.AsymmetricEncryption.Decrypt(System.Byte[])
-  fullName.vb: Sensus.Encryption.AsymmetricEncryption.Decrypt(System.Byte())
-  nameWithType: AsymmetricEncryption.Decrypt(Byte[])
-  nameWithType.vb: AsymmetricEncryption.Decrypt(Byte())
-- uid: Sensus.Encryption.AsymmetricEncryption.Decrypt*
-  name: Decrypt
-  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_Decrypt_
-  commentId: Overload:Sensus.Encryption.AsymmetricEncryption.Decrypt
-  fullName: Sensus.Encryption.AsymmetricEncryption.Decrypt
-  nameWithType: AsymmetricEncryption.Decrypt
+- uid: Sensus.Encryption.AsymmetricEncryption.DecryptToBytes(System.Byte[])
+  name: DecryptToBytes(Byte[])
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToBytes_System_Byte___
+  commentId: M:Sensus.Encryption.AsymmetricEncryption.DecryptToBytes(System.Byte[])
+  name.vb: DecryptToBytes(Byte())
+  fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToBytes(System.Byte[])
+  fullName.vb: Sensus.Encryption.AsymmetricEncryption.DecryptToBytes(System.Byte())
+  nameWithType: AsymmetricEncryption.DecryptToBytes(Byte[])
+  nameWithType.vb: AsymmetricEncryption.DecryptToBytes(Byte())
+- uid: Sensus.Encryption.AsymmetricEncryption.DecryptToBytes*
+  name: DecryptToBytes
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToBytes_
+  commentId: Overload:Sensus.Encryption.AsymmetricEncryption.DecryptToBytes
+  fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToBytes
+  nameWithType: AsymmetricEncryption.DecryptToBytes
+- uid: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])
+  name: DecryptToString(Byte[])
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToString_System_Byte___
+  commentId: M:Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])
+  name.vb: DecryptToString(Byte())
+  fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])
+  fullName.vb: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte())
+  nameWithType: AsymmetricEncryption.DecryptToString(Byte[])
+  nameWithType.vb: AsymmetricEncryption.DecryptToString(Byte())
+- uid: Sensus.Encryption.AsymmetricEncryption.DecryptToString*
+  name: DecryptToString
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToString_
+  commentId: Overload:Sensus.Encryption.AsymmetricEncryption.DecryptToString
+  fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToString
+  nameWithType: AsymmetricEncryption.DecryptToString
 - uid: Sensus.Encryption.AsymmetricEncryption.Encrypt(System.Byte[])
   name: Encrypt(Byte[])
   href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_Encrypt_System_Byte___
@@ -22253,27 +22109,42 @@ references:
   commentId: Overload:Sensus.Encryption.AsymmetricEncryption.Encrypt
   fullName: Sensus.Encryption.AsymmetricEncryption.Encrypt
   nameWithType: AsymmetricEncryption.Encrypt
+- uid: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[],System.Int32,System.Int32,System.String)
+  name: EncryptSymmetrically(Byte[], Int32, Int32, String)
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_System_Byte___System_Int32_System_Int32_System_String_
+  commentId: M:Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[],System.Int32,System.Int32,System.String)
+  name.vb: EncryptSymmetrically(Byte(), Int32, Int32, String)
+  fullName: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[], System.Int32, System.Int32, System.String)
+  fullName.vb: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte(), System.Int32, System.Int32, System.String)
+  nameWithType: AsymmetricEncryption.EncryptSymmetrically(Byte[], Int32, Int32, String)
+  nameWithType.vb: AsymmetricEncryption.EncryptSymmetrically(Byte(), Int32, Int32, String)
+- uid: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically*
+  name: EncryptSymmetrically
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_
+  commentId: Overload:Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically
+  fullName: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically
+  nameWithType: AsymmetricEncryption.EncryptSymmetrically
 - uid: Sensus.Encryption.IEncryption
   name: IEncryption
   href: api/Sensus.Encryption.IEncryption.html
   commentId: T:Sensus.Encryption.IEncryption
   fullName: Sensus.Encryption.IEncryption
   nameWithType: IEncryption
-- uid: Sensus.Encryption.IEncryption.Decrypt(System.Byte[])
-  name: Decrypt(Byte[])
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_Decrypt_System_Byte___
-  commentId: M:Sensus.Encryption.IEncryption.Decrypt(System.Byte[])
-  name.vb: Decrypt(Byte())
-  fullName: Sensus.Encryption.IEncryption.Decrypt(System.Byte[])
-  fullName.vb: Sensus.Encryption.IEncryption.Decrypt(System.Byte())
-  nameWithType: IEncryption.Decrypt(Byte[])
-  nameWithType.vb: IEncryption.Decrypt(Byte())
-- uid: Sensus.Encryption.IEncryption.Decrypt*
-  name: Decrypt
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_Decrypt_
-  commentId: Overload:Sensus.Encryption.IEncryption.Decrypt
-  fullName: Sensus.Encryption.IEncryption.Decrypt
-  nameWithType: IEncryption.Decrypt
+- uid: Sensus.Encryption.IEncryption.DecryptToString(System.Byte[])
+  name: DecryptToString(Byte[])
+  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_DecryptToString_System_Byte___
+  commentId: M:Sensus.Encryption.IEncryption.DecryptToString(System.Byte[])
+  name.vb: DecryptToString(Byte())
+  fullName: Sensus.Encryption.IEncryption.DecryptToString(System.Byte[])
+  fullName.vb: Sensus.Encryption.IEncryption.DecryptToString(System.Byte())
+  nameWithType: IEncryption.DecryptToString(Byte[])
+  nameWithType.vb: IEncryption.DecryptToString(Byte())
+- uid: Sensus.Encryption.IEncryption.DecryptToString*
+  name: DecryptToString
+  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_DecryptToString_
+  commentId: Overload:Sensus.Encryption.IEncryption.DecryptToString
+  fullName: Sensus.Encryption.IEncryption.DecryptToString
+  nameWithType: IEncryption.DecryptToString
 - uid: Sensus.Encryption.IEncryption.Encrypt(System.Byte[])
   name: Encrypt(Byte[])
   href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_Encrypt_System_Byte___
@@ -22334,21 +22205,21 @@ references:
   commentId: Overload:Sensus.Encryption.SymmetricEncryption.ConvertHexStringToByteArray
   fullName: Sensus.Encryption.SymmetricEncryption.ConvertHexStringToByteArray
   nameWithType: SymmetricEncryption.ConvertHexStringToByteArray
-- uid: Sensus.Encryption.SymmetricEncryption.Decrypt(System.Byte[])
-  name: Decrypt(Byte[])
-  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_Decrypt_System_Byte___
-  commentId: M:Sensus.Encryption.SymmetricEncryption.Decrypt(System.Byte[])
-  name.vb: Decrypt(Byte())
-  fullName: Sensus.Encryption.SymmetricEncryption.Decrypt(System.Byte[])
-  fullName.vb: Sensus.Encryption.SymmetricEncryption.Decrypt(System.Byte())
-  nameWithType: SymmetricEncryption.Decrypt(Byte[])
-  nameWithType.vb: SymmetricEncryption.Decrypt(Byte())
-- uid: Sensus.Encryption.SymmetricEncryption.Decrypt*
-  name: Decrypt
-  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_Decrypt_
-  commentId: Overload:Sensus.Encryption.SymmetricEncryption.Decrypt
-  fullName: Sensus.Encryption.SymmetricEncryption.Decrypt
-  nameWithType: SymmetricEncryption.Decrypt
+- uid: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])
+  name: DecryptToString(Byte[])
+  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_DecryptToString_System_Byte___
+  commentId: M:Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])
+  name.vb: DecryptToString(Byte())
+  fullName: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])
+  fullName.vb: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte())
+  nameWithType: SymmetricEncryption.DecryptToString(Byte[])
+  nameWithType.vb: SymmetricEncryption.DecryptToString(Byte())
+- uid: Sensus.Encryption.SymmetricEncryption.DecryptToString*
+  name: DecryptToString
+  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_DecryptToString_
+  commentId: Overload:Sensus.Encryption.SymmetricEncryption.DecryptToString
+  fullName: Sensus.Encryption.SymmetricEncryption.DecryptToString
+  nameWithType: SymmetricEncryption.DecryptToString
 - uid: Sensus.Encryption.SymmetricEncryption.Encrypt(System.Byte[])
   name: Encrypt(Byte[])
   href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_Encrypt_System_Byte___
@@ -22394,6 +22265,12 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.#ctor
   fullName: Sensus.Exceptions.SensusException.SensusException
   nameWithType: SensusException.SensusException
+- uid: Sensus.Exceptions.SensusException.Report(System.Exception)
+  name: Report(Exception)
+  href: api/Sensus.Exceptions.SensusException.html#Sensus_Exceptions_SensusException_Report_System_Exception_
+  commentId: M:Sensus.Exceptions.SensusException.Report(System.Exception)
+  fullName: Sensus.Exceptions.SensusException.Report(System.Exception)
+  nameWithType: SensusException.Report(Exception)
 - uid: Sensus.Exceptions.SensusException.Report(System.String,System.Exception)
   name: Report(String, Exception)
   href: api/Sensus.Exceptions.SensusException.html#Sensus_Exceptions_SensusException_Report_System_String_System_Exception_
@@ -22562,6 +22439,42 @@ references:
   fullName.vb: Sensus.Extensions.EnumerableExtensions.ToObservableCollection(Of T)(System.Collections.Generic.IEnumerable(Of T), System.Collections.Specialized.NotifyCollectionChangedEventHandler)
   nameWithType: EnumerableExtensions.ToObservableCollection<T>(IEnumerable<T>, NotifyCollectionChangedEventHandler)
   nameWithType.vb: EnumerableExtensions.ToObservableCollection(Of T)(IEnumerable(Of T), NotifyCollectionChangedEventHandler)
+- uid: Sensus.Extensions.NumericExtensions
+  name: NumericExtensions
+  href: api/Sensus.Extensions.NumericExtensions.html
+  commentId: T:Sensus.Extensions.NumericExtensions
+  fullName: Sensus.Extensions.NumericExtensions
+  nameWithType: NumericExtensions
+- uid: Sensus.Extensions.NumericExtensions.Round(System.Double,System.Int32)
+  name: Round(Double, Int32)
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_Round_System_Double_System_Int32_
+  commentId: M:Sensus.Extensions.NumericExtensions.Round(System.Double,System.Int32)
+  fullName: Sensus.Extensions.NumericExtensions.Round(System.Double, System.Int32)
+  nameWithType: NumericExtensions.Round(Double, Int32)
+- uid: Sensus.Extensions.NumericExtensions.Round(System.Int32,System.Int32)
+  name: Round(Int32, Int32)
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_Round_System_Int32_System_Int32_
+  commentId: M:Sensus.Extensions.NumericExtensions.Round(System.Int32,System.Int32)
+  fullName: Sensus.Extensions.NumericExtensions.Round(System.Int32, System.Int32)
+  nameWithType: NumericExtensions.Round(Int32, Int32)
+- uid: Sensus.Extensions.NumericExtensions.Round*
+  name: Round
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_Round_
+  commentId: Overload:Sensus.Extensions.NumericExtensions.Round
+  fullName: Sensus.Extensions.NumericExtensions.Round
+  nameWithType: NumericExtensions.Round
+- uid: Sensus.Extensions.NumericExtensions.RoundedPercentageOf(System.Int32,System.Int32,System.Int32)
+  name: RoundedPercentageOf(Int32, Int32, Int32)
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_RoundedPercentageOf_System_Int32_System_Int32_System_Int32_
+  commentId: M:Sensus.Extensions.NumericExtensions.RoundedPercentageOf(System.Int32,System.Int32,System.Int32)
+  fullName: Sensus.Extensions.NumericExtensions.RoundedPercentageOf(System.Int32, System.Int32, System.Int32)
+  nameWithType: NumericExtensions.RoundedPercentageOf(Int32, Int32, Int32)
+- uid: Sensus.Extensions.NumericExtensions.RoundedPercentageOf*
+  name: RoundedPercentageOf
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_RoundedPercentageOf_
+  commentId: Overload:Sensus.Extensions.NumericExtensions.RoundedPercentageOf
+  fullName: Sensus.Extensions.NumericExtensions.RoundedPercentageOf
+  nameWithType: NumericExtensions.RoundedPercentageOf
 - uid: Sensus.ImpreciseDatum
   name: ImpreciseDatum
   href: api/Sensus.ImpreciseDatum.html
@@ -23639,18 +23552,30 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.#ctor
   fullName: Sensus.iOS.iOSSensusServiceHelper.iOSSensusServiceHelper
   nameWithType: iOSSensusServiceHelper.iOSSensusServiceHelper
-- uid: Sensus.iOS.iOSSensusServiceHelper.BringToForeground
-  name: BringToForeground()
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BringToForeground
-  commentId: M:Sensus.iOS.iOSSensusServiceHelper.BringToForeground
-  fullName: Sensus.iOS.iOSSensusServiceHelper.BringToForeground()
-  nameWithType: iOSSensusServiceHelper.BringToForeground()
-- uid: Sensus.iOS.iOSSensusServiceHelper.BringToForeground*
-  name: BringToForeground
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BringToForeground_
-  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.BringToForeground
-  fullName: Sensus.iOS.iOSSensusServiceHelper.BringToForeground
-  nameWithType: iOSSensusServiceHelper.BringToForeground
+- uid: Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
+  name: BatteryChargePercent
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BatteryChargePercent
+  commentId: P:Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
+  fullName: Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
+  nameWithType: iOSSensusServiceHelper.BatteryChargePercent
+- uid: Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent*
+  name: BatteryChargePercent
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BatteryChargePercent_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
+  fullName: Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
+  nameWithType: iOSSensusServiceHelper.BatteryChargePercent
+- uid: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
+  name: BringToForegroundAsync()
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BringToForegroundAsync
+  commentId: M:Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
+  fullName: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync()
+  nameWithType: iOSSensusServiceHelper.BringToForegroundAsync()
+- uid: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync*
+  name: BringToForegroundAsync
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BringToForegroundAsync_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
+  fullName: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
+  nameWithType: iOSSensusServiceHelper.BringToForegroundAsync
 - uid: Sensus.iOS.iOSSensusServiceHelper.DeviceId
   name: DeviceId
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_DeviceId
@@ -24077,15 +24002,12 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Apps.iOSFacebookProbe.Poll
   fullName: Sensus.iOS.Probes.Apps.iOSFacebookProbe.Poll
   nameWithType: iOSFacebookProbe.Poll
-- uid: Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.iOS.Probes.Apps.iOSFacebookProbe.html#Sensus_iOS_Probes_Apps_iOSFacebookProbe_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: iOSFacebookProbe.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: iOSFacebookProbe.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth
+  name: TestHealth()
+  href: api/Sensus.iOS.Probes.Apps.iOSFacebookProbe.html#Sensus_iOS_Probes_Apps_iOSFacebookProbe_TestHealth
+  commentId: M:Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth
+  fullName: Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth()
+  nameWithType: iOSFacebookProbe.TestHealth()
 - uid: Sensus.iOS.Probes.Apps.iOSFacebookProbe.TestHealth*
   name: TestHealth
   href: api/Sensus.iOS.Probes.Apps.iOSFacebookProbe.html#Sensus_iOS_Probes_Apps_iOSFacebookProbe_TestHealth_
@@ -24479,42 +24401,6 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Context.iOSSoundProbe.Poll
   fullName: Sensus.iOS.Probes.Context.iOSSoundProbe.Poll
   nameWithType: iOSSoundProbe.Poll
-- uid: Sensus.iOS.Probes.Device
-  name: Sensus.iOS.Probes.Device
-  href: api/Sensus.iOS.Probes.Device.html
-  commentId: N:Sensus.iOS.Probes.Device
-  fullName: Sensus.iOS.Probes.Device
-  nameWithType: Sensus.iOS.Probes.Device
-- uid: Sensus.iOS.Probes.Device.iOSBatteryProbe
-  name: iOSBatteryProbe
-  href: api/Sensus.iOS.Probes.Device.iOSBatteryProbe.html
-  commentId: T:Sensus.iOS.Probes.Device.iOSBatteryProbe
-  fullName: Sensus.iOS.Probes.Device.iOSBatteryProbe
-  nameWithType: iOSBatteryProbe
-- uid: Sensus.iOS.Probes.Device.iOSBatteryProbe.#ctor
-  name: iOSBatteryProbe()
-  href: api/Sensus.iOS.Probes.Device.iOSBatteryProbe.html#Sensus_iOS_Probes_Device_iOSBatteryProbe__ctor
-  commentId: M:Sensus.iOS.Probes.Device.iOSBatteryProbe.#ctor
-  fullName: Sensus.iOS.Probes.Device.iOSBatteryProbe.iOSBatteryProbe()
-  nameWithType: iOSBatteryProbe.iOSBatteryProbe()
-- uid: Sensus.iOS.Probes.Device.iOSBatteryProbe.#ctor*
-  name: iOSBatteryProbe
-  href: api/Sensus.iOS.Probes.Device.iOSBatteryProbe.html#Sensus_iOS_Probes_Device_iOSBatteryProbe__ctor_
-  commentId: Overload:Sensus.iOS.Probes.Device.iOSBatteryProbe.#ctor
-  fullName: Sensus.iOS.Probes.Device.iOSBatteryProbe.iOSBatteryProbe
-  nameWithType: iOSBatteryProbe.iOSBatteryProbe
-- uid: Sensus.iOS.Probes.Device.iOSBatteryProbe.Poll(System.Threading.CancellationToken)
-  name: Poll(CancellationToken)
-  href: api/Sensus.iOS.Probes.Device.iOSBatteryProbe.html#Sensus_iOS_Probes_Device_iOSBatteryProbe_Poll_System_Threading_CancellationToken_
-  commentId: M:Sensus.iOS.Probes.Device.iOSBatteryProbe.Poll(System.Threading.CancellationToken)
-  fullName: Sensus.iOS.Probes.Device.iOSBatteryProbe.Poll(System.Threading.CancellationToken)
-  nameWithType: iOSBatteryProbe.Poll(CancellationToken)
-- uid: Sensus.iOS.Probes.Device.iOSBatteryProbe.Poll*
-  name: Poll
-  href: api/Sensus.iOS.Probes.Device.iOSBatteryProbe.html#Sensus_iOS_Probes_Device_iOSBatteryProbe_Poll_
-  commentId: Overload:Sensus.iOS.Probes.Device.iOSBatteryProbe.Poll
-  fullName: Sensus.iOS.Probes.Device.iOSBatteryProbe.Poll
-  nameWithType: iOSBatteryProbe.Poll
 - uid: Sensus.iOS.Probes.Location
   name: Sensus.iOS.Probes.Location
   href: api/Sensus.iOS.Probes.Location.html
@@ -25610,6 +25496,48 @@ references:
   commentId: F:Sensus.LoggingLevel.Verbose
   fullName: Sensus.LoggingLevel.Verbose
   nameWithType: LoggingLevel.Verbose
+- uid: Sensus.ParticipationReportDatum
+  name: ParticipationReportDatum
+  href: api/Sensus.ParticipationReportDatum.html
+  commentId: T:Sensus.ParticipationReportDatum
+  fullName: Sensus.ParticipationReportDatum
+  nameWithType: ParticipationReportDatum
+- uid: Sensus.ParticipationReportDatum.#ctor(System.DateTimeOffset,Sensus.Protocol)
+  name: ParticipationReportDatum(DateTimeOffset, Protocol)
+  href: api/Sensus.ParticipationReportDatum.html#Sensus_ParticipationReportDatum__ctor_System_DateTimeOffset_Sensus_Protocol_
+  commentId: M:Sensus.ParticipationReportDatum.#ctor(System.DateTimeOffset,Sensus.Protocol)
+  fullName: Sensus.ParticipationReportDatum.ParticipationReportDatum(System.DateTimeOffset, Sensus.Protocol)
+  nameWithType: ParticipationReportDatum.ParticipationReportDatum(DateTimeOffset, Protocol)
+- uid: Sensus.ParticipationReportDatum.#ctor*
+  name: ParticipationReportDatum
+  href: api/Sensus.ParticipationReportDatum.html#Sensus_ParticipationReportDatum__ctor_
+  commentId: Overload:Sensus.ParticipationReportDatum.#ctor
+  fullName: Sensus.ParticipationReportDatum.ParticipationReportDatum
+  nameWithType: ParticipationReportDatum.ParticipationReportDatum
+- uid: Sensus.ParticipationReportDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.ParticipationReportDatum.html#Sensus_ParticipationReportDatum_DisplayDetail
+  commentId: P:Sensus.ParticipationReportDatum.DisplayDetail
+  fullName: Sensus.ParticipationReportDatum.DisplayDetail
+  nameWithType: ParticipationReportDatum.DisplayDetail
+- uid: Sensus.ParticipationReportDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.ParticipationReportDatum.html#Sensus_ParticipationReportDatum_DisplayDetail_
+  commentId: Overload:Sensus.ParticipationReportDatum.DisplayDetail
+  fullName: Sensus.ParticipationReportDatum.DisplayDetail
+  nameWithType: ParticipationReportDatum.DisplayDetail
+- uid: Sensus.ParticipationReportDatum.ProbeParticipation
+  name: ProbeParticipation
+  href: api/Sensus.ParticipationReportDatum.html#Sensus_ParticipationReportDatum_ProbeParticipation
+  commentId: P:Sensus.ParticipationReportDatum.ProbeParticipation
+  fullName: Sensus.ParticipationReportDatum.ProbeParticipation
+  nameWithType: ParticipationReportDatum.ProbeParticipation
+- uid: Sensus.ParticipationReportDatum.ProbeParticipation*
+  name: ProbeParticipation
+  href: api/Sensus.ParticipationReportDatum.html#Sensus_ParticipationReportDatum_ProbeParticipation_
+  commentId: Overload:Sensus.ParticipationReportDatum.ProbeParticipation
+  fullName: Sensus.ParticipationReportDatum.ProbeParticipation
+  nameWithType: ParticipationReportDatum.ProbeParticipation
 - uid: Sensus.ParticipationRewardDatum
   name: ParticipationRewardDatum
   href: api/Sensus.ParticipationRewardDatum.html
@@ -27824,6 +27752,18 @@ references:
   commentId: Overload:Sensus.Probes.Context.SoundProbe.GetChartSeries
   fullName: Sensus.Probes.Context.SoundProbe.GetChartSeries
   nameWithType: SoundProbe.GetChartSeries
+- uid: Sensus.Probes.Context.SoundProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_Initialize
+  commentId: M:Sensus.Probes.Context.SoundProbe.Initialize
+  fullName: Sensus.Probes.Context.SoundProbe.Initialize()
+  nameWithType: SoundProbe.Initialize()
+- uid: Sensus.Probes.Context.SoundProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_Initialize_
+  commentId: Overload:Sensus.Probes.Context.SoundProbe.Initialize
+  fullName: Sensus.Probes.Context.SoundProbe.Initialize
+  nameWithType: SoundProbe.Initialize
 - uid: Sensus.Probes.Context.SoundProbe.SampleLengthMS
   name: SampleLengthMS
   href: api/Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_SampleLengthMS
@@ -28076,6 +28016,18 @@ references:
   commentId: Overload:Sensus.Probes.Device.BatteryProbe.GetChartSeries
   fullName: Sensus.Probes.Device.BatteryProbe.GetChartSeries
   nameWithType: BatteryProbe.GetChartSeries
+- uid: Sensus.Probes.Device.BatteryProbe.Poll(System.Threading.CancellationToken)
+  name: Poll(CancellationToken)
+  href: api/Sensus.Probes.Device.BatteryProbe.html#Sensus_Probes_Device_BatteryProbe_Poll_System_Threading_CancellationToken_
+  commentId: M:Sensus.Probes.Device.BatteryProbe.Poll(System.Threading.CancellationToken)
+  fullName: Sensus.Probes.Device.BatteryProbe.Poll(System.Threading.CancellationToken)
+  nameWithType: BatteryProbe.Poll(CancellationToken)
+- uid: Sensus.Probes.Device.BatteryProbe.Poll*
+  name: Poll
+  href: api/Sensus.Probes.Device.BatteryProbe.html#Sensus_Probes_Device_BatteryProbe_Poll_
+  commentId: Overload:Sensus.Probes.Device.BatteryProbe.Poll
+  fullName: Sensus.Probes.Device.BatteryProbe.Poll
+  nameWithType: BatteryProbe.Poll
 - uid: Sensus.Probes.Device.ScreenDatum
   name: ScreenDatum
   href: api/Sensus.Probes.Device.ScreenDatum.html
@@ -29174,18 +29126,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.GpsReceiver.Get
   fullName: Sensus.Probes.Location.GpsReceiver.Get
   nameWithType: GpsReceiver.Get
-- uid: Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken)
-  name: GetReading(Int32, CancellationToken)
-  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_System_Int32_System_Threading_CancellationToken_
-  commentId: M:Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken)
-  fullName: Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32, System.Threading.CancellationToken)
-  nameWithType: GpsReceiver.GetReading(Int32, CancellationToken)
-- uid: Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken)
-  name: GetReading(CancellationToken)
-  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_System_Threading_CancellationToken_
-  commentId: M:Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken)
-  fullName: Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken)
-  nameWithType: GpsReceiver.GetReading(CancellationToken)
+- uid: Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken,System.Boolean)
+  name: GetReading(Int32, CancellationToken, Boolean)
+  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_System_Int32_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken,System.Boolean)
+  fullName: Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32, System.Threading.CancellationToken, System.Boolean)
+  nameWithType: GpsReceiver.GetReading(Int32, CancellationToken, Boolean)
+- uid: Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken,System.Boolean)
+  name: GetReading(CancellationToken, Boolean)
+  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken,System.Boolean)
+  fullName: Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken, System.Boolean)
+  nameWithType: GpsReceiver.GetReading(CancellationToken, Boolean)
 - uid: Sensus.Probes.Location.GpsReceiver.GetReading*
   name: GetReading
   href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_
@@ -30191,6 +30143,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.GetChartSeries
   fullName: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.GetChartSeries
   nameWithType: PollingPointsOfInterestProximityProbe.GetChartSeries
+- uid: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.html#Sensus_Probes_Location_PollingPointsOfInterestProximityProbe_Initialize
+  commentId: M:Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Initialize
+  fullName: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Initialize()
+  nameWithType: PollingPointsOfInterestProximityProbe.Initialize()
+- uid: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.html#Sensus_Probes_Location_PollingPointsOfInterestProximityProbe_Initialize_
+  commentId: Overload:Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Initialize
+  fullName: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Initialize
+  nameWithType: PollingPointsOfInterestProximityProbe.Initialize
 - uid: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Poll(System.Threading.CancellationToken)
   name: Poll(CancellationToken)
   href: api/Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.html#Sensus_Probes_Location_PollingPointsOfInterestProximityProbe_Poll_System_Threading_CancellationToken_
@@ -31721,15 +31685,12 @@ references:
   commentId: Overload:Sensus.Probes.PollingProbe.Stop
   fullName: Sensus.Probes.PollingProbe.Stop
   nameWithType: PollingProbe.Stop
-- uid: Sensus.Probes.PollingProbe.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Probes.PollingProbe.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Probes.PollingProbe.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Probes.PollingProbe.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: PollingProbe.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: PollingProbe.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.Probes.PollingProbe.TestHealth
+  name: TestHealth()
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth
+  commentId: M:Sensus.Probes.PollingProbe.TestHealth
+  fullName: Sensus.Probes.PollingProbe.TestHealth()
+  nameWithType: PollingProbe.TestHealth()
 - uid: Sensus.Probes.PollingProbe.TestHealth*
   name: TestHealth
   href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth_
@@ -32012,18 +31973,6 @@ references:
   commentId: Overload:Sensus.Probes.Probe.Restart
   fullName: Sensus.Probes.Probe.Restart
   nameWithType: Probe.Restart
-- uid: Sensus.Probes.Probe.RunLocalCommitOnStore
-  name: RunLocalCommitOnStore
-  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_RunLocalCommitOnStore
-  commentId: P:Sensus.Probes.Probe.RunLocalCommitOnStore
-  fullName: Sensus.Probes.Probe.RunLocalCommitOnStore
-  nameWithType: Probe.RunLocalCommitOnStore
-- uid: Sensus.Probes.Probe.RunLocalCommitOnStore*
-  name: RunLocalCommitOnStore
-  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_RunLocalCommitOnStore_
-  commentId: Overload:Sensus.Probes.Probe.RunLocalCommitOnStore
-  fullName: Sensus.Probes.Probe.RunLocalCommitOnStore
-  nameWithType: Probe.RunLocalCommitOnStore
 - uid: Sensus.Probes.Probe.Running
   name: Running
   href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running
@@ -32135,15 +32084,12 @@ references:
   commentId: Overload:Sensus.Probes.Probe.SuccessfulHealthTestTimes
   fullName: Sensus.Probes.Probe.SuccessfulHealthTestTimes
   nameWithType: Probe.SuccessfulHealthTestTimes
-- uid: Sensus.Probes.Probe.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Probes.Probe.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Probes.Probe.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Probes.Probe.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: Probe.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: Probe.TestHealth(ByRef String, ByRef String, ByRef String)
+- uid: Sensus.Probes.Probe.TestHealth
+  name: TestHealth()
+  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth
+  commentId: M:Sensus.Probes.Probe.TestHealth
+  fullName: Sensus.Probes.Probe.TestHealth()
+  nameWithType: Probe.TestHealth()
 - uid: Sensus.Probes.Probe.TestHealth*
   name: TestHealth
   href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_
@@ -34619,21 +34565,6 @@ references:
   commentId: Overload:Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync
   fullName: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync
   nameWithType: MicrosoftBandProbeBase.TestBandClientAsync
-- uid: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html#Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbeBase_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: MicrosoftBandProbeBase.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: MicrosoftBandProbeBase.TestHealth(ByRef String, ByRef String, ByRef String)
-- uid: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth*
-  name: TestHealth
-  href: api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html#Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbeBase_TestHealth_
-  commentId: Overload:Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth
-  fullName: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestHealth
-  nameWithType: MicrosoftBandProbeBase.TestHealth
 - uid: Sensus.Probes.User.MicrosoftBand.MicrosoftBandRRIntervalDatum
   name: MicrosoftBandRRIntervalDatum
   href: api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandRRIntervalDatum.html
@@ -36104,21 +36035,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.Stop
   fullName: Sensus.Probes.User.Scripts.ScriptProbe.Stop
   nameWithType: ScriptProbe.Stop
-- uid: Sensus.Probes.User.Scripts.ScriptProbe.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Probes.User.Scripts.ScriptProbe.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Probes.User.Scripts.ScriptProbe.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Probes.User.Scripts.ScriptProbe.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: ScriptProbe.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: ScriptProbe.TestHealth(ByRef String, ByRef String, ByRef String)
-- uid: Sensus.Probes.User.Scripts.ScriptProbe.TestHealth*
-  name: TestHealth
-  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_TestHealth_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.TestHealth
-  fullName: Sensus.Probes.User.Scripts.ScriptProbe.TestHealth
-  nameWithType: ScriptProbe.TestHealth
 - uid: Sensus.Probes.User.Scripts.ScriptRunDatum
   name: ScriptRunDatum
   href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html
@@ -36518,21 +36434,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Stop
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.Stop
   nameWithType: ScriptRunner.Stop
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.TestHealth(System.String@,System.String@,System.String@)
-  name: TestHealth(ref String, ref String, ref String)
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_TestHealth_System_String__System_String__System_String__
-  commentId: M:Sensus.Probes.User.Scripts.ScriptRunner.TestHealth(System.String@,System.String@,System.String@)
-  name.vb: TestHealth(ByRef String, ByRef String, ByRef String)
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.TestHealth(ref System.String, ref System.String, ref System.String)
-  fullName.vb: Sensus.Probes.User.Scripts.ScriptRunner.TestHealth(ByRef System.String, ByRef System.String, ByRef System.String)
-  nameWithType: ScriptRunner.TestHealth(ref String, ref String, ref String)
-  nameWithType.vb: ScriptRunner.TestHealth(ByRef String, ByRef String, ByRef String)
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.TestHealth*
-  name: TestHealth
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_TestHealth_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.TestHealth
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.TestHealth
-  nameWithType: ScriptRunner.TestHealth
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.Triggers
   name: Triggers
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Triggers
@@ -37217,18 +37118,6 @@ references:
   commentId: Overload:Sensus.Protocol.Equals
   fullName: Sensus.Protocol.Equals
   nameWithType: Protocol.Equals
-- uid: Sensus.Protocol.ForceProtocolReportsToRemoteDataStore
-  name: ForceProtocolReportsToRemoteDataStore
-  href: api/Sensus.Protocol.html#Sensus_Protocol_ForceProtocolReportsToRemoteDataStore
-  commentId: P:Sensus.Protocol.ForceProtocolReportsToRemoteDataStore
-  fullName: Sensus.Protocol.ForceProtocolReportsToRemoteDataStore
-  nameWithType: Protocol.ForceProtocolReportsToRemoteDataStore
-- uid: Sensus.Protocol.ForceProtocolReportsToRemoteDataStore*
-  name: ForceProtocolReportsToRemoteDataStore
-  href: api/Sensus.Protocol.html#Sensus_Protocol_ForceProtocolReportsToRemoteDataStore_
-  commentId: Overload:Sensus.Protocol.ForceProtocolReportsToRemoteDataStore
-  fullName: Sensus.Protocol.ForceProtocolReportsToRemoteDataStore
-  nameWithType: Protocol.ForceProtocolReportsToRemoteDataStore
 - uid: Sensus.Protocol.GetHashCode
   name: GetHashCode()
   href: api/Sensus.Protocol.html#Sensus_Protocol_GetHashCode
@@ -37367,18 +37256,6 @@ references:
   commentId: Overload:Sensus.Protocol.LockPasswordHash
   fullName: Sensus.Protocol.LockPasswordHash
   nameWithType: Protocol.LockPasswordHash
-- uid: Sensus.Protocol.MostRecentReport
-  name: MostRecentReport
-  href: api/Sensus.Protocol.html#Sensus_Protocol_MostRecentReport
-  commentId: P:Sensus.Protocol.MostRecentReport
-  fullName: Sensus.Protocol.MostRecentReport
-  nameWithType: Protocol.MostRecentReport
-- uid: Sensus.Protocol.MostRecentReport*
-  name: MostRecentReport
-  href: api/Sensus.Protocol.html#Sensus_Protocol_MostRecentReport_
-  commentId: Overload:Sensus.Protocol.MostRecentReport
-  fullName: Sensus.Protocol.MostRecentReport
-  nameWithType: Protocol.MostRecentReport
 - uid: Sensus.Protocol.Name
   name: Name
   href: api/Sensus.Protocol.html#Sensus_Protocol_Name
@@ -37673,12 +37550,12 @@ references:
   commentId: Overload:Sensus.Protocol.Stop
   fullName: Sensus.Protocol.Stop
   nameWithType: Protocol.Stop
-- uid: Sensus.Protocol.StopAsync(System.Action)
-  name: StopAsync(Action)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StopAsync_System_Action_
-  commentId: M:Sensus.Protocol.StopAsync(System.Action)
-  fullName: Sensus.Protocol.StopAsync(System.Action)
-  nameWithType: Protocol.StopAsync(Action)
+- uid: Sensus.Protocol.StopAsync
+  name: StopAsync()
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StopAsync
+  commentId: M:Sensus.Protocol.StopAsync
+  fullName: Sensus.Protocol.StopAsync()
+  nameWithType: Protocol.StopAsync()
 - uid: Sensus.Protocol.StopAsync*
   name: StopAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_StopAsync_
@@ -37757,108 +37634,6 @@ references:
   commentId: Overload:Sensus.Protocol.VariableValueUiProperty
   fullName: Sensus.Protocol.VariableValueUiProperty
   nameWithType: Protocol.VariableValueUiProperty
-- uid: Sensus.ProtocolReportDatum
-  name: ProtocolReportDatum
-  href: api/Sensus.ProtocolReportDatum.html
-  commentId: T:Sensus.ProtocolReportDatum
-  fullName: Sensus.ProtocolReportDatum
-  nameWithType: ProtocolReportDatum
-- uid: Sensus.ProtocolReportDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,Sensus.Protocol)
-  name: ProtocolReportDatum(DateTimeOffset, String, String, String, Protocol)
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum__ctor_System_DateTimeOffset_System_String_System_String_System_String_Sensus_Protocol_
-  commentId: M:Sensus.ProtocolReportDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,Sensus.Protocol)
-  fullName: Sensus.ProtocolReportDatum.ProtocolReportDatum(System.DateTimeOffset, System.String, System.String, System.String, Sensus.Protocol)
-  nameWithType: ProtocolReportDatum.ProtocolReportDatum(DateTimeOffset, String, String, String, Protocol)
-- uid: Sensus.ProtocolReportDatum.#ctor*
-  name: ProtocolReportDatum
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum__ctor_
-  commentId: Overload:Sensus.ProtocolReportDatum.#ctor
-  fullName: Sensus.ProtocolReportDatum.ProtocolReportDatum
-  nameWithType: ProtocolReportDatum.ProtocolReportDatum
-- uid: Sensus.ProtocolReportDatum.DisplayDetail
-  name: DisplayDetail
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_DisplayDetail
-  commentId: P:Sensus.ProtocolReportDatum.DisplayDetail
-  fullName: Sensus.ProtocolReportDatum.DisplayDetail
-  nameWithType: ProtocolReportDatum.DisplayDetail
-- uid: Sensus.ProtocolReportDatum.DisplayDetail*
-  name: DisplayDetail
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_DisplayDetail_
-  commentId: Overload:Sensus.ProtocolReportDatum.DisplayDetail
-  fullName: Sensus.ProtocolReportDatum.DisplayDetail
-  nameWithType: ProtocolReportDatum.DisplayDetail
-- uid: Sensus.ProtocolReportDatum.Error
-  name: Error
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_Error
-  commentId: P:Sensus.ProtocolReportDatum.Error
-  fullName: Sensus.ProtocolReportDatum.Error
-  nameWithType: ProtocolReportDatum.Error
-- uid: Sensus.ProtocolReportDatum.Error*
-  name: Error
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_Error_
-  commentId: Overload:Sensus.ProtocolReportDatum.Error
-  fullName: Sensus.ProtocolReportDatum.Error
-  nameWithType: ProtocolReportDatum.Error
-- uid: Sensus.ProtocolReportDatum.Misc
-  name: Misc
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_Misc
-  commentId: P:Sensus.ProtocolReportDatum.Misc
-  fullName: Sensus.ProtocolReportDatum.Misc
-  nameWithType: ProtocolReportDatum.Misc
-- uid: Sensus.ProtocolReportDatum.Misc*
-  name: Misc
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_Misc_
-  commentId: Overload:Sensus.ProtocolReportDatum.Misc
-  fullName: Sensus.ProtocolReportDatum.Misc
-  nameWithType: ProtocolReportDatum.Misc
-- uid: Sensus.ProtocolReportDatum.OperatingSystem
-  name: OperatingSystem
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_OperatingSystem
-  commentId: P:Sensus.ProtocolReportDatum.OperatingSystem
-  fullName: Sensus.ProtocolReportDatum.OperatingSystem
-  nameWithType: ProtocolReportDatum.OperatingSystem
-- uid: Sensus.ProtocolReportDatum.OperatingSystem*
-  name: OperatingSystem
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_OperatingSystem_
-  commentId: Overload:Sensus.ProtocolReportDatum.OperatingSystem
-  fullName: Sensus.ProtocolReportDatum.OperatingSystem
-  nameWithType: ProtocolReportDatum.OperatingSystem
-- uid: Sensus.ProtocolReportDatum.ProbeParticipation
-  name: ProbeParticipation
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_ProbeParticipation
-  commentId: P:Sensus.ProtocolReportDatum.ProbeParticipation
-  fullName: Sensus.ProtocolReportDatum.ProbeParticipation
-  nameWithType: ProtocolReportDatum.ProbeParticipation
-- uid: Sensus.ProtocolReportDatum.ProbeParticipation*
-  name: ProbeParticipation
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_ProbeParticipation_
-  commentId: Overload:Sensus.ProtocolReportDatum.ProbeParticipation
-  fullName: Sensus.ProtocolReportDatum.ProbeParticipation
-  nameWithType: ProtocolReportDatum.ProbeParticipation
-- uid: Sensus.ProtocolReportDatum.ToString
-  name: ToString()
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_ToString
-  commentId: M:Sensus.ProtocolReportDatum.ToString
-  fullName: Sensus.ProtocolReportDatum.ToString()
-  nameWithType: ProtocolReportDatum.ToString()
-- uid: Sensus.ProtocolReportDatum.ToString*
-  name: ToString
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_ToString_
-  commentId: Overload:Sensus.ProtocolReportDatum.ToString
-  fullName: Sensus.ProtocolReportDatum.ToString
-  nameWithType: ProtocolReportDatum.ToString
-- uid: Sensus.ProtocolReportDatum.Warning
-  name: Warning
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_Warning
-  commentId: P:Sensus.ProtocolReportDatum.Warning
-  fullName: Sensus.ProtocolReportDatum.Warning
-  nameWithType: ProtocolReportDatum.Warning
-- uid: Sensus.ProtocolReportDatum.Warning*
-  name: Warning
-  href: api/Sensus.ProtocolReportDatum.html#Sensus_ProtocolReportDatum_Warning_
-  commentId: Overload:Sensus.ProtocolReportDatum.Warning
-  fullName: Sensus.ProtocolReportDatum.Warning
-  nameWithType: ProtocolReportDatum.Warning
 - uid: Sensus.SensusServiceHelper
   name: SensusServiceHelper
   href: api/Sensus.SensusServiceHelper.html
@@ -37937,18 +37712,36 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.BarcodeWriter
   fullName: Sensus.SensusServiceHelper.BarcodeWriter
   nameWithType: SensusServiceHelper.BarcodeWriter
-- uid: Sensus.SensusServiceHelper.BringToForeground
-  name: BringToForeground()
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForeground
-  commentId: M:Sensus.SensusServiceHelper.BringToForeground
-  fullName: Sensus.SensusServiceHelper.BringToForeground()
-  nameWithType: SensusServiceHelper.BringToForeground()
-- uid: Sensus.SensusServiceHelper.BringToForeground*
-  name: BringToForeground
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForeground_
-  commentId: Overload:Sensus.SensusServiceHelper.BringToForeground
-  fullName: Sensus.SensusServiceHelper.BringToForeground
-  nameWithType: SensusServiceHelper.BringToForeground
+- uid: Sensus.SensusServiceHelper.BatteryChargePercent
+  name: BatteryChargePercent
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BatteryChargePercent
+  commentId: P:Sensus.SensusServiceHelper.BatteryChargePercent
+  fullName: Sensus.SensusServiceHelper.BatteryChargePercent
+  nameWithType: SensusServiceHelper.BatteryChargePercent
+- uid: Sensus.SensusServiceHelper.BatteryChargePercent*
+  name: BatteryChargePercent
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BatteryChargePercent_
+  commentId: Overload:Sensus.SensusServiceHelper.BatteryChargePercent
+  fullName: Sensus.SensusServiceHelper.BatteryChargePercent
+  nameWithType: SensusServiceHelper.BatteryChargePercent
+- uid: Sensus.SensusServiceHelper.BringToForegroundAsync
+  name: BringToForegroundAsync()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForegroundAsync
+  commentId: M:Sensus.SensusServiceHelper.BringToForegroundAsync
+  fullName: Sensus.SensusServiceHelper.BringToForegroundAsync()
+  nameWithType: SensusServiceHelper.BringToForegroundAsync()
+- uid: Sensus.SensusServiceHelper.BringToForegroundAsync*
+  name: BringToForegroundAsync
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForegroundAsync_
+  commentId: Overload:Sensus.SensusServiceHelper.BringToForegroundAsync
+  fullName: Sensus.SensusServiceHelper.BringToForegroundAsync
+  nameWithType: SensusServiceHelper.BringToForegroundAsync
+- uid: Sensus.SensusServiceHelper.BUILD_ID
+  name: BUILD_ID
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BUILD_ID
+  commentId: F:Sensus.SensusServiceHelper.BUILD_ID
+  fullName: Sensus.SensusServiceHelper.BUILD_ID
+  nameWithType: SensusServiceHelper.BUILD_ID
 - uid: Sensus.SensusServiceHelper.ClearPendingSurveysNotificationAsync
   name: ClearPendingSurveysNotificationAsync()
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearPendingSurveysNotificationAsync
@@ -38708,6 +38501,42 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.WiFiConnected
   fullName: Sensus.SensusServiceHelper.WiFiConnected
   nameWithType: SensusServiceHelper.WiFiConnected
+- uid: Sensus.TrackedEvent
+  name: TrackedEvent
+  href: api/Sensus.TrackedEvent.html
+  commentId: T:Sensus.TrackedEvent
+  fullName: Sensus.TrackedEvent
+  nameWithType: TrackedEvent
+- uid: Sensus.TrackedEvent.Error
+  name: Error
+  href: api/Sensus.TrackedEvent.html#Sensus_TrackedEvent_Error
+  commentId: F:Sensus.TrackedEvent.Error
+  fullName: Sensus.TrackedEvent.Error
+  nameWithType: TrackedEvent.Error
+- uid: Sensus.TrackedEvent.Health
+  name: Health
+  href: api/Sensus.TrackedEvent.html#Sensus_TrackedEvent_Health
+  commentId: F:Sensus.TrackedEvent.Health
+  fullName: Sensus.TrackedEvent.Health
+  nameWithType: TrackedEvent.Health
+- uid: Sensus.TrackedEvent.Miscellaneous
+  name: Miscellaneous
+  href: api/Sensus.TrackedEvent.html#Sensus_TrackedEvent_Miscellaneous
+  commentId: F:Sensus.TrackedEvent.Miscellaneous
+  fullName: Sensus.TrackedEvent.Miscellaneous
+  nameWithType: TrackedEvent.Miscellaneous
+- uid: Sensus.TrackedEvent.value__
+  name: value__
+  href: api/Sensus.TrackedEvent.html#Sensus_TrackedEvent_value__
+  commentId: F:Sensus.TrackedEvent.value__
+  fullName: Sensus.TrackedEvent.value__
+  nameWithType: TrackedEvent.value__
+- uid: Sensus.TrackedEvent.Warning
+  name: Warning
+  href: api/Sensus.TrackedEvent.html#Sensus_TrackedEvent_Warning
+  commentId: F:Sensus.TrackedEvent.Warning
+  fullName: Sensus.TrackedEvent.Warning
+  nameWithType: TrackedEvent.Warning
 - uid: Sensus.UI
   name: Sensus.UI
   href: api/Sensus.UI.html
@@ -38816,24 +38645,6 @@ references:
   commentId: Overload:Sensus.UI.EstimoteBeaconProbeBeaconsPage.#ctor
   fullName: Sensus.UI.EstimoteBeaconProbeBeaconsPage.EstimoteBeaconProbeBeaconsPage
   nameWithType: EstimoteBeaconProbeBeaconsPage.EstimoteBeaconProbeBeaconsPage
-- uid: Sensus.UI.HomePage
-  name: HomePage
-  href: api/Sensus.UI.HomePage.html
-  commentId: T:Sensus.UI.HomePage
-  fullName: Sensus.UI.HomePage
-  nameWithType: HomePage
-- uid: Sensus.UI.HomePage.#ctor
-  name: HomePage()
-  href: api/Sensus.UI.HomePage.html#Sensus_UI_HomePage__ctor
-  commentId: M:Sensus.UI.HomePage.#ctor
-  fullName: Sensus.UI.HomePage.HomePage()
-  nameWithType: HomePage.HomePage()
-- uid: Sensus.UI.HomePage.#ctor*
-  name: HomePage
-  href: api/Sensus.UI.HomePage.html#Sensus_UI_HomePage__ctor_
-  commentId: Overload:Sensus.UI.HomePage.#ctor
-  fullName: Sensus.UI.HomePage.HomePage
-  nameWithType: HomePage.HomePage
 - uid: Sensus.UI.Inputs
   name: Sensus.UI.Inputs
   href: api/Sensus.UI.Inputs.html
@@ -40808,6 +40619,24 @@ references:
   commentId: Overload:Sensus.UI.PointsOfInterestPage.#ctor
   fullName: Sensus.UI.PointsOfInterestPage.PointsOfInterestPage
   nameWithType: PointsOfInterestPage.PointsOfInterestPage
+- uid: Sensus.UI.PrivacyPolicyPage
+  name: PrivacyPolicyPage
+  href: api/Sensus.UI.PrivacyPolicyPage.html
+  commentId: T:Sensus.UI.PrivacyPolicyPage
+  fullName: Sensus.UI.PrivacyPolicyPage
+  nameWithType: PrivacyPolicyPage
+- uid: Sensus.UI.PrivacyPolicyPage.#ctor
+  name: PrivacyPolicyPage()
+  href: api/Sensus.UI.PrivacyPolicyPage.html#Sensus_UI_PrivacyPolicyPage__ctor
+  commentId: M:Sensus.UI.PrivacyPolicyPage.#ctor
+  fullName: Sensus.UI.PrivacyPolicyPage.PrivacyPolicyPage()
+  nameWithType: PrivacyPolicyPage.PrivacyPolicyPage()
+- uid: Sensus.UI.PrivacyPolicyPage.#ctor*
+  name: PrivacyPolicyPage
+  href: api/Sensus.UI.PrivacyPolicyPage.html#Sensus_UI_PrivacyPolicyPage__ctor_
+  commentId: Overload:Sensus.UI.PrivacyPolicyPage.#ctor
+  fullName: Sensus.UI.PrivacyPolicyPage.PrivacyPolicyPage
+  nameWithType: PrivacyPolicyPage.PrivacyPolicyPage
 - uid: Sensus.UI.ProbePage
   name: ProbePage
   href: api/Sensus.UI.ProbePage.html
@@ -41297,36 +41126,108 @@ references:
   commentId: Overload:Sensus.UI.ScriptTriggersPage.#ctor
   fullName: Sensus.UI.ScriptTriggersPage.ScriptTriggersPage
   nameWithType: ScriptTriggersPage.ScriptTriggersPage
-- uid: Sensus.UI.ShareLocalDataStorePage
-  name: ShareLocalDataStorePage
-  href: api/Sensus.UI.ShareLocalDataStorePage.html
-  commentId: T:Sensus.UI.ShareLocalDataStorePage
-  fullName: Sensus.UI.ShareLocalDataStorePage
-  nameWithType: ShareLocalDataStorePage
-- uid: Sensus.UI.ShareLocalDataStorePage.#ctor(Sensus.DataStores.Local.LocalDataStore)
-  name: ShareLocalDataStorePage(LocalDataStore)
-  href: api/Sensus.UI.ShareLocalDataStorePage.html#Sensus_UI_ShareLocalDataStorePage__ctor_Sensus_DataStores_Local_LocalDataStore_
-  commentId: M:Sensus.UI.ShareLocalDataStorePage.#ctor(Sensus.DataStores.Local.LocalDataStore)
-  fullName: Sensus.UI.ShareLocalDataStorePage.ShareLocalDataStorePage(Sensus.DataStores.Local.LocalDataStore)
-  nameWithType: ShareLocalDataStorePage.ShareLocalDataStorePage(LocalDataStore)
-- uid: Sensus.UI.ShareLocalDataStorePage.#ctor*
-  name: ShareLocalDataStorePage
-  href: api/Sensus.UI.ShareLocalDataStorePage.html#Sensus_UI_ShareLocalDataStorePage__ctor_
-  commentId: Overload:Sensus.UI.ShareLocalDataStorePage.#ctor
-  fullName: Sensus.UI.ShareLocalDataStorePage.ShareLocalDataStorePage
-  nameWithType: ShareLocalDataStorePage.ShareLocalDataStorePage
-- uid: Sensus.UI.ShareLocalDataStorePage.OnDisappearing
-  name: OnDisappearing()
-  href: api/Sensus.UI.ShareLocalDataStorePage.html#Sensus_UI_ShareLocalDataStorePage_OnDisappearing
-  commentId: M:Sensus.UI.ShareLocalDataStorePage.OnDisappearing
-  fullName: Sensus.UI.ShareLocalDataStorePage.OnDisappearing()
-  nameWithType: ShareLocalDataStorePage.OnDisappearing()
-- uid: Sensus.UI.ShareLocalDataStorePage.OnDisappearing*
-  name: OnDisappearing
-  href: api/Sensus.UI.ShareLocalDataStorePage.html#Sensus_UI_ShareLocalDataStorePage_OnDisappearing_
-  commentId: Overload:Sensus.UI.ShareLocalDataStorePage.OnDisappearing
-  fullName: Sensus.UI.ShareLocalDataStorePage.OnDisappearing
-  nameWithType: ShareLocalDataStorePage.OnDisappearing
+- uid: Sensus.UI.SensusDetailPageItem
+  name: SensusDetailPageItem
+  href: api/Sensus.UI.SensusDetailPageItem.html
+  commentId: T:Sensus.UI.SensusDetailPageItem
+  fullName: Sensus.UI.SensusDetailPageItem
+  nameWithType: SensusDetailPageItem
+- uid: Sensus.UI.SensusDetailPageItem.#ctor
+  name: SensusDetailPageItem()
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem__ctor
+  commentId: M:Sensus.UI.SensusDetailPageItem.#ctor
+  fullName: Sensus.UI.SensusDetailPageItem.SensusDetailPageItem()
+  nameWithType: SensusDetailPageItem.SensusDetailPageItem()
+- uid: Sensus.UI.SensusDetailPageItem.#ctor*
+  name: SensusDetailPageItem
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem__ctor_
+  commentId: Overload:Sensus.UI.SensusDetailPageItem.#ctor
+  fullName: Sensus.UI.SensusDetailPageItem.SensusDetailPageItem
+  nameWithType: SensusDetailPageItem.SensusDetailPageItem
+- uid: Sensus.UI.SensusDetailPageItem.IconSource
+  name: IconSource
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_IconSource
+  commentId: P:Sensus.UI.SensusDetailPageItem.IconSource
+  fullName: Sensus.UI.SensusDetailPageItem.IconSource
+  nameWithType: SensusDetailPageItem.IconSource
+- uid: Sensus.UI.SensusDetailPageItem.IconSource*
+  name: IconSource
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_IconSource_
+  commentId: Overload:Sensus.UI.SensusDetailPageItem.IconSource
+  fullName: Sensus.UI.SensusDetailPageItem.IconSource
+  nameWithType: SensusDetailPageItem.IconSource
+- uid: Sensus.UI.SensusDetailPageItem.TargetType
+  name: TargetType
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_TargetType
+  commentId: P:Sensus.UI.SensusDetailPageItem.TargetType
+  fullName: Sensus.UI.SensusDetailPageItem.TargetType
+  nameWithType: SensusDetailPageItem.TargetType
+- uid: Sensus.UI.SensusDetailPageItem.TargetType*
+  name: TargetType
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_TargetType_
+  commentId: Overload:Sensus.UI.SensusDetailPageItem.TargetType
+  fullName: Sensus.UI.SensusDetailPageItem.TargetType
+  nameWithType: SensusDetailPageItem.TargetType
+- uid: Sensus.UI.SensusDetailPageItem.Title
+  name: Title
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_Title
+  commentId: P:Sensus.UI.SensusDetailPageItem.Title
+  fullName: Sensus.UI.SensusDetailPageItem.Title
+  nameWithType: SensusDetailPageItem.Title
+- uid: Sensus.UI.SensusDetailPageItem.Title*
+  name: Title
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_Title_
+  commentId: Overload:Sensus.UI.SensusDetailPageItem.Title
+  fullName: Sensus.UI.SensusDetailPageItem.Title
+  nameWithType: SensusDetailPageItem.Title
+- uid: Sensus.UI.SensusMasterDetailPage
+  name: SensusMasterDetailPage
+  href: api/Sensus.UI.SensusMasterDetailPage.html
+  commentId: T:Sensus.UI.SensusMasterDetailPage
+  fullName: Sensus.UI.SensusMasterDetailPage
+  nameWithType: SensusMasterDetailPage
+- uid: Sensus.UI.SensusMasterDetailPage.#ctor
+  name: SensusMasterDetailPage()
+  href: api/Sensus.UI.SensusMasterDetailPage.html#Sensus_UI_SensusMasterDetailPage__ctor
+  commentId: M:Sensus.UI.SensusMasterDetailPage.#ctor
+  fullName: Sensus.UI.SensusMasterDetailPage.SensusMasterDetailPage()
+  nameWithType: SensusMasterDetailPage.SensusMasterDetailPage()
+- uid: Sensus.UI.SensusMasterDetailPage.#ctor*
+  name: SensusMasterDetailPage
+  href: api/Sensus.UI.SensusMasterDetailPage.html#Sensus_UI_SensusMasterDetailPage__ctor_
+  commentId: Overload:Sensus.UI.SensusMasterDetailPage.#ctor
+  fullName: Sensus.UI.SensusMasterDetailPage.SensusMasterDetailPage
+  nameWithType: SensusMasterDetailPage.SensusMasterDetailPage
+- uid: Sensus.UI.SensusMasterPage
+  name: SensusMasterPage
+  href: api/Sensus.UI.SensusMasterPage.html
+  commentId: T:Sensus.UI.SensusMasterPage
+  fullName: Sensus.UI.SensusMasterPage
+  nameWithType: SensusMasterPage
+- uid: Sensus.UI.SensusMasterPage.#ctor
+  name: SensusMasterPage()
+  href: api/Sensus.UI.SensusMasterPage.html#Sensus_UI_SensusMasterPage__ctor
+  commentId: M:Sensus.UI.SensusMasterPage.#ctor
+  fullName: Sensus.UI.SensusMasterPage.SensusMasterPage()
+  nameWithType: SensusMasterPage.SensusMasterPage()
+- uid: Sensus.UI.SensusMasterPage.#ctor*
+  name: SensusMasterPage
+  href: api/Sensus.UI.SensusMasterPage.html#Sensus_UI_SensusMasterPage__ctor_
+  commentId: Overload:Sensus.UI.SensusMasterPage.#ctor
+  fullName: Sensus.UI.SensusMasterPage.SensusMasterPage
+  nameWithType: SensusMasterPage.SensusMasterPage
+- uid: Sensus.UI.SensusMasterPage.MasterPageItemsListView
+  name: MasterPageItemsListView
+  href: api/Sensus.UI.SensusMasterPage.html#Sensus_UI_SensusMasterPage_MasterPageItemsListView
+  commentId: P:Sensus.UI.SensusMasterPage.MasterPageItemsListView
+  fullName: Sensus.UI.SensusMasterPage.MasterPageItemsListView
+  nameWithType: SensusMasterPage.MasterPageItemsListView
+- uid: Sensus.UI.SensusMasterPage.MasterPageItemsListView*
+  name: MasterPageItemsListView
+  href: api/Sensus.UI.SensusMasterPage.html#Sensus_UI_SensusMasterPage_MasterPageItemsListView_
+  commentId: Overload:Sensus.UI.SensusMasterPage.MasterPageItemsListView
+  fullName: Sensus.UI.SensusMasterPage.MasterPageItemsListView
+  nameWithType: SensusMasterPage.MasterPageItemsListView
 - uid: Sensus.UI.UiProperties
   name: Sensus.UI.UiProperties
   href: api/Sensus.UI.UiProperties.html

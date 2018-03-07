@@ -97,7 +97,7 @@ S3 service is a simple, non-relational storage system that is relatively cheap, 
 <li>Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where <code>REGION</code> is the region in which 
 your bucket will reside (e.g., <code>us-east-1</code>), and <code>ROOT_ID</code> is the 12-digit (no dashes) AWS account identifier that will own your data:</li>
 </ul>
-<pre><code>./ConfigureAwsForExperiment.sh REGION ROOT_ID
+<pre><code>./ConfigureS3.sh REG    ION ROOT_ID
 </code></pre><ul>
 <li>The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
 like the following:</li>
@@ -120,11 +120,9 @@ a folder named <code>FOLDER</code>, you can download all of your Sensus data in 
 </ol>
 </section>
       <h4><a class="xref" href="Sensus.DataStores.Remote.ConsoleRemoteDataStore.html">ConsoleRemoteDataStore</a></h4>
-      <section><p>When using the Console Remote Data Store, all data accumulated in <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> are simply written to the logging console. This 
+      <section><p>When using the <a class="xref" href="Sensus.DataStores.Remote.ConsoleRemoteDataStore.html">ConsoleRemoteDataStore</a>, all data accumulated in <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> are simply ignored. This 
 is useful for debugging purposes and is not recommended for practical Sensus deployments since it provides no means of moving the data 
-off of the device. There is, however, one important exception to this: If you wish for the participants to store all data locally 
-until the end of the study, then using the Console Remote Data Store makes sense since it will not upload any data to a remote system. To 
-make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore">UploadToRemoteDataStore</a>.</p>
+off of the device.</p>
 </section>
       <h4><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a></h4>
       <section><p>A Remote Data Store periodically transfers data from the device&apos;s <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> to a remote storage system 

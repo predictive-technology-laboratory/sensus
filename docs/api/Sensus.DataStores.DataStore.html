@@ -81,7 +81,8 @@
   
   <h1 id="Sensus_DataStores_DataStore" data-uid="Sensus.DataStores.DataStore" class="text-break">Class DataStore
   </h1>
-  <div class="markdown level0 summary"><p>Data Stores play an integral part in the Sensus system. They are the storage location for data that come off of <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s.</p>
+  <div class="markdown level0 summary"><p><a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a>s coordinate the compression, encryption, and transmission of data produced by <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s, both
+on the user&apos;s device as well as remotely.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -111,141 +112,6 @@
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
-  <a id="Sensus_DataStores_DataStore_AddedDataCount_" data-uid="Sensus.DataStores.DataStore.AddedDataCount*"></a>
-  <h4 id="Sensus_DataStores_DataStore_AddedDataCount" data-uid="Sensus.DataStores.DataStore.AddedDataCount">AddedDataCount</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the number of data ever added to this data store.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long AddedDataCount { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><p>The added data count.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_Clearable_" data-uid="Sensus.DataStores.DataStore.Clearable*"></a>
-  <h4 id="Sensus_DataStores_DataStore_Clearable" data-uid="Sensus.DataStores.DataStore.Clearable">Clearable</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract bool Clearable { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommitDelayMS_" data-uid="Sensus.DataStores.DataStore.CommitDelayMS*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommitDelayMS" data-uid="Sensus.DataStores.DataStore.CommitDelayMS">CommitDelayMS</h4>
-  <div class="markdown level1 summary"><p>How many milliseconds to pause between each committing data.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Commit Delay (MS):&quot;, true, 2)]
-public int CommitDelayMS { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><p>The commit delay in milliseconds.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommittedDataCount_" data-uid="Sensus.DataStores.DataStore.CommittedDataCount*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommittedDataCount" data-uid="Sensus.DataStores.DataStore.CommittedDataCount">CommittedDataCount</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the number of data ever commited to this data store.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long CommittedDataCount { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td><p>The committed data count.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommitTimeoutMinutes_" data-uid="Sensus.DataStores.DataStore.CommitTimeoutMinutes*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommitTimeoutMinutes" data-uid="Sensus.DataStores.DataStore.CommitTimeoutMinutes">CommitTimeoutMinutes</h4>
-  <div class="markdown level1 summary"><p>How many minutes the data store has to complete a commit before being cancelled.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Commit Timeout (Mins.):&quot;, true, 3)]
-public int CommitTimeoutMinutes { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td><p>The commit timeout in minutes.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   
   
   <a id="Sensus_DataStores_DataStore_DisplayName_" data-uid="Sensus.DataStores.DataStore.DisplayName*"></a>
@@ -325,266 +191,6 @@ public int CommitTimeoutMinutes { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_DataStores_DataStore_AddAsync_" data-uid="Sensus.DataStores.DataStore.AddAsync*"></a>
-  <h4 id="Sensus_DataStores_DataStore_AddAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__System_Boolean_" data-uid="Sensus.DataStores.DataStore.AddAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken},System.Boolean)">AddAsync(Datum, Nullable&lt;CancellationToken&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a datum to the in-memory storage of this data store.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; AddAsync(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken, bool forceCommit)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
-        <td><span class="parametername">datum</span></td>
-        <td><p>Datum to add.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Threading.CancellationToken</span>&gt;</td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">forceCommit</span></td>
-        <td><p>If set to <code>true</code> force immediate commit of added data.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>Task for the operation</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_Clear_" data-uid="Sensus.DataStores.DataStore.Clear*"></a>
-  <h4 id="Sensus_DataStores_DataStore_Clear" data-uid="Sensus.DataStores.DataStore.Clear">Clear()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void Clear()</code></pre>
-  </div>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommitAndReleaseAddedDataAsync_" data-uid="Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommitAndReleaseAddedDataAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.DataStore.CommitAndReleaseAddedDataAsync(System.Threading.CancellationToken)">CommitAndReleaseAddedDataAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task CommitAndReleaseAddedDataAsync(CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommitAndReleaseAsync_" data-uid="Sensus.DataStores.DataStore.CommitAndReleaseAsync*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommitAndReleaseAsync_System_Collections_Generic_HashSet_Sensus_Datum__Sensus_DataStores_DataStore_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.DataStore.CommitAndReleaseAsync(System.Collections.Generic.HashSet{Sensus.Datum},Sensus.DataStores.DataStore,System.Threading.CancellationToken)">CommitAndReleaseAsync(HashSet&lt;Datum&gt;, DataStore, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Commits data from a passed set to a data store, and then releases (removes) the committed data from the passed set.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected static Task CommitAndReleaseAsync(HashSet&lt;Datum&gt; data, DataStore dataStore, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.HashSet</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
-        <td><span class="parametername">data</span></td>
-        <td><p>Data to commit. Data will be removed from this collection when they are successfully committed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a></td>
-        <td><span class="parametername">dataStore</span></td>
-        <td><p>Data store to commit to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A task for the operation</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommitAsync_" data-uid="Sensus.DataStores.DataStore.CommitAsync*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommitAsync_Sensus_Datum_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.DataStore.CommitAsync(Sensus.Datum,System.Threading.CancellationToken)">CommitAsync(Datum, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; CommitAsync(Datum datum, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
-        <td><span class="parametername">datum</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_DataStore_CommitAsync_" data-uid="Sensus.DataStores.DataStore.CommitAsync*"></a>
-  <h4 id="Sensus_DataStores_DataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_" data-uid="Sensus.DataStores.DataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)">CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract Task&lt;List&lt;Datum&gt;&gt; CommitAsync(IEnumerable&lt;Datum&gt; data, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
-        <td><span class="parametername">data</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_DataStores_DataStore_Copy_" data-uid="Sensus.DataStores.DataStore.Copy*"></a>
   <h4 id="Sensus_DataStores_DataStore_Copy" data-uid="Sensus.DataStores.DataStore.Copy">Copy()</h4>
   <div class="markdown level1 summary"></div>
@@ -632,8 +238,7 @@ public int CommitTimeoutMinutes { get; set; }</code></pre>
   
   <a id="Sensus_DataStores_DataStore_Start_" data-uid="Sensus.DataStores.DataStore.Start*"></a>
   <h4 id="Sensus_DataStores_DataStore_Start" data-uid="Sensus.DataStores.DataStore.Start">Start()</h4>
-  <div class="markdown level1 summary"><p>Starts the commit thread. This should always be called last within child-class overrides.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -643,8 +248,7 @@ public int CommitTimeoutMinutes { get; set; }</code></pre>
   
   <a id="Sensus_DataStores_DataStore_Stop_" data-uid="Sensus.DataStores.DataStore.Stop*"></a>
   <h4 id="Sensus_DataStores_DataStore_Stop" data-uid="Sensus.DataStores.DataStore.Stop">Stop()</h4>
-  <div class="markdown level1 summary"><p>Stops the commit thread. This should always be called first within parent-class overrides.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -653,40 +257,13 @@ public int CommitTimeoutMinutes { get; set; }</code></pre>
   
   
   <a id="Sensus_DataStores_DataStore_TestHealth_" data-uid="Sensus.DataStores.DataStore.TestHealth*"></a>
-  <h4 id="Sensus_DataStores_DataStore_TestHealth_System_String__System_String__System_String__" data-uid="Sensus.DataStores.DataStore.TestHealth(System.String@,System.String@,System.String@)">TestHealth(ref String, ref String, ref String)</h4>
+  <h4 id="Sensus_DataStores_DataStore_TestHealth" data-uid="Sensus.DataStores.DataStore.TestHealth">TestHealth()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool TestHealth(ref string error, ref string warning, ref string misc)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual bool TestHealth()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">error</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">warning</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">misc</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>

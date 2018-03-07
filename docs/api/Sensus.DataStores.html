@@ -85,8 +85,22 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="Sensus.DataStores.Compressor.html">Compressor</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.DataStores.Compressor.CompressionMethod.html">Compressor.CompressionMethod</a></h4>
+      <section></section>
       <h4><a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a></h4>
-      <section><p>Data Stores play an integral part in the Sensus system. They are the storage location for data that come off of <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s.</p>
+      <section><p><a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a>s coordinate the compression, encryption, and transmission of data produced by <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s, both
+on the user&apos;s device as well as remotely.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Sensus.DataStores.IClearableDataStore.html">IClearableDataStore</a></h4>
+      <section><p>Implemented by <a class="xref" href="Sensus.DataStores.DataStore.html">DataStore</a>s that are able to clear their content. For example,
+the <a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a> accumulates data within files on the device&apos;s local storage. Periodically,
+these files are transferred to a <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> and the files are deleted. If the user wishes
+to free up space prior to such deletions, he or she may do so via user interface elements provided by classes that
+implement this interface.</p>
 </section>
 </article>
           </div>

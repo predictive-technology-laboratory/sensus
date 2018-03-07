@@ -86,23 +86,12 @@
     <h3 id="classes">Classes
   </h3>
       <h4><a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a></h4>
-      <section><p>When using the File Local Data Store, all data coming off the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s  are stored as JSON objects in a plain-text file. 
-This data store is non-volatile (i.e., it will persist even when the device loses power) and does not rely on a local database system.</p>
+      <section><p>Stores each <a class="xref" href="Sensus.Datum.html">Datum</a> as plain-text JSON in a gzip-compressed file on the device&apos;s local storage media. Also
+supports encryption.</p>
 </section>
       <h4><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a></h4>
-      <section><p>A Local Data Store accumulates probed data internally in RAM. Periodically, the Local Data Store transfers these data to the device&apos;s 
-non-volatile storage system (e.g., a flat file). The job of the Local Data Store is to ensure that data coming off the Probes are not 
-lost if, for example, the device is powered off or Sensus crashes. Sensus defines the following Local Data Stores:</p>
-<ol>
-<li><a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a>:  All data coming off the probes are stored in a plain-text file.</li>
-<li><a class="xref" href="Sensus.DataStores.Local.RamLocalDataStore.html">RamLocalDataStore</a>: All data coming off the probes are stored in RAM. This is useful for debugging purposes and 
-is not recommended for practical Sensus deployments since it is a volatile storage mechanism.</li>
-</ol>
-</section>
-      <h4><a class="xref" href="Sensus.DataStores.Local.RamLocalDataStore.html">RamLocalDataStore</a></h4>
-      <section><p>When using the RAM Local Data Store, all data coming off the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s are stored in RAM. Since RAM is 
-volatile storage, any stored data will be lost if Sensus is turned off or crashes. Thus, most practical Sensus deployments 
-will probably want to avoid this local data store, opting instead for the <a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html">FileLocalDataStore</a>.</p>
+      <section><p>A <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> accumulates data on the device. Periodically, data are written from 
+the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> to a <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> for permanent storage.</p>
 </section>
 </article>
           </div>

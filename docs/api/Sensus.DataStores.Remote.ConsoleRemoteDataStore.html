@@ -81,11 +81,9 @@
   
   <h1 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore" class="text-break">Class ConsoleRemoteDataStore
   </h1>
-  <div class="markdown level0 summary"><p>When using the Console Remote Data Store, all data accumulated in <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> are simply written to the logging console. This 
+  <div class="markdown level0 summary"><p>When using the <a class="xref" href="Sensus.DataStores.Remote.ConsoleRemoteDataStore.html">ConsoleRemoteDataStore</a>, all data accumulated in <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> are simply ignored. This 
 is useful for debugging purposes and is not recommended for practical Sensus deployments since it provides no means of moving the data 
-off of the device. There is, however, one important exception to this: If you wish for the participants to store all data locally 
-until the end of the study, then using the Console Remote Data Store makes sense since it will not upload any data to a remote system. To 
-make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore">UploadToRemoteDataStore</a>.</p>
+off of the device.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -98,7 +96,25 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CommitAndReleaseAddedDataAsync_System_Threading_CancellationToken_">RemoteDataStore.CommitAndReleaseAddedDataAsync(CancellationToken)</a>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Start">RemoteDataStore.Start()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Stop">RemoteDataStore.Stop()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Reset">RemoteDataStore.Reset()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_TestHealth">RemoteDataStore.TestHealth()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteLocalDataStoreAsync_System_Threading_CancellationToken_">RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS">RemoteDataStore.WriteDelayMS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteTimeoutMinutes">RemoteDataStore.WriteTimeoutMinutes</a>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireWiFi">RemoteDataStore.RequireWiFi</a>
@@ -107,52 +123,19 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
       <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireCharging">RemoteDataStore.RequireCharging</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAndReleaseAsync_System_Collections_Generic_HashSet_Sensus_Datum__Sensus_DataStores_DataStore_System_Threading_CancellationToken_">DataStore.CommitAndReleaseAsync(HashSet&lt;Datum&gt;, DataStore, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Start">DataStore.Start()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__System_Boolean_">DataStore.AddAsync(Datum, Nullable&lt;CancellationToken&gt;, Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_Sensus_Datum_System_Threading_CancellationToken_">DataStore.CommitAsync(Datum, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clear">DataStore.Clear()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Stop">DataStore.Stop()</a>
+      <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequiredBatteryChargeLevelPercent">RemoteDataStore.RequiredBatteryChargeLevelPercent</a>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Restart">DataStore.Restart()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_String__System_String__System_String__">DataStore.TestHealth(String, String, String)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Reset">DataStore.Reset()</a>
-    </div>
-    <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy">DataStore.Copy()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitDelayMS">DataStore.CommitDelayMS</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitTimeoutMinutes">DataStore.CommitTimeoutMinutes</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Protocol">DataStore.Protocol</a>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Running">DataStore.Running</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommittedDataCount">DataStore.CommittedDataCount</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_AddedDataCount">DataStore.AddedDataCount</a>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Protocol">DataStore.Protocol</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.DataStores.Remote.html">Sensus.DataStores.Remote</a></h6>
@@ -177,13 +160,13 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
   </h3>
   
   
-  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveCommittedData_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveCommittedData" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveCommittedData">CanRetrieveCommittedData</h4>
+  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveWrittenData_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData*"></a>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_CanRetrieveWrittenData" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData">CanRetrieveWrittenData</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool CanRetrieveCommittedData { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public override bool CanRetrieveWrittenData { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -201,34 +184,7 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveCommittedData">RemoteDataStore.CanRetrieveCommittedData</a></div>
-  
-  
-  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_Clearable_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_Clearable" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.Clearable">Clearable</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool Clearable { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Clearable">DataStore.Clearable</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_CanRetrieveWrittenData">RemoteDataStore.CanRetrieveWrittenData</a></div>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DisplayName_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DisplayName*"></a>
@@ -260,62 +216,13 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
   </h3>
   
   
-  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_CommitAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.CommitAsync(System.Collections.Generic.IEnumerable{Sensus.Datum},System.Threading.CancellationToken)">CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</h4>
+  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatumAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatumAsync__1_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumAsync``1(System.String,System.Threading.CancellationToken)">GetDatumAsync&lt;T&gt;(String, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task&lt;List&lt;Datum&gt;&gt; CommitAsync(IEnumerable&lt;Datum&gt; data, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
-        <td><span class="parametername">data</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CommitAsync_System_Collections_Generic_IEnumerable_Sensus_Datum__System_Threading_CancellationToken_">DataStore.CommitAsync(IEnumerable&lt;Datum&gt;, CancellationToken)</a></div>
-  
-  
-  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatum_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatum``1(System.String,System.Threading.CancellationToken)">GetDatum&lt;T&gt;(String, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;T&gt; GetDatum&lt;T&gt;(string datumKey, CancellationToken cancellationToken)where T : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;T&gt; GetDatumAsync&lt;T&gt;(string datumKey, CancellationToken cancellationToken)where T : Datum</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -370,7 +277,7 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatum__1_System_String_System_Threading_CancellationToken_">RemoteDataStore.GetDatum&lt;T&gt;(String, CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumAsync__1_System_String_System_Threading_CancellationToken_">RemoteDataStore.GetDatumAsync&lt;T&gt;(String, CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetDatumKey_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey*"></a>
@@ -415,6 +322,114 @@ make this work, you must disable <a class="xref" href="Sensus.DataStores.Local.L
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumKey_Sensus_Datum_">RemoteDataStore.GetDatumKey(Datum)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)">WriteDataStreamAsync(Stream, String, String, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">stream</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">contentType</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_">RemoteDataStore.WriteDataStreamAsync(Stream, String, String, CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDatumAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)">WriteDatumAsync(Datum, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_">RemoteDataStore.WriteDatumAsync(Datum, CancellationToken)</a></div>
 </article>
           </div>
           
