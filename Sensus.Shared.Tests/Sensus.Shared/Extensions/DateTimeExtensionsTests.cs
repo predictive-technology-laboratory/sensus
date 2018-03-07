@@ -19,7 +19,7 @@ using Sensus.Extensions;
 namespace Sensus.Tests.Extensions
 {
     [TestFixture]
-    public class DateTimeExtensionTests
+    public class DateTimeExtensionsTests
     {
         [Test]
         public void Max()

@@ -400,11 +400,6 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            return false;
-        }
-
         public void Reset()
         {
             UnscheduleCallbacks();

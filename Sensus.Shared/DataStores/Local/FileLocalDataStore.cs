@@ -22,6 +22,9 @@ using System.Text;
 using System.IO.Compression;
 using Sensus.UI.UiProperties;
 using System.Linq;
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
+using Sensus.Extensions;
 
 namespace Sensus.DataStores.Local
 {
@@ -86,6 +89,10 @@ namespace Sensus.DataStores.Local
         private long _totalDataWritten;
         private long _bytesWrittenToCurrentFile;
         private long _dataWrittenToCurrentFile;
+        private int _filesOpened;
+        private int _filesClosed;
+        private int _filesPromoted;
+        private int _filesWrittenToRemote;
 
         private readonly object _locker = new object();
 
@@ -220,6 +227,7 @@ namespace Sensus.DataStores.Local
             _totalDataWritten = 0;
             _bytesWrittenToCurrentFile = 0;
             _dataWrittenToCurrentFile = 0;
+            _filesOpened = _filesClosed = _filesPromoted = _filesWrittenToRemote;
         }
 
         public override void Start()
@@ -273,6 +281,7 @@ namespace Sensus.DataStores.Local
                         _file = new BufferedStream(file, _bufferSizeBytes);
                         _bytesWrittenToCurrentFile = 0;
                         _dataWrittenToCurrentFile = 0;
+                        _filesOpened++;
                     }
                     catch (Exception ex)
                     {
@@ -290,7 +299,7 @@ namespace Sensus.DataStores.Local
                 {
                     // open the JSON array
                     byte[] jsonBeginArrayBytes = Encoding.UTF8.GetBytes("[");
-                    _file.Write(jsonBeginArrayBytes, 0, jsonBeginArrayBytes.Length);                    
+                    _file.Write(jsonBeginArrayBytes, 0, jsonBeginArrayBytes.Length);
                 }
             }
         }
@@ -306,7 +315,7 @@ namespace Sensus.DataStores.Local
                 {
                     // it's possible to stop the datastore before entering this lock, in which case we won't
                     // have a file to write to. check for a running data store here.
-                    if(!Running)
+                    if (!Running)
                     {
                         return written;
                     }
@@ -402,7 +411,7 @@ namespace Sensus.DataStores.Local
                     _writeToRemoteTask = Task.Run(async () =>
                     {
                         // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin)
-                        string promotedPathExtension = 
+                        string promotedPathExtension =
                             JSON_FILE_EXTENSION +
                             (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") +
                             (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
@@ -450,10 +459,11 @@ namespace Sensus.DataStores.Local
 
                                 // file was written remotely. delete it locally.
                                 File.Delete(protmotedPath);
+                                _filesWrittenToRemote++;
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to write file:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to write file:  " + ex, LoggingLevel.Normal, GetType());
                             }
                         }
 
@@ -487,6 +497,7 @@ namespace Sensus.DataStores.Local
                         _file.Dispose();
                         _file = null;
                         _path = null;
+                        _filesClosed++;
                     }
                     catch (Exception ex)
                     {
@@ -533,6 +544,8 @@ namespace Sensus.DataStores.Local
                             // if everything went through okay, delete the unencrypted file.
                             File.Delete(finalPath);
                         }
+
+                        _filesPromoted++;
                     }
                     catch (Exception ex)
                     {
@@ -582,19 +595,16 @@ namespace Sensus.DataStores.Local
             _path = null;
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth()
         {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth();
 
-            lock (_locker)
-            {
-                string name = GetType().Name;
-                string[] paths = Directory.GetFiles(StorageDirectory);
-
-                misc += name + ":  Number of files = " + paths.Length + Environment.NewLine +
-                        name + ":  Average file size (MB) = " + Math.Round(SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) / (float)paths.Length, 2) + Environment.NewLine +
-                        name + ":  Promoted files = " + paths.Count(path => !string.IsNullOrWhiteSpace(System.IO.Path.GetExtension(path))) + Environment.NewLine;
-            }
+            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+            {                
+                { "Percent Closed", _filesClosed.RoundedPercentageOf(_filesOpened, 5).ToString() },
+                { "Percent Promoted", _filesPromoted.RoundedPercentageOf(_filesOpened, 5).ToString() },
+                { "Percent Written", _filesWrittenToRemote.RoundedPercentageOf(_filesOpened, 5).ToString() }
+            });
 
             return restart;
         }

@@ -20,6 +20,9 @@ using System;
 using Sensus.Callbacks;
 using Sensus.Context;
 using System.IO;
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
+using Sensus.Extensions;
 
 namespace Sensus.DataStores.Remote
 {
@@ -186,16 +189,19 @@ namespace Sensus.DataStores.Remote
             _writeCallback = null;
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth()
         {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth();
 
             if (_mostRecentSuccessfulWriteTime.HasValue)
             {
                 TimeSpan timeElapsedSincePreviousWrite = DateTime.Now - _mostRecentSuccessfulWriteTime.Value;
                 if (timeElapsedSincePreviousWrite.TotalMilliseconds > (_writeDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings.
                 {
-                    warning += "Data store \"" + GetType().FullName + "\" has not written data in " + timeElapsedSincePreviousWrite + " (write delay = " + _writeDelayMS + "ms)." + Environment.NewLine;
+                    Analytics.TrackEvent(TrackedEvent.Warning + ":" + GetType(), new Dictionary<string, string>
+                    {
+                        { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).Round(1000).ToString() }
+                    });
                 }
             }
 
@@ -255,7 +261,7 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Writes a stream of <see cref="Datum"/>.
+        /// Writes a stream of <see cref="Datum"/> objects.
         /// </summary>
         /// <returns>The stream.</returns>
         /// <param name="stream">Stream.</param>

@@ -184,11 +184,6 @@ namespace Sensus.UI
                     }
                 }
 
-                if (selectedProtocol.Running)
-                {
-                    actions.Add("Status");
-                }
-
                 if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallback != null)
                 {
                     actions.Remove("Start");
@@ -468,27 +463,6 @@ namespace Sensus.UI
                     {
                         selectedProtocol.GroupedProtocols.Clear();
                     }
-                }
-                else if (selectedAction == "Status")
-                {
-                    if (SensusServiceHelper.Get().ProtocolShouldBeRunning(selectedProtocol))
-                    {
-                        await selectedProtocol.TestHealthAsync(true);
-
-                        Device.BeginInvokeOnMainThread(async () =>
-                        {
-                            if (selectedProtocol.MostRecentReport == null)
-                            {
-                                await DisplayAlert("No Report", "Status check failed.", "OK");
-                            }
-                            else
-                            {
-                                await Navigation.PushAsync(new ViewTextLinesPage("Protocol Status", selectedProtocol.MostRecentReport.ToString().Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).ToList(), null, null));
-                            }
-                        });
-                    }
-                    else
-                        await DisplayAlert("Protocol Not Running", "Cannot check status of protocol when protocol is not running.", "OK");
                 }
                 else if (selectedAction == "Delete")
                 {

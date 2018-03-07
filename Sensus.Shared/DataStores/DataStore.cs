@@ -15,6 +15,8 @@
 using Newtonsoft.Json;
 using System;
 using Sensus.Exceptions;
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
 
 namespace Sensus.DataStores
 {
@@ -71,15 +73,19 @@ namespace Sensus.DataStores
             Start();
         }
 
-        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
+        public virtual bool TestHealth()
         {
             bool restart = false;
 
             if (!_running)
             {
-                error += "Data store \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
                 restart = true;
             }
+
+            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+            {
+                { "Running", _running.ToString() }
+            });
 
             return restart;
         }

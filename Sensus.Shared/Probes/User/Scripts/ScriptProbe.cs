@@ -136,34 +136,6 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
-
-            if (Running)
-            {
-                foreach (ScriptRunner scriptRunner in _scriptRunners)
-                {
-                    if (scriptRunner.Enabled && scriptRunner.TestHealth(ref error, ref warning, ref misc))
-                    {
-                        warning += "Restarting script runner \"" + scriptRunner.Name + "\"." + Environment.NewLine;
-
-                        try
-                        {
-                            scriptRunner.Restart();
-                        }
-                        catch (Exception ex)
-                        {
-                            warning += "Error restarting script runner \"" + scriptRunner.Name + "\":  " + ex.Message;
-                            SensusServiceHelper.Get().Logger.Log(warning, LoggingLevel.Normal, GetType());
-                        }
-                    }
-                }
-            }
-
-            return restart;
-        }
-
         public override void Reset()
         {
             base.Reset();

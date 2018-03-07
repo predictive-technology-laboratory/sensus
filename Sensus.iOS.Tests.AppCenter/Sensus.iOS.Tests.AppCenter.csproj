@@ -50,4 +50,5 @@
   </ItemGroup>
   <Import Project="..\Sensus.AppCenter.Shared\Sensus.AppCenter.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.AppCenter.Shared\Sensus.AppCenter.Shared.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
 </Project>

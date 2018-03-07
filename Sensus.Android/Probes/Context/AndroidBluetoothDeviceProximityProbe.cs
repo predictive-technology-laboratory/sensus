@@ -212,9 +212,9 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth()
         {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth();
 
             if (Running)
             {

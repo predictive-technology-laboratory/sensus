@@ -23,6 +23,7 @@ using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
 using Sensus.Context;
 using Sensus.Probes.User.MicrosoftBand;
+using Microsoft.AppCenter.Analytics;
 
 namespace Sensus.Probes
 {
@@ -453,15 +454,19 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
+        public virtual bool TestHealth()
         {
             bool restart = false;
 
             if (!_running)
             {
                 restart = true;
-                error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
             }
+
+            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+            {
+                { "Running", _running.ToString() }
+            });
 
             return restart;
         }

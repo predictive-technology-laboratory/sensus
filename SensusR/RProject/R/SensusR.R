@@ -3,7 +3,7 @@
 #' Provides access and analytic functions for Sensus data. More information can be found at the
 #' following URL:
 #' 
-#'     https://github.com/predictive-technology-laboratory/sensus/wiki
+#'     https://predictive-technology-laboratory.github.io/sensus
 #' 
 #' @section SensusR functions:
 #' The SensusR functions handle reading, cleaning, plotting, and otherwise analyzing data collected
@@ -185,7 +185,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     # remove list-type columns
     file.json = file.json[sapply(file.json, typeof) != "list"]
     
-    # set datum type and OS
+    # set datum type and OS columns
     type.os = lapply(file.json$"$type", function(type)
     {
       type.split = strsplit(type, ",")[[1]]
@@ -208,15 +208,33 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
     
-    # add to data by type, putting each file in its own list entry (we'll merge files later)
-    type = file.json$Type[1]
-    if(is.null(data[[type]]))
+    # split by type and remove list entries that are entirely NA (different data types have different columns)
+    split.file.json = lapply(split(file.json, file.json$Type), function(data.type)
     {
-      data[[type]] = list()
-    }
+      # get list elements that have all NAs
+      na.elements = sapply(data.type, function(data.type.column)
+      {
+        return(sum(is.na(data.type.column)) == length(data.type.column))
+      })
+      
+      # remove list elements with all NAs
+      data.type[na.elements] = NULL
+      
+      return(data.type)
+    })
     
-    data.type.file.num = length(data[[type]]) + 1
-    data[[type]][[data.type.file.num]] = file.json
+    for(data.type in names(split.file.json))
+    {
+      # add to data by type, putting each file in its own list entry (we'll merge files later)
+      type = split.file.json[[data.type]]$Type[1]
+      if(is.null(data[[type]]))
+      {
+        data[[type]] = list()
+      }
+      
+      data.type.file.num = length(data[[type]]) + 1
+      data[[type]][[data.type.file.num]] = split.file.json[[data.type]]
+    }
   }
  
   # merge files for each data type

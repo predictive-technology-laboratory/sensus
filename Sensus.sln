@@ -70,7 +70,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1833108D-29E
 		DocFX\api\index.md = DocFX\api\index.md
 	EndProjectSection
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{13AB7FF7-7414-44F4-A05A-794A04ED282E}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{538EF664-E9BB-4326-8AE3-5D852799700D}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -182,12 +182,12 @@ Global
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
-		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhone.Build.0 = Debug|iPhone
-		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{13AB7FF7-7414-44F4-A05A-794A04ED282E}.Release|iPhone.ActiveCfg = Debug|iPhone
+		{538EF664-E9BB-4326-8AE3-5D852799700D}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
+		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhone.Build.0 = Debug|iPhone
+		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{538EF664-E9BB-4326-8AE3-5D852799700D}.Release|iPhone.ActiveCfg = Debug|iPhone
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
