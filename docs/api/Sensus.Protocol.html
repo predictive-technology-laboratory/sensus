@@ -314,7 +314,7 @@ appropriate format using the following steps (on Mac):</p>
 <pre><code>openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 </code></pre><ul>
 <li>Use the <code>PUBLIC KEY</code> (public.pem) as <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>.</li>
-<li>Enable <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Encrypt">Encrypt</a>.</li>
+<li>Enable <a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Encrypt">Encrypt</a>.</li>
 </ul>
 <p>Keep all <code>PRIVATE KEY</code> information safe and secure. Never share it.</p>
 </div>
@@ -477,35 +477,6 @@ public TimeSpan EndTime { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><p>The end time.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Protocol_ForceProtocolReportsToRemoteDataStore_" data-uid="Sensus.Protocol.ForceProtocolReportsToRemoteDataStore*"></a>
-  <h4 id="Sensus_Protocol_ForceProtocolReportsToRemoteDataStore" data-uid="Sensus.Protocol.ForceProtocolReportsToRemoteDataStore">ForceProtocolReportsToRemoteDataStore</h4>
-  <div class="markdown level1 summary"><p>Whether or not to submit <a class="xref" href="Sensus.Protocol.html">Protocol</a> status reports to the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_RemoteDataStore">RemoteDataStore</a> regardless of the setting
-for <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_UploadToRemoteDataStore">UploadToRemoteDataStore</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Force Reports to Remote:&quot;, true, 22)]
-public bool ForceProtocolReportsToRemoteDataStore { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p><code>true</code> if force protocol reports to remote data store; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -745,31 +716,6 @@ public bool Groupable { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Protocol_MostRecentReport_" data-uid="Sensus.Protocol.MostRecentReport*"></a>
-  <h4 id="Sensus_Protocol_MostRecentReport" data-uid="Sensus.Protocol.MostRecentReport">MostRecentReport</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ProtocolReportDatum MostRecentReport { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.ProtocolReportDatum.html">ProtocolReportDatum</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1750,26 +1696,24 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_StopAsync_" data-uid="Sensus.Protocol.StopAsync*"></a>
-  <h4 id="Sensus_Protocol_StopAsync_System_Action_" data-uid="Sensus.Protocol.StopAsync(System.Action)">StopAsync(Action)</h4>
+  <h4 id="Sensus_Protocol_StopAsync" data-uid="Sensus.Protocol.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void StopAsync(Action callback = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StopAsync()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">callback</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

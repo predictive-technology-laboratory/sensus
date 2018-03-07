@@ -175,13 +175,55 @@ be generated with the following commands:</p>
   </h3>
   
   
-  <a id="Sensus_Encryption_AsymmetricEncryption_Decrypt_" data-uid="Sensus.Encryption.AsymmetricEncryption.Decrypt*"></a>
-  <h4 id="Sensus_Encryption_AsymmetricEncryption_Decrypt_System_Byte___" data-uid="Sensus.Encryption.AsymmetricEncryption.Decrypt(System.Byte[])">Decrypt(Byte[])</h4>
+  <a id="Sensus_Encryption_AsymmetricEncryption_DecryptToBytes_" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToBytes*"></a>
+  <h4 id="Sensus_Encryption_AsymmetricEncryption_DecryptToBytes_System_Byte___" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToBytes(System.Byte[])">DecryptToBytes(Byte[])</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Decrypt(byte[] encryptedBytes)</code></pre>
+    <pre><code class="lang-csharp hljs">public byte[] DecryptToBytes(byte[] encryptedBytes)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">encryptedBytes</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Encryption_AsymmetricEncryption_DecryptToString_" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToString*"></a>
+  <h4 id="Sensus_Encryption_AsymmetricEncryption_DecryptToString_System_Byte___" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])">DecryptToString(Byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string DecryptToString(byte[] encryptedBytes)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -296,6 +338,55 @@ be generated with the following commands:</p>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_" data-uid="Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically*"></a>
+  <h4 id="Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_System_Byte___System_Int32_System_Int32_System_String_" data-uid="Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[],System.Int32,System.Int32,System.String)">EncryptSymmetrically(Byte[], Int32, Int32, String)</h4>
+  <div class="markdown level1 summary"><p>Encrypts bytes asymmetrically via symmetric encryption. Since asymmetric encryption does not support large data sizes, the approach
+is to generate a symmetric encryption key that is designed for large data sizes, encrypt the data with the symmetric key, encrypt
+the symmetric key with the asymmetric key, and send the encrypted symmetric key and encrypted data to the same file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EncryptSymmetrically(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, string encryptedOutputPath)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">unencryptedBytes</span></td>
+        <td><p>Unencrypted bytes.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">symmetricKeySizeBits</span></td>
+        <td><p>Symmetric key size in bits.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">symmetricInitializationVectorSizeBits</span></td>
+        <td><p>Symmetric initialization vector size in bits.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">encryptedOutputPath</span></td>
+        <td><p>Encrypted output path.</p>
+</td>
       </tr>
     </tbody>
   </table>

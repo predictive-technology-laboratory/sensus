@@ -81,7 +81,8 @@
   
   <h1 id="Sensus_Exceptions_SensusException" data-uid="Sensus.Exceptions.SensusException" class="text-break">Class SensusException
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Convenience class for creating and tracking errors via the app center.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -133,8 +134,38 @@
   
   
   <a id="Sensus_Exceptions_SensusException_Report_" data-uid="Sensus.Exceptions.SensusException.Report*"></a>
+  <h4 id="Sensus_Exceptions_SensusException_Report_System_Exception_" data-uid="Sensus.Exceptions.SensusException.Report(System.Exception)">Report(Exception)</h4>
+  <div class="markdown level1 summary"><p>Report the specified exception to the app center error tracker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Report(Exception exceptionToReport)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Exception</span></td>
+        <td><span class="parametername">exceptionToReport</span></td>
+        <td><p>Exception to report.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Exceptions_SensusException_Report_" data-uid="Sensus.Exceptions.SensusException.Report*"></a>
   <h4 id="Sensus_Exceptions_SensusException_Report_System_String_System_Exception_" data-uid="Sensus.Exceptions.SensusException.Report(System.String,System.Exception)">Report(String, Exception)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Report the specified message and an associated inner exception to the app center error tracker.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -153,12 +184,14 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">message</span></td>
-        <td></td>
+        <td><p>Message.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Exception</span></td>
         <td><span class="parametername">innerException</span></td>
-        <td></td>
+        <td><p>Inner exception.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -173,7 +206,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Exceptions.SensusException.html">SensusException</a></td>
-        <td></td>
+        <td><p>The report.</p>
+</td>
       </tr>
     </tbody>
   </table>

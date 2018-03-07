@@ -163,6 +163,31 @@
   </table>
   
   
+  <h4 id="Sensus_SensusServiceHelper_BUILD_ID" data-uid="Sensus.SensusServiceHelper.BUILD_ID">BUILD_ID</h4>
+  <div class="markdown level1 summary"><p>The build ID, used to tag each <a class="xref" href="Sensus.Datum.html">Datum</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string BUILD_ID = &quot;&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <h4 id="Sensus_SensusServiceHelper_ENCRYPTION_KEY" data-uid="Sensus.SensusServiceHelper.ENCRYPTION_KEY">ENCRYPTION_KEY</h4>
   <div class="markdown level1 summary"><p>The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:</p>
 <p>openssl enc -aes-256-cbc -k secret -P -md sha1</p>
@@ -307,6 +332,31 @@
     <tbody>
       <tr>
         <td><span class="xref">ZXing.Mobile.BarcodeWriter</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_SensusServiceHelper_BatteryChargePercent_" data-uid="Sensus.SensusServiceHelper.BatteryChargePercent*"></a>
+  <h4 id="Sensus_SensusServiceHelper_BatteryChargePercent" data-uid="Sensus.SensusServiceHelper.BatteryChargePercent">BatteryChargePercent</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract float BatteryChargePercent { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -776,14 +826,29 @@
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_BringToForeground_" data-uid="Sensus.SensusServiceHelper.BringToForeground*"></a>
-  <h4 id="Sensus_SensusServiceHelper_BringToForeground" data-uid="Sensus.SensusServiceHelper.BringToForeground">BringToForeground()</h4>
+  <a id="Sensus_SensusServiceHelper_BringToForegroundAsync_" data-uid="Sensus.SensusServiceHelper.BringToForegroundAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_BringToForegroundAsync" data-uid="Sensus.SensusServiceHelper.BringToForegroundAsync">BringToForegroundAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract void BringToForeground()</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task BringToForegroundAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_SensusServiceHelper_ClearPendingSurveysNotificationAsync_" data-uid="Sensus.SensusServiceHelper.ClearPendingSurveysNotificationAsync*"></a>

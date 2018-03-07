@@ -235,14 +235,14 @@
   
   
   <a id="Sensus_Probes_Location_GpsReceiver_GetReading_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading*"></a>
-  <h4 id="Sensus_Probes_Location_GpsReceiver_GetReading_System_Int32_System_Threading_CancellationToken_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken)">GetReading(Int32, CancellationToken)</h4>
+  <h4 id="Sensus_Probes_Location_GpsReceiver_GetReading_System_Int32_System_Threading_CancellationToken_System_Boolean_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken,System.Boolean)">GetReading(Int32, CancellationToken, Boolean)</h4>
   <div class="markdown level1 summary"><p>Gets a GPS reading, reusing an old one if it isn&apos;t too old. Will block the current thread while waiting for a GPS reading. Should not
 be called from the main / UI thread, since GPS runs on main thread (will deadlock).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken, bool checkAndObtainPermission)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -266,6 +266,14 @@ be called from the main / UI thread, since GPS runs on main thread (will deadloc
         <td><p>Cancellation token.</p>
 </td>
       </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">checkAndObtainPermission</span></td>
+        <td><p>Whether or not to check for and obtain permission for the reading. Note that, on Android, this
+may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user&apos;s permission prior to
+calling this method.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
@@ -287,14 +295,14 @@ be called from the main / UI thread, since GPS runs on main thread (will deadloc
   
   
   <a id="Sensus_Probes_Location_GpsReceiver_GetReading_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading*"></a>
-  <h4 id="Sensus_Probes_Location_GpsReceiver_GetReading_System_Threading_CancellationToken_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken)">GetReading(CancellationToken)</h4>
+  <h4 id="Sensus_Probes_Location_GpsReceiver_GetReading_System_Threading_CancellationToken_System_Boolean_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken,System.Boolean)">GetReading(CancellationToken, Boolean)</h4>
   <div class="markdown level1 summary"><p>Gets a GPS reading. Will block the current thread while waiting for a GPS reading. Should not
 be called from the main / UI thread, since GPS runs on main thread (will deadlock).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Position GetReading(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Position GetReading(CancellationToken cancellationToken, bool checkAndObtainPermission)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -310,6 +318,12 @@ be called from the main / UI thread, since GPS runs on main thread (will deadloc
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>Cancellation token.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">checkAndObtainPermission</span></td>
+        <td><p>Whether or not to check for and obtain permission for the reading.</p>
 </td>
       </tr>
     </tbody>

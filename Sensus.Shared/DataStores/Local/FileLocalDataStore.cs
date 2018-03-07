@@ -602,8 +602,8 @@ namespace Sensus.DataStores.Local
             Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
             {                
                 { "Percent Closed", _filesClosed.RoundedPercentageOf(_filesOpened, 5).ToString() },
-                { "Percent Promoted", _filesPromoted.RoundedPercentageOf(_filesOpened, 5).ToString() },
-                { "Percent Written", _filesWrittenToRemote.RoundedPercentageOf(_filesOpened, 5).ToString() }
+                { "Percent Promoted", _filesPromoted.RoundedPercentageOf(_filesClosed, 5).ToString() },
+                { "Percent Written", _filesWrittenToRemote.RoundedPercentageOf(_filesPromoted, 5).ToString() }
             });
 
             return restart;

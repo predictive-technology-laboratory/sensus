@@ -98,6 +98,15 @@
       <h4><a class="xref" href="Sensus.LoggingLevel.html">LoggingLevel</a></h4>
       <section><p>Logging levels.</p>
 </section>
+      <h4><a class="xref" href="Sensus.ParticipationReportDatum.html">ParticipationReportDatum</a></h4>
+      <section><p>Provides participation rates on a per-<a class="xref" href="Sensus.Probes.Probe.html">Probe</a> basis. For example, for a <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>
+set to poll 10 times per day with a <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizon">ParticipationHorizon</a> of 10 days, we would expect to
+see 100 pollings at full participation. If the device only records 67 pollings, then the participation rate
+would be 67%. The definition of participation rate is different for <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a>s, which are
+designed to be running continuously. Here, participation is defined to be the fraction of the 
+<a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizon">ParticipationHorizon</a> (e.g., 10 days) for which the <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a> was 
+turned on.</p>
+</section>
       <h4><a class="xref" href="Sensus.ParticipationRewardDatum.html">ParticipationRewardDatum</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Protocol.html">Protocol</a></h4>
@@ -105,10 +114,11 @@
 storing (via <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_LocalDataStore">LocalDataStore</a>s and <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_RemoteDataStore">RemoteDataStore</a>s) data from a device. Study organizers use Sensus to configure the 
 study&apos;s Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.</p>
 </section>
-      <h4><a class="xref" href="Sensus.ProtocolReportDatum.html">ProtocolReportDatum</a></h4>
-      <section></section>
       <h4><a class="xref" href="Sensus.SensusServiceHelper.html">SensusServiceHelper</a></h4>
       <section><p>Provides platform-independent service functionality.</p>
+</section>
+      <h4><a class="xref" href="Sensus.TrackedEvent.html">TrackedEvent</a></h4>
+      <section><p>Events tracked by the app center</p>
 </section>
       <h4><a class="xref" href="Sensus.Window.html">Window</a></h4>
       <section></section>

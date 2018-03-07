@@ -381,34 +381,6 @@ sharing it with others (e.g., since other people might have temperature hardware
   </table>
   
   
-  <a id="Sensus_Probes_Probe_RunLocalCommitOnStore_" data-uid="Sensus.Probes.Probe.RunLocalCommitOnStore*"></a>
-  <h4 id="Sensus_Probes_Probe_RunLocalCommitOnStore" data-uid="Sensus.Probes.Probe.RunLocalCommitOnStore">RunLocalCommitOnStore</h4>
-  <div class="markdown level1 summary"><p>Whether the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a> should run a local commit each time the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a> generates data.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Run Local Commit On Store:&quot;, true, 14)]
-public bool RunLocalCommitOnStore { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p><code>true</code> to run local commit on each store; otherwise, <code>false</code>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Probes_Probe_Running_" data-uid="Sensus.Probes.Probe.Running*"></a>
   <h4 id="Sensus_Probes_Probe_Running" data-uid="Sensus.Probes.Probe.Running">Running</h4>
   <div class="markdown level1 summary"></div>
@@ -858,40 +830,13 @@ information will have already been logged and displayed. Thus, the caller doesn&
   
   
   <a id="Sensus_Probes_Probe_TestHealth_" data-uid="Sensus.Probes.Probe.TestHealth*"></a>
-  <h4 id="Sensus_Probes_Probe_TestHealth_System_String__System_String__System_String__" data-uid="Sensus.Probes.Probe.TestHealth(System.String@,System.String@,System.String@)">TestHealth(ref String, ref String, ref String)</h4>
+  <h4 id="Sensus_Probes_Probe_TestHealth" data-uid="Sensus.Probes.Probe.TestHealth">TestHealth()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool TestHealth(ref string error, ref string warning, ref string misc)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual bool TestHealth()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">error</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">warning</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">misc</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
