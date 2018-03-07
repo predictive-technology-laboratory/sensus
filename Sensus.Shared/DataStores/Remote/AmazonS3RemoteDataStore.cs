@@ -26,6 +26,9 @@ using Sensus.Exceptions;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Text;
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
+using Sensus.Extensions;
 
 namespace Sensus.DataStores.Remote
 {
@@ -79,6 +82,8 @@ namespace Sensus.DataStores.Remote
         private string _folder;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
+        private int _putCount;
+        private int _successfulPutCount;
 
         /// <summary>
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
@@ -215,6 +220,7 @@ namespace Sensus.DataStores.Remote
             _region = _bucket = _folder = null;
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
+            _putCount = _successfulPutCount = 0;
         }
 
         public override void Start()
@@ -282,16 +288,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    DateTimeOffset writeStartTime = DateTimeOffset.UtcNow;
-
-                    if (await PutJsonAsync(s3, stream, name, contentType, cancellationToken) == HttpStatusCode.OK)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Wrote data to Amazon S3 bucket \"" + _bucket + "\" in " + (DateTimeOffset.UtcNow - writeStartTime).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to insert datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    await Put(s3, stream, (_folder + "/" + name).Trim('/'), contentType, cancellationToken);
                 }
                 finally
                 {
@@ -310,16 +307,12 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
                     string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-                    byte[] bytes = Encoding.UTF8.GetBytes(datumJSON);
-                    MemoryStream stream = new MemoryStream();
-                    stream.Write(bytes, 0, bytes.Length);
-                    stream.Position = 0;
+                    byte[] datumJsonBytes = Encoding.UTF8.GetBytes(datumJSON);
+                    MemoryStream dataStream = new MemoryStream();
+                    dataStream.Write(datumJsonBytes, 0, datumJsonBytes.Length);
+                    dataStream.Position = 0;
 
-                    await PutJsonAsync(s3, stream, GetDatumKey(datum), "application/json", cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to write datum into Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    await Put(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken);
                 }
                 finally
                 {
@@ -328,10 +321,12 @@ namespace Sensus.DataStores.Remote
             });
         }
 
-        private Task<HttpStatusCode> PutJsonAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
+                _putCount++;
+
                 try
                 {
                     PutObjectRequest putRequest = new PutObjectRequest
@@ -343,7 +338,16 @@ namespace Sensus.DataStores.Remote
                         ContentType = contentType
                     };
 
-                    return (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
+                    HttpStatusCode putStatus = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
+
+                    if (putStatus == HttpStatusCode.OK)
+                    {
+                        _successfulPutCount++;
+                    }
+                    else
+                    {
+                        throw new Exception("Bad status code:  " + putStatus);
+                    }
                 }
                 catch (WebException ex)
                 {
@@ -354,6 +358,12 @@ namespace Sensus.DataStores.Remote
                     }
 
                     throw ex;
+                }
+                catch (Exception ex)
+                {
+                    string message = "Failed to write data stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
+                    SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                    throw new Exception(message, ex);
                 }
             });
         }
@@ -375,9 +385,9 @@ namespace Sensus.DataStores.Remote
                 T datum = null;
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
-                    string json = reader.ReadToEnd().Trim().Trim('[', ']');  // there will only be one datum in the array, so trim the braces and deserialize the datum.
-                    json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(json);
-                    datum = Datum.FromJSON(json) as T;
+                    string datumJSON = reader.ReadToEnd().Trim();
+                    datumJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(datumJSON);
+                    datum = Datum.FromJSON(datumJSON) as T;
                 }
 
                 return datum;
@@ -418,6 +428,18 @@ namespace Sensus.DataStores.Remote
                     SensusServiceHelper.Get().Logger.Log("Failed to dispose Amazon S3 client:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
+        }
+
+        public override bool TestHealth()
+        {
+            bool restart = base.TestHealth();
+
+            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+            {
+                { "Put Success", _successfulPutCount.RoundedPercentageOf(_putCount, 5).ToString() }
+            });
+
+            return restart;
         }
     }
 }

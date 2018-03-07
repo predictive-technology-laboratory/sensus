@@ -462,11 +462,6 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            return false;
-        }
-
         protected override ChartAxis GetChartPrimaryAxis()
         {
             return new DateTimeAxis

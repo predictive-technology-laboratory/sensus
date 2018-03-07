@@ -89,14 +89,5 @@ namespace Sensus.DataStores.Local
         protected abstract bool IsTooLarge();
 
         public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
-
-            misc += GetType().Name + " - local size:  " + SizeDescription + Environment.NewLine;
-
-            return restart;
-        }
     }
 }

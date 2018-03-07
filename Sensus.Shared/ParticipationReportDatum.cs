@@ -19,43 +19,18 @@ using System.Collections.Generic;
 
 namespace Sensus
 {
-    public class ProtocolReportDatum : Datum
+    /// <summary>
+    /// Provides participation rates on a per-<see cref="Probe"/> basis. For example, for a <see cref="PollingProbe"/>
+    /// set to poll 10 times per day with a <see cref="Protocol.ParticipationHorizon"/> of 10 days, we would expect to
+    /// see 100 pollings at full participation. If the device only records 67 pollings, then the participation rate
+    /// would be 67%. The definition of participation rate is different for <see cref="ListeningProbe"/>s, which are
+    /// designed to be running continuously. Here, participation is defined to be the fraction of the 
+    /// <see cref="Protocol.ParticipationHorizon"/> (e.g., 10 days) for which the <see cref="ListeningProbe"/> was 
+    /// turned on.
+    /// </summary>
+    public class ParticipationReportDatum : Datum
     {
-        private string _error;
-        private string _warning;
-        private string _misc;
-        private string _operatingSystem;
         private Dictionary<string, double> _probeParticipation;
-
-        public string Error
-        {
-            get { return _error; }
-            set { _error = value; }
-        }
-
-        public string Warning
-        {
-            get { return _warning; }
-            set { _warning = value; }
-        }
-
-        public string Misc
-        {
-            get { return _misc; }
-            set { _misc = value; }
-        }
-
-        public string OperatingSystem
-        {
-            get
-            {
-                return _operatingSystem; 
-            }
-            set
-            {
-                _operatingSystem = value;
-            }
-        }
 
         public Dictionary<string, double> ProbeParticipation
         {
@@ -77,19 +52,16 @@ namespace Sensus
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private ProtocolReportDatum()
+        private ParticipationReportDatum()
         {
             _probeParticipation = new Dictionary<string, double>();
         }
 
-        public ProtocolReportDatum(DateTimeOffset timestamp, string error, string warning, string misc, Protocol protocol)
+        public ParticipationReportDatum(DateTimeOffset timestamp, Protocol protocol)
             : base(timestamp)
         {
-            _error = error == null ? "" : error;
-            _warning = warning == null ? "" : warning;
-            _misc = misc == null ? "" : misc;
-            _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
             _probeParticipation = new Dictionary<string, double>();
+            ProtocolId = protocol.Id;
 
             List<Tuple<Probe, double?>> probeParticipations = protocol.Probes.Select(probe => new Tuple<Probe, double?>(probe, probe.GetParticipation()))
                                                                             .Where(probeParticipation => probeParticipation.Item2.HasValue)
@@ -99,13 +71,6 @@ namespace Sensus
             {
                 _probeParticipation.Add(probeParticipation.Item1.GetType().FullName, probeParticipation.Item2.Value);
             }
-        }
-
-        public override string ToString()
-        {
-            return "Errors:  " + Environment.NewLine + _error + Environment.NewLine +
-            "Warnings:  " + Environment.NewLine + _warning + Environment.NewLine +
-            "Misc:  " + Environment.NewLine + _misc;
         }
     }
 }
