@@ -1,2378 +1,2494 @@
 <!DOCTYPE html>
 <html lang="en">
-
-    <head>
-
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Sensus protocol builder</title>
-
-        <!-- CSS -->
-        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
-        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
-		<link rel="stylesheet" href="assets/css/form-elements.css">
-        <link rel="stylesheet" href="assets/css/style.css">
-		<link rel="stylesheet" href="assets/css/mystyle.css?v=1.0">
-
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  
+  <head>
+    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sensus Protocol Designer</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,100,300,500">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/form-elements.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/mystyle.css?v=1.0">
+    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
-
-        <!-- Favicon and touch icons -->
-        <link rel="shortcut icon" href="assets/ico/favicon.png">
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
-        <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-
-    </head>
-
-    <body>
-
-		<!-- Top menu -->
-		<nav class="navbar navbar-inverse navbar-no-bg" role="navigation">
-			<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navbar-1">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<!-- <a class="navbar-brand" href="index.html">Sensus protocol wizard</a> -->
-				</div>
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="top-navbar-1">
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-							<!-- <span class="li-text">
-								Put some text or
-							</span> 
-							<a href="#"><strong>links</strong></a> 
-							<span class="li-text">
-								here, or some icons: 
-							</span> 
-							<span class="li-social">
-								<a href="https://www.facebook.com/pages/Azmindcom/196582707093191" target="_blank"><i class="fa fa-facebook"></i></a> 
-								<a href="https://twitter.com/anli_zaimi" target="_blank"><i class="fa fa-twitter"></i></a> 
-								<a href="https://plus.google.com/+AnliZaimi_azmind" target="_blank"><i class="fa fa-google-plus"></i></a> 
-								<a href="https://github.com/AZMIND" target="_blank"><i class="fa fa-github"></i></a>
-							</span> -->
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-
-        <!-- Top content -->
-        <div class="top-content">
-            <div class="container">
-                
-                <div class="row">
-                    <div class="col-sm-8 col-sm-offset-2 text">
-                        <h1><strong>Sensus Protocol Builder</strong></h1>
-                        <div class="description">
-                       	    <p>
-                                Please use this form to build your Sensus protocols for distribution to cohort participants. After you have completed this formA QR code will be generated at the end of this...Use the generated QR code to load the protocol on partcipants smartphones
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-sm-12 col-md-12 col-lg-12 form-box">
-                    	<form  class="f1" id="protocol_form" >
-
-                    		<h3>Please visit <a href="https://predictive-technology-laboratory.github.io/sensus/" target="_blank">Sensus web site</a> for more information about how to create a protocol</h3>
-                    		<p>Fill in the form to create your own Sensus protocol, a QR code will be created after submitting this form. Any smartphone user can enroll to your study by scanning the generated QR code.</p>
-                    		<div class="f1-steps">
-                    			<div class="f1-progress">
-                    			    <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
-                    			</div>
-                    			<div class="f1-step active">
-                    				<div class="f1-step-icon"><i class="fa fa-user"></i></div>
-                    				<p>Study</p>
-                    			</div>
-                    			<div class="f1-step">
-                    				<div class="f1-step-icon"><i class="fa fa-key"></i></div>
-                    				<p>Probes</p>
-                    			</div>
-                    		    <div class="f1-step">
-                    				<div class="f1-step-icon"><i class="fa fa-twitter"></i></div>
-                    				<p>Storage</p>
-                    			</div>
-                    		</div>
-                    		
-                    		<fieldset>
-                    		    
- 
-								<div class="form-group row"> 
-								<div class="col-md-3">Study</div>	
-								<div class="col-md-3"><input type="text" name="name"   class="form-control"></div>
-								<div class="col-md-3">Organization</div>	
-								<div class="col-md-3"><input type="text" name="organization"   class="form-control"></div>
-                                </div>
-								<div class="form-group row"> 
-								<div class="col-md-3">Contact Email</div>
-								<div class="col-md-3">
-									 <input type="text" name="contact_email" class="form-control" >
-								</div>
-								<div class="col-md-3">Phone Number</div>
-								<div class="col-md-3">
-									 <input type="text" name="phone_number" class="form-control" >
-								</div>								    
-                                </div>
-								<div class="form-group row"> 
-								<div class="col-md-3">Description</div>	
-								<div class="col-md-9"><textarea name="description" rows="1" style="resize: none;height:50px;" class=" form-control" ></textarea></div>
-								
-                                </div>
-
-                                <div class="form-group row">
-								
-								  <div class="col-md-3">Shareable</div>
-								  <div class="col-md-3">
-									  <label class="switch">
-										  <input type="checkbox">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									<div class="col-md-3">Force Reports to Remote</div>
-								  <div class="col-md-3">
-									  <label class="switch">
-										  <input type="checkbox" name="force_reports_to_remote">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-								</div>   
-								<div class="form-group row">
-								  <div class="col-md-3">Start Immediately</div>
-								  <div class="col-md-3">
-									  <label class="switch">
-										  <input type="checkbox" name="start_immediately">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									<div class="col-md-3">Continue Indefinilty</div>
-								  <div class="col-md-3">
-									  <label class="switch">
-										  <input type="checkbox" name="continue_indefinitely">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-								</div>
-								<div class="form-group row">
-								  <div class="col-md-3">Start Date</div>
-								  <div class="col-md-3">
-									 <input type="date" name="start_date"  class="form-control">
-									</div>
-									<div class="col-md-3">Start Time</div>
-								  <div class="col-md-3">
-									 <input type="time" name="start_time"  class="form-control">
-									</div>
-								</div>
-								<div class="form-group row">
-								  <div class="col-md-3">End Date</div>
-								  <div class="col-md-3">
-									 <input type="date" name="end_date"  class="form-control">
-									</div>
-									<div class="col-md-3">End Time</div>
-								  <div class="col-md-3">
-									 <input type="time" name="end_time"  class="form-control">
-									</div>
-								</div>
-								
-								<div class="form-group row"> 
-								<div class="col-md-3">Participation Horizon (days)</div>
-								<div class="col-md-3">
-									 <input type="number" name="participation_horizon" min="1" value="1" class="form-control" >
-								</div>								
-                                <div class="col-md-3">Reward Threshold</div>
-								<div class="col-md-3">
-									 <input type="number" name="reward_threshold" min="0"  class="form-control" >
-								</div>	    
-                                </div>
-
-								<div class="form-group row">
-								  <div class="col-md-3">Groupable</div>
-								  <div class="col-md-3">
-									  <label class="switch">
-										  <input type="checkbox" name="groupable" class="form-control" >
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									<div class="col-md-3">Asymmetric Encryption Public Key</div>	
-                                    <div class="col-md-3"><input type="text"  name="asymmetric_encryption_public_key"   class=" form-control"></div>
-								</div>
-								<div class="form-group row"> 
-								<div class="col-md-3">Variables</div>	
-								
-                                 <div class="col-md-3"><input type="text"  name="variables"   class="form-control"></div>
-								 <div class="col-md-3">Alert Exclusion Windows</div>	
-								
-                                    <div class="col-md-3"><input type="text"  name="alert_exclusion_windows"   class=" form-control"></div>
-                                </div>
-								
-                                
-                                <div class="f1-buttons row">
-                                    <button type="button" class="btn btn-next">Next</button>
-                                </div>
-                            </fieldset>
-
-                            <fieldset>
-                               
-                                
-							<!-- Acceleration (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name" >Acceleration (Listening)</div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="acceleration-listening" id="probe" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-								</div>
-								<div id="acceleration-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="acceleration-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="acceleration-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="acceleration-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="acceleration-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="acceleration-listening_max_data_second"   class="form-control" >
-									</div>
-									</div>
-									<div class="form-group row">
-								
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-2"> Anonymization</div>
-									<div class="col-md-10"> <hr></div>
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="acceleration-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="acceleration-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									</div>
-									
-									<div class="form-group row">
-								
-									<div class="col-md-1">X</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="acceleration-listening_anonymization_x">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Ones">Round to Ones</option>
-										<option value="Round to Tens">Round to Tens</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Y</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="acceleration-listening_anonymization_y">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Ones">Round to Ones</option>
-										<option value="Round to Tens">Round to Tens</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Z</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="acceleration-listening_anonymization_z">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Ones">Round to Ones</option>
-										<option value="Round to Tens">Round to Tens</option>
-									  </select>
-									</div>
-									</div>
-									<hr>
-								</div>
-							<!-- Activity (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name" >Activity (Listening)</div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="activity-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="activity-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="activity-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="activity-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="activity-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="activity-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="activity-listening_max_data_second"   class="form-control" >
-									</div>
-									<div class="col-md-3">Location Change Radius (Meters)</div>
-									<div class="col-md-1">
-									  <input type="number" name="activity-listening_location_change_radius" value ="25" min="1"   class="form-control" >
-									</div>
-									</div>
-									
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="activity-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="activity-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									</div>
-									<hr>
-								</div>
-								<!-- Altitude (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Altitude (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="altitude-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="altitude-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="altitude-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="altitude-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="altitude-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="altitude-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="altitude-listening_max_data_second"   class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="altitude-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="altitude-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Altitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="altitude-listening_anonymization_altitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- Battery Level (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Battery Level (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="battery-level-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="battery-level-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="battery-level-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="battery-level-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="battery-level-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="battery-level-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="battery-level-polling_sleep_duration" min="1" value="900000"   class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins)</div>
-									<div class="col-md-1">
-									  <input type="number" name="battery-level-polling_sleep_duration" min="0" value="5"   class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="battery-level-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="battery-level-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Level</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="battery-level-polling_anonymization_level">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-									  </select>
-									</div>
-									</div>
-									
-									<hr>
-								</div>
-								
-								<!-- Bluetooth Encounters (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Bluetooth Encounters (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="bluetooth-encounters-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="bluetooth-encounters-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="bluetooth-encounters-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="bluetooth-encounters-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="bluetooth-encounters-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="bluetooth-encounters-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="bluetooth-encounters-polling_sleep_duration" min="1" value="60000"   class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins)</div>
-									<div class="col-md-1">
-									  <input type="number" name="bluetooth-encounters-polling_sleep_duration" min="0" value="5"   class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="bluetooth-encounters-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="bluetooth-encounters-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Encountered Device</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="bluetooth-encounters-polling_anonymization_encountered_device">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									</div>
-									
-									<hr>
-								</div>
-								
-								<!-- Cell Tower Binding (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Cell Tower Binding (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="cell-tower-binding-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="cell-tower-binding-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="cell-tower-binding-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="cell-tower-binding-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="cell-tower-binding-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="cell-tower-binding-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="cell-tower-binding-listening_max_data_second"   class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="cell-tower-binding-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="cell-tower-binding-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Cellular Tower</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="cell-tower-binding-listening_anonymization_cellular_tower">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- Compass Heading (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Compass Heading (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="compass-heading-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="compass-heading-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="compass-heading-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="compass-heading-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="compass-heading-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="compass-heading-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="compass-heading-listening_max_data_second"   class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="compass-heading-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="compass-heading-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Heading</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="compass-heading-listening_anonymization_heading">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Ones">Round to Ones</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- GPS Location (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">GPS Location (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="gps-location-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep Duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="gps-location-polling_sleep_duration" value="15000" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-polling_timeout" value="15000" min="0"  class="form-control" >
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Desired Accuracy (Meters)</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-polling_desired_accuracy"  min="0" value="20" class="form-control" >
-									</div>
-									
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Latitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-polling_anonymization_latitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									</div>
-									<div class="form-group row">
-								
-									
-									<div class="col-md-1">Longitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-polling_anonymization_longitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- GPS Location (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">GPS Location (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="gps-location-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-listening_max_data_second" value="1" min="0"  class="form-control" >
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Desired Accuracy (Meters)</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-listening_desired_accuracy"  min="0" value="20" class="form-control" >
-									</div>
-									
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Minimum Time Delay (MS)</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-listening_minimum_time_delay"  value="5000" class="form-control" >
-									</div>
-									<div class="col-md-3">Minimum Distance Delay (Meters)</div>
-									<div class="col-md-1">
-									  <input type="number" name="gps-location-listening_minimum_distance_delay" value="20" min="0"  class="form-control" >
-									</div>
-									
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Latitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-listening_anonymization_latitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									</div>
-									<div class="form-group row">
-								
-									
-									<div class="col-md-1">Longitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="gps-location-listening_anonymization_longitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- Light Level (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Light Level (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="light-level-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="light-level-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="light-level-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="light-level-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="light-level-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="light-level-listening_max_data_second" value="1" min="0"  class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="light-level-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="light-level-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Brightness</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="light-level-listening_anonymization_brightness">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									</div>
-									
-								
-									<hr>
-								</div>
-								
-									<!-- Phone Call (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Phone Call (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="gps-location-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="phone-call-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="phone-call-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="phone-call-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="phone-call-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="phone-call-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="phone-call-listening_max_data_second" value="1" min="0"  class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="phone-call-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="phone-call-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Phone #</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="phone-call-listening_anonymization_phone_number">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									</div>
-									
-								
-									<hr>
-								</div>
-								
-								<!-- Points of Interest Proximity (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Points of Interest Proximity (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="poi-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="poi-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data / Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="poi-listening_max_data_second"  min="0"  class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Distance (Meters)</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_ldistance">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">Latitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_latitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Longitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_longitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Name</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_name">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									
-									</div>
-									<div class="form-group row">
-									<div class="col-md-1">Type</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-listening_anonymization_type">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>	
-									</div>									
-									<hr>
-								</div>
-								
-								<!-- Points of Interest Proximity (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Points of Interest Proximity (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="poi-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="poi-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="poi-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep Duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="poi-polling_sleep_duration" value="30000" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="poi-polling_sleep_duration"  min="0" value="5"  class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Distance (Meters)</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_ldistance">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">Latitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_latitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Longitude</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_longitude">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tenths">Round to Tenths</option>
-										<option value="Round to Hundredths">Round to Hundredths</option>
-										<option value="Round to Thousandths">Round to Thousandths</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Name</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_name">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									
-									</div>
-									<div class="form-group row">
-									<div class="col-md-1">Type</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="poi-polling_anonymization_type">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>	
-									</div>									
-									<hr>
-								</div>
-								
-								<!-- Screen On/Off (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Screen On/Off (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="sound-level-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="sound-level-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep Duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="sound-level-polling_sleep_duration" value="15000" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="sound-level-polling_sleep_duration"  min="0" value="5"  class="form-control" >
-									</div>
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="sound-level-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="sound-level-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									
-									</div>
-								
-									<hr>
-								</div>
-								
-								
-								<!-- Sound Level (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Sound Level (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="sound-level-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="sound-level-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="sound-level-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep Duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="sound-level-polling_sleep_duration" value="60000" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="sound-level-polling_sleep_duration"  min="0" value="5"  class="form-control" >
-									</div>
-									</div>
-									<div class="form-group row">
-									
-									<div class="col-md-2">Sample Length (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="sound-level-polling_sample_length" value="5000" min="0"  class="form-control" >
-									</div>
-									
-									</div>
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="sound-level-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="sound-level-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Decibels</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="sound-level-polling_anonymization_decibels">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Ones">Round to Ones</option>
-										<option value="Round to Tens">Round to Tens</option>
-									  </select>
-									</div>
-									
-									</div>
-								
-									<hr>
-								</div>
-								
-								
-								<!-- Speed (Polling) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Speed (Polling)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-polling" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="speed-polling_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-polling_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-polling_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-polling_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="speed-polling_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-2">Sleep Duration (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="speed-polling_sleep_duration" value="15000" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="speed-polling_sleep_duration"  min="0" value="5"  class="form-control" >
-									</div>
-									</div>
-									
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="speed-polling_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="speed-polling_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">KPH</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="speed-polling_anonymization_kph">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- Speed (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Speed (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="speed-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="speed-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="speed-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data/Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="speed-listening_max_data_second"  min="0"  class="form-control" >
-									</div>
-									
-									</div>
-									
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="speed-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="speed-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">KPH</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="speed-listening_anonymization_kph">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-										<option value="Round to Hundreds">Round to Hundreds</option>
-									  </select>
-									</div>
-									
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- Temperature (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Temperature (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="temperature-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="temperature-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="temperature-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="temperature-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="temperature-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="temperature-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data/Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="temperature-listening_max_data_second"  min="0"  class="form-control" >
-									</div>
-									
-									</div>
-									
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="temperature-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="temperature-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Degrees(C)</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="temperature-listening_anonymization_degrees">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Round to Tens">Round to Tens</option>
-									  </select>
-									</div>
-									
-									</div>
-								
-									<hr>
-								</div>
-								
-								<!-- Text Messages (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Text Messages (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="text-messages-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="text-messages-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="text-messages-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="text-messages-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="text-messages-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="text-messages-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data/Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="text-messages-listening_max_data_second"  min="0"  class="form-control" >
-									</div>
-									
-									</div>
-									
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="text-messages-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="text-messages-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Message</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="text-messages-listening_anonymization_message">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									
-									</div>
-									
-									<div class="form-group row">
-								
-									<div class="col-md-1">From #</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="text-messages-listening_anonymization_from_number">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">To #</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="text-messages-listening_anonymization_to_number">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Participant is Sender</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="text-messages-listening_anonymization_participant_is_sender">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-									  </select>
-									</div>
-									
-									</div>
-									<hr>
-								</div>
-								
-								<!-- Wireless Lan Binding (Listening) -->
-								<div class="form-group row">
-								
-								  <div class="col-md-5 probe_name"><span class="probe_name">Wireless Lan Binding (Listening)</span></div>
-								  <div class="col-md-7">
-									  <label class="switch">
-										  <input type="checkbox" name="wireless_lan_binding-listening" class="probe">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-
-								</div>
-								<div id="wireless_lan_binding-listening_probe_div" class="probe_div">
-									<hr>								
-									<div class="form-group row">
-									<div class="col-md-3">Store Data</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="wireless_lan_binding-listening_store_data" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Run Local Commit On Store</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="wireless_lan_binding-listening_run_local_commit_on_store" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Keep Device Awake</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="wireless_lan_binding-listening_keep_device_awake">
-										  <span class="slider round"></span>
-									</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Max Chart Data Count</div>
-									<div class="col-md-1">
-									  <input type="number" name="wireless_lan_binding-listening_max_chart_data_count"  value="10" class="form-control" >
-									</div>
-									<div class="col-md-3">Max Data/Second</div>
-									<div class="col-md-1">
-									  <input type="number" name="wireless_lan_binding-listening_max_data_second"  min="0"  class="form-control" >
-									</div>
-									
-									</div>
-									
-
-									<div class="form-group row">
-								
-									<div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-									
-									</div>
-									<div class="form-group row">
-								
-									<div class="col-md-1">DeviceID</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="wireless_lan_binding-listening_anonymization_device_id">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Hash">Hash</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Timestamp</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="wireless_lan_binding-listening_anonymization_timestamp">
-										<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value="Anonymous Timeline">Anonymous Timeline</option>
-									  </select>
-									</div>
-									<div class="col-md-1">Wireless Acess Point</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="wireless_lan_binding-listening_anonymization_wireless_access_point">
-										<option value="Do Not Anonymize">Do Not Anonymize</option>
-										<option value="Omit">Omit</option>
-										<option value ="Hash" selected>Hash</option>
-									  </select>
-									</div>
-									
-									</div>
-									
-									
-									<hr>
-								</div>
-								
-								
-                                <div class="f1-buttons row">
-                                    <button type="button" class="btn btn-previous">Previous</button>
-                                    <button type="button" class="btn btn-next">Next</button>
-                                </div>
-								
-                            </fieldset>
-
-							
-							
-							
-                            <fieldset>
-                                
-                                <div class="row">
-								<div class="form-group">
-								<div class="col-md-2"><span class="probe_name">Local storage</span></div>
-								  <div class="col-md-6">
-									 <select class="form-control" name="local storage" id="local_storage">
-									 <option selected value="None">None</option>
-									<option value="File">File</option>
-									<option value="RAM">RAM</option>
-								  </select>
-									</div>
-                                    
-                                </div>
-								</div>
-								<div id="local_storage_div" class="probe_div">
-									<hr>								
-									
-									<div class="form-group row">
-									<div class="col-md-2">Commit Delay (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="locale-storage_commit_delay"  value="900000" min="0" class="form-control" >
-									</div>
-									<div class="col-md-3">Commit Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="locale-storage_commit_timeout" value="5" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Upload to Remote</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="locale-storage_upload_to_remote" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									
-									</div>
-									
-									<hr>
-								</div>
-								<div class="row">
-                                <div class="form-group">
-                                   <div class="form-group">
-								<div class="col-md-2"><span class="probe_name">Remote storage</span></div>
-								  <div class="col-md-6">
-									 <select class="form-control" name="Remote storage" id="remote_storage">
-									 <option selected value="None">None</option>
-									<option value="Amazon S3">Amazon S3</option>
-									<option value="Console">Console</option>
-								  </select>
-									</div>
-                                    
-                                </div>
-                                </div>
-								</div>
-								<div id="s3_div" class="probe_div">
-									<hr>								
-									
-									<div class="form-group row">
-									<div class="col-md-1">Region</div>
-									<div class="col-md-3">
-									  <select class="form-control" name="s3_region">
-										<option value="us-east-1">us-east-1</option>
-										<option value="us-east-2">us-east-2</option>
-										<option value="us-west-1">us-west-1</option>
-										<option value="us-west-2">us-west-2</option>
-										<option value="ca-central-1">ca-central-1</option>
-										<option value="ap-south-1">ap-south-1</option>
-										<option value="ap-northeast-1">ap-northeast-1</option>
-										<option value="ap-northeast-2">ap-northeast-2</option>
-										<option value="ap-northeast-3">ap-northeast-3</option>
-										<option value="ap-southeast-1">ap-southeast-1</option>
-										<option value="ap-southeast-2">ap-southeast-2</option>
-										<option value="cn-north-1">cn-north-1</option>
-										<option value="cn-northwest-1">cn-northwest-1</option>
-										<option value="eu-central-1">eu-central-1</option>
-										<option value="eu-west-1">eu-west-1</option>
-										<option value="eu-west-2">eu-west-2</option>
-										<option value="eu-west-3">eu-west-3</option>
-										<option value="sa-east-1">sa-east-1</option>
-										
-									  </select>
-									</div>
-									<div class="col-md-1">Bucket</div>	
-									<div class="col-md-3"><input type="text" name="s3_bucket"   class="form-control"></div>
-									<div class="col-md-1">Folder</div>	
-									<div class="col-md-3"><input type="text" name="s3_folder"   class="form-control"></div>
-									
-									
-									</div>
-									<div class="form-group row">
-									<div class="col-md-2">Commit Delay (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="s3_commit_delay"  value="3600000" min="0" class="form-control" >
-									</div>
-									<div class="col-md-3">Commit Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="s3_commit_timeout" value="5" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Compress</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="s3_compress" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									<div class="col-md-3">Encrypt</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="s3_encrypt"  class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Require WIFI</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="s3_require_wifi" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									<div class="col-md-3">Require Charging</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="s3_require_charging" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									
-									</div>
-									<div class="form-group row">
-									
-									<div class="col-md-3">Pinned Service URL</div>	
-									<div class="col-md-3"><input type="text" name="s3_pinned_service_url"   class="form-control"></div>
-									<div class="col-md-3">Pinned Public Key</div>	
-									<div class="col-md-3"><input type="text" name="s3_pinned_public_key"   class="form-control"></div>
-									
-									
-									</div>
-									
-									<hr>
-								</div>
-								
-								<div id="console_div" class="probe_div">
-									<hr>								
-									
-									
-									<div class="form-group row">
-									<div class="col-md-2">Commit Delay (MS)</div>
-									<div class="col-md-2">
-									  <input type="number" name="console_commit_delay"  value="3600000" min="0" class="form-control" >
-									</div>
-									<div class="col-md-3">Commit Timeout (Mins.)</div>
-									<div class="col-md-1">
-									  <input type="number" name="console_commit_timeout" value="5" min="0"  class="form-control" >
-									</div>
-									<div class="col-md-3">Require WIFI</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="console_require_wifi" checked class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									</div>
-									<div class="form-group row">
-									
-									
-									<div class="col-md-3">Require Charging</div>
-									<div class="col-md-1">
-									  <label class="switch">
-										  <input type="checkbox" name="console_require_charging" class="form-control" >
-										  <span class="slider round"></span>
-										</label>
-									</div>
-									
-									</div>
-								
-									
-									<hr>
-								</div>
-                                <div class="row">
-								<div class="form-group">
-                                <div class="f1-buttons">
-                                    <button type="button" class="btn btn-previous">Previous</button>
-                                    <button type="submit" class="btn btn-submit">Submit</button>
-                                </div>
-								</div>
-								</div>
-								<div class="text-center">
-								<img src=""
-									 class="qr-code img-thumbnail img-responsive">
-							  </div>
-                            </fieldset>
-                    	
-                    	</form>
-                    </div>
-                </div>
-                    
-            </div>
-        </div>
-
-
-        <!-- Javascript -->
-        <script src="assets/js/jquery-1.11.1.min.js"></script>
-        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="assets/js/jquery.backstretch.min.js"></script>
-        <script src="assets/js/retina-1.1.0.min.js"></script>
-        <script src="assets/js/scripts.js?v=1.7"></script>
-
+    
+    <!-- Favicon and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    
+  </head>
+  
+  <body>
+    
+    <!-- Top menu -->
+    <nav class="navbar navbar-inverse navbar-no-bg" role="navigation">
+      <div class="container">
+	<div class="navbar-header">
+	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#top-navbar-1">
+	    <span class="sr-only">Toggle navigation</span>
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	    <span class="icon-bar"></span>
+	  </button>
+	  <!-- <a class="navbar-brand" href="index.html">Sensus protocol wizard</a> -->
+	</div>
+	<!-- Collect the nav links, forms, and other content for toggling -->
+	<div class="collapse navbar-collapse" id="top-navbar-1">
+	  <ul class="nav navbar-nav navbar-right">
+	    <li>
+	      <!-- <span class="li-text">
+		   Put some text or
+		   </span> 
+		   <a href="#"><strong>links</strong></a> 
+		   <span class="li-text">
+		     here, or some icons: 
+		   </span> 
+		   <span class="li-social">
+		     <a href="https://www.facebook.com/pages/Azmindcom/196582707093191" target="_blank"><i class="fa fa-facebook"></i></a> 
+		     <a href="https://twitter.com/anli_zaimi" target="_blank"><i class="fa fa-twitter"></i></a> 
+		     <a href="https://plus.google.com/+AnliZaimi_azmind" target="_blank"><i class="fa fa-google-plus"></i></a> 
+		     <a href="https://github.com/AZMIND" target="_blank"><i class="fa fa-github"></i></a>
+		   </span> -->
+	    </li>
+	  </ul>
+	</div>
+      </div>
+    </nav>
+    
+    <!-- Top content -->
+    <div class="top-content">
+      <div class="container">
         
-        <!--[if lt IE 10]>
-            <script src="assets/js/placeholder.js"></script>
-        <![endif]-->
+        <div class="row">
+          <div class="col-sm-8 col-sm-offset-2 text">
+            <h1><strong>Sensus Protocol Designer</strong></h1>
+            <div class="description">
+              <p>
+                Sensus is a smartphone application that runs on Android and iOS devices. While it is running, Sensus collects various types of data generated by the device and coordinates the anonymization, encryption, and transmission of these data. To use Sensus, you must first design a data collection plan. This plan is called a protocol, and this website will guide you in the creation of a protocol for your study. After completing this form, your protocol will be saved to a server and you will be provided with a QR code that links to the protocol file. Your study participants simply need to install the Sensus application from the Android or iOS store and scan the QR code to begin participating in your study.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row">
+          <div class="col-sm-12 col-md-12 col-lg-12 form-box">
+            <form  class="f1" id="protocol_form" >
+	      
+              <h3>Please visit <a href="https://predictive-technology-laboratory.github.io/sensus/" target="_blank">the Sensus web site</a> for more information.</h3>
+              <p>Fill in the form to create your Sensus protocol. A QR code will be created after submitting this form, and any smartphone user can enroll in your study by scanning the generated QR code using the Sensus app. If you need help or have questions, please <a href="mailto:uva.ptl@gmail.com?Subject=Help%20with%20Sensus%20protocol%20designer" target="_blank">email us</a>.</p>
+              <div class="f1-steps">
+                <div class="f1-progress">
+                  <div class="f1-progress-line" data-now-value="16.66" data-number-of-steps="3" style="width: 16.66%;"></div>
+                </div>
+                <div class="f1-step active">
+                  <div class="f1-step-icon"><i class="fa fa-user"></i></div>
+                  <p>Study</p>
+                </div>
+                <div class="f1-step">
+                  <div class="f1-step-icon"><i class="fa fa-key"></i></div>
+                  <p>Probes</p>
+                </div>
+                <div class="f1-step">
+                  <div class="f1-step-icon"><i class="fa fa-twitter"></i></div>
+                  <p>Storage</p>
+                </div>
+              </div>
+              
+              <fieldset>
 
-    </body>
 
+		<div class="form-group row"> 
+
+		  <div class="col-md-3">Study Name</div>	
+		  <div class="col-md-3"><input type="text" name="Name" required  class="form-control"></div>
+
+		  <div class="col-md-3">Organization</div>	
+		  <div class="col-md-3"><input type="text" name="Organization"  class="form-control"></div>
+
+                </div>
+
+
+		<div class="form-group row"> 
+
+		  <div class="col-md-3">Contact Email</div>
+		  <div class="col-md-3">
+		    <input type="text" name="ContactEmail" class="form-control" >
+		  </div>
+
+		  <div class="col-md-3">Contact Phone Number</div>
+		  <div class="col-md-3">
+		    <input type="text" name="ContactPhoneNumber" class="form-control" >
+		  </div>								    
+
+                </div>
+
+
+		<div class="form-group row"> 
+
+		  <div class="col-md-3">Study Description</div>	
+		  <div class="col-md-9"><textarea name="Description" rows="1" style="resize: none;height:200px;" class=" form-control" ></textarea></div>
+
+                </div>
+
+
+                <div class="form-group row">
+
+		  <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Protocol.html#Sensus_Protocol_Shareable">Shareable</div>
+		  <div class="col-md-3">
+		    <label class="switch">
+		      <input type="checkbox" name="Shareable">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>   
+
+
+		<div class="form-group row">
+
+		  <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Protocol.html#Sensus_Protocol_StartImmediately">Start Immediately</a></div>
+		  <div class="col-md-3">
+		    <label class="switch">
+		      <input type="checkbox" class="start-immediately" checked name="StartImmediately">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>
+
+
+		<div class="form-group row" id="start-date-time-div" style="display:none">
+
+		  <div class="col-md-3">Start Date</div>
+		  <div class="col-md-3">
+		    <input type="date" name="StartDate"  class="form-control">
+		  </div>
+
+		  <div class="col-md-3">Start Time</div>
+		  <div class="col-md-3">
+		    <input type="time" name="StartTime"  class="form-control">
+		  </div>
+
+		</div>
+
+
+		<div class="form-group row">
+
+		  <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Protocol.html#Sensus_Protocol_ContinueIndefinitely">Continue Indefinitely</a></div>
+		  <div class="col-md-3">
+		    <label class="switch">
+		      <input type="checkbox" class="continue-indefinitely" checked name="ContinueIndefinitely">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>
+
+
+		<div class="form-group row" id="end-date-time-div" style="display:none">
+
+		  <div class="col-md-3">End Date</div>
+		  <div class="col-md-3">
+		    <input type="date" name="EndDate"  class="form-control">
+		  </div>
+
+		  <div class="col-md-3">End Time</div>
+		  <div class="col-md-3">
+		    <input type="time" name="EndTime"  class="form-control">
+		  </div>
+
+		</div>
+
+
+		<div class="form-group row"> 
+
+		  <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizonDays">Participation Horizon (days)</a></div>
+		  <div class="col-md-3">
+		    <input type="number" name="ParticipationHorizonDays" min="1" value="1" class="form-control" >
+		  </div>								
+		</div>
+
+
+		<div class="form-group row">
+
+		  <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">Asymmetric Encryption Public Key</a></div>	
+		  <div class="col-md-9"><textarea name="AsymmetricEncryptionPublicKey" rows="1" style="resize: none;height:200px;" class=" form-control" ></textarea></div>
+		</div>
+		<div class="form-group row"> 
+
+		  <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Protocol.html#Sensus_Protocol_AlertExclusionWindowString">Alert Exclusion Windows</a></div>	
+		  <div class="col-md-3"><input type="text"  name="AlertExclusionWindowString"   class=" form-control"></div>
+		</div>
+
+
+                <div class="f1-buttons row">
+                  <button type="button" class="btn btn-next">Next</button>
+                </div>
+
+
+              </fieldset>
+	      
+              <fieldset>
+                
+		<!-- Acceleration -->
+
+
+		<div class="form-group row">
+
+		  <div class="col-md-5 probe_name" ><a href="javascript:void(0)" class="help" id="Sensus.Probes.Movement.AccelerometerProbe.html">Acceleration (Android,iOS)</a></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="AccelerometerProbe" id="probe" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>
+		<div id="AccelerometerProbe_probe_div" class="probe_div">
+		  <hr>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="AccelerometerProbe-StoreData" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">Keep Device Awake</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="AccelerometerProbe-KeepDeviceAwake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">Max Data / Second</a></div>
+		    <div class="col-md-1">
+		      <input type="number" name="AccelerometerProbe-MaxDataStoresPerSecond" class="form-control" >
+		    </div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AccelerometerProbe-Anonymization-DeviceId">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AccelerometerProbe-Anonymization-Timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-1">X</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AccelerometerProbe-Anonymization-X">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Ones">Round to Ones</option>
+			<option value="Round to Tens">Round to Tens</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Y</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AccelerometerProbe-Anonymization-Y">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Ones">Round to Ones</option>
+			<option value="Round to Tens">Round to Tens</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Z</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AccelerometerProbe-Anonymization-Z">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Ones">Round to Ones</option>
+			<option value="Round to Tens">Round to Tens</option>
+		      </select>
+
+		    </div>
+		  </div>
+		  <hr>
+		</div>
+
+		<!-- Activity (Android) -->
+		<div class="form-group row">
+
+		  <div class="col-md-5 probe_name"><a href="javascript:void(0)" class="help" id="Sensus.Android.Probes.Movement.AndroidActivityProbe.html">Activity (Android)</a></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="AndroidActivityProbe" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>
+		<div id="AndroidActivityProbe_probe_div" class="probe_div">
+		  <hr>
+
+								
+		  <div class="form-group row">
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="AndroidActivityProbe-StoreData" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">Keep Device Awake</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="AndroidActivityProbe-KeepDeviceAwake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">Max Data / Second</a></div>
+		    <div class="col-md-1">
+		      <input type="number" name="AndroidActivityProbe-MaxDataStoresPerSecond" class="form-control" >
+		    </div>
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_LocationChangeRadiusMeters">Location Change Radius (Meters)</a></div>
+		    <div class="col-md-1">
+		      <input type="number" name="AndroidActivityProbe-LocationChangeRadiusMeters" value ="25" min="1"   class="form-control" >
+		    </div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AndroidActivityProbe-Anonymization-DeviceId">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AndroidActivityProbe-Anonymization-Timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+
+		  </div>
+		  <hr>
+		</div>
+
+		<!-- Activity (iOS) -->
+		<div class="form-group row">
+
+		  <div class="col-md-5 probe_name"><a href="javascript:void(0)" class="help" id="Sensus.iOS.Probes.Movement.iOSActivityProbe.html">Activity (iOS)</a></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="iOSActivityProbe" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>
+		<div id="iOSActivityProbe_probe_div" class="probe_div">
+		  <hr>							
+
+	
+		  <div class="form-group row">
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="iOSActivityProbe-StoreData" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-2"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">Sleep Duration (MS)</a></div>
+		    <div class="col-md-2">
+		      <input type="number" name="iOSActivityProbe-PollingSleepDurationMS" min="1" value="900000"   class="form-control" >
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingTimeoutMinutes">Timeout (Mins.)</a></div>
+		    <div class="col-md-1">
+		      <input type="number" name="battery-level-polling_sleep_duration" min="0" value="5"   class="form-control" >
+		    </div>
+
+		  </div>
+
+		  <div class="form-group row">
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePoll">Significant Change Poll</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="iOSActivityProbe-SignificantChangePoll" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-4"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePollOverridesScheduledPolls">Significant Change Poll Overrides Scheduled Polls</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="iOSActivityProbe-SignificantChangePollOverridesScheduledPolls" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="iOSActivityProbe-Anonymization-DeviceId">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="iOSActivityProbe-Anonymization-Timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+
+		  </div>
+		  <hr>
+		</div>
+
+		<!-- Altitude (Android) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><a href="javascript:void(0)" class="help" id="Sensus.Android.Probes.Location.AndroidAltitudeProbe.html">Altitude (Android)</a></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="AndroidAltitudeProbe" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+
+		</div>
+		<div id="AndroidAltitudeProbe_probe_div" class="probe_div">
+		  <hr>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="AndroidAltitudeProbe-StoreData" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">Keep Device Awake</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="AndroidAltitudeProbe-KeepDeviceAwake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">Max Data / Second</a></div>
+		    <div class="col-md-1">
+		      <input type="number" name="AndroidAltitudeProbe-MaxDataStoresPerSecond" class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+
+		  <div class="form-group row">
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-1">Altitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AndroidAltitudeProbe-Anonymization-Altitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AndroidAltitudeProbe-Anonymization-DeviceId">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AndroidAltitudeProbe-Anonymization-Timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+
+		  </div>
+		  <hr>
+		</div>
+		
+		<!-- Battery Level (Polling) STOPPED HERE -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Battery Level (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="battery-level-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="battery-level-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="battery-level-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="battery-level-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="battery-level-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="battery-level-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="battery-level-polling_sleep_duration" min="1" value="900000"   class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="battery-level-polling_sleep_duration" min="0" value="5"   class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="battery-level-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="battery-level-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Level</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="battery-level-polling_anonymization_level">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Bluetooth Encounters (Polling) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Bluetooth Encounters (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="bluetooth-encounters-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="bluetooth-encounters-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="bluetooth-encounters-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="bluetooth-encounters-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="bluetooth-encounters-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="bluetooth-encounters-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="bluetooth-encounters-polling_sleep_duration" min="1" value="60000"   class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="bluetooth-encounters-polling_sleep_duration" min="0" value="5"   class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="bluetooth-encounters-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="bluetooth-encounters-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Encountered Device</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="bluetooth-encounters-polling_anonymization_encountered_device">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Cell Tower Binding (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Cell Tower Binding (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="cell-tower-binding-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="cell-tower-binding-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="cell-tower-binding-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="cell-tower-binding-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="cell-tower-binding-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="cell-tower-binding-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data / Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="cell-tower-binding-listening_max_data_second"   class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="cell-tower-binding-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="cell-tower-binding-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Cellular Tower</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="cell-tower-binding-listening_anonymization_cellular_tower">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Compass Heading (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Compass Heading (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="compass-heading-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="compass-heading-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="compass-heading-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="compass-heading-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="compass-heading-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="compass-heading-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data / Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="compass-heading-listening_max_data_second"   class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="compass-heading-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="compass-heading-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Heading</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="compass-heading-listening_anonymization_heading">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Ones">Round to Ones</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- GPS Location (Polling) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">GPS Location (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="gps-location-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="gps-location-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="gps-location-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="gps-location-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="gps-location-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep Duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="gps-location-polling_sleep_duration" value="15000" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-polling_timeout" value="15000" min="0"  class="form-control" >
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Desired Accuracy (Meters)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-polling_desired_accuracy"  min="0" value="20" class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Latitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-polling_anonymization_latitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    
+		    
+		    <div class="col-md-1">Longitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-polling_anonymization_longitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- GPS Location (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">GPS Location (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="gps-location-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="gps-location-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="gps-location-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="gps-location-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="gps-location-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data / Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-listening_max_data_second" value="1" min="0"  class="form-control" >
+		    </div>
+		    <div class="form-group row">
+		      <div class="col-md-3">Desired Accuracy (Meters)</div>
+		      <div class="col-md-1">
+			<input type="number" name="gps-location-listening_desired_accuracy"  min="0" value="20" class="form-control" >
+		      </div>
+		      
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Minimum Time Delay (MS)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-listening_minimum_time_delay"  value="5000" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Minimum Distance Delay (Meters)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="gps-location-listening_minimum_distance_delay" value="20" min="0"  class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Latitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-listening_anonymization_latitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    
+		    
+		    <div class="col-md-1">Longitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="gps-location-listening_anonymization_longitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Light Level (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Light Level (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="gps-location-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="light-level-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="light-level-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="light-level-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="light-level-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="light-level-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data / Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="light-level-listening_max_data_second" value="1" min="0"  class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="light-level-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="light-level-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Brightness</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="light-level-listening_anonymization_brightness">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  
+		  <hr>
+		</div>
+		
+		<!-- Phone Call (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Phone Call (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="gps-location-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="phone-call-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="phone-call-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="phone-call-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="phone-call-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="phone-call-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data / Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="phone-call-listening_max_data_second" value="1" min="0"  class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="phone-call-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="phone-call-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Phone #</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="phone-call-listening_anonymization_phone_number">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		  </div>
+		  
+		  
+		  <hr>
+		</div>
+		
+		<!-- Points of Interest Proximity (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Points of Interest Proximity (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="poi-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="poi-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="poi-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="poi-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="poi-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="poi-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data / Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="poi-listening_max_data_second"  min="0"  class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Distance (Meters)</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_ldistance">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">Latitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_latitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Longitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_longitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Name</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_name">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-1">Type</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-listening_anonymization_type">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>	
+		  </div>									
+		  <hr>
+		</div>
+		
+		<!-- Points of Interest Proximity (Polling) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Points of Interest Proximity (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="poi-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="poi-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="poi-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="poi-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="poi-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="poi-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep Duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="poi-polling_sleep_duration" value="30000" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="poi-polling_sleep_duration"  min="0" value="5"  class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Distance (Meters)</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_ldistance">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">Latitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_latitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Longitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_longitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tenths">Round to Tenths</option>
+			<option value="Round to Hundredths">Round to Hundredths</option>
+			<option value="Round to Thousandths">Round to Thousandths</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Name</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_name">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-1">Type</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="poi-polling_anonymization_type">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>	
+		  </div>									
+		  <hr>
+		</div>
+		
+		<!-- Screen On/Off (Polling) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Screen On/Off (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="sound-level-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="sound-level-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="sound-level-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="sound-level-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="sound-level-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="sound-level-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep Duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="sound-level-polling_sleep_duration" value="15000" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="sound-level-polling_sleep_duration"  min="0" value="5"  class="form-control" >
+		    </div>
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="sound-level-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="sound-level-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		
+		<!-- Sound Level (Polling) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Sound Level (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="sound-level-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="sound-level-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="sound-level-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="sound-level-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="sound-level-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="sound-level-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep Duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="sound-level-polling_sleep_duration" value="60000" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="sound-level-polling_sleep_duration"  min="0" value="5"  class="form-control" >
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Sample Length (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="sound-level-polling_sample_length" value="5000" min="0"  class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="sound-level-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="sound-level-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Decibels</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="sound-level-polling_anonymization_decibels">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Ones">Round to Ones</option>
+			<option value="Round to Tens">Round to Tens</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		
+		<!-- Speed (Polling) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Speed (Polling)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="speed-polling" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="speed-polling_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="speed-polling_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="speed-polling_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="speed-polling_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="speed-polling_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-2">Sleep Duration (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="speed-polling_sleep_duration" value="15000" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="speed-polling_sleep_duration"  min="0" value="5"  class="form-control" >
+		    </div>
+		  </div>
+		  
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="speed-polling_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="speed-polling_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">KPH</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="speed-polling_anonymization_kph">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Speed (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Speed (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="speed-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="speed-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="speed-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="speed-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="speed-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="speed-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data/Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="speed-listening_max_data_second"  min="0"  class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="speed-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="speed-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">KPH</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="speed-listening_anonymization_kph">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Temperature (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Temperature (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="temperature-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="temperature-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="temperature-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="temperature-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="temperature-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="temperature-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data/Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="temperature-listening_max_data_second"  min="0"  class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="temperature-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="temperature-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Degrees(C)</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="temperature-listening_anonymization_degrees">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<!-- Text Messages (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Text Messages (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="text-messages-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="text-messages-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="text-messages-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="text-messages-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="text-messages-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="text-messages-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data/Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="text-messages-listening_max_data_second"  min="0"  class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="text-messages-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="text-messages-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Message</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="text-messages-listening_anonymization_message">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">From #</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="text-messages-listening_anonymization_from_number">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">To #</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="text-messages-listening_anonymization_to_number">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Participant is Sender</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="text-messages-listening_anonymization_participant_is_sender">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  <hr>
+		</div>
+		
+		<!-- Wireless Lan Binding (Listening) -->
+		<div class="form-group row">
+		  
+		  <div class="col-md-5 probe_name"><span class="probe_name">Wireless Lan Binding (Listening)</span></div>
+		  <div class="col-md-7">
+		    <label class="switch">
+		      <input type="checkbox" name="wireless_lan_binding-listening" class="probe">
+		      <span class="slider round"></span>
+		    </label>
+		  </div>
+		  
+		</div>
+		<div id="wireless_lan_binding-listening_probe_div" class="probe_div">
+		  <hr>								
+		  <div class="form-group row">
+		    <div class="col-md-3">Store Data</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="wireless_lan_binding-listening_store_data" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Run Local Commit On Store</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="wireless_lan_binding-listening_run_local_commit_on_store" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Keep Device Awake</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="wireless_lan_binding-listening_keep_device_awake">
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Max Chart Data Count</div>
+		    <div class="col-md-1">
+		      <input type="number" name="wireless_lan_binding-listening_max_chart_data_count"  value="10" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Max Data/Second</div>
+		    <div class="col-md-1">
+		      <input type="number" name="wireless_lan_binding-listening_max_data_second"  min="0"  class="form-control" >
+		    </div>
+		    
+		  </div>
+		  
+		  
+		  <div class="form-group row">
+		    
+		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-1">DeviceID</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="wireless_lan_binding-listening_anonymization_device_id">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Hash">Hash</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Timestamp</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="wireless_lan_binding-listening_anonymization_timestamp">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Anonymous Timeline">Anonymous Timeline</option>
+		      </select>
+		    </div>
+		    <div class="col-md-1">Wireless Acess Point</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="wireless_lan_binding-listening_anonymization_wireless_access_point">
+			<option value="Do Not Anonymize">Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value ="Hash" selected>Hash</option>
+		      </select>
+		    </div>
+		    
+		  </div>
+		  
+		  
+		  <hr>
+		</div>
+		
+		
+                <div class="f1-buttons row">
+                  <button type="button" class="btn btn-previous">Previous</button>
+                  <button type="button" class="btn btn-next">Next</button>
+                </div>
+		
+              </fieldset>
+	      
+	      
+	      
+	      
+              <fieldset>
+                
+                <div class="row">
+		  <div class="form-group">
+		    <div class="col-md-2"><span class="probe_name">Local storage</span></div>
+		    <div class="col-md-6">
+		      <select class="form-control" name="local storage" id="local_storage">
+			<option selected value="None">None</option>
+			<option value="File">File</option>
+			<option value="RAM">RAM</option>
+		      </select>
+		    </div>
+                    
+                  </div>
+		</div>
+		<div id="local_storage_div" class="probe_div">
+		  <hr>								
+		  
+		  <div class="form-group row">
+		    <div class="col-md-2">Commit Delay (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="locale-storage_commit_delay"  value="900000" min="0" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Commit Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="locale-storage_commit_timeout" value="5" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Upload to Remote</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="locale-storage_upload_to_remote" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		<div class="row">
+                  <div class="form-group">
+                    <div class="form-group">
+		      <div class="col-md-2"><span class="probe_name">Remote storage</span></div>
+		      <div class="col-md-6">
+			<select class="form-control" name="Remote storage" id="remote_storage">
+			  <option selected value="None">None</option>
+			  <option value="Amazon S3">Amazon S3</option>
+			  <option value="Console">Console</option>
+			</select>
+		      </div>
+                      
+                    </div>
+                  </div>
+		</div>
+		<div id="s3_div" class="probe_div">
+		  <hr>								
+		  
+		  <div class="form-group row">
+		    <div class="col-md-1">Region</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="s3_region">
+			<option value="us-east-1">us-east-1</option>
+			<option value="us-east-2">us-east-2</option>
+			<option value="us-west-1">us-west-1</option>
+			<option value="us-west-2">us-west-2</option>
+			<option value="ca-central-1">ca-central-1</option>
+			<option value="ap-south-1">ap-south-1</option>
+			<option value="ap-northeast-1">ap-northeast-1</option>
+			<option value="ap-northeast-2">ap-northeast-2</option>
+			<option value="ap-northeast-3">ap-northeast-3</option>
+			<option value="ap-southeast-1">ap-southeast-1</option>
+			<option value="ap-southeast-2">ap-southeast-2</option>
+			<option value="cn-north-1">cn-north-1</option>
+			<option value="cn-northwest-1">cn-northwest-1</option>
+			<option value="eu-central-1">eu-central-1</option>
+			<option value="eu-west-1">eu-west-1</option>
+			<option value="eu-west-2">eu-west-2</option>
+			<option value="eu-west-3">eu-west-3</option>
+			<option value="sa-east-1">sa-east-1</option>
+			
+		      </select>
+		    </div>
+		    <div class="col-md-1">Bucket</div>	
+		    <div class="col-md-3"><input type="text" name="s3_bucket"   class="form-control"></div>
+		    <div class="col-md-1">Folder</div>	
+		    <div class="col-md-3"><input type="text" name="s3_folder"   class="form-control"></div>
+		    
+		    
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-2">Commit Delay (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="s3_commit_delay"  value="3600000" min="0" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Commit Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="s3_commit_timeout" value="5" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Compress</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="s3_compress" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    <div class="col-md-3">Encrypt</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="s3_encrypt"  class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Require WIFI</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="s3_require_wifi" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    <div class="col-md-3">Require Charging</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="s3_require_charging" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    
+		  </div>
+		  <div class="form-group row">
+		    
+		    <div class="col-md-3">Pinned Service URL</div>	
+		    <div class="col-md-3"><input type="text" name="s3_pinned_service_url"   class="form-control"></div>
+		    <div class="col-md-3">Pinned Public Key</div>	
+		    <div class="col-md-3"><input type="text" name="s3_pinned_public_key"   class="form-control"></div>
+		    
+		    
+		  </div>
+		  
+		  <hr>
+		</div>
+		
+		<div id="console_div" class="probe_div">
+		  <hr>								
+		  
+		  
+		  <div class="form-group row">
+		    <div class="col-md-2">Commit Delay (MS)</div>
+		    <div class="col-md-2">
+		      <input type="number" name="console_commit_delay"  value="3600000" min="0" class="form-control" >
+		    </div>
+		    <div class="col-md-3">Commit Timeout (Mins.)</div>
+		    <div class="col-md-1">
+		      <input type="number" name="console_commit_timeout" value="5" min="0"  class="form-control" >
+		    </div>
+		    <div class="col-md-3">Require WIFI</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="console_require_wifi" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		  </div>
+		  <div class="form-group row">
+		    
+		    
+		    <div class="col-md-3">Require Charging</div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="console_require_charging" class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+		    
+		  </div>
+		  
+		  
+		  <hr>
+		</div>
+                <div class="row">
+		  <div class="form-group">
+                    <div class="f1-buttons">
+                      <button type="button" class="btn btn-previous">Previous</button>
+                      <button type="submit" class="btn btn-submit">Submit</button>
+                    </div>
+		  </div>
+		</div>
+		<div class="text-center">
+		  <img src=""
+		       class="qr-code img-thumbnail img-responsive">
+		</div>
+              </fieldset>
+              
+            </form>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      
+      <!-- Javascript -->
+      <script src="assets/js/jquery-1.11.1.min.js"></script>
+      <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+      <script src="assets/js/jquery.backstretch.min.js"></script>
+      <script src="assets/js/retina-1.1.0.min.js"></script>
+      <script src="assets/js/scripts.js?v=1.7"></script>
+      
+      
+      <!--[if lt IE 10]>
+          <script src="assets/js/placeholder.js"></script>
+          <![endif]-->
+      
+  </body>
+  
 </html>

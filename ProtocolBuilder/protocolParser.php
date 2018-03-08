@@ -10,7 +10,7 @@ $myjson = json_encode($_POST);
 	$ctime= time();
 	$study="";
 	if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
-		$study=$_POST["study_name"];
+		$study=$_POST["Name"];
 	}
 	$name = $study."_".$ctime;
 
@@ -21,8 +21,8 @@ $myjson = json_encode($_POST);
     'version'     => 'latest',
     'region'      => 'us-east-1',
     'credentials' => [
-       'key'    => 'xxx',
-       'secret' => 'xxx',
+       'key'    => 'AKIAJZBJG2I6NT4DKX4A',
+       'secret' => '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',
      ],
 	 'http'    => [
         'verify' => false

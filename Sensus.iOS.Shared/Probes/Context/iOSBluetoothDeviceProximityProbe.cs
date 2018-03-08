@@ -59,7 +59,7 @@ namespace Sensus.iOS.Probes.Context
             _bluetoothCentralManagerDelegate.DeviceIdEncountered += async (sender, bluetoothDeviceProximityDatum) =>
             {
                 // we have no cancellation token. thus, all that can happen here is that the datum is stored locally
-                // and surveys are triggered (if any are defined). size- and force-commits will not result, and this
+                // and surveys are triggered (if any are defined). size- and force-writes will not result, and this
                 // is important because we might be currently executing from the background on a bluetooth scan result.
                 await StoreDatumAsync(bluetoothDeviceProximityDatum, null);
             };

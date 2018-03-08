@@ -361,6 +361,12 @@ namespace Sensus.Probes
             }
         }
 
+        /// <summary>
+        /// Stores a <see cref="Datum"/> within the <see cref="LocalDataStore"/>. Will not throw an <see cref="Exception"/>.
+        /// </summary>
+        /// <returns>The datum async.</returns>
+        /// <param name="datum">Datum.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken)
         {
             // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
@@ -397,7 +403,16 @@ namespace Sensus.Probes
                         }
                     }
 
-                    return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
+                    // catch any exceptions, as the caller (e.g., a probe listening) could very well be unprotected on the UI thread. throwing
+                    // an exception here can crash the app.
+                    try
+                    {
+                        return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
+                    }
                 }
             }
 

@@ -190,7 +190,7 @@ namespace Sensus
                                 }
 
                                 // store any data that have accumulated locally
-                                SensusServiceHelper.Get().FlashNotificationAsync("Committing data from previous study...");
+                                SensusServiceHelper.Get().FlashNotificationAsync("Submitting data from previous study...");
                                 await registeredProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
 
                                 // stop the study and unregister it 
