@@ -16,6 +16,8 @@ using System;
 using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
 
 namespace Sensus.DataStores.Local
 {
@@ -56,32 +58,38 @@ namespace Sensus.DataStores.Local
         {
             return Task.Run(async () =>
             {
-                bool commit = false;
+                bool write = false;
 
                 lock (_sizeTriggeredRemoteWriteLocker)
                 {
                     if (IsTooLarge() && !_sizeTriggeredRemoteWriteRunning)
                     {
                         _sizeTriggeredRemoteWriteRunning = true;
-                        commit = true;
+                        write = true;
                     }
                 }
 
-                try
+                if (write)
                 {
-                    if (commit)
+                    try
                     {
-                        SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Running size-triggered write to remote.", LoggingLevel.Normal, GetType());
+
+                        Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+                        {
+                            { "Write", "Size Triggered" }
+                        });
+
                         await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken);
                     }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _sizeTriggeredRemoteWriteRunning = false;
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered write to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                    finally
+                    {
+                        _sizeTriggeredRemoteWriteRunning = false;
+                    }
                 }
             });
         }

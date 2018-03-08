@@ -259,20 +259,19 @@ namespace Sensus.UI
                         false,
                         async () =>
                         {
-                            // add participation reward datum to remote data store and commit immediately
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
 
-                            bool commitFailed = false;
+                            bool writeFailed = false;
                             try
                             {
                                 await selectedProtocol.RemoteDataStore.WriteDatumAsync(participationRewardDatum, cancellationTokenSource.Token);
                             }
                             catch (Exception)
                             {
-                                commitFailed = true;
+                                writeFailed = true;
                             }
 
-                            if (commitFailed)
+                            if (writeFailed)
                             {
                                 SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
                             }
@@ -285,15 +284,15 @@ namespace Sensus.UI
 
                             Device.BeginInvokeOnMainThread(async () =>
                             {
-                                // only show the QR code for the reward datum if the datum was committed to the remote data store and if the data store can retrieve it.
-                                await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !commitFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)));
+                                // only show the QR code for the reward datum if the datum was written to the remote data store and if the data store can retrieve it.
+                                await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !writeFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)));
                             });
                         },
                         inputs =>
                         {
                             // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
-                            // to cancel the remote data store commit. if the prompt was closed by the termination of the remote
-                            // data store commit (i.e., by the canceled token), then don't cancel the token again.
+                            // to cancel the remote data store write. if the prompt was closed by the termination of the remote
+                            // data store write (i.e., by the canceled token), then don't cancel the token again.
                             if (!cancellationTokenSource.IsCancellationRequested)
                             {
                                 cancellationTokenSource.Cancel();

@@ -73,7 +73,7 @@ namespace Sensus.Tests.DataStores.Local
         }
         #endregion
 
-        #region the file sizes should increase without closing the streams. we need this because we track the file sizes to open new files and force remote commits
+        #region the file sizes should increase without closing the streams. we need this because we track the file sizes to open new files and force remote writes.
         [Test]
         public void UncompressedFileSizeIncreasesWithoutClosingTest()
         {
