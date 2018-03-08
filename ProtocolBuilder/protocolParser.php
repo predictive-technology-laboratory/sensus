@@ -21,8 +21,8 @@ $myjson = json_encode($_POST);
     'version'     => 'latest',
     'region'      => 'us-east-1',
     'credentials' => [
-       'key'    => 'AKIAJZBJG2I6NT4DKX4A',
-       'secret' => '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',
+       'key'    => '',
+       'secret' => '',
      ],
 	 'http'    => [
         'verify' => false
