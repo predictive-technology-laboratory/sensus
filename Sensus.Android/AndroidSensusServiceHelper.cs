@@ -114,7 +114,7 @@ namespace Sensus.Android
 
                     if (level >= 0 && scale >= 0)
                     {
-                        return level / scale;
+                        return 100 * level / scale;
                     }
                     else
                     {
