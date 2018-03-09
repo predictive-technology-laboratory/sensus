@@ -16,7 +16,7 @@
     <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
-    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
     <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
@@ -27,7 +27,6 @@
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AndroidManifest>..\Sensus.Android\Properties\AndroidManifest.xml</AndroidManifest>
-    <AndroidLinkMode>None</AndroidLinkMode>
     <Description>Endpoint that runs all Android and platform-neutral (i.e., shared) unit tests in an NUnit app. It is 
 possible to run and debug this project on physical and virtual Android devices. To do this, simply
 "Run" (or hit the debugger play icon) within Xamarin/Visual studio while targeting such a device.
@@ -45,19 +44,16 @@ for the project endpoint that is intended for the App Center.</Description>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
-    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
-    <AndroidSupportedAbis>armeabi;armeabi-v7a;x86;arm64-v8a;x86_64</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>false</Optimize>
     <OutputPath>bin\Android\Release</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
-    <JavaMaximumHeapSize></JavaMaximumHeapSize>
-    <AndroidSupportedAbis>armeabi-v7a;x86;armeabi</AndroidSupportedAbis>
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Band.Android">
