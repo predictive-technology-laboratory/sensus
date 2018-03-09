@@ -580,16 +580,6 @@
 
 		  <div class="form-group row">
 
-		    <div class="col-md-1">Altitude</div>
-		    <div class="col-md-3">
-		      <select class="form-control" name="AndroidAltitudeProbe-Anonymization-Altitude">
-			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
-			<option value="Omit">Omit</option>
-			<option value="Round to Tens">Round to Tens</option>
-			<option value="Round to Hundreds">Round to Hundreds</option>
-		      </select>
-		    </div>
-
 		    <div class="col-md-1">Device&nbsp;ID</div>
 		    <div class="col-md-3">
 		      <select class="form-control" name="AndroidAltitudeProbe-Anonymization-DeviceId">
@@ -608,271 +598,292 @@
 		      </select>
 		    </div>
 
+		    <div class="col-md-1">Altitude</div>
+		    <div class="col-md-3">
+		      <select class="form-control" name="AndroidAltitudeProbe-Anonymization-Altitude">
+			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
+			<option value="Omit">Omit</option>
+			<option value="Round to Tens">Round to Tens</option>
+			<option value="Round to Hundreds">Round to Hundreds</option>
+		      </select>
+		    </div>
+
 		  </div>
 		  <hr>
 		</div>
 		
-		<!-- Battery Level (Polling) STOPPED HERE -->
+		<!-- Battery Level (Android, iOS) -->
+
 		<div class="form-group row">
-		  
-		  <div class="col-md-5 probe_name"><span class="probe_name">Battery Level (Polling)</span></div>
+                  
+                  <div class="col-md-5 probe_name" ><a href="javascript:void(0)" class="help" id="Sensus.Probes.Device.BatteryProbe.html">Battery Level (Android,iOS)</a></div>
 		  <div class="col-md-7">
 		    <label class="switch">
-		      <input type="checkbox" name="battery-level-polling" class="probe">
+		      <input type="checkbox" name="BatteryProbe" id="probe" class="probe">
 		      <span class="slider round"></span>
 		    </label>
 		  </div>
-		  
+
 		</div>
-		<div id="battery-level-polling_probe_div" class="probe_div">
-		  <hr>								
+		<div id="BatteryProbe_probe_div" class="probe_div">
+		  <hr>
+
+
 		  <div class="form-group row">
-		    <div class="col-md-3">Store Data</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
 		    <div class="col-md-1">
 		      <label class="switch">
-			<input type="checkbox" name="battery-level-polling_store_data" checked class="form-control" >
+			<input type="checkbox" name="BatteryProbe-StoreData" checked class="form-control" >
 			<span class="slider round"></span>
 		      </label>
 		    </div>
-		    <div class="col-md-3">Run Local Commit On Store</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">Keep Device Awake</a></div>
 		    <div class="col-md-1">
 		      <label class="switch">
-			<input type="checkbox" name="battery-level-polling_run_local_commit_on_store" class="form-control" >
+			<input type="checkbox" name="BatteryProbe-KeepDeviceAwake">
 			<span class="slider round"></span>
 		      </label>
 		    </div>
-		    <div class="col-md-3">Keep Device Awake</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">Max Data / Second</a></div>
 		    <div class="col-md-1">
-		      <label class="switch">
-			<input type="checkbox" name="battery-level-polling_keep_device_awake">
-			<span class="slider round"></span>
-		      </label>
+		      <input type="number" name="BatteryProbe-MaxDataStoresPerSecond" class="form-control" >
 		    </div>
+
 		  </div>
+
+
 		  <div class="form-group row">
-		    <div class="col-md-3">Max Chart Data Count</div>
-		    <div class="col-md-1">
-		      <input type="number" name="battery-level-polling_max_chart_data_count"  value="10" class="form-control" >
-		    </div>
-		    <div class="col-md-2">Sleep duration (MS)</div>
-		    <div class="col-md-2">
-		      <input type="number" name="battery-level-polling_sleep_duration" min="1" value="900000"   class="form-control" >
-		    </div>
-		    <div class="col-md-3">Timeout (Mins)</div>
-		    <div class="col-md-1">
-		      <input type="number" name="battery-level-polling_sleep_duration" min="0" value="5"   class="form-control" >
-		    </div>
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
 		  </div>
-		  
+
+
 		  <div class="form-group row">
-		    
-		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-		    
-		  </div>
-		  <div class="form-group row">
-		    
-		    <div class="col-md-1">DeviceID</div>
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="battery-level-polling_anonymization_device_id">
+		      <select class="form-control" name="BatteryProbe-Anonymization-DeviceId">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Hash">Hash</option>
 		      </select>
 		    </div>
+
 		    <div class="col-md-1">Timestamp</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="battery-level-polling_anonymization_timestamp">
+		      <select class="form-control" name="BatteryProbe-Anonymization-Timestamp">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Anonymous Timeline">Anonymous Timeline</option>
 		      </select>
 		    </div>
+
 		    <div class="col-md-1">Level</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="battery-level-polling_anonymization_level">
+		      <select class="form-control" name="BatteryLevel-Anonymization-Level">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Round to Tens">Round to Tens</option>
 		      </select>
 		    </div>
+
 		  </div>
 		  
 		  <hr>
 		</div>
 		
-		<!-- Bluetooth Encounters (Polling) -->
+		<!-- Bluetooth Encounters (Android,iOS) -->
+
 		<div class="form-group row">
-		  
-		  <div class="col-md-5 probe_name"><span class="probe_name">Bluetooth Encounters (Polling)</span></div>
+
+		  <div class="col-md-5 probe_name"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">Bluetooth Encounters (Android,iOS)</a></div>
 		  <div class="col-md-7">
 		    <label class="switch">
-		      <input type="checkbox" name="bluetooth-encounters-polling" class="probe">
+		      <input type="checkbox" name="BluetoothDeviceProximityProbe" class="probe">
 		      <span class="slider round"></span>
 		    </label>
 		  </div>
-		  
+
 		</div>
-		<div id="bluetooth-encounters-polling_probe_div" class="probe_div">
-		  <hr>								
+		<div id="BluetoothDeviceProximityProbe_probe_div" class="probe_div">
+		  <hr>							
+
+	
 		  <div class="form-group row">
-		    <div class="col-md-3">Store Data</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
 		    <div class="col-md-1">
 		      <label class="switch">
-			<input type="checkbox" name="bluetooth-encounters-polling_store_data" checked class="form-control" >
+			<input type="checkbox" name="BluetoothDeviceProximityProbe-StoreData" checked class="form-control" >
 			<span class="slider round"></span>
 		      </label>
 		    </div>
-		    <div class="col-md-3">Run Local Commit On Store</div>
-		    <div class="col-md-1">
-		      <label class="switch">
-			<input type="checkbox" name="bluetooth-encounters-polling_run_local_commit_on_store" class="form-control" >
-			<span class="slider round"></span>
-		      </label>
-		    </div>
-		    <div class="col-md-3">Keep Device Awake</div>
-		    <div class="col-md-1">
-		      <label class="switch">
-			<input type="checkbox" name="bluetooth-encounters-polling_keep_device_awake">
-			<span class="slider round"></span>
-		      </label>
-		    </div>
-		  </div>
-		  <div class="form-group row">
-		    <div class="col-md-3">Max Chart Data Count</div>
-		    <div class="col-md-1">
-		      <input type="number" name="bluetooth-encounters-polling_max_chart_data_count"  value="10" class="form-control" >
-		    </div>
-		    <div class="col-md-2">Sleep duration (MS)</div>
+
+		    <div class="col-md-2"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">Sleep Duration (MS)</a></div>
 		    <div class="col-md-2">
-		      <input type="number" name="bluetooth-encounters-polling_sleep_duration" min="1" value="60000"   class="form-control" >
+		      <input type="number" name="BluetoothDeviceProximityProbe-PollingSleepDurationMS" min="1" value="900000"   class="form-control" >
 		    </div>
-		    <div class="col-md-3">Timeout (Mins)</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingTimeoutMinutes">Timeout (Mins.)</a></div>
 		    <div class="col-md-1">
-		      <input type="number" name="bluetooth-encounters-polling_sleep_duration" min="0" value="5"   class="form-control" >
+		      <input type="number" name="BluetoothDeviceProximityProbe-PollingTimeoutMinutes" min="1" value="5"   class="form-control" >
 		    </div>
+
 		  </div>
-		  
+
 		  <div class="form-group row">
-		    
-		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-		    
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePoll">Significant Change Poll</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="BluetoothDeviceProximityProbe-SignificantChangePoll" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
+		    <div class="col-md-4"><a href="javascript:void(0)" class="help" id="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePollOverridesScheduledPolls">Significant Change Poll Overrides Scheduled Polls</a></div>
+		    <div class="col-md-1">
+		      <label class="switch">
+			<input type="checkbox" name="BluetoothDeviceProximityProbe-SignificantChangePollOverridesScheduledPolls" checked class="form-control" >
+			<span class="slider round"></span>
+		      </label>
+		    </div>
+
 		  </div>
+
+
 		  <div class="form-group row">
-		    
-		    <div class="col-md-1">DeviceID</div>
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
+		  </div>
+
+
+		  <div class="form-group row">
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="bluetooth-encounters-polling_anonymization_device_id">
+		      <select class="form-control" name="BluetoothDeviceProximityProbe-Anonymization-DeviceId">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Hash">Hash</option>
 		      </select>
 		    </div>
+
 		    <div class="col-md-1">Timestamp</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="bluetooth-encounters-polling_anonymization_timestamp">
+		      <select class="form-control" name="BluetoothDeviceProximityProbe-Anonymization-Timestamp">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Anonymous Timeline">Anonymous Timeline</option>
 		      </select>
 		    </div>
-		    <div class="col-md-1">Encountered Device</div>
+
+		    <div class="col-md-1">Encountered Device Id</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="bluetooth-encounters-polling_anonymization_encountered_device">
+		      <select class="form-control" name="BluetoothDeviceProximityProbe-Anonymization-EncounteredDeviceId">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Hash">Hash</option>
 		      </select>
 		    </div>
+
 		  </div>
-		  
 		  <hr>
 		</div>
 		
-		<!-- Cell Tower Binding (Listening) -->
+		<!-- Cell Tower Binding (Android) -->
+
 		<div class="form-group row">
-		  
-		  <div class="col-md-5 probe_name"><span class="probe_name">Cell Tower Binding (Listening)</span></div>
+                  
+                  <div class="col-md-5 probe_name" ><a href="javascript:void(0)" class="help" id="Sensus.Android.Probes.Network.AndroidCellTowerProbe.html">AndroidCellTowerProbe (Android)</a></div>
 		  <div class="col-md-7">
 		    <label class="switch">
-		      <input type="checkbox" name="cell-tower-binding-listening" class="probe">
+		      <input type="checkbox" name="AndroidCellTowerProbe" id="probe" class="probe">
 		      <span class="slider round"></span>
 		    </label>
 		  </div>
-		  
+
 		</div>
-		<div id="cell-tower-binding-listening_probe_div" class="probe_div">
-		  <hr>								
+		<div id="AndroidCellTowerProbe_probe_div" class="probe_div">
+		  <hr>
+
+
 		  <div class="form-group row">
-		    <div class="col-md-3">Store Data</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Store Data</a></div>
 		    <div class="col-md-1">
 		      <label class="switch">
-			<input type="checkbox" name="cell-tower-binding-listening_store_data" checked class="form-control" >
+			<input type="checkbox" name="AndroidCellTowerProbe-StoreData" checked class="form-control" >
 			<span class="slider round"></span>
 		      </label>
 		    </div>
-		    <div class="col-md-3">Run Local Commit On Store</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">Keep Device Awake</a></div>
 		    <div class="col-md-1">
 		      <label class="switch">
-			<input type="checkbox" name="cell-tower-binding-listening_run_local_commit_on_store" class="form-control" >
+			<input type="checkbox" name="AndroidCellTowerProbe-KeepDeviceAwake">
 			<span class="slider round"></span>
 		      </label>
 		    </div>
-		    <div class="col-md-3">Keep Device Awake</div>
+
+		    <div class="col-md-3"><a href="javascript:void(0)" class="help" id="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">Max Data / Second</a></div>
 		    <div class="col-md-1">
-		      <label class="switch">
-			<input type="checkbox" name="cell-tower-binding-listening_keep_device_awake">
-			<span class="slider round"></span>
-		      </label>
+		      <input type="number" name="AndroidCellTowerProbe-MaxDataStoresPerSecond" class="form-control" >
 		    </div>
+
 		  </div>
+
+
 		  <div class="form-group row">
-		    <div class="col-md-3">Max Chart Data Count</div>
-		    <div class="col-md-1">
-		      <input type="number" name="cell-tower-binding-listening_max_chart_data_count"  value="10" class="form-control" >
-		    </div>
-		    <div class="col-md-3">Max Data / Second</div>
-		    <div class="col-md-1">
-		      <input type="number" name="cell-tower-binding-listening_max_data_second"   class="form-control" >
-		    </div>
+
+		    <div class="col-md-2">Anonymization</div>
+		    <div class="col-md-10"><hr></div>
+
 		  </div>
-		  
+
+
 		  <div class="form-group row">
-		    
-		    <div class="col-md-2">Anonymization</div><div class="col-md-10"><hr></div>
-		    
-		  </div>
-		  <div class="form-group row">
-		    
-		    <div class="col-md-1">DeviceID</div>
+
+		    <div class="col-md-1">Device&nbsp;ID</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="cell-tower-binding-listening_anonymization_device_id">
+		      <select class="form-control" name="AndroidCellTowerProbe-Anonymization-DeviceId">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Hash">Hash</option>
 		      </select>
 		    </div>
+
 		    <div class="col-md-1">Timestamp</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="cell-tower-binding-listening_anonymization_timestamp">
+		      <select class="form-control" name="AndroidCellTowerProbe-Anonymization-Timestamp">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Anonymous Timeline">Anonymous Timeline</option>
 		      </select>
 		    </div>
+
 		    <div class="col-md-1">Cellular Tower</div>
 		    <div class="col-md-3">
-		      <select class="form-control" name="cell-tower-binding-listening_anonymization_cellular_tower">
+		      <select class="form-control" name="AndroidCellTowerProbe-Anonymization-CellTower">
 			<option value="Do Not Anonymize" selected>Do Not Anonymize</option>
 			<option value="Omit">Omit</option>
 			<option value="Hash">Hash</option>
 		      </select>
 		    </div>
+
 		  </div>
-		  
 		  <hr>
 		</div>
 		
-		<!-- Compass Heading (Listening) -->
+		<!-- Compass Heading (Android,iOS) STOPPED HERE -->
+
 		<div class="form-group row">
 		  
 		  <div class="col-md-5 probe_name"><span class="probe_name">Compass Heading (Listening)</span></div>
