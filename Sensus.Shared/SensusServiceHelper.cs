@@ -40,11 +40,6 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
-using Microsoft.AppCenter.Crashes;
-
-#if __IOS__
-using XLabs.Platform.Device;
-#endif
 
 namespace Sensus
 {
@@ -467,26 +462,14 @@ namespace Sensus
             _runningProtocolIds = new List<string>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
-
-            // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
-#if __ANDROID__
-            int qrCodeSize = (int)(0.9 * Math.Min(XLabs.Platform.Device.Display.Metrics.WidthPixels, XLabs.Platform.Device.Display.Metrics.HeightPixels));
-#elif __IOS__
-            //In order for AppleDevice calls to work we need to be on the UI thread. We should always be on the made thread when creating new SensusServiceHelpers. Still, just to be safe, we're explicitly synchronizing 
-            int qrCodeSize = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width)));
-#elif LOCAL_TESTS
-#else
-#warning "Unrecognized platform"
-#endif
-
             _barcodeWriter = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
 
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = qrCodeSize,
-                    Width = qrCodeSize
+                    Height = 100,
+                    Width = 100
                 }
             };
 
