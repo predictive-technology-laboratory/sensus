@@ -19,7 +19,7 @@
     <NuGetPackageImportStamp>7d62c8f2</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
     <AssemblyName>SensusAndroid</AssemblyName>
@@ -44,6 +44,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <NoWarn>1591</NoWarn>
+<AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -55,15 +56,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86</AndroidSupportedAbis>
     <DebugType></DebugType>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>BeforeBuild</type>
-          <command>touch Assets/UnitTestingProtocol.json</command>
-          <workingdir>${ProjectDir}</workingdir>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
 <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>
