@@ -70,7 +70,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1833108D-29E
 		DocFX\api\index.md = DocFX\api\index.md
 	EndProjectSection
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{538EF664-E9BB-4326-8AE3-5D852799700D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.XTC.UiTests", "Sensus.XTC.UiTests\Sensus.XTC.UiTests.csproj", "{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -140,12 +140,10 @@ Global
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Android.ActiveCfg = Debug|Any CPU
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Debug|Android.Build.0 = Debug|Any CPU
 		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.ActiveCfg = Release|Any CPU
-		{AD7B78B0-AE51-4FB7-9B11-4E22A2B538CA}.Release|Android.Build.0 = Release|Any CPU
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{D2CED8F0-7A76-454D-B5F7-9E8B9FE6A58E}.Debug|iPhone.Build.0 = Debug|iPhone
@@ -164,13 +162,11 @@ Global
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|Android.ActiveCfg = Debug|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Debug|Android.Build.0 = Debug|Any CPU
 		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Android.ActiveCfg = Release|Any CPU
-		{5E5091C9-CFD3-4449-8223-430022119AC5}.Release|Android.Build.0 = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
@@ -182,12 +178,10 @@ Global
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{5F7E4E7F-D95D-46E7-9468-445737340FF5}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{538EF664-E9BB-4326-8AE3-5D852799700D}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
-		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhone.ActiveCfg = Debug|iPhone
-		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhone.Build.0 = Debug|iPhone
-		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
-		{538EF664-E9BB-4326-8AE3-5D852799700D}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
-		{538EF664-E9BB-4326-8AE3-5D852799700D}.Release|iPhone.ActiveCfg = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{7C2C81C9-7DF9-4676-B6DC-738CEB5990D9}.Release|iPhone.ActiveCfg = Debug|iPhone
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

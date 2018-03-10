@@ -140,34 +140,6 @@ project endpoint that is intended for the Xamarin Test Cloud.</Description>
       <HintPath>..\dependencies\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.iOS" />
-    <Reference Include="XLabs.Core, Version=2.0.5782.12218, Culture=neutral, PublicKeyToken=d65109b36e5040e4, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.Core.2.0.5782\lib\Xamarin.iOS10\XLabs.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="XLabs.Forms, Version=2.0.5782.12218, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.Forms.2.0.5782\lib\Xamarin.iOS10\XLabs.Forms.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="XLabs.Forms.iOS, Version=2.0.5782.12247, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.Forms.2.0.5782\lib\Xamarin.iOS10\XLabs.Forms.iOS.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="XLabs.Ioc, Version=2.0.5782.12218, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.IoC.2.0.5782\lib\portable-net45+netcore45+wp8+MonoAndroid1+MonoTouch1\XLabs.Ioc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="XLabs.Platform, Version=2.0.5782.12218, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.Platform.2.0.5782\lib\Xamarin.iOS10\XLabs.Platform.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="XLabs.Platform.iOS, Version=2.0.5782.12247, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.Platform.2.0.5782\lib\Xamarin.iOS10\XLabs.Platform.iOS.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="XLabs.Serialization, Version=2.0.5782.15703, Culture=neutral, PublicKeyToken=d65109b36e5040e4, processorArchitecture=MSIL">
-      <HintPath>..\packages\XLabs.Serialization.2.0.5782\lib\Xamarin.iOS10\XLabs.Serialization.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Xamarin.Estimote.iOS">
       <HintPath>..\packages\Xamarin.Estimote.iOS.4.7.3.2\lib\Xamarin.iOS10\Xamarin.Estimote.iOS.dll</HintPath>
     </Reference>
