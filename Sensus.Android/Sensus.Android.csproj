@@ -19,7 +19,7 @@
     <NuGetPackageImportStamp>7d62c8f2</NuGetPackageImportStamp>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
     <AssemblyName>SensusAndroid</AssemblyName>
