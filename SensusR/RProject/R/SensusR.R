@@ -262,7 +262,14 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       insert.end.row = insert.start.row + file.data.rows - 1
       for(col.name in datum.type.col.vectors.names)
       {
-        datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
+        if(col.name %in% colnames(file.data))
+        {
+          datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
+        }
+        else
+        {
+          warning(paste("Data file is missing column ", col.name, ". There will be null values in this column.", sep=""))
+        }
       }
       
       insert.start.row = insert.start.row + file.data.rows
