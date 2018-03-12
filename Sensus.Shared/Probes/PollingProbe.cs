@@ -104,7 +104,9 @@ namespace Sensus.Probes
             set
             {
                 if (value < 1)
+                {
                     value = 1;
+                }
 
                 _pollingTimeoutMinutes = value;
             }
@@ -361,6 +363,7 @@ namespace Sensus.Probes
                 {
                     SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
                 }
+
 #elif __ANDROID__
                 SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
 #endif
@@ -402,15 +405,15 @@ namespace Sensus.Probes
                 }
 #endif
 
-                double msElapsedSincePreviousStore = (DateTimeOffset.UtcNow - MostRecentStoreTimestamp.GetValueOrDefault(DateTimeOffset.MinValue)).TotalMilliseconds;
+                TimeSpan timeElapsedSincePreviousStore = DateTimeOffset.UtcNow - MostRecentStoreTimestamp.GetValueOrDefault(DateTimeOffset.MinValue);
                 int allowedLagMS = 5000;
-                if (!_isPolling &&
-                    _pollingSleepDurationMS <= int.MaxValue - allowedLagMS && // some probes (iOS HealthKit) have polling delays set to int.MaxValue. if we add to this (as we're about to do in the next check), we'll wrap around to 0 resulting in incorrect statuses. only do the check if we won't wrap around.
-                    msElapsedSincePreviousStore > (_pollingSleepDurationMS + allowedLagMS))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
+                if (!_isPolling &&                                                                               // don't raise a warning if the probe is currently trying to poll
+                    _pollingSleepDurationMS <= int.MaxValue - allowedLagMS &&                                    // some probes (iOS HealthKit for age) have polling delays set to int.MaxValue. if we add to this (as we're about to do in the next check), we'll wrap around to 0 resulting in incorrect statuses. only do the check if we won't wrap around.
+                    timeElapsedSincePreviousStore.TotalMilliseconds > (_pollingSleepDurationMS + allowedLagMS))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed polling. allow a small fudge factor to ignore these warnings.
                 {
                     Analytics.TrackEvent(TrackedEvent.Warning + ":" + GetType(), new Dictionary<string, string>
                     {
-                        { "Polling Latency", (msElapsedSincePreviousStore - _pollingSleepDurationMS).Round(1000).ToString() }
+                        { "Polling Latency", (timeElapsedSincePreviousStore.TotalMilliseconds - _pollingSleepDurationMS).Round(1000).ToString() }
                     });
                 }
             }
