@@ -18,9 +18,16 @@ namespace Sensus.Extensions
 {
     public static class NumericExtensions
     {
-        public static int RoundedPercentageOf(this int numerator, int denominator, int round)
+        public static int? RoundedPercentageOf(this int numerator, int denominator, int round)
         {
-            return (100.0 * (numerator / (double)denominator)).Round(round);
+            if (denominator == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return (100.0 * (numerator / (double)denominator)).Round(round);
+            }
         }
 
         public static int Round(this int value, int round)

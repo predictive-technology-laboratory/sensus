@@ -437,7 +437,7 @@ namespace Sensus.DataStores.Remote
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Put Success", _successfulPutCount.RoundedPercentageOf(_putCount, 5).ToString() }
+                { "Put Success", Convert.ToString(_successfulPutCount.RoundedPercentageOf(_putCount, 5)) }
             };
 
             Analytics.TrackEvent(eventName, properties);
