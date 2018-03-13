@@ -274,6 +274,7 @@ namespace Sensus.UI
                         async () =>
                         {
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
+                            participationRewardDatum.ProtocolId = selectedProtocol.Id;
 
                             bool writeFailed = false;
                             try
