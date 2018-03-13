@@ -434,7 +434,7 @@ namespace Sensus.DataStores.Remote
         {
             bool restart = base.TestHealth(ref events);
 
-            string eventName = TrackedEvent.Health + ":" + GetType();
+            string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 { "Put Success", _successfulPutCount.RoundedPercentageOf(_putCount, 5).ToString() }

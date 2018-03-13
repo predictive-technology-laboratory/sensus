@@ -208,7 +208,7 @@ namespace Sensus.UI
                 if (selectedAction == "Status")
                 {
                     List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
-                    await Navigation.PushModalAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
+                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
                     {
                         return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
 

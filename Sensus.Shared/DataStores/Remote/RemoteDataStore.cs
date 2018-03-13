@@ -198,7 +198,7 @@ namespace Sensus.DataStores.Remote
                 TimeSpan timeElapsedSincePreviousWrite = DateTime.Now - _mostRecentSuccessfulWriteTime.Value;
                 if (timeElapsedSincePreviousWrite.TotalMilliseconds > (_writeDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings.
                 {
-                    string eventName = TrackedEvent.Warning + ":" + GetType();
+                    string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
                     {
                         { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).Round(1000).ToString() }

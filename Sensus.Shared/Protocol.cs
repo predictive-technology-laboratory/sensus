@@ -1684,7 +1684,7 @@ namespace Sensus
 
                 lock (_locker)
                 {
-                    eventName = TrackedEvent.Health + ":" + GetType();
+                    eventName = TrackedEvent.Health + ":" + GetType().Name;
                     properties = new Dictionary<string, string>
                     {
                         { "Running", _running.ToString() }
@@ -1762,7 +1762,7 @@ namespace Sensus
                     }
 
 #if __ANDROID__
-                    eventName = TrackedEvent.Miscellaneous + ":" + GetType();
+                    eventName = TrackedEvent.Miscellaneous + ":" + GetType().Name;
                     properties = new Dictionary<string, string>
                     {
                         { "Wake Lock Count", (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper).WakeLockAcquisitionCount.ToString() }

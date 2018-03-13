@@ -45,7 +45,7 @@ namespace Sensus.UI
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
-            
+
             if (shareCallback != null)
             {
                 Button shareButton = new Button
@@ -61,8 +61,8 @@ namespace Sensus.UI
                 };
 
                 buttonStack.Children.Add(shareButton);
-            }            
-            
+            }
+
             if (clearCallback != null)
             {
                 Button clearButton = new Button

@@ -75,7 +75,7 @@ namespace Sensus.DataStores.Local
                     {
                         SensusServiceHelper.Get().Logger.Log("Running size-triggered write to remote.", LoggingLevel.Normal, GetType());
 
-                        Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+                        Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType().Name, new Dictionary<string, string>
                         {
                             { "Write", "Size Triggered" }
                         });

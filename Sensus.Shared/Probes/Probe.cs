@@ -478,7 +478,7 @@ namespace Sensus.Probes
                 restart = true;
             }
 
-            string eventName = TrackedEvent.Health + ":" + GetType();
+            string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 { "Running", _running.ToString() }

@@ -599,7 +599,7 @@ namespace Sensus.DataStores.Local
         {
             bool restart = base.TestHealth(ref events);
 
-            string eventName = TrackedEvent.Health + ":" + GetType();
+            string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 { "Percent Closed", _filesClosed.RoundedPercentageOf(_filesOpened, 5).ToString() },
