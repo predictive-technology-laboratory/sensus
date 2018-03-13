@@ -595,16 +595,21 @@ namespace Sensus.DataStores.Local
             _path = null;
         }
 
-        public override bool TestHealth()
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
-            bool restart = base.TestHealth();
+            bool restart = base.TestHealth(ref events);
 
-            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
-            {                
+            string eventName = TrackedEvent.Health + ":" + GetType();
+            Dictionary<string, string> properties = new Dictionary<string, string>
+            {
                 { "Percent Closed", _filesClosed.RoundedPercentageOf(_filesOpened, 5).ToString() },
                 { "Percent Promoted", _filesPromoted.RoundedPercentageOf(_filesClosed, 5).ToString() },
                 { "Percent Written", _filesWrittenToRemote.RoundedPercentageOf(_filesPromoted, 5).ToString() }
-            });
+            };
+
+            Analytics.TrackEvent(eventName, properties);
+
+            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
             return restart;
         }

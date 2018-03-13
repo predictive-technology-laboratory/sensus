@@ -189,19 +189,24 @@ namespace Sensus.DataStores.Remote
             _writeCallback = null;
         }
 
-        public override bool TestHealth()
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string,string>>> events)
         {
-            bool restart = base.TestHealth();
+            bool restart = base.TestHealth(ref events);
 
             if (_mostRecentSuccessfulWriteTime.HasValue)
             {
                 TimeSpan timeElapsedSincePreviousWrite = DateTime.Now - _mostRecentSuccessfulWriteTime.Value;
                 if (timeElapsedSincePreviousWrite.TotalMilliseconds > (_writeDelayMS + 5000))  // system timer callbacks aren't always fired exactly as scheduled, resulting in health tests that identify warning conditions for delayed data storage. allow a small fudge factor to ignore most of these warnings.
                 {
-                    Analytics.TrackEvent(TrackedEvent.Warning + ":" + GetType(), new Dictionary<string, string>
+                    string eventName = TrackedEvent.Warning + ":" + GetType();
+                    Dictionary<string, string> properties = new Dictionary<string, string>
                     {
                         { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).Round(1000).ToString() }
-                    });
+                    };
+
+                    Analytics.TrackEvent(eventName, properties);
+
+                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
                 }
             }
 

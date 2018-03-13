@@ -157,6 +157,11 @@ namespace Sensus.UI
                     actions.Add("Email Study Manager for Help");
                 }
 
+                if (selectedProtocol.Running)
+                {
+                    actions.Add("Status");
+                }
+
                 actions.Add("View Data");
 
                 if (selectedProtocol.Running)
@@ -200,7 +205,16 @@ namespace Sensus.UI
                     _protocolsList.SelectedItem = null;
                 });
 
-                if (selectedAction == "Start")
+                if (selectedAction == "Status")
+                {
+                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
+                    await Navigation.PushModalAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
+                    {
+                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
+
+                    }).ToList(), null, null));
+                }
+                else if (selectedAction == "Start")
                 {
                     selectedProtocol.StartWithUserAgreementAsync(null, () =>
                     {

@@ -465,11 +465,10 @@ namespace Sensus
             _barcodeWriter = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
-
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = 100,
-                    Width = 100
+                    Height = 500,
+                    Width = 500
                 }
             };
 
@@ -1251,10 +1250,6 @@ namespace Sensus
                     else if (currentTypeName == "iOSSensusServiceHelper")
                     {
                         convertedJsonLine = jsonLine.Replace("Android", "iOS").Replace("WinPhone", "iOS");
-                    }
-                    else if (currentTypeName == "WinPhoneSensusServiceHelper")
-                    {
-                        convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
                     }
                     else
                     {

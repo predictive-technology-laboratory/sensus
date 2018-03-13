@@ -306,7 +306,7 @@ namespace Sensus.DataStores.Remote
                 try
                 {
                     s3 = InitializeS3();
-                    string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
+                    string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
                     byte[] datumJsonBytes = Encoding.UTF8.GetBytes(datumJSON);
                     MemoryStream dataStream = new MemoryStream();
                     dataStream.Write(datumJsonBytes, 0, datumJsonBytes.Length);
@@ -430,14 +430,19 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override bool TestHealth()
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
-            bool restart = base.TestHealth();
+            bool restart = base.TestHealth(ref events);
 
-            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+            string eventName = TrackedEvent.Health + ":" + GetType();
+            Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 { "Put Success", _successfulPutCount.RoundedPercentageOf(_putCount, 5).ToString() }
-            });
+            };
+
+            Analytics.TrackEvent(eventName, properties);
+
+            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
             return restart;
         }

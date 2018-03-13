@@ -1672,18 +1672,27 @@ namespace Sensus
                 });
         }
 
-        public Task TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<List<Tuple<string, Dictionary<string, string>>>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
         {
             return Task.Run(async () =>
             {
                 ParticipationReportDatum participationReport;
 
+                List<Tuple<string, Dictionary<string, string>>> events = new List<Tuple<string, Dictionary<string, string>>>();
+                string eventName;
+                Dictionary<string, string> properties;
+
                 lock (_locker)
                 {
-                    Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+                    eventName = TrackedEvent.Health + ":" + GetType();
+                    properties = new Dictionary<string, string>
                     {
                         { "Running", _running.ToString() }
-                    });
+                    };
+
+                    Analytics.TrackEvent(eventName, properties);
+
+                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
                     if (!_running)
                     {
@@ -1699,7 +1708,7 @@ namespace Sensus
 
                     if (_running)
                     {
-                        if (_localDataStore.TestHealth())
+                        if (_localDataStore.TestHealth(ref events))
                         {
                             try
                             {
@@ -1710,7 +1719,7 @@ namespace Sensus
                             }
                         }
 
-                        if (_remoteDataStore.TestHealth())
+                        if (_remoteDataStore.TestHealth(ref events))
                         {
                             try
                             {
@@ -1725,7 +1734,7 @@ namespace Sensus
                         {
                             if (probe.Enabled)
                             {
-                                if (probe.TestHealth())
+                                if (probe.TestHealth(ref events))
                                 {
                                     try
                                     {
@@ -1753,10 +1762,15 @@ namespace Sensus
                     }
 
 #if __ANDROID__
-                    Analytics.TrackEvent(TrackedEvent.Miscellaneous + ":" + GetType(), new Dictionary<string, string>
+                    eventName = TrackedEvent.Miscellaneous + ":" + GetType();
+                    properties = new Dictionary<string, string>
                     {
                         { "Wake Lock Count", (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper).WakeLockAcquisitionCount.ToString() }
-                    });
+                    };
+
+                    Analytics.TrackEvent(eventName, properties);
+
+                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 #endif
 
                     participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
@@ -1764,6 +1778,8 @@ namespace Sensus
                 }
 
                 await _localDataStore.WriteDatumAsync(participationReport, cancellationToken);
+
+                return events;
             });
         }
 

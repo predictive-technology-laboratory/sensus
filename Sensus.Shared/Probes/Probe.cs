@@ -469,7 +469,7 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual bool TestHealth()
+        public virtual bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
             bool restart = false;
 
@@ -478,10 +478,15 @@ namespace Sensus.Probes
                 restart = true;
             }
 
-            Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType(), new Dictionary<string, string>
+            string eventName = TrackedEvent.Health + ":" + GetType();
+            Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 { "Running", _running.ToString() }
-            });
+            };
+
+            Analytics.TrackEvent(eventName, properties);
+
+            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
             return restart;
         }

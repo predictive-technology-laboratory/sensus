@@ -212,9 +212,9 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        public override bool TestHealth()
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
-            bool restart = base.TestHealth();
+            bool restart = base.TestHealth(ref events);
 
             if (Running)
             {
