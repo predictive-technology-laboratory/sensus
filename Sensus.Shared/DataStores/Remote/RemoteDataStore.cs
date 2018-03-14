@@ -49,6 +49,7 @@ namespace Sensus.DataStores.Remote
         private bool _requireWiFi;
         private bool _requireCharging;
         private float _requiredBatteryChargeLevelPercent;
+        private string _userNotificationMessage;
 
         /// <summary>
         /// How many milliseconds to pause between each writing data.
@@ -138,6 +139,19 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// The message displayed to iOS users when Sensus is in the background and data are scheduled to be transferred
+        /// to the <see cref="RemoteDataStore"/>. This message is delivered via a notification in the hope that the user
+        /// will open Sensus to transmit the data.
+        /// </summary>
+        /// <value>The user notification message.</value>
+        [EntryStringUiProperty("User Notification Message:", true, int.MaxValue)]
+        public string UserNotificationMessage
+        {
+            get { return _userNotificationMessage; }
+            set { _userNotificationMessage = value; }
+        }
+
         [JsonIgnore]
         public abstract bool CanRetrieveWrittenData { get; }
 
@@ -147,7 +161,8 @@ namespace Sensus.DataStores.Remote
             _mostRecentSuccessfulWriteTime = null;
             _requireWiFi = true;
             _requireCharging = true;
-            _requiredBatteryChargeLevelPercent = 95;
+            _requiredBatteryChargeLevelPercent = 50;
+            _userNotificationMessage = "Please open this notification to submit your data.";
 
 #if DEBUG || UI_TESTING
             WriteDelayMS = 10000;  // 10 seconds...so we can see debugging output quickly
@@ -169,7 +184,7 @@ namespace Sensus.DataStores.Remote
             // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
             // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
             // only do this for the remote data store to that we don't get duplicate notifications.
-            userNotificationMessage = "Please open this notification to submit your data for the \"" + Protocol.Name + "\" study.";
+            userNotificationMessage = _userNotificationMessage;
 #endif
 
             _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
