@@ -183,7 +183,6 @@ namespace Sensus.DataStores.Remote
             // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
             // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
             // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
-            // only do this for the remote data store to that we don't get duplicate notifications.
             userNotificationMessage = _userNotificationMessage;
 #endif
 
