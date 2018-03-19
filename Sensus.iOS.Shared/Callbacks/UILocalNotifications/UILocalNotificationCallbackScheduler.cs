@@ -71,7 +71,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
         /// <returns>The callbacks async.</returns>
         public override Task UpdateCallbacksAsync()
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
 
@@ -86,7 +86,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 foreach (UILocalNotification notification in notifications)
                 {
                     // the following needs to be done on the main thread since we're working with UILocalNotification objects.
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         TimeSpan timeTillTrigger = TimeSpan.Zero;
                         DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
@@ -99,13 +99,17 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                         if (timeTillTrigger.TotalSeconds < 5)
                         {
                             notifier.CancelNotification(notification);
-                            ServiceCallbackAsync(notification.UserInfo);
+                            await ServiceCallbackAsync(notification.UserInfo);
                         }
                         // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
                         // app was backgrounded. re-issue those silent notifications now.
                         else if (iOSNotifier.IsSilent(notification.UserInfo))
                         {
                             notifier.IssueNotificationAsync(notification);
+                        }
+                        else
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Non-silent callback notification request " + (notification.UserInfo?.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY))?.ToString() ?? "[null]") + " has upcoming trigger time of " + triggerDateTime, LoggingLevel.Normal, GetType());
                         }
                     });
                 }

@@ -67,7 +67,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
                 DateTime fireDateTime = DateTime.Now + delay;
 
-                // all properties below were introduced in iOS 8.0. we currently target 8.0 and above, so these should be safe to set.
+                // all properties below were introduced in iOS 8.0. we currently target 9.0 and above, so these should be safe to set.
                 UILocalNotification notification = new UILocalNotification
                 {
                     AlertBody = message,
@@ -76,7 +76,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     UserInfo = notificationInfo
                 };
 
-                // also introduced in 8.0
+                // introduced in 8.0
                 if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, fireDateTime.TimeOfDay))
                 {
                     notification.SoundName = UILocalNotification.DefaultSoundName;

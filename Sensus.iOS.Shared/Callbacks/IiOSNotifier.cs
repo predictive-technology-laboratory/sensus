@@ -17,7 +17,13 @@ using Sensus.Callbacks;
 namespace Sensus.iOS.Callbacks
 {
     /// <summary>
-    /// Adds iOS-specific methods to the notifier.
+    /// 
+    /// Adds iOS-specific methods to the notifier. Primary additions include:
+    /// 
+    ///   * Silent notifications:  These are notifications that the user will never see. They are a mechanism to get timed callbacks
+    ///                            into Sensus while the app is in the foreground. When Sensus enters the background these notifications
+    ///                            are cancelled but then reissued when the app returns to the foreground.
+    /// 
     /// </summary>
     public interface IiOSNotifier : INotifier
     {

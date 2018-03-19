@@ -50,9 +50,6 @@ namespace Sensus.iOS.Callbacks
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
             // refreshed. don't create the UserInfo dictionary if we've got null values.
-            //
-            // see:  https://insights.xamarin.com/app/Sensus-Production/issues/64
-            // 
             if (callbackId == null)
             {
                 return null;
@@ -81,7 +78,7 @@ namespace Sensus.iOS.Callbacks
                     return;
                 }
 
-                // not sure why the following would be null, but we've seen NRE in insights and these are the likely suspects.
+                // not sure why the following would be null, but we've seen NREs and these are the likely suspects.
                 string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
                 bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
 

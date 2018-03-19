@@ -16,17 +16,22 @@ using System;
 using Foundation;
 using Sensus.Context;
 using UserNotifications;
-using UIKit;
 
 namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
     public class UNUserNotificationDelegate : UNUserNotificationCenterDelegate
     {
+        /// <summary>
+        /// Called just prior to a notification being presented while the app is in the foreground.
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="notification"></param>
+        /// <param name="completionHandler"></param>
         public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
-            // common scenario:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
+            // long story:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
             // dismisses the tapped notification and brings up sensus. upon activation sensus then updates and reissues all notifications. these reissued
             // notifications will come directly to the app as long as it's in the foreground. the original notifications that were in the iOS notification
             // tray will still be there, despite the fact that the notifications have been sent to the app via the current method. short story:  we need to 
@@ -36,6 +41,12 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification?.Request?.Content?.UserInfo);
         }
 
+        /// <summary>
+        /// Called when the user taps a notification.
+        /// </summary>
+        /// <param name="center"></param>
+        /// <param name="response"></param>
+        /// <param name="completionHandler"></param>
         public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
             UNNotificationRequest request = response?.Notification?.Request;
@@ -45,11 +56,12 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             {
                 SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
+                // if the notification is associated with a particular UI page to display, show that page now.
                 (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(notificationInfo);
 
                 // provide some generic feedback if the user responded to a silent notification. this should only happen in race cases where
                 // a silent notification is issued just before we enter background.
-                if ((notificationInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                if (iOSNotifier.IsSilent(notificationInfo))
                 {
                     SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                 }

@@ -33,6 +33,7 @@ using UserNotifications;
 using Sensus.iOS.Callbacks.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
+using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.iOS
 {
@@ -146,13 +147,15 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
             System.Threading.Tasks.Task.Run(async () =>
             {
-                await serviceHelper.StartAsync();
+                try
+                {
+                    // ensure service helper is running
+                    await SensusServiceHelper.Get().StartAsync();
 
-                await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
+                    // update/run all callbacks
+                    await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
 #if UI_TESTING
                     // load and run the UI testing protocol
@@ -162,15 +165,26 @@ namespace Sensus.iOS
                         Protocol.RunUiTestingProtocol(file);
                     }
 #endif
+                }
+                catch(Exception ex)
+                {
+                    SensusException.Report("Failed in OnActivated.", ex);
+                }
             });
 
             base.OnActivated(uiApplication);
         }
 
+        /// <summary>
+        /// Pre-10.0:  Handles notifications received when the app is in the foreground. See <see cref="UNUserNotificationDelegate.WillPresentNotification"/> for
+        /// the corresponding handler for iOS 10.0 and above.
+        /// </summary>
+        /// <param name="application">Application.</param>
+        /// <param name="notification">Notification.</param>
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
             // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them via this app delegate
-            // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem to Insights and bail.
+            // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem and bail.
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
                 SensusException.Report("Received UILocalNotification in iOS 10 or later.");
@@ -190,12 +204,12 @@ namespace Sensus.iOS
                 else
                 {
                     // run asynchronously to release the UI thread
-                    System.Threading.Tasks.Task.Run(() =>
+                    System.Threading.Tasks.Task.Run(async () =>
                     {
                         // the following must be done on the UI thread because we reference UIApplicationState.Active.
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
-                            callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+                            await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
 
                             // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
                             // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 

@@ -67,7 +67,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public override Task UpdateCallbacksAsync()
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
 
@@ -92,7 +92,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     if (timeTillTrigger.TotalSeconds < 5)
                     {
                         notifier.CancelNotification(request);
-                        ServiceCallbackAsync(request.Content?.UserInfo);
+                        await ServiceCallbackAsync(request.Content?.UserInfo);
                     }
                     // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
                     // app was backgrounded. re-issue those silent notifications now.
@@ -105,6 +105,10 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                                 _callbackIdRequest[request.Identifier] = newRequest;
                             }
                         });
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Non-silent callback notification request " + request.Identifier + " has upcoming trigger time of " + triggerDateTime, LoggingLevel.Normal, GetType());
                     }
                 }
             });

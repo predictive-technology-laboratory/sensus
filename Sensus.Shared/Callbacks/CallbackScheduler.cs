@@ -270,7 +270,7 @@ namespace Sensus.Callbacks
                 ScheduledCallback removedCallback;
                 _idCallback.TryRemove(callbackId, out removedCallback);
 
-                // tell the current platform cancel its hook into the system's callback architecture
+                // tell the current platform cancel its hook into the system's callback system
                 UnscheduleCallbackPlatformSpecific(callbackId);
             }
         }
