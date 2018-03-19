@@ -57,11 +57,12 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
                 // if the notification is associated with a particular UI page to display, show that page now.
-                (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.OpenDisplayPage(notificationInfo);
+                iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
+                callbackScheduler.OpenDisplayPage(notificationInfo);
 
                 // provide some generic feedback if the user responded to a silent notification. this should only happen in race cases where
                 // a silent notification is issued just before we enter background.
-                if (iOSNotifier.IsSilent(notificationInfo))
+                if (callbackScheduler.TryGetCallback(notificationInfo)?.Silent ?? false)
                 {
                     SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                 }

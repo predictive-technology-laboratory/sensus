@@ -273,7 +273,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 if (HEALTH_TEST_CALLBACK != null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK.Id);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK);
                     HEALTH_TEST_CALLBACK = null;
                 }
             }
@@ -379,8 +379,8 @@ namespace Sensus.Probes.User.MicrosoftBand
                 if (HEALTH_TEST_CALLBACK == null)
                 {
                     // the band health test is static, so it has no domain other than sensus.
-                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(HEALTH_TEST_CALLBACK, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, false);
+                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, false, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(HEALTH_TEST_CALLBACK);
                 }
             }
 

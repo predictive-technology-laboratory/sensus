@@ -196,10 +196,14 @@ namespace Sensus.iOS
                 // cancel notification (removing it from the tray), since it has served its purpose
                 (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
-                IiOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler;
+                iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
                 if (callbackScheduler == null)
                 {
-                    SensusException.Report("Invalid callback scheduler.");
+                    SensusException.Report("We don't have an iOSCallbackScheduler.");
+                }
+                else if(notification.UserInfo == null)
+                {
+                    SensusException.Report("Null user info passed to ReceivedLocalNotification.");
                 }
                 else
                 {
@@ -214,12 +218,12 @@ namespace Sensus.iOS
                             // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
                             // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
                             // display the page associated with the notification (if there is one). 
-                            if (application.ApplicationState != UIApplicationState.Active && notification.UserInfo != null)
+                            if (application.ApplicationState != UIApplicationState.Active)
                             {
                                 callbackScheduler.OpenDisplayPage(notification.UserInfo);
 
                                 // provide some generic feedback if the user responded to a silent notification
-                                if ((notification.UserInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                                if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
                                 {
                                     SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                                 }
@@ -235,7 +239,7 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication uiApplication)
         {
-            (SensusContext.Current.Notifier as IiOSNotifier).CancelSilentNotifications();
+            (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
 
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
@@ -244,6 +248,7 @@ namespace Sensus.iOS
             // save app state in background
             nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
             {
+                // not much we can do if we run out of time...
             });
 
             serviceHelper.SaveAsync(() =>

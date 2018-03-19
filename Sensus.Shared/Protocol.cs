@@ -397,11 +397,6 @@ namespace Sensus
             });
         }
 
-        public static bool TimeIsWithinAlertExclusionWindow(string protocolId, TimeSpan time)
-        {
-            return SensusServiceHelper.Get().GetRunningProtocols().SingleOrDefault(protocol => protocol.Id == protocolId)?.AlertExclusionWindows.Any(window => window.Encompasses(time)) ?? false;
-        }
-
         public static void RunUiTestingProtocol(Stream uiTestingProtocolFile)
         {
             try
@@ -1143,15 +1138,6 @@ namespace Sensus
                 }
             }
         }
-
-        [JsonIgnore]
-        public List<Window> AlertExclusionWindows
-        {
-            get
-            {
-                return _alertExclusionWindows;
-            }
-        }
         
         /// <summary>
         /// Sensus is able to use asymmetric key encryption to secure data before transmission from the device to a remote endpoint (e.g., AWS S3). This 
@@ -1524,7 +1510,7 @@ namespace Sensus
                     _scheduledStartCallback = null;
                 });
 
-            }, "START", _id, _id, null,
+            }, timeUntilStart, "START", _id, this, null,
 #if __ANDROID__
             $"Started study: {Name}.");
 #elif __IOS__
@@ -1533,12 +1519,12 @@ namespace Sensus
             $"Started study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStartCallback, timeUntilStart);
+            SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStartCallback);
         }
 
         public void CancelScheduledStart()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallback?.Id);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallback);
             _scheduledStartCallback = null;
 
             // we might have scheduled a stop when starting the protocol, so be sure to cancel it.
@@ -1556,7 +1542,7 @@ namespace Sensus
                     Stop();
                     _scheduledStopCallback = null;
                 });
-            }, "STOP", _id, _id, null,
+            }, timeUntilStop, "STOP", _id, this, null,
 #if __ANDROID__
             $"Stopped study: {Name}.");
 #elif __IOS__
@@ -1565,12 +1551,12 @@ namespace Sensus
             $"Stopped study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(_scheduledStopCallback, timeUntilStop);
+            SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStopCallback);
         }
 
         public void CancelScheduledStop()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStopCallback?.Id);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStopCallback);
             _scheduledStopCallback = null;
         }
 
@@ -1670,6 +1656,11 @@ namespace Sensus
 
                     callback?.Invoke();
                 });
+        }
+
+        public bool TimeIsWithinAlertExclusionWindow(TimeSpan time)
+        {
+            return _alertExclusionWindows.Any(window => window.Encompasses(time));
         }
 
         public Task<List<Tuple<string, Dictionary<string, string>>>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))

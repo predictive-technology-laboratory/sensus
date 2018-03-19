@@ -66,7 +66,7 @@ namespace Sensus.TestsExtensions
         public void ZeroDenominatorTest()
         {
             Assert.AreEqual(Convert.ToString(7.RoundedPercentageOf(7, 1)), "100");
-            Assert.AreEqual(Convert.ToString(7.RoundedPercentageOf(0, 1)), "null");
+            Assert.AreEqual(Convert.ToString(7.RoundedPercentageOf(0, 1)), "");
         }
     }
 }

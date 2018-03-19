@@ -39,7 +39,7 @@ namespace Sensus.Probes.User.Scripts
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
         private TimeSpan? _maxAge;
         private DateTime? _maxScheduledDate;
-        private readonly List<string> _scriptRunCallbackIds;
+        private readonly List<ScheduledCallback> _scriptRunCallbacks;
         private readonly ScheduleTrigger _scheduleTrigger;
 
         private readonly object _locker = new object();
@@ -254,7 +254,7 @@ namespace Sensus.Probes.User.Scripts
             _enabled = false;
             _maxAge = null;
             _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            _scriptRunCallbackIds = new List<string>();
+            _scriptRunCallbacks = new List<ScheduledCallback>();
             Script = new Script(this);
             Triggers = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
             RunTimes = new List<DateTime>();
@@ -443,9 +443,9 @@ namespace Sensus.Probes.User.Scripts
                 // only allow a maximum of 32 script-run callbacks to be scheduled. android's limit is 500, and ios 9 has a limit of 64. 
                 // not sure about ios 10+. as long as we have just a few script runners, each one will be able to schedule a few future
                 // script runs. this will help mitigate the problem of users ignoring surveys and losing touch with the study.
-                lock (_scriptRunCallbackIds)
+                lock (_scriptRunCallbacks)
                 {
-                    if (_scriptRunCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
+                    if (_scriptRunCallbacks.Count > 32 / Probe.ScriptRunners.Count)
                     {
                         break;
                     }
@@ -476,11 +476,11 @@ namespace Sensus.Probes.User.Scripts
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
             // script run since it was already schedule. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, triggerTime.ReferenceTillTrigger))
+            if (SensusContext.Current.CallbackScheduler.ScheduleCallback(callback))
             {
-                lock (_scriptRunCallbackIds)
+                lock (_scriptRunCallbacks)
                 {
-                    _scriptRunCallbackIds.Add(callback.Id);
+                    _scriptRunCallbacks.Add(callback);
                 }
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
@@ -504,9 +504,9 @@ namespace Sensus.Probes.User.Scripts
 
                     Run(script);
 
-                    lock (_scriptRunCallbackIds)
+                    lock (_scriptRunCallbacks)
                     {
-                        _scriptRunCallbackIds.Remove(callbackId);
+                        _scriptRunCallbacks.RemoveAll(c => c.Id == callbackId);
                     }
 
                     // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
@@ -518,7 +518,7 @@ namespace Sensus.Probes.User.Scripts
                 }, cancellationToken);
 
                 // Be careful to use Script.Id rather than script.Id for the callback domain. Using the former means that callbacks are tied to the script runner and not the script copies (the latter) that we will be running. The latter would always be unique.
-            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol.Id);
+            }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol);
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 
@@ -543,27 +543,27 @@ namespace Sensus.Probes.User.Scripts
 
         private void UnscheduleCallbacks()
         {
-            lock (_scriptRunCallbackIds)
+            lock (_scriptRunCallbacks)
             {
-                if (_scriptRunCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
+                if (_scriptRunCallbacks.Count == 0 || SensusServiceHelper.Get() == null)
                 {
                     return;
                 }
 
-                foreach (var scheduledCallbackId in _scriptRunCallbackIds)
+                foreach (ScheduledCallback callback in _scriptRunCallbacks)
                 {
-                    UnscheduleCallback(scheduledCallbackId);
+                    UnscheduleCallback(callback);
                 }
 
-                _scriptRunCallbackIds.Clear();
+                _scriptRunCallbacks.Clear();
                 _maxScheduledDate = null;
             }
         }
 
-        private void UnscheduleCallback(string scheduledCallbackId)
+        private void UnscheduleCallback(ScheduledCallback callback)
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(scheduledCallbackId);
-            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(callback);
+            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({callback})", LoggingLevel.Normal, GetType());
         }
 
         private Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)

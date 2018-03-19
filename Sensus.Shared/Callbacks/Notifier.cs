@@ -26,7 +26,7 @@ namespace Sensus.Callbacks
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
-        public abstract void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage);
+        public abstract void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
 

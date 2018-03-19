@@ -21,6 +21,7 @@ using Sensus.Context;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 using System.Threading.Tasks;
+using Sensus.Exceptions;
 
 namespace Sensus.iOS.Callbacks.UILocalNotifications
 {
@@ -28,16 +29,30 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
     {
         private Dictionary<string, UILocalNotification> _callbackIdNotification;
 
+        public override List<string> CallbackIds
+        {
+            get
+            {
+                List<string> callbackIds;
+
+                lock (_callbackIdNotification)
+                {
+                    callbackIds = _callbackIdNotification.Keys.ToList();
+                }
+
+                return callbackIds;
+            }
+        }
+
         public UILocalNotificationCallbackScheduler()
         {
             _callbackIdNotification = new Dictionary<string, UILocalNotification>();
         }
 
-        protected override void ScheduleCallbackAsync(string callbackId, TimeSpan delay, bool repeating, TimeSpan repeatDelay, bool repeatLag)
+        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
-            DisplayPage displayPage = GetCallbackDisplayPage(callbackId);
-            NSMutableDictionary callbackInfo = GetCallbackInfo(callbackId, repeating, repeatDelay, repeatLag, displayPage);
+            NSMutableDictionary callbackInfo = GetCallbackInfo(callback);
             if (callbackInfo == null)
             {
                 return;
@@ -47,76 +62,41 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             {
                 lock (_callbackIdNotification)
                 {
-                    _callbackIdNotification.Add(callbackId, notification);
+                    _callbackIdNotification.Add(callback.Id, notification);
                 }
             };
 
             IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
 
-            string userNotificationMessage = GetCallbackUserNotificationMessage(callbackId);
-            if (userNotificationMessage == null)
+            if (callback.Silent)
             {
-                notifier.IssueSilentNotificationAsync(callbackId, delay, callbackInfo, notificationCreated);
+                notifier.IssueSilentNotificationAsync(callback.Id, callback.NextExecution.Value, callbackInfo, notificationCreated);
             }
             else
             {
-                notifier.IssueNotificationAsync("Sensus", userNotificationMessage, callbackId, GetCallbackProtocolId(callbackId), true, displayPage, delay, callbackInfo, notificationCreated);
+                notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage, callback.NextExecution.Value, callbackInfo, notificationCreated);
             }
         }
 
-        /// <summary>
-        /// Updates the callbacks by running any that should have already been serviced or will be serviced in the near future.
-        /// Also reissues all silent notifications, which would have been canceled when the app went into the background.
-        /// </summary>
-        /// <returns>The callbacks async.</returns>
-        public override Task UpdateCallbacksAsync()
+        protected override void ReissueSilentNotification(string id)
         {
-            return Task.Run(async () =>
+            // the following needs to be done on the main thread since we're working with UILocalNotification objects.
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+                UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
 
-                // get a list of notifications to update. cannot iterate over the notifications directly because the raising
-                // process is going to temporarily modify the collection.
-                List<UILocalNotification> notifications = null;
+                UILocalNotification notification;
+
                 lock (_callbackIdNotification)
                 {
-                    notifications = _callbackIdNotification.Values.ToList();
+                    notification = _callbackIdNotification[id];
                 }
 
-                foreach (UILocalNotification notification in notifications)
-                {
-                    // the following needs to be done on the main thread since we're working with UILocalNotification objects.
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        TimeSpan timeTillTrigger = TimeSpan.Zero;
-                        DateTime? triggerDateTime = notification.FireDate?.ToDateTime().ToLocalTime();
-                        if (triggerDateTime.HasValue)
-                        {
-                            timeTillTrigger = triggerDateTime.Value - DateTime.Now;
-                        }
-
-                        // service any callback that should have already been serviced or will soon be serviced
-                        if (timeTillTrigger.TotalSeconds < 5)
-                        {
-                            notifier.CancelNotification(notification);
-                            await ServiceCallbackAsync(notification.UserInfo);
-                        }
-                        // all other callbacks will have upcoming notification deliveries, except for silent notifications, which were canceled when the 
-                        // app was backgrounded. re-issue those silent notifications now.
-                        else if (iOSNotifier.IsSilent(notification.UserInfo))
-                        {
-                            notifier.IssueNotificationAsync(notification);
-                        }
-                        else
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Non-silent callback notification request " + (notification.UserInfo?.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY))?.ToString() ?? "[null]") + " has upcoming trigger time of " + triggerDateTime, LoggingLevel.Normal, GetType());
-                        }
-                    });
-                }
+                notifier.IssueNotificationAsync(notification);
             });
         }
 
-        public override Task RaiseCallbackAsync(string callbackId, bool repeating, TimeSpan repeatDelay, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -129,23 +109,23 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 UILocalNotification callbackNotification;
                 lock (_callbackIdNotification)
                 {
-                    _callbackIdNotification.TryGetValue(callbackId, out callbackNotification);
-                    _callbackIdNotification.Remove(callbackId);
+                    _callbackIdNotification.TryGetValue(callback.Id, out callbackNotification);
+                    _callbackIdNotification.Remove(callback.Id);
                 }
 
-                await base.RaiseCallbackAsync(callbackId, repeating, repeatDelay, repeatLag, notifyUser,
+                await base.RaiseCallbackAsync(callback, notifyUser,
 
-                    repeatCallbackTime =>
+                    () =>
                     {
                         // add to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
                         lock (_callbackIdNotification)
                         {
-                            _callbackIdNotification.Add(callbackId, callbackNotification);
+                            _callbackIdNotification.Add(callback.Id, callbackNotification);
                         }
 
                         SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
-                            callbackNotification.FireDate = repeatCallbackTime.ToUniversalTime().ToNSDate();
+                            callbackNotification.FireDate = callback.NextExecution.Value.ToUniversalTime().ToNSDate();
                             (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
                         });
                     },
@@ -155,18 +135,35 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             });
         }
 
-        protected override void UnscheduleCallbackPlatformSpecific(string callbackId)
+        protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
             lock (_callbackIdNotification)
             {
                 // there are race conditions on this collection, and the key might be removed elsewhere
                 UILocalNotification notification;
-                if (_callbackIdNotification.TryGetValue(callbackId, out notification))
+                if (_callbackIdNotification.TryGetValue(callback.Id, out notification))
                 {
                     (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
-                    _callbackIdNotification.Remove(callbackId);
+                    _callbackIdNotification.Remove(callback.Id);
                 }
             }
+        }
+
+        public override void CancelSilentNotifications()
+        {
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+
+                foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
+                {
+                    ScheduledCallback callback = TryGetCallback(scheduledNotification.UserInfo);
+                    if (callback?.Silent ?? false)
+                    {
+                        notifier.CancelNotification(scheduledNotification);
+                    }
+                }
+            });
         }
     }
 }

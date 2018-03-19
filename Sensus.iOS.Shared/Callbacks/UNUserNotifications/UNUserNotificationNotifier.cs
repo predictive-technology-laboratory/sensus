@@ -24,27 +24,25 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier, IUNUserNotificationNotifier
     {
-        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, protocolId, alertUser, displayPage, TimeSpan.Zero, null, null);
+            IssueNotificationAsync(title, message, id, protocol, alertUser, displayPage, DateTime.Now, null, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
             {
                 info = new NSMutableDictionary();
             }
 
-            info.SetValueForKey(new NSNumber(true), new NSString(SILENT_NOTIFICATION_KEY));
-
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, delay, info, requestCreated);
+            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             if (info == null)
             {
@@ -71,33 +69,24 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 content.Body = message;
             }
 
-            // the following calculation isn't perfect because we use DateTime.Now and then use it again in the subsequent call to IssueNotificationAsync.
-            // these two values will be slightly different due to execution time, but the risk is small:  the user might hear or not hear the notification
-            // when it comes through, and it's very unlikely that the result will be incorrect.
-            if (alertUser && !Protocol.TimeIsWithinAlertExclusionWindow(protocolId, (DateTime.Now + delay).TimeOfDay))
+            if (alertUser && protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay))
             {
                 content.Sound = UNNotificationSound.Default;
             }
 
-            IssueNotificationAsync(id, content, delay, requestCreated);
+            IssueNotificationAsync(id, content, triggerDateTime, requestCreated);
         }
 
-        public void IssueNotificationAsync(string id, UNNotificationContent content, TimeSpan delay, Action<UNNotificationRequest> requestCreated = null)
+        public void IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
         {
             UNCalendarNotificationTrigger trigger = null;
 
-            // a non-positive delay indicates an immediate notification, which is achieved with a null trigger.
-            if (delay.Ticks > 0)
+            // we're going to specify an absolute trigger date below. if this time is in the past by the time
+            // the notification center processes it (race condition), then the notification will not be scheduled. 
+            // so ensure that we leave some time to avoid the race condition by triggering an immediate notification
+            // for any trigger date that is not greater than several seconds into the future.
+            if (triggerDateTime > DateTime.Now.AddSeconds(10))
             {
-                // we're going to specify an absolute date below based on the current time and the given delay. if this time is in the past by the time
-                // the notification center processes it (race condition), then the notification will not be scheduled. so ensure that we leave some time
-                // and avoid the race condition.
-                if (delay.TotalSeconds < 5)
-                {
-                    delay = TimeSpan.FromSeconds(5);
-                }
-
-                DateTime triggerDateTime = DateTime.Now + delay;
                 NSDateComponents triggerDateComponents = new NSDateComponents
                 {
                     Year = triggerDateTime.Year,
@@ -105,7 +94,9 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     Day = triggerDateTime.Day,
                     Hour = triggerDateTime.Hour,
                     Minute = triggerDateTime.Minute,
-                    Second = triggerDateTime.Second
+                    Second = triggerDateTime.Second,
+                    Calendar = NSCalendar.CurrentCalendar,
+                    TimeZone = NSTimeZone.LocalTimeZone
                 };
 
                 trigger = UNCalendarNotificationTrigger.CreateTrigger(triggerDateComponents, false);
@@ -127,12 +118,14 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
             // don't issue silent notifications from the background, as they will be displayed to the user upon delivery, and this will confuse the user (they're 
             // not designed to be seen). this can happen in a race condition where sensus transitions to the background but has a small amount of time to execute,
-            // and in that time a silent callback (e.g., for local data store) is schedule. checking for background state below will help mitigate this.
+            // and in that time a silent callback (e.g., for local data store) is scheduled. checking for background state below will help mitigate this.
             bool abort = false;
 
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                abort = IsSilent(request?.Content?.UserInfo) && UIApplication.SharedApplication.ApplicationState == UIApplicationState.Background;
+                iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
+                ScheduledCallback callback = callbackScheduler.TryGetCallback(request?.Content?.UserInfo);
+                abort = (callback?.Silent ?? false) && UIApplication.SharedApplication.ApplicationState == UIApplicationState.Background;
             });
 
             if (abort)
@@ -172,20 +165,6 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         public void CancelNotification(UNNotificationRequest request)
         {
             CancelNotification(request?.Identifier);
-        }
-
-        public override void CancelSilentNotifications()
-        {
-            UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
-            {
-                foreach (UNNotificationRequest request in requests)
-                {
-                    if (IsSilent(request.Content?.UserInfo))
-                    {
-                        CancelNotification(request);
-                    }
-                }
-            });
         }
     }
 }

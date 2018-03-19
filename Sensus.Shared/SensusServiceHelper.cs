@@ -610,9 +610,9 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                    }, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
                 }
             }
         }
@@ -625,7 +625,7 @@ namespace Sensus
 
                 if (_runningProtocolIds.Count == 0)
                 {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback?.Id);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback);
                     _healthTestCallback = null;
                 }
 
@@ -781,7 +781,7 @@ namespace Sensus
 
                 if (modifiedScriptsToRun)
                 {
-                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol.Id, true);
+                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
                 }
             });
         }
@@ -804,9 +804,9 @@ namespace Sensus
         /// <summary>
         /// Issues the pending surveys notification.
         /// </summary>
-        /// <param name="protocolId">Protocol identifier used to check for alert exclusion time windows. </param>
+        /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
         /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public void IssuePendingSurveysNotificationAsync(string protocolId, bool alertUser)
+        public void IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
         {
             RemoveExpiredScripts(false);
 
@@ -822,7 +822,7 @@ namespace Sensus
                 string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                 DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                 string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocolId, alertUser, DisplayPage.PendingSurveys);
+                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
             }
         }
 

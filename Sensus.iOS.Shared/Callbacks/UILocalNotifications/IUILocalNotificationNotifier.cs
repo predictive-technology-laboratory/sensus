@@ -19,11 +19,11 @@ using UIKit;
 
 namespace Sensus.iOS.Callbacks.UILocalNotifications
 {
-    public interface IUILocalNotificationNotifier : IiOSNotifier
+    public interface IUILocalNotificationNotifier
     {
-        void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null);
+        void IssueSilentNotificationAsync(string id, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null);
 
-        void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null);
+        void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null);
 
         void IssueNotificationAsync(UILocalNotification notification);
 

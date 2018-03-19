@@ -186,13 +186,13 @@ namespace Sensus.DataStores.Remote
             userNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
-            SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_writeCallback, TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG);
+            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
+            SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
         }
 
         public override void Stop()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback?.Id);
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
         }
 
         public override void Reset()

@@ -338,9 +338,10 @@ namespace Sensus.Probes
                         }
                     });
 
-                }, GetType().FullName, Protocol.Id, Protocol.Id, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
+
                 if (_significantChangePoll)
                 {
                     _locationManager.RequestAlwaysAuthorization();
@@ -361,11 +362,11 @@ namespace Sensus.Probes
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
                 if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
                 {
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
                 }
 
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_pollCallback, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG);
+                SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
 #endif
             }
         }
@@ -385,7 +386,7 @@ namespace Sensus.Probes
                 }
 #endif
 
-                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback?.Id);
+                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback);
                 _pollCallback = null;
             }
         }

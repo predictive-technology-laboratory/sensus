@@ -27,9 +27,6 @@ namespace Sensus.Callbacks
     public abstract class CallbackScheduler : ICallbackScheduler
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
-        public const string SENSUS_CALLBACK_REPEATING_KEY = "SENSUS-CALLBACK-REPEATING";
-        public const string SENSUS_CALLBACK_REPEAT_DELAY_KEY = "SENSUS-CALLBACK-REPEAT-DELAY";
-        public const string SENSUS_CALLBACK_REPEAT_LAG_KEY = "SENSUS-CALLBACK-REPEAT-LAG";
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
@@ -38,72 +35,59 @@ namespace Sensus.Callbacks
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
         }
 
-        #region platform-specific methods
-        protected abstract void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag);
-        protected abstract void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, TimeSpan delay);
-        protected abstract void UnscheduleCallbackPlatformSpecific(string callbackId);
-        #endregion
+        protected abstract void ScheduleCallbackPlatformSpecific(ScheduledCallback callback);
+        protected abstract void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback);
 
-        public bool ScheduleRepeatingCallback(ScheduledCallback callback, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag)
+        public bool ScheduleCallback(ScheduledCallback callback)
         {
             if (!_idCallback.TryAdd(callback.Id, callback))
             {
                 return false;
             }
 
-            ScheduleRepeatingCallbackPlatformSpecific(callback.Id, initialDelay, repeatDelay, repeatLag);
+            callback.NextExecution = DateTime.Now + callback.Delay;
+
+            ScheduleCallbackPlatformSpecific(callback);
 
             return true;
         }
 
-        public bool ScheduleOneTimeCallback(ScheduledCallback callback, TimeSpan delay)
-        {
-            if (!_idCallback.TryAdd(callback.Id, callback))
-            {
-                return false;
-            }
-            
-            ScheduleOneTimeCallbackPlatformSpecific(callback.Id, delay);
-
-            return true;
-        }
-
-        public bool CallbackIsScheduled(string callbackId)
+        public bool CallbackIsScheduled(ScheduledCallback callback)
         {
             // we should never get a null callback id, but it seems that we are from android.
-            if (callbackId == null)
+            if (callback?.Id == null)
             {
                 SensusException.Report("Received null callback id.");
                 return false;
             }
             else
             {
-                return _idCallback.ContainsKey(callbackId);
+                return _idCallback.ContainsKey(callback.Id);
             }
         }
 
-        public string GetCallbackUserNotificationMessage(string callbackId)
+        public ScheduledCallback TryGetCallback(string id)
         {
             ScheduledCallback callback;
-            _idCallback.TryGetValue(callbackId, out callback);
-            return callback?.UserNotificationMessage;
+            _idCallback.TryGetValue(id, out callback);
+
+            if (callback == null)
+            {
+                SensusException.Report("Failed to retrieve callback " + id + ".");
+            }
+
+            return callback;
         }
 
-        public DisplayPage GetCallbackDisplayPage(string callbackId)
-        {
-            ScheduledCallback callback;
-            _idCallback.TryGetValue(callbackId, out callback);
-            return callback?.DisplayPage ?? DisplayPage.None;
-        }
-
-        public string GetCallbackProtocolId(string callbackId)
-        {
-            ScheduledCallback callback;
-            _idCallback.TryGetValue(callbackId, out callback);
-            return callback?.ProtocolId;
-        }
-
-        public virtual Task RaiseCallbackAsync(string callbackId, bool repeating, TimeSpan repeatDelay, bool repeatLag, bool notifyUser, Action<DateTime> scheduleRepeatCallback, Action letDeviceSleepCallback)
+        /// <summary>
+        /// Raises a callback.
+        /// </summary>
+        /// <returns>Async task</returns>
+        /// <param name="callback">Callback to raise.</param>
+        /// <param name="notifyUser">If set to <c>true</c>, then notify user that the callback is being raised.</param>
+        /// <param name="scheduleRepeatCallback">Platform-specific action to execute to schedule the next execution of the callback.</param>
+        /// <param name="letDeviceSleepCallback">Action to execute when the system should be allowed to sleep.</param>
+        public virtual Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             DateTime callbackStartTime = DateTime.Now;
 
@@ -111,64 +95,55 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    ScheduledCallback scheduledCallback = null;
-
-                    // do we have callback information for the passed callbackId? we might not, in the case where the callback is canceled by the user and the system fires it subsequently.
-                    if (!_idCallback.TryGetValue(callbackId, out scheduledCallback))
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Callback " + callbackId + " is not valid. Unscheduling.", LoggingLevel.Normal, GetType());
-                        UnscheduleCallback(callbackId);
-                    }
-
-                    if (scheduledCallback != null)
+                    if (callback != null)
                     {
                         // the same callback action cannot be run multiple times concurrently. drop the current callback if it's already running. multiple
                         // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until it has executed.
                         bool actionAlreadyRunning = true;
-                        lock (scheduledCallback)
+                        lock (callback)
                         {
-                            if (!scheduledCallback.Running)
+                            if (!callback.Running)
                             {
                                 actionAlreadyRunning = false;
-                                scheduledCallback.Running = true;
+                                callback.Running = true;
                             }
                         }
 
                         if (actionAlreadyRunning)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" is already running. Not running again.", LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " is already running. Not running again.", LoggingLevel.Normal, GetType());
                         }
                         else
                         {
                             try
                             {
-                                if (scheduledCallback.Canceller.IsCancellationRequested)
+                                if (callback.Canceller.IsCancellationRequested)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Callback \"" + scheduledCallback.Id + "\" was cancelled before it was raised.", LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " was cancelled before it was raised.", LoggingLevel.Normal, GetType());
                                 }
                                 else
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Raising callback \"" + scheduledCallback.Id + "\".", LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Raising callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
                                     if (notifyUser)
                                     {
-                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", scheduledCallback.UserNotificationMessage, callbackId, scheduledCallback.ProtocolId, true, scheduledCallback.DisplayPage);
+                                        SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage);
                                     }
 
                                     // if the callback specified a timeout, request cancellation at the specified time.
-                                    if (scheduledCallback.CallbackTimeout.HasValue)
+                                    if (callback.CallbackTimeout.HasValue)
                                     {
-                                        scheduledCallback.Canceller.CancelAfter(scheduledCallback.CallbackTimeout.Value);
+                                        callback.Canceller.CancelAfter(callback.CallbackTimeout.Value);
                                     }
 
-                                    await scheduledCallback.Action(callbackId, scheduledCallback.Canceller.Token, letDeviceSleepCallback);
+                                    await callback.Action(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
                                 }
                             }
-                            catch (Exception ex)
+                            catch (Exception raiseException)
                             {
-                                string errorMessage = "Callback \"" + scheduledCallback.Id + "\" failed:  " + ex.Message;
+                                string errorMessage = "Callback " + callback.Id + " threw an exception:  " + raiseException.Message;
                                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-                                SensusException.Report(errorMessage, ex);
+                                SensusException.Report(errorMessage, raiseException);
                             }
                             finally
                             {
@@ -181,11 +156,11 @@ namespace Sensus.Callbacks
                                 // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                                 try
                                 {
-                                    if (repeating)
+                                    if (callback.RepeatDelay.HasValue)
                                     {
                                         lock (_idCallback)
                                         {
-                                            scheduledCallback.Canceller = new CancellationTokenSource();
+                                            callback.Canceller = new CancellationTokenSource();
                                         }
                                     }
                                 }
@@ -195,33 +170,38 @@ namespace Sensus.Callbacks
                                 finally
                                 {
                                     // if we marked the callback as running, ensure that we unmark it (note we're nested within two finally blocks so
-                                    // this will always execute). this will allow others to run the callback.
-                                    lock (scheduledCallback)
+                                    // this will always execute). this will allow the callback to run again.
+                                    lock (callback)
                                     {
-                                        scheduledCallback.Running = false;
+                                        callback.Running = false;
                                     }
 
-                                    // schedule callback again if it was a repeating callback and is still scheduled with a valid repeat delay
-                                    if (repeating && CallbackIsScheduled(callbackId) && repeatDelay.Ticks >= 0 && scheduleRepeatCallback != null)
+                                    // schedule callback again if it is still scheduled with a valid repeat delay
+                                    if (CallbackIsScheduled(callback) &&
+                                        callback.RepeatDelay.HasValue && 
+                                        callback.RepeatDelay.Value.Ticks > 0 &&
+                                        scheduleRepeatCallback != null)
                                     {
                                         DateTime nextCallbackTime;
 
                                         // if this repeating callback is allowed to lag, schedule the repeat from the current time.
-                                        if (repeatLag)
+                                        if (callback.AllowRepeatLag.Value)
                                         {
-                                            nextCallbackTime = DateTime.Now + repeatDelay;
+                                            nextCallbackTime = DateTime.Now + callback.RepeatDelay.Value;
                                         }
                                         else
                                         {
                                             // otherwise, schedule the repeat from the time at which the current callback was raised.
-                                            nextCallbackTime = callbackStartTime + repeatDelay;
+                                            nextCallbackTime = callbackStartTime + callback.RepeatDelay.Value;
                                         }
 
-                                        scheduleRepeatCallback(nextCallbackTime);
+                                        callback.NextExecution = nextCallbackTime;
+
+                                        scheduleRepeatCallback();
                                     }
                                     else
                                     {
-                                        UnscheduleCallback(callbackId);
+                                        UnscheduleCallback(callback);
                                     }
                                 }
                             }
@@ -238,40 +218,32 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Cancels a callback that has been raised and is currently executing.
         /// </summary>
-        /// <param name="callbackId">Callback identifier.</param>
-        public void CancelRaisedCallback(string callbackId)
+        /// <param name="callback">Callback.</param>
+        public void CancelRaisedCallback(ScheduledCallback callback)
         {
-            ScheduledCallback scheduledCallback;
-            if (_idCallback.TryGetValue(callbackId, out scheduledCallback))
-            {
-                scheduledCallback.Canceller.Cancel();
-                SensusServiceHelper.Get().Logger.Log("Cancelled callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
-            }
-            else
-            {
-                SensusServiceHelper.Get().Logger.Log("Callback \"" + callbackId + "\" not present. Cannot cancel.", LoggingLevel.Normal, GetType());
-            }
+            callback?.Canceller.Cancel();
+            SensusServiceHelper.Get().Logger.Log("Cancelled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
         }
 
         /// <summary>
         /// Unschedules the callback, first cancelling any executions that are currently running and then removing the callback from the scheduler.
         /// </summary>
-        /// <param name="callbackId">Callback identifier.</param>
-        public void UnscheduleCallback(string callbackId)
+        /// <param name="callback">Callback.</param>
+        public void UnscheduleCallback(ScheduledCallback callback)
         {
-            if (callbackId != null)
+            if (callback != null)
             {
-                SensusServiceHelper.Get().Logger.Log("Unscheduling callback \"" + callbackId + "\".", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Unscheduling callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
                 // interrupt any current executions
-                CancelRaisedCallback(callbackId);
+                CancelRaisedCallback(callback);
 
                 // remove from the scheduler
                 ScheduledCallback removedCallback;
-                _idCallback.TryRemove(callbackId, out removedCallback);
+                _idCallback.TryRemove(callback.Id, out removedCallback);
 
                 // tell the current platform cancel its hook into the system's callback system
-                UnscheduleCallbackPlatformSpecific(callbackId);
+                UnscheduleCallbackPlatformSpecific(callback);
             }
         }
     }

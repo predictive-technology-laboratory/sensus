@@ -20,6 +20,7 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using UIKit;
+using Sensus.Exceptions;
 
 namespace Sensus.iOS.Callbacks
 {
@@ -31,72 +32,84 @@ namespace Sensus.iOS.Callbacks
             return isCallback?.BoolValue ?? false;
         }
 
-        protected override void ScheduleRepeatingCallbackPlatformSpecific(string callbackId, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag)
+        public abstract List<string> CallbackIds { get; }
+
+        /// <summary>
+        /// Updates the callbacks by running any that should have already been serviced or will be serviced in the near future.
+        /// Also reissues all silent notifications, which would have been canceled when the app went into the background.
+        /// </summary>
+        /// <returns>Async task.</returns>
+        public Task UpdateCallbacksAsync()
         {
-            ScheduleCallbackAsync(callbackId, initialDelay, true, repeatDelay, repeatLag);
+            return Task.Run(async () =>
+            {
+                foreach (string callbackId in CallbackIds)
+                {
+                    ScheduledCallback callback = TryGetCallback(callbackId);
+
+                    if (callback == null)
+                    {
+                        continue;
+                    }
+
+                    // service any callback that should have already been serviced or will soon be serviced
+                    if (callback.NextExecution.Value < DateTime.Now.AddSeconds(5))
+                    {
+                        iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
+                        notifier.CancelNotification(callback.Id);
+                        await ServiceCallbackAsync(callback);
+                    }
+                    // all silent notifications were cancelled when the app entered background. reissue them now.
+                    else if (callback.Silent)
+                    {
+                        ReissueSilentNotification(callback.Id);
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Non-silent callback notification " + callback.Id + " has upcoming trigger time of " + callback.NextExecution, LoggingLevel.Normal, GetType());
+                    }
+                }
+            });
         }
 
-        protected override void ScheduleOneTimeCallbackPlatformSpecific(string callbackId, TimeSpan delay)
-        {
-            ScheduleCallbackAsync(callbackId, delay, false, TimeSpan.Zero, false);
-        }
+        protected abstract void ReissueSilentNotification(string id);                            
 
-        protected abstract void ScheduleCallbackAsync(string callbackId, TimeSpan delay, bool repeating, TimeSpan repeatDelay, bool repeatLag);
-
-        public abstract Task UpdateCallbacksAsync();
-
-        public NSMutableDictionary GetCallbackInfo(string callbackId, bool repeating, TimeSpan repeatDelay, bool repeatLag, DisplayPage displayPage)
+        public NSMutableDictionary GetCallbackInfo(ScheduledCallback callback)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
             // refreshed. don't create the UserInfo dictionary if we've got null values.
-            if (callbackId == null)
+            if (callback.Id == null)
             {
+                SensusException.Report("Failed to get callback information bundle due to null callback ID.");
                 return null;
             }
 
-            List<object> keyValuePairs = new object[]
-            {
-                iOSNotifier.NOTIFICATION_ID_KEY, callbackId,
-                Notifier.DISPLAY_PAGE_KEY, displayPage.ToString(),
-                SENSUS_CALLBACK_REPEATING_KEY, repeating,
-                SENSUS_CALLBACK_REPEAT_DELAY_KEY, repeatDelay.Ticks.ToString(),
-                SENSUS_CALLBACK_REPEAT_LAG_KEY, repeatLag
+            return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true,
+                                                            iOSNotifier.NOTIFICATION_ID_KEY, callback.Id));
+        }
 
-            }.ToList();
-
-            return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true, keyValuePairs.ToArray()));
+        public ScheduledCallback TryGetCallback(NSDictionary callbackInfo)
+        {
+            return TryGetCallback((callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString());
         }
 
         public Task ServiceCallbackAsync(NSDictionary callbackInfo)
         {
+            return ServiceCallbackAsync(TryGetCallback(callbackInfo));
+        }
+
+        public Task ServiceCallbackAsync(ScheduledCallback callback)
+        {
             return Task.Run(async () =>
             {
-                // check whether the passed information describes a callback
-                if(!IsCallback(callbackInfo))
+                if (callback == null)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Null callback", LoggingLevel.Normal, GetType());
                     return;
                 }
 
-                // not sure why the following would be null, but we've seen NREs and these are the likely suspects.
-                string callbackId = (callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString();
-                bool repeating = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEATING_KEY)) as NSNumber)?.BoolValue ?? false;
-
-                TimeSpan repeatDelay = TimeSpan.Zero;
-                if (repeating)
-                {
-                    repeatDelay = TimeSpan.FromTicks(long.Parse(callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_DELAY_KEY)) as NSString));
-                }
-
-                bool repeatLag = (callbackInfo.ValueForKey(new NSString(SENSUS_CALLBACK_REPEAT_LAG_KEY)) as NSNumber)?.BoolValue ?? false;
-
-                // only raise callback if it is still scheduled
-                if (!CallbackIsScheduled(callbackId))
-                {
-                    return;
-                }
-
-                SensusServiceHelper.Get().Logger.Log("Servicing callback " + callbackId, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id, LoggingLevel.Normal, GetType());
 
                 // start background task
                 nint callbackTaskId = -1;
@@ -105,15 +118,16 @@ namespace Sensus.iOS.Callbacks
                     callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                     {
                         // if we're out of time running in the background, cancel the callback.
-                        CancelRaisedCallback(callbackId);
+                        CancelRaisedCallback(callback);
                     });
                 });
 
                 // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
                 // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
                 // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-                await RaiseCallbackAsync(callbackId, repeating, repeatDelay, repeatLag, false, null, null);
+                await RaiseCallbackAsync(callback, false, null, null);
 
+                // end the background task
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
@@ -129,5 +143,10 @@ namespace Sensus.iOS.Callbacks
                 SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
             }
         }
+
+        /// <summary>
+        /// Cancels the silent notifications.
+        /// </summary>
+        public abstract void CancelSilentNotifications();
     }
 }
