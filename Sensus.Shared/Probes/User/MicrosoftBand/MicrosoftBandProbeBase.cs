@@ -272,7 +272,6 @@ namespace Sensus.Probes.User.MicrosoftBand
             {
                 if (HEALTH_TEST_CALLBACK != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
                     SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK);
                     HEALTH_TEST_CALLBACK = null;
                 }

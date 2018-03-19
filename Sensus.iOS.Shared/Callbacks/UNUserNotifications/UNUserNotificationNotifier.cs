@@ -85,7 +85,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             // the notification center processes it (race condition), then the notification will not be scheduled. 
             // so ensure that we leave some time to avoid the race condition by triggering an immediate notification
             // for any trigger date that is not greater than several seconds into the future.
-            if (triggerDateTime > DateTime.Now.AddSeconds(10))
+            if (triggerDateTime > DateTime.Now + iOSCallbackScheduler.CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
             {
                 NSDateComponents triggerDateComponents = new NSDateComponents
                 {

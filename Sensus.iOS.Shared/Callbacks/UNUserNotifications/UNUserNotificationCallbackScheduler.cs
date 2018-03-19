@@ -100,7 +100,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         {
             return Task.Run(async () =>
             {
-                // see corresponding comments in <see 
+                // see corresponding comments in the UILocalNotificationCallbackScheduler
 
                 UNNotificationRequest request;
                 lock (_callbackIdRequest)

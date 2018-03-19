@@ -108,7 +108,8 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> is silent. Silent 
         /// callbacks do not have a message to display to the user via notifications, and the user is never aware of them. These
-        /// are only used when Sensus is in the foreground when managing <see cref="ScheduledCallback"/>s.
+        /// are only used when Sensus is in the foreground when managing <see cref="ScheduledCallback"/>s. This only applies
+        /// to iOS, as there is no need for such silent callbacks in Android where we are free to do things in the background.
         /// </summary>
         /// <value><c>true</c> if silent; otherwise, <c>false</c>.</value>
         public bool Silent { get { return UserNotificationMessage == null; } }

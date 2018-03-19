@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -97,7 +96,6 @@ namespace Sensus.Android.Callbacks
 
                 if (callback == null)
                 {
-                    SensusException.Report("Received null callback to service:  " + intent.Action);
                     return;
                 }
 

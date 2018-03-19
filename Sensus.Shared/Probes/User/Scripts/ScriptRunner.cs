@@ -474,7 +474,7 @@ namespace Sensus.Probes.User.Scripts
             // a string denoting the script to run and the time window to run within. thus, the callback ids can
             // duplicate. the callback scheduler checks for such duplicate ids and will return false on the next
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
-            // script run since it was already schedule. this issue is much less common in android because all 
+            // script run since it was already scheduled. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
             if (SensusContext.Current.CallbackScheduler.ScheduleCallback(callback))
             {
@@ -552,18 +552,12 @@ namespace Sensus.Probes.User.Scripts
 
                 foreach (ScheduledCallback callback in _scriptRunCallbacks)
                 {
-                    UnscheduleCallback(callback);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(callback);
                 }
 
                 _scriptRunCallbacks.Clear();
                 _maxScheduledDate = null;
             }
-        }
-
-        private void UnscheduleCallback(ScheduledCallback callback)
-        {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(callback);
-            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({callback})", LoggingLevel.Normal, GetType());
         }
 
         private Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)

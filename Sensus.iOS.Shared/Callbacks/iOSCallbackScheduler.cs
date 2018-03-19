@@ -26,6 +26,17 @@ namespace Sensus.iOS.Callbacks
 {
     public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
     {
+        /// <summary>
+        /// The callback notification horizon threshold. When using notifications to schedule the timing of
+        /// callbacks, we must decide when the delay of a callback execution necessitates a notification 
+        /// rather than executing immediately. This is in part a practical question, in that executing a 
+        /// callback immediately rather than using a notification can improve performance -- imagine the
+        /// app coming to the foreground and executing the callback right away versus deferring it to a 
+        /// future notification. This is also an iOS API consideration, as the iOS system will not schedule 
+        /// a notification if its fire date is in the past by the time it gets around to doing the scheduling.
+        /// </summary>
+        public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(10);
+
         public static bool IsCallback(NSDictionary callbackInfo)
         {
             NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
@@ -53,13 +64,13 @@ namespace Sensus.iOS.Callbacks
                     }
 
                     // service any callback that should have already been serviced or will soon be serviced
-                    if (callback.NextExecution.Value < DateTime.Now.AddSeconds(5))
+                    if (callback.NextExecution.Value < DateTime.Now + CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
                     {
                         iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
                         notifier.CancelNotification(callback.Id);
                         await ServiceCallbackAsync(callback);
                     }
-                    // all silent notifications were cancelled when the app entered background. reissue them now.
+                    // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
                     else if (callback.Silent)
                     {
                         ReissueSilentNotification(callback.Id);
@@ -111,7 +122,7 @@ namespace Sensus.iOS.Callbacks
 
                 SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id, LoggingLevel.Normal, GetType());
 
-                // start background task
+                // start background task for callback
                 nint callbackTaskId = -1;
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
@@ -145,7 +156,7 @@ namespace Sensus.iOS.Callbacks
         }
 
         /// <summary>
-        /// Cancels the silent notifications.
+        /// Cancels the silent notifications (e.g., those for health test) when the app is going into the background.
         /// </summary>
         public abstract void CancelSilentNotifications();
     }

@@ -23,6 +23,7 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Microsoft.AppCenter.Analytics;
 using Sensus.Extensions;
+using Sensus.Exceptions;
 
 #if __IOS__
 using CoreLocation;
@@ -262,7 +263,7 @@ namespace Sensus.Probes
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed significant change poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        SensusException.Report("Failed significant change poll.", ex);
                     }
                 });
             };
@@ -280,8 +281,6 @@ namespace Sensus.Probes
                 string userNotificationMessage = DisplayName + " data requested.";
 #elif __ANDROID__
                 string userNotificationMessage = null;
-#elif WINDOWS_PHONE
-                string userNotificationMessage = null; // TODO:  Should we use a message?
 #elif LOCAL_TESTS
                 string userNotificationMessage = null;
 #else
