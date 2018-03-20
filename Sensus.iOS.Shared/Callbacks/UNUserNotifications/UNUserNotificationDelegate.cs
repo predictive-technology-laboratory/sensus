@@ -38,7 +38,11 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             // cancel each notification as it comes in to remove it from the notification center.
             SensusContext.Current.Notifier.CancelNotification(notification?.Request?.Identifier);
 
-            (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler)?.ServiceCallbackAsync(notification?.Request?.Content?.UserInfo);
+            iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
+            if(callbackScheduler.IsCallback(notification?.Request?.Content?.UserInfo))
+            {
+                callbackScheduler.ServiceCallbackAsync(notification?.Request?.Content?.UserInfo);
+            }
         }
 
         /// <summary>

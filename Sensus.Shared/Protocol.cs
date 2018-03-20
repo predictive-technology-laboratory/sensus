@@ -1540,6 +1540,7 @@ namespace Sensus
                     Stop();
                     _scheduledStopCallback = null;
                 });
+
             }, timeUntilStop, "STOP", _id, this, null,
 #if __ANDROID__
             $"Stopped study: {Name}.");

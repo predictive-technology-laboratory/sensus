@@ -161,7 +161,7 @@ namespace Sensus.DataStores.Remote
             _mostRecentSuccessfulWriteTime = null;
             _requireWiFi = true;
             _requireCharging = true;
-            _requiredBatteryChargeLevelPercent = 50;
+            _requiredBatteryChargeLevelPercent = 20;
             _userNotificationMessage = "Please open this notification to submit your data.";
 
 #if DEBUG || UI_TESTING

@@ -35,13 +35,7 @@ namespace Sensus.iOS.Callbacks
         /// future notification. This is also an iOS API consideration, as the iOS system will not schedule 
         /// a notification if its fire date is in the past by the time it gets around to doing the scheduling.
         /// </summary>
-        public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(10);
-
-        public static bool IsCallback(NSDictionary callbackInfo)
-        {
-            NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
-            return isCallback?.BoolValue ?? false;
-        }
+        public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(5);
 
         public abstract List<string> CallbackIds { get; }
 
@@ -102,7 +96,20 @@ namespace Sensus.iOS.Callbacks
 
         public ScheduledCallback TryGetCallback(NSDictionary callbackInfo)
         {
-            return TryGetCallback((callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString());
+            if (IsCallback(callbackInfo))
+            {
+                return TryGetCallback((callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString());
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool IsCallback(NSDictionary callbackInfo)
+        {
+            NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
+            return isCallback?.BoolValue ?? false;
         }
 
         public Task ServiceCallbackAsync(NSDictionary callbackInfo)

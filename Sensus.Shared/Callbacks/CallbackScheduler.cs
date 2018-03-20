@@ -69,7 +69,7 @@ namespace Sensus.Callbacks
             }
         }
 
-        public ScheduledCallback TryGetCallback(string id)
+        protected ScheduledCallback TryGetCallback(string id)
         {
             ScheduledCallback callback;
             _idCallback.TryGetValue(id, out callback);

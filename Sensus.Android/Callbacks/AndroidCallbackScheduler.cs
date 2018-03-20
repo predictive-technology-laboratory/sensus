@@ -88,6 +88,23 @@ namespace Sensus.Android.Callbacks
             }
         }
 
+        public ScheduledCallback TryGetCallback(Intent intent)
+        {
+            if (IsCallback(intent))
+            {
+                return TryGetCallback(intent.Action);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public bool IsCallback(Intent intent)
+        {
+            return intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false);
+        }
+
         public Task ServiceCallbackAsync(Intent intent)
         {
             return Task.Run(async () =>

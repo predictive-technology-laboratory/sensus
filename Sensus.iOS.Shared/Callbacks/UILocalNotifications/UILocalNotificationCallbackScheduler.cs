@@ -157,8 +157,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
                 foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {
-                    ScheduledCallback callback = TryGetCallback(scheduledNotification.UserInfo);
-                    if (callback?.Silent ?? false)
+                    if (TryGetCallback(scheduledNotification.UserInfo)?.Silent ?? false)
                     {
                         notifier.CancelNotification(scheduledNotification);
                     }

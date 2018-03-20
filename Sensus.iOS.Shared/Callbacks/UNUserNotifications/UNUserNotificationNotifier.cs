@@ -69,7 +69,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 content.Body = message;
             }
 
-            if (alertUser && protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay))
+            if (alertUser && !protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay))
             {
                 content.Sound = UNNotificationSound.Default;
             }

@@ -73,7 +73,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 };
 
                 // introduced in 8.0
-                if (alertUser && protocol.TimeIsWithinAlertExclusionWindow(fireDateTime.TimeOfDay))
+                if (alertUser && !protocol.TimeIsWithinAlertExclusionWindow(fireDateTime.TimeOfDay))
                 {
                     notification.SoundName = UILocalNotification.DefaultSoundName;
                 }

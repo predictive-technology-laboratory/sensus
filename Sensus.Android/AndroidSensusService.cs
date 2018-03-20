@@ -146,13 +146,15 @@ namespace Sensus.Android
                     }
                     else
                     {
+                        AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
+
                         DisplayPage displayPage;
 
                         // is this a callback intent?
-                        if (intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false))
+                        if (callbackScheduler.IsCallback(intent))
                         {
                             // service the callback -- the matching LetDeviceSleep will be called therein
-                            await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackAsync(intent);
+                            await callbackScheduler.ServiceCallbackAsync(intent);
                         }
                         // should we display a page?
                         else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
