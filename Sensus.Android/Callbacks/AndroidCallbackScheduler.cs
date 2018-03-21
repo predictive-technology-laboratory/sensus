@@ -18,6 +18,8 @@ using Android.OS;
 using Sensus.Callbacks;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
+using System;
+using Sensus.Extensions;
 
 namespace Sensus.Android.Callbacks
 {
@@ -69,7 +71,7 @@ namespace Sensus.Android.Callbacks
             // additional, duplicate alarms. we need to be careful to avoid duplicate alarms, and this is how we manage it.
             alarmManager.Cancel(callbackPendingIntent);
 
-            long callbackTimeMS = Java.Lang.JavaSystem.CurrentTimeMillis() + (long)callback.Delay.TotalMilliseconds;
+            long callbackTimeMS = callback.NextExecution.Value.ToJavaCurrentTimeMillis();
 
             // see the Backwards Compatibility article for more information
 #if __ANDROID_23__
@@ -86,6 +88,8 @@ namespace Sensus.Android.Callbacks
             {
                 alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
             }
+
+            SensusServiceHelper.Get().Logger.Log("Alarm scheduled for callback " + callback.Id + " at " + callback.NextExecution.Value + ".", LoggingLevel.Normal, GetType());
         }
 
         public ScheduledCallback TryGetCallback(Intent intent)
@@ -117,6 +121,8 @@ namespace Sensus.Android.Callbacks
                 }
 
                 SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+
+                serviceHelper.Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
                 // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
                 // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service

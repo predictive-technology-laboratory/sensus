@@ -51,11 +51,29 @@ namespace Sensus.Extensions
         public static DateTime? Min(this DateTime? d1, DateTime? d2)
         {
             if (d1.HasValue)
+            {
                 return d1.Value.Min(d2);
+            }
             else if (d2.HasValue)
+            {
                 return d2.Value.Min(d1);
+            }
             else
+            {
                 return default(DateTime?);
+            }
+        }
+
+        /// <summary>
+        /// Converts a <see cref="DateTime"/> to the Java current time in milliseconds, following the definition provided
+        /// [here](https://docs.oracle.com/javase/7/docs/api/java/lang/System.html#currentTimeMillis()), which specifies
+        /// that the time is the number of milliseconds elapsed since midnight January 1, 1970.
+        /// </summary>
+        /// <returns>The java current time millis.</returns>
+        /// <param name="dateTime">Date time.</param>
+        public static long ToJavaCurrentTimeMillis(this DateTime dateTime)
+        {
+            return (long)(dateTime.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan())).TotalMilliseconds;
         }
     }
 }

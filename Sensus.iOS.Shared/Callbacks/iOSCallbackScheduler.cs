@@ -123,11 +123,11 @@ namespace Sensus.iOS.Callbacks
             {
                 if (callback == null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Null callback", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Attempted to service null callback.", LoggingLevel.Normal, GetType());
                     return;
                 }
 
-                SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
                 // start background task for callback
                 nint callbackTaskId = -1;

@@ -197,6 +197,7 @@ namespace Sensus.iOS
                 (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
                 iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
+
                 if (callbackScheduler == null)
                 {
                     SensusException.Report("We don't have an iOSCallbackScheduler.");
@@ -210,23 +211,28 @@ namespace Sensus.iOS
                     // run asynchronously to release the UI thread
                     System.Threading.Tasks.Task.Run(async () =>
                     {
-                        // the following must be done on the UI thread because we reference UIApplicationState.Active.
-                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        // service the callback if we've got one (not all notification userinfo bundles are for callbacks)
+                        if (callbackScheduler.IsCallback(notification.UserInfo))
                         {
                             await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
 
+                            // provide some generic feedback if the user responded to a silent callback notification
+                            if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
+                            {
+                                SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
+                            }
+                        }
+
+                        // open the the display page if we're passed one. the following must be done on the UI 
+                        // thread because we reference UIApplicationState.Active.
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        {
                             // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
                             // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
                             // display the page associated with the notification (if there is one). 
                             if (application.ApplicationState != UIApplicationState.Active)
                             {
                                 callbackScheduler.OpenDisplayPage(notification.UserInfo);
-
-                                // provide some generic feedback if the user responded to a silent notification
-                                if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
-                                {
-                                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
-                                }
                             }
                         });
                     });

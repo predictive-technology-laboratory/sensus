@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Java.Lang;
 using NUnit.Framework;
 using Sensus.Extensions;
 
@@ -99,6 +100,18 @@ namespace Sensus.Tests.Extensions
 
             Assert.AreEqual(date1, date1.Min(date2));
             Assert.AreEqual(date1, date2.Min(date1));
+        }
+
+        [Test]
+        public void ToJavaTime()
+        {
+            // covert java current time to a local date time
+            long currentTimeMillis = JavaSystem.CurrentTimeMillis();
+            DateTimeOffset currentTime = DateTimeOffset.FromUnixTimeMilliseconds(currentTimeMillis);
+            DateTime currentLocalTime = currentTime.LocalDateTime;
+
+            // ensure that our conversion of local date times equals the 
+            Assert.AreEqual(currentTimeMillis, currentLocalTime.ToJavaCurrentTimeMillis());
         }
     }
 }
