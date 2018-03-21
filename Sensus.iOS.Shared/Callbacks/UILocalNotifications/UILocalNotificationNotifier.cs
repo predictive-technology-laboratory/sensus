@@ -94,11 +94,13 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+                string id = null;
+
                 lock (_idNotification)
                 {
                     // notifications are not required to have an id. if the current one does, save the notification by id for easy lookup later.
                     // use indexing to add/replace since we might be reissuing the notification with the same id.
-                    string id = notification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
+                    id = notification.UserInfo?.ValueForKey(new NSString(NOTIFICATION_ID_KEY))?.ToString();
                     if (id != null)
                     {
                         _idNotification[id] = notification;
@@ -106,6 +108,8 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 }
 
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
+
+                SensusServiceHelper.Get().Logger.Log("Notification " + (id ?? "[null]") + " requested for " + notification.FireDate + ".", LoggingLevel.Normal, GetType());
             });
         }
 

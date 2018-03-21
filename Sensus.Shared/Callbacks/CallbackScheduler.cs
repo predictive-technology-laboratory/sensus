@@ -225,7 +225,7 @@ namespace Sensus.Callbacks
         /// <param name="callback">Callback.</param>
         public void CancelRaisedCallback(ScheduledCallback callback)
         {
-            callback?.Canceller.Cancel();
+            callback.Canceller.Cancel();
             SensusServiceHelper.Get().Logger.Log("Cancelled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
         }
 
