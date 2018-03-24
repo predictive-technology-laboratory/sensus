@@ -582,22 +582,17 @@ namespace Sensus
                 {
                     _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
-                        List<Protocol> protocolsToTest = new List<Protocol>();
-
-                        lock (_registeredProtocols)
+                        // get protocols to test (those that should be running)
+                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
                         {
                             lock (_runningProtocolIds)
                             {
-                                foreach (Protocol protocol in _registeredProtocols)
-                                {
-                                    if (_runningProtocolIds.Contains(protocol.Id))
-                                    {
-                                        protocolsToTest.Add(protocol);
-                                    }
-                                }
+                                return _runningProtocolIds.Contains(protocol.Id);
                             }
-                        }
 
+                        }).ToList();
+
+                        // test protocols
                         foreach (Protocol protocolToTest in protocolsToTest)
                         {
                             if (cancellationToken.IsCancellationRequested)
@@ -609,6 +604,9 @@ namespace Sensus
 
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
+
+                        // test the callback scheduler itself
+                        SensusContext.Current.CallbackScheduler.TestHealth();
 
                     }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 

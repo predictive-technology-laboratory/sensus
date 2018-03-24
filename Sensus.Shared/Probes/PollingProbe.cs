@@ -422,6 +422,21 @@ namespace Sensus.Probes
 
                     events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
                 }
+
+                if(!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
+                {
+                    string eventName = TrackedEvent.Error + ":" + GetType().Name;
+                    Dictionary<string, string> properties = new Dictionary<string, string>
+                    {
+                        { "Missing Callback", _pollCallback.Id }
+                    };
+
+                    Analytics.TrackEvent(eventName, properties);
+
+                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+
+                    restart = true;
+                }
             }
 
             return restart;

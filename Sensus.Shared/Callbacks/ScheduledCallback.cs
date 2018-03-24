@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace Sensus.Callbacks
 {
     /// <summary>
-    /// Encapsulates information needed to run a scheduled callback.
+    /// Represents a action that should be scheduled with the operating system for execution at a future time.
     /// </summary>
     public class ScheduledCallback
     {
@@ -33,7 +33,7 @@ namespace Sensus.Callbacks
         public delegate Task ActionDelegate(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback);
 
         /// <summary>
-        /// Action to invoke.
+        /// Action to execute.
         /// </summary>
         /// <value>The action.</value>
         public ActionDelegate Action { get; set; }
@@ -45,13 +45,13 @@ namespace Sensus.Callbacks
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback's protocol's identifier.
+        /// Gets or sets the callback's protocol.
         /// </summary>
         /// <value>The protocol identifier.</value>
         public Protocol Protocol { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback timeout.
+        /// Gets or sets the callback timeout. After this time has elapsed, the callback's cancellation token will be cancelled.
         /// </summary>
         /// <value>The callback timeout.</value>
         public TimeSpan? CallbackTimeout { get; set; }
@@ -63,43 +63,44 @@ namespace Sensus.Callbacks
         public string UserNotificationMessage { get; set; }
 
         /// <summary>
-        /// Source of cancellation tokens when Action is invoked.
+        /// Source of cancellation tokens to be cancelled when the action times out.
         /// </summary>
         /// <value>The canceller.</value>
         public CancellationTokenSource Canceller { get; set; }
 
         /// <summary>
-        /// Page to display when callback is returned to app.
+        /// UI page to display when callback is returned to app.
         /// </summary>
         /// <value>The display page.</value>
         public DisplayPage DisplayPage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ScheduledCallback"/> is running.
+        /// Gets or sets the state.
         /// </summary>
-        /// <value><c>true</c> if running; otherwise, <c>false</c>.</value>
-        public bool Running { get; set; }
+        /// <value>The state.</value>
+        public ScheduledCallbackState State { get; set; }
 
         /// <summary>
-        /// Gets or sets the delay.
+        /// Gets or sets the delay of the action.
         /// </summary>
         /// <value>The delay.</value>
         public TimeSpan Delay { get; set; }
 
         /// <summary>
-        /// Gets or sets the repeat delay for repeating callbacks.
+        /// For actions that are repeatedly executed, this is the delay between executions.
         /// </summary>
         /// <value>The repeat delay.</value>
         public TimeSpan? RepeatDelay { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> allows lag.
+        /// Since a repeating action can take a while to complete, one must decide whether to schedule the next
+        /// delay from the time at which the action started (no lag) or the time at which the action ended (lag).
         /// </summary>
-        /// <value><c>true</c> if allow lag; otherwise, <c>false</c>.</value>
+        /// <value><c>true</c> to allow lag; otherwise, <c>false</c>.</value>
         public bool? AllowRepeatLag { get; set; }
 
         /// <summary>
-        /// Gets or sets the next execution time for this <see cref="ScheduledCallback"/>.
+        /// Gets or sets the next execution time for this callback.
         /// </summary>
         /// <value>The next execution time.</value>
         public DateTime? NextExecution { get; set; }
@@ -141,7 +142,7 @@ namespace Sensus.Callbacks
             UserNotificationMessage = userNotificationMessage;
             Canceller = new CancellationTokenSource();
             DisplayPage = DisplayPage.None;
-            Running = false;
+            State = ScheduledCallbackState.Created;
         }
 
         /// <summary>

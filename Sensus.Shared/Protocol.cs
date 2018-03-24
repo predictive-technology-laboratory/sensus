@@ -1198,6 +1198,23 @@ namespace Sensus
 
         #endregion
 
+        [JsonIgnore]
+        public bool StartIsScheduled 
+        {
+            get
+            {
+                if (_scheduledStartCallback != null &&
+                    SensusContext.Current.CallbackScheduler.ContainsCallback(_scheduledStartCallback) &&
+                    _scheduledStartCallback.NextExecution.HasValue &&
+                    _scheduledStartCallback.NextExecution.Value > DateTime.Now)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>

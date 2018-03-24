@@ -127,8 +127,8 @@ namespace Sensus.Android.Callbacks
                 // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
                 // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
                 // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
-                // if the callback is scheduled, it's fine. if it's not, then unschedule it.
-                if (CallbackIsScheduled(callback))
+                // if the callback is present, it's fine. if it's not, then unschedule it.
+                if (ContainsCallback(callback))
                 {                    
                     bool wakeLockReleased = false;
 

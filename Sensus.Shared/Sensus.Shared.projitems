@@ -233,6 +233,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\NumericExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TrackedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallbackState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

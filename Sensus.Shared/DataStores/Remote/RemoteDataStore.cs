@@ -224,6 +224,21 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
+            if (!SensusContext.Current.CallbackScheduler.ContainsCallback(_writeCallback))
+            {
+                string eventName = TrackedEvent.Error + ":" + GetType().Name;
+                Dictionary<string, string> properties = new Dictionary<string, string>
+                {
+                    { "Missing Callback", _writeCallback.Id }
+                };
+
+                Analytics.TrackEvent(eventName, properties);
+
+                events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+
+                restart = true;
+            }
+
             return restart;
         }
 

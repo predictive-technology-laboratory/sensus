@@ -472,11 +472,11 @@ namespace Sensus.Probes.User.Scripts
             // schedule all future scripts. because two such attempts are made concurrently, they may race to 
             // schedule the same future script. each script callback id is functional in the sense that it is
             // a string denoting the script to run and the time window to run within. thus, the callback ids can
-            // duplicate. the callback scheduler checks for such duplicate ids and will return false on the next
+            // duplicate. the callback scheduler checks for such duplicate ids and will return unscheduled on the next
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
             // script run since it was already scheduled. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleCallback(callback))
+            if (SensusContext.Current.CallbackScheduler.ScheduleCallback(callback) == ScheduledCallbackState.Scheduled)
             {
                 lock (_scriptRunCallbacks)
                 {

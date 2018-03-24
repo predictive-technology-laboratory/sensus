@@ -14,10 +14,13 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
 using Sensus.Context;
 using Sensus.Exceptions;
+using Sensus.Extensions;
 
 namespace Sensus.Callbacks
 {
@@ -38,24 +41,29 @@ namespace Sensus.Callbacks
         protected abstract void ScheduleCallbackPlatformSpecific(ScheduledCallback callback);
         protected abstract void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback);
 
-        public bool ScheduleCallback(ScheduledCallback callback)
+        public ScheduledCallbackState ScheduleCallback(ScheduledCallback callback)
         {
-            if (!_idCallback.TryAdd(callback.Id, callback))
+            if (callback.State != ScheduledCallbackState.Created)
             {
-                SensusException.Report("Attempted to schedule duplicate callback for " + callback.Id + ".");
-                return false;
+                SensusException.Report("Attemped to schedule callback " + callback.Id + ", which is in the " + callback.State + " state and not the " + ScheduledCallbackState.Created + " state.");
+                callback.State = ScheduledCallbackState.Unknown;
+            }
+            else if (_idCallback.TryAdd(callback.Id, callback))
+            {
+                callback.NextExecution = DateTime.Now + callback.Delay;
+                callback.State = ScheduledCallbackState.Scheduled;
+
+                ScheduleCallbackPlatformSpecific(callback);
             }
             else
             {
-                callback.NextExecution = DateTime.Now + callback.Delay;
-
-                ScheduleCallbackPlatformSpecific(callback);
-
-                return true;
+                SensusException.Report("Attempted to schedule duplicate callback for " + callback.Id + ".");
             }
+
+            return callback.State;
         }
 
-        public bool CallbackIsScheduled(ScheduledCallback callback)
+        public bool ContainsCallback(ScheduledCallback callback)
         {
             // we should never get a null callback id, but it seems that we are from android.
             if (callback?.Id == null)
@@ -92,8 +100,6 @@ namespace Sensus.Callbacks
         /// <param name="letDeviceSleepCallback">Action to execute when the system should be allowed to sleep.</param>
         public virtual Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
-            DateTime callbackStartTime = DateTime.Now;
-
             return Task.Run(async () =>
             {
                 try
@@ -109,9 +115,10 @@ namespace Sensus.Callbacks
                     bool runCallbackNow = false;
                     lock (callback)
                     {
-                        if (!callback.Running)
+                        if (callback.State == ScheduledCallbackState.Scheduled)
                         {
-                            runCallbackNow = callback.Running = true;
+                            runCallbackNow = true;
+                            callback.State = ScheduledCallbackState.Running;
                         }
                     }
 
@@ -158,45 +165,35 @@ namespace Sensus.Callbacks
                             {
                                 if (callback.RepeatDelay.HasValue)
                                 {
-                                    lock (_idCallback)
-                                    {
-                                        callback.Canceller = new CancellationTokenSource();
-                                    }
+                                    callback.Canceller = new CancellationTokenSource();
                                 }
                             }
                             catch (Exception ex)
                             {
-                                SensusException.Report("Exception while setting new callback canceller.", ex);
+                                SensusException.Report("Exception while assigning new callback canceller.", ex);
                             }
                             finally
                             {
-                                // if we marked the callback as running, ensure that we unmark it (note we're nested within two finally blocks so
-                                // this will always execute). this will allow the callback to run again.
-                                lock (callback)
-                                {
-                                    callback.Running = false;
-                                }
+                                callback.State = ScheduledCallbackState.Completed;
 
                                 // schedule callback again if it is still scheduled with a valid repeat delay
-                                if (CallbackIsScheduled(callback) &&
+                                if (ContainsCallback(callback) &&
                                     callback.RepeatDelay.HasValue &&
                                     callback.RepeatDelay.Value.Ticks > 0 &&
                                     scheduleRepeatCallback != null)
                                 {
-                                    DateTime nextCallbackTime;
-
-                                    // if this repeating callback is allowed to lag, schedule the repeat from the current time.
+                                    // if this repeating callback is allowed to lag, schedule the next execution from the current time.
                                     if (callback.AllowRepeatLag.Value)
                                     {
-                                        nextCallbackTime = DateTime.Now + callback.RepeatDelay.Value;
+                                        callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
                                     }
                                     else
                                     {
-                                        // otherwise, schedule the repeat from the time at which the current callback was raised.
-                                        nextCallbackTime = callbackStartTime + callback.RepeatDelay.Value;
+                                        // otherwise, schedule the next execution from the time at which the current callback was supposed to be raised.
+                                        callback.NextExecution = callback.NextExecution.Value + callback.RepeatDelay.Value;
                                     }
 
-                                    callback.NextExecution = nextCallbackTime;
+                                    callback.State = ScheduledCallbackState.Scheduled;
 
                                     scheduleRepeatCallback();
                                 }
@@ -217,6 +214,56 @@ namespace Sensus.Callbacks
                     SensusException.Report("Failed to raise callback:  " + ex.Message, ex);
                 }
             });
+        }
+
+        public void TestHealth()
+        {
+            foreach (ScheduledCallback callback in _idCallback.Values)
+            {
+                // the following states should be extremely short-lived. if they are present
+                // then something has likely gone wrong. track the event.
+                if (callback.State == ScheduledCallbackState.Created ||
+                    callback.State == ScheduledCallbackState.Completed)
+                {
+                    string eventName = TrackedEvent.Warning + ":" + GetType().Name;
+                    Dictionary<string, string> properties = new Dictionary<string, string>
+                    {
+                        { "Callback State", callback.State + ":" + callback.Id }
+                    };
+
+                    Analytics.TrackEvent(eventName, properties);
+                }
+                else if (callback.State == ScheduledCallbackState.Scheduled)
+                {
+                    // if the callback is scheduled and has a next execution time, check for latency.
+                    if (callback.NextExecution.HasValue)
+                    {
+                        TimeSpan latency = DateTime.Now - callback.NextExecution.Value;
+
+                        if (latency.TotalMinutes > 1)
+                        {
+                            string eventName = TrackedEvent.Warning + ":" + GetType().Name;
+                            Dictionary<string, string> properties = new Dictionary<string, string>
+                            {
+                                { "Callback Latency", latency.TotalMinutes.Round(5) + ":" + callback.Id }
+                            };
+
+                            Analytics.TrackEvent(eventName, properties);
+                        }
+                    }
+                    else
+                    {
+                        // report missing next execution time
+                        string eventName = TrackedEvent.Warning + ":" + GetType().Name;
+                        Dictionary<string, string> properties = new Dictionary<string, string>
+                        {
+                                { "Callback Next Execution", "NONE" }
+                        };
+
+                        Analytics.TrackEvent(eventName, properties);
+                    }
+                }
+            }
         }
 
         /// <summary>
