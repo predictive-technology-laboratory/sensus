@@ -191,6 +191,14 @@ namespace Sensus.Callbacks
                                     {
                                         // otherwise, schedule the next execution from the time at which the current callback was supposed to be raised.
                                         callback.NextExecution = callback.NextExecution.Value + callback.RepeatDelay.Value;
+
+                                        // if we've lagged so long that the next execution is already in the past, just reschedule for now. this will cause
+                                        // the rescheduled callback to be raised as soon as possible, subject to delays in the systems scheduler (e.g., on
+                                        // android most alarms do not come back immediately, even if requested).
+                                        if (callback.NextExecution.Value < DateTime.Now)
+                                        {
+                                            callback.NextExecution = DateTime.Now;
+                                        }
                                     }
 
                                     callback.State = ScheduledCallbackState.Scheduled;
