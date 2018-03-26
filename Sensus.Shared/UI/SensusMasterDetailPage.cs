@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Sensus.Context;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -27,7 +28,15 @@ namespace Sensus.UI
             _masterPage.MasterPageItemsListView.ItemSelected += OnItemSelected;
 
             Master = _masterPage;
-            Detail = new NavigationPage(new ProtocolsPage());
+            Detail = new ContentPage();
+        }
+
+        public void LoadInitialDetailPage()
+        {
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                Detail = new NavigationPage(new ProtocolsPage());
+            });
         }
 
         private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

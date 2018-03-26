@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -62,13 +59,14 @@ namespace Sensus.UI
                 ItemsSource = detailPageItems,
                 ItemTemplate = new DataTemplate(() =>
                 {
-                    var grid = new Grid { Padding = new Thickness(5, 10) };
+                    Grid grid = new Grid { Padding = new Thickness(5, 10) };
                     grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });
                     grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
-                    var image = new Image();
+                    Image image = new Image();
                     image.SetBinding(Image.SourceProperty, "IconSource");
-                    var label = new Label { VerticalOptions = LayoutOptions.FillAndExpand };
+
+                    Label label = new Label { VerticalOptions = LayoutOptions.FillAndExpand };
                     label.SetBinding(Label.TextProperty, "Title");
 
                     grid.Children.Add(image);
