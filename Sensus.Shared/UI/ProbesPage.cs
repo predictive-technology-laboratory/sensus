@@ -21,59 +21,11 @@ namespace Sensus.UI
 {
     public abstract class ProbesPage : ContentPage
     {
-        private class ProbeTextValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                if (value == null)
-                    return "";
-
-                Probe probe = value as Probe;
-
-                string type = "";
-                if (probe is ListeningProbe)
-                    type = "Listening";
-                else if (probe is PollingProbe)
-                    type = "Polling";
-
-                return probe.DisplayName + (type == "" ? "" : " (" + type + ")");
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
-                return null;
-            }
-        }
-
         private class ProbeTextColorValueConverter : IValueConverter
         {
             public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
             {
-                if (value == null)
-                    return Color.Default;
-
-                Probe probe = value as Probe;
-                return probe.Enabled ? Color.Green : Color.Red;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
-                return null;
-            }
-        }
-
-        private class ProbeDetailValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                if (value == null)
-                    return "";
-
-                Probe probe = value as Probe;
-                Datum mostRecentDatum = probe.MostRecentDatum;
-                return mostRecentDatum == null ? "----------" : mostRecentDatum.DisplayDetail + Environment.NewLine + mostRecentDatum.Timestamp;
+                return (bool)value ? Color.Green : Color.Red;
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -108,34 +60,17 @@ namespace Sensus.UI
 
             Title = title;
 
-            _probesList = new ListView
-            {
-                IsPullToRefreshEnabled = true
-            };
-
+            _probesList = new ListView(ListViewCachingStrategy.RecycleElement);
             _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProbeTextValueConverter()));
-            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProbeTextColorValueConverter()));
-            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(".", converter: new ProbeDetailValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Probe.Caption));
+            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(Probe.Enabled), converter: new ProbeTextColorValueConverter()));
+            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));
+            _probesList.ItemsSource = _protocol.Probes;
             _probesList.ItemTapped += ProbeTapped;
-
-            _probesList.Refreshing += (o, e) =>
-            {
-                Bind();
-                _probesList.IsRefreshing = false;
-            };
-
-            Bind();
 
             Content = _probesList;
         }
 
         protected abstract void ProbeTapped(object sender, ItemTappedEventArgs e);
-
-        public void Bind()
-        {
-            _probesList.ItemsSource = null;
-            _probesList.ItemsSource = _protocol.Probes;
-        }
     }
 }

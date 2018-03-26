@@ -27,7 +27,7 @@ namespace Sensus.UI
         {
             Title = "Beacons";
 
-            ListView beaconList = new ListView();
+            ListView beaconList = new ListView(ListViewCachingStrategy.RecycleElement);
             beaconList.ItemTemplate = new DataTemplate(typeof(TextCell));
             beaconList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             beaconList.ItemsSource = probe.Beacons;

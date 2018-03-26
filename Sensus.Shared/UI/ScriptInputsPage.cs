@@ -24,26 +24,22 @@ namespace Sensus.UI
 {
     public class ScriptInputsPage : ContentPage
     {
-        private InputGroup _inputGroup;
-        private ListView _inputsList;
-
         public ScriptInputsPage(InputGroup inputGroup, List<InputGroup> previousInputGroups)
         {
-            _inputGroup = inputGroup;
-
             Title = "Inputs";
 
-            _inputsList = new ListView();
-            _inputsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _inputsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-            _inputsList.ItemTapped += async (o, e) =>
+            ListView inputsList = new ListView(ListViewCachingStrategy.RecycleElement);
+            inputsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            inputsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Input.Caption));
+            inputsList.ItemsSource = inputGroup.Inputs;
+            inputsList.ItemTapped += async (o, e) =>
             {
-                if (_inputsList.SelectedItem == null)
+                if (inputsList.SelectedItem == null)
                 {
                     return;
                 }
 
-                Input selectedInput = _inputsList.SelectedItem as Input;
+                Input selectedInput = inputsList.SelectedItem as Input;
                 int selectedIndex = inputGroup.Inputs.IndexOf(selectedInput);
 
                 List<string> actions = new List<string>();
@@ -85,13 +81,8 @@ namespace Sensus.UI
                 else if (selectedAction == "Edit")
                 {
                     ScriptInputPage inputPage = new ScriptInputPage(selectedInput);
-                    inputPage.Disappearing += (oo, ee) =>
-                    {
-                        Bind();
-                    };
-
                     await Navigation.PushAsync(inputPage);
-                    _inputsList.SelectedItem = null;
+                    inputsList.SelectedItem = null;
                 }
                 else if (selectedAction == "Add Display Condition")
                 {
@@ -177,8 +168,8 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        _inputGroup.Inputs.Remove(selectedInput);
-                        _inputsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
+                        inputGroup.Inputs.Remove(selectedInput);
+                        inputsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
                     }
                 }
             };
@@ -206,26 +197,12 @@ namespace Sensus.UI
                     else
                     {
                         inputGroup.Inputs.Add(input);
-
-                        ScriptInputPage inputPage = new ScriptInputPage(input);
-                        inputPage.Disappearing += (o, e) =>
-                        {
-                            Bind();
-                        };
-
-                        await Navigation.PushAsync(inputPage);
+                        await Navigation.PushAsync(new ScriptInputPage(input));
                     }
                 }
             }));
 
-            Bind();
-            Content = _inputsList;
-        }
-
-        public void Bind()
-        {
-            _inputsList.ItemsSource = null;
-            _inputsList.ItemsSource = _inputGroup.Inputs;
+            Content = inputsList;
         }
     }
 }

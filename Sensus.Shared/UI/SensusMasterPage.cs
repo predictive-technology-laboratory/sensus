@@ -57,7 +57,7 @@ namespace Sensus.UI
                 TargetType = typeof(PrivacyPolicyPage)
             });
 
-            _masterPageItemsListView = new ListView
+            _masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)
             {
                 ItemsSource = detailPageItems,
                 ItemTemplate = new DataTemplate(() =>

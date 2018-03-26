@@ -87,20 +87,32 @@ namespace Sensus.Probes.Location
                 SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
                 if (e.Position != null)
+                {
                     foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
                     {
                         double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(e.Position) * 1000;
 
                         foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                        {
                             if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                            {
                                 data.Add(new PointOfInterestProximityDatum(e.Position.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                            }
+                        }
                     }
+                }
 
                 if (data.Count > 0)
+                {
                     foreach (Datum datum in data)
+                    {
                         await StoreDatumAsync(datum);
+                    }
+                }
                 else
+                {
                     await StoreDatumAsync(null);
+                }
             };
         }
 

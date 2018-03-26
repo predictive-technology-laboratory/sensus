@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus.Context;
 using Sensus.UI.Inputs;
 using Sensus.Probes.Location;
+using Sensus.Concurrent;
 
 namespace Sensus.UI
 {
@@ -28,31 +29,26 @@ namespace Sensus.UI
     /// </summary>
     public class PointsOfInterestPage : ContentPage
     {
-        private List<PointOfInterest> _pointsOfInterest;
-        private ListView _pointsOfInterestList;
-        private CancellationTokenSource _gpsCancellationTokenSource;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PointsOfInterestPage"/> class.
         /// </summary>
         /// <param name="pointsOfInterest">Points of interest to display.</param>        
-        public PointsOfInterestPage(List<PointOfInterest> pointsOfInterest)
+        public PointsOfInterestPage(ConcurrentObservableCollection<PointOfInterest> pointsOfInterest)
         {
-            _pointsOfInterest = pointsOfInterest;
-
             Title = "Points of Interest";
 
-            _pointsOfInterestList = new ListView();
-            _pointsOfInterestList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-            _pointsOfInterestList.ItemTapped += async (o, e) =>
+            ListView pointsOfInterestList = new ListView(ListViewCachingStrategy.RecycleElement);
+            pointsOfInterestList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            pointsOfInterestList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
+            pointsOfInterestList.ItemsSource = pointsOfInterest;
+            pointsOfInterestList.ItemTapped += async (o, e) =>
             {
-                if (_pointsOfInterestList.SelectedItem == null)
+                if (pointsOfInterestList.SelectedItem == null)
                 {
                     return;
                 }
 
-                PointOfInterest selectedPointOfInterest = _pointsOfInterestList.SelectedItem as PointOfInterest;
+                PointOfInterest selectedPointOfInterest = pointsOfInterestList.SelectedItem as PointOfInterest;
 
                 string selectedAction = await DisplayActionSheet(selectedPointOfInterest.ToString(), "Cancel", null, "Delete");
 
@@ -60,15 +56,15 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Delete " + selectedPointOfInterest.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        _pointsOfInterest.Remove(selectedPointOfInterest);
-                        _pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
-
-                        Bind();
+                        pointsOfInterest.Remove(selectedPointOfInterest);
+                        pointsOfInterestList.SelectedItem = null;  // reset it manually, since it isn't done automatically.
                     }
                 }
             };
 
-            Content = _pointsOfInterestList;
+            Content = pointsOfInterestList;
+
+            CancellationTokenSource gpsCancellationTokenSource = null;
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
             {
@@ -112,9 +108,7 @@ namespace Sensus.UI
                                     {
                                         foreach (Position poiPosition in poiPositions)
                                         {
-                                            _pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
-
-                                            Bind();
+                                            pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
                                         }
                                     }
                                 });
@@ -125,14 +119,14 @@ namespace Sensus.UI
                             if (string.IsNullOrWhiteSpace(address))
                             {
                                 // cancel existing token source if we have one
-                                if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
+                                if (gpsCancellationTokenSource != null && !gpsCancellationTokenSource.IsCancellationRequested)
                                 {
-                                    _gpsCancellationTokenSource.Cancel();
+                                    gpsCancellationTokenSource.Cancel();
                                 }
 
-                                _gpsCancellationTokenSource = new CancellationTokenSource();
+                                gpsCancellationTokenSource = new CancellationTokenSource();
 
-                                Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(_gpsCancellationTokenSource.Token, true);
+                                Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(gpsCancellationTokenSource.Token, true);
 
                                 if (gpsPosition != null)
                                 {
@@ -147,27 +141,13 @@ namespace Sensus.UI
                     });
             }));
 
-            Appearing += (sender, e) =>
-            {
-                Bind();
-            };
-
             Disappearing += (o, e) =>
             {
-                if (_gpsCancellationTokenSource != null && !_gpsCancellationTokenSource.IsCancellationRequested)
+                if (gpsCancellationTokenSource != null && !gpsCancellationTokenSource.IsCancellationRequested)
                 {
-                    _gpsCancellationTokenSource.Cancel();
+                    gpsCancellationTokenSource.Cancel();
                 }
             };
-        }
-
-        private void Bind()
-        {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                _pointsOfInterestList.ItemsSource = null;
-                _pointsOfInterestList.ItemsSource = _pointsOfInterest;
-            });
         }
     }
 }

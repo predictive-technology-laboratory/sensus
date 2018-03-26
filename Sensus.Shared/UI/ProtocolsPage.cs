@@ -25,6 +25,7 @@ using ZXing.Mobile;
 using ZXing.Net.Mobile.Forms;
 using ZXing;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -37,50 +38,6 @@ namespace Sensus.UI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
-        private class ProtocolNameValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                Protocol protocol = value as Protocol;
-                if (protocol == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return protocol.Name + " (" + (protocol.Running ? "Running" : (protocol.ScheduledStartCallback != null ? "Scheduled: " + protocol.StartDate.ToShortDateString() + " " + (protocol.StartDate.Date + protocol.StartTime).ToShortTimeString() : "Stopped")) + ")";
-                }
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
-                return null;
-            }
-        }
-
-        private class ProtocolColorValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                Protocol protocol = value as Protocol;
-                if (protocol == null)
-                {
-                    return Color.Default;
-                }
-                else
-                {
-                    return protocol.Running ? Color.Green : (protocol.ScheduledStartCallback != null ? Color.Olive : Color.Red);
-                }
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
-                return null;
-            }
-        }
-
         public static void ExecuteActionUponProtocolAuthentication(Protocol protocol, Action successAction, Action failAction = null)
         {
             if (protocol.LockPasswordHash == "")
@@ -110,7 +67,9 @@ namespace Sensus.UI
                             string password = input.Value as string;
 
                             if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
+                            {
                                 successAction();
+                            }
                             else
                             {
                                 SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
@@ -123,22 +82,14 @@ namespace Sensus.UI
 
         private ListView _protocolsList;
 
-        private void Refresh()
-        {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                Bind();
-            });
-        }
-
         public ProtocolsPage()
         {
             Title = "Your Studies";
 
-            _protocolsList = new ListView();
+            _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", converter: new ProtocolNameValueConverter()));
-            _protocolsList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(".", converter: new ProtocolColorValueConverter()));
+            _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
+            _protocolsList.ItemsSource = SensusServiceHelper.Get()?.RegisteredProtocols;
             _protocolsList.ItemTapped += async (o, e) =>
             {
                 if (_protocolsList.SelectedItem == null)
@@ -148,11 +99,12 @@ namespace Sensus.UI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
+                #region add actions
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
 
-                if(!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
+                if (!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
                 {
                     actions.Add("Email Study Manager for Help");
                 }
@@ -196,7 +148,9 @@ namespace Sensus.UI
                 }
 
                 actions.Add("Delete");
+                #endregion
 
+                #region process selected action
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 // must reset the protocol selection manually
@@ -216,20 +170,13 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Start")
                 {
-                    selectedProtocol.StartWithUserAgreementAsync(null, () =>
-                    {
-                        // rebind to pick up color and running status changes
-                        Refresh();
-                    });
+                    selectedProtocol.StartWithUserAgreementAsync(null);
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
                     if (await DisplayAlert("Confirm Cancel", "Are you sure you want to cancel " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
                         selectedProtocol.CancelScheduledStart();
-
-                        // rebind to pick up color and running status changes
-                        Refresh();
                     }
                 }
                 else if (selectedAction == "Stop")
@@ -237,9 +184,6 @@ namespace Sensus.UI
                     if (await DisplayAlert("Confirm Stop", "Are you sure you want to stop " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
                         await selectedProtocol.StopAsync();
-
-                        // rebind to pick up color and running status changes
-                        Refresh();
                     }
                 }
                 else if (selectedAction == "Email Study Manager for Help")
@@ -317,7 +261,7 @@ namespace Sensus.UI
                 else if (selectedAction == "Scan Participation Barcode")
                 {
                     try
-                    {                        
+                    {
                         Result barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(Navigation);
 
                         if (barcodeResult == null)
@@ -406,7 +350,6 @@ namespace Sensus.UI
                         Device.BeginInvokeOnMainThread(async () =>
                         {
                             ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
-                            protocolPage.Disappearing += (oo, ee) => Bind();  // rebind to pick up name changes
                             await Navigation.PushAsync(protocolPage);
                         });
                     });
@@ -486,9 +429,11 @@ namespace Sensus.UI
                     }
                 }
             };
+            #endregion
 
             Content = _protocolsList;
 
+            #region add toolbar items
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
             {
                 List<string> buttons = new string[] { "From QR Code", "From URL", "New" }.ToList();
@@ -533,7 +478,7 @@ namespace Sensus.UI
             ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
             {
                 await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
-                                                                 
+
                     () =>
                     {
                         string sharePath = null;
@@ -552,7 +497,7 @@ namespace Sensus.UI
                             SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
                         }
                     },
-                                                                 
+
                     () => SensusServiceHelper.Get().Logger.Clear()));
 
             }, ToolbarItemOrder.Secondary));
@@ -575,38 +520,7 @@ namespace Sensus.UI
                 await DisplayAlert("About Sensus", "Version:  " + SensusServiceHelper.Get().Version, "OK");
 
             }, ToolbarItemOrder.Secondary));
-
-            Bind();
-
-            System.Timers.Timer refreshTimer = new System.Timers.Timer(1000);
-
-            refreshTimer.Elapsed += (sender, e) =>
-            {
-                Refresh();
-            };
-
-            Appearing += (sender, e) =>
-            {
-                refreshTimer.Start();
-            };
-
-            Disappearing += (sender, e) =>
-            {
-                refreshTimer.Stop();
-            };
-        }
-
-        public void Bind()
-        {
-            _protocolsList.ItemsSource = null;
-
-            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
-
-            // make sure we have a service helper -- it might get disconnected before we get the OnDisappearing event that calls Bind
-            if (serviceHelper != null)
-            {
-                _protocolsList.ItemsSource = serviceHelper.RegisteredProtocols;
-            }
+            #endregion
         }
     }
 }

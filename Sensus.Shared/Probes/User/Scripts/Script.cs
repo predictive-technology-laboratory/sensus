@@ -18,30 +18,38 @@ using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
 using Sensus.Extensions;
+using System.ComponentModel;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script
+    public class Script : INotifyPropertyChanged
     {
-        #region Properties
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool _submitting;
+
         public string Id { get; }
-
         public ScriptRunner Runner { get; }
-
         public ObservableCollection<InputGroup> InputGroups { get; }
-
         public DateTimeOffset? ScheduledRunTime { get; set; }
-
         public DateTimeOffset? RunTime { get; set; }
-
         public Datum PreviousDatum { get; set; }
-
         public Datum CurrentDatum { get; set; }
-
         public DateTime? ExpirationDate { get; set; }
 
         [JsonIgnore]
-        public bool Submitting { get; set; }
+        public bool Submitting 
+        {
+            get
+            {
+                return _submitting;
+            }
+            set
+            {
+                _submitting = value;
+                CaptionChanged();
+            }
+        }
 
         [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
@@ -62,9 +70,22 @@ namespace Sensus.Probes.User.Scripts
         /// </remarks>
         [JsonIgnore]
         public DateTime Birthdate => (ScheduledRunTime ?? RunTime).Value.LocalDateTime;
-        #endregion
 
-        #region Constructors
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {
+                return Runner.Name + (Submitting ? " (Submitting...)" : "");
+            }
+        }
+
+        [JsonIgnore]
+        public string SubCaption
+        {
+            get { return Runner.Probe.Protocol.Name + " - " + Birthdate; }
+        }
+
         public Script(Script script)
         {
             Id = script.Id;
@@ -104,6 +125,10 @@ namespace Sensus.Probes.User.Scripts
             Runner = runner;
             InputGroups = inputGroups;
         }
-        #endregion
+
+        private void CaptionChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+        }        
     }
 }

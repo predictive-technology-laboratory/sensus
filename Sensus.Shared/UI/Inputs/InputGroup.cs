@@ -18,11 +18,16 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Sensus.UI.Inputs
 {
-    public class InputGroup
+    public class InputGroup : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string _name;
+
         #region Properties     
         public string Id { get; }
 
@@ -33,7 +38,21 @@ namespace Sensus.UI.Inputs
         /// </summary>
         /// <value>The name.</value>
         [EntryStringUiProperty(null, true, 0)]
-        public string Name { get; set; }
+        public string Name 
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                }
+            }
+        }
 
         /// <summary>
         /// Whether or not to tag inputs in this group with the device's current GPS location.
@@ -128,11 +147,6 @@ namespace Sensus.UI.Inputs
                     displayCondition.Input = inputs.Single(i => i.Id == displayCondition.Input.Id);
                 }
             }
-        }
-
-        public override string ToString()
-        {
-            return Name;
         }
         #endregion
 

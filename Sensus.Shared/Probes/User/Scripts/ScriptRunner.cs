@@ -28,12 +28,16 @@ using Newtonsoft.Json;
 using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using Plugin.Geolocator.Abstractions;
+using System.ComponentModel;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class ScriptRunner
+    public class ScriptRunner : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #region Fields
+        private string _name;
         private bool _enabled;
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
@@ -55,7 +59,18 @@ namespace Sensus.Probes.User.Scripts
         /// </summary>
         /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 1)]
-        public string Name { get; set; }
+        public string Name 
+        {
+            get { return _name; }
+            set
+            {
+                if(value != _name)
+                {
+                    _name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+                }
+            }
+        }            
 
         /// <summary>
         /// Whether or not the survey is enabled.
@@ -245,6 +260,15 @@ namespace Sensus.Probes.User.Scripts
         /// <value><c>true</c> if shuffle input groups; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
         public bool ShuffleInputGroups { get; set; }
+
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {                
+                return _name;
+            }
+        }
         #endregion
 
         #region Constructor

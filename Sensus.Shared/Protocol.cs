@@ -40,6 +40,8 @@ using Sensus.Callbacks;
 using Sensus.Encryption;
 using System.Text.RegularExpressions;
 using Microsoft.AppCenter.Analytics;
+using System.ComponentModel;
+using Sensus.Concurrent;
 
 #if __IOS__
 using HealthKit;
@@ -57,7 +59,7 @@ namespace Sensus
     /// study's Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.
     /// 
     /// </summary>
-    public class Protocol
+    public class Protocol : INotifyPropertyChanged
     {
         #region static members
 
@@ -381,15 +383,10 @@ namespace Sensus
                         else
                         {
                             protocolsPage = new ProtocolsPage();
-                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(protocolsPage.Bind);
                         }
 
                         // ask user to start protocol
-                        protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", () =>
-                        {
-                            // rebind to pick up any color changes
-                            Device.BeginInvokeOnMainThread(protocolsPage.Bind);
-                        });
+                        protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
                     });
                 }
             });
@@ -465,6 +462,7 @@ namespace Sensus
         #endregion
 
         public event EventHandler<bool> ProtocolRunningChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private string _id;
         private string _name;
@@ -479,7 +477,7 @@ namespace Sensus
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _randomTimeAnchor;
         private bool _shareable;
-        private List<PointOfInterest> _pointsOfInterest;
+        private ConcurrentObservableCollection<PointOfInterest> _pointsOfInterest;
         private string _description;
         private DateTime _startTimestamp;
         private bool _startImmediately;
@@ -513,7 +511,11 @@ namespace Sensus
         public string Name
         {
             get { return _name; }
-            set { _name = value; }
+            set
+            {
+                _name = value;
+                CaptionChanged();
+            }
         }
 
         public List<Probe> Probes
@@ -663,7 +665,7 @@ namespace Sensus
             }
         }
 
-        public List<PointOfInterest> PointsOfInterest
+        public ConcurrentObservableCollection<PointOfInterest> PointsOfInterest
         {
             get { return _pointsOfInterest; }
         }
@@ -672,7 +674,7 @@ namespace Sensus
         /// A detailed description of the <see cref="Protocol"/> (e.g., what it does, who it is intended for, etc.).
         /// </summary>
         /// <value>The description.</value>
-        [EditorUiProperty("Description:", true, 15)]
+        [EditorUiProperty(null, true, 15)]
         public string Description
         {
             get
@@ -717,6 +719,8 @@ namespace Sensus
             set
             {
                 _startTimestamp = new DateTime(value.Year, value.Month, value.Day, _startTimestamp.Hour, _startTimestamp.Minute, _startTimestamp.Second);
+
+                CaptionChanged();
             }
         }
 
@@ -734,6 +738,8 @@ namespace Sensus
             set
             {
                 _startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
+
+                CaptionChanged();
             }
         }
 
@@ -1136,7 +1142,7 @@ namespace Sensus
                 }
             }
         }
-        
+
         /// <summary>
         /// Sensus is able to use asymmetric key encryption to secure data before transmission from the device to a remote endpoint (e.g., AWS S3). This 
         /// provides a layer of security on top of SSL encryption and certificate pinning. For example, even if an attacker is able to intercept 
@@ -1199,7 +1205,7 @@ namespace Sensus
         #endregion
 
         [JsonIgnore]
-        public bool StartIsScheduled 
+        public bool StartIsScheduled
         {
             get
             {
@@ -1215,6 +1221,15 @@ namespace Sensus
             }
         }
 
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {
+                return Name + " (" + (Running ? "Running" : (ScheduledStartCallback == null ? "Stopped" : "Scheduled: " + StartDate.ToShortDateString() + " " + (StartDate.Date + StartTime).ToShortTimeString())) + ")";
+            }
+        }
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -1224,7 +1239,7 @@ namespace Sensus
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
             _shareable = false;
-            _pointsOfInterest = new List<PointOfInterest>();
+            _pointsOfInterest = new ConcurrentObservableCollection<PointOfInterest>();
             _participationHorizonDays = 1;
             _alertExclusionWindows = new List<Window>();
             _asymmetricEncryptionPublicKey = null;
@@ -1358,6 +1373,8 @@ namespace Sensus
                 }
 
                 _scheduledStartCallback = null;
+
+                CaptionChanged();
 
                 ProtocolRunningChanged?.Invoke(this, _running);
 
@@ -1535,12 +1552,15 @@ namespace Sensus
 #endif
 
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStartCallback);
+
+            CaptionChanged();
         }
 
         public void CancelScheduledStart()
         {
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallback);
             _scheduledStartCallback = null;
+            CaptionChanged();
 
             // we might have scheduled a stop when starting the protocol, so be sure to cancel it.
             CancelScheduledStop();
@@ -1805,6 +1825,7 @@ namespace Sensus
                 if (_running)
                 {
                     _running = false;
+                    CaptionChanged();
                 }
                 else
                 {
@@ -1903,6 +1924,11 @@ namespace Sensus
         public override string ToString()
         {
             return _name;
+        }
+
+        private void CaptionChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
         }
     }
 }

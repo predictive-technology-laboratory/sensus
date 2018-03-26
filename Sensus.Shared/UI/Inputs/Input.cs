@@ -22,14 +22,17 @@ using Xamarin;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Sensus.Exceptions;
+using System.ComponentModel;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
 
 namespace Sensus.UI.Inputs
 {
-    public abstract class Input
+    public abstract class Input : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public const string EFFECT_RESOLUTION_GROUP_NAME = "InputEffects";
 
         private string _name;
@@ -62,7 +65,14 @@ namespace Sensus.UI.Inputs
         public string Name
         {
             get { return _name; }
-            set { _name = value; }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+                }
+            }
         }
 
         public string Id
@@ -262,7 +272,11 @@ namespace Sensus.UI.Inputs
             }
             set
             {
-                _required = value;
+                if (value != _required)
+                {
+                    _required = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+                }
             }
         }
 
@@ -378,6 +392,15 @@ namespace Sensus.UI.Inputs
             set
             {
                 _submissionTimestamp = value;
+            }
+        }
+
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {
+                return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
             }
         }
 
@@ -538,11 +561,6 @@ namespace Sensus.UI.Inputs
 
                 return false;
             }
-        }
-
-        public override string ToString()
-        {
-            return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
         }
 
         public Input Copy(bool newId)

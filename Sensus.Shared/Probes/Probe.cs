@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Sensus.Context;
 using Sensus.Probes.User.MicrosoftBand;
 using Microsoft.AppCenter.Analytics;
+using System.ComponentModel;
 
 namespace Sensus.Probes
 {
@@ -33,7 +34,7 @@ namespace Sensus.Probes
     /// Sensus defines a variety of Probes, with platform availability and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, 
     /// etc.). Availability and reliability of Probes will depend on the device being used.
     /// </summary>
-    public abstract class Probe
+    public abstract class Probe : INotifyPropertyChanged
     {
         #region static members
 
@@ -56,6 +57,7 @@ namespace Sensus.Probes
         /// Fired when the most recently sensed datum is changed, regardless of whether the datum was stored.
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _enabled;
         private bool _running;
@@ -95,10 +97,16 @@ namespace Sensus.Probes
                     if (_protocol != null && _protocol.Running)
                     {
                         if (_enabled)
+                        {
                             StartAsync();
+                        }
                         else
+                        {
                             StopAsync();
+                        }
                     }
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
                 }
             }
         }
@@ -146,6 +154,7 @@ namespace Sensus.Probes
                     _mostRecentDatum = value;
 
                     MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
                 }
             }
         }
@@ -224,6 +233,34 @@ namespace Sensus.Probes
                     while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
                         _chartData.RemoveAt(0);
                 }
+            }
+        }
+
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {
+                string type = "";
+                if (this is ListeningProbe)
+                {
+                    type = "Listening";
+                }
+                else if (this is PollingProbe)
+                {
+                    type = "Polling";
+                }
+
+                return DisplayName + (type == "" ? "" : " (" + type + ")");
+            }
+        }
+
+        [JsonIgnore]
+        public string SubCaption
+        {
+            get
+            {
+                return _mostRecentDatum == null ? "[no data]" : _mostRecentDatum.DisplayDetail + Environment.NewLine + _mostRecentDatum.Timestamp.ToLocalTime();
             }
         }
 

@@ -329,7 +329,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="AndroidSensusServiceBinder.cs" />
     <Compile Include="AndroidSensusServiceConnection.cs" />
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
-    <Compile Include="TextCellDisposedFix.cs" />
     <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
     <Compile Include="Callbacks\AndroidNotifier.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothAdvertisingCallback.cs" />
