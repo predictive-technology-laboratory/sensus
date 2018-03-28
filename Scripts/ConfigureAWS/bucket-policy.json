@@ -1,0 +1,27 @@
+{
+  "Id": "Policy1499693184221",
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1499693177867",
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::bucketId/*",
+      "Principal": "*"
+    },
+    {
+      "Sid": "Stmt1499538755124",
+      "Effect": "Deny",
+      "NotPrincipal": { 
+        "AWS": [
+          "arn:aws:iam::rootAccountId:root",
+          "iamUserARN"
+        ]
+      },
+      "Action": "s3:GetObject",
+      "NotResource": "arn:aws:s3:::bucketId/*ParticipationRewardDatum/*"
+    }
+  ]
+}
