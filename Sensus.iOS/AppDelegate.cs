@@ -157,9 +157,6 @@ namespace Sensus.iOS
                     // update/run all callbacks
                     await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
-                    // load the initial detail page, which depends on the service helper.
-                    (App.Current.MainPage as SensusMasterDetailPage).LoadInitialDetailPage();
-
 #if UI_TESTING
                     // load and run the UI testing protocol
                     string filePath = NSBundle.MainBundle.PathForResource("UiTestingProtocol", "json");

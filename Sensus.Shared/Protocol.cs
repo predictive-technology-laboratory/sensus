@@ -369,7 +369,7 @@ namespace Sensus
                 }
                 else
                 {
-                    Device.BeginInvokeOnMainThread(() =>
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         ProtocolsPage protocolsPage = null;
 

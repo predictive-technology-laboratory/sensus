@@ -154,7 +154,7 @@ namespace Sensus.UI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 // must reset the protocol selection manually
-                Device.BeginInvokeOnMainThread(() =>
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
                     _protocolsList.SelectedItem = null;
                 });
@@ -241,7 +241,7 @@ namespace Sensus.UI
                                 cancellationTokenSource.Cancel();
                             }
 
-                            Device.BeginInvokeOnMainThread(async () =>
+                            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 // only show the QR code for the reward datum if the datum was written to the remote data store and if the data store can retrieve it.
                                 await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !writeFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)));
@@ -347,7 +347,7 @@ namespace Sensus.UI
                 {
                     ExecuteActionUponProtocolAuthentication(selectedProtocol, () =>
                     {
-                        Device.BeginInvokeOnMainThread(async () =>
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
                             await Navigation.PushAsync(protocolPage);

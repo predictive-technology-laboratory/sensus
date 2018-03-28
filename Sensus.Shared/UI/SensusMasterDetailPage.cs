@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System;
-using Sensus.Context;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -28,15 +27,13 @@ namespace Sensus.UI
             _masterPage.MasterPageItemsListView.ItemSelected += OnItemSelected;
 
             Master = _masterPage;
-            Detail = new ContentPage();
-        }
 
-        public void LoadInitialDetailPage()
-        {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                Detail = new NavigationPage(new ProtocolsPage());
-            });
+            // the SensusServiceHelper is not yet loaded when this page is constructed. as a result, we cannot assign the 
+            // ProtocolsPage to the Detail property. instead, just assign a blank content page and show the user the master
+            // detail list. by the time the user selects from the list, the service helper will be available and the protocols
+            // page will be ready to go.
+            Detail = new NavigationPage(new ContentPage());  
+            IsPresented = true;
         }
 
         private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)

@@ -108,9 +108,6 @@ namespace Sensus.Android
                 // signal the activity that the service has been bound
                 _serviceBindWait.Set();
 
-                // load the initial detail page, which depends on the service helper.
-                (_app.MainPage as SensusMasterDetailPage).LoadInitialDetailPage();
-
                 // if we're UI testing, try to load and run the UI testing protocol from the embedded assets
 #if UI_TESTING
                 using (Stream protocolFile = Assets.Open("UiTestingProtocol.json"))
