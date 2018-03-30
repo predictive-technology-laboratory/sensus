@@ -25,7 +25,7 @@ NULL
 #' @return Local path to location of downloaded data.
 #' @examples 
 #' # data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", local.path = "~/Desktop/data")
-sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE, decompress = TRUE)
+sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = FALSE, decompress = FALSE)
 {
   aws.args = paste("s3 --profile", profile, "sync ", s3.path, local.path, sep = " ")
   
@@ -177,7 +177,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     file.json = jsonlite::fromJSON(file.text)
 
     # skip empty JSON
-    if(is.null(file.json) || is.na(file.json) || nrow(file.json) == 0)
+    if(is.null(file.json) || is.na(file.json) || length(file.json) == 0)
     {
       next
     }
