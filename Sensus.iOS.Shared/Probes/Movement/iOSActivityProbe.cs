@@ -27,6 +27,9 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.iOS.Probes.Movement
 {
+    /// <summary>
+    /// Provides inferred activity information via the iOS activity recognition API as <see cref="ActivityDatum"/> readings.
+    /// </summary>
     public class iOSActivityProbe : PollingProbe
     {
         private DateTimeOffset? _queryStartTime;

@@ -41,7 +41,9 @@ namespace Sensus.Anonymization.Anonymizers
             double doubleValue = (double)value;
 
             if (_places >= 0)
+            {
                 return Math.Round(doubleValue, _places);
+            }
             else
             {
                 // round number to nearest 10^(-_places). for example, -1 would round to tens place, -2 to hundreds, etc.

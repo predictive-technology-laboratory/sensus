@@ -14,6 +14,8 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.User.MicrosoftBand
 {
@@ -21,6 +23,7 @@ namespace Sensus.Probes.User.MicrosoftBand
     {
         private ContactState _state;
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public ContactState State
         {
             get

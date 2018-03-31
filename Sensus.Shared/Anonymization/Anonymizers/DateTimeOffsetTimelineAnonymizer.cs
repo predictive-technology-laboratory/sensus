@@ -37,7 +37,6 @@ namespace Sensus.Anonymization.Anonymizers
         {
             DateTimeOffset dateTimeOffsetValue = (DateTimeOffset)value;
 
-
             // if the value passed in precedes the random time anchor, the result of the subtraction 
             // will not be representable and will throw an exception. there probably isn't a good case 
             // for anonymizing dates within the first 1000 years AD, so the user has probably misconfigured 

@@ -16,8 +16,19 @@ namespace Sensus.Probes.Movement
 {
     public enum ActivityPhase
     {
+        /// <summary>
+        /// The activity is starting.
+        /// </summary>
         Starting,
+
+        /// <summary>
+        /// The activity is progressing.
+        /// </summary>
         During,
+
+        /// <summary>
+        /// The activity is ending
+        /// </summary>
         Stopping
     }
 }

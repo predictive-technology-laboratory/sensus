@@ -34,6 +34,9 @@ using Sensus.Probes.Location;
 
 namespace Sensus.Android.Probes.Movement
 {
+    /// <summary>
+    /// Provides inferred activity information via the Google Awareness API as <see cref="ActivityDatum"/> readings.
+    /// </summary>
     public class AndroidActivityProbe : ListeningProbe
     {
         private enum FenceUpdateAction

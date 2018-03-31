@@ -17,6 +17,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Newtonsoft.Json;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.Location
 {
@@ -49,6 +50,7 @@ namespace Sensus.Probes.Location
         [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double DistanceMeters { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public EstimoteBeaconProximityEvent ProximityEvent { get; set; }
 
         [StringProbeTriggerProperty("Entered/Exited [Event Name]")]

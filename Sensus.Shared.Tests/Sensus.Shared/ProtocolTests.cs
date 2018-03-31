@@ -32,7 +32,7 @@ namespace Sensus.Tests
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
 
-            //we don't want to quietly handle errors when testing.
+            // we don't want to quietly handle errors when testing.
             _jsonSerializerSettings.Error = null;
         }
         #endregion

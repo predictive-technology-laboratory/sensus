@@ -14,10 +14,24 @@
 
 namespace Sensus.Probes.Movement
 {
+    /// <summary>
+    /// States in which an <see cref="ActivityPhase"/> may be.
+    /// </summary>
     public enum ActivityState
     {
+        /// <summary>
+        /// The <see cref="ActivityPhase"/> is currently active.
+        /// </summary>
         Active,
+
+        /// <summary>
+        /// The <see cref="ActivityPhase"/> is currently inactive.
+        /// </summary>
         Inactive,
+
+        /// <summary>
+        /// The <see cref="ActivityPhase"/> is currently in an unknown state.
+        /// </summary>
         Unknown
     }
 }

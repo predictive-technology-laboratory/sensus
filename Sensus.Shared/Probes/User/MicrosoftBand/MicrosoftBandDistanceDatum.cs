@@ -14,6 +14,8 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
@@ -40,6 +42,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public MotionType MotionType
         {
             get

@@ -244,7 +244,9 @@ namespace Sensus.Probes.User.Scripts
             get
             {
                 if (_response == null)
+                {
                     return "No response.";
+                }
                 else
                 {
                     if (_response is IList)
@@ -253,7 +255,9 @@ namespace Sensus.Probes.User.Scripts
                         return responseList.Count + " response" + (responseList.Count == 1 ? "" : "s") + ".";
                     }
                     else
+                    {
                         return _response.ToString();
+                    }
                 }
             }
         }

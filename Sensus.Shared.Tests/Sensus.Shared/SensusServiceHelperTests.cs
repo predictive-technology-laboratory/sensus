@@ -104,7 +104,6 @@ namespace Sensus.Tests
         public void RunningProtocolIdsTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             Protocol.Create("Test");
@@ -126,7 +125,6 @@ namespace Sensus.Tests
         public void PointsOfInterestTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             service1.PointsOfInterest.Clear();
@@ -146,7 +144,6 @@ namespace Sensus.Tests
         public void FlashNotificationsEnabledTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             service1.FlashNotificationsEnabled = true;
@@ -174,7 +171,6 @@ namespace Sensus.Tests
         public void ScriptsToRunTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             service1.RunningProtocolIds.Clear();

@@ -14,18 +14,41 @@
 
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Movement
 {
+    /// <summary>
+    /// Activity the user is engaged in, as inferred from the phone's sensors.
+    /// </summary>
     public class ActivityDatum : Datum
     {        
+        /// <summary>
+        /// The type of activity (see <see cref="Activities"/>).
+        /// </summary>
+        /// <value>The activity.</value>
+        [JsonConverter(typeof(StringEnumConverter))]
         public Activities Activity { get; set; }
 
+        /// <summary>
+        /// The phase of the <see cref="Activity"/> (see <see cref="ActivityPhase"/>).
+        /// </summary>
+        /// <value>The phase.</value>
+        [JsonConverter(typeof(StringEnumConverter))]
         public ActivityPhase Phase { get; set; }
 
+        /// <summary>
+        /// The state of the <see cref="Phase"/> (see <see cref="ActivityState"/>).
+        /// </summary>
+        /// <value>The state.</value>
+        [JsonConverter(typeof(StringEnumConverter))]
         public ActivityState State { get; set; }
 
+        /// <summary>
+        /// The confidence (0 to 1) of the estimated activity information.
+        /// </summary>
+        /// <value>The confidence.</value>
         public double? Confidence { get; set; }
 
         [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Unknown, Activities.Walking })]

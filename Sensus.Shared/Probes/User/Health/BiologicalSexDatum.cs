@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.User.Health
 {
@@ -20,6 +22,7 @@ namespace Sensus.Probes.User.Health
     {
         private BiologicalSex _sex;
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public BiologicalSex Sex
         {
             get
