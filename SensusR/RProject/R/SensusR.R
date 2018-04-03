@@ -158,6 +158,11 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   
   num.files = length(paths)
   
+  # keep track of the expected data count, both by type and in total.
+  expected.data.cnt.by.type = list()
+  expected.total.cnt = 0
+  
+  # process each path
   data = list()
   file.num = 0
   for(path in paths)
@@ -166,13 +171,14 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     print(paste("Parsing JSON file ", file.num, " of ", num.files, ":  ", path, sep = ""))
 
-    # read and parse JSON
+    # skip zero-length files
     file.size = file.info(path)$size
     if(file.size == 0)
     {
       next
     }
     
+    # read and parse JSON
     file.text = readChar(path, file.size)
     file.json = jsonlite::fromJSON(file.text)
 
@@ -182,8 +188,12 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       next
     }
     
-    # remove list-type columns
+    # file.json is a list with one entry per column (e.g., for the X coordinates of accelerometer readings). sub-list
+    # the file.json list to include only those columns that are not themselves lists.
     file.json = file.json[sapply(file.json, typeof) != "list"]
+    
+    # add to expected total count of data, which is the length of the Id list entry
+    expected.total.cnt = expected.total.cnt + length(file.json$Id)
     
     # set datum type and OS columns
     type.os = lapply(file.json$"$type", function(type)
@@ -199,30 +209,42 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     file.json$Type = type.os[,1]
     file.json$OS = type.os[,2]
+    
+    # remove the original $type column
     file.json$"$type" = NULL
     
-    # parse timestamps
+    # parse timestamps and convert to local time zone if needed
     file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
     if(convert.to.local.timezone)
     {
       file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
     
-    # split by type and remove list entries that are entirely NA (different data types have different columns)
+    # the input files will have JSON objects of different type (e.g., location and acceleration). the resulting file.json variable
+    # will a list element for each column across all data types (e.g., latitude and X columns for location and acceleration types).
+    # since 1 or more columns for each data type will be specific to that type, these specific columns will have NA values for the
+    # other types (e.g., the X column for location data will be all NAs). the first step in cleaning all of this up is to split
+    # the entries in each column list by type. do this now...
     split.file.json = lapply(split(file.json, file.json$Type), function(data.type)
     {
-      # get list elements that have all NAs
+      # the data.type variable is for a specific type (e.g., location data) and it has all columns
+      # from all data types. only those columns for location data will have non-NA values. the other
+      # columns (e.g., X from acceleration) will be entirely NAs and can be removed. identify these
+      # all-NA columns next.
       na.elements = sapply(data.type, function(data.type.column)
       {
         return(sum(is.na(data.type.column)) == length(data.type.column))
       })
       
-      # remove list elements with all NAs
+      # remove list elements for the current data type that have all NAs.
       data.type[na.elements] = NULL
       
       return(data.type)
     })
     
+    # now that we have reorganized all data into a list by type, append the list for each type to our 
+    # collection. later we'll take care of merging together all data of each type into a dataframe, but
+    # we can't do this now because we don't know how large of a dataframe needs to be preallocated.
     for(data.type in names(split.file.json))
     {
       # add to data by type, putting each file in its own list entry (we'll merge files later)
@@ -234,10 +256,21 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       
       data.type.file.num = length(data[[type]]) + 1
       data[[type]][[data.type.file.num]] = split.file.json[[data.type]]
+      
+      # update expected data counts by type (use number of non-null IDs as basis for counting)
+      data.type.curr.cnt = 0
+      if(!is.null(expected.data.cnt.by.type[[data.type]]))
+      {
+        data.type.curr.cnt = expected.data.cnt.by.type[[data.type]]
+      }
+      
+      expected.data.cnt.by.type[[data.type]] = data.type.curr.cnt + sum(!is.na(split.file.json[[data.type]]$Id))
     }
   }
  
   # merge files for each data type
+  final.data.cnt.by.type = list()
+  final.total.cnt = 0
   for(datum.type in names(data))
   { 
     datum.type.data = data[[datum.type]]
@@ -284,8 +317,13 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     print(paste("Creating data frame for ", datum.type, ".", sep = ""))
     
-    # create data frame from pre-allocated vectors 
+    # create data frame for current type from pre-allocated vectors 
     data.type.data.frame = data.frame(datum.type.col.vectors, stringsAsFactors = FALSE)
+    
+    # record final count for the current type. we do this before the deduplication step that comes next
+    # since our expected counts were also calculated without any deduplication.
+    final.data.cnt.by.type[[datum.type]] = nrow(data.type.data.frame)
+    final.total.cnt = final.total.cnt + nrow(data.type.data.frame)
     
     # filter redundant data by datum id and sort by timestamp
     data.type.data.frame = data.type.data.frame[!duplicated(data.type.data.frame$Id), ]
@@ -307,6 +345,31 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     # set class information for plotting
     class(data[[datum.type]]) = c(datum.type, class(data[[datum.type]]))
+  }
+  
+  # make sure expected and final counts match per type
+  for(datum.type in names(data))
+  {
+    expected.cnt = expected.data.cnt.by.type[[datum.type]]
+    final.cnt = final.data.cnt.by.type[[datum.type]]
+    if(expected.cnt == final.cnt)
+    {
+      message(paste(datum.type, ":  Expected and final counts match (", expected.cnt, ").", sep=""))
+    }
+    else
+    {
+      warning(paste(datum.type, ":  Expected ", expected.cnt, " but obtained ", final.cnt, ".", sep = ""))
+    }
+  }
+  
+  # make sure expected and final total counts match overall
+  if(expected.total.cnt == final.total.cnt)
+  {
+    message(paste("Final count is correct (", expected.total.cnt, ").", sep=""))
+  }
+  else
+  {
+    warning(paste("Final count mismatch (expected ", expected.total.cnt, " but got ", final.total.cnt, ").", sep=""))
   }
   
   return(data)
