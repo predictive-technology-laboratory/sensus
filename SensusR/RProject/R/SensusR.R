@@ -58,7 +58,7 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
 #' # sensus.decrypt.bin.files(data.path = data.path, 
 #' #                          rsa.private.key.path = "/path/to/private.pem", 
 #' #                          replace.files = FALSE)
-sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = TRUE, rsa.private.key.path, rsa.private.key.password = askpass, replace.files = TRUE)
+sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = TRUE, rsa.private.key.path, rsa.private.key.password = askpass, replace.files = FALSE)
 {
   bin.paths = c(data.path)
   
@@ -121,18 +121,21 @@ sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = 
 #' Decompresses JSON files downloaded from AWS S3.
 #' 
 #' @param local.path Path to location on local machine.
+#' @param skip If TRUE and the output file already exists, the output file is returned as is.
+#' @param overwrite If TRUE and the output file already exists, the file is silently overwritten; otherwise an exception is thrown (unless skip is TRUE).
+#' @param remove If TRUE, the input file is removed afterward, otherwise not.
 #' @return None
 #' @examples 
 #' # sensus.decompress.gz.files("~/Desktop/data")
-sensus.decompress.gz.files = function(local.path)
+sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE, remove = FALSE)
 {
-  gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz")
+  gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz$")
   
   print(paste("Decompressing", length(gz.paths), "file(s)..."))
   
   for(gz.path in gz.paths)
   {
-    gunzip(gz.path)
+    gunzip(gz.path, skip = skip, overwrite = overwrite, remove = remove)
   }
 }
 
@@ -153,7 +156,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   
   if(is.directory)
   {
-    paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE)
+    paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE, pattern = "*.json$")
   }
   
   num.files = length(paths)
@@ -329,17 +332,6 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     data.type.data.frame = data.type.data.frame[!duplicated(data.type.data.frame$Id), ]
     data.type.data.frame = data.type.data.frame[order(data.type.data.frame$Timestamp), ]
     
-    # add year, month, day, hour, minute, second, day of week, day of month, and day of year
-    data.type.data.frame$Year = lubridate::year(data.type.data.frame$Timestamp)
-    data.type.data.frame$Month = lubridate::month(data.type.data.frame$Timestamp)
-    data.type.data.frame$Day = lubridate::day(data.type.data.frame$Timestamp)
-    data.type.data.frame$Hour = lubridate::hour(data.type.data.frame$Timestamp)
-    data.type.data.frame$Minute = lubridate::minute(data.type.data.frame$Timestamp)
-    data.type.data.frame$Second = lubridate::second(data.type.data.frame$Timestamp)
-    data.type.data.frame$DayOfWeek = lubridate::wday(data.type.data.frame$Timestamp)
-    data.type.data.frame$DayOfMonth = lubridate::mday(data.type.data.frame$Timestamp)
-    data.type.data.frame$DayOfYear = lubridate::yday(data.type.data.frame$Timestamp)
-    
     # set data frame within final list
     data[[datum.type]] = data.type.data.frame
     
@@ -354,7 +346,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     final.cnt = final.data.cnt.by.type[[datum.type]]
     if(expected.cnt == final.cnt)
     {
-      message(paste(datum.type, ":  Expected and final counts match (", expected.cnt, ").", sep=""))
+      print(paste(datum.type, ":  Expected and final counts match (", expected.cnt, ").", sep=""))
     }
     else
     {
@@ -365,7 +357,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   # make sure expected and final total counts match overall
   if(expected.total.cnt == final.total.cnt)
   {
-    message(paste("Final count is correct (", expected.total.cnt, ").", sep=""))
+    print(paste("Final count is correct (", expected.total.cnt, ").", sep=""))
   }
   else
   {
