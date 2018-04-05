@@ -29,17 +29,7 @@ load the package and see the package help for details on available functions and
 ## Obtaining Sensus Data
 The approach to obtaining your Sensus data will depending on how you have configured your <xref:Sensus.Protocol>. In particular, 
 it will depend on your choice of <xref:Sensus.DataStores.Local.LocalDataStore>, <xref:Sensus.DataStores.Remote.RemoteDataStore>, 
-and configuration of each. Below are some common configurations and approaches for downloading the associated Sensus data.
-
-#### File Local Data Store + Amazon S3 Remote Data Store
-To obtain data stored in your Amazon S3 bucket, follow the <xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore>. This is 
-typically the best approach to remote storage.
-
-#### File Local Data Store Only (No Remote Data Store)
-In some situations (e.g., where privacy is a major concern), it might be better to store all Sensus data locally on the 
-participant's device. The tradeoff, of course, is usage of the device's on-board storage, which might be substantial over 
-time. Nonetheless, if remote storage is not possible, then no other alternatives exist. To share the data that have 
-accumulated in the Local Data Store, go [here](xref:Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore).
+and configuration of each. We typically use the <xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore>.
 
 ## Releasing SensusR
 The following steps were adapted from http://www.r-bloggers.com/how-to-check-your-package-with-r-devel.
