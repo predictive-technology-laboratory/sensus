@@ -37,6 +37,18 @@ namespace Sensus.Probes.Device
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the battery level.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _level;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private BatteryDatum() { }

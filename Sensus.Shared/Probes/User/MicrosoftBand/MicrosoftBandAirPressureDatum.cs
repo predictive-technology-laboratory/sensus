@@ -47,6 +47,18 @@ namespace Sensus.Probes.User.MicrosoftBand
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the air pressue.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _airPressure;
+            }
+        }
+
+        /// <summary>
         /// For JSON.net deserialization.
         /// </summary>
         private MicrosoftBandAirPressureDatum()

@@ -43,6 +43,18 @@ namespace Sensus.Probes.User.Health
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is the biological sex.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _sex;
+            }
+        }
+
         public BiologicalSexDatum(DateTimeOffset timestamp, BiologicalSex sex)
             : base(timestamp)
         {

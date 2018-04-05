@@ -50,6 +50,18 @@ namespace Sensus
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is always empty.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "";
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private ParticipationReportDatum()

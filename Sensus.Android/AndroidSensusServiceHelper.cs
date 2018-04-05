@@ -441,9 +441,7 @@ namespace Sensus.Android
                         dialog.ShowEvent += (o, e) =>
                         {
                             dialogShowWait.Set();
-
-                            if (postDisplayCallback != null)
-                                postDisplayCallback();
+                            postDisplayCallback?.Invoke();
                         };
 
                         // dismiss the keyguard when dialog appears
@@ -483,10 +481,12 @@ namespace Sensus.Android
                                 {
                                     IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
                                     if (matches != null && matches.Count > 0)
-                                        mainActivity.RunOnUiThread(() =>
                                     {
-                                        inputEdit.Text = matches[0];
-                                    });
+                                        mainActivity.RunOnUiThread(() =>
+                                        {
+                                            inputEdit.Text = matches[0];
+                                        });
+                                    }
                                 }
                             });
                         });

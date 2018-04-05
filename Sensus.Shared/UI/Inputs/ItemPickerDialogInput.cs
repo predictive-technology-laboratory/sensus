@@ -143,8 +143,8 @@ namespace Sensus.UI.Inputs
             Construct(tipText, items);
         }
 
-        public ItemPickerDialogInput(string name, string labelText, string tipText, List<string> items)
-            : base(name, labelText)
+        public ItemPickerDialogInput(string labelText, string name, string tipText, List<string> items)
+            : base(labelText, name)
         {
             Construct(tipText, items);
         }

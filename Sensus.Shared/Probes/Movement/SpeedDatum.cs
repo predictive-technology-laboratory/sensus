@@ -81,6 +81,18 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the speed (KPH).
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _kph;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private SpeedDatum() { }

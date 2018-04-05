@@ -40,6 +40,18 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is always empty.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "";
+            }
+        }
+
         public ParticipationRewardDatum(DateTimeOffset timestamp, double participation)
             : base(timestamp)
         {

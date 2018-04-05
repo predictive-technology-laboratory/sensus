@@ -62,8 +62,8 @@ namespace Sensus.UI.Inputs
             Construct();
         }
 
-        public ItemPickerInput(string name, string labelText)
-            : base(name, labelText)
+        public ItemPickerInput(string labelText, string name)
+            : base(labelText, name)
         {
             Construct();
         }

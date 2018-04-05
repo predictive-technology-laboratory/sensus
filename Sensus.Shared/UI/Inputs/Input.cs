@@ -18,7 +18,6 @@ using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using Xamarin;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Sensus.Exceptions;
@@ -100,7 +99,11 @@ namespace Sensus.UI.Inputs
         }
 
         /// <summary>
-        /// The text to display next to the input when showing the field to the user for completion.
+        /// The text to display next to the input when showing the field to the user for completion. If you would like to 
+        /// use the value of a survey-triggering <see cref="Script.CurrentDatum"/> within the input's label, you can do so 
+        /// by placing a <c>{0}</c> within <see cref="LabelText"/> as a placeholder. The placeholder will be replaced with
+        /// the value of the triggering <see cref="Datum"/> at runtime. You can read more about the format of the 
+        /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
         /// </summary>
         /// <value>The label text.</value>
         [EntryStringUiProperty("Label Text:", true, 1)]
@@ -404,6 +407,14 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Gets or sets the <see cref="Datum"/> that triggered the deployment of this <see cref="Input"/>. This
+        /// is what will be used when formatting placeholder text in the input <see cref="LabelText"/>.
+        /// </summary>
+        /// <value>The triggering datum.</value>
+        [JsonIgnore]
+        public Datum TriggeringDatum { get; set; }
+
         public Input()
         {
             _name = DefaultName;
@@ -435,7 +446,7 @@ namespace Sensus.UI.Inputs
             _labelFontSize = labelFontSize;
         }
 
-        public Input(string name, string labelText)
+        public Input(string labelText, string name)
             : this(labelText)
         {
             _name = name;
@@ -487,6 +498,14 @@ namespace Sensus.UI.Inputs
                         // replace variable references with its value
                         labelTextStr = labelTextStr.Replace("{" + variable + "}", variableValue);
                     }
+                }
+
+                // if this input is being shown as part of a datum-triggered script, format the label 
+                // text of the input to replace any {0} references with the triggering datum's placeholder
+                // value.
+                if (TriggeringDatum != null)
+                {
+                    labelTextStr = string.Format(labelTextStr, TriggeringDatum.StringPlaceholderValue);
                 }
 
                 return requiredStr + indexStr + labelTextStr;

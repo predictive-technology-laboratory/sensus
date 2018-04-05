@@ -1658,7 +1658,7 @@ namespace Sensus
             consent.Add(collectionDescriptionLabel);
 
             // the name in the following text input is used to grab the UI element when UI testing
-            consent.Add(new SingleLineTextInput("ConsentCode", "To participate in this study as described above, please enter the following code:  " + consentCode, Keyboard.Numeric)
+            consent.Add(new SingleLineTextInput("To participate in this study as described above, please enter the following code:  " + consentCode, "ConsentCode", Keyboard.Numeric)
             {
                 DisplayNumber = false
             });

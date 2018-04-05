@@ -38,6 +38,18 @@ namespace Sensus.Probes.Network
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the cell tower ID.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _cellTower;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private CellTowerDatum() { }

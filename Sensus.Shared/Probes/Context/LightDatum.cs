@@ -37,6 +37,18 @@ namespace Sensus.Probes.Context
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the brightness level.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _brightness;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private LightDatum() { }

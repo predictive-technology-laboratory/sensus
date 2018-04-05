@@ -91,8 +91,8 @@ namespace Sensus.UI.Inputs
         {
         }
 
-        public NumberEntryInput(string name, string labelText)
-            : base(name, labelText)
+        public NumberEntryInput(string labelText, string name)
+            : base(labelText, name)
         {
         }
 

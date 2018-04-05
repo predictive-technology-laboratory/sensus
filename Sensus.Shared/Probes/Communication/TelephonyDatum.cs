@@ -56,6 +56,18 @@ namespace Sensus.Probes.Communication
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the phone number.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _phoneNumber;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private TelephonyDatum()

@@ -43,6 +43,18 @@ namespace Sensus.Probes.User.Health
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is the blood type.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _bloodType;
+            }
+        }
+
         public BloodTypeDatum(DateTimeOffset timestamp, BloodType bloodType)
             : base(timestamp)
         {

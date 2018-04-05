@@ -37,6 +37,18 @@ namespace Sensus.Probes.User.Health
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is the height (inches).
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _heightInches;
+            }
+        }
+
         public override string DisplayDetail
         {
             get

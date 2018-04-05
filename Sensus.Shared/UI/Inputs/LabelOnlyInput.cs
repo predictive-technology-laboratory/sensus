@@ -84,8 +84,8 @@ namespace Sensus.UI.Inputs
             Construct(complete);
         }
 
-        public LabelOnlyInput(string name, string labelText)
-            : base(name, labelText)
+        public LabelOnlyInput(string labelText, string name)
+            : base(labelText, name)
         {
             Construct(true);
         }

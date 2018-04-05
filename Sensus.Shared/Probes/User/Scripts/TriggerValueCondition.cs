@@ -20,6 +20,7 @@ namespace Sensus.Probes.User.Scripts
         LessThanOrEqualTo,
         EqualTo,
         GreaterThanOrEqualTo,
-        GreaterThan
+        GreaterThan,
+        NotEqualTo
     }
 }

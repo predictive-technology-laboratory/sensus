@@ -38,6 +38,18 @@ namespace Sensus.Probes.Location
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the altitude.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _altitude;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private AltitudeDatum() { }

@@ -276,7 +276,6 @@ namespace Sensus.UI.Inputs
             else
             {
                 SensusException.Report("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>.");
-
                 return false;
             }
         }

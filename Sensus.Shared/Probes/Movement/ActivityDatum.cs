@@ -51,6 +51,11 @@ namespace Sensus.Probes.Movement
         /// <value>The confidence.</value>
         public double? Confidence { get; set; }
 
+        /// <summary>
+        /// Gets the activity the user is currently engaged in. If there is an activity, it will be one of <see cref="Activities"/>. If there
+        /// is not a current activity, then the value will be <see cref="Activities.Unknown"/>.
+        /// </summary>
+        /// <value>The current activity.</value>
         [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Unknown, Activities.Walking })]
         [JsonIgnore]
         public Activities CurrentActivity
@@ -66,6 +71,18 @@ namespace Sensus.Probes.Movement
             get
             {
                 return Phase + " " + Activity + " (" + State + (Confidence.HasValue ? " " + Math.Round(Confidence.Value, 2) : "") + ")";
+            }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the current activity (if any).
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return CurrentActivity;
             }
         }
 

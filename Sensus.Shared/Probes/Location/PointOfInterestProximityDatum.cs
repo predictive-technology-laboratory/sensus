@@ -135,6 +135,18 @@ namespace Sensus.Probes.Location
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the POI name.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _poiName;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private PointOfInterestProximityDatum()

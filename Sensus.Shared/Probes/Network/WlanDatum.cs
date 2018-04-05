@@ -37,6 +37,18 @@ namespace Sensus.Probes.Network
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the WLAN BSSID.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _accessPointBSSID;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private WlanDatum() { }

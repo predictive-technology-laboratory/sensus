@@ -151,6 +151,18 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is always blank.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "";
+            }
+        }
+
         public ScriptRunDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string runId, DateTimeOffset? scheduledTimestamp, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp)
             : base(timestamp)
         {

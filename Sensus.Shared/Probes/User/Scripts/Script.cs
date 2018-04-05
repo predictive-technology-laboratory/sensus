@@ -27,18 +27,23 @@ namespace Sensus.Probes.User.Scripts
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _submitting;
+        private Datum _currentDatum;
 
-        public string Id { get; }
-        public ScriptRunner Runner { get; }
-        public ObservableCollection<InputGroup> InputGroups { get; }
-        public DateTimeOffset? ScheduledRunTime { get; set; }
-        public DateTimeOffset? RunTime { get; set; }
-        public Datum PreviousDatum { get; set; }
-        public Datum CurrentDatum { get; set; }
-        public DateTime? ExpirationDate { get; set; }
+        public Datum CurrentDatum
+        {
+            get
+            {
+                return _currentDatum;
+            }
+            set
+            {
+                _currentDatum = value;
+                CaptionChanged();
+            }
+        }
 
         [JsonIgnore]
-        public bool Submitting 
+        public bool Submitting
         {
             get
             {
@@ -50,6 +55,14 @@ namespace Sensus.Probes.User.Scripts
                 CaptionChanged();
             }
         }
+
+        public string Id { get; }
+        public ScriptRunner Runner { get; }
+        public ObservableCollection<InputGroup> InputGroups { get; }
+        public DateTimeOffset? ScheduledRunTime { get; set; }
+        public DateTimeOffset? RunTime { get; set; }
+        public Datum PreviousDatum { get; set; }
+        public DateTime? ExpirationDate { get; set; }
 
         [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
@@ -76,7 +89,8 @@ namespace Sensus.Probes.User.Scripts
         {
             get
             {
-                return Runner.Name + (Submitting ? " (Submitting...)" : "");
+                // format the runner's name to replace any {0} references with the current datum's placeholder value.
+                return string.Format(Runner.Name, CurrentDatum.StringPlaceholderValue) + (Submitting ? " (Submitting...)" : "");
             }
         }
 
@@ -129,6 +143,6 @@ namespace Sensus.Probes.User.Scripts
         private void CaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
-        }        
+        }
     }
 }

@@ -263,6 +263,18 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the user's response.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _response;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private ScriptDatum()

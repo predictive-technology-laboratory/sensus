@@ -34,6 +34,18 @@ namespace Sensus.Probes.Device
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is whether the screen is on/off.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _on;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private ScreenDatum() { }

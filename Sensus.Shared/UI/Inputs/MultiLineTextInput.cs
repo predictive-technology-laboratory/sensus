@@ -87,8 +87,8 @@ namespace Sensus.UI.Inputs
             Construct(keyboard);
         }
 
-        public MultiLineTextInput(string name, string labelText, Keyboard keyboard)
-            : base(name, labelText)
+        public MultiLineTextInput(string labelText, string name, Keyboard keyboard)
+            : base(labelText, name)
         {
             Construct(keyboard);
         }

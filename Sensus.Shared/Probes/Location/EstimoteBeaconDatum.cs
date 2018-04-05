@@ -70,6 +70,18 @@ namespace Sensus.Probes.Location
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the beacon name.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return BeaconName;
+            }
+        }
+
+        /// <summary>
         /// For JSON.NET deserialization.
         /// </summary>
         private EstimoteBeaconDatum()

@@ -72,6 +72,18 @@ namespace Sensus.Probes.Communication
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the SMS message.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _message;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private SmsDatum()

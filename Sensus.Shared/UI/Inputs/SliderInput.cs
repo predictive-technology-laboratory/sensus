@@ -237,8 +237,8 @@ namespace Sensus.UI.Inputs
             Construct(minimum, maximum);
         }
 
-        public SliderInput(string name, string labelText, double minimum, double maximum)
-            : base(name, labelText)
+        public SliderInput(string labelText, string name, double minimum, double maximum)
+            : base(labelText, name)
         {
             Construct(minimum, maximum);
         }

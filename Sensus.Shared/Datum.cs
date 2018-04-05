@@ -152,6 +152,14 @@ namespace Sensus
         public abstract string DisplayDetail { get; }
 
         /// <summary>
+        /// Gets the string placeholder value, which is used as a formatting replacement in strings 
+        /// such as <see cref="Probes.User.Scripts.Script.Caption"/> and <see cref="UI.Inputs.Input.LabelText"/>.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        [JsonIgnore]
+        public abstract object StringPlaceholderValue { get; }
+
+        /// <summary>
         /// Parameterless constructor For JSON.NET deserialization.
         /// </summary>
         protected Datum()

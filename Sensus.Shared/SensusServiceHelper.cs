@@ -957,11 +957,7 @@ namespace Sensus
                                 }
                                 catch (Exception ex)
                                 {
-                                    try
-                                    {
-                                        SensusException.Report("Voice input failed to run.", ex);
-                                    }
-                                    catch { }
+                                    SensusException.Report("Voice input failed to run.", ex);
                                 }
                             }
 

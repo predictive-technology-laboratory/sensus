@@ -46,6 +46,18 @@ namespace Sensus.Probes.Context
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the temperature (C).
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _degreesCelsius;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private AmbientTemperatureDatum() 

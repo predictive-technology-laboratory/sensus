@@ -170,6 +170,7 @@ namespace Sensus.Probes.User.Scripts
                     if (Condition == TriggerValueCondition.GreaterThanOrEqualTo) return compareTo >= 0;
                     if (Condition == TriggerValueCondition.LessThan) return compareTo < 0;
                     if (Condition == TriggerValueCondition.LessThanOrEqualTo) return compareTo <= 0;
+                    if (Condition == TriggerValueCondition.NotEqualTo) return compareTo != 0;
 
                     throw new Exception($"Trigger failed recognize Condition:  {Condition}");
                 }

@@ -104,8 +104,8 @@ namespace Sensus.UI.Inputs
             _masked = masked;
         }
 
-        public SingleLineTextInput(string name, string labelText, Keyboard keyboard, bool masked = false)
-            : base(name, labelText)
+        public SingleLineTextInput(string labelText, string name, Keyboard keyboard, bool masked = false)
+            : base(labelText, name)
         {
             _keyboard = keyboard;
             _masked = masked;

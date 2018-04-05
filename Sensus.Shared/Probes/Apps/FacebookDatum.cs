@@ -32,7 +32,9 @@ namespace Sensus.Probes.Apps
             {
                 FacebookPermission permission = property.GetCustomAttribute<FacebookPermission>();
                 if (permission != null)
+                {
                     JSON_FIELD_DATUM_PROPERTY.Add(permission.Edge ?? permission.Field, property);
+                }
             }
         }
 
@@ -207,6 +209,18 @@ namespace Sensus.Probes.Apps
         [Anonymizable("Titles of Posted Videos:", typeof(StringHashAnonymizer), false)]
         [FacebookPermission("user_videos", "videos", "id")]
         public List<string> VideoTitles { get; set; }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is always empty.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "";
+            }
+        }
 
         public override string DisplayDetail
         {

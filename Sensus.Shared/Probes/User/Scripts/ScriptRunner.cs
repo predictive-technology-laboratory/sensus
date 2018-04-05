@@ -55,7 +55,11 @@ namespace Sensus.Probes.User.Scripts
         public Script Script { get; set; }
 
         /// <summary>
-        /// Name of the survey.
+        /// Name of the survey. If you would like to use the value of a 
+        /// survey-triggering <see cref="Script.CurrentDatum"/> within the survey's name, you can do so 
+        /// by placing a <c>{0}</c> within <see cref="Name"/> as a placeholder. The placeholder will be replaced with
+        /// the value of the triggering <see cref="Datum"/> at runtime. You can read more about the format of the 
+        /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
         /// </summary>
         /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 1)]
@@ -668,7 +672,7 @@ namespace Sensus.Probes.User.Scripts
             });
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
-            // can also be called without previous / current datum values (e.g., when triggering randomly). if
+            // can also be called without previous / current datum values (e.g., when triggering on a schedule). if
             // we have such values, set them on the script.
 
             script.PreviousDatum = previousDatum ?? script.PreviousDatum;

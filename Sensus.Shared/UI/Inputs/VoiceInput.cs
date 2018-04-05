@@ -24,7 +24,6 @@ namespace Sensus.UI.Inputs
     public class VoiceInput : Input, IVariableDefiningInput
     {
         private string _outputMessage;
-        private string _outputMessageRerun;
         private string _response;
         private bool _enabled;
         private string _definedVariable;
@@ -38,17 +37,6 @@ namespace Sensus.UI.Inputs
         {
             get { return _outputMessage; }
             set { _outputMessage = value; }
-        }
-
-        /// <summary>
-        /// Message to generate speech for when displaying this input for a second time.
-        /// </summary>
-        /// <value>The output message.</value>
-        [EntryStringUiProperty("Output Message Rerun:", true, 12)]
-        public string OutputMessageRerun
-        {
-            get { return _outputMessageRerun; }
-            set { _outputMessageRerun = value; }
         }
 
         /// <summary>
@@ -102,26 +90,25 @@ namespace Sensus.UI.Inputs
 
         public VoiceInput()
         {
-            Construct("", "");
+            Construct("");
         }
 
-        public VoiceInput(string outputMessage, string outputMessageRerun)
+        public VoiceInput(string outputMessage)
             : base()
         {
-            Construct(outputMessage, outputMessageRerun);
+            Construct(outputMessage);
         }
 
-        public VoiceInput(string name, string outputMessage, string outputMessageRerun)
-            : base(name, null)
+        public VoiceInput(string name, string outputMessage)
+            : base(null, name)
         {
-            Construct(outputMessage, outputMessageRerun);
+            Construct(outputMessage);
         }
 
-        private void Construct(string outputMessage, string outputMessageRerun)
+        private void Construct(string outputMessage)
         {
             _enabled = true;
             _outputMessage = outputMessage;
-            _outputMessageRerun = outputMessageRerun;
         }
 
         public override View GetView(int index)
@@ -138,35 +125,9 @@ namespace Sensus.UI.Inputs
         {
             return Task.Run(async () =>
             {
-                string outputMessage = _outputMessage;
+                await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
 
-                #region temporal analysis
-                if (firstRunTimestamp.HasValue && !string.IsNullOrWhiteSpace(_outputMessageRerun))
-                {
-                    TimeSpan promptAge = DateTimeOffset.UtcNow - firstRunTimestamp.Value;
-
-                    int daysAgo = (int)promptAge.TotalDays;
-                    string daysAgoStr;
-                    if (daysAgo == 0)
-                    {
-                        daysAgoStr = "today";
-                    }
-                    else if (daysAgo == 1)
-                    {
-                        daysAgoStr = "yesterday";
-                    }
-                    else
-                    {
-                        daysAgoStr = promptAge.TotalDays + " days ago";
-                    }
-
-                    outputMessage = string.Format(_outputMessageRerun, daysAgoStr + " at " + firstRunTimestamp.Value.LocalDateTime.ToString("h:mm tt"));
-                }
-                #endregion
-
-                await SensusServiceHelper.Get().TextToSpeechAsync(outputMessage);
-
-                _response = await SensusServiceHelper.Get().RunVoicePromptAsync(outputMessage, postDisplayCallback);
+                _response = await SensusServiceHelper.Get().RunVoicePromptAsync(_outputMessage, postDisplayCallback);
 
                 Viewed = true;
 
