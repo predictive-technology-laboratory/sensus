@@ -218,13 +218,13 @@
   
   
   <a id="Sensus_Android_Callbacks_AndroidNotifier_IssueNotificationAsync_" data-uid="Sensus.Android.Callbacks.AndroidNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_Android_Callbacks_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_String_System_Boolean_Sensus_Callbacks_DisplayPage_" data-uid="Sensus.Android.Callbacks.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.String,System.Boolean,Sensus.Callbacks.DisplayPage)">IssueNotificationAsync(String, String, String, String, Boolean, DisplayPage)</h4>
+  <h4 id="Sensus_Android_Callbacks_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Callbacks_DisplayPage_" data-uid="Sensus.Android.Callbacks.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Callbacks.DisplayPage)">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</h4>
   <div class="markdown level1 summary"><p>Issues the notification.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -255,9 +255,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
-        <td><p>Protocol identifier to check for alert exclusion time windows.</p>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td><p>Protocol to check for alert exclusion time windows.</p>
 </td>
       </tr>
       <tr>
@@ -275,7 +275,7 @@
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Callbacks.Notifier.html#Sensus_Callbacks_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_String_System_Boolean_Sensus_Callbacks_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, String, Boolean, DisplayPage)</a></div>
+  <div><a class="xref" href="Sensus.Callbacks.Notifier.html#Sensus_Callbacks_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Callbacks_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Sensus.Callbacks.INotifier.html">INotifier</a>

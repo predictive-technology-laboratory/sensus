@@ -92,20 +92,13 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="Sensus.iOS.Callbacks.UILocalNotifications.IUILocalNotificationNotifier.html">IUILocalNotificationNotifier</a></div>
-    <div><a class="xref" href="Sensus.iOS.Callbacks.IiOSNotifier.html">IiOSNotifier</a></div>
     <div><a class="xref" href="Sensus.Callbacks.INotifier.html">INotifier</a></div>
+    <div><a class="xref" href="Sensus.iOS.Callbacks.UILocalNotifications.IUILocalNotificationNotifier.html">IUILocalNotificationNotifier</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
       <a class="xref" href="Sensus.iOS.Callbacks.iOSNotifier.html#Sensus_iOS_Callbacks_iOSNotifier_NOTIFICATION_ID_KEY">iOSNotifier.NOTIFICATION_ID_KEY</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.iOS.Callbacks.iOSNotifier.html#Sensus_iOS_Callbacks_iOSNotifier_SILENT_NOTIFICATION_KEY">iOSNotifier.SILENT_NOTIFICATION_KEY</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.iOS.Callbacks.iOSNotifier.html#Sensus_iOS_Callbacks_iOSNotifier_IsSilent_Foundation_NSDictionary_">iOSNotifier.IsSilent(NSDictionary)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Callbacks.Notifier.html#Sensus_Callbacks_Notifier_DISPLAY_PAGE_KEY">Notifier.DISPLAY_PAGE_KEY</a>
@@ -118,7 +111,7 @@
   <h6><strong>Assembly</strong>: SensusiOS.dll</h6>
   <h5 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class UILocalNotificationNotifier : iOSNotifier, IUILocalNotificationNotifier, IiOSNotifier, INotifier</code></pre>
+    <pre><code class="lang-csharp hljs">public class UILocalNotificationNotifier : iOSNotifier, INotifier, IUILocalNotificationNotifier</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -192,25 +185,13 @@
   </table>
   
   
-  <a id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_CancelSilentNotifications_" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.CancelSilentNotifications*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_CancelSilentNotifications" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.CancelSilentNotifications">CancelSilentNotifications()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void CancelSilentNotifications()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.iOS.Callbacks.iOSNotifier.html#Sensus_iOS_Callbacks_iOSNotifier_CancelSilentNotifications">iOSNotifier.CancelSilentNotifications()</a></div>
-  
-  
   <a id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_String_System_Boolean_Sensus_Callbacks_DisplayPage_" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.String,System.Boolean,Sensus.Callbacks.DisplayPage)">IssueNotificationAsync(String, String, String, String, Boolean, DisplayPage)</h4>
+  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Callbacks_DisplayPage_" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Callbacks.DisplayPage)">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -238,8 +219,8 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
         <td></td>
       </tr>
       <tr>
@@ -255,16 +236,16 @@
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Callbacks.Notifier.html#Sensus_Callbacks_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_String_System_Boolean_Sensus_Callbacks_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, String, Boolean, DisplayPage)</a></div>
+  <div><a class="xref" href="Sensus.Callbacks.Notifier.html#Sensus_Callbacks_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Callbacks_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</a></div>
   
   
   <a id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_String_System_Boolean_Sensus_Callbacks_DisplayPage_System_TimeSpan_Foundation_NSMutableDictionary_System_Action_UIKit_UILocalNotification__" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.String,System.Boolean,Sensus.Callbacks.DisplayPage,System.TimeSpan,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})">IssueNotificationAsync(String, String, String, String, Boolean, DisplayPage, TimeSpan, NSMutableDictionary, Action&lt;UILocalNotification&gt;)</h4>
+  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Callbacks_DisplayPage_System_DateTime_Foundation_NSMutableDictionary_System_Action_UIKit_UILocalNotification__" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Callbacks.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action&lt;UILocalNotification&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary notificationInfo, Action&lt;UILocalNotification&gt; notificationCreated = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action&lt;UILocalNotification&gt; notificationCreated = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -292,8 +273,8 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
         <td></td>
       </tr>
       <tr>
@@ -307,8 +288,8 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.TimeSpan</span></td>
-        <td><span class="parametername">delay</span></td>
+        <td><span class="xref">System.DateTime</span></td>
+        <td><span class="parametername">fireDateTime</span></td>
         <td></td>
       </tr>
       <tr>
@@ -353,12 +334,12 @@
   
   
   <a id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueSilentNotificationAsync_" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueSilentNotificationAsync_System_String_System_TimeSpan_Foundation_NSMutableDictionary_System_Action_UIKit_UILocalNotification__" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotificationAsync(System.String,System.TimeSpan,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})">IssueSilentNotificationAsync(String, TimeSpan, NSMutableDictionary, Action&lt;UILocalNotification&gt;)</h4>
+  <h4 id="Sensus_iOS_Callbacks_UILocalNotifications_UILocalNotificationNotifier_IssueSilentNotificationAsync_System_String_System_DateTime_Foundation_NSMutableDictionary_System_Action_UIKit_UILocalNotification__" data-uid="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotificationAsync(System.String,System.DateTime,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})">IssueSilentNotificationAsync(String, DateTime, NSMutableDictionary, Action&lt;UILocalNotification&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary notificationInfo, Action&lt;UILocalNotification&gt; notificationCreated = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public void IssueSilentNotificationAsync(string id, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action&lt;UILocalNotification&gt; notificationCreated = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -376,8 +357,8 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.TimeSpan</span></td>
-        <td><span class="parametername">delay</span></td>
+        <td><span class="xref">System.DateTime</span></td>
+        <td><span class="parametername">fireDateTime</span></td>
         <td></td>
       </tr>
       <tr>
@@ -394,13 +375,10 @@
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="Sensus.iOS.Callbacks.UILocalNotifications.IUILocalNotificationNotifier.html">IUILocalNotificationNotifier</a>
-  </div>
-  <div>
-      <a class="xref" href="Sensus.iOS.Callbacks.IiOSNotifier.html">IiOSNotifier</a>
-  </div>
-  <div>
       <a class="xref" href="Sensus.Callbacks.INotifier.html">INotifier</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.iOS.Callbacks.UILocalNotifications.IUILocalNotificationNotifier.html">IUILocalNotificationNotifier</a>
   </div>
 </article>
           </div>

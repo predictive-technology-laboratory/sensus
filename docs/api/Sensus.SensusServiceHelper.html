@@ -1464,13 +1464,13 @@ decide which probes to enable when enabling all probes.</p>
   
   
   <a id="Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_" data-uid="Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_System_String_System_Boolean_" data-uid="Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(System.String,System.Boolean)">IssuePendingSurveysNotificationAsync(String, Boolean)</h4>
+  <h4 id="Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Protocol_System_Boolean_" data-uid="Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Protocol,System.Boolean)">IssuePendingSurveysNotificationAsync(Protocol, Boolean)</h4>
   <div class="markdown level1 summary"><p>Issues the pending surveys notification.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssuePendingSurveysNotificationAsync(string protocolId, bool alertUser)</code></pre>
+    <pre><code class="lang-csharp hljs">public void IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1483,9 +1483,9 @@ decide which probes to enable when enabling all probes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
-        <td><p>Protocol identifier used to check for alert exclusion time windows. </p>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td><p>Protocol used to check for alert exclusion time windows. </p>
 </td>
       </tr>
       <tr>

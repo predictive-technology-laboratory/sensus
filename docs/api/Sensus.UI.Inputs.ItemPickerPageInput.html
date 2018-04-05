@@ -90,6 +90,10 @@
     <div class="level2"><a class="xref" href="Sensus.UI.Inputs.ItemPickerInput.html">ItemPickerInput</a></div>
     <div class="level3"><span class="xref">ItemPickerPageInput</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -188,12 +192,21 @@
     <div>
       <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_SubmissionTimestamp">Input.SubmissionTimestamp</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Caption">Input.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_TriggeringDatum">Input.TriggeringDatum</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_PropertyChanged">Input.PropertyChanged</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.Inputs.html">Sensus.UI.Inputs</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_UI_Inputs_ItemPickerPageInput_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ItemPickerPageInput : ItemPickerInput</code></pre>
+    <pre><code class="lang-csharp hljs">public class ItemPickerPageInput : ItemPickerInput, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -504,8 +517,6 @@ public List&lt;string&gt; StringItems { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ToString">Input.ToString()</a></div>
   
   
   <a id="Sensus_UI_Inputs_ItemPickerPageInput_ValueMatches_" data-uid="Sensus.UI.Inputs.ItemPickerPageInput.ValueMatches*"></a>
@@ -555,6 +566,10 @@ public List&lt;string&gt; StringItems { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ValueMatches_System_Object_System_Boolean_">Input.ValueMatches(Object, Boolean)</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

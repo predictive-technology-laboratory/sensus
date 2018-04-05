@@ -91,6 +91,10 @@
     <div class="level3"><a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a></div>
     <div class="level4"><span class="xref">AndroidBluetoothDeviceProximityProbe</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -202,14 +206,23 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Caption">Probe.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SubCaption">Probe.SubCaption</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_PropertyChanged">Probe.PropertyChanged</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Android.Probes.Context.html">Sensus.Android.Probes.Context</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe</code></pre>
+    <pre><code class="lang-csharp hljs">public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -367,13 +380,30 @@
   
   
   <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth">TestHealth()</h4>
+  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool TestHealth()</code></pre>
+    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -390,7 +420,11 @@
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth">PollingProbe.TestHealth()</a></div>
+  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">PollingProbe.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

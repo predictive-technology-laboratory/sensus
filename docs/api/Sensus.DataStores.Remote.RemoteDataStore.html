@@ -249,6 +249,36 @@ public bool RequireWiFi { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_UserNotificationMessage_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.UserNotificationMessage*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_UserNotificationMessage" data-uid="Sensus.DataStores.Remote.RemoteDataStore.UserNotificationMessage">UserNotificationMessage</h4>
+  <div class="markdown level1 summary"><p>The message displayed to iOS users when Sensus is in the background and data are scheduled to be transferred
+to the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>. This message is delivered via a notification in the hope that the user
+will open Sensus to transmit the data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;User Notification Message:&quot;, true, 2147483647)]
+public string UserNotificationMessage { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The user notification message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS*"></a>
   <h4 id="Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS" data-uid="Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS">WriteDelayMS</h4>
   <div class="markdown level1 summary"><p>How many milliseconds to pause between each writing data.</p>
@@ -456,13 +486,30 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   
   
   <a id="Sensus_DataStores_Remote_RemoteDataStore_TestHealth_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealth*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_TestHealth" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealth">TestHealth()</h4>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool TestHealth()</code></pre>
+    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -479,7 +526,7 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth">DataStore.TestHealth()</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">DataStore.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_RemoteDataStore_WriteDataStreamAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync*"></a>

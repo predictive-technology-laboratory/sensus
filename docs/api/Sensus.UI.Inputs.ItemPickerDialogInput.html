@@ -92,6 +92,7 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
     <div><a class="xref" href="Sensus.UI.Inputs.IVariableDefiningInput.html">IVariableDefiningInput</a></div>
   </div>
   <div class="inheritedMembers">
@@ -195,12 +196,21 @@
     <div>
       <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_SubmissionTimestamp">Input.SubmissionTimestamp</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Caption">Input.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_TriggeringDatum">Input.TriggeringDatum</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_PropertyChanged">Input.PropertyChanged</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.Inputs.html">Sensus.UI.Inputs</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_UI_Inputs_ItemPickerDialogInput_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ItemPickerDialogInput : ItemPickerInput, IVariableDefiningInput</code></pre>
+    <pre><code class="lang-csharp hljs">public class ItemPickerDialogInput : ItemPickerInput, INotifyPropertyChanged, IVariableDefiningInput</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -259,7 +269,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ItemPickerDialogInput(string name, string labelText, string tipText, List&lt;string&gt; items)</code></pre>
+    <pre><code class="lang-csharp hljs">public ItemPickerDialogInput(string labelText, string name, string tipText, List&lt;string&gt; items)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -273,12 +283,12 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">name</span></td>
+        <td><span class="parametername">labelText</span></td>
         <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">labelText</span></td>
+        <td><span class="parametername">name</span></td>
         <td></td>
       </tr>
       <tr>
@@ -562,9 +572,10 @@ public string TipText { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ToString">Input.ToString()</a></div>
   <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
   <div>
       <a class="xref" href="Sensus.UI.Inputs.IVariableDefiningInput.html">IVariableDefiningInput</a>
   </div>

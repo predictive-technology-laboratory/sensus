@@ -91,11 +91,15 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">Protocol</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Protocol_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Protocol : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -204,31 +208,6 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
-  <a id="Sensus_Protocol_AlertExclusionWindows_" data-uid="Sensus.Protocol.AlertExclusionWindows*"></a>
-  <h4 id="Sensus_Protocol_AlertExclusionWindows" data-uid="Sensus.Protocol.AlertExclusionWindows">AlertExclusionWindows</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;Window&gt; AlertExclusionWindows { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Window.html">Window</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   
   
   <a id="Sensus_Protocol_AlertExclusionWindowString_" data-uid="Sensus.Protocol.AlertExclusionWindowString*"></a>
@@ -342,6 +321,31 @@ public string AsymmetricEncryptionPublicKey { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_Caption_" data-uid="Sensus.Protocol.Caption*"></a>
+  <h4 id="Sensus_Protocol_Caption" data-uid="Sensus.Protocol.Caption">Caption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Caption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_ContactEmail_" data-uid="Sensus.Protocol.ContactEmail*"></a>
   <h4 id="Sensus_Protocol_ContactEmail" data-uid="Sensus.Protocol.ContactEmail">ContactEmail</h4>
   <div class="markdown level1 summary"><p>An email address for the individual who is responsible for handling questions
@@ -406,7 +410,7 @@ public bool ContinueIndefinitely { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EditorUiProperty(&quot;Description:&quot;, true, 15)]
+    <pre><code class="lang-csharp hljs">[EditorUiProperty(null, true, 15)]
 public string Description { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -837,7 +841,7 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;PointOfInterest&gt; PointsOfInterest { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ConcurrentObservableCollection&lt;PointOfInterest&gt; PointsOfInterest { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -849,7 +853,7 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Location.PointOfInterest.html">PointOfInterest</a>&gt;</td>
+        <td><a class="xref" href="Sensus.Concurrent.ConcurrentObservableCollection-1.html">ConcurrentObservableCollection</a>&lt;<a class="xref" href="Sensus.Probes.Location.PointOfInterest.html">PointOfInterest</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1114,6 +1118,31 @@ public bool StartImmediately { get; set; }</code></pre>
         <td><span class="xref">System.Boolean</span></td>
         <td><p><code>true</code> to start immediately; otherwise, <code>false</code>.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StartIsScheduled_" data-uid="Sensus.Protocol.StartIsScheduled*"></a>
+  <h4 id="Sensus_Protocol_StartIsScheduled" data-uid="Sensus.Protocol.StartIsScheduled">StartIsScheduled</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartIsScheduled { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -1726,7 +1755,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt;&gt; TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1760,7 +1789,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1768,12 +1797,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_TimeIsWithinAlertExclusionWindow_" data-uid="Sensus.Protocol.TimeIsWithinAlertExclusionWindow*"></a>
-  <h4 id="Sensus_Protocol_TimeIsWithinAlertExclusionWindow_System_String_System_TimeSpan_" data-uid="Sensus.Protocol.TimeIsWithinAlertExclusionWindow(System.String,System.TimeSpan)">TimeIsWithinAlertExclusionWindow(String, TimeSpan)</h4>
+  <h4 id="Sensus_Protocol_TimeIsWithinAlertExclusionWindow_System_TimeSpan_" data-uid="Sensus.Protocol.TimeIsWithinAlertExclusionWindow(System.TimeSpan)">TimeIsWithinAlertExclusionWindow(TimeSpan)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool TimeIsWithinAlertExclusionWindow(string protocolId, TimeSpan time)</code></pre>
+    <pre><code class="lang-csharp hljs">public bool TimeIsWithinAlertExclusionWindow(TimeSpan time)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1785,11 +1814,6 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
-        <td></td>
-      </tr>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">time</span></td>
@@ -1841,6 +1865,30 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </h3>
   
   
+  <h4 id="Sensus_Protocol_PropertyChanged" data-uid="Sensus.Protocol.PropertyChanged">PropertyChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event PropertyChangedEventHandler PropertyChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.ComponentModel.PropertyChangedEventHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <h4 id="Sensus_Protocol_ProtocolRunningChanged" data-uid="Sensus.Protocol.ProtocolRunningChanged">ProtocolRunningChanged</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -1863,6 +1911,10 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

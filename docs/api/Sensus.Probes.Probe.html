@@ -95,11 +95,15 @@ etc.). Availability and reliability of Probes will depend on the device being us
       <div class="level2"><a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.html">Sensus.Probes</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Probe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class Probe : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class Probe : Object, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -115,6 +119,31 @@ etc.). Availability and reliability of Probes will depend on the device being us
   </div>
   <h3 id="properties">Properties
   </h3>
+  
+  
+  <a id="Sensus_Probes_Probe_Caption_" data-uid="Sensus.Probes.Probe.Caption*"></a>
+  <h4 id="Sensus_Probes_Probe_Caption" data-uid="Sensus.Probes.Probe.Caption">Caption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Caption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_Probe_CollectionDescription_" data-uid="Sensus.Probes.Probe.CollectionDescription*"></a>
@@ -458,6 +487,31 @@ public bool StoreData { get; set; }</code></pre>
         <td><span class="xref">System.Boolean</span></td>
         <td><p><code>true</code> if store data; otherwise, <code>false</code>.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_SubCaption_" data-uid="Sensus.Probes.Probe.SubCaption*"></a>
+  <h4 id="Sensus_Probes_Probe_SubCaption" data-uid="Sensus.Probes.Probe.SubCaption">SubCaption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string SubCaption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -834,13 +888,30 @@ information will have already been logged and displayed. Thus, the caller doesn&
   
   
   <a id="Sensus_Probes_Probe_TestHealth_" data-uid="Sensus.Probes.Probe.TestHealth*"></a>
-  <h4 id="Sensus_Probes_Probe_TestHealth" data-uid="Sensus.Probes.Probe.TestHealth">TestHealth()</h4>
+  <h4 id="Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Probes.Probe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool TestHealth()</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -883,6 +954,34 @@ information will have already been logged and displayed. Thus, the caller doesn&
       </tr>
     </tbody>
   </table>
+  
+  
+  <h4 id="Sensus_Probes_Probe_PropertyChanged" data-uid="Sensus.Probes.Probe.PropertyChanged">PropertyChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event PropertyChangedEventHandler PropertyChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.ComponentModel.PropertyChangedEventHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

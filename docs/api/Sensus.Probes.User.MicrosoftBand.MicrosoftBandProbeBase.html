@@ -91,6 +91,10 @@
     <div class="level3"><span class="xref">MicrosoftBandProbeBase</span></div>
       <div class="level4"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbe-2.html">MicrosoftBandProbe&lt;SensorType, ReadingType&gt;</a></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -139,7 +143,7 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth">Probe.TestHealth()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -190,14 +194,23 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Caption">Probe.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SubCaption">Probe.SubCaption</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_PropertyChanged">Probe.PropertyChanged</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.MicrosoftBand.html">Sensus.Probes.User.MicrosoftBand</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbeBase_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class MicrosoftBandProbeBase : ListeningProbe</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class MicrosoftBandProbeBase : ListeningProbe, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -542,6 +555,10 @@ public bool StopWhenNotWorn { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

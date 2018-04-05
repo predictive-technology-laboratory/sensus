@@ -92,6 +92,10 @@
     <div class="level3"><span class="xref">PollingWlanProbe</span></div>
       <div class="level4"><a class="xref" href="Sensus.iOS.Network.Probes.iOSPollingWlanProbe.html">iOSPollingWlanProbe</a></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -104,7 +108,7 @@
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_Stop">PollingProbe.Stop()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth">PollingProbe.TestHealth()</a>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">PollingProbe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_Reset">PollingProbe.Reset()</a>
@@ -182,14 +186,23 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Caption">Probe.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SubCaption">Probe.SubCaption</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_PropertyChanged">Probe.PropertyChanged</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Network.html">Sensus.Probes.Network</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Network_PollingWlanProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class PollingWlanProbe : PollingProbe</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class PollingWlanProbe : PollingProbe, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -413,6 +426,10 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSeries">Probe.GetChartSeries()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

@@ -89,6 +89,10 @@
     <div class="level1"><a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a></div>
     <div class="level2"><span class="xref">MultiLineTextInput</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -108,9 +112,6 @@
     </div>
     <div>
       <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ValueMatches_System_Object_System_Boolean_">Input.ValueMatches(Object, Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ToString">Input.ToString()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Copy_System_Boolean_">Input.Copy(Boolean)</a>
@@ -184,12 +185,21 @@
     <div>
       <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_SubmissionTimestamp">Input.SubmissionTimestamp</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Caption">Input.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_TriggeringDatum">Input.TriggeringDatum</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_PropertyChanged">Input.PropertyChanged</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.Inputs.html">Sensus.UI.Inputs</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_UI_Inputs_MultiLineTextInput_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class MultiLineTextInput : Input</code></pre>
+    <pre><code class="lang-csharp hljs">public class MultiLineTextInput : Input, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -211,7 +221,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MultiLineTextInput(string name, string labelText, Keyboard keyboard)</code></pre>
+    <pre><code class="lang-csharp hljs">public MultiLineTextInput(string labelText, string name, Keyboard keyboard)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -225,12 +235,12 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">name</span></td>
+        <td><span class="parametername">labelText</span></td>
         <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">labelText</span></td>
+        <td><span class="parametername">name</span></td>
         <td></td>
       </tr>
       <tr>
@@ -429,6 +439,10 @@ public int Height { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_GetView_System_Int32_">Input.GetView(Int32)</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

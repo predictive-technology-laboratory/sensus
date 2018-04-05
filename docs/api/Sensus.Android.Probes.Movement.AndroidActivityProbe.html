@@ -81,7 +81,8 @@
   
   <h1 id="Sensus_Android_Probes_Movement_AndroidActivityProbe" data-uid="Sensus.Android.Probes.Movement.AndroidActivityProbe" class="text-break">Class AndroidActivityProbe
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Provides inferred activity information via the Google Awareness API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -89,6 +90,10 @@
     <div class="level1"><a class="xref" href="Sensus.Probes.Probe.html">Probe</a></div>
     <div class="level2"><a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a></div>
     <div class="level3"><span class="xref">AndroidActivityProbe</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -138,7 +143,7 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth">Probe.TestHealth()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -174,14 +179,23 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Caption">Probe.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SubCaption">Probe.SubCaption</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_PropertyChanged">Probe.PropertyChanged</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Android.Probes.Movement.html">Sensus.Android.Probes.Movement</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Android_Probes_Movement_AndroidActivityProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AndroidActivityProbe : ListeningProbe</code></pre>
+    <pre><code class="lang-csharp hljs">public class AndroidActivityProbe : ListeningProbe, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -573,6 +587,10 @@ public int LocationChangeRadiusMeters { get; set; }</code></pre>
   </div>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopListening">ListeningProbe.StopListening()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

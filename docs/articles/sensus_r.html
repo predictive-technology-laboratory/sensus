@@ -97,15 +97,7 @@ load the package and see the package help for details on available functions and
 <h2 id="obtaining-sensus-data">Obtaining Sensus Data</h2>
 <p>The approach to obtaining your Sensus data will depending on how you have configured your <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>. In particular, 
 it will depend on your choice of <a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a>, <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>, 
-and configuration of each. Below are some common configurations and approaches for downloading the associated Sensus data.</p>
-<h4 id="file-local-data-store--amazon-s3-remote-data-store">File Local Data Store + Amazon S3 Remote Data Store</h4>
-<p>To obtain data stored in your Amazon S3 bucket, follow the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>. This is 
-typically the best approach to remote storage.</p>
-<h4 id="file-local-data-store-only-no-remote-data-store">File Local Data Store Only (No Remote Data Store)</h4>
-<p>In some situations (e.g., where privacy is a major concern), it might be better to store all Sensus data locally on the 
-participant&#39;s device. The tradeoff, of course, is usage of the device&#39;s on-board storage, which might be substantial over 
-time. Nonetheless, if remote storage is not possible, then no other alternatives exist. To share the data that have 
-accumulated in the Local Data Store, go <a href="xref:Sensus.DataStores.Local.LocalDataStore.UploadToRemoteDataStore">here</a>.</p>
+and configuration of each. We typically use the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>.</p>
 <h2 id="releasing-sensusr">Releasing SensusR</h2>
 <p>The following steps were adapted from <a href="http://www.r-bloggers.com/how-to-check-your-package-with-r-devel">http://www.r-bloggers.com/how-to-check-your-package-with-r-devel</a>.</p>
 <ol>

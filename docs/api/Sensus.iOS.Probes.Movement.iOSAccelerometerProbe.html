@@ -91,6 +91,10 @@
     <div class="level3"><a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a></div>
     <div class="level4"><span class="xref">iOSAccelerometerProbe</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -169,7 +173,7 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth">Probe.TestHealth()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -205,14 +209,23 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxChartDataCount">Probe.MaxChartDataCount</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Caption">Probe.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_SubCaption">Probe.SubCaption</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">Probe.MostRecentDatumChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_PropertyChanged">Probe.PropertyChanged</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.iOS.Probes.Movement.html">Sensus.iOS.Probes.Movement</a></h6>
   <h6><strong>Assembly</strong>: SensusiOS.dll</h6>
   <h5 id="Sensus_iOS_Probes_Movement_iOSAccelerometerProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class iOSAccelerometerProbe : AccelerometerProbe</code></pre>
+    <pre><code class="lang-csharp hljs">public class iOSAccelerometerProbe : AccelerometerProbe, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -264,6 +277,10 @@
   </div>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopListening">ListeningProbe.StopListening()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
 </article>
           </div>
           

@@ -113,7 +113,8 @@
     <pre><code class="lang-csharp hljs">public class MainConcurrent : Disposable, IConcurrent, IDisposable</code></pre>
   </div>
   <h5 id="Sensus_Android_Concurrent_MainConcurrent_remarks"><strong>Remarks</strong></h5>
-  <div class="markdown level0 remarks"><p>Device.BeginInvokeOnMainThread invokes off the activity. Sensus does not always have an activity, so we create a handler bound to the main thread&apos;s looper instead.</p>
+  <div class="markdown level0 remarks"><p>Provides concurrent access to the main thread of the application. Note that <span class="xref">Xamarin.Forms.Device.BeginInvokeOnMainThread(System.Action)</span> invokes 
+off the activity, and Sensus does not always have an activity, so we create a handler bound to the main thread&apos;s looper instead.</p>
 </div>
   <h3 id="constructors">Constructors
   </h3>
