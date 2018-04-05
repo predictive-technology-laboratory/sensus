@@ -44,7 +44,7 @@ namespace Sensus.Probes.Context
         {
             get
             {
-                return _brightness;
+                return Math.Round(_brightness, 2);
             }
         }
 

@@ -53,7 +53,7 @@ namespace Sensus.Probes.Context
         {
             get
             {
-                return _degreesCelsius;
+                return Math.Round(_degreesCelsius, 0);
             }
         }
 

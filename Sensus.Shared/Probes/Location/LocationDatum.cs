@@ -69,7 +69,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return "[" + _latitude + "," + _longitude + "]";
+                return "[" + Math.Round(_latitude, 2) + "," + Math.Round(_longitude, 2) + "]";
             }
         }
 

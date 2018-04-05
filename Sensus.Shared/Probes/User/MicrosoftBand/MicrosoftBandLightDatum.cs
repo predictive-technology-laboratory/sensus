@@ -54,7 +54,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return _brightness;
+                return Math.Round(_brightness, 0);
             }
         }
 

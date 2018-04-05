@@ -86,7 +86,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return "[" + _angularX + "," + _angularY + "," + _angularZ + "]";
+                return "[" + Math.Round(_angularX, 2) + "," + Math.Round(_angularY, 2) + "," + Math.Round(_angularZ, 2) + "]";
             }
         }
 

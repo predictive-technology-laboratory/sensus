@@ -44,7 +44,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return _heading;
+                return Math.Round(_heading, 0);
             }
         }
 

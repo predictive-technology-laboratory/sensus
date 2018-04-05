@@ -52,17 +52,17 @@ namespace Sensus.Probes.Movement
         public double? Confidence { get; set; }
 
         /// <summary>
-        /// Gets the activity the user is currently engaged in. If there is an activity, it will be one of <see cref="Activities"/>. If there
-        /// is not a current activity, then the value will be <see cref="Activities.Unknown"/>.
+        /// Gets the activity the user is starting to engage in. If there is such an activity, it will be one of <see cref="Activities"/>. If there
+        /// is not an activity starting, then the value will be <see cref="Activities.Unknown"/>.
         /// </summary>
         /// <value>The current activity.</value>
-        [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Unknown, Activities.Walking })]
+        [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Walking, Activities.Unknown })]
         [JsonIgnore]
-        public Activities CurrentActivity
+        public Activities ActivityStarting
         {
             get
             {
-                return (Phase == ActivityPhase.Starting || Phase == ActivityPhase.During) && State == ActivityState.Active ? Activity : Activities.Unknown;
+                return Phase == ActivityPhase.Starting && State == ActivityState.Active ? Activity : Activities.Unknown;
             }
         }
 
@@ -75,14 +75,14 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the current activity (if any).
+        /// Gets the string placeholder value, which is <see cref="ActivityStarting"/>.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return CurrentActivity;
+                return ActivityStarting;
             }
         }
 

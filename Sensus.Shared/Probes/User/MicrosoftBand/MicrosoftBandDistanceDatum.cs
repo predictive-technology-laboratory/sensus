@@ -72,7 +72,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return _totalDistance;
+                return Math.Round(_totalDistance, 1);
             }
         }
 

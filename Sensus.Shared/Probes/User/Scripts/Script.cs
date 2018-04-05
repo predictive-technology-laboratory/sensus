@@ -46,6 +46,15 @@ namespace Sensus.Probes.User.Scripts
             {
                 _currentDatum = value;
                 CaptionChanged();
+
+                // update the triggering datum on all inputs
+                foreach (InputGroup inputGroup in InputGroups)
+                {
+                    foreach (Input input in inputGroup.Inputs)
+                    {
+                        input.TriggeringDatum = _currentDatum;
+                    }
+                }
             }
         }
 

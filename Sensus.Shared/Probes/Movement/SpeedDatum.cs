@@ -88,7 +88,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return _kph;
+                return Math.Round(_kph, 1);
             }
         }
 

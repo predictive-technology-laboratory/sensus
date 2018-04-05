@@ -44,7 +44,7 @@ namespace Sensus.Probes.Context
         {
             get
             {
-                return _decibels;
+                return Math.Round(_decibels, 0);
             }
         }
 

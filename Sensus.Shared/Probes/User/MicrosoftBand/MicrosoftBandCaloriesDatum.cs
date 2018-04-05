@@ -54,7 +54,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return _calories;
+                return Math.Round(_calories, 0);
             }
         }
 

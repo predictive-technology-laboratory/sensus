@@ -37,6 +37,14 @@ namespace Sensus.Probes.User.Health
             }
         }
 
+        public override string DisplayDetail
+        {
+            get
+            {
+                return "Height (Inches):  " + Math.Round(_heightInches, 1);
+            }
+        }
+
         /// <summary>
         /// Gets the string placeholder value, which is the height (inches).
         /// </summary>
@@ -45,15 +53,7 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return _heightInches;
-            }
-        }
-
-        public override string DisplayDetail
-        {
-            get
-            {
-                return "Height (Inches):  " + Math.Round(_heightInches, 1);
+                return Math.Round(_heightInches, 1);
             }
         }
 

@@ -44,7 +44,7 @@ namespace Sensus.Probes.Device
         {
             get
             {
-                return _level;
+                return Math.Round(_level, 2);
             }
         }
 

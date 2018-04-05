@@ -80,7 +80,7 @@ namespace Sensus.Tests
             Assert.AreEqual(datum.Timestamp, deserializedDatum.Timestamp);
             Assert.AreEqual(datum.Activity, deserializedDatum.Activity);
             Assert.AreEqual(datum.Confidence, deserializedDatum.Confidence);
-            Assert.AreEqual(datum.CurrentActivity, deserializedDatum.CurrentActivity);
+            Assert.AreEqual(datum.ActivityStarting, deserializedDatum.ActivityStarting);
             Assert.AreEqual(datum.Phase, deserializedDatum.Phase);
             Assert.AreEqual(datum.State, deserializedDatum.State);
         }

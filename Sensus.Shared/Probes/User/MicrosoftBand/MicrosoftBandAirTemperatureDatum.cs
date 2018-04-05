@@ -54,7 +54,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return _temperature;
+                return Math.Round(_temperature, 1);
             }
         }
 

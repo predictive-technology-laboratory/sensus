@@ -120,7 +120,7 @@ namespace Sensus.iOS.Probes.Movement
                                     #region get activities
                                     Action<Activities> AddActivityDatum = activityType =>
                                     {
-                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.During, ActivityState.Active, confidence);
+                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.Starting, ActivityState.Active, confidence);
                                         data.Add(activityDatum);
                                     };
 

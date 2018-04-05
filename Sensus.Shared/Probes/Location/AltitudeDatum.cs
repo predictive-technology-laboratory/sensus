@@ -45,7 +45,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return _altitude;
+                return Math.Round(_altitude, 0);
             }
         }
 

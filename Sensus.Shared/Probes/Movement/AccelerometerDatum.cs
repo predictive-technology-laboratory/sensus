@@ -85,7 +85,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return "[" + _x + "," + _y + "," + _z + "]";
+                return "[" + Math.Round(_x, 1) + "," + Math.Round(_y, 1) + "," + Math.Round(_z, 1) + "]";
             }
         }
 

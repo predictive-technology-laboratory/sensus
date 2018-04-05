@@ -54,7 +54,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return _interval;
+                return Math.Round(_interval, 2);
             }
         }
 

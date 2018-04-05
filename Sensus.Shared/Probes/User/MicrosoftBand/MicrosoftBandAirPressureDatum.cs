@@ -54,7 +54,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         {
             get
             {
-                return _airPressure;
+                return Math.Round(_airPressure, 0);
             }
         }
 
