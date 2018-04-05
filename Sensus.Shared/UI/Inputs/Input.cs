@@ -505,7 +505,7 @@ namespace Sensus.UI.Inputs
                 // value.
                 if (TriggeringDatum != null)
                 {
-                    labelTextStr = string.Format(labelTextStr, TriggeringDatum.StringPlaceholderValue);
+                    labelTextStr = string.Format(labelTextStr, TriggeringDatum.StringPlaceholderValue.ToString().ToLower());
                 }
 
                 return requiredStr + indexStr + labelTextStr;
