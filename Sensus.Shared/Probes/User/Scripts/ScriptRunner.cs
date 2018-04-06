@@ -364,8 +364,7 @@ namespace Sensus.Probes.User.Scripts
                                 }
                             }
 
-                            // if the trigger fires for the current value, run a copy of the script so that we can retain a pristine version of the original. use
-                            // the async version of run to ensure that we are not on the UI thread.
+                            // run the script if the current datum's value satisfies the trigger
                             if (trigger.FireFor(currentDatumValue))
                             {
                                 await RunAsync(previousDatum, currentDatum);
