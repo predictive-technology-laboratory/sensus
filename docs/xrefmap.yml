@@ -30665,6 +30665,18 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.Activity
   fullName: Sensus.Probes.Movement.ActivityDatum.Activity
   nameWithType: ActivityDatum.Activity
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
+  name: ActivityStarting
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting
+  commentId: P:Sensus.Probes.Movement.ActivityDatum.ActivityStarting
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
+  nameWithType: ActivityDatum.ActivityStarting
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityStarting*
+  name: ActivityStarting
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting_
+  commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityStarting
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
+  nameWithType: ActivityDatum.ActivityStarting
 - uid: Sensus.Probes.Movement.ActivityDatum.Confidence
   name: Confidence
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_Confidence
@@ -30677,18 +30689,6 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.Confidence
   fullName: Sensus.Probes.Movement.ActivityDatum.Confidence
   nameWithType: ActivityDatum.Confidence
-- uid: Sensus.Probes.Movement.ActivityDatum.CurrentActivity
-  name: CurrentActivity
-  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_CurrentActivity
-  commentId: P:Sensus.Probes.Movement.ActivityDatum.CurrentActivity
-  fullName: Sensus.Probes.Movement.ActivityDatum.CurrentActivity
-  nameWithType: ActivityDatum.CurrentActivity
-- uid: Sensus.Probes.Movement.ActivityDatum.CurrentActivity*
-  name: CurrentActivity
-  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_CurrentActivity_
-  commentId: Overload:Sensus.Probes.Movement.ActivityDatum.CurrentActivity
-  fullName: Sensus.Probes.Movement.ActivityDatum.CurrentActivity
-  nameWithType: ActivityDatum.CurrentActivity
 - uid: Sensus.Probes.Movement.ActivityDatum.DisplayDetail
   name: DisplayDetail
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_DisplayDetail

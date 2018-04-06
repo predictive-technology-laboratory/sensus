@@ -209,6 +209,35 @@
   </table>
   
   
+  <a id="Sensus_Probes_Movement_ActivityDatum_ActivityStarting_" data-uid="Sensus.Probes.Movement.ActivityDatum.ActivityStarting*"></a>
+  <h4 id="Sensus_Probes_Movement_ActivityDatum_ActivityStarting" data-uid="Sensus.Probes.Movement.ActivityDatum.ActivityStarting">ActivityStarting</h4>
+  <div class="markdown level1 summary"><p>Gets the activity the user is starting to engage in. If there is such an activity, it will be one of <a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a>. If there
+is not an activity starting, then the value will be <a class="xref" href="Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Unknown">Unknown</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListProbeTriggerProperty]
+public Activities ActivityStarting { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a></td>
+        <td><p>The current activity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Movement_ActivityDatum_Confidence_" data-uid="Sensus.Probes.Movement.ActivityDatum.Confidence*"></a>
   <h4 id="Sensus_Probes_Movement_ActivityDatum_Confidence" data-uid="Sensus.Probes.Movement.ActivityDatum.Confidence">Confidence</h4>
   <div class="markdown level1 summary"><p>The confidence (0 to 1) of the estimated activity information.</p>
@@ -230,35 +259,6 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
         <td><p>The confidence.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Movement_ActivityDatum_CurrentActivity_" data-uid="Sensus.Probes.Movement.ActivityDatum.CurrentActivity*"></a>
-  <h4 id="Sensus_Probes_Movement_ActivityDatum_CurrentActivity" data-uid="Sensus.Probes.Movement.ActivityDatum.CurrentActivity">CurrentActivity</h4>
-  <div class="markdown level1 summary"><p>Gets the activity the user is currently engaged in. If there is an activity, it will be one of <a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a>. If there
-is not a current activity, then the value will be <a class="xref" href="Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Unknown">Unknown</a>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[ListProbeTriggerProperty]
-public Activities CurrentActivity { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a></td>
-        <td><p>The current activity.</p>
 </td>
       </tr>
     </tbody>
@@ -348,7 +348,7 @@ public Activities CurrentActivity { get; }</code></pre>
   
   <a id="Sensus_Probes_Movement_ActivityDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Movement.ActivityDatum.StringPlaceholderValue*"></a>
   <h4 id="Sensus_Probes_Movement_ActivityDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Movement.ActivityDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
-  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the current activity (if any).</p>
+  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting">ActivityStarting</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

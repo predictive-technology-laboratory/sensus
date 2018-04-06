@@ -69,7 +69,8 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 content.Body = message;
             }
 
-            if (alertUser && !protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay))
+            // protocol might be null when issuing the pending surveys notification.
+            if (alertUser && (protocol == null || !protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay)))
             {
                 content.Sound = UNNotificationSound.Default;
             }

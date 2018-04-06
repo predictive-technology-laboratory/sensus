@@ -72,8 +72,8 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     UserInfo = notificationInfo
                 };
 
-                // introduced in 8.0
-                if (alertUser && !protocol.TimeIsWithinAlertExclusionWindow(fireDateTime.TimeOfDay))
+                // introduced in 8.0...protocol might be null when issuing the pending surveys notification.
+                if (alertUser && (protocol == null || !protocol.TimeIsWithinAlertExclusionWindow(fireDateTime.TimeOfDay)))
                 {
                     notification.SoundName = UILocalNotification.DefaultSoundName;
                 }

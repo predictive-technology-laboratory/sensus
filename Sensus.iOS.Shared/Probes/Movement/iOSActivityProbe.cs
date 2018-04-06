@@ -71,9 +71,11 @@ namespace Sensus.iOS.Probes.Movement
         {
             List<Datum> data = new List<Datum>();
 
+            // if this is the first poll (no existing query start time), set the query time
             if (_queryStartTime == null)
             {
-                _queryStartTime = DateTimeOffset.UtcNow.AddDays(-7);  // only the last 7 days of activities are stored:  https://developer.apple.com/documentation/coremotion/cmmotionactivitymanager/1615929-queryactivitystarting
+                // only the last 7 days of activities are stored:  https://developer.apple.com/documentation/coremotion/cmmotionactivitymanager/1615929-queryactivitystarting
+                _queryStartTime = DateTimeOffset.UtcNow.AddDays(-7);
             }
 
             ManualResetEvent queryWait = new ManualResetEvent(false);
@@ -101,7 +103,7 @@ namespace Sensus.iOS.Probes.Movement
 
                                     if (activity.Confidence == CMMotionActivityConfidence.Low)
                                     {
-                                        confidence = 0;
+                                        confidence = 0.1;
                                     }
                                     else if (activity.Confidence == CMMotionActivityConfidence.Medium)
                                     {
@@ -173,7 +175,7 @@ namespace Sensus.iOS.Probes.Movement
                             }
                             else
                             {
-                                SensusServiceHelper.Get().Logger.Log("Error while querying activities:  " + error, LoggingLevel.Normal, GetType());
+                                throw new Exception("Error while querying activities:  " + error);
                             }
                         }
                         catch (Exception ex)

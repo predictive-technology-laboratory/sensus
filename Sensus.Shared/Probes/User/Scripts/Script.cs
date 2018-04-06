@@ -105,7 +105,17 @@ namespace Sensus.Probes.User.Scripts
         [JsonIgnore]
         public string SubCaption
         {
-            get { return Runner.Probe.Protocol.Name + " - " + Birthdate; }
+            get
+            {
+                DateTime displayDateTime = Birthdate;
+
+                if (Runner.UseTriggerDatumTimestampInSubcaption && _currentDatum != null)
+                {
+                    displayDateTime = _currentDatum.Timestamp.ToLocalTime().DateTime;
+                }
+
+                return Runner.Probe.Protocol.Name + " - " + displayDateTime;
+            }
         }
 
         public Script(Script script)

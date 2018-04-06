@@ -94,9 +94,13 @@ namespace Sensus.Probes.User.Scripts
                     _enabled = value;
 
                     if (Probe != null && Probe.Running && _enabled) // probe can be null when deserializing, if set after this property.
+                    {
                         Start();
+                    }
                     else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
+                    {
                         Stop();
+                    }
                 }
             }
         }
@@ -264,6 +268,16 @@ namespace Sensus.Probes.User.Scripts
         /// <value><c>true</c> if shuffle input groups; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
         public bool ShuffleInputGroups { get; set; }
+
+        /// <summary>
+        /// Whether or not to use the triggering <see cref="Datum.Timestamp"/> within the subcaption text
+        /// displayed for surveys deployed by this <see cref="ScriptRunner"/>. This is important in scenarios
+        /// where <see cref="Script.Birthdate"/> differs from <see cref="Datum.Timestamp"/> (e.g., as is the
+        /// case in iOS where readings collected by the activity probe lag by several minutes).
+        /// </summary>
+        /// <value><c>true</c> if use trigger datum timestamp in subcaption; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Use Trigger Timestamp In Subcaption:", true, 17)]
+        public bool UseTriggerDatumTimestampInSubcaption { get; set; }
 
         [JsonIgnore]
         public string Caption

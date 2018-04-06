@@ -328,8 +328,10 @@ public Nullable&lt;double&gt; MaxAgeMinutes { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_Name_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Name*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Name" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Name">Name</h4>
-  <div class="markdown level1 summary"><p>Name of the survey. If you would like to use <a class="xref" href="Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_CurrentDatum">CurrentDatum</a> within the survey&apos;s name,
-you can do so by placing a <code>{0}</code> within <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Name">Name</a> as a placeholder. You can read more about the format of the 
+  <div class="markdown level1 summary"><p>Name of the survey. If you would like to use the value of a 
+survey-triggering <a class="xref" href="Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_CurrentDatum">CurrentDatum</a> within the survey&apos;s name, you can do so 
+by placing a <code>{0}</code> within <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Name">Name</a> as a placeholder. The placeholder will be replaced with
+the value of the triggering <a class="xref" href="Sensus.Datum.html">Datum</a> at runtime. You can read more about the format of the 
 placeholder <a href="https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx">here</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
