@@ -28,8 +28,9 @@ namespace Sensus.Probes.User.Scripts
 
         private bool _submitting;
         private Datum _currentDatum;
-        public string Id { get; }
-        public ScriptRunner Runner { get; }
+
+        public string Id { get; set; }
+        public ScriptRunner Runner { get; set; }
         public ObservableCollection<InputGroup> InputGroups { get; }
         public DateTimeOffset? ScheduledRunTime { get; set; }
         public DateTimeOffset? RunTime { get; set; }
@@ -97,8 +98,9 @@ namespace Sensus.Probes.User.Scripts
         {
             get
             {
-                // format the runner's name to replace any {0} references with the current datum's placeholder value.
-                return string.Format(Runner.Name, CurrentDatum.StringPlaceholderValue.ToString().ToLower()) + (Submitting ? " (Submitting...)" : "");
+                // format the runner's name to replace any {0} references with the current datum's placeholder value. there won't be a current datum for
+                // scheduled or run-on-start scripts.
+                return string.Format(Runner.Name, CurrentDatum?.StringPlaceholderValue.ToString().ToLower()) + (Submitting ? " (Submitting...)" : "");
             }
         }
 
@@ -118,49 +120,42 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public Script(Script script)
-        {
-            Id = script.Id;
-            Runner = script.Runner;
-            InputGroups = script.InputGroups.Select(g => new InputGroup(g, false)).ToObservableCollection();  // don't reset the group ID or input IDs. we're copying the script to run it.
-
-            // update input object references within any display conditions
-            Input[] allInputs = InputGroups.SelectMany(group => group.Inputs).ToArray();
-            foreach (InputGroup inputGroup in InputGroups)
-            {
-                inputGroup.UpdateDisplayConditionInputs(allInputs);
-            }
-
-            ScheduledRunTime = script.ScheduledRunTime;
-            RunTime = script.RunTime;
-            PreviousDatum = script.PreviousDatum;
-            CurrentDatum = script.CurrentDatum;
-            ExpirationDate = script.ExpirationDate;
-        }
-
-        public Script(Script script, Guid guid) : this(script)
-        {
-            Id = guid.ToString();
-        }
-
-        public Script(ScriptRunner runner)
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
+        private Script()
         {
             Id = Guid.NewGuid().ToString();
-            Runner = runner;
             InputGroups = new ObservableCollection<InputGroup>();
         }
 
-        [JsonConstructor]
-        private Script(ScriptRunner runner, string id, ObservableCollection<InputGroup> inputGroups)
+        public Script(ScriptRunner runner)
+            : this()
         {
-            Id = id;
             Runner = runner;
-            InputGroups = inputGroups;
         }
 
         private void CaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+        }
+
+        /// <summary>
+        /// Creates a copy of the current <see cref="Script"/>.
+        /// </summary>
+        /// <returns>The copy.</returns>
+        /// <param name="newId">If set to <c>true</c>, set a new random <see cref="Script.Id"/> on the script. Doing so does not change
+        /// the <see cref="InputGroup.Id"/> or <see cref="Input.Id"/> values associated with this <see cref="Script"/>.</param>
+        public Script Copy(bool newId)
+        {
+            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+            if (newId)
+            {
+                copy.Id = Guid.NewGuid().ToString();
+            }
+
+            return copy;
         }
     }
 }

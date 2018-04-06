@@ -516,7 +516,7 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' @examples
 #' data.path = system.file("extdata", "example_data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
-#' plot(data$LocationDatum)
+#' #plot(data$LocationDatum)
 plot.LocationDatum = function(x, ...)
 {
   args = list(...)

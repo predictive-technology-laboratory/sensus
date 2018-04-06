@@ -71,10 +71,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Copy")
                 {
-                    // the group copy should have a new id, and the copied inputs should have new IDs.
-                    InputGroup selectedInputGroupCopy = new InputGroup(selectedInputGroup, true);
-                    selectedInputGroupCopy.UpdateDisplayConditionInputs(script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs).ToArray());
-                    script.InputGroups.Add(selectedInputGroupCopy);
+                    script.InputGroups.Add(selectedInputGroup.Copy(true));
                 }
                 else if (selectedAction == "Delete")
                 {

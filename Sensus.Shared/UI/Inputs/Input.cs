@@ -596,5 +596,15 @@ namespace Sensus.UI.Inputs
 
             return copy;
         }
+
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>. This is needed
+        /// when adding display conditions.
+        /// </summary>
+        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>.</returns>
+        public override string ToString()
+        {
+            return _name;
+        }
     }
 }
