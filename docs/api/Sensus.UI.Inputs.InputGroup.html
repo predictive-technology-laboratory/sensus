@@ -110,40 +110,6 @@
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public InputGroup()</code></pre>
   </div>
-  
-  
-  <a id="Sensus_UI_Inputs_InputGroup__ctor_" data-uid="Sensus.UI.Inputs.InputGroup.#ctor*"></a>
-  <h4 id="Sensus_UI_Inputs_InputGroup__ctor_Sensus_UI_Inputs_InputGroup_System_Boolean_" data-uid="Sensus.UI.Inputs.InputGroup.#ctor(Sensus.UI.Inputs.InputGroup,System.Boolean)">InputGroup(InputGroup, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a> class as a copy of another. WARNING:  You must call
-UpdateDisplayConditionInputs on the resulting object to ensure that all display conditions are properly set up.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public InputGroup(InputGroup inputGroup, bool newGroupId)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a></td>
-        <td><span class="parametername">inputGroup</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">newGroupId</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="properties">Properties
   </h3>
   
@@ -211,7 +177,7 @@ public bool Geotag { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Id { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -341,16 +307,14 @@ An input group with no inputs is deemed valid by default.</p>
   </h3>
   
   
-  <a id="Sensus_UI_Inputs_InputGroup_UpdateDisplayConditionInputs_" data-uid="Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs*"></a>
-  <h4 id="Sensus_UI_Inputs_InputGroup_UpdateDisplayConditionInputs_Sensus_UI_Inputs_Input___" data-uid="Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs(Sensus.UI.Inputs.Input[])">UpdateDisplayConditionInputs(Input[])</h4>
-  <div class="markdown level1 summary"><p>Updates any display conditions contained on any input in this group to reference inputs contained in the passed array.
-This is necessary after copying an input group, because we use serialization/deserialization to copy each individual
-input, which then breaks the object reference from input display conditions to their target inputs.</p>
+  <a id="Sensus_UI_Inputs_InputGroup_Copy_" data-uid="Sensus.UI.Inputs.InputGroup.Copy*"></a>
+  <h4 id="Sensus_UI_Inputs_InputGroup_Copy_System_Boolean_" data-uid="Sensus.UI.Inputs.InputGroup.Copy(System.Boolean)">Copy(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Creates a copy of this <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void UpdateDisplayConditionInputs(Input[] inputs)</code></pre>
+    <pre><code class="lang-csharp hljs">public InputGroup Copy(bool newId)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -363,9 +327,26 @@ input, which then breaks the object reference from input display conditions to t
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>[]</td>
-        <td><span class="parametername">inputs</span></td>
-        <td><p>Inputs.</p>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">newId</span></td>
+        <td><p>If set to <code>true</code>, set new random <a class="xref" href="Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_Id">Id</a> and <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Id">Id</a> values for the current group
+and <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>s associated with this <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a></td>
+        <td><p>The copy.</p>
 </td>
       </tr>
     </tbody>

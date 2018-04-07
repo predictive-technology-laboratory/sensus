@@ -103,65 +103,6 @@
   
   
   <a id="Sensus_Probes_User_Scripts_Script__ctor_" data-uid="Sensus.Probes.User.Scripts.Script.#ctor*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_Script__ctor_Sensus_Probes_User_Scripts_Script_" data-uid="Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.Script)">Script(Script)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Script(Script script)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
-        <td><span class="parametername">script</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_User_Scripts_Script__ctor_" data-uid="Sensus.Probes.User.Scripts.Script.#ctor*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_Script__ctor_Sensus_Probes_User_Scripts_Script_System_Guid_" data-uid="Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.Script,System.Guid)">Script(Script, Guid)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Script(Script script, Guid guid)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
-        <td><span class="parametername">script</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Guid</span></td>
-        <td><span class="parametername">guid</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_User_Scripts_Script__ctor_" data-uid="Sensus.Probes.User.Scripts.Script.#ctor*"></a>
   <h4 id="Sensus_Probes_User_Scripts_Script__ctor_Sensus_Probes_User_Scripts_ScriptRunner_" data-uid="Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.ScriptRunner)">Script(ScriptRunner)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -330,7 +271,7 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Id { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -405,7 +346,7 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScriptRunner Runner { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ScriptRunner Runner { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -544,6 +485,54 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_Script_Copy_" data-uid="Sensus.Probes.User.Scripts.Script.Copy*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_Script_Copy_System_Boolean_" data-uid="Sensus.Probes.User.Scripts.Script.Copy(System.Boolean)">Copy(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Creates a copy of the current <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Script Copy(bool newId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">newId</span></td>
+        <td><p>If set to <code>true</code>, set a new random <a class="xref" href="Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_Id">Id</a> on the script. Doing so does not change
+the <a class="xref" href="Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_Id">Id</a> or <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Id">Id</a> values associated with this <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
+        <td><p>The copy.</p>
+</td>
       </tr>
     </tbody>
   </table>

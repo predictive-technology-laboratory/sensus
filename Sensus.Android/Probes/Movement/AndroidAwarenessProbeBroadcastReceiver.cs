@@ -20,14 +20,17 @@ using Sensus.Probes.Movement;
 
 namespace Sensus.Android.Probes.Movement
 {
-    public class AndroidActivityProbeBroadcastReceiver : BroadcastReceiver
+    /// <summary>
+    /// Broadcast receiver for all Android Awareness API events.
+    /// </summary>
+    public class AndroidAwarenessProbeBroadcastReceiver : BroadcastReceiver
     {
         public event EventHandler<ActivityDatum> ActivityChanged;
         public event EventHandler<FenceState> LocationChanged;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (intent.Action == AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION)
+            if (intent.Action == AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION)
             {
                 FenceState fenceState = FenceState.Extract(intent);
                 if (fenceState == null)
@@ -36,13 +39,15 @@ namespace Sensus.Android.Probes.Movement
                     return;
                 }
 
-                if (fenceState.FenceKey == AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY)
+                // is this a location fence event?
+                if (fenceState.FenceKey == AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY)
                 {
                     if (fenceState.CurrentState == FenceState.True)
                     {
                         LocationChanged?.Invoke(this, fenceState);
                     }
                 }
+                // otherwise, it should be an activity fence event.
                 else
                 {
                     string[] fenceKeyParts;

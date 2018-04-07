@@ -2581,18 +2581,6 @@ references:
   commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.#ctor
   fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.AndroidActivityProbe
   nameWithType: AndroidActivityProbe.AndroidActivityProbe
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
-  name: AWARENESS_EXITING_LOCATION_FENCE_KEY
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_AWARENESS_EXITING_LOCATION_FENCE_KEY
-  commentId: F:Sensus.Android.Probes.Movement.AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
-  nameWithType: AndroidActivityProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION
-  name: AWARENESS_PENDING_INTENT_ACTION
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_AWARENESS_PENDING_INTENT_ACTION
-  commentId: F:Sensus.Android.Probes.Movement.AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION
-  nameWithType: AndroidActivityProbe.AWARENESS_PENDING_INTENT_ACTION
 - uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DatumType
   name: DatumType
   href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DatumType
@@ -2605,42 +2593,6 @@ references:
   commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.DatumType
   fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DatumType
   nameWithType: AndroidActivityProbe.DatumType
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DefaultKeepDeviceAwake
-  name: DefaultKeepDeviceAwake
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DefaultKeepDeviceAwake
-  commentId: P:Sensus.Android.Probes.Movement.AndroidActivityProbe.DefaultKeepDeviceAwake
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DefaultKeepDeviceAwake
-  nameWithType: AndroidActivityProbe.DefaultKeepDeviceAwake
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DefaultKeepDeviceAwake*
-  name: DefaultKeepDeviceAwake
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DefaultKeepDeviceAwake_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.DefaultKeepDeviceAwake
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DefaultKeepDeviceAwake
-  nameWithType: AndroidActivityProbe.DefaultKeepDeviceAwake
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAsleepWarning
-  name: DeviceAsleepWarning
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DeviceAsleepWarning
-  commentId: P:Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAsleepWarning
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAsleepWarning
-  nameWithType: AndroidActivityProbe.DeviceAsleepWarning
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAsleepWarning*
-  name: DeviceAsleepWarning
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DeviceAsleepWarning_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAsleepWarning
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAsleepWarning
-  nameWithType: AndroidActivityProbe.DeviceAsleepWarning
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAwakeWarning
-  name: DeviceAwakeWarning
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DeviceAwakeWarning
-  commentId: P:Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAwakeWarning
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAwakeWarning
-  nameWithType: AndroidActivityProbe.DeviceAwakeWarning
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAwakeWarning*
-  name: DeviceAwakeWarning
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DeviceAwakeWarning_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAwakeWarning
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DeviceAwakeWarning
-  nameWithType: AndroidActivityProbe.DeviceAwakeWarning
 - uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.DisplayName
   name: DisplayName
   href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_DisplayName
@@ -2653,78 +2605,6 @@ references:
   commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.DisplayName
   fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.DisplayName
   nameWithType: AndroidActivityProbe.DisplayName
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartDataPointFromDatum(Sensus.Datum)
-  name: GetChartDataPointFromDatum(Datum)
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartDataPointFromDatum_Sensus_Datum_
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartDataPointFromDatum(Sensus.Datum)
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartDataPointFromDatum(Sensus.Datum)
-  nameWithType: AndroidActivityProbe.GetChartDataPointFromDatum(Datum)
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartDataPointFromDatum*
-  name: GetChartDataPointFromDatum
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartDataPointFromDatum_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartDataPointFromDatum
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartDataPointFromDatum
-  nameWithType: AndroidActivityProbe.GetChartDataPointFromDatum
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartPrimaryAxis
-  name: GetChartPrimaryAxis()
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartPrimaryAxis
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartPrimaryAxis
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartPrimaryAxis()
-  nameWithType: AndroidActivityProbe.GetChartPrimaryAxis()
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartPrimaryAxis*
-  name: GetChartPrimaryAxis
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartPrimaryAxis_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartPrimaryAxis
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartPrimaryAxis
-  nameWithType: AndroidActivityProbe.GetChartPrimaryAxis
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSecondaryAxis
-  name: GetChartSecondaryAxis()
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartSecondaryAxis
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSecondaryAxis
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSecondaryAxis()
-  nameWithType: AndroidActivityProbe.GetChartSecondaryAxis()
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSecondaryAxis*
-  name: GetChartSecondaryAxis
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartSecondaryAxis_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSecondaryAxis
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSecondaryAxis
-  nameWithType: AndroidActivityProbe.GetChartSecondaryAxis
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSeries
-  name: GetChartSeries()
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartSeries
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSeries
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSeries()
-  nameWithType: AndroidActivityProbe.GetChartSeries()
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSeries*
-  name: GetChartSeries
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_GetChartSeries_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSeries
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.GetChartSeries
-  nameWithType: AndroidActivityProbe.GetChartSeries
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.Initialize
-  name: Initialize()
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_Initialize
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbe.Initialize
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.Initialize()
-  nameWithType: AndroidActivityProbe.Initialize()
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.Initialize*
-  name: Initialize
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_Initialize_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.Initialize
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.Initialize
-  nameWithType: AndroidActivityProbe.Initialize
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.LocationChangeRadiusMeters
-  name: LocationChangeRadiusMeters
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_LocationChangeRadiusMeters
-  commentId: P:Sensus.Android.Probes.Movement.AndroidActivityProbe.LocationChangeRadiusMeters
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.LocationChangeRadiusMeters
-  nameWithType: AndroidActivityProbe.LocationChangeRadiusMeters
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.LocationChangeRadiusMeters*
-  name: LocationChangeRadiusMeters
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_LocationChangeRadiusMeters_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.LocationChangeRadiusMeters
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.LocationChangeRadiusMeters
-  nameWithType: AndroidActivityProbe.LocationChangeRadiusMeters
 - uid: Sensus.Android.Probes.Movement.AndroidActivityProbe.StartListening
   name: StartListening()
   href: api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html#Sensus_Android_Probes_Movement_AndroidActivityProbe_StartListening
@@ -2749,48 +2629,363 @@ references:
   commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbe.StopListening
   fullName: Sensus.Android.Probes.Movement.AndroidActivityProbe.StopListening
   nameWithType: AndroidActivityProbe.StopListening
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver
-  name: AndroidActivityProbeBroadcastReceiver
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html
-  commentId: T:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver
-  nameWithType: AndroidActivityProbeBroadcastReceiver
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.#ctor
-  name: AndroidActivityProbeBroadcastReceiver()
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidActivityProbeBroadcastReceiver__ctor
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.#ctor
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.AndroidActivityProbeBroadcastReceiver()
-  nameWithType: AndroidActivityProbeBroadcastReceiver.AndroidActivityProbeBroadcastReceiver()
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.#ctor*
-  name: AndroidActivityProbeBroadcastReceiver
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidActivityProbeBroadcastReceiver__ctor_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.#ctor
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.AndroidActivityProbeBroadcastReceiver
-  nameWithType: AndroidActivityProbeBroadcastReceiver.AndroidActivityProbeBroadcastReceiver
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.ActivityChanged
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe
+  name: AndroidAwarenessProbe
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html
+  commentId: T:Sensus.Android.Probes.Movement.AndroidAwarenessProbe
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe
+  nameWithType: AndroidAwarenessProbe
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.#ctor
+  name: AndroidAwarenessProbe()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe__ctor
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.#ctor
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AndroidAwarenessProbe()
+  nameWithType: AndroidAwarenessProbe.AndroidAwarenessProbe()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.#ctor*
+  name: AndroidAwarenessProbe
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe__ctor_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.#ctor
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AndroidAwarenessProbe
+  nameWithType: AndroidAwarenessProbe.AndroidAwarenessProbe
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION
+  name: AWARENESS_PENDING_INTENT_ACTION
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_AWARENESS_PENDING_INTENT_ACTION
+  commentId: F:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION
+  nameWithType: AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessApiClient
+  name: AwarenessApiClient
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_AwarenessApiClient
+  commentId: P:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessApiClient
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessApiClient
+  nameWithType: AndroidAwarenessProbe.AwarenessApiClient
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessApiClient*
+  name: AwarenessApiClient
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_AwarenessApiClient_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessApiClient
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessApiClient
+  nameWithType: AndroidAwarenessProbe.AwarenessApiClient
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessBroadcastReceiver
+  name: AwarenessBroadcastReceiver
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_AwarenessBroadcastReceiver
+  commentId: P:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessBroadcastReceiver
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessBroadcastReceiver
+  nameWithType: AndroidAwarenessProbe.AwarenessBroadcastReceiver
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessBroadcastReceiver*
+  name: AwarenessBroadcastReceiver
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_AwarenessBroadcastReceiver_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessBroadcastReceiver
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.AwarenessBroadcastReceiver
+  nameWithType: AndroidAwarenessProbe.AwarenessBroadcastReceiver
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DefaultKeepDeviceAwake
+  name: DefaultKeepDeviceAwake
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DefaultKeepDeviceAwake
+  commentId: P:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DefaultKeepDeviceAwake
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DefaultKeepDeviceAwake
+  nameWithType: AndroidAwarenessProbe.DefaultKeepDeviceAwake
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DefaultKeepDeviceAwake*
+  name: DefaultKeepDeviceAwake
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DefaultKeepDeviceAwake_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DefaultKeepDeviceAwake
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DefaultKeepDeviceAwake
+  nameWithType: AndroidAwarenessProbe.DefaultKeepDeviceAwake
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAsleepWarning
+  name: DeviceAsleepWarning
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DeviceAsleepWarning
+  commentId: P:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAsleepWarning
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAsleepWarning
+  nameWithType: AndroidAwarenessProbe.DeviceAsleepWarning
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAsleepWarning*
+  name: DeviceAsleepWarning
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DeviceAsleepWarning_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAsleepWarning
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAsleepWarning
+  nameWithType: AndroidAwarenessProbe.DeviceAsleepWarning
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAwakeWarning
+  name: DeviceAwakeWarning
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DeviceAwakeWarning
+  commentId: P:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAwakeWarning
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAwakeWarning
+  nameWithType: AndroidAwarenessProbe.DeviceAwakeWarning
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAwakeWarning*
+  name: DeviceAwakeWarning
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DeviceAwakeWarning_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAwakeWarning
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.DeviceAwakeWarning
+  nameWithType: AndroidAwarenessProbe.DeviceAwakeWarning
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction
+  name: AndroidAwarenessProbe.FenceUpdateAction
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.html
+  commentId: T:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction
+  nameWithType: AndroidAwarenessProbe.FenceUpdateAction
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.Add
+  name: Add
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_FenceUpdateAction_Add
+  commentId: F:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.Add
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.Add
+  nameWithType: AndroidAwarenessProbe.FenceUpdateAction.Add
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.Remove
+  name: Remove
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_FenceUpdateAction_Remove
+  commentId: F:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.Remove
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.Remove
+  nameWithType: AndroidAwarenessProbe.FenceUpdateAction.Remove
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.value__
+  name: value__
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_FenceUpdateAction_value__
+  commentId: F:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.value__
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction.value__
+  nameWithType: AndroidAwarenessProbe.FenceUpdateAction.value__
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  name: GetChartDataPointFromDatum(Datum)
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartDataPointFromDatum_Sensus_Datum_
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  nameWithType: AndroidAwarenessProbe.GetChartDataPointFromDatum(Datum)
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartDataPointFromDatum*
+  name: GetChartDataPointFromDatum
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartDataPointFromDatum_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartDataPointFromDatum
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartDataPointFromDatum
+  nameWithType: AndroidAwarenessProbe.GetChartDataPointFromDatum
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartPrimaryAxis
+  name: GetChartPrimaryAxis()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartPrimaryAxis
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartPrimaryAxis
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartPrimaryAxis()
+  nameWithType: AndroidAwarenessProbe.GetChartPrimaryAxis()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartPrimaryAxis*
+  name: GetChartPrimaryAxis
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartPrimaryAxis_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartPrimaryAxis
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartPrimaryAxis
+  nameWithType: AndroidAwarenessProbe.GetChartPrimaryAxis
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSecondaryAxis
+  name: GetChartSecondaryAxis()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartSecondaryAxis
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSecondaryAxis
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSecondaryAxis()
+  nameWithType: AndroidAwarenessProbe.GetChartSecondaryAxis()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSecondaryAxis*
+  name: GetChartSecondaryAxis
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartSecondaryAxis_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSecondaryAxis
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSecondaryAxis
+  nameWithType: AndroidAwarenessProbe.GetChartSecondaryAxis
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSeries
+  name: GetChartSeries()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartSeries
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSeries
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSeries()
+  nameWithType: AndroidAwarenessProbe.GetChartSeries()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSeries*
+  name: GetChartSeries
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartSeries_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSeries
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.GetChartSeries
+  nameWithType: AndroidAwarenessProbe.GetChartSeries
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_Initialize
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.Initialize
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.Initialize()
+  nameWithType: AndroidAwarenessProbe.Initialize()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_Initialize_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.Initialize
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.Initialize
+  nameWithType: AndroidAwarenessProbe.Initialize
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StartListening
+  name: StartListening()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StartListening
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StartListening
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StartListening()
+  nameWithType: AndroidAwarenessProbe.StartListening()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StartListening*
+  name: StartListening
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StartListening_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StartListening
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StartListening
+  nameWithType: AndroidAwarenessProbe.StartListening
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StopListening
+  name: StopListening()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StopListening
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StopListening
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StopListening()
+  nameWithType: AndroidAwarenessProbe.StopListening()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StopListening*
+  name: StopListening
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StopListening_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StopListening
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.StopListening
+  nameWithType: AndroidAwarenessProbe.StopListening
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateFences(Android.Gms.Awareness.Fence.IFenceUpdateRequest)
+  name: UpdateFences(IFenceUpdateRequest)
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateFences_Android_Gms_Awareness_Fence_IFenceUpdateRequest_
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateFences(Android.Gms.Awareness.Fence.IFenceUpdateRequest)
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateFences(Android.Gms.Awareness.Fence.IFenceUpdateRequest)
+  nameWithType: AndroidAwarenessProbe.UpdateFences(IFenceUpdateRequest)
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateFences*
+  name: UpdateFences
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateFences_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateFences
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateFences
+  nameWithType: AndroidAwarenessProbe.UpdateFences
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder(Android.Gms.Awareness.Fence.AwarenessFence,System.String,Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction,Android.Gms.Awareness.Fence.FenceUpdateRequestBuilder@)
+  name: UpdateRequestBuilder(AwarenessFence, String, AndroidAwarenessProbe.FenceUpdateAction, ref FenceUpdateRequestBuilder)
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateRequestBuilder_Android_Gms_Awareness_Fence_AwarenessFence_System_String_Sensus_Android_Probes_Movement_AndroidAwarenessProbe_FenceUpdateAction_Android_Gms_Awareness_Fence_FenceUpdateRequestBuilder__
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder(Android.Gms.Awareness.Fence.AwarenessFence,System.String,Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction,Android.Gms.Awareness.Fence.FenceUpdateRequestBuilder@)
+  name.vb: UpdateRequestBuilder(AwarenessFence, String, AndroidAwarenessProbe.FenceUpdateAction, ByRef FenceUpdateRequestBuilder)
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder(Android.Gms.Awareness.Fence.AwarenessFence, System.String, Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction, ref Android.Gms.Awareness.Fence.FenceUpdateRequestBuilder)
+  fullName.vb: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder(Android.Gms.Awareness.Fence.AwarenessFence, System.String, Sensus.Android.Probes.Movement.AndroidAwarenessProbe.FenceUpdateAction, ByRef Android.Gms.Awareness.Fence.FenceUpdateRequestBuilder)
+  nameWithType: AndroidAwarenessProbe.UpdateRequestBuilder(AwarenessFence, String, AndroidAwarenessProbe.FenceUpdateAction, ref FenceUpdateRequestBuilder)
+  nameWithType.vb: AndroidAwarenessProbe.UpdateRequestBuilder(AwarenessFence, String, AndroidAwarenessProbe.FenceUpdateAction, ByRef FenceUpdateRequestBuilder)
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder*
+  name: UpdateRequestBuilder
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateRequestBuilder_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbe.UpdateRequestBuilder
+  nameWithType: AndroidAwarenessProbe.UpdateRequestBuilder
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver
+  name: AndroidAwarenessProbeBroadcastReceiver
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html
+  commentId: T:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.#ctor
+  name: AndroidAwarenessProbeBroadcastReceiver()
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbeBroadcastReceiver__ctor
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.AndroidAwarenessProbeBroadcastReceiver()
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver.AndroidAwarenessProbeBroadcastReceiver()
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.#ctor*
+  name: AndroidAwarenessProbeBroadcastReceiver
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbeBroadcastReceiver__ctor_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.AndroidAwarenessProbeBroadcastReceiver
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver.AndroidAwarenessProbeBroadcastReceiver
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.ActivityChanged
   name: ActivityChanged
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidActivityProbeBroadcastReceiver_ActivityChanged
-  commentId: E:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.ActivityChanged
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.ActivityChanged
-  nameWithType: AndroidActivityProbeBroadcastReceiver.ActivityChanged
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.LocationChanged
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbeBroadcastReceiver_ActivityChanged
+  commentId: E:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.ActivityChanged
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.ActivityChanged
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver.ActivityChanged
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.LocationChanged
   name: LocationChanged
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidActivityProbeBroadcastReceiver_LocationChanged
-  commentId: E:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.LocationChanged
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.LocationChanged
-  nameWithType: AndroidActivityProbeBroadcastReceiver.LocationChanged
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbeBroadcastReceiver_LocationChanged
+  commentId: E:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.LocationChanged
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.LocationChanged
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver.LocationChanged
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
   name: OnReceive(Context, Intent)
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidActivityProbeBroadcastReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
-  commentId: M:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
-  nameWithType: AndroidActivityProbeBroadcastReceiver.OnReceive(Context, Intent)
-- uid: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.OnReceive*
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbeBroadcastReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
+  commentId: M:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver.OnReceive(Context, Intent)
+- uid: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.OnReceive*
   name: OnReceive
-  href: api/Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidActivityProbeBroadcastReceiver_OnReceive_
-  commentId: Overload:Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.OnReceive
-  fullName: Sensus.Android.Probes.Movement.AndroidActivityProbeBroadcastReceiver.OnReceive
-  nameWithType: AndroidActivityProbeBroadcastReceiver.OnReceive
+  href: api/Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbeBroadcastReceiver_OnReceive_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.OnReceive
+  fullName: Sensus.Android.Probes.Movement.AndroidAwarenessProbeBroadcastReceiver.OnReceive
+  nameWithType: AndroidAwarenessProbeBroadcastReceiver.OnReceive
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe
+  name: AndroidLocationFenceProbe
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html
+  commentId: T:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe
+  nameWithType: AndroidLocationFenceProbe
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.#ctor
+  name: AndroidLocationFenceProbe()
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe__ctor
+  commentId: M:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.#ctor
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.AndroidLocationFenceProbe()
+  nameWithType: AndroidLocationFenceProbe.AndroidLocationFenceProbe()
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.#ctor*
+  name: AndroidLocationFenceProbe
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe__ctor_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.#ctor
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.AndroidLocationFenceProbe
+  nameWithType: AndroidLocationFenceProbe.AndroidLocationFenceProbe
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
+  name: AWARENESS_EXITING_LOCATION_FENCE_KEY
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_AWARENESS_EXITING_LOCATION_FENCE_KEY
+  commentId: F:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
+  nameWithType: AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DatumType
+  name: DatumType
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_DatumType
+  commentId: P:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DatumType
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DatumType
+  nameWithType: AndroidLocationFenceProbe.DatumType
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DatumType*
+  name: DatumType
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_DatumType_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DatumType
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DatumType
+  nameWithType: AndroidLocationFenceProbe.DatumType
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DisplayName
+  name: DisplayName
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_DisplayName
+  commentId: P:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DisplayName
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DisplayName
+  nameWithType: AndroidLocationFenceProbe.DisplayName
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DisplayName*
+  name: DisplayName
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_DisplayName_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DisplayName
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.DisplayName
+  nameWithType: AndroidLocationFenceProbe.DisplayName
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_Initialize
+  commentId: M:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize()
+  nameWithType: AndroidLocationFenceProbe.Initialize()
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_Initialize_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize
+  nameWithType: AndroidLocationFenceProbe.Initialize
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.LocationChangeRadiusMeters
+  name: LocationChangeRadiusMeters
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_LocationChangeRadiusMeters
+  commentId: P:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.LocationChangeRadiusMeters
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.LocationChangeRadiusMeters
+  nameWithType: AndroidLocationFenceProbe.LocationChangeRadiusMeters
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.LocationChangeRadiusMeters*
+  name: LocationChangeRadiusMeters
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_LocationChangeRadiusMeters_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.LocationChangeRadiusMeters
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.LocationChangeRadiusMeters
+  nameWithType: AndroidLocationFenceProbe.LocationChangeRadiusMeters
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening
+  name: StartListening()
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StartListening
+  commentId: M:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening()
+  nameWithType: AndroidLocationFenceProbe.StartListening()
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening*
+  name: StartListening
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StartListening_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening
+  nameWithType: AndroidLocationFenceProbe.StartListening
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening
+  name: StopListening()
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StopListening
+  commentId: M:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening()
+  nameWithType: AndroidLocationFenceProbe.StopListening()
+- uid: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening*
+  name: StopListening
+  href: api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html#Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StopListening_
+  commentId: Overload:Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening
+  fullName: Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening
+  nameWithType: AndroidLocationFenceProbe.StopListening
 - uid: Sensus.Android.Probes.Network
   name: Sensus.Android.Probes.Network
   href: api/Sensus.Android.Probes.Network.html
@@ -32057,18 +32252,6 @@ references:
   commentId: Overload:Sensus.Probes.Probe.MaxChartDataCount
   fullName: Sensus.Probes.Probe.MaxChartDataCount
   nameWithType: Probe.MaxChartDataCount
-- uid: Sensus.Probes.Probe.MostRecentDatum
-  name: MostRecentDatum
-  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatum
-  commentId: P:Sensus.Probes.Probe.MostRecentDatum
-  fullName: Sensus.Probes.Probe.MostRecentDatum
-  nameWithType: Probe.MostRecentDatum
-- uid: Sensus.Probes.Probe.MostRecentDatum*
-  name: MostRecentDatum
-  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatum_
-  commentId: Overload:Sensus.Probes.Probe.MostRecentDatum
-  fullName: Sensus.Probes.Probe.MostRecentDatum
-  nameWithType: Probe.MostRecentDatum
 - uid: Sensus.Probes.Probe.MostRecentDatumChanged
   name: MostRecentDatumChanged
   href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged
@@ -35915,18 +36098,6 @@ references:
   commentId: T:Sensus.Probes.User.Scripts.Script
   fullName: Sensus.Probes.User.Scripts.Script
   nameWithType: Script
-- uid: Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.Script)
-  name: Script(Script)
-  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script__ctor_Sensus_Probes_User_Scripts_Script_
-  commentId: M:Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.Script)
-  fullName: Sensus.Probes.User.Scripts.Script.Script(Sensus.Probes.User.Scripts.Script)
-  nameWithType: Script.Script(Script)
-- uid: Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.Script,System.Guid)
-  name: Script(Script, Guid)
-  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script__ctor_Sensus_Probes_User_Scripts_Script_System_Guid_
-  commentId: M:Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.Script,System.Guid)
-  fullName: Sensus.Probes.User.Scripts.Script.Script(Sensus.Probes.User.Scripts.Script, System.Guid)
-  nameWithType: Script.Script(Script, Guid)
 - uid: Sensus.Probes.User.Scripts.Script.#ctor(Sensus.Probes.User.Scripts.ScriptRunner)
   name: Script(ScriptRunner)
   href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script__ctor_Sensus_Probes_User_Scripts_ScriptRunner_
@@ -35963,6 +36134,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.Script.Caption
   fullName: Sensus.Probes.User.Scripts.Script.Caption
   nameWithType: Script.Caption
+- uid: Sensus.Probes.User.Scripts.Script.Copy(System.Boolean)
+  name: Copy(Boolean)
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_Copy_System_Boolean_
+  commentId: M:Sensus.Probes.User.Scripts.Script.Copy(System.Boolean)
+  fullName: Sensus.Probes.User.Scripts.Script.Copy(System.Boolean)
+  nameWithType: Script.Copy(Boolean)
+- uid: Sensus.Probes.User.Scripts.Script.Copy*
+  name: Copy
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_Copy_
+  commentId: Overload:Sensus.Probes.User.Scripts.Script.Copy
+  fullName: Sensus.Probes.User.Scripts.Script.Copy
+  nameWithType: Script.Copy
 - uid: Sensus.Probes.User.Scripts.Script.CurrentDatum
   name: CurrentDatum
   href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_CurrentDatum
@@ -36953,6 +37136,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.TriggerWindowsString
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.TriggerWindowsString
   nameWithType: ScriptRunner.TriggerWindowsString
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.UseTriggerDatumTimestampInSubcaption
+  name: UseTriggerDatumTimestampInSubcaption
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_UseTriggerDatumTimestampInSubcaption
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.UseTriggerDatumTimestampInSubcaption
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.UseTriggerDatumTimestampInSubcaption
+  nameWithType: ScriptRunner.UseTriggerDatumTimestampInSubcaption
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.UseTriggerDatumTimestampInSubcaption*
+  name: UseTriggerDatumTimestampInSubcaption
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_UseTriggerDatumTimestampInSubcaption_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.UseTriggerDatumTimestampInSubcaption
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.UseTriggerDatumTimestampInSubcaption
+  nameWithType: ScriptRunner.UseTriggerDatumTimestampInSubcaption
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.WindowExpiration
   name: WindowExpiration
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_WindowExpiration
@@ -39578,6 +39773,18 @@ references:
   commentId: Overload:Sensus.UI.Inputs.Input.SubmissionTimestamp
   fullName: Sensus.UI.Inputs.Input.SubmissionTimestamp
   nameWithType: Input.SubmissionTimestamp
+- uid: Sensus.UI.Inputs.Input.ToString
+  name: ToString()
+  href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ToString
+  commentId: M:Sensus.UI.Inputs.Input.ToString
+  fullName: Sensus.UI.Inputs.Input.ToString()
+  nameWithType: Input.ToString()
+- uid: Sensus.UI.Inputs.Input.ToString*
+  name: ToString
+  href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ToString_
+  commentId: Overload:Sensus.UI.Inputs.Input.ToString
+  fullName: Sensus.UI.Inputs.Input.ToString
+  nameWithType: Input.ToString
 - uid: Sensus.UI.Inputs.Input.TriggeringDatum
   name: TriggeringDatum
   href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_TriggeringDatum
@@ -39782,18 +39989,24 @@ references:
   commentId: M:Sensus.UI.Inputs.InputGroup.#ctor
   fullName: Sensus.UI.Inputs.InputGroup.InputGroup()
   nameWithType: InputGroup.InputGroup()
-- uid: Sensus.UI.Inputs.InputGroup.#ctor(Sensus.UI.Inputs.InputGroup,System.Boolean)
-  name: InputGroup(InputGroup, Boolean)
-  href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup__ctor_Sensus_UI_Inputs_InputGroup_System_Boolean_
-  commentId: M:Sensus.UI.Inputs.InputGroup.#ctor(Sensus.UI.Inputs.InputGroup,System.Boolean)
-  fullName: Sensus.UI.Inputs.InputGroup.InputGroup(Sensus.UI.Inputs.InputGroup, System.Boolean)
-  nameWithType: InputGroup.InputGroup(InputGroup, Boolean)
 - uid: Sensus.UI.Inputs.InputGroup.#ctor*
   name: InputGroup
   href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup__ctor_
   commentId: Overload:Sensus.UI.Inputs.InputGroup.#ctor
   fullName: Sensus.UI.Inputs.InputGroup.InputGroup
   nameWithType: InputGroup.InputGroup
+- uid: Sensus.UI.Inputs.InputGroup.Copy(System.Boolean)
+  name: Copy(Boolean)
+  href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_Copy_System_Boolean_
+  commentId: M:Sensus.UI.Inputs.InputGroup.Copy(System.Boolean)
+  fullName: Sensus.UI.Inputs.InputGroup.Copy(System.Boolean)
+  nameWithType: InputGroup.Copy(Boolean)
+- uid: Sensus.UI.Inputs.InputGroup.Copy*
+  name: Copy
+  href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_Copy_
+  commentId: Overload:Sensus.UI.Inputs.InputGroup.Copy
+  fullName: Sensus.UI.Inputs.InputGroup.Copy
+  nameWithType: InputGroup.Copy
 - uid: Sensus.UI.Inputs.InputGroup.ForceValidInputs
   name: ForceValidInputs
   href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_ForceValidInputs
@@ -39872,21 +40085,6 @@ references:
   commentId: Overload:Sensus.UI.Inputs.InputGroup.ShuffleInputs
   fullName: Sensus.UI.Inputs.InputGroup.ShuffleInputs
   nameWithType: InputGroup.ShuffleInputs
-- uid: Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs(Sensus.UI.Inputs.Input[])
-  name: UpdateDisplayConditionInputs(Input[])
-  href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_UpdateDisplayConditionInputs_Sensus_UI_Inputs_Input___
-  commentId: M:Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs(Sensus.UI.Inputs.Input[])
-  name.vb: UpdateDisplayConditionInputs(Input())
-  fullName: Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs(Sensus.UI.Inputs.Input[])
-  fullName.vb: Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs(Sensus.UI.Inputs.Input())
-  nameWithType: InputGroup.UpdateDisplayConditionInputs(Input[])
-  nameWithType.vb: InputGroup.UpdateDisplayConditionInputs(Input())
-- uid: Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs*
-  name: UpdateDisplayConditionInputs
-  href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_UpdateDisplayConditionInputs_
-  commentId: Overload:Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs
-  fullName: Sensus.UI.Inputs.InputGroup.UpdateDisplayConditionInputs
-  nameWithType: InputGroup.UpdateDisplayConditionInputs
 - uid: Sensus.UI.Inputs.InputGroup.Valid
   name: Valid
   href: api/Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_Valid
