@@ -85,8 +85,8 @@ namespace Sensus
         // test every 30 seconds in debug
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
-        // test every 15 minutes in release
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(15);
+        // test every 60 minutes in release
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
 #endif
 
         /// <summary>

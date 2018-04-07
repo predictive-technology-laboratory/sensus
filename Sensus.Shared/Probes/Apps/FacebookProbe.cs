@@ -65,7 +65,9 @@ namespace Sensus.Probes.Apps
             base.Initialize();
 
             if (GetRequiredPermissionNames().Length == 0)
+            {
                 throw new NotSupportedException("No Facebook permissions requested. Will not start Facebook probe.");
+            }
         }
 
         /// <summary>
@@ -82,7 +84,9 @@ namespace Sensus.Probes.Apps
                 FacebookPermission permission = facebookDatumProperty.GetCustomAttribute<FacebookPermission>();
                 Anonymizer propertyAnonymizer = Protocol.JsonAnonymizer.GetAnonymizer(facebookDatumProperty);
                 if (permission != null && (propertyAnonymizer == null || !(propertyAnonymizer is ValueOmittingAnonymizer)))
+                {
                     requiredFacebookPermissions.Add(permission);
+                }
             }
 
             return requiredFacebookPermissions;
@@ -102,10 +106,13 @@ namespace Sensus.Probes.Apps
 
             // get query for all required permissions that have been granted
             foreach (FacebookPermission permission in GetRequiredFacebookPermissions())
+            {
                 if (grantedPermissions.Contains(permission.Name))
                 {
                     if (permission.Edge == null)
+                    {
                         userFields.Add(permission.Field);
+                    }
                     else
                     {
                         List<string> fields;
@@ -118,12 +125,15 @@ namespace Sensus.Probes.Apps
                         fields.Add(permission.Field);
                     }
                 }
+            }
 
             List<Tuple<string, List<string>>> edgeFieldQueries = new List<Tuple<string, List<string>>>();
 
             userFields.RemoveAll(s => string.IsNullOrWhiteSpace(s));
             if (userFields.Count > 0)
+            {
                 edgeFieldQueries.Add(new Tuple<string, List<string>>(null, userFields.Distinct().ToList()));
+            }
 
             foreach (string edge in edgeFields.Keys)
             {
@@ -139,12 +149,12 @@ namespace Sensus.Probes.Apps
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

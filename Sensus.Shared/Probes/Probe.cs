@@ -137,28 +137,6 @@ namespace Sensus.Probes
             get { return _running; }
         }
 
-        /// <summary>
-        /// Gets or sets the datum that was most recently sensed, regardless of whether the datum was stored.
-        /// </summary>
-        /// <value>The most recent datum.</value>
-        [JsonIgnore]
-        public Datum MostRecentDatum
-        {
-            get { return _mostRecentDatum; }
-            set
-            {
-                if (value != _mostRecentDatum)
-                {
-                    Datum previousDatum = _mostRecentDatum;
-
-                    _mostRecentDatum = value;
-
-                    MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
-                }
-            }
-        }
-
         [JsonIgnore]
         public DateTimeOffset? MostRecentStoreTimestamp
         {
@@ -406,9 +384,14 @@ namespace Sensus.Probes
         /// <param name="cancellationToken">Cancellation token.</param>
         public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken)
         {
-            // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
-            MostRecentDatum = datum;
+            // track the most recent datum regardless of whether the datum is null or whether we're storing data
+            Datum previousDatum = _mostRecentDatum;
+            _mostRecentDatum = datum;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;
+
+            // fire events to notify observers of the stored data and associated UI values
+            MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
 
             // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
             if (datum != null)

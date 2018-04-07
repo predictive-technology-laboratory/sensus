@@ -17,17 +17,45 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
-using Sensus.Extensions;
 using System.ComponentModel;
+using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
     public class Script : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
+        /// a reference to its associated <see cref="ScriptRunner"/>, which contains other references that make JSON 
+        /// serialization and deserialization an expensive operation. We use JSON serialization/deserialization for <see cref="Script"/>s
+        /// because there are complicated objective references between the <see cref="InputGroup"/>s and <see cref="Input"/>s
+        /// that are associated with the <see cref="Script"/>. We use the contract resolver to prevent copying of the 
+        /// <see cref="ScriptRunner"/>.
+        /// </summary>
+        private class CopyContractResolver : DefaultContractResolver
+        {
+            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+            {
+                // copy all properties except the script runner
+                IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
+                return properties.Where(p => p.PropertyName != nameof(Script.Runner)).ToList();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _submitting;
         private Datum _currentDatum;
+
+        private JsonSerializerSettings _copySettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            TypeNameHandling = TypeNameHandling.All,
+            ContractResolver = new CopyContractResolver()
+        };
 
         public string Id { get; set; }
         public ScriptRunner Runner { get; set; }
@@ -148,12 +176,16 @@ namespace Sensus.Probes.User.Scripts
         /// the <see cref="InputGroup.Id"/> or <see cref="Input.Id"/> values associated with this <see cref="Script"/>.</param>
         public Script Copy(bool newId)
         {
-            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+            // copy the script except for the script runner
+            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, _copySettings), _copySettings);
 
             if (newId)
             {
                 copy.Id = Guid.NewGuid().ToString();
             }
+
+            // attach the script runner to the copy
+            copy.Runner = Runner;
 
             return copy;
         }

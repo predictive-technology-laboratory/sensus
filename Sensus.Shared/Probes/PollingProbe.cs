@@ -246,9 +246,9 @@ namespace Sensus.Probes
             _significantChangePoll = false;
             _significantChangePollOverridesScheduledPolls = false;
             _locationManager = new CLLocationManager();
-            _locationManager.LocationsUpdated += (sender, e) =>
+            _locationManager.LocationsUpdated += async (sender, e) =>
             {
-                Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     try
                     {
@@ -260,7 +260,7 @@ namespace Sensus.Probes
                             canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
                         }
 
-                        _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
+                        await _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
                     }
                     catch (Exception ex)
                     {

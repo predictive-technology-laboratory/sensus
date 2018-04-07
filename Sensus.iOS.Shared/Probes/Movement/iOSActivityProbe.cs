@@ -71,11 +71,14 @@ namespace Sensus.iOS.Probes.Movement
         {
             List<Datum> data = new List<Datum>();
 
-            // if this is the first poll (no existing query start time), set the query time
+            // if this is the first poll (no existing query start time), set the query start time to the current time. we
+            // used to set this to the maximally previous time per ios documentation (7 days), but this (1) causes issues
+            // when triggering surveys on the basis of these activities (there might be hundreds of activities within the
+            // past 7 days), and it also runs counter to the user's expectations that data will only be collected from the
+            // time at which they have enrolled in the study and not from times prior.
             if (_queryStartTime == null)
             {
-                // only the last 7 days of activities are stored:  https://developer.apple.com/documentation/coremotion/cmmotionactivitymanager/1615929-queryactivitystarting
-                _queryStartTime = DateTimeOffset.UtcNow.AddDays(-7);
+                _queryStartTime = DateTimeOffset.UtcNow;
             }
 
             ManualResetEvent queryWait = new ManualResetEvent(false);
