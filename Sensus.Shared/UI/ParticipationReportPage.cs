@@ -126,9 +126,9 @@ namespace Sensus.UI
                     FontSize = 20
                 };
 
-                emailStudyManagerButton.Clicked += (o, e) =>
+                emailStudyManagerButton.Clicked += async (o, e) =>
                 {
-                    SensusServiceHelper.Get().SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name,
+                    await SensusServiceHelper.Get().SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name,
                         "Hello - " + Environment.NewLine +
                         Environment.NewLine +
                         "I am having trouble with a Sensus study. The name of the study is \"" + protocol.Name + "\"." + Environment.NewLine +

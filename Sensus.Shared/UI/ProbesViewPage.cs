@@ -42,7 +42,7 @@ namespace Sensus.UI
 
             if (chart == null)
             {
-                SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.");
+                await SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.");
             }
             else
             {

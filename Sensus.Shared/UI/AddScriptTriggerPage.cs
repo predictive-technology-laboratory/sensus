@@ -377,7 +377,7 @@ namespace Sensus.UI
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync($"Failed to add trigger:  {ex.Message}");
+                    await SensusServiceHelper.Get().FlashNotificationAsync($"Failed to add trigger:  {ex.Message}");
                     SensusServiceHelper.Get().Logger.Log($"Failed to add trigger:  {ex.Message}", LoggingLevel.Normal, GetType());
                 }
             };

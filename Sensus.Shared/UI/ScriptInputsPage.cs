@@ -192,7 +192,7 @@ namespace Sensus.UI
 
                     if (input is VoiceInput && inputGroup.Inputs.Count > 0 || !(input is VoiceInput) && inputGroup.Inputs.Any(i => i is VoiceInput))
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Voice inputs must reside in groups by themselves.");
                     }
                     else
                     {

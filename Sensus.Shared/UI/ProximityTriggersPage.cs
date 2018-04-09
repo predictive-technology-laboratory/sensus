@@ -67,7 +67,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
+                    await SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
                 }
             }));
         }

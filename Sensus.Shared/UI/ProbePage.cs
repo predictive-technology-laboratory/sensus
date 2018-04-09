@@ -100,7 +100,7 @@ namespace Sensus.UI
 
                 contentLayout.Children.Add(shareScriptButton);
 
-                shareScriptButton.Clicked += (o, e) =>
+                shareScriptButton.Clicked += async (o, e) =>
                 {
                     string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
 
@@ -109,7 +109,7 @@ namespace Sensus.UI
                         shareFile.WriteLine(JsonConvert.SerializeObject(probe, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
                     }
 
-                    SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition", "application/json");
+                    await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition", "application/json");
                 };
             }
             #endregion

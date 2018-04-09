@@ -231,7 +231,7 @@ namespace Sensus.iOS
                                 // provide some generic feedback if the user responded to a silent callback notification
                                 if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
                                 {
-                                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
+                                    await SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                                 }
                             }
                         });

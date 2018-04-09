@@ -495,24 +495,28 @@ namespace Sensus
         public string GetHash(string s)
         {
             if (s == null)
+            {
                 return null;
+            }
 
             StringBuilder hashBuilder = new StringBuilder();
             foreach (byte b in _hasher.ComputeHash(Encoding.UTF8.GetBytes(s)))
+            {
                 hashBuilder.Append(b.ToString("x"));
+            }
 
             return hashBuilder.ToString();
         }
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform. we are gradually migrating this functionality into the ISensusContext object.
 
-        protected abstract void ProtectedFlashNotificationAsync(string message, Action callback);
+        protected abstract Task ProtectedFlashNotificationAsync(string message, Action callback);
 
-        public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
+        public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
-        public abstract void ShareFileAsync(string path, string subject, string mimeType);
+        public abstract Task ShareFileAsync(string path, string subject, string mimeType);
 
-        public abstract void SendEmailAsync(string toAddress, string subject, string message);
+        public abstract Task SendEmailAsync(string toAddress, string subject, string message);
 
         public abstract Task TextToSpeechAsync(string text);
 
@@ -835,13 +839,17 @@ namespace Sensus
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
         /// <param name="callback">Callback.</param>
-        public void FlashNotificationAsync(string message, Action callback = null)
+        public Task FlashNotificationAsync(string message, Action callback = null)
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
             if (_flashNotificationsEnabled)
             {
-                ProtectedFlashNotificationAsync(message, callback);
+                return ProtectedFlashNotificationAsync(message, callback);
+            }
+            else
+            {
+                return Task.CompletedTask;
             }
 #endif
         }
@@ -1159,7 +1167,7 @@ namespace Sensus
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                 {
-                    FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                    await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
                 }
                 else
                 {
@@ -1181,7 +1189,7 @@ namespace Sensus
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                 {
-                    FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                    await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
                 }
                 else
                 {

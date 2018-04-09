@@ -153,7 +153,7 @@ namespace Sensus.Android
             Intent serviceIntent = AndroidSensusService.StartService(this);
             BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
 
-            // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
+            // start new task to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             Task.Run(() =>
             {
                 // we've not seen the binding take more than a second or two; however, we want to be very careful not to block indefinitely
@@ -272,9 +272,9 @@ namespace Sensus.Android
             OpenIntentAsync(intent);
         }
 
-        private void OpenIntentAsync(Intent intent)
+        private Task OpenIntentAsync(Intent intent)
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 // wait for service helper to be initialized, since this method might be called before the service starts up
                 // and initializes the service helper.
@@ -343,8 +343,7 @@ namespace Sensus.Android
                         });
                     }
                 }
-
-            }).Start();
+            });
         }
 
         #endregion

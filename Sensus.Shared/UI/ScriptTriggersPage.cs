@@ -66,7 +66,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
+                    await SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
                 }
             }));
         }

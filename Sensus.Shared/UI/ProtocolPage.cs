@@ -67,7 +67,7 @@ namespace Sensus.UI
 
                     if (copy == null)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
                     }
                     else
                     {
@@ -111,7 +111,7 @@ namespace Sensus.UI
 
                     if (copy == null)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to edit data store.");
                     }
                     else
                     {

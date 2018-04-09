@@ -208,9 +208,9 @@ namespace Sensus.Android
         /// <param name="startMainActivityIfNotFocused">Whether or not to start the main activity if it is not currently focused.</param>
         /// <param name="holdActionIfNoActivity">If the main activity is not focused and we're not starting a new one to refocus it, whether 
         /// or not to hold the action for later when the activity is refocused.</param>
-        public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
+        public Task RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 lock (_focusedMainActivityLocker)
                 {
@@ -298,9 +298,9 @@ namespace Sensus.Android
         #endregion
 
         #region miscellaneous platform-specific functions
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            new Thread(() =>
+            return Task.Run(async () =>
             {
                 try
                 {
@@ -308,7 +308,7 @@ namespace Sensus.Android
                     intent.SetType("*/*");
                     intent.AddCategory(Intent.CategoryOpenable);
 
-                    RunActionUsingMainActivityAsync(mainActivity =>
+                    await RunActionUsingMainActivityAsync(mainActivity =>
                     {
                         mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
                         {
@@ -332,51 +332,51 @@ namespace Sensus.Android
                 }
                 catch (ActivityNotFoundException)
                 {
-                    FlashNotificationAsync("Please install a file manager from the Apps store.");
+                    await FlashNotificationAsync("Please install a file manager from the Apps store.");
                 }
                 catch (Exception ex)
                 {
-                    FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
+                    await FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
                 }
-
-            }).Start();
+            });
         }
 
-        public override void ShareFileAsync(string path, string subject, string mimeType)
+        public override Task ShareFileAsync(string path, string subject, string mimeType)
         {
-            new Thread(() =>
+            return Task.Run(async () =>
+            {
+                try
                 {
-                    try
+                    Intent intent = new Intent(Intent.ActionSend);
+                    intent.SetType(mimeType);
+                    intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+
+                    if (!string.IsNullOrWhiteSpace(subject))
                     {
-                        Intent intent = new Intent(Intent.ActionSend);
-                        intent.SetType(mimeType);
-                        intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                        if (!string.IsNullOrWhiteSpace(subject))
-                            intent.PutExtra(Intent.ExtraSubject, subject);
-
-                        Java.IO.File file = new Java.IO.File(path);
-                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
-                        intent.PutExtra(Intent.ExtraStream, uri);
-
-                        // run from main activity to get a smoother transition back to sensus
-                        RunActionUsingMainActivityAsync(mainActivity =>
-                            {
-                                mainActivity.StartActivity(intent);
-
-                            }, true, false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        intent.PutExtra(Intent.ExtraSubject, subject);
                     }
 
-                }).Start();
+                    Java.IO.File file = new Java.IO.File(path);
+                    global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                    intent.PutExtra(Intent.ExtraStream, uri);
+
+                    // run from main activity to get a smoother transition back to sensus
+                    await RunActionUsingMainActivityAsync(mainActivity =>
+                    {
+                        mainActivity.StartActivity(intent);
+
+                    }, true, false);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
 
-        public override void SendEmailAsync(string toAddress, string subject, string message)
+        public override Task SendEmailAsync(string toAddress, string subject, string message)
         {
-            RunActionUsingMainActivityAsync(mainActivity =>
+            return RunActionUsingMainActivityAsync(mainActivity =>
             {
                 Intent emailIntent = new Intent(Intent.ActionSend);
                 emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
@@ -401,12 +401,12 @@ namespace Sensus.Android
 
         public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 string input = null;
                 ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-                RunActionUsingMainActivityAsync(mainActivity =>
+                await RunActionUsingMainActivityAsync(mainActivity =>
                 {
                     mainActivity.RunOnUiThread(() =>
                     {
@@ -503,11 +503,11 @@ namespace Sensus.Android
 
         #endregion
 
-        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
         {
-            Task.Run(() =>
+            return Task.Run(async () =>
             {
-                RunActionUsingMainActivityAsync(mainActivity =>
+                await RunActionUsingMainActivityAsync(mainActivity =>
                 {
                     mainActivity.RunOnUiThread(() =>
                     {
@@ -731,15 +731,7 @@ namespace Sensus.Android
         /// </summary>
         public override Task BringToForegroundAsync()
         {
-            TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
-
-            RunActionUsingMainActivityAsync(mainActivity =>
-            {
-                taskCompletionSource.SetResult(true);
-
-            }, true, false);
-
-            return taskCompletionSource.Task;
+            return RunActionUsingMainActivityAsync(activity => { }, true, false);
         }
 
         #endregion

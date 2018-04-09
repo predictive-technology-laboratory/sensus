@@ -102,7 +102,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             throw new NotImplementedException();
         }
@@ -112,12 +112,12 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void SendEmailAsync(string toAddress, string subject, string message)
+        public override Task SendEmailAsync(string toAddress, string subject, string message)
         {
             throw new NotImplementedException();
         }
 
-        public override void ShareFileAsync(string path, string subject, string mimeType)
+        public override Task ShareFileAsync(string path, string subject, string mimeType)
         {
             throw new NotImplementedException();
         }
@@ -127,7 +127,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
         {
             throw new NotImplementedException();
         }

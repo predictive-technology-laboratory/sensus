@@ -188,8 +188,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Email Study Manager for Help")
                 {
-
-                    SensusServiceHelper.Get().SendEmailAsync(selectedProtocol.ContactEmail, "Help with Sensus study:  " + selectedProtocol.Name,
+                    await SensusServiceHelper.Get().SendEmailAsync(selectedProtocol.ContactEmail, "Help with Sensus study:  " + selectedProtocol.Name,
                         "Hello - " + Environment.NewLine +
                         Environment.NewLine +
                         "I am having trouble with a Sensus study. The name of the study is \"" + selectedProtocol.Name + "\"." + Environment.NewLine +
@@ -232,7 +231,7 @@ namespace Sensus.UI
 
                             if (writeFailed)
                             {
-                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to submit participation information to remote server. You will not be able to verify your participation at this time.");
                             }
 
                             // cancel the token to close the input above, but only if the token hasn't already been canceled.
@@ -307,12 +306,12 @@ namespace Sensus.UI
                                         }
                                         else
                                         {
-                                            SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
+                                            await SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
                                         }
                                     }
                                     catch (Exception)
                                     {
-                                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
+                                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
                                     }
                                     finally
                                     {
@@ -340,7 +339,7 @@ namespace Sensus.UI
                     {
                         string message = "Failed to scan barcode:  " + ex.Message;
                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                        SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        await SensusServiceHelper.Get().FlashNotificationAsync(message);
                     }
                 }
                 else if (selectedAction == "Edit")
@@ -365,12 +364,12 @@ namespace Sensus.UI
                     {
                         // make a deep copy of the selected protocol so we can reset it for sharing. don't reset the id of the protocol to keep
                         // it in the same study. also do not register the copy since we're just going to send it off.
-                        selectedProtocol.CopyAsync(false, false, selectedProtocolCopy =>
+                        selectedProtocol.CopyAsync(false, false, async selectedProtocolCopy =>
                         {
                             // write protocol to file and share
                             string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                             selectedProtocolCopy.Save(sharePath);
-                            SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
+                            await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
                         });
                     });
 
@@ -425,7 +424,7 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        selectedProtocol.DeleteAsync();
+                        await selectedProtocol.DeleteAsync();
                     }
                 }
             };
@@ -479,7 +478,7 @@ namespace Sensus.UI
             {
                 await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
 
-                    () =>
+                    async () =>
                     {
                         string sharePath = null;
                         try
@@ -494,7 +493,7 @@ namespace Sensus.UI
 
                         if (sharePath != null)
                         {
-                            SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
+                            await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
                         }
                     },
 

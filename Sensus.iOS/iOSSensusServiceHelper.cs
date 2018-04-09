@@ -100,9 +100,9 @@ namespace Sensus.iOS
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
@@ -114,13 +114,13 @@ namespace Sensus.iOS
             });
         }
 
-        public override void ShareFileAsync(string path, string subject, string mimeType)
+        public override Task ShareFileAsync(string path, string subject, string mimeType)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (!MFMailComposeViewController.CanSendMail)
                 {
-                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                    await FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
                     return;
                 }
 
@@ -128,7 +128,7 @@ namespace Sensus.iOS
 
                 if (data == null)
                 {
-                    FlashNotificationAsync("No file to share.");
+                    await FlashNotificationAsync("No file to share.");
                     return;
                 }
 
@@ -140,9 +140,9 @@ namespace Sensus.iOS
             });
         }
 
-        public override void SendEmailAsync(string toAddress, string subject, string message)
+        public override Task SendEmailAsync(string toAddress, string subject, string message)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (MFMailComposeViewController.CanSendMail)
                 {
@@ -154,7 +154,9 @@ namespace Sensus.iOS
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 }
                 else
-                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                {
+                    await FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                }
             });
         }
 
@@ -168,7 +170,7 @@ namespace Sensus.iOS
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             });
         }
@@ -306,11 +308,12 @@ namespace Sensus.iOS
 
         #region methods not implemented in ios
 
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            FlashNotificationAsync("This is not supported on iOS.");
-
-            new Thread(() => callback(null)).Start();
+            return Task.Run(async () =>
+            {
+                await FlashNotificationAsync("This is not supported on iOS.");
+            });
         }
 
         public override void KeepDeviceAwake()

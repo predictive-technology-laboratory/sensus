@@ -190,11 +190,11 @@ namespace Sensus
                                 }
 
                                 // store any data that have accumulated locally
-                                SensusServiceHelper.Get().FlashNotificationAsync("Submitting data from previous study...");
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Submitting data from previous study...");
                                 await registeredProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
 
                                 // stop the study and unregister it 
-                                SensusServiceHelper.Get().FlashNotificationAsync("Stopping previous study...");
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Stopping previous study...");
                                 registeredProtocol.Stop();
                                 SensusServiceHelper.Get().UnregisterProtocol(registeredProtocol);
                                 registeredProtocol = null;
@@ -262,7 +262,7 @@ namespace Sensus
                                         if (trigger.Probe == null)
                                         {
                                             scriptRunner.Triggers.Remove(trigger);
-                                            SensusServiceHelper.Get().FlashNotificationAsync("Warning:  " + scriptRunner.Name + " trigger is not valid on this device.");
+                                            await SensusServiceHelper.Get().FlashNotificationAsync("Warning:  " + scriptRunner.Name + " trigger is not valid on this device.");
                                         }
                                     }
                                 }
@@ -286,7 +286,7 @@ namespace Sensus
                         if (protocol != null)
                         {
                             SensusServiceHelper.Get().Logger.Log("Failed to set up deserialized protocol:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                            SensusServiceHelper.Get().FlashNotificationAsync("Failed to set up unpacked protocol.");
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to set up unpacked protocol.");
                             protocol = null;
                         }
                     }
@@ -1885,15 +1885,12 @@ namespace Sensus
             }
         }
 
-        public void DeleteAsync(Action callback = null)
+        public Task DeleteAsync()
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 Delete();
-
-                callback?.Invoke();
-
-            }).Start();
+            });
         }
 
         public void Delete()
