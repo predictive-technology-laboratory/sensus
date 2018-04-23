@@ -151,7 +151,7 @@ namespace Sensus.Probes.Location
 
             try
             {
-                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v2/devices");
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v3/attachments");
                 request.ContentType = "application/json";
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
@@ -172,27 +172,19 @@ namespace Sensus.Probes.Location
                             throw new Exception("Received empty response content.");
                         }
 
-                        foreach (JObject device in JArray.Parse(content))
+                        foreach (JObject attachment in JObject.Parse(content).Value<JArray>("data"))
                         {
-                            JArray tags = device.Value<JObject>("shadow").Value<JArray>("tags");
-                            foreach (JValue tag in tags)
+                            try
                             {
-                                try
-                                {
-                                    // there might be other tags on the beacon. skip those that aren't objects by catching exception.
-                                    JObject tagObject = JObject.Parse(tag.ToString());
+                                string deviceName = attachment.Value<JObject>("payload").Value<JValue>("sensus").ToString();
 
-                                    // there might be other objects. catch exception to skip those that aren't attachments.
-                                    string deviceName = tagObject.Value<JObject>("attachment").Value<JValue>("sensus").ToString();
-
-                                    if (!sensusBeaconNames.Contains(deviceName))
-                                    {
-                                        sensusBeaconNames.Add(deviceName);
-                                    }
-                                }
-                                catch (Exception)
+                                if (!sensusBeaconNames.Contains(deviceName))
                                 {
+                                    sensusBeaconNames.Add(deviceName);
                                 }
+                            }
+                            catch (Exception)
+                            {
                             }
                         }
                     }
