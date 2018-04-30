@@ -6,6 +6,14 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
+# delete iam access key
+iamUserName="$1"
+accessKeyId=$(aws iam list-access-keys --user-name $iamUserName | jq -r .AccessKeyMetadata[0].AccessKeyId)
+aws iam delete-access-key --user-name $iamUserName --access-key-id $accessKeyId
+if [ $? -ne 0 ]; then
+    echo "Failed to delete IAM access key."
+fi
+
 # terminate instance
 echo "Terminating instance..."
 instanceId=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$1" --output text --query "Reservations[*].Instances[*].InstanceId")
