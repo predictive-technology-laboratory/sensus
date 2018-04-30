@@ -14,7 +14,6 @@
 
 using System;
 using Estimote.Android.Proximity;
-using Estimote.Android.Cloud;
 using Android.App;
 using Sensus.Context;
 using System.Collections.Generic;
@@ -72,7 +71,6 @@ namespace Sensus.Android.Probes.Location
 
             _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
                 .WithBalancedPowerMode()
-                .WithTelemetryReporting()
                 .WithScannerInForegroundService(notification)
                 .WithOnErrorAction(new ErrorHandler())
                 .Build();
