@@ -1,7 +1,8 @@
 #!/bin/sh
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 3 ]; then
     echo "Usage:  ./configure-s3.sh [region] [root id]"
+    echo "\t[name]:  Informative name for bucket (alphanumerics and dashes)"
     echo "\t[region]:  AWS region to use (e.g., us-east-1)"
     echo "\t[root id]:  Account ID that will own the data (12 digits, no dashes)"
     exit 1
@@ -9,8 +10,8 @@ fi
 
 # create random bucket in given region
 echo "Creating S3 bucket..."
-bucket=$(uuidgen | tr '[:upper:]' '[:lower:]')
-aws s3api create-bucket --bucket $bucket --region $1
+bucket="$1-$(uuidgen | tr '[:upper:]' '[:lower:]')"
+aws s3api create-bucket --bucket $bucket --region $2
 if [ $? -ne 0 ]; then
     echo "Failed to create bucket."
     exit $?
@@ -47,7 +48,7 @@ rm tmp.json
 sleep 15
 cp ./bucket-policy.json tmp.json
 sed -i "" "s/bucketId/$bucket/" ./tmp.json
-sed -i "" "s/rootAccountId/$2/" ./tmp.json
+sed -i "" "s/rootAccountId/$3/" ./tmp.json
 sed -i "" "s#iamUserARN#$iamUserARN#" ./tmp.json
 aws s3api put-bucket-policy --bucket $bucket --policy file://./tmp.json
 if [ $? -ne 0 ]; then
