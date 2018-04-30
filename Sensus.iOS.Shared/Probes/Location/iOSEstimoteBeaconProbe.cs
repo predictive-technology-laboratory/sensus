@@ -57,8 +57,6 @@ namespace Sensus.iOS.Probes.Location
                 }
 
                 _observer.StartObservingZones(zones.ToArray());
-
-
             });
         }
 
