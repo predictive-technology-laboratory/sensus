@@ -196,7 +196,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string ENCRYPTION_KEY = &quot;54AFEEE09C5817D1AD6F2464F305823B3E37DE5A3D0B9F707B23D984D002838F&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public const string ENCRYPTION_KEY = &quot;&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1069,7 +1069,7 @@ decide which probes to enable when enabling all probes.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void FlashNotificationAsync(string message, Action callback = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task FlashNotificationAsync(string message, Action callback = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1091,6 +1091,22 @@ decide which probes to enable when enabling all probes.</p>
         <td><span class="xref">System.Action</span></td>
         <td><span class="parametername">callback</span></td>
         <td><p>Callback.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>The notification async.</p>
 </td>
       </tr>
     </tbody>
@@ -1612,7 +1628,7 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action&lt;string&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action&lt;string&gt; callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1632,6 +1648,21 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       <tr>
         <td><span class="xref">System.Action</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -1865,7 +1896,7 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void ProtectedFlashNotificationAsync(string message, Action callback)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract Task ProtectedFlashNotificationAsync(string message, Action callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1885,6 +1916,21 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       <tr>
         <td><span class="xref">System.Action</span></td>
         <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2245,7 +2291,7 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract void SendEmailAsync(string toAddress, string subject, string message)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task SendEmailAsync(string toAddress, string subject, string message)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2274,6 +2320,21 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_SensusServiceHelper_ShareFileAsync_" data-uid="Sensus.SensusServiceHelper.ShareFileAsync*"></a>
@@ -2282,7 +2343,7 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract void ShareFileAsync(string path, string subject, string mimeType)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task ShareFileAsync(string path, string subject, string mimeType)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2307,6 +2368,21 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">mimeType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

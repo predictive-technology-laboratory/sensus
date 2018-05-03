@@ -4677,7 +4677,7 @@
   "Sensus.Protocol.CopyAsync(System.Boolean,System.Boolean,System.Action{Sensus.Protocol})": "Sensus.Protocol.yml",
   "Sensus.Protocol.Create(System.String)": "Sensus.Protocol.yml",
   "Sensus.Protocol.Delete": "Sensus.Protocol.yml",
-  "Sensus.Protocol.DeleteAsync(System.Action)": "Sensus.Protocol.yml",
+  "Sensus.Protocol.DeleteAsync": "Sensus.Protocol.yml",
   "Sensus.Protocol.Description": "Sensus.Protocol.yml",
   "Sensus.Protocol.DeserializeAsync(System.Byte[],System.Action{Sensus.Protocol})": "Sensus.Protocol.yml",
   "Sensus.Protocol.DeserializeAsync(System.String,System.Action{Sensus.Protocol})": "Sensus.Protocol.yml",

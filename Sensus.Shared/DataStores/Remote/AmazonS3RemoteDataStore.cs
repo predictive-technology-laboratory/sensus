@@ -43,21 +43,22 @@ namespace Sensus.DataStores.Remote
     ///   * Install the [AWS Command Line Interface(CLI)](https://aws.amazon.com/cli).
     ///   * Install the [jq](https://stedolan.github.io/jq) command-line utility.
     ///   * Download and unzip our [AWS configuration scripts](https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip).
-    ///   * Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where `REGION` is the region in which 
-    ///     your bucket will reside (e.g., `us-east-1`), and `ROOT_ID` is the 12-digit (no dashes) AWS account identifier that will own your data:
+    ///   * Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where `NAME` is an informative name
+    ///     (alphanumerics only), `REGION` is the region in which your bucket will reside (e.g., `us-east-1`), and `ROOT_ID` is the 12-digit (no dashes) 
+    ///     AWS account identifier that will own your data:
     /// 
     ///     ```
-    ///     ./ConfigureS3.sh REG    ION ROOT_ID
+    ///     ./ConfigureS3.sh NAME REGION ROOT_ID
     ///     ```
     /// 
     ///   * The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
     ///     like the following:
     /// 
     ///     ```
-    ///     All done. Bucket:  21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+    ///     All done. Bucket:  testing-21bfc3a9-a24f-4746-b9fb-58dc4669dd01
     ///     ```
     /// 
-    ///   * The bucket ID should be kept confidential. Use this value as <see cref="Bucket"/>.
+    ///   * The bucket produced on the final line should be kept confidential. Use this value as <see cref="Bucket"/>.
     /// 
     /// # Downloading Data from Amazon S3
     /// 

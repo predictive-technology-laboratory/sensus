@@ -37709,12 +37709,12 @@ references:
   commentId: Overload:Sensus.Protocol.Delete
   fullName: Sensus.Protocol.Delete
   nameWithType: Protocol.Delete
-- uid: Sensus.Protocol.DeleteAsync(System.Action)
-  name: DeleteAsync(Action)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeleteAsync_System_Action_
-  commentId: M:Sensus.Protocol.DeleteAsync(System.Action)
-  fullName: Sensus.Protocol.DeleteAsync(System.Action)
-  nameWithType: Protocol.DeleteAsync(Action)
+- uid: Sensus.Protocol.DeleteAsync
+  name: DeleteAsync()
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeleteAsync
+  commentId: M:Sensus.Protocol.DeleteAsync
+  fullName: Sensus.Protocol.DeleteAsync()
+  nameWithType: Protocol.DeleteAsync()
 - uid: Sensus.Protocol.DeleteAsync*
   name: DeleteAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_DeleteAsync_
