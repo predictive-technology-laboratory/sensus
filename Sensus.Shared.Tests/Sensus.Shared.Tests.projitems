@@ -16,8 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\LockConcurrentTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Dispose\DisposableTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Encryption\SymmetricEncryptionTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Exceptions\InsightsInitializerTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Extensions\DateTimeExtensionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Extensions\DateTimeExtensionsTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\ScheduleTriggerTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\ProtocolTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\SensusServiceHelperTests.cs" />
@@ -25,5 +24,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Encryption\AsymmetricEncryptionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\WindowTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\TriggerWindowTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\CompressionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\Local\FileLocalDataStoreTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Extensions\NumericExtensionsTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DatumTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\ScriptTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\Local\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\Remote\" />
   </ItemGroup>
 </Project>

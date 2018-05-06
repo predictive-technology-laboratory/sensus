@@ -19,11 +19,23 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Location
 {
+    /// <summary>
+    /// 
+    /// Location in degrees latitude and longitude. Can be anonymized by rounding significant digits from these degree values. For example, 
+    /// rounding the latitude/longitude location 38.64/-78.35 to tenths produces 38.6/-78.4, reducing spatial fidelity by approximately 4 miles. 
+    /// Similarly, rounding to hundredths will reduce spatial fidelity by approximately 0.4 miles, and rounding to thousandths will reduce 
+    /// spatial fidelity by approximately 0.04 miles (200 feet).
+    /// 
+    /// </summary>
     public class LocationDatum : ImpreciseDatum
     {
         private double _latitude;
         private double _longitude;
 
+        /// <summary>
+        /// Latitude coordinate, measured in decimal degrees north and south of the equator per the WGS 1984 datum. 
+        /// </summary>
+        /// <value>The latitude.</value>
         [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double Latitude
@@ -32,6 +44,10 @@ namespace Sensus.Probes.Location
             set { _latitude = value; }
         }
 
+        /// <summary>
+        /// Longitude coordinate, measured in decimal degrees west and east of the prime meridian per the WGS 1984 datum.
+        /// </summary>
+        /// <value>The longitude.</value>
         [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double Longitude
@@ -43,6 +59,18 @@ namespace Sensus.Probes.Location
         public override string DisplayDetail
         {
             get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon)"; }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the [lat,lon] location.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "[" + Math.Round(_latitude, 2) + "," + Math.Round(_longitude, 2) + "]";
+            }
         }
 
         /// <summary>

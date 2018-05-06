@@ -21,7 +21,7 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Movement
 {
     /// <summary>
-    /// Probes information about physical acceleration in x, y, and z directions.
+    /// Provides acceleration in x, y, and z directions as <see cref="AccelerometerDatum"/> readings.
     /// </summary>
     public abstract class AccelerometerProbe : ListeningProbe
     {

@@ -1,0 +1,799 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class SliderInput
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class SliderInput
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.UI.Inputs.SliderInput">
+  
+  
+  <h1 id="Sensus_UI_Inputs_SliderInput" data-uid="Sensus.UI.Inputs.SliderInput" class="text-break">Class SliderInput
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a></div>
+    <div class="level2"><span class="xref">SliderInput</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.UI.Inputs.IVariableDefiningInput.html">IVariableDefiningInput</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_EFFECT_RESOLUTION_GROUP_NAME">Input.EFFECT_RESOLUTION_GROUP_NAME</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_CreateLabel_System_Int32_">Input.CreateLabel(Int32)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_GetLabelText_System_Int32_">Input.GetLabelText(Int32)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_SetView_Xamarin_Forms_View_">Input.SetView(View)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Reset">Input.Reset()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ValueMatches_System_Object_System_Boolean_">Input.ValueMatches(Object, Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Copy_System_Boolean_">Input.Copy(Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Name">Input.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Id">Input.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_GroupId">Input.GroupId</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_LabelText">Input.LabelText</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_LabelFontSize">Input.LabelFontSize</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_DisplayNumber">Input.DisplayNumber</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Complete">Input.Complete</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Valid">Input.Valid</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_NeedsToBeStored">Input.NeedsToBeStored</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Latitude">Input.Latitude</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Longitude">Input.Longitude</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_LocationUpdateTimestamp">Input.LocationUpdateTimestamp</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Required">Input.Required</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Viewed">Input.Viewed</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_CompletionTimestamp">Input.CompletionTimestamp</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_DisplayConditions">Input.DisplayConditions</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_BackgroundColor">Input.BackgroundColor</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Padding">Input.Padding</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Frame">Input.Frame</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_CompletionRecords">Input.CompletionRecords</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_StoreCompletionRecords">Input.StoreCompletionRecords</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Display">Input.Display</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_SubmissionTimestamp">Input.SubmissionTimestamp</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Caption">Input.Caption</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_TriggeringDatum">Input.TriggeringDatum</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_PropertyChanged">Input.PropertyChanged</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.Inputs.html">Sensus.UI.Inputs</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_UI_Inputs_SliderInput_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SliderInput : Input, INotifyPropertyChanged, IVariableDefiningInput</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput__ctor_" data-uid="Sensus.UI.Inputs.SliderInput.#ctor*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput__ctor" data-uid="Sensus.UI.Inputs.SliderInput.#ctor">SliderInput()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SliderInput()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput__ctor_" data-uid="Sensus.UI.Inputs.SliderInput.#ctor*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput__ctor_System_String_System_Double_System_Double_" data-uid="Sensus.UI.Inputs.SliderInput.#ctor(System.String,System.Double,System.Double)">SliderInput(String, Double, Double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SliderInput(string labelText, double minimum, double maximum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">labelText</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">minimum</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">maximum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput__ctor_" data-uid="Sensus.UI.Inputs.SliderInput.#ctor*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput__ctor_System_String_System_String_System_Double_System_Double_" data-uid="Sensus.UI.Inputs.SliderInput.#ctor(System.String,System.String,System.Double,System.Double)">SliderInput(String, String, Double, Double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SliderInput(string labelText, string name, double minimum, double maximum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">labelText</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">minimum</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">maximum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="Sensus_UI_Inputs_SliderInput_EFFECT_RESOLUTION_EFFECT_NAME" data-uid="Sensus.UI.Inputs.SliderInput.EFFECT_RESOLUTION_EFFECT_NAME">EFFECT_RESOLUTION_EFFECT_NAME</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string EFFECT_RESOLUTION_EFFECT_NAME = &quot;SliderInputEffect&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_UI_Inputs_SliderInput_EFFECT_RESOLUTION_NAME" data-uid="Sensus.UI.Inputs.SliderInput.EFFECT_RESOLUTION_NAME">EFFECT_RESOLUTION_NAME</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string EFFECT_RESOLUTION_NAME = &quot;InputEffects.SliderInputEffect&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_DefaultName_" data-uid="Sensus.UI.Inputs.SliderInput.DefaultName*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_DefaultName" data-uid="Sensus.UI.Inputs.SliderInput.DefaultName">DefaultName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string DefaultName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_DefaultName">Input.DefaultName</a></div>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_DefinedVariable_" data-uid="Sensus.UI.Inputs.SliderInput.DefinedVariable*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_DefinedVariable" data-uid="Sensus.UI.Inputs.SliderInput.DefinedVariable">DefinedVariable</h4>
+  <div class="markdown level1 summary"><p>The name of the variable in <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_VariableValueUiProperty">VariableValueUiProperty</a> that this input should
+define the value for. For example, if you wanted this input to supply the value for a variable
+named <code>study-name</code>, then set this field to <code>study-name</code> and the user&apos;s selection will be used as
+the value for this variable. </p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Define Variable:&quot;, true, 2)]
+public string DefinedVariable { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The defined variable.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_DisplayMinMax_" data-uid="Sensus.UI.Inputs.SliderInput.DisplayMinMax*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_DisplayMinMax" data-uid="Sensus.UI.Inputs.SliderInput.DisplayMinMax">DisplayMinMax</h4>
+  <div class="markdown level1 summary"><p>Whether or not to display the minimum and maximum values of the slider.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Display Min and Max:&quot;, true, 16)]
+public bool DisplayMinMax { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to display the minimum and maximum; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_DisplaySliderValue_" data-uid="Sensus.UI.Inputs.SliderInput.DisplaySliderValue*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_DisplaySliderValue" data-uid="Sensus.UI.Inputs.SliderInput.DisplaySliderValue">DisplaySliderValue</h4>
+  <div class="markdown level1 summary"><p>Whether or not the slider&apos;s current value should be displayed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Display Slider Value:&quot;, true, 15)]
+public bool DisplaySliderValue { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to display slider value; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_Enabled_" data-uid="Sensus.UI.Inputs.SliderInput.Enabled*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_Enabled" data-uid="Sensus.UI.Inputs.SliderInput.Enabled">Enabled</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Enabled { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Enabled">Input.Enabled</a></div>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_Increment_" data-uid="Sensus.UI.Inputs.SliderInput.Increment*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_Increment" data-uid="Sensus.UI.Inputs.SliderInput.Increment">Increment</h4>
+  <div class="markdown level1 summary"><p>How much the slider&apos;s value should change between points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryDoubleUiProperty(null, true, 12)]
+public double Increment { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><p>The increment.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_LeftLabel_" data-uid="Sensus.UI.Inputs.SliderInput.LeftLabel*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_LeftLabel" data-uid="Sensus.UI.Inputs.SliderInput.LeftLabel">LeftLabel</h4>
+  <div class="markdown level1 summary"><p>Label to display at the left end of the slider range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Left Label:&quot;, true, 13)]
+public string LeftLabel { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The left label.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_Maximum_" data-uid="Sensus.UI.Inputs.SliderInput.Maximum*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_Maximum" data-uid="Sensus.UI.Inputs.SliderInput.Maximum">Maximum</h4>
+  <div class="markdown level1 summary"><p>Maximum value available on the slider.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryDoubleUiProperty(null, true, 11)]
+public double Maximum { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><p>The maximum.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_Minimum_" data-uid="Sensus.UI.Inputs.SliderInput.Minimum*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_Minimum" data-uid="Sensus.UI.Inputs.SliderInput.Minimum">Minimum</h4>
+  <div class="markdown level1 summary"><p>Minimum value available on the slider.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryDoubleUiProperty(null, true, 10)]
+public double Minimum { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><p>The minimum.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_RightLabel_" data-uid="Sensus.UI.Inputs.SliderInput.RightLabel*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_RightLabel" data-uid="Sensus.UI.Inputs.SliderInput.RightLabel">RightLabel</h4>
+  <div class="markdown level1 summary"><p>Label to display at the right end of the slider range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Right Label:&quot;, true, 14)]
+public string RightLabel { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The left label.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_TipText_" data-uid="Sensus.UI.Inputs.SliderInput.TipText*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_TipText" data-uid="Sensus.UI.Inputs.SliderInput.TipText">TipText</h4>
+  <div class="markdown level1 summary"><p>A short tip that explains how to pick an item from the dialog window.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Tip Text:&quot;, true, 9)]
+public string TipText { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The tip text.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_Value_" data-uid="Sensus.UI.Inputs.SliderInput.Value*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_Value" data-uid="Sensus.UI.Inputs.SliderInput.Value">Value</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override object Value { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Value">Input.Value</a></div>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_GetView_" data-uid="Sensus.UI.Inputs.SliderInput.GetView*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_GetView_System_Int32_" data-uid="Sensus.UI.Inputs.SliderInput.GetView(System.Int32)">GetView(Int32)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override View GetView(int index)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">index</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.View</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_GetView_System_Int32_">Input.GetView(Int32)</a></div>
+  
+  
+  <a id="Sensus_UI_Inputs_SliderInput_ToString_" data-uid="Sensus.UI.Inputs.SliderInput.ToString*"></a>
+  <h4 id="Sensus_UI_Inputs_SliderInput_ToString" data-uid="Sensus.UI.Inputs.SliderInput.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_ToString">Input.ToString()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.UI.Inputs.IVariableDefiningInput.html">IVariableDefiningInput</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

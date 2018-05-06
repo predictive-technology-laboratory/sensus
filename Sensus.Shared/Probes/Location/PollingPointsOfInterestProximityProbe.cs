@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 using Syncfusion.SfChart.XForms;
+using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Probes.Location
 {
@@ -60,26 +61,50 @@ namespace Sensus.Probes.Location
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
         }
 
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            {
+                // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
+                // and we'd like the probe to be restarted at that time.
+                string error = "Geolocation is not permitted on this device. Cannot start POI probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
+        }
+
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
 
             if (currentPosition == null)
+            {
                 throw new Exception("Failed to get GPS reading.");
+            }
             else
+            {
                 foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
                 {
                     double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(currentPosition) * 1000;
 
                     foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                    {
                         if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                        {
                             data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                        }
+                    }
                 }
+            }
 
             if (data.Count == 0)
+            {
                 data.Add(null);
+            }
 
             return data;
         }

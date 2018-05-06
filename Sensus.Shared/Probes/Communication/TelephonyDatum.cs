@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
@@ -33,6 +35,7 @@ namespace Sensus.Probes.Communication
         }
 
         [ListProbeTriggerProperty(new object[] { TelephonyState.Idle, TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
+        [JsonConverter(typeof(StringEnumConverter))]
         public TelephonyState State
         {
             get { return _state; }
@@ -50,6 +53,18 @@ namespace Sensus.Probes.Communication
         public override string DisplayDetail
         {
             get { return _phoneNumber + " (" + _state + (_callDurationSeconds == null ? "" : ", Prior Call:  " + Math.Round(_callDurationSeconds.GetValueOrDefault(), 1) + "s") + ")"; }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the phone number.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _phoneNumber;
+            }
         }
 
         /// <summary>

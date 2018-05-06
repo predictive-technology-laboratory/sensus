@@ -48,7 +48,7 @@ namespace Sensus.UI.Inputs
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="Sensus.Shared.Inputs.LabelOnlyInput"/> stores completion records. Always
+        /// Gets a value indicating whether this <see cref="LabelOnlyInput"/> stores completion records. Always
         /// returns false, since label-only inputs are complete by definition and repeated deserialization will accumulate
         /// completion records that don't have meaning:  https://github.com/predictive-technology-laboratory/sensus/issues/126
         /// </summary>
@@ -84,8 +84,8 @@ namespace Sensus.UI.Inputs
             Construct(complete);
         }
 
-        public LabelOnlyInput(string name, string labelText)
-            : base(name, labelText)
+        public LabelOnlyInput(string labelText, string name)
+            : base(labelText, name)
         {
             Construct(true);
         }

@@ -15,29 +15,163 @@
 using Newtonsoft.Json;
 using Sensus.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
+using System.Text;
+using System.IO.Compression;
+using Sensus.UI.UiProperties;
+using System.Linq;
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
+using Sensus.Extensions;
 
 namespace Sensus.DataStores.Local
 {
-    public class FileLocalDataStore : LocalDataStore
+    /// <summary>
+    /// Stores each <see cref="Datum"/> as plain-text JSON in a gzip-compressed file on the device's local storage media. Also
+    /// supports encryption.
+    /// </summary>
+    public class FileLocalDataStore : LocalDataStore, IClearableDataStore
     {
-        private const double REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;
+        /// <summary>
+        /// Number of <see cref="Datum"/> to write before checking the size of the data store.
+        /// </summary>
+        private const int DATA_WRITES_PER_SIZE_CHECK = 10000;
+
+        /// <summary>
+        /// Threshold on the size of the local storage directory in MB. When this is exceeded, a write to the <see cref="Remote.RemoteDataStore"/> 
+        /// will be forced.
+        /// </summary>
+        private const double REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;
+
+        /// <summary>
+        /// Threshold on the size of files within the local storage directory. When this is exceeded, a new file will be started.
+        /// </summary>
         private const double MAX_FILE_SIZE_MB = 1;
 
-        private string _path;
+        /// <summary>
+        /// File-based storage uses a <see cref="BufferedStream"/> for efficiency. This is the default buffer size in bytes.
+        /// </summary>
+        private const int DEFAULT_BUFFER_SIZE_BYTES = 4096;
 
-        private readonly object _storageDirectoryLocker = new object();
+        /// <summary>
+        /// File extension to use for JSON files.
+        /// </summary>
+        private const string JSON_FILE_EXTENSION = ".json";
+
+        /// <summary>
+        /// File extension to use for GZip files.
+        /// </summary>
+        private const string GZIP_FILE_EXTENSION = ".gz";
+
+        /// <summary>
+        /// Files extension to use for encrypted files.
+        /// </summary>
+        private const string ENCRYPTED_FILE_EXTENSION = ".bin";
+
+        /// <summary>
+        /// The encryption key size in bits.
+        /// </summary>
+        private const int ENCRYPTION_KEY_SIZE_BITS = 32 * 8;
+
+        /// <summary>
+        /// The encryption initialization vector size in bits.
+        /// </summary>
+        private const int ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS = 16 * 8;
+
+        private string _path;
+        private BufferedStream _file;
+        private CompressionLevel _compressionLevel;
+        private int _bufferSizeBytes;
+        private bool _encrypt;
+        private Task _writeToRemoteTask;
+        private long _totalDataWritten;
+        private long _bytesWrittenToCurrentFile;
+        private long _dataWrittenToCurrentFile;
+        private int _filesOpened;
+        private int _filesClosed;
+        private int _filesPromoted;
+        private int _filesWrittenToRemote;
+
+        private readonly object _locker = new object();
+
+        /// <summary>
+        /// Gets the path.
+        /// </summary>
+        /// <value>The path.</value>
+        [JsonIgnore]
+        public string Path
+        {
+            get { return _path; }
+        }
+
+        /// <summary>
+        /// Gets or sets the compression level. Options are <see cref="CompressionLevel.NoCompression"/> (no compression), <see cref="CompressionLevel.Fastest"/> 
+        /// (computationally faster but less compression), and <see cref="CompressionLevel.Optimal"/> (computationally slower but more compression).
+        /// </summary>
+        /// <value>The compression level.</value>
+        [ListUiProperty("Compression Level:", true, 1, new object[] { CompressionLevel.NoCompression, CompressionLevel.Fastest, CompressionLevel.Optimal })]
+        public CompressionLevel CompressionLevel
+        {
+            get
+            {
+                return _compressionLevel;
+            }
+            set
+            {
+                _compressionLevel = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the buffer size in bytes. All <see cref="Probes.Probe"/>d data will be held in memory until the buffer is filled, at which time
+        /// the data will be written to the file. There is not a single-best <see cref="BufferSizeBytes"/> value. If data are collected at high rates, a
+        /// higher value will be best to minimize write operations. If data are collected at low rates, a lower value will be best to minimize the likelihood
+        /// of data loss when the app is killed or crashes (as the buffer resides in RAM).
+        /// </summary>
+        /// <value>The buffer size in bytes.</value>
+        [EntryIntegerUiProperty("Buffer Size (Bytes):", true, 2)]
+        public int BufferSizeBytes
+        {
+            get { return _bufferSizeBytes; }
+            set
+            {
+                if (value <= 0)
+                {
+                    value = DEFAULT_BUFFER_SIZE_BYTES;
+                }
+
+                _bufferSizeBytes = value;
+            }
+        }
+
+        /// <summary>
+        /// Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must provide a public encryption 
+        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. You can generate a public encryption key following the instructions
+        /// provided for <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. Note that data are not encrypted immediately. They are first
+        /// written to a compressed file on the device where they live unencrypted for a period of time.
+        /// </summary>
+        /// <value><c>true</c> to encrypt; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
+        public bool Encrypt
+        {
+            get
+            {
+                return _encrypt;
+            }
+            set
+            {
+                _encrypt = value;
+            }
+        }
 
         [JsonIgnore]
         public string StorageDirectory
         {
             get
             {
-                string directory = Path.Combine(Protocol.StorageDirectory, GetType().FullName);
+                string directory = System.IO.Path.Combine(Protocol.StorageDirectory, GetType().FullName);
 
                 if (!Directory.Exists(directory))
                 {
@@ -49,15 +183,21 @@ namespace Sensus.DataStores.Local
         }
 
         [JsonIgnore]
-        public override string DisplayName
+        public long BytesWrittenToCurrentFile
         {
-            get { return "File"; }
+            get { return _bytesWrittenToCurrentFile; }
         }
 
         [JsonIgnore]
-        public override bool Clearable
+        public long DataWrittenToCurrentFile
         {
-            get { return true; }
+            get { return _dataWrittenToCurrentFile; }
+        }
+
+        [JsonIgnore]
+        public override string DisplayName
+        {
+            get { return "File"; }
         }
 
         [JsonIgnore]
@@ -65,301 +205,371 @@ namespace Sensus.DataStores.Local
         {
             get
             {
-                string desc = null;
+                string description = null;
 
                 try
                 {
-                    desc = Math.Round(SensusServiceHelper.GetDirectorySizeMB(StorageDirectory), 1) + " MB";
+                    description = Math.Round(SensusServiceHelper.GetDirectorySizeMB(StorageDirectory), 1) + " MB";
                 }
                 catch (Exception)
                 {
                 }
 
-                return desc;
+                return description;
             }
+        }
+
+        public FileLocalDataStore()
+        {
+            _compressionLevel = CompressionLevel.Optimal;
+            _bufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
+            _encrypt = false;
+            _totalDataWritten = 0;
+            _bytesWrittenToCurrentFile = 0;
+            _dataWrittenToCurrentFile = 0;
+            _filesOpened = _filesClosed = _filesPromoted = _filesWrittenToRemote;
         }
 
         public override void Start()
         {
-            // file needs to be ready to accept data immediately, so set file path before calling base.Start
-            WriteToNewPath();
-
             base.Start();
+
+            // ensure that we have a valid encryption setup if one is requested
+            if (_encrypt)
+            {
+                try
+                {
+                    Protocol.AsymmetricEncryption.Encrypt("testing");
+                }
+                catch (Exception)
+                {
+                    throw new Exception("Ensure that a valid public key is set on the Protocol.");
+                }
+            }
+
+            // file needs to be ready to accept data immediately, so write new file before calling base.Start
+            OpenFile();
         }
 
-        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        private void OpenFile()
+        {
+            lock (_locker)
+            {
+                // it's possible to stop the datastore before entering this lock.
+                if (!Running)
+                {
+                    return;
+                }
+
+                // open new file
+                _path = null;
+                Exception mostRecentException = null;
+                for (int i = 0; _path == null && i < 5; ++i)
+                {
+                    try
+                    {
+                        _path = System.IO.Path.Combine(StorageDirectory, Guid.NewGuid().ToString());
+                        Stream file = new FileStream(_path, FileMode.CreateNew, FileAccess.Write);
+
+                        // add gzip stream if doing compression
+                        if (_compressionLevel != CompressionLevel.NoCompression)
+                        {
+                            file = new GZipStream(file, _compressionLevel, false);
+                        }
+
+                        // use buffering for compression and runtime performance
+                        _file = new BufferedStream(file, _bufferSizeBytes);
+                        _bytesWrittenToCurrentFile = 0;
+                        _dataWrittenToCurrentFile = 0;
+                        _filesOpened++;
+                    }
+                    catch (Exception ex)
+                    {
+                        mostRecentException = ex;
+                        _path = null;
+                    }
+                }
+
+                // we could not open a file to write, so we cannot proceed. report the most recent exception and bail.
+                if (_path == null)
+                {
+                    throw SensusException.Report("Failed to open file for local data store.", mostRecentException);
+                }
+                else
+                {
+                    // open the JSON array
+                    byte[] jsonBeginArrayBytes = Encoding.UTF8.GetBytes("[");
+                    _file.Write(jsonBeginArrayBytes, 0, jsonBeginArrayBytes.Length);
+                }
+            }
+        }
+
+        public override Task<bool> WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
-                List<Datum> committedData = new List<Datum>();
+                bool written = false;
 
-                lock (_storageDirectoryLocker)
+                // only 1 write operation at once
+                lock (_locker)
                 {
+                    // it's possible to stop the datastore before entering this lock, in which case we won't
+                    // have a file to write to. check for a running data store here.
+                    if (!Running)
+                    {
+                        return written;
+                    }
+
+                    // get anonymized JSON for datum
+                    string datumJSON = null;
                     try
                     {
-                        using (StreamWriter file = new StreamWriter(_path, true))
-                        {
-                            foreach (Datum datum in data)
-                            {
-                                if (cancellationToken.IsCancellationRequested)
-                                {
-                                    break;
-                                }
-
-                                // get JSON for datum
-                                string datumJSON = null;
-                                try
-                                {
-                                    datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to get JSON for datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-
-                                // write JSON to file
-                                if (datumJSON != null)
-                                {
-                                    try
-                                    {
-                                        file.WriteLine(datumJSON);
-                                        committedData.Add(datum);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to write datum JSON to local file:  " + ex.Message, LoggingLevel.Normal, GetType());
-
-                                        // something went wrong with file write...switch to a new file in the hope that it will work better
-                                        try
-                                        {
-                                            WriteToNewPath();
-                                            SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
-                                        }
-                                        catch (Exception ex2)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to write data:  " + ex.Message, LoggingLevel.Normal, GetType());
-
-                        // something went wrong with file write...switch to a new file in the hope that it will work better
-                        try
-                        {
-                            WriteToNewPath();
-                            SensusServiceHelper.Get().Logger.Log("Initialized new local file.", LoggingLevel.Normal, GetType());
-                        }
-                        catch (Exception ex2)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to initialize new file after failing to write the old one:  " + ex2.Message, LoggingLevel.Normal, GetType());
-                        }
+                        SensusException.Report("Failed to get JSON for datum.", ex);
                     }
 
-                    // switch to a new path if the current one has grown too large
-                    if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
+                    // write JSON to file
+                    if (datumJSON != null)
                     {
-                        WriteToNewPath();
+                        try
+                        {
+                            byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_dataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
+                            _file.Write(datumJsonBytes, 0, datumJsonBytes.Length);
+                            _bytesWrittenToCurrentFile += datumJsonBytes.Length;
+                            _dataWrittenToCurrentFile++;
+                            _totalDataWritten++;
+                            written = true;
+                        }
+                        catch (Exception writeException)
+                        {
+                            SensusException.Report("Failed to write datum JSON bytes to file.", writeException);
+
+                            // something went wrong with file write...switch to a new file in the hope that it will work better.
+
+                            try
+                            {
+                                CloseFile();
+                            }
+                            catch (Exception closeException)
+                            {
+                                SensusException.Report("Failed to close file after failing to write it.", closeException);
+                            }
+
+                            try
+                            {
+                                OpenFile();
+                            }
+                            catch (Exception openException)
+                            {
+                                SensusException.Report("Failed to open new file after failing to write the previous one.", openException);
+                            }
+                        }
                     }
                 }
 
-                await CommitToRemoteIfTooLargeAsync(cancellationToken);
+                // every so often, check the sizes of the file and data store
+                if ((_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK) == 0)
+                {
+                    // switch to a new file if the current one has grown too large
+                    if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
+                    {
+                        CloseFile();
+                        OpenFile();
+                    }
 
-                return committedData;
+                    // write the local data to remote if the overall size has grown too large
+                    await WriteToRemoteIfTooLargeAsync(cancellationToken);
+                }
+
+                return written;
             });
         }
 
-        public override void CommitToRemote(CancellationToken cancellationToken)
+        public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
         {
-            lock (_storageDirectoryLocker)
+            lock (_locker)
             {
-                string[] pathsToCommit = Directory.GetFiles(StorageDirectory);
-
-                // get path for uncommitted data
-                WriteToNewPath();
-                string uncommittedDataPath = _path;
-
-                // reset _path for standard commits
-                WriteToNewPath();
-
-                using (StreamWriter uncommittedDataFile = new StreamWriter(uncommittedDataPath))
+                // it's possible to stop the datastore before entering this lock.
+                if (!Running)
                 {
-                    foreach (string pathToCommit in pathsToCommit)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        // wrap in try-catch to ensure that we process all files
-                        try
-                        {
-                            using (StreamReader fileToCommit = new StreamReader(pathToCommit))
-                            {
-                                // commit data in small batches. all data will end up in the uncommitted file, in the batch object, or
-                                // in the remote data store.
-                                HashSet<Datum> batch = new HashSet<Datum>();
-                                string datumJSON;
-                                while ((datumJSON = fileToCommit.ReadLine()) != null)
-                                {
-                                    // if we have been canceled, dump the rest of the file into the uncommitted data file.
-                                    if (cancellationToken.IsCancellationRequested)
-                                    {
-                                        uncommittedDataFile.WriteLine(datumJSON);
-                                    }
-                                    else
-                                    {
-                                        // wrap in try-catch to ensure that we process all lines
-                                        try
-                                        {
-                                            batch.Add(Datum.FromJSON(datumJSON));
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            SensusServiceHelper.Get().Logger.Log("Failed to add datum to batch from JSON:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                        }
-
-                                        if (batch.Count >= 50000)
-                                        {
-                                            CommitAndReleaseBatchToRemote(batch, cancellationToken, uncommittedDataFile);
-                                        }
-                                    }
-                                }
-
-                                // commit partial batch
-                                if (batch.Count > 0)
-                                {
-                                    CommitAndReleaseBatchToRemote(batch, cancellationToken, uncommittedDataFile);
-                                }
-                            }
-
-                            // we've read all lines in the file and either committed them to the remote data store or written them
-                            // to the uncommitted data file. we can delete the current path.
-                            File.Delete(pathToCommit);
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to commit:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
-                }
-            }
-        }
-
-        private void CommitAndReleaseBatchToRemote(HashSet<Datum> batch, CancellationToken cancellationToken, StreamWriter uncommittedDataFile)
-        {
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                CommitAndReleaseAsync(batch, Protocol.RemoteDataStore, cancellationToken).Wait();
-            }
-
-            // any leftover data should be dumped to the uncommitted file to maintain memory limits. the data will be committed next time.
-            foreach (Datum datum in batch)
-            {
-                uncommittedDataFile.WriteLine(datum.GetJSON(Protocol.JsonAnonymizer, false));
-            }
-
-            // all data were either commmitted or dumped to the uncommitted file. clear the batch.
-            batch.Clear();
-        }
-
-        protected override bool TooLarge()
-        {
-            lock (_storageDirectoryLocker)
-            {
-                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) >= REMOTE_COMMIT_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
-            }
-        }
-
-        protected override IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback)
-        {
-            lock (_storageDirectoryLocker)
-            {
-                // "$type":"SensusService.Probes.Movement.AccelerometerDatum, SensusiOS"
-                Regex datumTypeRegex = new Regex(@"""\$type""\s*:\s*""(?<type>[^,]+),");
-
-                double storageDirectoryMbToRead = SensusServiceHelper.GetDirectorySizeMB(StorageDirectory);
-                double storageDirectoryMbRead = 0;
-
-                string[] localPaths = Directory.GetFiles(StorageDirectory);
-                for (int localPathNum = 0; localPathNum < localPaths.Length; ++localPathNum)
-                {
-                    string localPath = localPaths[localPathNum];
-
-                    using (StreamReader localFile = new StreamReader(localPath))
-                    {
-                        long localFilePosition = 0;
-
-                        string line;
-                        while ((line = localFile.ReadLine()) != null)
-                        {
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            string type = datumTypeRegex.Match(line).Groups["type"].Value;
-                            type = type.Substring(type.LastIndexOf('.') + 1);
-
-                            yield return new Tuple<string, string>(type, line);
-
-                            if (localFile.BaseStream.Position > localFilePosition)
-                            {
-                                int oldMbRead = (int)storageDirectoryMbRead;
-                                storageDirectoryMbRead += (localFile.BaseStream.Position - localFilePosition) / (1024d * 1024d);
-                                int newMbRead = (int)storageDirectoryMbRead;
-
-                                if (newMbRead > oldMbRead && progressCallback != null && storageDirectoryMbToRead > 0)
-                                    progressCallback(null, storageDirectoryMbRead / storageDirectoryMbToRead);
-
-                                localFilePosition = localFile.BaseStream.Position;
-                            }
-                        }
-                    }
+                    return Task.CompletedTask;
                 }
 
-                if (progressCallback != null)
-                    progressCallback(null, 1);
+                CloseFile();
+                PromoteFiles();
+                OpenFile();
+
+                // if this is the first write or the previous write is finished, run a new task.
+                if (_writeToRemoteTask == null ||
+                    _writeToRemoteTask.Status == TaskStatus.Canceled ||
+                    _writeToRemoteTask.Status == TaskStatus.Faulted ||
+                    _writeToRemoteTask.Status == TaskStatus.RanToCompletion)
+                {
+                    _writeToRemoteTask = Task.Run(async () =>
+                    {
+                        // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin)
+                        string promotedPathExtension =
+                            JSON_FILE_EXTENSION +
+                            (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") +
+                            (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+
+                        // get paths to write
+                        string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+
+                        // write each promoted file
+                        foreach (string protmotedPath in promotedPaths)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
+                            // wrap in try-catch to ensure that we process all files
+                            try
+                            {
+                                // get stream name and content type
+                                string streamName = System.IO.Path.GetFileName(protmotedPath);
+                                string streamContentType;
+                                if (streamName.EndsWith(JSON_FILE_EXTENSION))
+                                {
+                                    streamContentType = "application/json";
+                                }
+                                else if (streamName.EndsWith(GZIP_FILE_EXTENSION))
+                                {
+                                    streamContentType = "application/gzip";
+                                }
+                                else if (streamName.EndsWith(ENCRYPTED_FILE_EXTENSION))
+                                {
+                                    streamContentType = "application/octet-stream";
+                                }
+                                else
+                                {
+                                    // this should never happen. write anyway and report the situation.
+                                    streamContentType = "application/octet-stream";
+                                    SensusException.Report("Unknown stream file extension:  " + streamName);
+                                }
+
+                                using (FileStream fileToWrite = new FileStream(protmotedPath, FileMode.Open, FileAccess.Read))
+                                {
+                                    await Protocol.RemoteDataStore.WriteDataStreamAsync(fileToWrite, streamName, streamContentType, cancellationToken);
+                                }
+
+                                // file was written remotely. delete it locally.
+                                File.Delete(protmotedPath);
+                                _filesWrittenToRemote++;
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to write file:  " + ex, LoggingLevel.Normal, GetType());
+                            }
+                        }
+
+                    }, cancellationToken);
+                }
+
+                return _writeToRemoteTask;
             }
         }
 
-        private void WriteToNewPath()
+        protected override bool IsTooLarge()
         {
-            lock (_storageDirectoryLocker)
+            lock (_locker)
             {
-                _path = null;
-                int pathNumber = 0;
-                while (pathNumber++ < int.MaxValue && _path == null)
+                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) >= REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
+            }
+        }
+
+        private void CloseFile()
+        {
+            lock (_locker)
+            {
+                if (_file != null)
                 {
                     try
                     {
-                        _path = Path.Combine(StorageDirectory, pathNumber.ToString());
+                        // end the JSON array and close the file
+                        byte[] jsonEndArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
+                        _file.Write(jsonEndArrayBytes, 0, jsonEndArrayBytes.Length);
+                        _file.Flush();
+                        _file.Dispose();
+                        _file = null;
+                        _path = null;
+                        _filesClosed++;
                     }
                     catch (Exception ex)
                     {
-                        throw SensusException.Report("Failed to get path to local file:  " + ex.Message, ex);
+                        SensusException.Report("Failed to close the local file.", ex);
                     }
-
-                    // create an empty file at the path if one does not exist
-                    if (File.Exists(_path))
-                        _path = null;
-                    else
-                        File.Create(_path).Dispose();
-                }
-
-                if (_path == null)
-                {
-                    throw SensusException.Report("Failed to find new path.");
                 }
             }
         }
 
-        public override void Clear()
+        private void PromoteFiles()
         {
-            base.Clear();
+            lock (_locker)
+            {
+                foreach (string path in Directory.GetFiles(StorageDirectory))
+                {
+                    try
+                    {
+                        // promotion applies to files that don't yet have a file extension
+                        if (!string.IsNullOrWhiteSpace(System.IO.Path.GetExtension(path)))
+                        {
+                            continue;
+                        }
 
-            lock (_storageDirectoryLocker)
+                        // add the .json file extension, marking the file as complete.
+                        string finalPath = path + JSON_FILE_EXTENSION;
+                        File.Move(path, finalPath);
+
+                        // add the gzip file extension if we're doing compression
+                        if (_compressionLevel != CompressionLevel.NoCompression)
+                        {
+                            // add the .gz extension to the path
+                            string gzipPath = finalPath + GZIP_FILE_EXTENSION;
+                            File.Move(finalPath, gzipPath);
+                            finalPath = gzipPath;
+                        }
+
+                        // encrypt the file if needed
+                        if (_encrypt)
+                        {
+                            string encryptedPath = finalPath + ENCRYPTED_FILE_EXTENSION;
+
+                            Protocol.AsymmetricEncryption.EncryptSymmetrically(File.ReadAllBytes(finalPath), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, encryptedPath);
+
+                            // if everything went through okay, delete the unencrypted file.
+                            File.Delete(finalPath);
+                        }
+
+                        _filesPromoted++;
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusException.Report("Failed to promote file.", ex);
+                    }
+                }
+            }
+        }
+
+        public override void Stop()
+        {
+            base.Stop();
+
+            lock (_locker)
+            {
+                CloseFile();
+                _bytesWrittenToCurrentFile = 0;
+                _dataWrittenToCurrentFile = 0;
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_locker)
             {
                 if (Protocol != null)
                 {
@@ -385,18 +595,21 @@ namespace Sensus.DataStores.Local
             _path = null;
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref events);
 
-            lock (_storageDirectoryLocker)
+            string eventName = TrackedEvent.Health + ":" + GetType().Name;
+            Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                int fileCount = Directory.GetFiles(StorageDirectory).Length;
+                { "Percent Closed", Convert.ToString(_filesClosed.RoundedPercentageOf(_filesOpened, 5)) },
+                { "Percent Promoted", Convert.ToString(_filesPromoted.RoundedPercentageOf(_filesClosed, 5)) },
+                { "Percent Written", Convert.ToString(_filesWrittenToRemote.RoundedPercentageOf(_filesPromoted, 5)) }
+            };
 
-                string name = GetType().Name;
-                misc += "Number of files (" + name + "):  " + fileCount + Environment.NewLine +
-                        "Average file size (MB) (" + name + "):  " + Math.Round(SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) / (float)fileCount, 2) + Environment.NewLine;
-            }
+            Analytics.TrackEvent(eventName, properties);
+
+            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
             return restart;
         }

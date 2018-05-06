@@ -1,0 +1,1255 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class AndroidSensusServiceHelper
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class AndroidSensusServiceHelper
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Android.AndroidSensusServiceHelper">
+  
+  
+  <h1 id="Sensus_Android_AndroidSensusServiceHelper" data-uid="Sensus.Android.AndroidSensusServiceHelper" class="text-break">Class AndroidSensusServiceHelper
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Sensus.SensusServiceHelper.html">SensusServiceHelper</a></div>
+    <div class="level2"><span class="xref">AndroidSensusServiceHelper</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS">SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_APP_CENTER_KEY_ANDROID">SensusServiceHelper.APP_CENTER_KEY_ANDROID</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_APP_CENTER_KEY_IOS">SensusServiceHelper.APP_CENTER_KEY_IOS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ENCRYPTION_KEY">SensusServiceHelper.ENCRYPTION_KEY</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BUILD_ID">SensusServiceHelper.BUILD_ID</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_SHARE_DIRECTORY">SensusServiceHelper.SHARE_DIRECTORY</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_HEALTH_TEST_DELAY">SensusServiceHelper.HEALTH_TEST_DELAY</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_JSON_SERIALIZER_SETTINGS">SensusServiceHelper.JSON_SERIALIZER_SETTINGS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Initialize_System_Func_Sensus_SensusServiceHelper__">SensusServiceHelper.Initialize(Func&lt;SensusServiceHelper&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Get">SensusServiceHelper.Get()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ReadAllBytes_System_String_">SensusServiceHelper.ReadAllBytes(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetDirectorySizeMB_System_String_">SensusServiceHelper.GetDirectorySizeMB(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetFileSizeMB_System_String_">SensusServiceHelper.GetFileSizeMB(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearSingleton">SensusServiceHelper.ClearSingleton()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetHash_System_String_">SensusServiceHelper.GetHash(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddRunningProtocolId_System_String_">SensusServiceHelper.AddRunningProtocolId(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveRunningProtocolId_System_String_">SensusServiceHelper.RemoveRunningProtocolId(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtocolShouldBeRunning_Sensus_Protocol_">SensusServiceHelper.ProtocolShouldBeRunning(Protocol)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetRunningProtocols">SensusServiceHelper.GetRunningProtocols()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_SaveAsync_System_Action_">SensusServiceHelper.SaveAsync(Action)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Save">SensusServiceHelper.Save()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StartAsync">SensusServiceHelper.StartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Start">SensusServiceHelper.Start()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterProtocol_Sensus_Protocol_">SensusServiceHelper.RegisterProtocol(Protocol)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddScriptToRun_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_">SensusServiceHelper.AddScriptToRun(Script, RunMode)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScript_Sensus_Probes_User_Scripts_Script_">SensusServiceHelper.RemoveScript(Script)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptRunner_Sensus_Probes_User_Scripts_ScriptRunner_">SensusServiceHelper.RemoveScriptRunner(ScriptRunner)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScripts_System_Boolean_">SensusServiceHelper.RemoveExpiredScripts(Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Protocol_System_Boolean_">SensusServiceHelper.IssuePendingSurveysNotificationAsync(Protocol, Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearPendingSurveysNotificationAsync">SensusServiceHelper.ClearPendingSurveysNotificationAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_FlashNotificationAsync_System_String_System_Action_">SensusServiceHelper.FlashNotificationAsync(String, Action)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ScanQrCodeAsync_Xamarin_Forms_INavigation_">SensusServiceHelper.ScanQrCodeAsync(INavigation)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_Sensus_UI_Inputs_Input__">SensusServiceHelper.PromptForInputAsync(String, Input, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action&lt;Input&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Collections_Generic_List_Sensus_UI_Inputs_Input___">SensusServiceHelper.PromptForInputsAsync(String, IEnumerable&lt;Input&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action&lt;List&lt;Input&gt;&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Action_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup___">SensusServiceHelper.PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt;, IEnumerable&lt;InputGroup&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action, Action&lt;IEnumerable&lt;InputGroup&gt;&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetPositionsFromMapAsync_Xamarin_Forms_Maps_Position_System_String_System_Action_System_Collections_Generic_List_Xamarin_Forms_Maps_Position___">SensusServiceHelper.GetPositionsFromMapAsync(Position, String, Action&lt;List&lt;Position&gt;&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetPositionsFromMapAsync_System_String_System_String_System_Action_System_Collections_Generic_List_Xamarin_Forms_Maps_Position___">SensusServiceHelper.GetPositionsFromMapAsync(String, String, Action&lt;List&lt;Position&gt;&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UnregisterProtocol_Sensus_Protocol_">SensusServiceHelper.UnregisterProtocol(Protocol)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetSharePath_System_String_">SensusServiceHelper.GetSharePath(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ConvertJsonForCrossPlatform_System_String_">SensusServiceHelper.ConvertJsonForCrossPlatform(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ObtainPermissionAsync_Plugin_Permissions_Abstractions_Permission_">SensusServiceHelper.ObtainPermissionAsync(Permission)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ObtainPermission_Plugin_Permissions_Abstractions_Permission_">SensusServiceHelper.ObtainPermission(Permission)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AssertNotOnMainThread_System_String_">SensusServiceHelper.AssertNotOnMainThread(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopProtocols">SensusServiceHelper.StopProtocols()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Logger">SensusServiceHelper.Logger</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisteredProtocols">SensusServiceHelper.RegisteredProtocols</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RunningProtocolIds">SensusServiceHelper.RunningProtocolIds</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PointsOfInterest">SensusServiceHelper.PointsOfInterest</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BarcodeWriter">SensusServiceHelper.BarcodeWriter</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_FlashNotificationsEnabled">SensusServiceHelper.FlashNotificationsEnabled</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ScriptsToRun">SensusServiceHelper.ScriptsToRun</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GpsDesiredAccuracyMeters">SensusServiceHelper.GpsDesiredAccuracyMeters</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GpsMinTimeDelayMS">SensusServiceHelper.GpsMinTimeDelayMS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GpsMinDistanceDelayMeters">SensusServiceHelper.GpsMinDistanceDelayMeters</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Android.html">Sensus.Android</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Android_AndroidSensusServiceHelper_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AndroidSensusServiceHelper : SensusServiceHelper, IAndroidSensusServiceHelper</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper__ctor_" data-uid="Sensus.Android.AndroidSensusServiceHelper.#ctor*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper__ctor" data-uid="Sensus.Android.AndroidSensusServiceHelper.#ctor">AndroidSensusServiceHelper()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AndroidSensusServiceHelper()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_BatteryChargePercent_" data-uid="Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_BatteryChargePercent" data-uid="Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent">BatteryChargePercent</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override float BatteryChargePercent { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BatteryChargePercent">SensusServiceHelper.BatteryChargePercent</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_DeviceId_" data-uid="Sensus.Android.AndroidSensusServiceHelper.DeviceId*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_DeviceId" data-uid="Sensus.Android.AndroidSensusServiceHelper.DeviceId">DeviceId</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string DeviceId { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceId">SensusServiceHelper.DeviceId</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_IsCharging_" data-uid="Sensus.Android.AndroidSensusServiceHelper.IsCharging*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_IsCharging" data-uid="Sensus.Android.AndroidSensusServiceHelper.IsCharging">IsCharging</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool IsCharging { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IsCharging">SensusServiceHelper.IsCharging</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_IsOnMainThread_" data-uid="Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_IsOnMainThread" data-uid="Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread">IsOnMainThread</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool IsOnMainThread { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IsOnMainThread">SensusServiceHelper.IsOnMainThread</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_OperatingSystem_" data-uid="Sensus.Android.AndroidSensusServiceHelper.OperatingSystem*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_OperatingSystem" data-uid="Sensus.Android.AndroidSensusServiceHelper.OperatingSystem">OperatingSystem</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string OperatingSystem { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_OperatingSystem">SensusServiceHelper.OperatingSystem</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_UserDeniedBluetoothEnable_" data-uid="Sensus.Android.AndroidSensusServiceHelper.UserDeniedBluetoothEnable*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_UserDeniedBluetoothEnable" data-uid="Sensus.Android.AndroidSensusServiceHelper.UserDeniedBluetoothEnable">UserDeniedBluetoothEnable</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool UserDeniedBluetoothEnable { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_Version_" data-uid="Sensus.Android.AndroidSensusServiceHelper.Version*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_Version" data-uid="Sensus.Android.AndroidSensusServiceHelper.Version">Version</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string Version { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Version">SensusServiceHelper.Version</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_WakeLockAcquisitionCount_" data-uid="Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_WakeLockAcquisitionCount" data-uid="Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount">WakeLockAcquisitionCount</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int WakeLockAcquisitionCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_WiFiConnected_" data-uid="Sensus.Android.AndroidSensusServiceHelper.WiFiConnected*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_WiFiConnected" data-uid="Sensus.Android.AndroidSensusServiceHelper.WiFiConnected">WiFiConnected</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool WiFiConnected { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_WiFiConnected">SensusServiceHelper.WiFiConnected</a></div>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync" data-uid="Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync">BringToForegroundAsync()</h4>
+  <div class="markdown level1 summary"><p>Brings the Sensus UI to the foreground.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task BringToForegroundAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForegroundAsync">SensusServiceHelper.BringToForegroundAsync()</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_DisableBluetooth_" data-uid="Sensus.Android.AndroidSensusServiceHelper.DisableBluetooth*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_DisableBluetooth_System_Boolean_System_Boolean_System_String_" data-uid="Sensus.Android.AndroidSensusServiceHelper.DisableBluetooth(System.Boolean,System.Boolean,System.String)">DisableBluetooth(Boolean, Boolean, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool DisableBluetooth(bool reenable, bool lowEnergy = true, string rationale = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">reenable</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">lowEnergy</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">rationale</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DisableBluetooth_System_Boolean_System_Boolean_System_String_">SensusServiceHelper.DisableBluetooth(Boolean, Boolean, String)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_EnableBluetooth_" data-uid="Sensus.Android.AndroidSensusServiceHelper.EnableBluetooth*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_EnableBluetooth_System_Boolean_System_String_" data-uid="Sensus.Android.AndroidSensusServiceHelper.EnableBluetooth(System.Boolean,System.String)">EnableBluetooth(Boolean, String)</h4>
+  <div class="markdown level1 summary"><p>Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool EnableBluetooth(bool lowEnergy, string rationale)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">lowEnergy</span></td>
+        <td><p>If set to <code>true</code> low energy.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">rationale</span></td>
+        <td><p>Rationale.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code>, if Bluetooth was enabled, <code>false</code> otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_EnableBluetooth_System_Boolean_System_String_">SensusServiceHelper.EnableBluetooth(Boolean, String)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_EnableProbeWhenEnablingAll_" data-uid="Sensus.Android.AndroidSensusServiceHelper.EnableProbeWhenEnablingAll*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_EnableProbeWhenEnablingAll_Sensus_Probes_Probe_" data-uid="Sensus.Android.AndroidSensusServiceHelper.EnableProbeWhenEnablingAll(Sensus.Probes.Probe)">EnableProbeWhenEnablingAll(Probe)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool EnableProbeWhenEnablingAll(Probe probe)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Probe.html">Probe</a></td>
+        <td><span class="parametername">probe</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_EnableProbeWhenEnablingAll_Sensus_Probes_Probe_">SensusServiceHelper.EnableProbeWhenEnablingAll(Probe)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_GetQrCodeImageSource_" data-uid="Sensus.Android.AndroidSensusServiceHelper.GetQrCodeImageSource*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_GetQrCodeImageSource_System_String_" data-uid="Sensus.Android.AndroidSensusServiceHelper.GetQrCodeImageSource(System.String)">GetQrCodeImageSource(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ImageSource GetQrCodeImageSource(string contents)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">contents</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Xamarin.Forms.ImageSource</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetQrCodeImageSource_System_String_">SensusServiceHelper.GetQrCodeImageSource(String)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_GetSensorManager_" data-uid="Sensus.Android.AndroidSensusServiceHelper.GetSensorManager*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_GetSensorManager" data-uid="Sensus.Android.AndroidSensusServiceHelper.GetSensorManager">GetSensorManager()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SensorManager GetSensorManager()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Android.Hardware.SensorManager</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_KeepDeviceAwake_" data-uid="Sensus.Android.AndroidSensusServiceHelper.KeepDeviceAwake*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_KeepDeviceAwake" data-uid="Sensus.Android.AndroidSensusServiceHelper.KeepDeviceAwake">KeepDeviceAwake()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void KeepDeviceAwake()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_KeepDeviceAwake">SensusServiceHelper.KeepDeviceAwake()</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_LetDeviceSleep_" data-uid="Sensus.Android.AndroidSensusServiceHelper.LetDeviceSleep*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_LetDeviceSleep" data-uid="Sensus.Android.AndroidSensusServiceHelper.LetDeviceSleep">LetDeviceSleep()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void LetDeviceSleep()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_LetDeviceSleep">SensusServiceHelper.LetDeviceSleep()</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_PromptForAndReadTextFileAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_PromptForAndReadTextFileAsync_System_String_System_Action_System_String__" data-uid="Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})">PromptForAndReadTextFileAsync(String, Action&lt;String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task PromptForAndReadTextFileAsync(string promptTitle, Action&lt;string&gt; callback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">promptTitle</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync_System_String_System_Action_System_String__">SensusServiceHelper.PromptForAndReadTextFileAsync(String, Action&lt;String&gt;)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_ProtectedFlashNotificationAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_ProtectedFlashNotificationAsync_System_String_System_Action_" data-uid="Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync(System.String,System.Action)">ProtectedFlashNotificationAsync(String, Action)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedFlashNotificationAsync(string message, Action callback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">message</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtectedFlashNotificationAsync_System_String_System_Action_">SensusServiceHelper.ProtectedFlashNotificationAsync(String, Action)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification_" data-uid="Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification" data-uid="Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification">ReissueForegroundServiceNotification()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReissueForegroundServiceNotification()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_RunActionUsingMainActivityAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RunActionUsingMainActivityAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_RunActionUsingMainActivityAsync_System_Action_Sensus_Android_AndroidMainActivity__System_Boolean_System_Boolean_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RunActionUsingMainActivityAsync(System.Action{Sensus.Android.AndroidMainActivity},System.Boolean,System.Boolean)">RunActionUsingMainActivityAsync(Action&lt;AndroidMainActivity&gt;, Boolean, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Runs an action using main activity, optionally bringing the main activity into focus if it is not already focused.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RunActionUsingMainActivityAsync(Action&lt;AndroidMainActivity&gt; action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.Android.AndroidMainActivity.html">AndroidMainActivity</a>&gt;</td>
+        <td><span class="parametername">action</span></td>
+        <td><p>Action to run.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">startMainActivityIfNotFocused</span></td>
+        <td><p>Whether or not to start the main activity if it is not currently focused.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">holdActionIfNoActivity</span></td>
+        <td><p>If the main activity is not focused and we&apos;re not starting a new one to refocus it, whether 
+or not to hold the action for later when the activity is refocused.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_RunVoicePromptAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RunVoicePromptAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_RunVoicePromptAsync_System_String_System_Action_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RunVoicePromptAsync(System.String,System.Action)">RunVoicePromptAsync(String, Action)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; RunVoicePromptAsync(string prompt, Action postDisplayCallback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">prompt</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td><span class="parametername">postDisplayCallback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RunVoicePromptAsync_System_String_System_Action_">SensusServiceHelper.RunVoicePromptAsync(String, Action)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_SendEmailAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.SendEmailAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_SendEmailAsync_System_String_System_String_System_String_" data-uid="Sensus.Android.AndroidSensusServiceHelper.SendEmailAsync(System.String,System.String,System.String)">SendEmailAsync(String, String, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task SendEmailAsync(string toAddress, string subject, string message)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">toAddress</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">subject</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">message</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_SendEmailAsync_System_String_System_String_System_String_">SensusServiceHelper.SendEmailAsync(String, String, String)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_SetFocusedMainActivity_" data-uid="Sensus.Android.AndroidSensusServiceHelper.SetFocusedMainActivity*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_SetFocusedMainActivity_Sensus_Android_AndroidMainActivity_" data-uid="Sensus.Android.AndroidSensusServiceHelper.SetFocusedMainActivity(Sensus.Android.AndroidMainActivity)">SetFocusedMainActivity(AndroidMainActivity)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetFocusedMainActivity(AndroidMainActivity focusedMainActivity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Android.AndroidMainActivity.html">AndroidMainActivity</a></td>
+        <td><span class="parametername">focusedMainActivity</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_SetService_" data-uid="Sensus.Android.AndroidSensusServiceHelper.SetService*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_SetService_Sensus_Android_AndroidSensusService_" data-uid="Sensus.Android.AndroidSensusServiceHelper.SetService(Sensus.Android.AndroidSensusService)">SetService(AndroidSensusService)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetService(AndroidSensusService service)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Android.AndroidSensusService.html">AndroidSensusService</a></td>
+        <td><span class="parametername">service</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_ShareFileAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.ShareFileAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_ShareFileAsync_System_String_System_String_System_String_" data-uid="Sensus.Android.AndroidSensusServiceHelper.ShareFileAsync(System.String,System.String,System.String)">ShareFileAsync(String, String, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task ShareFileAsync(string path, string subject, string mimeType)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">path</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">subject</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">mimeType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ShareFileAsync_System_String_System_String_System_String_">SensusServiceHelper.ShareFileAsync(String, String, String)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_StopAndroidSensusService_" data-uid="Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_StopAndroidSensusService" data-uid="Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService">StopAndroidSensusService()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StopAndroidSensusService()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_TextToSpeechAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_TextToSpeechAsync_System_String_" data-uid="Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync(System.String)">TextToSpeechAsync(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task TextToSpeechAsync(string text)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">text</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_TextToSpeechAsync_System_String_">SensusServiceHelper.TextToSpeechAsync(String)</a></div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

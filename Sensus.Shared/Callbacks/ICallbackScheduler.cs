@@ -18,10 +18,12 @@ namespace Sensus.Callbacks
 {
     public interface ICallbackScheduler
     {
-        bool ScheduleRepeatingCallback(ScheduledCallback callback, TimeSpan initialDelay, TimeSpan repeatDelay, bool repeatLag);
+        ScheduledCallbackState ScheduleCallback(ScheduledCallback callback);
 
-        bool ScheduleOneTimeCallback(ScheduledCallback callback, TimeSpan delay);
+        bool ContainsCallback(ScheduledCallback callback);
 
-        void UnscheduleCallback(string callbackId);
+        void UnscheduleCallback(ScheduledCallback callback);
+
+        void TestHealth();
     }
 }

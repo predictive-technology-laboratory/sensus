@@ -17,16 +17,11 @@ using Sensus.Callbacks;
 
 namespace Sensus.iOS.Callbacks
 {
-    public abstract class iOSNotifier : Notifier, IiOSNotifier
+    public abstract class iOSNotifier : Notifier
     {
+        /// <summary>
+        /// The notification identifier key, which has a value uniquely identifying the issued notification.
+        /// </summary>
         public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
-        public const string SILENT_NOTIFICATION_KEY = "SENSUS-SILENT-NOTIFICATION";
-
-        public static bool IsSilent(NSDictionary notificationInfo)
-        {
-            return (notificationInfo?.ValueForKey(new NSString(SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false;
-        }
-
-        public abstract void CancelSilentNotifications();
     }
 }

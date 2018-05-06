@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Plugin.Permissions.Abstractions;
 using Sensus.UI.UiProperties;
 using Syncfusion.SfChart.XForms;
 
@@ -22,6 +23,11 @@ namespace Sensus.Probes.Context
     {
         private int _sampleLengthMS;
 
+        /// <summary>
+        /// How many milliseconds to sample audio from the microphone when computing the 
+        /// decibel level.
+        /// </summary>
+        /// <value>The sample length ms.</value>
         [EntryIntegerUiProperty("Sample Length (MS):", true, 5)]
         public int SampleLengthMS
         {
@@ -50,6 +56,18 @@ namespace Sensus.Probes.Context
         protected SoundProbe()
         {
             _sampleLengthMS = 5000;
+        }
+
+        protected override void Initialize()
+        {
+            base.Initialize();
+
+            if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+            {
+                string error = "Microphone use is not permitted on this device. Cannot start sound probe.";
+                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                throw new Exception(error);
+            }
         }
 
         protected override ChartSeries GetChartSeries()

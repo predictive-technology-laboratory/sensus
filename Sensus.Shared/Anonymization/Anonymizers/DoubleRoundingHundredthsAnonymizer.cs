@@ -16,6 +16,9 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Rounds numeric values to the hundredths place (e.g., 123.123 becomes 123.12).
+    /// </summary>
     public class DoubleRoundingHundredthsAnonymizer : DoubleRoundingAnonymizer
     {
         public override string DisplayText

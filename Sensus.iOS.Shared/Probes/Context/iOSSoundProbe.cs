@@ -55,17 +55,14 @@ namespace Sensus.iOS.Probes.Context
             AVAudioRecorder recorder = null;
             string recordPath = Path.GetTempFileName();
             try
-            {
-                if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
-                {
-                    throw new Exception("Cannot access microphone.");
-                }
-                
+            {                
                 AVAudioSession audioSession = AVAudioSession.SharedInstance();
 
                 NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
                 if (error != null)
+                {
                     throw new Exception("Failed to initialize iOS audio recording session:  " + error.LocalizedDescription);
+                }
 
                 error = audioSession.SetActive(true);
                 if (error != null)

@@ -27,7 +27,7 @@ namespace Sensus.UI
         {
             Title = "Beacons";
 
-            ListView beaconList = new ListView();
+            ListView beaconList = new ListView(ListViewCachingStrategy.RecycleElement);
             beaconList.ItemTemplate = new DataTemplate(typeof(TextCell));
             beaconList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             beaconList.ItemsSource = probe.Beacons;
@@ -71,7 +71,7 @@ namespace Sensus.UI
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve Estimote beacons from Cloud:  " + ex, false, TimeSpan.FromSeconds(10));
+                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve Estimote beacons from Cloud:  " + ex);
                         return;
                     }
 
@@ -101,7 +101,7 @@ namespace Sensus.UI
                             }
                             catch (Exception)
                             {
-                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon.", false, TimeSpan.FromSeconds(5));
+                                SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon.");
                             }
                         }
                     });

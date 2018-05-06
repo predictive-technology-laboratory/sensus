@@ -23,13 +23,18 @@ using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
 using Sensus.Context;
 using Sensus.Probes.User.MicrosoftBand;
+using Microsoft.AppCenter.Analytics;
+using System.ComponentModel;
 
 namespace Sensus.Probes
 {
     /// <summary>
-    /// An abstract probe.
+    /// Each Probe collects data of a particular type from the device. Sensus contains Probes for many of the hardware sensors present on many 
+    /// smartphones. Sensus also contains Probes that can prompt the user for information, which the user supplies via speech or textual input.
+    /// Sensus defines a variety of Probes, with platform availability and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, 
+    /// etc.). Availability and reliability of Probes will depend on the device being used.
     /// </summary>
-    public abstract class Probe
+    public abstract class Probe : INotifyPropertyChanged
     {
         #region static members
 
@@ -52,6 +57,7 @@ namespace Sensus.Probes
         /// Fired when the most recently sensed datum is changed, regardless of whether the datum was stored.
         /// </summary>
         public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _enabled;
         private bool _running;
@@ -64,7 +70,6 @@ namespace Sensus.Probes
         private List<DateTime> _successfulHealthTestTimes;
         private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
-        private bool _runLocalCommitOnStore;
 
         private readonly object _locker = new object();
 
@@ -74,6 +79,10 @@ namespace Sensus.Probes
         [JsonIgnore]
         public abstract string CollectionDescription { get; }
 
+        /// <summary>
+        /// Whether the <see cref="Probe"/> should be turned on when the user starts the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
         {
@@ -88,10 +97,16 @@ namespace Sensus.Probes
                     if (_protocol != null && _protocol.Running)
                     {
                         if (_enabled)
+                        {
                             StartAsync();
+                        }
                         else
+                        {
                             StopAsync();
+                        }
                     }
+
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
                 }
             }
         }
@@ -122,27 +137,6 @@ namespace Sensus.Probes
             get { return _running; }
         }
 
-        /// <summary>
-        /// Gets or sets the datum that was most recently sensed, regardless of whether the datum was stored.
-        /// </summary>
-        /// <value>The most recent datum.</value>
-        [JsonIgnore]
-        public Datum MostRecentDatum
-        {
-            get { return _mostRecentDatum; }
-            set
-            {
-                if (value != _mostRecentDatum)
-                {
-                    Datum previousDatum = _mostRecentDatum;
-
-                    _mostRecentDatum = value;
-
-                    MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
-                }
-            }
-        }
-
         [JsonIgnore]
         public DateTimeOffset? MostRecentStoreTimestamp
         {
@@ -155,6 +149,11 @@ namespace Sensus.Probes
             set { _protocol = value; }
         }
 
+        /// <summary>
+        /// Whether the Probe should store the data it collects. This might be turned off if the <see cref="Probe"/> is used to trigger 
+        /// the <see cref="User.Scripts.ScriptProbe"/> but the probed data are not needed.
+        /// </summary>
+        /// <value><c>true</c> if store data; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Store Data:", true, 3)]
         public bool StoreData
         {
@@ -188,6 +187,10 @@ namespace Sensus.Probes
             get { return _successfulHealthTestTimes; }
         }
 
+        /// <summary>
+        /// How much data to save from the <see cref="Probe"/>  for the purpose of charting within the Sensus app.
+        /// </summary>
+        /// <value>The maximum chart data count.</value>
         [EntryIntegerUiProperty("Max Chart Data Count:", true, 50)]
         public int MaxChartDataCount
         {
@@ -198,7 +201,9 @@ namespace Sensus.Probes
             set
             {
                 if (value > 0)
+                {
                     _maxChartDataCount = value;
+                }
 
                 // trim chart data collection
                 lock (_chartData)
@@ -209,16 +214,31 @@ namespace Sensus.Probes
             }
         }
 
-        [OnOffUiProperty("Run Local Commit On Store:", true, 14)]
-        public bool RunLocalCommitOnStore
+        [JsonIgnore]
+        public string Caption
         {
             get
             {
-                return _runLocalCommitOnStore;
+                string type = "";
+                if (this is ListeningProbe)
+                {
+                    type = "Listening";
+                }
+                else if (this is PollingProbe)
+                {
+                    type = "Polling";
+                }
+
+                return DisplayName + (type == "" ? "" : " (" + type + ")");
             }
-            set
+        }
+
+        [JsonIgnore]
+        public string SubCaption
+        {
+            get
             {
-                _runLocalCommitOnStore = value;
+                return _mostRecentDatum == null ? "[no data]" : _mostRecentDatum.DisplayDetail + Environment.NewLine + _mostRecentDatum.Timestamp.ToLocalTime();
             }
         }
 
@@ -313,7 +333,7 @@ namespace Sensus.Probes
 
                 string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync(message, false, TimeSpan.FromSeconds(10));  // don't save failure messages for later, since they might be confusing at that future time.
+                SensusServiceHelper.Get().FlashNotificationAsync(message);
 
                 // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
@@ -356,11 +376,22 @@ namespace Sensus.Probes
             }
         }
 
+        /// <summary>
+        /// Stores a <see cref="Datum"/> within the <see cref="LocalDataStore"/>. Will not throw an <see cref="Exception"/>.
+        /// </summary>
+        /// <returns>The datum async.</returns>
+        /// <param name="datum">Datum.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken)
         {
-            // track the most recent datum and call timestamp regardless of whether the datum is null or whether we're storing data
-            MostRecentDatum = datum;
+            // track the most recent datum regardless of whether the datum is null or whether we're storing data
+            Datum previousDatum = _mostRecentDatum;
+            _mostRecentDatum = datum;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;
+
+            // fire events to notify observers of the stored data and associated UI values
+            MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
 
             // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
             if (datum != null)
@@ -392,7 +423,16 @@ namespace Sensus.Probes
                         }
                     }
 
-                    return _protocol.LocalDataStore.AddAsync(datum, cancellationToken, _runLocalCommitOnStore);
+                    // catch any exceptions, as the caller (e.g., a probe listening) could very well be unprotected on the UI thread. throwing
+                    // an exception here can crash the app.
+                    try
+                    {
+                        return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
+                    }
                 }
             }
 
@@ -449,15 +489,24 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual bool TestHealth(ref string error, ref string warning, ref string misc)
+        public virtual bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
             bool restart = false;
 
             if (!_running)
             {
                 restart = true;
-                error += "Probe \"" + GetType().FullName + "\" is not running." + Environment.NewLine;
             }
+
+            string eventName = TrackedEvent.Health + ":" + GetType().Name;
+            Dictionary<string, string> properties = new Dictionary<string, string>
+            {
+                { "Running", _running.ToString() }
+            };
+
+            Analytics.TrackEvent(eventName, properties);
+
+            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
             return restart;
         }

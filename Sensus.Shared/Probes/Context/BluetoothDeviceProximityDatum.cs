@@ -37,6 +37,18 @@ namespace Sensus.Probes.Context
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the encountered device ID.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _encounteredDeviceId;
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private BluetoothDeviceProximityDatum() { }

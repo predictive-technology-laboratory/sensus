@@ -26,6 +26,10 @@ namespace Sensus.UI.Inputs
         private bool _hasFocused;
         private int _height;
 
+        /// <summary>
+        /// Height in pixels of the multi-line text input.
+        /// </summary>
+        /// <value>The height.</value>
         [EntryIntegerUiProperty(null, true, 5)]
         public int Height
         {
@@ -83,8 +87,8 @@ namespace Sensus.UI.Inputs
             Construct(keyboard);
         }
 
-        public MultiLineTextInput(string name, string labelText, Keyboard keyboard)
-            : base(name, labelText)
+        public MultiLineTextInput(string labelText, string name, Keyboard keyboard)
+            : base(labelText, name)
         {
             Construct(keyboard);
         }

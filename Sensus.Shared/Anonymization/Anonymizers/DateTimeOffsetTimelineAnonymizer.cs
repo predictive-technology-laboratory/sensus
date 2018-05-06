@@ -16,6 +16,13 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Anonymizes a date/time value by anchoring it to an arbitrary point in the past. The
+    /// random anchor time is chosen from the first 1000 years AD, and the anonymized date/time
+    /// values are calculated as intervals of time since the random anchor. Thus, the anonymized
+    /// date/time values are only meaningful with respect to each other. Their absolute values
+    /// will have no meaningful interpretation.
+    /// </summary>
     public class DateTimeOffsetTimelineAnonymizer : Anonymizer
     {
         public override string DisplayText
@@ -30,14 +37,15 @@ namespace Sensus.Anonymization.Anonymizers
         {
             DateTimeOffset dateTimeOffsetValue = (DateTimeOffset)value;
 
-            // the random anchor time is chosen from the first 1000 years AD. if the value passed in 
-            // precedes the random time anchor, the result of the subtraction will not be representable
-            // and will throw an exception. there probably isn't a good case for anonymizing dates
-            // within the first 1000 years AD, so the user has probably misconfigured the protocol; 
-            // however, we must return a value, so default to the minimum.
+            // if the value passed in precedes the random time anchor, the result of the subtraction 
+            // will not be representable and will throw an exception. there probably isn't a good case 
+            // for anonymizing dates within the first 1000 years AD, so the user has probably misconfigured 
+            // the protocol; however, we must return a value, so default to the minimum.
 
-            if(dateTimeOffsetValue >= protocol.RandomTimeAnchor)
+            if (dateTimeOffsetValue >= protocol.RandomTimeAnchor)
+            {
                 return DateTimeOffset.MinValue + (dateTimeOffsetValue - protocol.RandomTimeAnchor);
+            }
             else
             {
                 SensusServiceHelper.Get().Logger.Log("Attempted to anonymize a value that preceded the random anchor time.", LoggingLevel.Normal, GetType());

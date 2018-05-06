@@ -19,6 +19,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using Sensus.UI.UiProperties;
 using Xamarin;
+using Sensus.Exceptions;
 
 namespace Sensus.UI.Inputs
 {
@@ -40,7 +41,7 @@ namespace Sensus.UI.Inputs
         }
 
         /// <summary>
-        /// Provides a means of setting the items via a UI property (e.g., when configuring this input for a script).
+        /// These are the items that the user will have to select from.
         /// </summary>
         /// <value>The string items.</value>
         [EditableListUiProperty("Items:", true, 10)]
@@ -78,6 +79,10 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// Whether or not to allow the user to select multiple items simultaneously.
+        /// </summary>
+        /// <value><c>true</c> if multiselect; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 11)]
         public bool Multiselect
         {
@@ -270,14 +275,7 @@ namespace Sensus.UI.Inputs
             }
             else
             {
-                try
-                {
-                    Insights.Report(new Exception("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>."), Insights.Severity.Critical);
-                }
-                catch (Exception)
-                {
-                }
-
+                SensusException.Report("Called ItemPickerPageInput.ValueMatches with conditionValue that is not a List<object>.");
                 return false;
             }
         }

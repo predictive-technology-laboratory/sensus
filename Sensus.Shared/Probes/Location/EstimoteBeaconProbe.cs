@@ -26,15 +26,48 @@ using Sensus.Concurrent;
 
 namespace Sensus.Probes.Location
 {
+    /// <summary>
+    /// 
+    /// Sensus uses [Estimote Proximity Beacons](http://estimote.com/#get-beacons) to track fine-grained locations. This Probe is available for 
+    /// Android and iOS and runs while the Sensus app is in the foreground and background. Generates proximity event data in the form 
+    /// of <see cref="EstimoteBeaconDatum"/> readings.
+    /// 
+    /// # Prerequisites
+    /// 
+    ///   * You must purchase Proximity or Location beacons.
+    ///   * The beacons must be configured within the [Estimote Cloud console](https://cloud.estimote.com) to have the following JSON attachment:
+    /// 
+    ///     ```
+    ///     { &quot;attachment&quot;: { &quot;sensus&quot;: &quot;test&quot; } }
+    ///     ```
+    /// 
+    /// More details are available [here](http://developer.estimote.com/proximity/android-tutorial).
+    /// 
+    /// * Having entered the App Id and App Token, the list of beacons can be edited via the `Edit Beacons` button in the Estimote Beacon Probe 
+    ///   configuration. Each beacon definition contains the following:
+    ///   
+    ///   * `Beacon Name`:  Name of the beacon, as specified in the attachment value.
+    ///   * `Proximity (Meters)`:  Number of meters desired for proximity.
+    ///   * `Event Name`:  Name to be given to the proximity event.
+    /// 
+    /// </summary>
     public abstract class EstimoteBeaconProbe : ListeningProbe
     {
         private ConcurrentObservableCollection<EstimoteBeacon> _beacons;
 
         public ConcurrentObservableCollection<EstimoteBeacon> Beacons { get { return _beacons; }}
 
+        /// <summary>
+        /// The App Id from the [Estimote Cloud console](https://cloud.estimote.com/#/apps) that is associated with the beacons to be tracked.
+        /// </summary>
+        /// <value>The Estimote Cloud app identifier.</value>
         [EntryStringUiProperty("Estimote Cloud App Id:", true, 35)]
         public string EstimoteCloudAppId { get; set; }
 
+        /// <summary>
+        /// The App Token from the [Estimote Cloud console](https://cloud.estimote.com/#/apps) that is associated with the beacons to be tracked.
+        /// </summary>
+        /// <value>The Estimote Cloud app token.</value>
         [EntryStringUiProperty("Estimote Cloud App Token:", true, 36)]
         public string EstimoteCloudAppToken { get; set; }
 
@@ -118,7 +151,7 @@ namespace Sensus.Probes.Location
 
             try
             {
-                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v2/devices");
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v3/attachments");
                 request.ContentType = "application/json";
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
@@ -139,27 +172,19 @@ namespace Sensus.Probes.Location
                             throw new Exception("Received empty response content.");
                         }
 
-                        foreach (JObject device in JArray.Parse(content))
+                        foreach (JObject attachment in JObject.Parse(content).Value<JArray>("data"))
                         {
-                            JArray tags = device.Value<JObject>("shadow").Value<JArray>("tags");
-                            foreach (JValue tag in tags)
+                            try
                             {
-                                try
-                                {
-                                    // there might be other tags on the beacon. skip those that aren't objects by catching exception.
-                                    JObject tagObject = JObject.Parse(tag.ToString());
+                                string deviceName = attachment.Value<JObject>("payload").Value<JValue>("sensus").ToString();
 
-                                    // there might be other objects. catch exception to skip those that aren't attachments.
-                                    string deviceName = tagObject.Value<JObject>("attachment").Value<JValue>("sensus").ToString();
-
-                                    if (!sensusBeaconNames.Contains(deviceName))
-                                    {
-                                        sensusBeaconNames.Add(deviceName);
-                                    }
-                                }
-                                catch (Exception)
+                                if (!sensusBeaconNames.Contains(deviceName))
                                 {
+                                    sensusBeaconNames.Add(deviceName);
                                 }
+                            }
+                            catch (Exception)
+                            {
                             }
                         }
                     }

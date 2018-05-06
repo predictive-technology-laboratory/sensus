@@ -37,6 +37,18 @@ namespace Sensus.Probes.Context
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the decibel level.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return Math.Round(_decibels, 0);
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private SoundDatum() { }

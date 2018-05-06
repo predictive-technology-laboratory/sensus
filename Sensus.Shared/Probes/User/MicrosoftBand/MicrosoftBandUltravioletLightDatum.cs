@@ -14,6 +14,8 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.User.MicrosoftBand
 {
@@ -21,6 +23,7 @@ namespace Sensus.Probes.User.MicrosoftBand
     {
         private UVIndexLevel _level;
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public UVIndexLevel Level
         {
             get
@@ -39,6 +42,18 @@ namespace Sensus.Probes.User.MicrosoftBand
             get
             {
                 return "Level:  " + _level;
+            }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the UV light level.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _level;
             }
         }
 

@@ -30,32 +30,32 @@ namespace Sensus.iOS.Probes.Location
 
         protected override void StartListening()
         {
-            _observer = new EPXProximityObserver(new EPXCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error => 
-            {                
-                SensusServiceHelper.Get().Logger.Log("Error while initializing proximiy observer:  " + error, LoggingLevel.Normal, GetType());
-            });
-
-            List<EPXProximityZone> zones = new List<EPXProximityZone>();
-
-            foreach (EstimoteBeacon beacon in Beacons)
-            {
-                EPXProximityZone zone = new EPXProximityZone(new EPXProximityRange(beacon.ProximityMeters), "sensus", beacon.Name);
-
-                zone.OnEnterAction = async (triggeringDeviceAttachment) =>
-                {
-                    await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
-                };
-
-                zone.OnExitAction = async (triggeringDeviceAttachment) =>
-                {
-                    await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
-                };
-
-                zones.Add(zone);
-            }
-
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
+                _observer = new EPXProximityObserver(new EPXCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
+                {
+                    SensusServiceHelper.Get().Logger.Log("Error while initializing proximity observer:  " + error, LoggingLevel.Normal, GetType());
+                });
+
+                List<EPXProximityZone> zones = new List<EPXProximityZone>();
+
+                foreach (EstimoteBeacon beacon in Beacons)
+                {
+                    EPXProximityZone zone = new EPXProximityZone(new EPXProximityRange(beacon.ProximityMeters), "sensus", beacon.Name);
+
+                    zone.OnEnterAction = async (triggeringDeviceAttachment) =>
+                    {
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                    };
+
+                    zone.OnExitAction = async (triggeringDeviceAttachment) =>
+                    {
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                    };
+
+                    zones.Add(zone);
+                }
+
                 _observer.StartObservingZones(zones.ToArray());
             });
         }

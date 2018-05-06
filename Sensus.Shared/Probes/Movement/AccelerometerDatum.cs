@@ -19,12 +19,29 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Movement
 {
+    /// <summary>
+    /// 
+    /// Acceleration in x, y, and z directions according to the following coordinate system:
+    /// 
+    ///   ![Accelerometer Coordiates](/sensus/images/axis_device.png)
+    /// 
+    ///   * Lying flat on its back, the phone will register an acceleration vector of approximately &lt;0,0,-1&gt;.
+    ///   * Lying flat on its face, the phone will register an acceleration vector of approximately &lt;0,0,1&gt;.
+    ///   * Lying upright on its left edge, the phone will register an acceleration vector of approximately &lt;-1,0,0&gt;.
+    ///   * Lying upright on its right edge, the phone will register an acceleration vector of approximately &lt;1,0,0&gt;.
+    ///   * Lying upright on its bottom edge, the phone will register an acceleration vector of approximately &lt;0,-1,0&gt;.
+    ///   * Lying upright on its top edge, the phone will register an acceleration vector of approximately &lt;0,1,0&gt;.
+    /// 
+    /// </summary>
     public class AccelerometerDatum : Datum
     {
         private double _x;
         private double _y;
         private double _z;
 
+        /// <summary>
+        /// Acceleration along the X axis.
+        /// </summary>
         [DoubleProbeTriggerProperty("X Acceleration")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double X
@@ -33,6 +50,9 @@ namespace Sensus.Probes.Movement
             set { _x = value; }
         }
 
+        /// <summary>
+        /// Acceleration along the Y axis.
+        /// </summary>
         [DoubleProbeTriggerProperty("Y Acceleration")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Y
@@ -41,6 +61,9 @@ namespace Sensus.Probes.Movement
             set { _y = value; }
         }
 
+        /// <summary>
+        /// Acceleration along the Z axis.
+        /// </summary>
         [DoubleProbeTriggerProperty("Z Acceleration")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Z
@@ -52,6 +75,18 @@ namespace Sensus.Probes.Movement
         public override string DisplayDetail
         {
             get { return Math.Round(_x, 2) + " (x), " + Math.Round(_y, 2) + " (y), " + Math.Round(_z, 2) + " (z)"; }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the acceleration vector in [x,y,z] format.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "[" + Math.Round(_x, 1) + "," + Math.Round(_y, 1) + "," + Math.Round(_z, 1) + "]";
+            }
         }
 
         /// <summary>

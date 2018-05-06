@@ -27,6 +27,10 @@ namespace Sensus.iOS.Callbacks
 
         Task ServiceCallbackAsync(NSDictionary callbackInfo);
 
+        Task ServiceCallbackAsync(ScheduledCallback callback);
+
+        void CancelSilentNotifications();
+
         void OpenDisplayPage(NSDictionary notificationInfo);
     }
 }

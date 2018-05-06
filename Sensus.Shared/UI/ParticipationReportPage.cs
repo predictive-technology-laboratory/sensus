@@ -29,8 +29,6 @@ namespace Sensus.UI
             string howToIncreaseScore = "You can increase your score by opening Sensus more often and responding to questions that Sensus asks you.";
 #elif __ANDROID__
             string howToIncreaseScore = "You can increase your score by allowing Sensus to run continuously and responding to questions that Sensus asks you.";
-#elif WINDOWS_PHONE
-            string userNotificationMessage = null; // TODO:  How to increase score?
 #elif LOCAL_TESTS
             string howToIncreaseScore = null;
 #else
@@ -128,9 +126,9 @@ namespace Sensus.UI
                     FontSize = 20
                 };
 
-                emailStudyManagerButton.Clicked += (o, e) =>
+                emailStudyManagerButton.Clicked += async (o, e) =>
                 {
-                    SensusServiceHelper.Get().SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name,
+                    await SensusServiceHelper.Get().SendEmailAsync(protocol.ContactEmail, "Help with Sensus study:  " + protocol.Name,
                         "Hello - " + Environment.NewLine +
                         Environment.NewLine +
                         "I am having trouble with a Sensus study. The name of the study is \"" + protocol.Name + "\"." + Environment.NewLine +

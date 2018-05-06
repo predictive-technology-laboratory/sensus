@@ -27,6 +27,9 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.iOS.Probes.Movement
 {
+    /// <summary>
+    /// Provides inferred activity information via the iOS activity recognition API as <see cref="ActivityDatum"/> readings.
+    /// </summary>
     public class iOSActivityProbe : PollingProbe
     {
         private DateTimeOffset? _queryStartTime;
@@ -68,9 +71,14 @@ namespace Sensus.iOS.Probes.Movement
         {
             List<Datum> data = new List<Datum>();
 
+            // if this is the first poll (no existing query start time), set the query start time to the current time. we
+            // used to set this to the maximally previous time per ios documentation (7 days), but this (1) causes issues
+            // when triggering surveys on the basis of these activities (there might be hundreds of activities within the
+            // past 7 days), and it also runs counter to the user's expectations that data will only be collected from the
+            // time at which they have enrolled in the study and not from times prior.
             if (_queryStartTime == null)
             {
-                _queryStartTime = DateTimeOffset.UtcNow.AddDays(-7);  // only the last 7 days of activities are stored:  https://developer.apple.com/documentation/coremotion/cmmotionactivitymanager/1615929-queryactivitystarting
+                _queryStartTime = DateTimeOffset.UtcNow;
             }
 
             ManualResetEvent queryWait = new ManualResetEvent(false);
@@ -98,7 +106,7 @@ namespace Sensus.iOS.Probes.Movement
 
                                     if (activity.Confidence == CMMotionActivityConfidence.Low)
                                     {
-                                        confidence = 0;
+                                        confidence = 0.1;
                                     }
                                     else if (activity.Confidence == CMMotionActivityConfidence.Medium)
                                     {
@@ -117,7 +125,7 @@ namespace Sensus.iOS.Probes.Movement
                                     #region get activities
                                     Action<Activities> AddActivityDatum = activityType =>
                                     {
-                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.During, ActivityState.Active, confidence);
+                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.Starting, ActivityState.Active, confidence);
                                         data.Add(activityDatum);
                                     };
 
@@ -170,7 +178,7 @@ namespace Sensus.iOS.Probes.Movement
                             }
                             else
                             {
-                                SensusServiceHelper.Get().Logger.Log("Error while querying activities:  " + error, LoggingLevel.Normal, GetType());
+                                throw new Exception("Error while querying activities:  " + error);
                             }
                         }
                         catch (Exception ex)

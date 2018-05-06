@@ -17,23 +17,40 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using Newtonsoft.Json;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.Location
 {
+    /// <summary>
+    /// Event proximity for named beacons at specified distance thresholds.
+    /// </summary>
     public class EstimoteBeaconDatum : Datum
     {
+        /// <summary>
+        /// The name assigned to the beacon.
+        /// </summary>
+        /// <value>The name of the beacon.</value>
         [StringProbeTriggerProperty("Beacon Name")]
         [Anonymizable("Beacon Name:", typeof(StringHashAnonymizer), false)]
         public string BeaconName { get; set; }
 
+        /// <summary>
+        /// Name of the proximity event.
+        /// </summary>
+        /// <value>The name of the event.</value>
         [StringProbeTriggerProperty("Event Name")]
         [Anonymizable("Event Name:", typeof(StringHashAnonymizer), false)]
         public string EventName { get; set; }
 
+        /// <summary>
+        /// Proximity detection threshold.
+        /// </summary>
+        /// <value>The distance in meters.</value>
         [DoubleProbeTriggerProperty("Distance (Meters)")]
         [Anonymizable("Distance (Meters):", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double DistanceMeters { get; set; }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public EstimoteBeaconProximityEvent ProximityEvent { get; set; }
 
         [StringProbeTriggerProperty("Entered/Exited [Event Name]")]
@@ -49,6 +66,18 @@ namespace Sensus.Probes.Location
             get
             {
                 return ProximityEvent + " " + EventName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the beacon name.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return BeaconName;
             }
         }
 

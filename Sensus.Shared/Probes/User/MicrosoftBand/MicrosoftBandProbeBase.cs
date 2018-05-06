@@ -272,8 +272,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             {
                 if (HEALTH_TEST_CALLBACK != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Canceling health test.", LoggingLevel.Verbose, typeof(MicrosoftBandProbeBase));
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK.Id);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK);
                     HEALTH_TEST_CALLBACK = null;
                 }
             }
@@ -285,6 +284,11 @@ namespace Sensus.Probes.User.MicrosoftBand
         private bool _stopWhenNotWorn;
         private bool _stoppedBecauseNotWorn;
 
+        /// <summary>
+        /// The sampling rate for the sensor. Options are <see cref="BandSensorSampleRate.Ms16"/>, <see cref="BandSensorSampleRate.Ms32"/>, and
+        /// <see cref="BandSensorSampleRate.Ms128"/>.
+        /// </summary>
+        /// <value>The sampling rate.</value>
         [ListUiProperty("Sampling Rate:", true, 5, new object[] { BandSensorSampleRate.Ms16, BandSensorSampleRate.Ms32, BandSensorSampleRate.Ms128 })]
         public BandSensorSampleRate SamplingRate
         {
@@ -298,6 +302,10 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
+        /// <summary>
+        /// Whether or not to stop this Probe when the user is not wearing the Band.
+        /// </summary>
+        /// <value><c>true</c> to stop when not worn; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Stop When Not Worn (Must Enable Contact Probe):", true, 6)]
         public bool StopWhenNotWorn
         {
@@ -370,8 +378,8 @@ namespace Sensus.Probes.User.MicrosoftBand
                 if (HEALTH_TEST_CALLBACK == null)
                 {
                     // the band health test is static, so it has no domain other than sensus.
-                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(HEALTH_TEST_CALLBACK, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, false);
+                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, false, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(HEALTH_TEST_CALLBACK);
                 }
             }
 
@@ -451,11 +459,6 @@ namespace Sensus.Probes.User.MicrosoftBand
                     }
                 }
             }
-        }
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            return false;
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

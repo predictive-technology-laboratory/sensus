@@ -25,7 +25,7 @@ namespace Sensus
         private double _accuracy;
 
         /// <summary>
-        /// Precision of the measurement associated with this Datum.
+        /// Meters +/- that the reading is accurate to.
         /// </summary>
         public double Accuracy
         {

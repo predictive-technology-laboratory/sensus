@@ -9,7 +9,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-	<string>8.0</string>
+	<string>9.0</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -143,8 +143,6 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
-	<key>CFBundleShortVersionString</key>
-	<string>14.2.2</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
@@ -153,8 +151,6 @@
 	</array>
 	<key>CFBundleName</key>
 	<string>Sensus</string>
-	<key>CFBundleVersion</key>
-	<string>14.2.2</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Sensus collects calendar information for studies you enroll in.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -177,5 +173,9 @@
 	<string>Sensus uses movement sensors to collect information for studies you enroll in.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
+	<key>CFBundleShortVersionString</key>
+	<string>15.5.4</string>
+	<key>CFBundleVersion</key>
+	<string>1.1.1</string>
 </dict>
 </plist>

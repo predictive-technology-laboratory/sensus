@@ -19,7 +19,7 @@ using System.Reflection;
 namespace Sensus.UI.UiProperties
 {
     /// <summary>
-    /// Decorated members should be rendered as editable DateTimes.
+    /// Decorated members should be rendered as editable times.
     /// </summary>
     public class TimeUiProperty : UiProperty
     {

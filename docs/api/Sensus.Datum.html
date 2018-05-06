@@ -1,0 +1,616 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Datum
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Datum
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Datum">
+  
+  
+  <h1 id="Sensus_Datum" data-uid="Sensus.Datum" class="text-break">Class Datum
+  </h1>
+  <div class="markdown level0 summary"><p>A single unit of sensed information returned by a probe.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Datum</span></div>
+      <div class="level2"><a class="xref" href="Sensus.ImpreciseDatum.html">ImpreciseDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.ParticipationReportDatum.html">ParticipationReportDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.ParticipationRewardDatum.html">ParticipationRewardDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Apps.FacebookDatum.html">FacebookDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Communication.SmsDatum.html">SmsDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html">TelephonyDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Context.AmbientTemperatureDatum.html">AmbientTemperatureDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityDatum.html">BluetoothDeviceProximityDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Context.LightDatum.html">LightDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Context.SoundDatum.html">SoundDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Device.BatteryDatum.html">BatteryDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Device.ScreenDatum.html">ScreenDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Location.CompassDatum.html">CompassDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Location.PointOfInterestProximityDatum.html">PointOfInterestProximityDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Movement.AccelerometerDatum.html">AccelerometerDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Network.CellTowerDatum.html">CellTowerDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Network.WlanDatum.html">WlanDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.BiologicalSexDatum.html">BiologicalSexDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.BirthdateDatum.html">BirthdateDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.BloodTypeDatum.html">BloodTypeDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.HeightDatum.html">HeightDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandAccelerometerDatum.html">MicrosoftBandAccelerometerDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandAirPressureDatum.html">MicrosoftBandAirPressureDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandAirTemperatureDatum.html">MicrosoftBandAirTemperatureDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandCaloriesDatum.html">MicrosoftBandCaloriesDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandContactDatum.html">MicrosoftBandContactDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandDistanceDatum.html">MicrosoftBandDistanceDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandGsrDatum.html">MicrosoftBandGsrDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandGyroscopeDatum.html">MicrosoftBandGyroscopeDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandHeartRateDatum.html">MicrosoftBandHeartRateDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandLightDatum.html">MicrosoftBandLightDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandPedometerDatum.html">MicrosoftBandPedometerDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandRRIntervalDatum.html">MicrosoftBandRRIntervalDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandSkinTemperatureDatum.html">MicrosoftBandSkinTemperatureDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandStepDatum.html">MicrosoftBandStepDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandUltravioletLightDatum.html">MicrosoftBandUltravioletLightDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Datum_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Datum : Object</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Datum__ctor_" data-uid="Sensus.Datum.#ctor*"></a>
+  <h4 id="Sensus_Datum__ctor" data-uid="Sensus.Datum.#ctor">Datum()</h4>
+  <div class="markdown level1 summary"><p>Parameterless constructor For JSON.NET deserialization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Datum()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Datum__ctor_" data-uid="Sensus.Datum.#ctor*"></a>
+  <h4 id="Sensus_Datum__ctor_System_DateTimeOffset_" data-uid="Sensus.Datum.#ctor(System.DateTimeOffset)">Datum(DateTimeOffset)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Datum(DateTimeOffset timestamp)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><span class="parametername">timestamp</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Datum_Anonymized_" data-uid="Sensus.Datum.Anonymized*"></a>
+  <h4 id="Sensus_Datum_Anonymized" data-uid="Sensus.Datum.Anonymized">Anonymized</h4>
+  <div class="markdown level1 summary"><p>Whether or not this <a class="xref" href="Sensus.Datum.html">Datum</a> has been run through an anonymizer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Anonymized { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if anonymized; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_BuildId_" data-uid="Sensus.Datum.BuildId*"></a>
+  <h4 id="Sensus_Datum_BuildId" data-uid="Sensus.Datum.BuildId">BuildId</h4>
+  <div class="markdown level1 summary"><p>The identifier for the build of Sensus that generated this datum.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string BuildId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The build identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_DeviceId_" data-uid="Sensus.Datum.DeviceId*"></a>
+  <h4 id="Sensus_Datum_DeviceId" data-uid="Sensus.Datum.DeviceId">DeviceId</h4>
+  <div class="markdown level1 summary"><p>An identifier that is unique to the particular device running Sensus. Note that this ID will change if the user performs
+a factory reset on their device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Anonymizable]
+public string DeviceId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The device identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_DisplayDetail_" data-uid="Sensus.Datum.DisplayDetail*"></a>
+  <h4 id="Sensus_Datum_DisplayDetail" data-uid="Sensus.Datum.DisplayDetail">DisplayDetail</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string DisplayDetail { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_Id_" data-uid="Sensus.Datum.Id*"></a>
+  <h4 id="Sensus_Datum_Id" data-uid="Sensus.Datum.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Unique identifier for the current <a class="xref" href="Sensus.Datum.html">Datum</a>, unique across all data generated by all Sensus apps.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_ProtocolId_" data-uid="Sensus.Datum.ProtocolId*"></a>
+  <h4 id="Sensus_Datum_ProtocolId" data-uid="Sensus.Datum.ProtocolId">ProtocolId</h4>
+  <div class="markdown level1 summary"><p>A unique identifier for the <a class="xref" href="Sensus.Protocol.html">Protocol</a> that generated this <a class="xref" href="Sensus.Datum.html">Datum</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ProtocolId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The protocol identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_StringPlaceholderValue_" data-uid="Sensus.Datum.StringPlaceholderValue*"></a>
+  <h4 id="Sensus_Datum_StringPlaceholderValue" data-uid="Sensus.Datum.StringPlaceholderValue">StringPlaceholderValue</h4>
+  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is used as a formatting replacement in strings 
+such as <a class="xref" href="Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_Caption">Caption</a> and <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_LabelText">LabelText</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract object StringPlaceholderValue { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><p>The string placeholder value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_Timestamp_" data-uid="Sensus.Datum.Timestamp*"></a>
+  <h4 id="Sensus_Datum_Timestamp" data-uid="Sensus.Datum.Timestamp">Timestamp</h4>
+  <div class="markdown level1 summary"><p>Date and time at which a data element from the Probe was read.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Anonymizable]
+public DateTimeOffset Timestamp { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td><p>The timestamp.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Datum_Equals_" data-uid="Sensus.Datum.Equals*"></a>
+  <h4 id="Sensus_Datum_Equals_System_Object_" data-uid="Sensus.Datum.Equals(System.Object)">Equals(Object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_FromJSON_" data-uid="Sensus.Datum.FromJSON*"></a>
+  <h4 id="Sensus_Datum_FromJSON_System_String_" data-uid="Sensus.Datum.FromJSON(System.String)">FromJSON(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Datum FromJSON(string json)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">json</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_GetHashCode_" data-uid="Sensus.Datum.GetHashCode*"></a>
+  <h4 id="Sensus_Datum_GetHashCode" data-uid="Sensus.Datum.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_GetJSON_" data-uid="Sensus.Datum.GetJSON*"></a>
+  <h4 id="Sensus_Datum_GetJSON_Sensus_Anonymization_AnonymizedJsonContractResolver_System_Boolean_" data-uid="Sensus.Datum.GetJSON(Sensus.Anonymization.AnonymizedJsonContractResolver,System.Boolean)">GetJSON(AnonymizedJsonContractResolver, Boolean)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver, bool indented)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Anonymization.AnonymizedJsonContractResolver.html">AnonymizedJsonContractResolver</a></td>
+        <td><span class="parametername">anonymizationContractResolver</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">indented</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_ToString_" data-uid="Sensus.Datum.ToString*"></a>
+  <h4 id="Sensus_Datum_ToString" data-uid="Sensus.Datum.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

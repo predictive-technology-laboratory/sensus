@@ -17,31 +17,89 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
-using Sensus.Extensions;
+using System.ComponentModel;
+using Newtonsoft.Json.Serialization;
+using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script
+    public class Script : INotifyPropertyChanged
     {
-        #region Properties
-        public string Id { get; }
+        /// <summary>
+        /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
+        /// a reference to its associated <see cref="ScriptRunner"/>, which contains other references that make JSON 
+        /// serialization and deserialization an expensive operation. We use JSON serialization/deserialization for <see cref="Script"/>s
+        /// because there are complicated objective references between the <see cref="InputGroup"/>s and <see cref="Input"/>s
+        /// that are associated with the <see cref="Script"/>. We use the contract resolver to prevent copying of the 
+        /// <see cref="ScriptRunner"/>.
+        /// </summary>
+        private class CopyContractResolver : DefaultContractResolver
+        {
+            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+            {
+                // copy all properties except the script runner
+                IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
+                return properties.Where(p => p.PropertyName != nameof(Script.Runner)).ToList();
+            }
+        }
 
-        public ScriptRunner Runner { get; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        private bool _submitting;
+        private Datum _currentDatum;
+
+        private JsonSerializerSettings _copySettings = new JsonSerializerSettings
+        {
+            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            TypeNameHandling = TypeNameHandling.All,
+            ContractResolver = new CopyContractResolver()
+        };
+
+        public string Id { get; set; }
+        public ScriptRunner Runner { get; set; }
         public ObservableCollection<InputGroup> InputGroups { get; }
-
         public DateTimeOffset? ScheduledRunTime { get; set; }
-
         public DateTimeOffset? RunTime { get; set; }
-
         public Datum PreviousDatum { get; set; }
-
-        public Datum CurrentDatum { get; set; }
-
         public DateTime? ExpirationDate { get; set; }
 
+        public Datum CurrentDatum
+        {
+            get
+            {
+                return _currentDatum;
+            }
+            set
+            {
+                _currentDatum = value;
+                CaptionChanged();
+
+                // update the triggering datum on all inputs
+                foreach (InputGroup inputGroup in InputGroups)
+                {
+                    foreach (Input input in inputGroup.Inputs)
+                    {
+                        input.TriggeringDatum = _currentDatum;
+                    }
+                }
+            }
+        }
+
         [JsonIgnore]
-        public bool Submitting { get; set; }
+        public bool Submitting
+        {
+            get
+            {
+                return _submitting;
+            }
+            set
+            {
+                _submitting = value;
+                CaptionChanged();
+            }
+        }
 
         [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
@@ -62,48 +120,74 @@ namespace Sensus.Probes.User.Scripts
         /// </remarks>
         [JsonIgnore]
         public DateTime Birthdate => (ScheduledRunTime ?? RunTime).Value.LocalDateTime;
-        #endregion
 
-        #region Constructors
-        public Script(Script script)
+        [JsonIgnore]
+        public string Caption
         {
-            Id = script.Id;
-            Runner = script.Runner;
-            InputGroups = script.InputGroups.Select(g => new InputGroup(g, false)).ToObservableCollection();  // don't reset the group ID or input IDs. we're copying the script to run it.
-
-            // update input object references within any display conditions
-            Input[] allInputs = InputGroups.SelectMany(group => group.Inputs).ToArray();
-            foreach (InputGroup inputGroup in InputGroups)
+            get
             {
-                inputGroup.UpdateDisplayConditionInputs(allInputs);
+                // format the runner's name to replace any {0} references with the current datum's placeholder value. there won't be a current datum for
+                // scheduled or run-on-start scripts.
+                return string.Format(Runner.Name, CurrentDatum?.StringPlaceholderValue.ToString().ToLower()) + (Submitting ? " (Submitting...)" : "");
             }
-
-            ScheduledRunTime = script.ScheduledRunTime;
-            RunTime = script.RunTime;
-            PreviousDatum = script.PreviousDatum;
-            CurrentDatum = script.CurrentDatum;
-            ExpirationDate = script.ExpirationDate;
         }
 
-        public Script(Script script, Guid guid) : this(script)
+        [JsonIgnore]
+        public string SubCaption
         {
-            Id = guid.ToString();
+            get
+            {
+                DateTime displayDateTime = Birthdate;
+
+                if (Runner.UseTriggerDatumTimestampInSubcaption && _currentDatum != null)
+                {
+                    displayDateTime = _currentDatum.Timestamp.ToLocalTime().DateTime;
+                }
+
+                return Runner.Probe.Protocol.Name + " - " + displayDateTime;
+            }
         }
 
-        public Script(ScriptRunner runner)
+        /// <summary>
+        /// For JSON.NET deserialization.
+        /// </summary>
+        private Script()
         {
             Id = Guid.NewGuid().ToString();
-            Runner = runner;
             InputGroups = new ObservableCollection<InputGroup>();
         }
 
-        [JsonConstructor]
-        private Script(ScriptRunner runner, string id, ObservableCollection<InputGroup> inputGroups)
+        public Script(ScriptRunner runner)
+            : this()
         {
-            Id = id;
             Runner = runner;
-            InputGroups = inputGroups;
         }
-        #endregion
+
+        private void CaptionChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+        }
+
+        /// <summary>
+        /// Creates a copy of the current <see cref="Script"/>.
+        /// </summary>
+        /// <returns>The copy.</returns>
+        /// <param name="newId">If set to <c>true</c>, set a new random <see cref="Script.Id"/> on the script. Doing so does not change
+        /// the <see cref="InputGroup.Id"/> or <see cref="Input.Id"/> values associated with this <see cref="Script"/>.</param>
+        public Script Copy(bool newId)
+        {
+            // copy the script except for the script runner
+            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, _copySettings), _copySettings);
+
+            if (newId)
+            {
+                copy.Id = Guid.NewGuid().ToString();
+            }
+
+            // attach the script runner to the copy
+            copy.Runner = Runner;
+
+            return copy;
+        }
     }
 }

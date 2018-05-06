@@ -28,6 +28,7 @@ using Xamarin.Facebook;
 using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
+using Sensus.Exceptions;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -144,29 +145,33 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
+            // temporarily disable UI while we bind to service
+            Window.AddFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+
             // make sure that the service is running and bound any time the activity is resumed. the service is both started
             // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
             Intent serviceIntent = AndroidSensusService.StartService(this);
             BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
 
-            // prevent the user from interacting with the UI by displaying a progress dialog until 
-            // the service has been bound. if the service has already bound, the wait handle below 
-            // will already be set and the dialog will immediately be dismissed.
-            ProgressDialog serviceBindWaitDialog = ProgressDialog.Show(this, "Please Wait", "Binding to Sensus", true, false);
-
-            // start new thread to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
+            // start new task to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             Task.Run(() =>
             {
-                _serviceBindWait.WaitOne();
+                // we've not seen the binding take more than a second or two; however, we want to be very careful not to block indefinitely
+                // here becaus the UI is currently disabled. if for some strange reason the binding does not work, bail out after 10 seconds
+                // and let the user interact with the UI. most likely, a crash will be coming very soon in this case, as the sensus service
+                // will probably not be running. again, this has not occurred in practice, but allowing the crash to occur will send us information
+                // through the crash analytics service and we'll be able to track it
+                _serviceBindWait.WaitOne(TimeSpan.FromSeconds(10000));
 
                 SensusServiceHelper.Get().ClearPendingSurveysNotificationAsync();
 
-                // now that the service connection has been established, dismiss the wait dialog. wrap this in a try-catch in 
-                // case the screen orientation changes before we get here, which will disconnect the dialog from the window manager 
-                // and will throw an exception.
+                // now that the service connection has been established, reenable UI.
                 try
                 {
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(serviceBindWaitDialog.Dismiss);
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        Window.ClearFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+                    });
                 }
                 catch (Exception)
                 {
@@ -248,9 +253,13 @@ namespace Sensus.Android
             if (serviceHelper != null)
             {
                 if (hasFocus)
+                {
                     serviceHelper.SetFocusedMainActivity(this);
+                }
                 else
+                {
                     serviceHelper.SetFocusedMainActivity(null);
+                }
             }
         }
 
@@ -263,9 +272,9 @@ namespace Sensus.Android
             OpenIntentAsync(intent);
         }
 
-        private void OpenIntentAsync(Intent intent)
+        private Task OpenIntentAsync(Intent intent)
         {
-            new Thread(() =>
+            return Task.Run(() =>
             {
                 // wait for service helper to be initialized, since this method might be called before the service starts up
                 // and initializes the service helper.
@@ -334,17 +343,16 @@ namespace Sensus.Android
                         });
                     }
                 }
-
-            }).Start();
+            });
         }
 
-#endregion
+        #endregion
 
-#region activity results
+        #region activity results
 
         public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
         {
-            new Thread(() =>
+            Task.Run(() =>
             {
                 lock (_locker)
                 {
@@ -359,14 +367,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        try
-                        {
-                            Insights.Report(ex, Insights.Severity.Error);
-                        }
-                        catch (Exception)
-                        {
-                        }
-
+                        SensusException.Report(ex);
                         _activityResultWait.Set();
                     }
 
@@ -374,8 +375,7 @@ namespace Sensus.Android
 
                     callback(_activityResult);
                 }
-
-            }).Start();
+            });
         }
 
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

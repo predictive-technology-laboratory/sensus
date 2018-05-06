@@ -1,0 +1,993 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Probe
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Probe
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Probe">
+  
+  
+  <h1 id="Sensus_Probes_Probe" data-uid="Sensus.Probes.Probe" class="text-break">Class Probe
+  </h1>
+  <div class="markdown level0 summary"><p>Each Probe collects data of a particular type from the device. Sensus contains Probes for many of the hardware sensors present on many 
+smartphones. Sensus also contains Probes that can prompt the user for information, which the user supplies via speech or textual input.
+Sensus defines a variety of Probes, with platform availability and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, 
+etc.). Availability and reliability of Probes will depend on the device being used.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Probe</span></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.html">Sensus.Probes</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Probes_Probe_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Probe : Object, INotifyPropertyChanged</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Probes_Probe__ctor_" data-uid="Sensus.Probes.Probe.#ctor*"></a>
+  <h4 id="Sensus_Probes_Probe__ctor" data-uid="Sensus.Probes.Probe.#ctor">Probe()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Probe()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Probes_Probe_Caption_" data-uid="Sensus.Probes.Probe.Caption*"></a>
+  <h4 id="Sensus_Probes_Probe_Caption" data-uid="Sensus.Probes.Probe.Caption">Caption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Caption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_CollectionDescription_" data-uid="Sensus.Probes.Probe.CollectionDescription*"></a>
+  <h4 id="Sensus_Probes_Probe_CollectionDescription" data-uid="Sensus.Probes.Probe.CollectionDescription">CollectionDescription</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string CollectionDescription { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_DatumType_" data-uid="Sensus.Probes.Probe.DatumType*"></a>
+  <h4 id="Sensus_Probes_Probe_DatumType" data-uid="Sensus.Probes.Probe.DatumType">DatumType</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract Type DatumType { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_DisplayName_" data-uid="Sensus.Probes.Probe.DisplayName*"></a>
+  <h4 id="Sensus_Probes_Probe_DisplayName" data-uid="Sensus.Probes.Probe.DisplayName">DisplayName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string DisplayName { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_Enabled_" data-uid="Sensus.Probes.Probe.Enabled*"></a>
+  <h4 id="Sensus_Probes_Probe_Enabled" data-uid="Sensus.Probes.Probe.Enabled">Enabled</h4>
+  <div class="markdown level1 summary"><p>Whether the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a> should be turned on when the user starts the <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Protocol">Protocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Enabled:&quot;, true, 2)]
+public bool Enabled { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if enabled; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_MaxChartDataCount_" data-uid="Sensus.Probes.Probe.MaxChartDataCount*"></a>
+  <h4 id="Sensus_Probes_Probe_MaxChartDataCount" data-uid="Sensus.Probes.Probe.MaxChartDataCount">MaxChartDataCount</h4>
+  <div class="markdown level1 summary"><p>How much data to save from the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>  for the purpose of charting within the Sensus app.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Max Chart Data Count:&quot;, true, 50)]
+public int MaxChartDataCount { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The maximum chart data count.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_MostRecentStoreTimestamp_" data-uid="Sensus.Probes.Probe.MostRecentStoreTimestamp*"></a>
+  <h4 id="Sensus_Probes_Probe_MostRecentStoreTimestamp" data-uid="Sensus.Probes.Probe.MostRecentStoreTimestamp">MostRecentStoreTimestamp</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;DateTimeOffset&gt; MostRecentStoreTimestamp { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_OriginallyEnabled_" data-uid="Sensus.Probes.Probe.OriginallyEnabled*"></a>
+  <h4 id="Sensus_Probes_Probe_OriginallyEnabled" data-uid="Sensus.Probes.Probe.OriginallyEnabled">OriginallyEnabled</h4>
+  <div class="markdown level1 summary"><p>Gets or sets whether or not this probe was originally enabled within the protocol. Some probes can become disabled when 
+attempting to start them. For example, the temperature probe might not be supported on all hardware and will thus become 
+disabled after its failed initialization. Thus, we need a separate variable (other than Enabled) to tell us whether the 
+probe was originally enabled. We use this value to calculate participation levels and also to restore the probe before 
+sharing it with others (e.g., since other people might have temperature hardware in their devices).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OriginallyEnabled { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>Whether or not this probe was enabled the first time the protocol was started.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_Protocol_" data-uid="Sensus.Probes.Probe.Protocol*"></a>
+  <h4 id="Sensus_Probes_Probe_Protocol" data-uid="Sensus.Probes.Probe.Protocol">Protocol</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Protocol Protocol { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_RawParticipation_" data-uid="Sensus.Probes.Probe.RawParticipation*"></a>
+  <h4 id="Sensus_Probes_Probe_RawParticipation" data-uid="Sensus.Probes.Probe.RawParticipation">RawParticipation</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract double RawParticipation { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_Running_" data-uid="Sensus.Probes.Probe.Running*"></a>
+  <h4 id="Sensus_Probes_Probe_Running" data-uid="Sensus.Probes.Probe.Running">Running</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Running { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_StartStopTimes_" data-uid="Sensus.Probes.Probe.StartStopTimes*"></a>
+  <h4 id="Sensus_Probes_Probe_StartStopTimes" data-uid="Sensus.Probes.Probe.StartStopTimes">StartStopTimes</h4>
+  <div class="markdown level1 summary"><p>Gets a list of times at which the probe was started (tuple bool = True) and stopped (tuple bool = False). Only includes 
+those that have occurred within the protocol&apos;s participation horizon.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Tuple&lt;bool, DateTime&gt;&gt; StartStopTimes { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.Boolean</span>, <span class="xref">System.DateTime</span>&gt;&gt;</td>
+        <td><p>The start stop times.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_StoreData_" data-uid="Sensus.Probes.Probe.StoreData*"></a>
+  <h4 id="Sensus_Probes_Probe_StoreData" data-uid="Sensus.Probes.Probe.StoreData">StoreData</h4>
+  <div class="markdown level1 summary"><p>Whether the Probe should store the data it collects. This might be turned off if the <a class="xref" href="Sensus.Probes.Probe.html">Probe</a> is used to trigger 
+the <a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a> but the probed data are not needed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Store Data:&quot;, true, 3)]
+public bool StoreData { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if store data; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_SubCaption_" data-uid="Sensus.Probes.Probe.SubCaption*"></a>
+  <h4 id="Sensus_Probes_Probe_SubCaption" data-uid="Sensus.Probes.Probe.SubCaption">SubCaption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string SubCaption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_SuccessfulHealthTestTimes_" data-uid="Sensus.Probes.Probe.SuccessfulHealthTestTimes*"></a>
+  <h4 id="Sensus_Probes_Probe_SuccessfulHealthTestTimes" data-uid="Sensus.Probes.Probe.SuccessfulHealthTestTimes">SuccessfulHealthTestTimes</h4>
+  <div class="markdown level1 summary"><p>Gets the successful health test times. Only includes those that have occurred within the
+protocol&apos;s participation horizon.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;DateTime&gt; SuccessfulHealthTestTimes { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><p>The successful health test times.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_Probe_GetAll_" data-uid="Sensus.Probes.Probe.GetAll*"></a>
+  <h4 id="Sensus_Probes_Probe_GetAll" data-uid="Sensus.Probes.Probe.GetAll">GetAll()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;Probe&gt; GetAll()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Probe.html">Probe</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_GetChart_" data-uid="Sensus.Probes.Probe.GetChart*"></a>
+  <h4 id="Sensus_Probes_Probe_GetChart" data-uid="Sensus.Probes.Probe.GetChart">GetChart()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SfChart GetChart()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.SfChart</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_GetChartDataPointFromDatum_" data-uid="Sensus.Probes.Probe.GetChartDataPointFromDatum*"></a>
+  <h4 id="Sensus_Probes_Probe_GetChartDataPointFromDatum_Sensus_Datum_" data-uid="Sensus.Probes.Probe.GetChartDataPointFromDatum(Sensus.Datum)">GetChartDataPointFromDatum(Datum)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract ChartDataPoint GetChartDataPointFromDatum(Datum datum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.ChartDataPoint</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_GetChartPrimaryAxis_" data-uid="Sensus.Probes.Probe.GetChartPrimaryAxis*"></a>
+  <h4 id="Sensus_Probes_Probe_GetChartPrimaryAxis" data-uid="Sensus.Probes.Probe.GetChartPrimaryAxis">GetChartPrimaryAxis()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract ChartAxis GetChartPrimaryAxis()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.ChartAxis</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_GetChartSecondaryAxis_" data-uid="Sensus.Probes.Probe.GetChartSecondaryAxis*"></a>
+  <h4 id="Sensus_Probes_Probe_GetChartSecondaryAxis" data-uid="Sensus.Probes.Probe.GetChartSecondaryAxis">GetChartSecondaryAxis()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract RangeAxisBase GetChartSecondaryAxis()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.RangeAxisBase</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_GetChartSeries_" data-uid="Sensus.Probes.Probe.GetChartSeries*"></a>
+  <h4 id="Sensus_Probes_Probe_GetChartSeries" data-uid="Sensus.Probes.Probe.GetChartSeries">GetChartSeries()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract ChartSeries GetChartSeries()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Syncfusion.SfChart.XForms.ChartSeries</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_GetParticipation_" data-uid="Sensus.Probes.Probe.GetParticipation*"></a>
+  <h4 id="Sensus_Probes_Probe_GetParticipation" data-uid="Sensus.Probes.Probe.GetParticipation">GetParticipation()</h4>
+  <div class="markdown level1 summary"><p>Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
+this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
+this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
+probe should not be included in calculations of overall protocol participation. Probes can become disabled if they
+are not supported on the current device or if the user refuses to initialize them (e.g., by not signing into Facebook).
+Although they become disabled, they were originally enabled within the protocol and participation should reflect this.
+Lastly, this will return null if the probe is not storing its data, as might be the case if a probe is enabled in order
+to trigger scripts but not told to store its data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;double&gt; GetParticipation()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><p>The participation level (null, or somewhere 0-1).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_Initialize_" data-uid="Sensus.Probes.Probe.Initialize*"></a>
+  <h4 id="Sensus_Probes_Probe_Initialize" data-uid="Sensus.Probes.Probe.Initialize">Initialize()</h4>
+  <div class="markdown level1 summary"><p>Initializes this probe. Throws an exception if initialization fails. After successful completion the probe is considered to be
+running and a candidate for stopping at some future point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void Initialize()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_InternalStart_" data-uid="Sensus.Probes.Probe.InternalStart*"></a>
+  <h4 id="Sensus_Probes_Probe_InternalStart" data-uid="Sensus.Probes.Probe.InternalStart">InternalStart()</h4>
+  <div class="markdown level1 summary"><p>Throws an exception if start fails. Should be called first within child-class overrides. This should only be called within Start. This setup
+allows for child-class overrides, but since InternalStart is protected, it cannot be called from the outside. Outsiders only have access to
+Start (perhaps via Enabled), which takes care of any exceptions arising from the entire chain of InternalStart overrides.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void InternalStart()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_Reset_" data-uid="Sensus.Probes.Probe.Reset*"></a>
+  <h4 id="Sensus_Probes_Probe_Reset" data-uid="Sensus.Probes.Probe.Reset">Reset()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Reset()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_Restart_" data-uid="Sensus.Probes.Probe.Restart*"></a>
+  <h4 id="Sensus_Probes_Probe_Restart" data-uid="Sensus.Probes.Probe.Restart">Restart()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Restart()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_Start_" data-uid="Sensus.Probes.Probe.Start*"></a>
+  <h4 id="Sensus_Probes_Probe_Start" data-uid="Sensus.Probes.Probe.Start">Start()</h4>
+  <div class="markdown level1 summary"><p>Start this instance, throwing an exception if anything goes wrong. If an exception is thrown, the caller can assume that any relevant
+information will have already been logged and displayed. Thus, the caller doesn&apos;t need to do anything with the exception information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_StartAsync_" data-uid="Sensus.Probes.Probe.StartAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_StartAsync" data-uid="Sensus.Probes.Probe.StartAsync">StartAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void StartAsync()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_Stop_" data-uid="Sensus.Probes.Probe.Stop*"></a>
+  <h4 id="Sensus_Probes_Probe_Stop" data-uid="Sensus.Probes.Probe.Stop">Stop()</h4>
+  <div class="markdown level1 summary"><p>Should be called first within child-class overrides.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void Stop()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_StopAsync_" data-uid="Sensus.Probes.Probe.StopAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_StopAsync" data-uid="Sensus.Probes.Probe.StopAsync">StopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void StopAsync()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Probes_Probe_StoreDatumAsync_" data-uid="Sensus.Probes.Probe.StoreDatumAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.Probe.StoreDatumAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</h4>
+  <div class="markdown level1 summary"><p>Stores a <a class="xref" href="Sensus.Datum.html">Datum</a> within the <span class="xref">System.LocalDataStore</span>. Will not throw an <span class="xref">System.Exception</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Task&lt;bool&gt; StoreDatumAsync(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td><p>Datum.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Threading.CancellationToken</span>&gt;</td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>The datum async.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_TestHealth_" data-uid="Sensus.Probes.Probe.TestHealth*"></a>
+  <h4 id="Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Probes.Probe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  
+  
+  <h4 id="Sensus_Probes_Probe_MostRecentDatumChanged" data-uid="Sensus.Probes.Probe.MostRecentDatumChanged">MostRecentDatumChanged</h4>
+  <div class="markdown level1 summary"><p>Fired when the most recently sensed datum is changed, regardless of whether the datum was stored.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Tuple&lt;Datum, Datum&gt;&gt; MostRecentDatumChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.EventHandler</span>&lt;<span class="xref">System.Tuple</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>, <a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Probes_Probe_PropertyChanged" data-uid="Sensus.Probes.Probe.PropertyChanged">PropertyChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event PropertyChangedEventHandler PropertyChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.ComponentModel.PropertyChangedEventHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

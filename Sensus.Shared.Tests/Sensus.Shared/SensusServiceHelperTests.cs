@@ -19,7 +19,7 @@ using Sensus.Tests.Classes;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 
-namespace Sensus.Tests.Core
+namespace Sensus.Tests
 {
     [TestFixture]
     public class SensusServiceHelperTests
@@ -104,7 +104,6 @@ namespace Sensus.Tests.Core
         public void RunningProtocolIdsTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             Protocol.Create("Test");
@@ -126,7 +125,6 @@ namespace Sensus.Tests.Core
         public void PointsOfInterestTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             service1.PointsOfInterest.Clear();
@@ -146,7 +144,6 @@ namespace Sensus.Tests.Core
         public void FlashNotificationsEnabledTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             service1.FlashNotificationsEnabled = true;
@@ -174,7 +171,6 @@ namespace Sensus.Tests.Core
         public void ScriptsToRunTest()
         {
             var service1 = new TestSensusServiceHelper();
-
             SensusServiceHelper.Initialize(() => service1);
 
             service1.RunningProtocolIds.Clear();

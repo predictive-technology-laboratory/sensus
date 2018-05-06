@@ -14,6 +14,9 @@
 
 namespace Sensus.Context
 {
+    /// <summary>
+    /// Platforms that Sensus can target.
+    /// </summary>
     public enum Platform
     {
         Android,

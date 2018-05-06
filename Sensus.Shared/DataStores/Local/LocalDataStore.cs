@@ -12,266 +12,90 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Probes;
-using Sensus.UI.UiProperties;
-using System.Collections.Generic;
 using System;
 using Newtonsoft.Json;
 using System.Threading;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
-#if __ANDROID__
-using Java.Util.Zip;
-#elif __IOS__
-using MiniZip.ZipArchive;
-#elif LOCAL_TESTS
-#else
-#warning "Unrecognized platform"
-#endif
+using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
 
 namespace Sensus.DataStores.Local
 {
     /// <summary>
-    /// Responsible for transferring data from probes to local media.
+    /// A <see cref="LocalDataStore"/> accumulates data on the device. Periodically, data are written from 
+    /// the <see cref="LocalDataStore"/> to a <see cref="Remote.RemoteDataStore"/> for permanent storage.
     /// </summary>
     public abstract class LocalDataStore : DataStore
     {
-        private bool _uploadToRemoteDataStore;
-        private bool _sizeTriggeredRemoteCommitRunning;
+        private bool _sizeTriggeredRemoteWriteRunning;
 
-        private readonly object _sizeTriggeredRemoteCommitLocker = new object();
-
-        [OnOffUiProperty("Upload to Remote:", true, 3)]
-        public bool UploadToRemoteDataStore
-        {
-            get { return _uploadToRemoteDataStore; }
-            set { _uploadToRemoteDataStore = value; }
-        }
+        private readonly object _sizeTriggeredRemoteWriteLocker = new object();
 
         [JsonIgnore]
         public abstract string SizeDescription { get; }
 
         protected LocalDataStore()
         {
-            _uploadToRemoteDataStore = true;
-            _sizeTriggeredRemoteCommitRunning = false;
-
-#if DEBUG || ENABLE_TEST_CLOUD
-            CommitDelayMS = 5000;  // 5 seconds...so we can see debugging output quickly
-#else
-            CommitDelayMS = 1000 * 60 * 15;  // 15 minutes
-#endif
+            _sizeTriggeredRemoteWriteRunning = false;
         }
 
         /// <summary>
-        /// Checks whether the current local data store has grown too large, and (if it has) commits the data to the remote data store.
-        /// This relieves pressure on local storage resources (e.g., RAM or disk) in cases where the remote data store is not triggered
-        /// frequently enough by its own callback delays. It makes sense to call this method after committing data to the current local data
-        /// store. This method will have no effect if the local data store is configured to not upload data to the remote data store.
+        /// Writes a single <see cref="Datum"/> asynchronously to the <see cref="LocalDataStore"/>.
+        /// </summary>
+        /// <returns><c>true</c> if the <see cref="Datum"/> was written and <c>false</c> otherwise.</returns>
+        /// <param name="datum">Datum.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task<bool> WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Checks whether the current <see cref="LocalDataStore"/> has grown too large, and (if it has) writes the data to the 
+        /// <see cref="Remote.RemoteDataStore"/>. This relieves pressure on local resources in cases where the <see cref="Remote.RemoteDataStore"/> 
+        /// is not triggered frequently enough by its own schedule. It makes sense to call this method periodically after writing 
+        /// data.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token.</param>
-        protected Task CommitToRemoteIfTooLargeAsync(CancellationToken cancellationToken)
+        protected Task WriteToRemoteIfTooLargeAsync(CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
-                bool commit = false;
+                bool write = false;
 
-                lock (_sizeTriggeredRemoteCommitLocker)
+                lock (_sizeTriggeredRemoteWriteLocker)
                 {
-                    if (TooLarge() && !_sizeTriggeredRemoteCommitRunning)
+                    if (IsTooLarge() && !_sizeTriggeredRemoteWriteRunning)
                     {
-                        _sizeTriggeredRemoteCommitRunning = true;
-                        commit = true;
+                        _sizeTriggeredRemoteWriteRunning = true;
+                        write = true;
                     }
                 }
 
-                try
+                if (write)
                 {
-                    if (commit)
+                    try
                     {
-                        SensusServiceHelper.Get().Logger.Log("Running size-triggered commit to remote.", LoggingLevel.Normal, GetType());
-                        await Protocol.RemoteDataStore.CommitAndReleaseAddedDataAsync(cancellationToken);
+                        SensusServiceHelper.Get().Logger.Log("Running size-triggered write to remote.", LoggingLevel.Normal, GetType());
+
+                        Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType().Name, new Dictionary<string, string>
+                        {
+                            { "Write", "Size Triggered" }
+                        });
+
+                        await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken);
                     }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered commit to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _sizeTriggeredRemoteCommitRunning = false;
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered write to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                    finally
+                    {
+                        _sizeTriggeredRemoteWriteRunning = false;
+                    }
                 }
             });
         }
 
-        protected abstract bool TooLarge();
+        protected abstract bool IsTooLarge();
 
-        public abstract void CommitToRemote(CancellationToken cancellationToken);
-
-        public int WriteDataToZipFile(string zipPath, CancellationToken cancellationToken, Action<string, double> progressCallback)
-        {
-            // create a zip file to hold all data
-#if __ANDROID__
-            ZipOutputStream zipFile = null;
-#elif __IOS__
-            ZipArchive zipFile = null;
-#endif
-
-            // write all data to separate JSON files. zip files for convenience.
-            string directory = null;
-            Dictionary<string, StreamWriter> datumTypeFile = new Dictionary<string, StreamWriter>();
-
-            try
-            {
-                string directoryName = Protocol.Name + "_Data_" + DateTime.UtcNow.ToShortDateString() + "_" + DateTime.UtcNow.ToShortTimeString();
-                directoryName = new Regex("[^a-zA-Z0-9]").Replace(directoryName, "_");
-                directory = Path.Combine(SensusServiceHelper.SHARE_DIRECTORY, directoryName);
-
-                if (Directory.Exists(directory))
-                    Directory.Delete(directory, true);
-
-                Directory.CreateDirectory(directory);
-
-                if (progressCallback != null)
-                    progressCallback("Gathering data...", 0);
-
-                int totalDataCount = 0;
-
-                foreach (Tuple<string, string> datumTypeLine in GetDataLinesToWrite(cancellationToken, progressCallback))
-                {
-                    string datumType = datumTypeLine.Item1;
-                    string line = datumTypeLine.Item2;
-
-                    StreamWriter file;
-                    if (datumTypeFile.TryGetValue(datumType, out file))
-                        file.WriteLine(",");
-                    else
-                    {
-                        file = new StreamWriter(Path.Combine(directory, datumType + ".json"));
-                        file.WriteLine("[");
-                        datumTypeFile.Add(datumType, file);
-                    }
-
-                    file.Write(line);
-                    ++totalDataCount;
-                }
-
-                // close all files
-                foreach (StreamWriter file in datumTypeFile.Values)
-                {
-                    file.Write(Environment.NewLine + "]");
-                    file.Close();
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (progressCallback != null)
-                    progressCallback("Compressing data...", 0);
-
-#if __ANDROID__
-
-                directoryName += '/';
-                zipFile = new ZipOutputStream(new FileStream(zipPath, FileMode.Create, FileAccess.Write));
-                zipFile.PutNextEntry(new ZipEntry(directoryName));
-
-                int dataWritten = 0;
-
-                foreach (string path in Directory.GetFiles(directory))
-                {
-                    // start json file for data of current type
-                    zipFile.PutNextEntry(new ZipEntry(directoryName + Path.GetFileName(path)));
-
-                    using (StreamReader file = new StreamReader(path))
-                    {
-                        string line;
-                        while ((line = file.ReadLine()) != null)
-                        {
-                            if (progressCallback != null && totalDataCount >= 10 && (dataWritten % (totalDataCount / 10)) == 0)
-                                progressCallback(null, dataWritten / (double)totalDataCount);
-
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            zipFile.Write(file.CurrentEncoding.GetBytes(line + Environment.NewLine));
-
-                            if (line != "[" && line != "]")
-                                ++dataWritten;
-                        }
-                    }
-
-                    zipFile.CloseEntry();
-                    System.IO.File.Delete(path);
-                }
-
-                // close entry for directory
-                zipFile.CloseEntry();
-
-#elif __IOS__
-                zipFile = new ZipArchive();
-                zipFile.CreateZipFile(zipPath);
-                zipFile.AddFolder(directory, null);
-#endif
-
-                if (progressCallback != null)
-                {
-                    progressCallback(null, 1);
-                }
-
-                return totalDataCount;
-            }
-            finally
-            {
-                // ensure that zip file is closed.
-                try
-                {
-#if __ANDROID__ || __IOS__
-                    if (zipFile != null)
-                    {
-#if __ANDROID__
-                        zipFile.Close();
-#elif __IOS__
-                        zipFile.CloseZipFile();
-#endif
-                    }
-#endif
-                }
-                catch (Exception)
-                {
-                }
-
-                // ensure that all temporary files are closed/deleted.
-                foreach (string datumType in datumTypeFile.Keys)
-                {
-                    try
-                    {
-                        datumTypeFile[datumType].Close();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                }
-
-                try
-                {
-                    Directory.Delete(directory, true);
-                }
-                catch (Exception)
-                {
-                }
-            }
-        }
-
-        protected abstract IEnumerable<Tuple<string, string>> GetDataLinesToWrite(CancellationToken cancellationToken, Action<string, double> progressCallback);
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
-
-            misc += GetType().Name + " - local size:  " + SizeDescription + Environment.NewLine;
-
-            return restart;
-        }
+        public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
     }
 }

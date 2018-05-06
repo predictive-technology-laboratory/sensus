@@ -18,17 +18,20 @@ using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using Xamarin;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
+using Sensus.Exceptions;
+using System.ComponentModel;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
 
 namespace Sensus.UI.Inputs
 {
-    public abstract class Input
+    public abstract class Input : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public const string EFFECT_RESOLUTION_GROUP_NAME = "InputEffects";
 
         private string _name;
@@ -53,11 +56,22 @@ namespace Sensus.UI.Inputs
         private List<InputCompletionRecord> _completionRecords;
         private DateTimeOffset? _submissionTimestamp;
 
+        /// <summary>
+        /// The name by which this input will be referred to within the Sensus app.
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 0)]
         public string Name
         {
             get { return _name; }
-            set { _name = value; }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+                }
+            }
         }
 
         public string Id
@@ -84,6 +98,14 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        /// <summary>
+        /// The text to display next to the input when showing the field to the user for completion. If you would like to 
+        /// use the value of a survey-triggering <see cref="Script.CurrentDatum"/> within the input's label, you can do so 
+        /// by placing a <c>{0}</c> within <see cref="LabelText"/> as a placeholder. The placeholder will be replaced with
+        /// the value of the triggering <see cref="Datum"/> at runtime. You can read more about the format of the 
+        /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
+        /// </summary>
+        /// <value>The label text.</value>
         [EntryStringUiProperty("Label Text:", true, 1)]
         public string LabelText
         {
@@ -240,6 +262,10 @@ namespace Sensus.UI.Inputs
         [JsonIgnore]
         public abstract string DefaultName { get; }
 
+        /// <summary>
+        /// Whether or not a valid value is required for this input. Also see <see cref="InputGroup.ForceValidInputs"/>.
+        /// </summary>
+        /// <value><c>true</c> if required; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 5)]
         public bool Required
         {
@@ -249,7 +275,11 @@ namespace Sensus.UI.Inputs
             }
             set
             {
-                _required = value;
+                if (value != _required)
+                {
+                    _required = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+                }
             }
         }
 
@@ -368,6 +398,23 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {
+                return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Datum"/> that triggered the deployment of this <see cref="Input"/>. This
+        /// is what will be used when formatting placeholder text in the input <see cref="LabelText"/>.
+        /// </summary>
+        /// <value>The triggering datum.</value>
+        [JsonIgnore]
+        public Datum TriggeringDatum { get; set; }
+
         public Input()
         {
             _name = DefaultName;
@@ -399,7 +446,7 @@ namespace Sensus.UI.Inputs
             _labelFontSize = labelFontSize;
         }
 
-        public Input(string name, string labelText)
+        public Input(string labelText, string name)
             : this(labelText)
         {
             _name = name;
@@ -451,6 +498,14 @@ namespace Sensus.UI.Inputs
                         // replace variable references with its value
                         labelTextStr = labelTextStr.Replace("{" + variable + "}", variableValue);
                     }
+                }
+
+                // if this input is being shown as part of a datum-triggered script, format the label 
+                // text of the input to replace any {0} references with the triggering datum's placeholder
+                // value.
+                if (TriggeringDatum != null)
+                {
+                    labelTextStr = string.Format(labelTextStr, TriggeringDatum.StringPlaceholderValue.ToString().ToLower());
                 }
 
                 return requiredStr + indexStr + labelTextStr;
@@ -521,21 +576,10 @@ namespace Sensus.UI.Inputs
             else
             {
                 // this should never happen
-                try
-                {
-                    Insights.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."), Insights.Severity.Critical);
-                }
-                catch (Exception)
-                {
-                }
+                SensusException.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."));
 
                 return false;
             }
-        }
-
-        public override string ToString()
-        {
-            return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
         }
 
         public Input Copy(bool newId)
@@ -551,6 +595,16 @@ namespace Sensus.UI.Inputs
             }
 
             return copy;
+        }
+
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>. This is needed
+        /// when adding display conditions.
+        /// </summary>
+        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>.</returns>
+        public override string ToString()
+        {
+            return _name;
         }
     }
 }

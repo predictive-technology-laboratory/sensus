@@ -13,13 +13,15 @@
 // limitations under the License.
 
 using System;
-using Sensus.Anonymization;
 using System.Collections.Generic;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Exceptions;
 
 namespace Sensus.Anonymization
 {
+    /// <summary>
+    /// Declares a <see cref="Datum"/> property to be anonymizable via the declared anonymizers.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class Anonymizable : Attribute
     {

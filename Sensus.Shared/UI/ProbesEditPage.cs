@@ -27,34 +27,35 @@ namespace Sensus.UI
             if (!protocol.Running)
             {
                 ToolbarItems.Add(new ToolbarItem("All", null, async () =>
+                {
+                    if (await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
                     {
-                        if (await DisplayAlert("Enable All Probes", "Are you sure you want to enable all probes?", "Yes", "No"))
+                        foreach (Probe probe in Protocol.Probes)
                         {
-                            foreach (Probe probe in Protocol.Probes)
-                                if (SensusServiceHelper.Get().EnableProbeWhenEnablingAll(probe))
-                                    probe.Enabled = true;
-
-                            Bind();
+                            if (SensusServiceHelper.Get().EnableProbeWhenEnablingAll(probe))
+                            {
+                                probe.Enabled = true;
+                            }
                         }
-                    }));
+                    }
+                }));
             }
 
             ToolbarItems.Add(new ToolbarItem("None", null, async () =>
+            {
+                if (await DisplayAlert("Disable All Probes", "Are you sure you want to disable all probes?", "Yes", "No"))
                 {
-                    if (await DisplayAlert("Disable All Probes", "Are you sure you want to disable all probes?", "Yes", "No"))
+                    foreach (Probe probe in Protocol.Probes)
                     {
-                        foreach (Probe probe in Protocol.Probes)
-                            probe.Enabled = false;
-
-                        Bind();
+                        probe.Enabled = false;
                     }
-                }));
+                }
+            }));
         }
 
         protected override async void ProbeTapped(object sender, ItemTappedEventArgs e)
         {
             ProbePage probePage = new ProbePage(e.Item as Probe);
-            probePage.Disappearing += (oo, ee) => { Bind(); };  // rebind the probes page to pick up changes in the probe
             await Navigation.PushAsync(probePage);
             ProbesList.SelectedItem = null;
         }
@@ -64,7 +65,9 @@ namespace Sensus.UI
             base.OnDisappearing();
 
             foreach (Probe probe in Protocol.Probes)
+            {
                 probe.OriginallyEnabled = probe.Enabled;
+            }
         }
     }
 }

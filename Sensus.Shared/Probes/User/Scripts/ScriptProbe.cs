@@ -21,6 +21,11 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.User.Scripts
 {
+    /// <summary>
+    /// The Script Probe allows Sensus to deliver custom surveys to the user in response to either a schedule or the data coming off other probes. For 
+    /// example, one could configure a survey to display at particular times or randomly within particular time blocks. One could also configure a survey 
+    /// to display when a <see cref="Datum"/> from another probe meets particular criteria.
+    /// </summary>
     public class ScriptProbe : Probe
     {
         private ObservableCollection<ScriptRunner> _scriptRunners;
@@ -129,34 +134,6 @@ namespace Sensus.Probes.User.Scripts
                     scriptRunner.Start();
                 }
             }
-        }
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
-
-            if (Running)
-            {
-                foreach (ScriptRunner scriptRunner in _scriptRunners)
-                {
-                    if (scriptRunner.Enabled && scriptRunner.TestHealth(ref error, ref warning, ref misc))
-                    {
-                        warning += "Restarting script runner \"" + scriptRunner.Name + "\"." + Environment.NewLine;
-
-                        try
-                        {
-                            scriptRunner.Restart();
-                        }
-                        catch (Exception ex)
-                        {
-                            warning += "Error restarting script runner \"" + scriptRunner.Name + "\":  " + ex.Message;
-                            SensusServiceHelper.Get().Logger.Log(warning, LoggingLevel.Normal, GetType());
-                        }
-                    }
-                }
-            }
-
-            return restart;
         }
 
         public override void Reset()

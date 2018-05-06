@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Namespace Sensus.DataStores.Remote
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Namespace Sensus.DataStores.Remote
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.DataStores.Remote">
+  
+  <h1 id="Sensus_DataStores_Remote" data-uid="Sensus.DataStores.Remote" class="text-break">Namespace Sensus.DataStores.Remote
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">Classes
+  </h3>
+      <h4><a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a></h4>
+      <section><p>The Amazon S3 Remote Data Store allows Sensus to upload data from the device to <a href="https://aws.amazon.com/s3">Amazon&apos;s Simple Storage Service (S3)</a>. The 
+S3 service is a simple, non-relational storage system that is relatively cheap, easy to use, and robust.</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>Sign up for an account with Amazon Web Services, if you don&apos;t have one already. The <a href="https://aws.amazon.com/free">Free Tier</a> is sufficient.</li>
+<li>Install the <a href="https://aws.amazon.com/cli">AWS Command Line Interface(CLI)</a>.</li>
+<li>Install the <a href="https://stedolan.github.io/jq">jq</a> command-line utility.</li>
+<li>Download and unzip our <a href="https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip">AWS configuration scripts</a>.</li>
+<li>Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where <code>NAME</code> is an informative name
+(alphanumerics only), <code>REGION</code> is the region in which your bucket will reside (e.g., <code>us-east-1</code>), and <code>ROOT_ID</code> is the 12-digit (no dashes) 
+AWS account identifier that will own your data:</li>
+</ul>
+<pre><code>./ConfigureS3.sh NAME REGION ROOT_ID
+</code></pre><ul>
+<li>The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
+like the following:</li>
+</ul>
+<pre><code>All done. Bucket:  testing-21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+</code></pre><ul>
+<li>The bucket produced on the final line should be kept confidential. Use this value as <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a>.</li>
+</ul>
+<h1 id="downloading-data-from-amazon-s3">Downloading Data from Amazon S3</h1>
+<p>Install the <a href="http://aws.amazon.com/cli">AWS Command Line Interface</a>. Assuming you have created and populated an S3 bucket named <code>BUCKET</code> and 
+a folder named <code>FOLDER</code>, you can download all of your Sensus data in a few different ways:</p>
+<ol>
+<li>You can use the functions (e.g., <code>sensus.sync.from.aws.s3</code>) in the <a href="https://cran.r-project.org/web/packages/SensusR/index.html">SensusR</a> package.</li>
+<li>You can execute the following command to download everything to a directory named <code>data</code> on your desktop:</li>
+</ol>
+<pre><code>aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
+</code></pre><ol>
+<li>You can run <a href="https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh">DownloadFromAmazonS3</a>.</li>
+<li>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</li>
+</ol>
+</section>
+      <h4><a class="xref" href="Sensus.DataStores.Remote.ConsoleRemoteDataStore.html">ConsoleRemoteDataStore</a></h4>
+      <section><p>When using the <a class="xref" href="Sensus.DataStores.Remote.ConsoleRemoteDataStore.html">ConsoleRemoteDataStore</a>, all data accumulated in <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> are simply ignored. This 
+is useful for debugging purposes and is not recommended for practical Sensus deployments since it provides no means of moving the data 
+off of the device.</p>
+</section>
+      <h4><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a></h4>
+      <section><p>A Remote Data Store periodically transfers data from the device&apos;s <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a> to a remote storage system 
+(e.g., Amazon&apos;s Simple Storage Service). The job of the Remote Data Store is to ensure that data accumulated locally on the device 
+are safely transferred off of the device before their accumulated size grows too large or they are corrupted, deleted, lost, etc. </p>
+</section>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

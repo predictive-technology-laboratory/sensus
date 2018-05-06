@@ -15,12 +15,17 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading;
-using Sensus.UI.UiProperties;
 using System;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Sensus.DataStores.Remote
 {
+    /// <summary>
+    /// When using the <see cref="ConsoleRemoteDataStore"/>, all data accumulated in <see cref="Local.LocalDataStore"/> are simply ignored. This 
+    /// is useful for debugging purposes and is not recommended for practical Sensus deployments since it provides no means of moving the data 
+    /// off of the device.
+    /// </summary>
     public class ConsoleRemoteDataStore : RemoteDataStore
     {
         [JsonIgnore]
@@ -30,7 +35,7 @@ namespace Sensus.DataStores.Remote
         }
 
         [JsonIgnore]
-        public override bool CanRetrieveCommittedData
+        public override bool CanRetrieveWrittenData
         {
             get
             {
@@ -38,39 +43,24 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        [JsonIgnore]
-        public override bool Clearable
+        public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
-            get { return false; }
+            return Task.CompletedTask;
         }
 
-        protected override Task<List<Datum>> CommitAsync(IEnumerable<Datum> data, CancellationToken cancellationToken)
+        public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
-            {
-                List<Datum> committedData = new List<Datum>();
-
-                foreach (Datum datum in data)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                        break;
-
-                    SensusServiceHelper.Get().Logger.Log("Committed datum to remote console:  " + datum, LoggingLevel.Debug, GetType());
-                    committedData.Add(datum);
-                }
-
-                return committedData;
-            });
+            throw new NotImplementedException();
         }
 
         public override string GetDatumKey(Datum datum)
         {
-            throw new Exception("Cannot retrieve datum key from Console Remote Data Store.");
+            throw new NotImplementedException();
         }
 
-        public override Task<T> GetDatum<T>(string datumKey, CancellationToken cancellationToken)
+        public override Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)
         {
-            throw new Exception("Cannot retrieve datum from Console Remote Data Store.");
+            throw new NotImplementedException();
         }
     }
 }

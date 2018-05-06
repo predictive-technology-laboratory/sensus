@@ -1,0 +1,604 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ScheduledCallback
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ScheduledCallback
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Callbacks.ScheduledCallback">
+  
+  
+  <h1 id="Sensus_Callbacks_ScheduledCallback" data-uid="Sensus.Callbacks.ScheduledCallback" class="text-break">Class ScheduledCallback
+  </h1>
+  <div class="markdown level0 summary"><p>Represents a action that should be scheduled with the operating system for execution at a future time.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ScheduledCallback</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Callbacks.html">Sensus.Callbacks</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Callbacks_ScheduledCallback_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ScheduledCallback : Object</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback__ctor_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)">ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, String, String, Protocol, Nullable&lt;TimeSpan&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScheduledCallback(ScheduledCallback.ActionDelegate action, TimeSpan delay, string id, string domain, Protocol protocol, Nullable&lt;TimeSpan&gt; callbackTimeout = null, string userNotificationMessage = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionDelegate.html">ScheduledCallback.ActionDelegate</a></td>
+        <td><span class="parametername">action</span></td>
+        <td><p>Action</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">delay</span></td>
+        <td><p>Delay</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Identifier for callback</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">domain</span></td>
+        <td><p>Domain of scheduled callback</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td><p>Protocol of scheduled callback</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">callbackTimeout</span></td>
+        <td><p>Callback Timeout</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userNotificationMessage</span></td>
+        <td><p>User notification message</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback__ctor_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionDelegate_System_TimeSpan_System_TimeSpan_System_Boolean_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionDelegate,System.TimeSpan,System.TimeSpan,System.Boolean,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)">ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, TimeSpan, Boolean, String, String, Protocol, Nullable&lt;TimeSpan&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScheduledCallback(ScheduledCallback.ActionDelegate action, TimeSpan initialDelay, TimeSpan repeatDelay, bool allowRepeatLag, string id, string domain, Protocol protocol, Nullable&lt;TimeSpan&gt; callbackTimeout = null, string userNotificationMessage = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionDelegate.html">ScheduledCallback.ActionDelegate</a></td>
+        <td><span class="parametername">action</span></td>
+        <td><p>Action</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">initialDelay</span></td>
+        <td><p>Delay</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">repeatDelay</span></td>
+        <td><p>Repeat delay</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">allowRepeatLag</span></td>
+        <td><p>Whethe or not to allow lag</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Identifier for callback</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">domain</span></td>
+        <td><p>Domain of scheduled callback</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td><p>Protocol ID of scheduled callback</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">callbackTimeout</span></td>
+        <td><p>Callback Timeout</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userNotificationMessage</span></td>
+        <td><p>User notification message</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_Action_" data-uid="Sensus.Callbacks.ScheduledCallback.Action*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_Action" data-uid="Sensus.Callbacks.ScheduledCallback.Action">Action</h4>
+  <div class="markdown level1 summary"><p>Action to execute.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScheduledCallback.ActionDelegate Action { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionDelegate.html">ScheduledCallback.ActionDelegate</a></td>
+        <td><p>The action.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_AllowRepeatLag_" data-uid="Sensus.Callbacks.ScheduledCallback.AllowRepeatLag*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_AllowRepeatLag" data-uid="Sensus.Callbacks.ScheduledCallback.AllowRepeatLag">AllowRepeatLag</h4>
+  <div class="markdown level1 summary"><p>Since a repeating action can take a while to complete, one must decide whether to schedule the next
+delay from the time at which the action started (no lag) or the time at which the action ended (lag).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;bool&gt; AllowRepeatLag { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p><code>true</code> to allow lag; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_CallbackTimeout_" data-uid="Sensus.Callbacks.ScheduledCallback.CallbackTimeout*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_CallbackTimeout" data-uid="Sensus.Callbacks.ScheduledCallback.CallbackTimeout">CallbackTimeout</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the callback timeout. After this time has elapsed, the callback&apos;s cancellation token will be cancelled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; CallbackTimeout { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The callback timeout.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_Canceller_" data-uid="Sensus.Callbacks.ScheduledCallback.Canceller*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_Canceller" data-uid="Sensus.Callbacks.ScheduledCallback.Canceller">Canceller</h4>
+  <div class="markdown level1 summary"><p>Source of cancellation tokens to be cancelled when the action times out.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CancellationTokenSource Canceller { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationTokenSource</span></td>
+        <td><p>The canceller.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_Delay_" data-uid="Sensus.Callbacks.ScheduledCallback.Delay*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_Delay" data-uid="Sensus.Callbacks.ScheduledCallback.Delay">Delay</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the delay of the action.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan Delay { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><p>The delay.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_DisplayPage_" data-uid="Sensus.Callbacks.ScheduledCallback.DisplayPage*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_DisplayPage" data-uid="Sensus.Callbacks.ScheduledCallback.DisplayPage">DisplayPage</h4>
+  <div class="markdown level1 summary"><p>UI page to display when callback is returned to app.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DisplayPage DisplayPage { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.DisplayPage.html">DisplayPage</a></td>
+        <td><p>The display page.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_Id_" data-uid="Sensus.Callbacks.ScheduledCallback.Id*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_Id" data-uid="Sensus.Callbacks.ScheduledCallback.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_NextExecution_" data-uid="Sensus.Callbacks.ScheduledCallback.NextExecution*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_NextExecution" data-uid="Sensus.Callbacks.ScheduledCallback.NextExecution">NextExecution</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the next execution time for this callback.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;DateTime&gt; NextExecution { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><p>The next execution time.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_Protocol_" data-uid="Sensus.Callbacks.ScheduledCallback.Protocol*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_Protocol" data-uid="Sensus.Callbacks.ScheduledCallback.Protocol">Protocol</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the callback&apos;s protocol.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Protocol Protocol { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><p>The protocol identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_RepeatDelay_" data-uid="Sensus.Callbacks.ScheduledCallback.RepeatDelay*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_RepeatDelay" data-uid="Sensus.Callbacks.ScheduledCallback.RepeatDelay">RepeatDelay</h4>
+  <div class="markdown level1 summary"><p>For actions that are repeatedly executed, this is the delay between executions.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; RepeatDelay { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The repeat delay.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_State_" data-uid="Sensus.Callbacks.ScheduledCallback.State*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_State" data-uid="Sensus.Callbacks.ScheduledCallback.State">State</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScheduledCallbackState State { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallbackState.html">ScheduledCallbackState</a></td>
+        <td><p>The state.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_UserNotificationMessage_" data-uid="Sensus.Callbacks.ScheduledCallback.UserNotificationMessage*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_UserNotificationMessage" data-uid="Sensus.Callbacks.ScheduledCallback.UserNotificationMessage">UserNotificationMessage</h4>
+  <div class="markdown level1 summary"><p>Notification message that should be displayed to the user when the callback is invoked.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string UserNotificationMessage { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The user notification message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

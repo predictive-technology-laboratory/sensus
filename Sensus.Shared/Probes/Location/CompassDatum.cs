@@ -37,6 +37,18 @@ namespace Sensus.Probes.Location
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the compass heading.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return Math.Round(_heading, 0);
+            }
+        }
+
+        /// <summary>
         /// For JSON deserialization.
         /// </summary>
         private CompassDatum() { }

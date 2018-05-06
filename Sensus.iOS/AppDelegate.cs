@@ -25,9 +25,7 @@ using Sensus.Exceptions;
 using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
-using CoreLocation;
 using Facebook.CoreKit;
-using Sensus.iOS.Exceptions;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 using Sensus.iOS.Callbacks.UILocalNotifications;
 using Sensus.iOS.Callbacks;
@@ -35,6 +33,7 @@ using UserNotifications;
 using Sensus.iOS.Callbacks.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
+using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.iOS
 {
@@ -46,9 +45,6 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            // insights should be initialized first to maximize coverage of exception reporting
-            InsightsInitialization.Initialize(new iOSInsightsInitializer(UIDevice.CurrentDevice.IdentifierForVendor.AsString()), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
-
             #region configure context
             SensusContext.Current = new iOSSensusContext
             {
@@ -151,13 +147,15 @@ namespace Sensus.iOS
 
         public override void OnActivated(UIApplication uiApplication)
         {
-            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
             System.Threading.Tasks.Task.Run(async () =>
             {
-                await serviceHelper.StartAsync();
+                try
+                {
+                    // ensure service helper is running
+                    await SensusServiceHelper.Get().StartAsync();
 
-                await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
+                    // update/run all callbacks
+                    await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
 #if ENABLE_TEST_CLOUD
                     // load and run the UI testing protocol
@@ -167,15 +165,26 @@ namespace Sensus.iOS
                         Protocol.RunUiTestingProtocol(file);
                     }
 #endif
+                }
+                catch(Exception ex)
+                {
+                    SensusException.Report("Failed in OnActivated.", ex);
+                }
             });
 
             base.OnActivated(uiApplication);
         }
 
+        /// <summary>
+        /// Pre-10.0:  Handles notifications received when the app is in the foreground. See <see cref="UNUserNotificationDelegate.WillPresentNotification"/> for
+        /// the corresponding handler for iOS 10.0 and above.
+        /// </summary>
+        /// <param name="application">Application.</param>
+        /// <param name="notification">Notification.</param>
         public override void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
         {
             // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them via this app delegate
-            // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem to Insights and bail.
+            // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem and bail.
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
                 SensusException.Report("Received UILocalNotification in iOS 10 or later.");
@@ -187,32 +196,42 @@ namespace Sensus.iOS
                 // cancel notification (removing it from the tray), since it has served its purpose
                 (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
 
-                IiOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler;
+                iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
+
                 if (callbackScheduler == null)
                 {
-                    SensusException.Report("Invalid callback scheduler.");
+                    SensusException.Report("We don't have an iOSCallbackScheduler.");
+                }
+                else if(notification.UserInfo == null)
+                {
+                    SensusException.Report("Null user info passed to ReceivedLocalNotification.");
                 }
                 else
                 {
                     // run asynchronously to release the UI thread
-                    System.Threading.Tasks.Task.Run(() =>
+                    System.Threading.Tasks.Task.Run(async () =>
                     {
-                        // the following must be done on the UI thread because we reference UIApplicationState.Active.
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        // we've tried pulling some of the code below out of the UI thread, but we do not receive/process
+                        // the callback notifications when doing so..
+                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
-                            callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+                            // service the callback if we've got one (not all notification userinfo bundles are for callbacks)
+                            if (callbackScheduler.IsCallback(notification.UserInfo))
+                            {
+                                await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+                            }
 
                             // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
-                            // also get notifications when the app is active, since we use them for timed callback events. if the user opened the notification, 
-                            // display the page associated with the notification (if there is one). 
-                            if (application.ApplicationState != UIApplicationState.Active && notification.UserInfo != null)
+                            // also get notifications when the app is active, since we use them for timed callback events.
+                            if (application.ApplicationState != UIApplicationState.Active)
                             {
+                                // if the user opened the notification, display the page associated with the notification, if any. 
                                 callbackScheduler.OpenDisplayPage(notification.UserInfo);
 
-                                // provide some generic feedback if the user responded to a silent notification
-                                if ((notification.UserInfo.ValueForKey(new NSString(iOSNotifier.SILENT_NOTIFICATION_KEY)) as NSNumber)?.BoolValue ?? false)
+                                // provide some generic feedback if the user responded to a silent callback notification
+                                if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
                                 {
-                                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.", false);
+                                    await SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                                 }
                             }
                         });
@@ -226,7 +245,7 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication uiApplication)
         {
-            (SensusContext.Current.Notifier as IiOSNotifier).CancelSilentNotifications();
+            (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
 
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
@@ -235,6 +254,7 @@ namespace Sensus.iOS
             // save app state in background
             nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
             {
+                // not much we can do if we run out of time...
             });
 
             serviceHelper.SaveAsync(() =>

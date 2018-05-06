@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
@@ -111,6 +113,7 @@ namespace Sensus.Probes.Location
             }
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public ProximityThresholdDirection TriggerDistanceDirection
         {
             get
@@ -128,6 +131,18 @@ namespace Sensus.Probes.Location
             get
             {
                 return Math.Round(_distanceToPoiMeters) + "m from " + _poiName + (string.IsNullOrWhiteSpace(_poiType) ? "" : " (" + _poiType + ")");
+            }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the POI name.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _poiName;
             }
         }
 

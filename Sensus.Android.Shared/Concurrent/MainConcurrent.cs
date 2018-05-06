@@ -21,7 +21,8 @@ using Android.OS;
 namespace Sensus.Android.Concurrent
 {
     /// <remarks>
-    /// Device.BeginInvokeOnMainThread invokes off the activity. Sensus does not always have an activity, so we create a handler bound to the main thread's looper instead.
+    /// Provides concurrent access to the main thread of the application. Note that <see cref="Xamarin.Forms.Device.BeginInvokeOnMainThread"/> invokes 
+    /// off the activity, and Sensus does not always have an activity, so we create a handler bound to the main thread's looper instead.
     /// </remarks>
     public class MainConcurrent : Disposable, IConcurrent
     {

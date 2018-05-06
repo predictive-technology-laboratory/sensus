@@ -79,6 +79,18 @@ namespace Sensus.Probes.User.MicrosoftBand
         }
 
         /// <summary>
+        /// Gets the string placeholder value, which is the acceleration vector [x,y,z].
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return "[" + Math.Round(_x, 2) + "," + Math.Round(_y, 2) + "," + Math.Round(_z, 2) + "]";
+            }
+        }
+
+        /// <summary>
         /// For JSON.net deserialization.
         /// </summary>
         private MicrosoftBandAccelerometerDatum()

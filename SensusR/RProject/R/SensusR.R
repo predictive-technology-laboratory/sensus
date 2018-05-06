@@ -3,7 +3,7 @@
 #' Provides access and analytic functions for Sensus data. More information can be found at the
 #' following URL:
 #' 
-#'     https://github.com/predictive-technology-laboratory/sensus/wiki
+#'     https://predictive-technology-laboratory.github.io/sensus
 #' 
 #' @section SensusR functions:
 #' The SensusR functions handle reading, cleaning, plotting, and otherwise analyzing data collected
@@ -25,7 +25,7 @@ NULL
 #' @return Local path to location of downloaded data.
 #' @examples 
 #' # data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", local.path = "~/Desktop/data")
-sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE, decompress = TRUE)
+sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = FALSE, decompress = FALSE)
 {
   aws.args = paste("s3 --profile", profile, "sync ", s3.path, local.path, sep = " ")
   
@@ -58,7 +58,7 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
 #' # sensus.decrypt.bin.files(data.path = data.path, 
 #' #                          rsa.private.key.path = "/path/to/private.pem", 
 #' #                          replace.files = FALSE)
-sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = TRUE, rsa.private.key.path, rsa.private.key.password = askpass, replace.files = TRUE)
+sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = TRUE, rsa.private.key.path, rsa.private.key.password = askpass, replace.files = FALSE)
 {
   bin.paths = c(data.path)
   
@@ -121,18 +121,21 @@ sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = 
 #' Decompresses JSON files downloaded from AWS S3.
 #' 
 #' @param local.path Path to location on local machine.
+#' @param skip If TRUE and the output file already exists, the output file is returned as is.
+#' @param overwrite If TRUE and the output file already exists, the file is silently overwritten; otherwise an exception is thrown (unless skip is TRUE).
+#' @param remove If TRUE, the input file is removed afterward, otherwise not.
 #' @return None
 #' @examples 
 #' # sensus.decompress.gz.files("~/Desktop/data")
-sensus.decompress.gz.files = function(local.path)
+sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE, remove = FALSE)
 {
-  gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz")
+  gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz$")
   
   print(paste("Decompressing", length(gz.paths), "file(s)..."))
   
   for(gz.path in gz.paths)
   {
-    gunzip(gz.path)
+    gunzip(gz.path, skip = skip, overwrite = overwrite, remove = remove)
   }
 }
 
@@ -153,11 +156,16 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   
   if(is.directory)
   {
-    paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE)
+    paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE, pattern = "*.json$")
   }
   
   num.files = length(paths)
   
+  # keep track of the expected data count, both by type and in total.
+  expected.data.cnt.by.type = list()
+  expected.total.cnt = 0
+  
+  # process each path
   data = list()
   file.num = 0
   for(path in paths)
@@ -166,26 +174,31 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     print(paste("Parsing JSON file ", file.num, " of ", num.files, ":  ", path, sep = ""))
 
-    # read and parse JSON
+    # skip zero-length files
     file.size = file.info(path)$size
     if(file.size == 0)
     {
       next
     }
     
+    # read and parse JSON
     file.text = readChar(path, file.size)
     file.json = jsonlite::fromJSON(file.text)
 
     # skip empty JSON
-    if(is.null(file.json) || is.na(file.json) || nrow(file.json) == 0)
+    if(is.null(file.json) || is.na(file.json) || length(file.json) == 0)
     {
       next
     }
     
-    # remove list-type columns
+    # file.json is a list with one entry per column (e.g., for the X coordinates of accelerometer readings). sub-list
+    # the file.json list to include only those columns that are not themselves lists.
     file.json = file.json[sapply(file.json, typeof) != "list"]
     
-    # set datum type and OS
+    # add to expected total count of data, which is the length of the Id list entry
+    expected.total.cnt = expected.total.cnt + length(file.json$Id)
+    
+    # set datum type and OS columns
     type.os = lapply(file.json$"$type", function(type)
     {
       type.split = strsplit(type, ",")[[1]]
@@ -199,27 +212,68 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     file.json$Type = type.os[,1]
     file.json$OS = type.os[,2]
+    
+    # remove the original $type column
     file.json$"$type" = NULL
     
-    # parse timestamps
+    # parse timestamps and convert to local time zone if needed
     file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
     if(convert.to.local.timezone)
     {
       file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
     
-    # add to data by type, putting each file in its own list entry (we'll merge files later)
-    type = file.json$Type[1]
-    if(is.null(data[[type]]))
+    # the input files will have JSON objects of different type (e.g., location and acceleration). the resulting file.json variable
+    # will a list element for each column across all data types (e.g., latitude and X columns for location and acceleration types).
+    # since 1 or more columns for each data type will be specific to that type, these specific columns will have NA values for the
+    # other types (e.g., the X column for location data will be all NAs). the first step in cleaning all of this up is to split
+    # the entries in each column list by type. do this now...
+    split.file.json = lapply(split(file.json, file.json$Type), function(data.type)
     {
-      data[[type]] = list()
-    }
+      # the data.type variable is for a specific type (e.g., location data) and it has all columns
+      # from all data types. only those columns for location data will have non-NA values. the other
+      # columns (e.g., X from acceleration) will be entirely NAs and can be removed. identify these
+      # all-NA columns next.
+      na.elements = sapply(data.type, function(data.type.column)
+      {
+        return(sum(is.na(data.type.column)) == length(data.type.column))
+      })
+      
+      # remove list elements for the current data type that have all NAs.
+      data.type[na.elements] = NULL
+      
+      return(data.type)
+    })
     
-    data.type.file.num = length(data[[type]]) + 1
-    data[[type]][[data.type.file.num]] = file.json
+    # now that we have reorganized all data into a list by type, append the list for each type to our 
+    # collection. later we'll take care of merging together all data of each type into a dataframe, but
+    # we can't do this now because we don't know how large of a dataframe needs to be preallocated.
+    for(data.type in names(split.file.json))
+    {
+      # add to data by type, putting each file in its own list entry (we'll merge files later)
+      type = split.file.json[[data.type]]$Type[1]
+      if(is.null(data[[type]]))
+      {
+        data[[type]] = list()
+      }
+      
+      data.type.file.num = length(data[[type]]) + 1
+      data[[type]][[data.type.file.num]] = split.file.json[[data.type]]
+      
+      # update expected data counts by type (use number of non-null IDs as basis for counting)
+      data.type.curr.cnt = 0
+      if(!is.null(expected.data.cnt.by.type[[data.type]]))
+      {
+        data.type.curr.cnt = expected.data.cnt.by.type[[data.type]]
+      }
+      
+      expected.data.cnt.by.type[[data.type]] = data.type.curr.cnt + sum(!is.na(split.file.json[[data.type]]$Id))
+    }
   }
  
   # merge files for each data type
+  final.data.cnt.by.type = list()
+  final.total.cnt = 0
   for(datum.type in names(data))
   { 
     datum.type.data = data[[datum.type]]
@@ -244,7 +298,14 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       insert.end.row = insert.start.row + file.data.rows - 1
       for(col.name in datum.type.col.vectors.names)
       {
-        datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
+        if(col.name %in% colnames(file.data))
+        {
+          datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
+        }
+        else
+        {
+          warning(paste("Data file is missing column ", col.name, ". There will be null values in this column.", sep=""))
+        }
       }
       
       insert.start.row = insert.start.row + file.data.rows
@@ -259,29 +320,48 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     print(paste("Creating data frame for ", datum.type, ".", sep = ""))
     
-    # create data frame from pre-allocated vectors 
+    # create data frame for current type from pre-allocated vectors 
     data.type.data.frame = data.frame(datum.type.col.vectors, stringsAsFactors = FALSE)
+    
+    # record final count for the current type. we do this before the deduplication step that comes next
+    # since our expected counts were also calculated without any deduplication.
+    final.data.cnt.by.type[[datum.type]] = nrow(data.type.data.frame)
+    final.total.cnt = final.total.cnt + nrow(data.type.data.frame)
     
     # filter redundant data by datum id and sort by timestamp
     data.type.data.frame = data.type.data.frame[!duplicated(data.type.data.frame$Id), ]
     data.type.data.frame = data.type.data.frame[order(data.type.data.frame$Timestamp), ]
-    
-    # add year, month, day, hour, minute, second, day of week, day of month, and day of year
-    data.type.data.frame$Year = lubridate::year(data.type.data.frame$Timestamp)
-    data.type.data.frame$Month = lubridate::month(data.type.data.frame$Timestamp)
-    data.type.data.frame$Day = lubridate::day(data.type.data.frame$Timestamp)
-    data.type.data.frame$Hour = lubridate::hour(data.type.data.frame$Timestamp)
-    data.type.data.frame$Minute = lubridate::minute(data.type.data.frame$Timestamp)
-    data.type.data.frame$Second = lubridate::second(data.type.data.frame$Timestamp)
-    data.type.data.frame$DayOfWeek = lubridate::wday(data.type.data.frame$Timestamp)
-    data.type.data.frame$DayOfMonth = lubridate::mday(data.type.data.frame$Timestamp)
-    data.type.data.frame$DayOfYear = lubridate::yday(data.type.data.frame$Timestamp)
     
     # set data frame within final list
     data[[datum.type]] = data.type.data.frame
     
     # set class information for plotting
     class(data[[datum.type]]) = c(datum.type, class(data[[datum.type]]))
+  }
+  
+  # make sure expected and final counts match per type
+  for(datum.type in names(data))
+  {
+    expected.cnt = expected.data.cnt.by.type[[datum.type]]
+    final.cnt = final.data.cnt.by.type[[datum.type]]
+    if(expected.cnt == final.cnt)
+    {
+      print(paste(datum.type, ":  Expected and final counts match (", expected.cnt, ").", sep=""))
+    }
+    else
+    {
+      warning(paste(datum.type, ":  Expected ", expected.cnt, " but obtained ", final.cnt, ".", sep = ""))
+    }
+  }
+  
+  # make sure expected and final total counts match overall
+  if(expected.total.cnt == final.total.cnt)
+  {
+    print(paste("Final count is correct (", expected.total.cnt, ").", sep=""))
+  }
+  else
+  {
+    warning(paste("Final count mismatch (expected ", expected.total.cnt, " but got ", final.total.cnt, ").", sep=""))
   }
   
   return(data)
@@ -436,7 +516,7 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' @examples
 #' data.path = system.file("extdata", "example_data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
-#' plot(data$LocationDatum)
+#' #plot(data$LocationDatum)
 plot.LocationDatum = function(x, ...)
 {
   args = list(...)

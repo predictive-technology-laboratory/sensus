@@ -31,8 +31,14 @@ namespace Sensus.Android
     {
         protected override void OnCellPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            try { base.OnCellPropertyChanged(sender, args); }
-            catch (Exception) { }
+            try
+            {
+                base.OnCellPropertyChanged(sender, args);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Caught TextCell disposed exception:  " + ex, LoggingLevel.Normal, GetType());
+            }
         }
     }
 }

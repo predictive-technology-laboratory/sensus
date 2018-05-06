@@ -18,25 +18,59 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Sensus.UI.Inputs
 {
-    public class InputGroup
+    public class InputGroup : INotifyPropertyChanged
     {
-        #region Properties     
-        public string Id { get; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        private string _name;
+
+        public string Id { get; set; }
         public ObservableCollection<Input> Inputs { get; }
 
+        /// <summary>
+        /// Name of the input group.
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty(null, true, 0)]
-        public string Name { get; set; }
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (value != _name)
+                {
+                    _name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+                }
+            }
+        }
 
+        /// <summary>
+        /// Whether or not to tag inputs in this group with the device's current GPS location.
+        /// </summary>
+        /// <value><c>true</c> if geotag; otherwise, <c>false</c>.</value>
         [OnOffUiProperty(null, true, 1)]
         public bool Geotag { get; set; }
 
+        /// <summary>
+        /// Whether or not to force valid input values (e.g., all required fields completed, etc.)
+        /// before allowing the user to move to the next input group.
+        /// </summary>
+        /// <value><c>true</c> if force valid inputs; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Force Valid Inputs:", true, 2)]
         public bool ForceValidInputs { get; set; }
 
+        /// <summary>
+        /// Whether or not to randomly shuffle the inputs in this group when displaying them to the user.
+        /// </summary>
+        /// <value><c>true</c> if shuffle inputs; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Inputs:", true, 3)]
         public bool ShuffleInputs { get; set; }
 
@@ -47,9 +81,7 @@ namespace Sensus.UI.Inputs
         /// </summary>
         [JsonIgnore]
         public bool Valid => Inputs.All(i => i?.Valid ?? true);
-        #endregion
 
-        #region Constructors
         public InputGroup()
         {
             Id = Guid.NewGuid().ToString();
@@ -59,73 +91,12 @@ namespace Sensus.UI.Inputs
             ShuffleInputs = false;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sensus.UI.Inputs.InputGroup"/> class as a copy of another. WARNING:  You must call
-        /// UpdateDisplayConditionInputs on the resulting object to ensure that all display conditions are properly set up.
-        /// </summary>
-        public InputGroup(InputGroup inputGroup, bool newGroupId)
-        {
-            Id = inputGroup.Id;
-            Name = inputGroup.Name;
-            Geotag = inputGroup.Geotag;
-            ForceValidInputs = inputGroup.ForceValidInputs;
-            ShuffleInputs = inputGroup.ShuffleInputs;
-
-            Inputs = JsonConvert.DeserializeObject<ObservableCollection<Input>>(JsonConvert.SerializeObject(inputGroup.Inputs, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-
-            if (newGroupId)
-            {
-                Id = Guid.NewGuid().ToString();
-
-                // update all inputs to have the new group ID. because we are creating a new group, all inputs should get new IDs to break
-                // all connections with the passed-in group.
-                foreach (Input input in Inputs)
-                {
-                    input.GroupId = Id;
-                    input.Id = Guid.NewGuid().ToString();
-                }
-            }
-        }
-
-        [JsonConstructor]
-        private InputGroup(string id, ObservableCollection<Input> inputs)
-        {
-            Id = id;
-            Inputs = inputs;
-        }
-        #endregion
-
-        #region Public Methods
-        /// <summary>
-        /// Updates any display conditions contained on any input in this group to reference inputs contained in the passed array.
-        /// This is necessary after copying an input group, because we use serialization/deserialization to copy each individual
-        /// input, which then breaks the object reference from input display conditions to their target inputs.
-        /// </summary>
-        /// <param name="inputs">Inputs.</param>
-        public void UpdateDisplayConditionInputs(Input[] inputs)
-        {
-            foreach (Input input in Inputs)
-            {
-                foreach (InputDisplayCondition displayCondition in input.DisplayConditions)
-                {
-                    displayCondition.Input = inputs.Single(i => i.Id == displayCondition.Input.Id);
-                }
-            }
-        }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-        #endregion
-
-        #region Private Methods
         private ObservableCollection<Input> NewObservableCollection()
         {
-            var collection = new ObservableCollection<Input>();
+            ObservableCollection<Input> collection = new ObservableCollection<Input>();
 
-            //I've tested this and the closure still looks up Id by reference.
-            //That means we don't need to update this handler when Id changes. 
+            // I've tested this and the closure still looks up Id by reference.
+            // That means we don't need to update this handler when Id changes. 
             collection.CollectionChanged += CollectionChanged;
 
             return collection;
@@ -149,6 +120,30 @@ namespace Sensus.UI.Inputs
                 }
             }
         }
-        #endregion
+
+        /// <summary>
+        /// Creates a copy of this <see cref="InputGroup"/>.
+        /// </summary>
+        /// <returns>The copy.</returns>
+        /// <param name="newId">If set to <c>true</c>, set new random <see cref="Id"/> and <see cref="Input.Id"/> values for the current group
+        /// and <see cref="Input"/>s associated with this <see cref="InputGroup"/>.</param>
+        public InputGroup Copy(bool newId)
+        {
+            InputGroup copy = JsonConvert.DeserializeObject<InputGroup>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+            if (newId)
+            {
+                copy.Id = Guid.NewGuid().ToString();
+
+                // update all inputs to have the new group ID and new IDs themselves.
+                foreach (Input input in copy.Inputs)
+                {
+                    input.GroupId = copy.Id;
+                    input.Id = Guid.NewGuid().ToString();
+                }
+            }
+
+            return copy;
+        }
     }
 }

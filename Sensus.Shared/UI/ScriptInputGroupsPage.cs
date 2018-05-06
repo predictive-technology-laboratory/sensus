@@ -22,26 +22,22 @@ namespace Sensus.UI
 {
     public class ScriptInputGroupsPage : ContentPage
     {
-        private Script _script;
-        private ListView _groupsList;
-
         public ScriptInputGroupsPage(Script script)
         {
-            _script = script;
-
             Title = "Input Groups";
 
-            _groupsList = new ListView();
-            _groupsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _groupsList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
-            _groupsList.ItemTapped += async (o, e) =>
+            ListView groupsList = new ListView(ListViewCachingStrategy.RecycleElement);
+            groupsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            groupsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(InputGroup.Name));
+            groupsList.ItemsSource = script.InputGroups;
+            groupsList.ItemTapped += async (o, e) =>
             {
-                if (_groupsList.SelectedItem == null)
+                if (groupsList.SelectedItem == null)
                 {
                     return;
                 }
 
-                InputGroup selectedInputGroup = _groupsList.SelectedItem as InputGroup;
+                InputGroup selectedInputGroup = groupsList.SelectedItem as InputGroup;
                 int selectedIndex = script.InputGroups.IndexOf(selectedInputGroup);
 
                 List<string> actions = new string[] { "Edit", "Copy", "Delete" }.ToList();
@@ -68,44 +64,31 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Edit")
                 {
-                    List<InputGroup> previousInputGroups = _script.InputGroups.Where((inputGroup, index) => index < selectedIndex).ToList();
+                    List<InputGroup> previousInputGroups = script.InputGroups.Where((inputGroup, index) => index < selectedIndex).ToList();
                     ScriptInputGroupPage inputGroupPage = new ScriptInputGroupPage(selectedInputGroup, previousInputGroups);
-                    inputGroupPage.Disappearing += (oo, ee) =>
-                    {
-                        Bind();
-                    };
-
                     await Navigation.PushAsync(inputGroupPage);
-
-                    _groupsList.SelectedItem = null;
+                    groupsList.SelectedItem = null;
                 }
                 else if (selectedAction == "Copy")
                 {
-                    // the group copy should have a new id, and the copied inputs should have new IDs.
-                    InputGroup selectedInputGroupCopy = new InputGroup(selectedInputGroup, true);
-                    selectedInputGroupCopy.UpdateDisplayConditionInputs(_script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs).ToArray());
-                    script.InputGroups.Add(selectedInputGroupCopy);
+                    script.InputGroups.Add(selectedInputGroup.Copy(true));
                 }
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedInputGroup.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        _script.InputGroups.Remove(selectedInputGroup);
-                        _groupsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
+                        script.InputGroups.Remove(selectedInputGroup);
+                        groupsList.SelectedItem = null;
                     }
                 }
             };
 
-            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () => { _script.InputGroups.Add(new InputGroup { Name = "New Input Group" }); }));
+            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () => 
+            { 
+                script.InputGroups.Add(new InputGroup { Name = "New Input Group" }); 
+            }));
 
-            Bind();
-            Content = _groupsList;
-        }
-
-        public void Bind()
-        {
-            _groupsList.ItemsSource = null;
-            _groupsList.ItemsSource = _script.InputGroups;
+            Content = groupsList;
         }
     }
 }

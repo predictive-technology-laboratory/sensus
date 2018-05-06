@@ -26,18 +26,24 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
+using Plugin.Permissions.Abstractions;
+using Plugin.Geolocator.Abstractions;
+using System.ComponentModel;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class ScriptRunner
+    public class ScriptRunner : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #region Fields
+        private string _name;
         private bool _enabled;
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
         private TimeSpan? _maxAge;
         private DateTime? _maxScheduledDate;
-        private readonly List<string> _scriptRunCallbackIds;
+        private readonly List<ScheduledCallback> _scriptRunCallbacks;
         private readonly ScheduleTrigger _scheduleTrigger;
 
         private readonly object _locker = new object();
@@ -48,9 +54,32 @@ namespace Sensus.Probes.User.Scripts
 
         public Script Script { get; set; }
 
+        /// <summary>
+        /// Name of the survey. If you would like to use the value of a 
+        /// survey-triggering <see cref="Script.CurrentDatum"/> within the survey's name, you can do so 
+        /// by placing a <c>{0}</c> within <see cref="Name"/> as a placeholder. The placeholder will be replaced with
+        /// the value of the triggering <see cref="Datum"/> at runtime. You can read more about the format of the 
+        /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
+        /// </summary>
+        /// <value>The name.</value>
         [EntryStringUiProperty("Name:", true, 1)]
-        public string Name { get; set; }
+        public string Name 
+        {
+            get { return _name; }
+            set
+            {
+                if(value != _name)
+                {
+                    _name = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+                }
+            }
+        }            
 
+        /// <summary>
+        /// Whether or not the survey is enabled.
+        /// </summary>
+        /// <value><c>true</c> if enabled; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Enabled:", true, 2)]
         public bool Enabled
         {
@@ -65,18 +94,30 @@ namespace Sensus.Probes.User.Scripts
                     _enabled = value;
 
                     if (Probe != null && Probe.Running && _enabled) // probe can be null when deserializing, if set after this property.
+                    {
                         Start();
+                    }
                     else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
+                    {
                         Stop();
+                    }
                 }
             }
         }
 
+        /// <summary>
+        /// Whether or not the user should be allowed to cancel the survey after starting it.
+        /// </summary>
+        /// <value><c>true</c> if allow cancel; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Cancel:", true, 3)]
         public bool AllowCancel { get; set; }
 
         public ConcurrentObservableCollection<Trigger> Triggers { get; }
 
+        /// <summary>
+        /// The maximum number of minutes, following delivery to the user, that this survey should remain available for completion.
+        /// </summary>
+        /// <value>The max age minutes.</value>
         [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7)]
         public double? MaxAgeMinutes
         {
@@ -90,6 +131,10 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Whether or not the survey should be removed from availability when the survey's window ends. See <see cref="TriggerWindowsString"/> for more information.
+        /// </summary>
+        /// <value><c>true</c> if window expiration should be used; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Expire Script When Window Ends:", true, 15)]
         public bool WindowExpiration
         {
@@ -97,6 +142,31 @@ namespace Sensus.Probes.User.Scripts
             set { _scheduleTrigger.WindowExpiration = value; }
         }
 
+        /// <summary>
+        /// 
+        /// A comma-separated list of times at (in the case of exact times) or during (in the case of time windows) which the survey should
+        /// be delievered. For example, if you want the survey to be delivered twice per day, once randomly between 9am-10am (e.g., 9:32am) 
+        /// and once randomly between 1pm-2pm (e.g., 1:56pm), then you would enter the following into this field:
+        /// 
+        ///     9:00-10:00,13:00-14:00
+        /// 
+        /// Note that the survey will be deployed at a random time during each future window (e.g., 9:32am and 1:56pm on day 1, 9:57am and 
+        /// 1:28pm on day 2, etc.). Alternatively, you may specify an exact time as follows:
+        /// 
+        ///     9:00-10:00,11:32,13:00-14:00
+        /// 
+        /// The survey thus configured will also fire exactly at 11:32am each day. See <see cref="NonDowTriggerIntervalDays"/> 
+        /// for how to put additional days between each survey.
+        /// 
+        /// If you want the survey to be fired on particular days of the week, you can prepend the day of week ("Su", "Mo", "Tu", "We", "Th", 
+        /// "Fr", "Sa") to the time as follows:
+        /// 
+        ///     9:00-10:00,Su-11:32,13:00-14:00
+        /// 
+        /// In contrast to the previous example, this one would would only fire at 11:32am on Sundays.
+        /// 
+        /// </summary>
+        /// <value>The trigger windows string.</value>
         [EntryStringUiProperty("Trigger Windows:", true, 8)]
         public string TriggerWindowsString
         {
@@ -110,6 +180,14 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// For surveys that are not associated with a specific day of the week, this field indicates how 
+        /// many days to should pass between subsequent surveys. For example, if this is set to 1 and 
+        /// <see cref="TriggerWindowsString"/> is set to `9:00-10:00`, then the survey would be fired each
+        /// day at some time between 9am and 10am. If this field were set to 2, then the survey would be 
+        /// fired every other day at some time between 9am and 10am.
+        /// </summary>
+        /// <value>The non-DOW trigger interval days.</value>
         [EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9)]
         public int NonDowTriggerIntervalDays
         {
@@ -148,23 +226,67 @@ namespace Sensus.Probes.User.Scripts
 
         public List<DateTime> CompletionTimes { get; set; }
 
+        /// <summary>
+        /// Whether or not to run the survey exactly once.
+        /// </summary>
+        /// <value><c>true</c> if one shot; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("One Shot:", true, 10)]
         public bool OneShot { get; set; }
 
+        /// <summary>
+        /// Whether or not to run the survey immediately upon starting the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> if run on start; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Run On Start:", true, 11)]
         public bool RunOnStart { get; set; }
 
+        /// <summary>
+        /// Whether or not to display progress (% complete) to the user when they are working on the survey.
+        /// </summary>
+        /// <value><c>true</c> if display progress; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Display Progress:", true, 13)]
         public bool DisplayProgress { get; set; }
 
+        /// <summary>
+        /// How to handle multiple instances of the survey. Options are <see cref="RunMode.Multiple"/>, 
+        /// <see cref="RunMode.SingleKeepNewest"/>, and <see cref="RunMode.SingleKeepOldest"/>.
+        /// </summary>
+        /// <value>The run mode.</value>
         [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleKeepNewest, RunMode.SingleKeepOldest })]
         public RunMode RunMode { get; set; }
 
+        /// <summary>
+        /// The message to display to the user if a required field is invalid.
+        /// </summary>
+        /// <value>The incomplete submission confirmation.</value>
         [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
         public string IncompleteSubmissionConfirmation { get; set; }
 
+        /// <summary>
+        /// Whether or not to shuffle the order of the survey's input groups prior to displaying them to the user.
+        /// </summary>
+        /// <value><c>true</c> if shuffle input groups; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
         public bool ShuffleInputGroups { get; set; }
+
+        /// <summary>
+        /// Whether or not to use the triggering <see cref="Datum.Timestamp"/> within the subcaption text
+        /// displayed for surveys deployed by this <see cref="ScriptRunner"/>. This is important in scenarios
+        /// where <see cref="Script.Birthdate"/> differs from <see cref="Datum.Timestamp"/> (e.g., as is the
+        /// case in iOS where readings collected by the activity probe lag by several minutes).
+        /// </summary>
+        /// <value><c>true</c> if use trigger datum timestamp in subcaption; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Use Trigger Timestamp In Subcaption:", true, 17)]
+        public bool UseTriggerDatumTimestampInSubcaption { get; set; }
+
+        [JsonIgnore]
+        public string Caption
+        {
+            get
+            {                
+                return _name;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -174,7 +296,7 @@ namespace Sensus.Probes.User.Scripts
             _enabled = false;
             _maxAge = null;
             _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
-            _scriptRunCallbackIds = new List<string>();
+            _scriptRunCallbacks = new List<ScheduledCallback>();
             Script = new Script(this);
             Triggers = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
             RunTimes = new List<DateTime>();
@@ -200,7 +322,7 @@ namespace Sensus.Probes.User.Scripts
                         }
 
                         // create a handler to be called each time the triggering probe stores a datum
-                        EventHandler<Tuple<Datum, Datum>> handler = (oo, previousCurrentDatum) =>
+                        EventHandler<Tuple<Datum, Datum>> handler = async (oo, previousCurrentDatum) =>
                         {
                             // must be running and must have a current datum
                             lock (_locker)
@@ -242,11 +364,10 @@ namespace Sensus.Probes.User.Scripts
                                 }
                             }
 
-                            // if the trigger fires for the current value, run a copy of the script so that we can retain a pristine version of the original. use
-                            // the async version of run to ensure that we are not on the UI thread.
+                            // run the script if the current datum's value satisfies the trigger
                             if (trigger.FireFor(currentDatumValue))
                             {
-                                RunAsync(new Script(Script, Guid.NewGuid()), previousDatum, currentDatum);
+                                await RunAsync(previousDatum, currentDatum);
                             }
                         };
 
@@ -296,6 +417,11 @@ namespace Sensus.Probes.User.Scripts
             {
                 throw new Exception("The following input-defined variables are not listed on the protocol:  " + string.Join(", ", unknownVariables));
             }
+
+            if (Script.InputGroups.Any(inputGroup => inputGroup.Geotag))
+            {
+                SensusServiceHelper.Get().ObtainPermission(Permission.Location);
+            }
         }
 
         public void Start()
@@ -311,13 +437,8 @@ namespace Sensus.Probes.User.Scripts
             // not need to finish running in order for the runner to be considered started.
             if (RunOnStart)
             {
-                RunAsync(new Script(Script, Guid.NewGuid()));
+                RunAsync();
             }
-        }
-
-        public bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            return false;
         }
 
         public void Reset()
@@ -363,9 +484,9 @@ namespace Sensus.Probes.User.Scripts
                 // only allow a maximum of 32 script-run callbacks to be scheduled. android's limit is 500, and ios 9 has a limit of 64. 
                 // not sure about ios 10+. as long as we have just a few script runners, each one will be able to schedule a few future
                 // script runs. this will help mitigate the problem of users ignoring surveys and losing touch with the study.
-                lock (_scriptRunCallbackIds)
+                lock (_scriptRunCallbacks)
                 {
-                    if (_scriptRunCallbackIds.Count > 32 / Probe.ScriptRunners.Count)
+                    if (_scriptRunCallbacks.Count > 32 / Probe.ScriptRunners.Count)
                     {
                         break;
                     }
@@ -383,8 +504,7 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-            Script scriptToRun = new Script(Script, Guid.NewGuid()) { ExpirationDate = triggerTime.Expiration, ScheduledRunTime = triggerTime.Trigger };
-            ScheduledCallback callback = CreateScriptRunCallback(scriptToRun, triggerTime);
+            ScheduledCallback callback = CreateScriptRunCallback(triggerTime);
 
             // there is a race condition, so far only seen in ios, in which multiple script runner notifications
             // accumulate and are executed concurrently when the user opens the app. when these script runners
@@ -392,15 +512,15 @@ namespace Sensus.Probes.User.Scripts
             // schedule all future scripts. because two such attempts are made concurrently, they may race to 
             // schedule the same future script. each script callback id is functional in the sense that it is
             // a string denoting the script to run and the time window to run within. thus, the callback ids can
-            // duplicate. the callback scheduler checks for such duplicate ids and will return false on the next
+            // duplicate. the callback scheduler checks for such duplicate ids and will return unscheduled on the next
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
-            // script run since it was already schedule. this issue is much less common in android because all 
+            // script run since it was already scheduled. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleOneTimeCallback(callback, triggerTime.ReferenceTillTrigger))
+            if (SensusContext.Current.CallbackScheduler.ScheduleCallback(callback) == ScheduledCallbackState.Scheduled)
             {
-                lock (_scriptRunCallbackIds)
+                lock (_scriptRunCallbacks)
                 {
-                    _scriptRunCallbackIds.Add(callback.Id);
+                    _scriptRunCallbacks.Add(callback);
                 }
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
@@ -409,8 +529,12 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        private ScheduledCallback CreateScriptRunCallback(Script script, ScriptTriggerTime triggerTime)
+        private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime)
         {
+            Script scriptToRun = Script.Copy(true);
+            scriptToRun.ExpirationDate = triggerTime.Expiration;
+            scriptToRun.ScheduledRunTime = triggerTime.Trigger;
+
             ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 return Task.Run(() =>
@@ -422,11 +546,11 @@ namespace Sensus.Probes.User.Scripts
                         return;
                     }
 
-                    Run(script);
+                    Run(scriptToRun);
 
-                    lock (_scriptRunCallbackIds)
+                    lock (_scriptRunCallbacks)
                     {
-                        _scriptRunCallbackIds.Remove(callbackId);
+                        _scriptRunCallbacks.RemoveAll(c => c.Id == callbackId);
                     }
 
                     // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
@@ -438,15 +562,15 @@ namespace Sensus.Probes.User.Scripts
                 }, cancellationToken);
 
                 // Be careful to use Script.Id rather than script.Id for the callback domain. Using the former means that callbacks are tied to the script runner and not the script copies (the latter) that we will be running. The latter would always be unique.
-            }, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol.Id);
+            }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol);
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 
             // scheduled surveys, since we don't have a way to update the "you have X pending surveys" notification (generated by triggered 
             // surveys) without executing code in the background.
-            if (script.ExpirationDate.HasValue)
+            if (scriptToRun.ExpirationDate.HasValue)
             {
-                callback.UserNotificationMessage = "Survey expires on " + script.ExpirationDate.Value.ToShortDateString() + " at " + script.ExpirationDate.Value.ToShortTimeString() + ".";
+                callback.UserNotificationMessage = "Survey expires on " + scriptToRun.ExpirationDate.Value.ToShortDateString() + " at " + scriptToRun.ExpirationDate.Value.ToShortTimeString() + ".";
             }
             // on iOS, even if we don't have an expiration date we should show some additional notification, again because we don't have a way
             // to update the "you have X pending surveys" notification from the background.
@@ -463,34 +587,28 @@ namespace Sensus.Probes.User.Scripts
 
         private void UnscheduleCallbacks()
         {
-            lock (_scriptRunCallbackIds)
+            lock (_scriptRunCallbacks)
             {
-                if (_scriptRunCallbackIds.Count == 0 || SensusServiceHelper.Get() == null)
+                if (_scriptRunCallbacks.Count == 0 || SensusServiceHelper.Get() == null)
                 {
                     return;
                 }
 
-                foreach (var scheduledCallbackId in _scriptRunCallbackIds)
+                foreach (ScheduledCallback callback in _scriptRunCallbacks)
                 {
-                    UnscheduleCallback(scheduledCallbackId);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(callback);
                 }
 
-                _scriptRunCallbackIds.Clear();
+                _scriptRunCallbacks.Clear();
                 _maxScheduledDate = null;
             }
         }
 
-        private void UnscheduleCallback(string scheduledCallbackId)
-        {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(scheduledCallbackId);
-            SensusServiceHelper.Get().Logger.Log($"Unscheduled ({scheduledCallbackId})", LoggingLevel.Normal, GetType());
-        }
-
-        private Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
+        private Task RunAsync(Datum previousDatum = null, Datum currentDatum = null)
         {
             return Task.Run(() =>
             {
-                Run(script, previousDatum, currentDatum);
+                Run(Script.Copy(true), previousDatum, currentDatum);
             });
         }
 
@@ -537,7 +655,7 @@ namespace Sensus.Probes.User.Scripts
                 RunTimes.RemoveAll(r => r < Probe.Protocol.ParticipationHorizon);
             }
 
-            // submit a separate datum indicating each time the script was run.
+            #region submit a separate datum indicating each time the script was run.
             Task.Run(async () =>
             {
                 // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
@@ -549,7 +667,7 @@ namespace Sensus.Probes.User.Scripts
                 {
                     try
                     {
-                        var currentPosition = GpsReceiver.Get().GetReading(new CancellationToken());
+                        Position currentPosition = GpsReceiver.Get().GetReading(new CancellationToken(), false);
 
                         if (currentPosition == null)
                         {
@@ -568,13 +686,21 @@ namespace Sensus.Probes.User.Scripts
 
                 await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
+            #endregion
 
             // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
-            // can also be called without previous / current datum values (e.g., when triggering randomly). if
+            // can also be called without previous / current datum values (e.g., when triggering on a schedule). if
             // we have such values, set them on the script.
 
-            script.PreviousDatum = previousDatum ?? script.PreviousDatum;
-            script.CurrentDatum = currentDatum ?? script.CurrentDatum;
+            if (previousDatum != null)
+            {
+                script.PreviousDatum = previousDatum;
+            }
+
+            if (currentDatum != null)
+            {
+                script.CurrentDatum = currentDatum;
+            }
 
             SensusServiceHelper.Get().AddScriptToRun(script, RunMode);
         }

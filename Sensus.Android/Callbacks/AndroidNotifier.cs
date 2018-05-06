@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ namespace Sensus.Android.Callbacks
 
             Notification.Builder builder;
 
-            // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+            // see the Backwards Compatibility article for more information
 #if __ANDROID_26__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
@@ -172,10 +172,10 @@ namespace Sensus.Android.Callbacks
         /// <param name="title">Title.</param>
         /// <param name="message">Message.</param>
         /// <param name="id">Identifier of notification.</param>
-        /// <param name="protocolId">Protocol identifier to check for alert exclusion time windows.</param>
+        /// <param name="protocol">Protocol to check for alert exclusion time windows.</param>
         /// <param name="alertUser">If set to <c>true</c> alert user.</param>
         /// <param name="displayPage">Display page.</param>
-        public override void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
             if (_notificationManager == null)
             {
@@ -202,7 +202,7 @@ namespace Sensus.Android.Callbacks
                     }
 
                     // reset channel to silent if we're not alerting or if we're in an exclusion window
-                    if (!alertUser || Protocol.TimeIsWithinAlertExclusionWindow(protocolId, DateTime.Now.TimeOfDay))
+                    if (!alertUser || (protocol != null && protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay)))
                     {
                         notificationChannel = SensusNotificationChannel.Silent;
                     }

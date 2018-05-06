@@ -40,6 +40,18 @@ namespace Sensus.Probes.User.Health
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is the birth date.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return _birthdate;
+            }
+        }
+
         public BirthdateDatum(DateTimeOffset timestamp, DateTimeOffset birthdate)
             : base(timestamp)
         {

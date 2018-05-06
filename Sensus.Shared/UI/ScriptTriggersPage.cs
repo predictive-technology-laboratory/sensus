@@ -31,7 +31,7 @@ namespace Sensus.UI
         {
             Title = "Script Triggers";
 
-            ListView triggerList = new ListView();
+            ListView triggerList = new ListView(ListViewCachingStrategy.RecycleElement);
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             triggerList.ItemsSource = scriptRunner.Triggers;
@@ -66,7 +66,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
+                    await SensusServiceHelper.Get().FlashNotificationAsync("You must enable other probes before adding triggers.");
                 }
             }));
         }

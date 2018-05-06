@@ -18,14 +18,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\FileLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\RamLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ConsoleRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dispose\Disposable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\IInsightsInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
@@ -107,7 +105,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodTypeDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BiologicalSex.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BloodType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ProtocolReportDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParticipationReportDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ParticipationRewardDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\MicrosoftBandGsrProbe.cs" />
@@ -159,7 +157,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddScriptTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\HomePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputCompletionRecord.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputDisplayCondition.cs" />
@@ -194,7 +191,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptTriggersPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ShareLocalDataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DateUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayYesNoUiProperty.cs" />
@@ -210,8 +206,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InsightsInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />
@@ -231,6 +225,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProximityEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NumericExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TrackedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallbackState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

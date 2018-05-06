@@ -45,6 +45,18 @@ namespace Sensus.Probes.User.Health
             }
         }
 
+        /// <summary>
+        /// Gets the string placeholder value, which is the height (inches).
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return Math.Round(_heightInches, 1);
+            }
+        }
+
         public HeightDatum(DateTimeOffset timestamp, double heightInches)
             : base(timestamp)
         {

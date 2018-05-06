@@ -16,6 +16,9 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Rounds numeric values to various levels of precision.
+    /// </summary>
     public abstract class DoubleRoundingAnonymizer : Anonymizer
     {
         private int _places;
@@ -38,7 +41,9 @@ namespace Sensus.Anonymization.Anonymizers
             double doubleValue = (double)value;
 
             if (_places >= 0)
+            {
                 return Math.Round(doubleValue, _places);
+            }
             else
             {
                 // round number to nearest 10^(-_places). for example, -1 would round to tens place, -2 to hundreds, etc.

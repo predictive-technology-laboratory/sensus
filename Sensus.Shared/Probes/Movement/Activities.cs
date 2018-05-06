@@ -14,6 +14,9 @@
 
 namespace Sensus.Probes.Movement
 {
+    /// <summary>
+    /// Activities the user might engage in.
+    /// </summary>
     public enum Activities
     {
         InVehicle,

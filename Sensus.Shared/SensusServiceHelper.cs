@@ -21,7 +21,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
-using Xamarin;
 using Xamarin.Forms;
 using Newtonsoft.Json;
 
@@ -38,14 +37,9 @@ using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Sensus.Callbacks;
-
-#if __ANDROID__ || __IOS__
 using ZXing;
-#endif
-
-#if __IOS__
-using XLabs.Platform.Device;
-#endif
+using ZXing.Net.Mobile.Forms;
+using ZXing.Mobile;
 
 namespace Sensus
 {
@@ -60,9 +54,14 @@ namespace Sensus
         private const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
 
         /// <summary>
-        /// The Xamarin Insights app key. Generated via Xamarin Insights dashboard.
+        /// App Center key for Android app.
         /// </summary>
-        public const string XAMARIN_INSIGHTS_APP_KEY = "";
+        public const string APP_CENTER_KEY_ANDROID = "";
+                                                      
+        /// <summary>
+        /// App Center key for iOS app.
+        /// </summary>
+        public const string APP_CENTER_KEY_IOS = "";
 
         /// <summary>
         /// The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:
@@ -73,6 +72,11 @@ namespace Sensus
         /// </summary>
         public const string ENCRYPTION_KEY = "";
 
+        /// <summary>
+        /// The build ID, used to tag each <see cref="Datum"/>.
+        /// </summary>
+        public const string BUILD_ID = "";
+
         public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
@@ -81,8 +85,8 @@ namespace Sensus
         // test every 30 seconds in debug
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
-        // test every 15 minutes in release
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(15);
+        // test every 60 minutes in release
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
 #endif
 
         /// <summary>
@@ -103,7 +107,7 @@ namespace Sensus
             {
                 if (Get() != null)
                 {
-                    Get().Logger.Log("Failed to deserialize some part of the JSON:  " + e.ErrorContext.Error.ToString(), LoggingLevel.Normal, typeof(Protocol));
+                    Get().Logger.Log("Failed to (de)serialize some part of the JSON:  " + e.ErrorContext.Error, LoggingLevel.Normal, typeof(SensusServiceHelper));
                     e.ErrorContext.Handled = true;
                 }
             },
@@ -139,24 +143,12 @@ namespace Sensus
                 }
                 catch (Exception singletonCreationException)
                 {
-                    #region crash app and report to insights
-
+                    // report exception and crash app
                     string error = "Failed to construct service helper:  " + singletonCreationException.Message + Environment.NewLine + singletonCreationException.StackTrace;
                     Console.Error.WriteLine(error);
                     Exception exceptionToReport = new Exception(error);
-
-                    try
-                    {
-                        Insights.Report(exceptionToReport, Insights.Severity.Error);
-                    }
-                    catch (Exception insightsReportException)
-                    {
-                        Console.Error.WriteLine("Failed to report exception to Xamarin Insights:  " + insightsReportException.Message);
-                    }
-
+                    SensusException.Report(exceptionToReport);
                     throw exceptionToReport;
-
-                    #endregion
                 }
 
                 SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
@@ -182,7 +174,7 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.SymmetricEncryption.Decrypt(encryptedJsonBytes);
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes);
                 }
                 catch (Exception exception)
                 {
@@ -236,7 +228,9 @@ namespace Sensus
                 }
 
                 if (totalBytesRead != fileBytes.Length)
+                {
                     throw new Exception("Mismatch between file length (" + file.Length + ") and bytes read (" + totalBytesRead + ").");
+                }
             }
 
             return fileBytes;
@@ -247,14 +241,16 @@ namespace Sensus
             double directorySizeMB = 0;
 
             foreach (string path in Directory.GetFiles(directory))
+            {
                 directorySizeMB += GetFileSizeMB(path);
+            }
 
             return directorySizeMB;
         }
 
         public static double GetFileSizeMB(string path)
         {
-            return new FileInfo(path).Length / (1024d * 1024d);
+            return new FileInfo(path).Length / Math.Pow(1024d, 2);
         }
 
         /// <remarks>
@@ -272,16 +268,10 @@ namespace Sensus
         private ScheduledCallback _healthTestCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
-
-#if __IOS__ || __ANDROID__
-        private ZXing.Mobile.BarcodeWriter _barcodeWriter;
-#endif
-
+        private BarcodeWriter _barcodeWriter;
         private bool _flashNotificationsEnabled;
-
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
-
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
 
@@ -306,16 +296,14 @@ namespace Sensus
             get { return _pointsOfInterest; }
         }
 
-#if __IOS__ || __ANDROID__
         [JsonIgnore]
-        public ZXing.Mobile.BarcodeWriter BarcodeWriter
+        public BarcodeWriter BarcodeWriter
         {
             get
             {
                 return _barcodeWriter;
             }
         }
-#endif
 
         public bool FlashNotificationsEnabled
         {
@@ -371,6 +359,9 @@ namespace Sensus
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
+
+        [JsonIgnore]
+        public abstract float BatteryChargePercent { get; }
 
         [JsonIgnore]
         public abstract bool WiFiConnected { get; }
@@ -471,35 +462,22 @@ namespace Sensus
             _runningProtocolIds = new List<string>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
-
-            // ensure that the entire QR code is always visible by using 90% the minimum screen dimension as the QR code size.
-#if __ANDROID__
-            int qrCodeSize = (int)(0.9 * Math.Min(XLabs.Platform.Device.Display.Metrics.WidthPixels, XLabs.Platform.Device.Display.Metrics.HeightPixels));
-#elif __IOS__
-            //In order for AppleDevice calls to work we need to be on the UI thread. We should always be on the made thread when creating new SensusServiceHelpers. Still, just to be safe, we're explicitly synchronizing 
-            int qrCodeSize = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => (int)(0.9 * Math.Min(AppleDevice.CurrentDevice.Display.Height, AppleDevice.CurrentDevice.Display.Width)));
-#elif LOCAL_TESTS
-#else
-#warning "Unrecognized platform"
-#endif
-
-#if __IOS__ || __ANDROID__
-            _barcodeWriter = new ZXing.Mobile.BarcodeWriter
+            _barcodeWriter = new BarcodeWriter
             {
                 Format = BarcodeFormat.QR_CODE,
-
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = qrCodeSize,
-                    Width = qrCodeSize
+                    Height = 500,
+                    Width = 500
                 }
             };
-#endif
+
             _flashNotificationsEnabled = true;
 
-
             if (!Directory.Exists(SHARE_DIRECTORY))
+            {
                 Directory.CreateDirectory(SHARE_DIRECTORY);
+            }
 
 #if DEBUG || ENABLE_TEST_CLOUD
             LoggingLevel loggingLevel = LoggingLevel.Debug;
@@ -511,43 +489,34 @@ namespace Sensus
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
-
-            if (!Insights.IsInitialized && string.IsNullOrWhiteSpace(XAMARIN_INSIGHTS_APP_KEY))
-            {
-                _logger.Log("Xamarin Insights key is empty -- not initialized.", LoggingLevel.Normal, GetType());
-            }
-            else if (!Insights.IsInitialized)
-            {
-                _logger.Log("Xamarin Insights failed to initialize.", LoggingLevel.Normal, GetType());
-            }
-            else
-            {
-                _logger.Log("Xamarin Insights sucessfully initialized.", LoggingLevel.Normal, GetType());
-            }
         }
         #endregion
 
         public string GetHash(string s)
         {
             if (s == null)
+            {
                 return null;
+            }
 
             StringBuilder hashBuilder = new StringBuilder();
             foreach (byte b in _hasher.ComputeHash(Encoding.UTF8.GetBytes(s)))
+            {
                 hashBuilder.Append(b.ToString("x"));
+            }
 
             return hashBuilder.ToString();
         }
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform. we are gradually migrating this functionality into the ISensusContext object.
 
-        protected abstract void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback);
+        protected abstract Task ProtectedFlashNotificationAsync(string message, Action callback);
 
-        public abstract void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
+        public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
-        public abstract void ShareFileAsync(string path, string subject, string mimeType);
+        public abstract Task ShareFileAsync(string path, string subject, string mimeType);
 
-        public abstract void SendEmailAsync(string toAddress, string subject, string message);
+        public abstract Task SendEmailAsync(string toAddress, string subject, string message);
 
         public abstract Task TextToSpeechAsync(string text);
 
@@ -557,7 +526,7 @@ namespace Sensus
 
         public abstract void LetDeviceSleep();
 
-        public abstract void BringToForeground();
+        public abstract Task BringToForegroundAsync();
 
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
@@ -617,22 +586,17 @@ namespace Sensus
                 {
                     _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
-                        List<Protocol> protocolsToTest = new List<Protocol>();
-
-                        lock (_registeredProtocols)
+                        // get protocols to test (those that should be running)
+                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
                         {
                             lock (_runningProtocolIds)
                             {
-                                foreach (Protocol protocol in _registeredProtocols)
-                                {
-                                    if (_runningProtocolIds.Contains(protocol.Id))
-                                    {
-                                        protocolsToTest.Add(protocol);
-                                    }
-                                }
+                                return _runningProtocolIds.Contains(protocol.Id);
                             }
-                        }
 
+                        }).ToList();
+
+                        // test protocols
                         foreach (Protocol protocolToTest in protocolsToTest)
                         {
                             if (cancellationToken.IsCancellationRequested)
@@ -645,9 +609,12 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                    }, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                        // test the callback scheduler itself
+                        SensusContext.Current.CallbackScheduler.TestHealth();
 
-                    SensusContext.Current.CallbackScheduler.ScheduleRepeatingCallback(_healthTestCallback, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG);
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
                 }
             }
         }
@@ -660,7 +627,7 @@ namespace Sensus
 
                 if (_runningProtocolIds.Count == 0)
                 {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback?.Id);
+                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback);
                     _healthTestCallback = null;
                 }
 
@@ -816,7 +783,7 @@ namespace Sensus
 
                 if (modifiedScriptsToRun)
                 {
-                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol.Id, true);
+                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
                 }
             });
         }
@@ -839,9 +806,9 @@ namespace Sensus
         /// <summary>
         /// Issues the pending surveys notification.
         /// </summary>
-        /// <param name="protocolId">Protocol identifier used to check for alert exclusion time windows. </param>
+        /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
         /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public void IssuePendingSurveysNotificationAsync(string protocolId, bool alertUser)
+        public void IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
         {
             RemoveExpiredScripts(false);
 
@@ -857,7 +824,7 @@ namespace Sensus
                 string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                 DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                 string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocolId, alertUser, DisplayPage.PendingSurveys);
+                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
             }
         }
 
@@ -871,32 +838,76 @@ namespace Sensus
         /// </summary>
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
-        /// <param name="flashLaterIfNotVisible">Flash later if not visible.</param>
-        /// <param name="duration">Duration. Increments of 2 seconds are best displayed.</param>
         /// <param name="callback">Callback.</param>
-        public void FlashNotificationAsync(string message, bool flashLaterIfNotVisible = true, TimeSpan? duration = null, Action callback = null)
+        public Task FlashNotificationAsync(string message, Action callback = null)
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
-#if !ENABLE_TEST_CLOUD
-
+#if !UI_TESTING
             if (_flashNotificationsEnabled)
             {
-                if (!duration.HasValue)
-                {
-                    duration = TimeSpan.FromSeconds(2);
-                }
-
-                ProtectedFlashNotificationAsync(message, flashLaterIfNotVisible, duration.Value, callback);
+                return ProtectedFlashNotificationAsync(message, callback);
+            }
+            else
+            {
+                return Task.CompletedTask;
             }
 #endif
+        }
+
+        public Task<Result> ScanQrCodeAsync(INavigation navigation)
+        {
+            return Task.Run(() =>
+            {
+                Result result = null;
+                ManualResetEvent resultWait = new ManualResetEvent(false);
+
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
+                    // to take care of. the library does ask for permission, but if it's denied we get an exception
+                    // kicked back. ask explicitly here, and bail out if permission is not granted.
+                    if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    {
+                        resultWait.Set();
+                        return;
+                    }
+
+                    ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
+                    {
+                        PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
+                    });
+
+                    barcodeScannerPage.OnScanResult += r =>
+                    {
+                        result = r;
+
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {                            
+                            barcodeScannerPage.IsScanning = false;
+                            await navigation.PopAsync();
+                        });
+                    };
+
+                    barcodeScannerPage.Disappearing += (sender, e) => 
+                    {
+                        resultWait.Set();
+                    };
+
+                    await navigation.PushAsync(barcodeScannerPage);
+                });
+
+                resultWait.WaitOne();
+
+                return result;
+            });
         }
 
         public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
         {
             PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
-           {
-               callback(inputs?.First());
-           });
+            {
+                callback(inputs?.First());
+            });
         }
 
         public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
@@ -909,14 +920,14 @@ namespace Sensus
             }
 
             PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
-           {
-               callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
-           });
+            {
+                callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
+            });
         }
 
         public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
         {
-            new Thread(async () =>
+            Task.Run(async () =>
             {
                 if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                 {
@@ -954,11 +965,7 @@ namespace Sensus
                                 }
                                 catch (Exception ex)
                                 {
-                                    try
-                                    {
-                                        Insights.Report(ex, Insights.Severity.Critical);
-                                    }
-                                    catch { }
+                                    SensusException.Report("Voice input failed to run.", ex);
                                 }
                             }
 
@@ -966,7 +973,7 @@ namespace Sensus
                         }
                         else
                         {
-                            BringToForeground();
+                            await BringToForegroundAsync();
 
                             await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
@@ -1019,12 +1026,7 @@ namespace Sensus
                                         }
                                         catch (Exception ex)
                                         {
-                                            // report exception and set wait handle if anything goes wrong while processing the current input group.
-                                            try
-                                            {
-                                                Insights.Report(ex, Insights.Severity.Critical);
-                                            }
-                                            catch { }
+                                            SensusException.Report(ex);
                                         }
                                         finally
                                         {
@@ -1072,11 +1074,7 @@ namespace Sensus
                                 }
                                 catch (Exception ex)
                                 {
-                                    try
-                                    {
-                                        Insights.Report(ex, Insights.Severity.Critical);
-                                    }
-                                    catch { }
+                                    SensusException.Report(ex);
 
                                     // if anything bad happens, set the wait handle to ensure we get out of the prompt.
                                     responseWait.Set();
@@ -1087,12 +1085,7 @@ namespace Sensus
                     catch (Exception ex)
                     {
                         // report exception and set wait handle if anything goes wrong while processing the current input group.
-                        try
-                        {
-                            Insights.Report(ex, Insights.Severity.Critical);
-                        }
-                        catch { }
-
+                        SensusException.Report(ex);
                         responseWait.Set();
                     }
 
@@ -1120,7 +1113,7 @@ namespace Sensus
 
                         try
                         {
-                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault());
+                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault(), true);
 
                             if (currentPosition != null)
                             {
@@ -1165,8 +1158,7 @@ namespace Sensus
                 }
 
                 callback(inputGroups);
-
-            }).Start();
+            });
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
@@ -1175,7 +1167,7 @@ namespace Sensus
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                 {
-                    FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                    await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
                 }
                 else
                 {
@@ -1197,7 +1189,7 @@ namespace Sensus
             {
                 if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                 {
-                    FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
+                    await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
                 }
                 else
                 {
@@ -1261,10 +1253,6 @@ namespace Sensus
                     {
                         convertedJsonLine = jsonLine.Replace("Android", "iOS").Replace("WinPhone", "iOS");
                     }
-                    else if (currentTypeName == "WinPhoneSensusServiceHelper")
-                    {
-                        convertedJsonLine = jsonLine.Replace("Android", "WinPhone").Replace("iOS", "WinPhone");
-                    }
                     else
                     {
                         throw SensusException.Report("Attempted to convert JSON for unknown service helper type:  " + GetType().FullName);
@@ -1303,7 +1291,7 @@ namespace Sensus
                 {
                     // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
                     // before using the plugin.
-                    BringToForeground();
+                    await BringToForegroundAsync();
 
                     if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                     {
@@ -1318,7 +1306,7 @@ namespace Sensus
                     }
                     else if (permission == Permission.Camera)
                     {
-                        rationale = "Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.";
+                        rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
                     }
                     else if(permission == Permission.Contacts)
                     {

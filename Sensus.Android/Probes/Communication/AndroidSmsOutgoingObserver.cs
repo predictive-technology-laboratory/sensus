@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ using System;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
+using Sensus.Exceptions;
 using Sensus.Probes.Communication;
 using Xamarin;
 
@@ -63,7 +64,7 @@ namespace Sensus.Android.Probes.Communication
 
                     int sentMessageType;
 
-                    // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+                    // see the Backwards Compatibility article for more information
 #if __ANDROID_19__
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
                     {
@@ -91,14 +92,8 @@ namespace Sensus.Android.Probes.Communication
                 }
                 catch (Exception ex)
                 {
-                    // if anything goes wrong, report exception to Insights
-                    try
-                    {
-                        Insights.Report(ex, Insights.Severity.Error);
-                    }
-                    catch
-                    {
-                    }
+                    // something is wrong with our implementation
+                    SensusException.Report(ex);
                 }
                 finally
                 {

@@ -22,7 +22,7 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Location
 {
     /// <summary>
-    /// Probes location information.
+    /// Periodically takes a location reading.
     /// </summary>
     public class PollingLocationProbe : PollingProbe
     {
@@ -60,12 +60,16 @@ namespace Sensus.Probes.Location
 
         protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken);
+            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
 
             if (currentPosition == null)
+            {
                 throw new Exception("Failed to get GPS reading.");
+            }
             else
+            {
                 return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) };
+            }
         }
 
         protected override ChartSeries GetChartSeries()

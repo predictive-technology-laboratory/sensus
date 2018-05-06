@@ -25,7 +25,7 @@ namespace Sensus.Tests.Classes
         {
             get
             {
-                throw new NotImplementedException();
+                return "asdfasdfasdfasdf";
             }
         }
 
@@ -33,7 +33,15 @@ namespace Sensus.Tests.Classes
         {
             get
             {
-                throw new NotImplementedException();
+                return new Random().NextDouble() > 0.5;
+            }
+        }
+
+        public override float BatteryChargePercent
+        {
+            get
+            {
+                return (float)new Random().NextDouble();
             }
         }
 
@@ -41,7 +49,7 @@ namespace Sensus.Tests.Classes
         {
             get
             {
-                throw new NotImplementedException();
+                return "Android";
             }
         }
 
@@ -49,7 +57,7 @@ namespace Sensus.Tests.Classes
         {
             get
             {
-                throw new NotImplementedException();
+                return "vXXXX";
             }
         }
 
@@ -57,7 +65,7 @@ namespace Sensus.Tests.Classes
         {
             get
             {
-                throw new NotImplementedException();
+                return new Random().NextDouble() > 0.5;
             }
         }
 
@@ -69,7 +77,7 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override void BringToForeground()
+        public override Task BringToForegroundAsync()
         {
             throw new NotImplementedException();
         }
@@ -94,7 +102,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             throw new NotImplementedException();
         }
@@ -104,12 +112,12 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void SendEmailAsync(string toAddress, string subject, string message)
+        public override Task SendEmailAsync(string toAddress, string subject, string message)
         {
             throw new NotImplementedException();
         }
 
-        public override void ShareFileAsync(string path, string subject, string mimeType)
+        public override Task ShareFileAsync(string path, string subject, string mimeType)
         {
             throw new NotImplementedException();
         }
@@ -119,7 +127,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
         {
             throw new NotImplementedException();
         }

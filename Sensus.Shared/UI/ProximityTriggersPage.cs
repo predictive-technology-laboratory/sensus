@@ -25,14 +25,14 @@ namespace Sensus.UI
     public class ProximityTriggersPage : ContentPage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SensusUI.ProximityTriggersPage"/> class.
+        /// Initializes a new instance of the <see cref="ProximityTriggersPage"/> class.
         /// </summary>
         /// <param name="proximityProbe">Proximity probe to display triggers for.</param>
         public ProximityTriggersPage(IPointsOfInterestProximityProbe proximityProbe)
         {
             Title = "Proximity Triggers";
 
-            ListView triggerList = new ListView();
+            ListView triggerList = new ListView(ListViewCachingStrategy.RecycleElement);
             triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             triggerList.ItemsSource = proximityProbe.Triggers;
@@ -67,7 +67,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
+                    await SensusServiceHelper.Get().FlashNotificationAsync("You must define points of interest before adding triggers.");
                 }
             }));
         }

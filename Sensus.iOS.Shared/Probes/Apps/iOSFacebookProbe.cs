@@ -297,9 +297,9 @@ namespace Sensus.iOS.Probes.Apps
             return data;
         }
 
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
         {
-            bool restart = base.TestHealth(ref error, ref warning, ref misc);
+            bool restart = base.TestHealth(ref events);
 
             if (!HasValidAccessToken)
             {

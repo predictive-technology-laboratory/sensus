@@ -27,7 +27,7 @@ using AVFoundation;
 using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
-using ToastIOS;
+using TTGSnackBar;
 
 namespace Sensus.iOS
 {
@@ -45,6 +45,15 @@ namespace Sensus.iOS
             get
             {
                 return UIDevice.CurrentDevice.BatteryState == UIDeviceBatteryState.Charging || UIDevice.CurrentDevice.BatteryState == UIDeviceBatteryState.Full;
+            }
+        }
+
+        public override float BatteryChargePercent
+        {
+            get
+            {
+                UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
+                return UIDevice.CurrentDevice.BatteryLevel * 100f;
             }
         }
 
@@ -91,13 +100,27 @@ namespace Sensus.iOS
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
-        public override void ShareFileAsync(string path, string subject, string mimeType)
+        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return Task.Run(() =>
+            {
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                {
+                    TTGSnackbar snackbar = new TTGSnackbar(message);
+                    snackbar.Duration = TimeSpan.FromSeconds(5);
+                    snackbar.Show();
+                    callback?.Invoke();
+                });
+            });
+        }
+
+        public override Task ShareFileAsync(string path, string subject, string mimeType)
+        {
+            return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (!MFMailComposeViewController.CanSendMail)
                 {
-                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                    await FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
                     return;
                 }
 
@@ -105,7 +128,7 @@ namespace Sensus.iOS
 
                 if (data == null)
                 {
-                    FlashNotificationAsync("No file to share.");
+                    await FlashNotificationAsync("No file to share.");
                     return;
                 }
 
@@ -117,9 +140,9 @@ namespace Sensus.iOS
             });
         }
 
-        public override void SendEmailAsync(string toAddress, string subject, string message)
+        public override Task SendEmailAsync(string toAddress, string subject, string message)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (MFMailComposeViewController.CanSendMail)
                 {
@@ -131,7 +154,9 @@ namespace Sensus.iOS
                     UIApplication.SharedApplication.KeyWindow.RootViewController.PresentViewController(mailer, true, null);
                 }
                 else
-                    FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                {
+                    await FlashNotificationAsync("You do not have any mail accounts configured. Please configure one before attempting to send emails from Sensus.");
+                }
             });
         }
 
@@ -145,7 +170,7 @@ namespace Sensus.iOS
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    Logger.Log("Failed to speak utterance:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             });
         }
@@ -208,40 +233,6 @@ namespace Sensus.iOS
                 dialogDismissWait.WaitOne();
 
                 return input;
-            });
-        }
-
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
-        {
-            Task.Run(async () =>
-            {
-                TimeSpan delay = TimeSpan.FromSeconds(0);
-
-                lock (_toastLocker)
-                {
-                    DateTime now = DateTime.Now;
-
-                    double delaySeconds = (_nextToastTime - now).TotalSeconds;
-
-                    if (delaySeconds > 0)
-                    {
-                        delay = TimeSpan.FromSeconds(delaySeconds);
-                    }
-
-                    _nextToastTime = now + delay + duration;
-                }
-
-                if (delay.TotalSeconds > 0)
-                {
-                    await Task.Delay(delay);
-                }
-
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    Toast.MakeText(message, (nint)duration.TotalMilliseconds).SetFontSize(13).Show(ToastType.Info);
-                });
-
-                callback?.Invoke();
             });
         }
 
@@ -317,11 +308,12 @@ namespace Sensus.iOS
 
         #region methods not implemented in ios
 
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            FlashNotificationAsync("This is not supported on iOS.");
-
-            new Thread(() => callback(null)).Start();
+            return Task.Run(async () =>
+            {
+                await FlashNotificationAsync("This is not supported on iOS.");
+            });
         }
 
         public override void KeepDeviceAwake()
@@ -332,8 +324,9 @@ namespace Sensus.iOS
         {
         }
 
-        public override void BringToForeground()
+        public override Task BringToForegroundAsync()
         {
+            return Task.CompletedTask;
         }
 
         #endregion

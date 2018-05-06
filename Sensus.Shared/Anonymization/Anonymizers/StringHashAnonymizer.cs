@@ -18,6 +18,9 @@ using System.Collections.Generic;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Computes a cryptographic, one-way has of a textual string.
+    /// </summary>
     public class StringHashAnonymizer : Anonymizer
     {        
         public override string DisplayText
@@ -31,7 +34,9 @@ namespace Sensus.Anonymization.Anonymizers
         public override object Apply(object value, Protocol protocol)
         {
             if (value is string)
+            {
                 return SensusServiceHelper.Get().GetHash(value as string);
+            }
             else if (value is IEnumerable<string>)
             {
                 List<string> hashes = new List<string>();

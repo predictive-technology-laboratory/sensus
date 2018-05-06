@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Linq;
 using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.UI;
@@ -21,11 +19,14 @@ using Xamarin.Forms;
 
 namespace Sensus.Callbacks
 {
+    /// <summary>
+    /// Exposes the user-facing notification functionality of a platform.
+    /// </summary>
     public abstract class Notifier : INotifier
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
-        public abstract void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage);
+        public abstract void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
 
@@ -36,7 +37,7 @@ namespace Sensus.Callbacks
                 return;
             }
 
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 Page desiredTopPage = null;
 
@@ -50,12 +51,7 @@ namespace Sensus.Callbacks
                     return;
                 }
 
-                Page currentTopPage = Application.Current.MainPage.Navigation.NavigationStack.LastOrDefault();
-
-                if (currentTopPage == null || desiredTopPage.GetType() != currentTopPage.GetType())
-                {
-                    await Application.Current.MainPage.Navigation.PushAsync(desiredTopPage);
-                }
+                (Application.Current.MainPage as SensusMasterDetailPage).Detail = new NavigationPage(desiredTopPage);
             });
         }
     }

@@ -1,0 +1,1951 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Protocol
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Protocol
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.31.0.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items"></div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Protocol">
+  
+  
+  <h1 id="Sensus_Protocol" data-uid="Sensus.Protocol" class="text-break">Class Protocol
+  </h1>
+  <div class="markdown level0 summary"><p>A Protocol defines a plan for collecting (via <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s), anonymizing (via <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a>s), and 
+storing (via <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_LocalDataStore">LocalDataStore</a>s and <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_RemoteDataStore">RemoteDataStore</a>s) data from a device. Study organizers use Sensus to configure the 
+study&apos;s Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Protocol</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_Protocol_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Protocol__ctor_" data-uid="Sensus.Protocol.#ctor*"></a>
+  <h4 id="Sensus_Protocol__ctor_System_String_" data-uid="Sensus.Protocol.#ctor(System.String)">Protocol(String)</h4>
+  <div class="markdown level1 summary"><p>Called by static CreateAsync. Should not be called directly by outside callers.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Protocol(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>Name.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_ACCURACY_METERS" data-uid="Sensus.Protocol.GPS_DEFAULT_ACCURACY_METERS">GPS_DEFAULT_ACCURACY_METERS</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_ACCURACY_METERS = 25</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS" data-uid="Sensus.Protocol.GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS">GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_MIN_TIME_DELAY_MS" data-uid="Sensus.Protocol.GPS_DEFAULT_MIN_TIME_DELAY_MS">GPS_DEFAULT_MIN_TIME_DELAY_MS</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Protocol_AlertExclusionWindowString_" data-uid="Sensus.Protocol.AlertExclusionWindowString*"></a>
+  <h4 id="Sensus_Protocol_AlertExclusionWindowString" data-uid="Sensus.Protocol.AlertExclusionWindowString">AlertExclusionWindowString</h4>
+  <div class="markdown level1 summary"><p>A comma-separated list of time windows during which alerts from Sensus (e.g., notifications
+about new surveys) should not have a sound or vibration associated with them. The format
+is the same as described for <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_TriggerWindowsString">TriggerWindowsString</a>, except that 
+exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Alert Exclusion Windows:&quot;, true, 36)]
+public string AlertExclusionWindowString { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The alert exclusion window string.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AsymmetricEncryption_" data-uid="Sensus.Protocol.AsymmetricEncryption*"></a>
+  <h4 id="Sensus_Protocol_AsymmetricEncryption" data-uid="Sensus.Protocol.AsymmetricEncryption">AsymmetricEncryption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AsymmetricEncryption AsymmetricEncryption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Encryption.AsymmetricEncryption.html">AsymmetricEncryption</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AsymmetricEncryptionPublicKey_" data-uid="Sensus.Protocol.AsymmetricEncryptionPublicKey*"></a>
+  <h4 id="Sensus_Protocol_AsymmetricEncryptionPublicKey" data-uid="Sensus.Protocol.AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</h4>
+  <div class="markdown level1 summary"><p>Sensus is able to use asymmetric key encryption to secure data before transmission from the device to a remote endpoint (e.g., AWS S3). This 
+provides a layer of security on top of SSL encryption and certificate pinning. For example, even if an attacker is able to intercept 
+and decrypt a service request (e.g., write data) to AWS S3 via a man-in-the-middle attack, the attacker would not be able to decrypt 
+the Sensus data payload, which is encrypted with an additional public/private key pair that you control. This protects against two 
+threats. First, it protects against the case where a man-in-the-middle has gained access to your pinned private encryption key and 
+intercepts data. Second, it protects against unauthorized access to Sensus data payloads after storage within the intended system 
+(e.g., within AWS S3). In the latter case, the data payloads are transferred to the correct server, but they live unencrypted on 
+that system. Asymmetric encryption prevents unauthorized access to the data by ensuring that Sensus data payloads can only be decrypted 
+by those who have the asymmetric private encryption key. To use asymmetric data encryption within Sensus, you must generate a public/private 
+key pair and enter the public key within <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>. You can generate a public/private key pair in the 
+appropriate format using the following steps (on Mac):</p>
+<ul>
+<li>Generate a 2048-bit <code>RSA PRIVATE KEY</code>: </li>
+</ul>
+<pre><code>openssl genrsa -des3 -out private.pem 2048
+</code></pre><ul>
+<li>Convert the <code>RSA PRIVATE KEY</code> to a <code>PRIVATE KEY</code>:  </li>
+</ul>
+<pre><code>openssl pkcs8 -topk8 -nocrypt -in private.pem
+</code></pre><ul>
+<li>Extract the <code>PUBLIC KEY</code> for entering into your Sensus <a class="xref" href="Sensus.Protocol.html">Protocol</a>:</li>
+</ul>
+<pre><code>openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+</code></pre><ul>
+<li>Use the <code>PUBLIC KEY</code> (public.pem) as <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>.</li>
+<li>Enable <a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Encrypt">Encrypt</a>.</li>
+</ul>
+<p>Keep all <code>PRIVATE KEY</code> information safe and secure. Never share it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Asymmetric Encryption Public Key:&quot;, true, 37)]
+public string AsymmetricEncryptionPublicKey { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The asymmetric encryption public key.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Caption_" data-uid="Sensus.Protocol.Caption*"></a>
+  <h4 id="Sensus_Protocol_Caption" data-uid="Sensus.Protocol.Caption">Caption</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Caption { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ContactEmail_" data-uid="Sensus.Protocol.ContactEmail*"></a>
+  <h4 id="Sensus_Protocol_ContactEmail" data-uid="Sensus.Protocol.ContactEmail">ContactEmail</h4>
+  <div class="markdown level1 summary"><p>An email address for the individual who is responsible for handling questions
+associated with this study.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Contact Email:&quot;, true, 24)]
+public string ContactEmail { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The contact email.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ContinueIndefinitely_" data-uid="Sensus.Protocol.ContinueIndefinitely*"></a>
+  <h4 id="Sensus_Protocol_ContinueIndefinitely" data-uid="Sensus.Protocol.ContinueIndefinitely">ContinueIndefinitely</h4>
+  <div class="markdown level1 summary"><p>Whether or not to execute the <a class="xref" href="Sensus.Protocol.html">Protocol</a> forever after it has started.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Continue Indefinitely:&quot;, true, 19)]
+public bool ContinueIndefinitely { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to execute forever; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Description_" data-uid="Sensus.Protocol.Description*"></a>
+  <h4 id="Sensus_Protocol_Description" data-uid="Sensus.Protocol.Description">Description</h4>
+  <div class="markdown level1 summary"><p>A detailed description of the <a class="xref" href="Sensus.Protocol.html">Protocol</a> (e.g., what it does, who it is intended for, etc.).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditorUiProperty(null, true, 15)]
+public string Description { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_EndDate_" data-uid="Sensus.Protocol.EndDate*"></a>
+  <h4 id="Sensus_Protocol_EndDate" data-uid="Sensus.Protocol.EndDate">EndDate</h4>
+  <div class="markdown level1 summary"><p>The date on which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will stop running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ContinueIndefinitely">ContinueIndefinitely</a> is <code>false</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DateUiProperty(&quot;End Date:&quot;, true, 20)]
+public DateTime EndDate { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTime</span></td>
+        <td><p>The end date.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_EndTime_" data-uid="Sensus.Protocol.EndTime*"></a>
+  <h4 id="Sensus_Protocol_EndTime" data-uid="Sensus.Protocol.EndTime">EndTime</h4>
+  <div class="markdown level1 summary"><p>The time at which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will stop running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ContinueIndefinitely">ContinueIndefinitely</a> is <code>false</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[TimeUiProperty(&quot;End Time:&quot;, true, 21)]
+public TimeSpan EndTime { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><p>The end time.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsDesiredAccuracyMeters_" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters*"></a>
+  <h4 id="Sensus_Protocol_GpsDesiredAccuracyMeters" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters">GpsDesiredAccuracyMeters</h4>
+  <div class="markdown level1 summary"><p>The desired accuracy in meters of the collected GPS readings. There are no guarantees that this accuracy
+will be achieved.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;GPS - Desired Accuracy (Meters):&quot;, true, 27)]
+public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>The GPS desired accuracy, in meters.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsMinDistanceDelayMeters_" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters*"></a>
+  <h4 id="Sensus_Protocol_GpsMinDistanceDelayMeters" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters">GpsMinDistanceDelayMeters</h4>
+  <div class="markdown level1 summary"><p>The minimum distance in meters to wait between deliveries of GPS readings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;GPS - Minimum Distance Delay (Meters):&quot;, true, 29)]
+public float GpsMinDistanceDelayMeters { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>The GPS minimum distance delay, in meters.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsMinTimeDelayMS_" data-uid="Sensus.Protocol.GpsMinTimeDelayMS*"></a>
+  <h4 id="Sensus_Protocol_GpsMinTimeDelayMS" data-uid="Sensus.Protocol.GpsMinTimeDelayMS">GpsMinTimeDelayMS</h4>
+  <div class="markdown level1 summary"><p>The minimum amount of time in milliseconds to wait between deliveries of GPS readings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;GPS - Minimum Time Delay (MS):&quot;, true, 28)]
+public int GpsMinTimeDelayMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The GPS minimum time delay, in milliseconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Groupable_" data-uid="Sensus.Protocol.Groupable*"></a>
+  <h4 id="Sensus_Protocol_Groupable" data-uid="Sensus.Protocol.Groupable">Groupable</h4>
+  <div class="markdown level1 summary"><p>Whether the user should be allowed to group the <a class="xref" href="Sensus.Protocol.html">Protocol</a> with other <a class="xref" href="Sensus.Protocol.html">Protocol</a>s to form a 
+bundle that participant&apos;s are randomized into.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(null, true, 25)]
+public bool Groupable { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if groupable; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GroupedProtocols_" data-uid="Sensus.Protocol.GroupedProtocols*"></a>
+  <h4 id="Sensus_Protocol_GroupedProtocols" data-uid="Sensus.Protocol.GroupedProtocols">GroupedProtocols</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Protocol&gt; GroupedProtocols { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Id_" data-uid="Sensus.Protocol.Id*"></a>
+  <h4 id="Sensus_Protocol_Id" data-uid="Sensus.Protocol.Id">Id</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_JsonAnonymizer_" data-uid="Sensus.Protocol.JsonAnonymizer*"></a>
+  <h4 id="Sensus_Protocol_JsonAnonymizer" data-uid="Sensus.Protocol.JsonAnonymizer">JsonAnonymizer</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AnonymizedJsonContractResolver JsonAnonymizer { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Anonymization.AnonymizedJsonContractResolver.html">AnonymizedJsonContractResolver</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_LocalDataStore_" data-uid="Sensus.Protocol.LocalDataStore*"></a>
+  <h4 id="Sensus_Protocol_LocalDataStore" data-uid="Sensus.Protocol.LocalDataStore">LocalDataStore</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LocalDataStore LocalDataStore { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_LockPasswordHash_" data-uid="Sensus.Protocol.LockPasswordHash*"></a>
+  <h4 id="Sensus_Protocol_LockPasswordHash" data-uid="Sensus.Protocol.LockPasswordHash">LockPasswordHash</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string LockPasswordHash { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Name_" data-uid="Sensus.Protocol.Name*"></a>
+  <h4 id="Sensus_Protocol_Name" data-uid="Sensus.Protocol.Name">Name</h4>
+  <div class="markdown level1 summary"><p>A descriptive name for the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Name:&quot;, true, 1)]
+public string Name { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The name.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Participation_" data-uid="Sensus.Protocol.Participation*"></a>
+  <h4 id="Sensus_Protocol_Participation" data-uid="Sensus.Protocol.Participation">Participation</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double Participation { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ParticipationHorizon_" data-uid="Sensus.Protocol.ParticipationHorizon*"></a>
+  <h4 id="Sensus_Protocol_ParticipationHorizon" data-uid="Sensus.Protocol.ParticipationHorizon">ParticipationHorizon</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime ParticipationHorizon { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTime</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ParticipationHorizonDays_" data-uid="Sensus.Protocol.ParticipationHorizonDays*"></a>
+  <h4 id="Sensus_Protocol_ParticipationHorizonDays" data-uid="Sensus.Protocol.ParticipationHorizonDays">ParticipationHorizonDays</h4>
+  <div class="markdown level1 summary"><p>The number of days used to calculate the participation percentage. For example, if the participation horizon is
+7 days, and the user has been running a <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a> for 1 day, then the participation percentage
+would be 1/7 (~14%). On the other hand, if the participation horizon is 1 day, then the same user would have a 
+participation percentage of 1/1 (100%).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Participation Horizon (Days):&quot;, true, 23)]
+public int ParticipationHorizonDays { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The participation horizon, in days.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_PointsOfInterest_" data-uid="Sensus.Protocol.PointsOfInterest*"></a>
+  <h4 id="Sensus_Protocol_PointsOfInterest" data-uid="Sensus.Protocol.PointsOfInterest">PointsOfInterest</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConcurrentObservableCollection&lt;PointOfInterest&gt; PointsOfInterest { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Concurrent.ConcurrentObservableCollection-1.html">ConcurrentObservableCollection</a>&lt;<a class="xref" href="Sensus.Probes.Location.PointOfInterest.html">PointOfInterest</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Probes_" data-uid="Sensus.Protocol.Probes*"></a>
+  <h4 id="Sensus_Protocol_Probes" data-uid="Sensus.Protocol.Probes">Probes</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Probe&gt; Probes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Probe.html">Probe</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_RandomTimeAnchor_" data-uid="Sensus.Protocol.RandomTimeAnchor*"></a>
+  <h4 id="Sensus_Protocol_RandomTimeAnchor" data-uid="Sensus.Protocol.RandomTimeAnchor">RandomTimeAnchor</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTimeOffset RandomTimeAnchor { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTimeOffset</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_RemoteDataStore_" data-uid="Sensus.Protocol.RemoteDataStore*"></a>
+  <h4 id="Sensus_Protocol_RemoteDataStore" data-uid="Sensus.Protocol.RemoteDataStore">RemoteDataStore</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RemoteDataStore RemoteDataStore { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_RewardThreshold_" data-uid="Sensus.Protocol.RewardThreshold*"></a>
+  <h4 id="Sensus_Protocol_RewardThreshold" data-uid="Sensus.Protocol.RewardThreshold">RewardThreshold</h4>
+  <div class="markdown level1 summary"><p>The participation percentage required for a user to be considered eligible for rewards.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;Reward Threshold:&quot;, true, 26)]
+public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Single</span>&gt;</td>
+        <td><p>The reward threshold.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Running_" data-uid="Sensus.Protocol.Running*"></a>
+  <h4 id="Sensus_Protocol_Running" data-uid="Sensus.Protocol.Running">Running</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Running { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ScheduledStartCallback_" data-uid="Sensus.Protocol.ScheduledStartCallback*"></a>
+  <h4 id="Sensus_Protocol_ScheduledStartCallback" data-uid="Sensus.Protocol.ScheduledStartCallback">ScheduledStartCallback</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScheduledCallback ScheduledStartCallback { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ScheduledStopCallback_" data-uid="Sensus.Protocol.ScheduledStopCallback*"></a>
+  <h4 id="Sensus_Protocol_ScheduledStopCallback" data-uid="Sensus.Protocol.ScheduledStopCallback">ScheduledStopCallback</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScheduledCallback ScheduledStopCallback { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Shareable_" data-uid="Sensus.Protocol.Shareable*"></a>
+  <h4 id="Sensus_Protocol_Shareable" data-uid="Sensus.Protocol.Shareable">Shareable</h4>
+  <div class="markdown level1 summary"><p>Whether the user should be permitted to share the <a class="xref" href="Sensus.Protocol.html">Protocol</a> with another device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Shareable:&quot;, true, 10)]
+public bool Shareable { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if shareable; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StartDate_" data-uid="Sensus.Protocol.StartDate*"></a>
+  <h4 id="Sensus_Protocol_StartDate" data-uid="Sensus.Protocol.StartDate">StartDate</h4>
+  <div class="markdown level1 summary"><p>The date on which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will start running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_StartImmediately">StartImmediately</a> 
+is <code>false</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DateUiProperty(&quot;Start Date:&quot;, true, 17)]
+public DateTime StartDate { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTime</span></td>
+        <td><p>The start date.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StartImmediately_" data-uid="Sensus.Protocol.StartImmediately*"></a>
+  <h4 id="Sensus_Protocol_StartImmediately" data-uid="Sensus.Protocol.StartImmediately">StartImmediately</h4>
+  <div class="markdown level1 summary"><p>Whether or not to start the <a class="xref" href="Sensus.Protocol.html">Protocol</a> immediately after the user has opted into it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Start Immediately:&quot;, true, 16)]
+public bool StartImmediately { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to start immediately; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StartIsScheduled_" data-uid="Sensus.Protocol.StartIsScheduled*"></a>
+  <h4 id="Sensus_Protocol_StartIsScheduled" data-uid="Sensus.Protocol.StartIsScheduled">StartIsScheduled</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool StartIsScheduled { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StartTime_" data-uid="Sensus.Protocol.StartTime*"></a>
+  <h4 id="Sensus_Protocol_StartTime" data-uid="Sensus.Protocol.StartTime">StartTime</h4>
+  <div class="markdown level1 summary"><p>The time at which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will start running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_StartImmediately">StartImmediately</a> is <code>false</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[TimeUiProperty(&quot;Start Time:&quot;, true, 18)]
+public TimeSpan StartTime { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><p>The start time.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StorageDirectory_" data-uid="Sensus.Protocol.StorageDirectory*"></a>
+  <h4 id="Sensus_Protocol_StorageDirectory" data-uid="Sensus.Protocol.StorageDirectory">StorageDirectory</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string StorageDirectory { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_VariableValue_" data-uid="Sensus.Protocol.VariableValue*"></a>
+  <h4 id="Sensus_Protocol_VariableValue" data-uid="Sensus.Protocol.VariableValue">VariableValue</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Dictionary&lt;string, string&gt; VariableValue { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_VariableValueUiProperty_" data-uid="Sensus.Protocol.VariableValueUiProperty*"></a>
+  <h4 id="Sensus_Protocol_VariableValueUiProperty" data-uid="Sensus.Protocol.VariableValueUiProperty">VariableValueUiProperty</h4>
+  <div class="markdown level1 summary"><p>A <a class="xref" href="Sensus.Protocol.html">Protocol</a> may delare variables whose values can be easily reused throughout the
+system. For example, if many of the survey inputs share a particular substring (e.g., the study 
+name), consider defining a variable named <code>study-name</code> that holds the study name. You can then
+reference this variable when defining the survey input label via <code>{study-name}</code>. The format
+of this field is <code>variable-name:variable-value</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditableListUiProperty(&quot;Variables:&quot;, true, 30)]
+public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>The variable value user interface property.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Protocol_CancelScheduledStart_" data-uid="Sensus.Protocol.CancelScheduledStart*"></a>
+  <h4 id="Sensus_Protocol_CancelScheduledStart" data-uid="Sensus.Protocol.CancelScheduledStart">CancelScheduledStart()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CancelScheduledStart()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_CancelScheduledStop_" data-uid="Sensus.Protocol.CancelScheduledStop*"></a>
+  <h4 id="Sensus_Protocol_CancelScheduledStop" data-uid="Sensus.Protocol.CancelScheduledStop">CancelScheduledStop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CancelScheduledStop()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_CopyAsync_" data-uid="Sensus.Protocol.CopyAsync*"></a>
+  <h4 id="Sensus_Protocol_CopyAsync_System_Boolean_System_Boolean_System_Action_Sensus_Protocol__" data-uid="Sensus.Protocol.CopyAsync(System.Boolean,System.Boolean,System.Action{Sensus.Protocol})">CopyAsync(Boolean, Boolean, Action&lt;Protocol&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CopyAsync(bool resetId, bool register, Action&lt;Protocol&gt; callback = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">resetId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">register</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Create_" data-uid="Sensus.Protocol.Create*"></a>
+  <h4 id="Sensus_Protocol_Create_System_String_" data-uid="Sensus.Protocol.Create(System.String)">Create(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Create(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Delete_" data-uid="Sensus.Protocol.Delete*"></a>
+  <h4 id="Sensus_Protocol_Delete" data-uid="Sensus.Protocol.Delete">Delete()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Delete()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_DeleteAsync_" data-uid="Sensus.Protocol.DeleteAsync*"></a>
+  <h4 id="Sensus_Protocol_DeleteAsync" data-uid="Sensus.Protocol.DeleteAsync">DeleteAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task DeleteAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Byte___System_Action_Sensus_Protocol__" data-uid="Sensus.Protocol.DeserializeAsync(System.Byte[],System.Action{Sensus.Protocol})">DeserializeAsync(Byte[], Action&lt;Protocol&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void DeserializeAsync(byte[] bytes, Action&lt;Protocol&gt; callback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">bytes</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_String_System_Action_Sensus_Protocol__" data-uid="Sensus.Protocol.DeserializeAsync(System.String,System.Action{Sensus.Protocol})">DeserializeAsync(String, Action&lt;Protocol&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void DeserializeAsync(string json, Action&lt;Protocol&gt; callback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">json</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_System_Action_Sensus_Protocol__" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri,System.Action{Sensus.Protocol})">DeserializeAsync(Uri, Action&lt;Protocol&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void DeserializeAsync(Uri webURI, Action&lt;Protocol&gt; callback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Uri</span></td>
+        <td><span class="parametername">webURI</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_DisplayAndStartAsync_" data-uid="Sensus.Protocol.DisplayAndStartAsync*"></a>
+  <h4 id="Sensus_Protocol_DisplayAndStartAsync_Sensus_Protocol_" data-uid="Sensus.Protocol.DisplayAndStartAsync(Sensus.Protocol)">DisplayAndStartAsync(Protocol)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void DisplayAndStartAsync(Protocol protocol)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Equals_" data-uid="Sensus.Protocol.Equals*"></a>
+  <h4 id="Sensus_Protocol_Equals_System_Object_" data-uid="Sensus.Protocol.Equals(System.Object)">Equals(Object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GetHashCode_" data-uid="Sensus.Protocol.GetHashCode*"></a>
+  <h4 id="Sensus_Protocol_GetHashCode" data-uid="Sensus.Protocol.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_RunUiTestingProtocol_" data-uid="Sensus.Protocol.RunUiTestingProtocol*"></a>
+  <h4 id="Sensus_Protocol_RunUiTestingProtocol_System_IO_Stream_" data-uid="Sensus.Protocol.RunUiTestingProtocol(System.IO.Stream)">RunUiTestingProtocol(Stream)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void RunUiTestingProtocol(Stream uiTestingProtocolFile)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">uiTestingProtocolFile</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Save_" data-uid="Sensus.Protocol.Save*"></a>
+  <h4 id="Sensus_Protocol_Save_System_String_" data-uid="Sensus.Protocol.Save(System.String)">Save(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Save(string path)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">path</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ScheduleStart_" data-uid="Sensus.Protocol.ScheduleStart*"></a>
+  <h4 id="Sensus_Protocol_ScheduleStart" data-uid="Sensus.Protocol.ScheduleStart">ScheduleStart()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ScheduleStart()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_ScheduleStop_" data-uid="Sensus.Protocol.ScheduleStop*"></a>
+  <h4 id="Sensus_Protocol_ScheduleStop" data-uid="Sensus.Protocol.ScheduleStop">ScheduleStop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ScheduleStop()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_Start_" data-uid="Sensus.Protocol.Start*"></a>
+  <h4 id="Sensus_Protocol_Start" data-uid="Sensus.Protocol.Start">Start()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_StartAsync_" data-uid="Sensus.Protocol.StartAsync*"></a>
+  <h4 id="Sensus_Protocol_StartAsync_System_Action_" data-uid="Sensus.Protocol.StartAsync(System.Action)">StartAsync(Action)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartAsync(Action callback = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_StartWithUserAgreementAsync_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync*"></a>
+  <h4 id="Sensus_Protocol_StartWithUserAgreementAsync_System_String_System_Action_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync(System.String,System.Action)">StartWithUserAgreementAsync(String, Action)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void StartWithUserAgreementAsync(string startupMessage, Action callback = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">startupMessage</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_Stop_" data-uid="Sensus.Protocol.Stop*"></a>
+  <h4 id="Sensus_Protocol_Stop" data-uid="Sensus.Protocol.Stop">Stop()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Stop()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Protocol_StopAsync_" data-uid="Sensus.Protocol.StopAsync*"></a>
+  <h4 id="Sensus_Protocol_StopAsync" data-uid="Sensus.Protocol.StopAsync">StopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task StopAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_TestHealthAsync_" data-uid="Sensus.Protocol.TestHealthAsync*"></a>
+  <h4 id="Sensus_Protocol_TestHealthAsync_System_Boolean_System_Threading_CancellationToken_" data-uid="Sensus.Protocol.TestHealthAsync(System.Boolean,System.Threading.CancellationToken)">TestHealthAsync(Boolean, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt;&gt; TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">userInitiated</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_TimeIsWithinAlertExclusionWindow_" data-uid="Sensus.Protocol.TimeIsWithinAlertExclusionWindow*"></a>
+  <h4 id="Sensus_Protocol_TimeIsWithinAlertExclusionWindow_System_TimeSpan_" data-uid="Sensus.Protocol.TimeIsWithinAlertExclusionWindow(System.TimeSpan)">TimeIsWithinAlertExclusionWindow(TimeSpan)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TimeIsWithinAlertExclusionWindow(TimeSpan time)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">time</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ToString_" data-uid="Sensus.Protocol.ToString*"></a>
+  <h4 id="Sensus_Protocol_ToString" data-uid="Sensus.Protocol.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  
+  
+  <h4 id="Sensus_Protocol_PropertyChanged" data-uid="Sensus.Protocol.PropertyChanged">PropertyChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event PropertyChangedEventHandler PropertyChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.ComponentModel.PropertyChangedEventHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_ProtocolRunningChanged" data-uid="Sensus.Protocol.ProtocolRunningChanged">ProtocolRunningChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; ProtocolRunningChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.EventHandler</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

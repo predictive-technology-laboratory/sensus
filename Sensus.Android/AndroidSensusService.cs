@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,8 @@ using Android.Content;
 using Android.OS;
 using System;
 using System.Collections.Generic;
-using Android.Provider;
 using Sensus.Context;
-using Sensus.Exceptions;
 using Sensus.Android.Context;
-using Sensus.Android.Exceptions;
 using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
 using Sensus.Android.Concurrent;
@@ -51,7 +48,7 @@ namespace Sensus.Android
             //
             // also see notes on backwards compatibility for how the compiler directives are used below:
             //
-            //    https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+            //    see the Backwards Compatibility article for more information
 #if __ANDROID_26__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
@@ -74,9 +71,6 @@ namespace Sensus.Android
         public override void OnCreate()
         {
             base.OnCreate();
-
-            // insights should be initialized first to maximize coverage of exception reporting
-            InsightsInitialization.Initialize(new AndroidInsightsInitializer(Settings.Secure.GetString(ContentResolver, Settings.Secure.AndroidId)), SensusServiceHelper.XAMARIN_INSIGHTS_APP_KEY);
 
             SensusContext.Current = new AndroidSensusContext
             {
@@ -152,18 +146,20 @@ namespace Sensus.Android
                     }
                     else
                     {
+                        AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
+
                         DisplayPage displayPage;
 
                         // is this a callback intent?
-                        if (intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false))
+                        if (callbackScheduler.IsCallback(intent))
                         {
                             // service the callback -- the matching LetDeviceSleep will be called therein
-                            await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackAsync(intent);
+                            await callbackScheduler.ServiceCallbackAsync(intent);
                         }
                         // should we display a page?
                         else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
                         {
-                            serviceHelper.BringToForeground();
+                            await serviceHelper.BringToForegroundAsync();
                             SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
                             serviceHelper.LetDeviceSleep();
                         }

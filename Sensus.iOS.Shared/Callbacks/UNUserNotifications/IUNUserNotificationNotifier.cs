@@ -22,13 +22,13 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
     /// <summary>
     /// Adds notifier methods specific to the UNNotificationCenter architecture.
     /// </summary>
-    public interface IUNUserNotificationNotifier : IiOSNotifier
+    public interface IUNUserNotificationNotifier
     {
-        void IssueSilentNotificationAsync(string id, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null);
+        void IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null);
 
-        void IssueNotificationAsync(string title, string message, string id, string protocolId, bool alertUser, DisplayPage displayPage, TimeSpan delay, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null);
+        void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null);
 
-        void IssueNotificationAsync(string id, UNNotificationContent content, TimeSpan delay, Action<UNNotificationRequest> requestCreated = null);
+        void IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null);
 
         void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null);
 

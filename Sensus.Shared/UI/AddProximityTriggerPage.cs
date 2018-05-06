@@ -73,12 +73,16 @@ namespace Sensus.UI
             };
 
             foreach (string poiDesc in pointsOfInterest.Select(poi => poi.ToString()))
+            {
                 pointOfInterestPicker.Items.Add(poiDesc);
+            }
 
             pointOfInterestPicker.SelectedIndexChanged += (o, e) =>
             {
                 if (pointOfInterestPicker.SelectedIndex < 0)
+                {
                     _pointOfInterestName = _pointOfInterestType = null;
+                }
                 else
                 {
                     PointOfInterest poi = pointsOfInterest[pointOfInterestPicker.SelectedIndex];
@@ -88,11 +92,11 @@ namespace Sensus.UI
             };
 
             contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { pointOfInterestLabel, pointOfInterestPicker }
-                });
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { pointOfInterestLabel, pointOfInterestPicker }
+            });
             #endregion
 
             #region distance threshold
@@ -111,17 +115,21 @@ namespace Sensus.UI
             distanceThresholdEntry.TextChanged += (o, e) =>
             {
                 if (!double.TryParse(distanceThresholdEntry.Text, out _distanceThresholdMeters))
+                {
                     _distanceThresholdMeters = -1;
+                }
                 else if (_distanceThresholdMeters < GpsReceiver.Get().MinimumDistanceThreshold)
+                {
                     SensusServiceHelper.Get().FlashNotificationAsync("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
+                }
             };
 
             contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { distanceThresholdLabel, distanceThresholdEntry }
-                });
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { distanceThresholdLabel, distanceThresholdEntry }
+            });
             #endregion
 
             #region threshold direction
@@ -139,22 +147,28 @@ namespace Sensus.UI
             };
 
             foreach (ProximityThresholdDirection thresholdDirection in thresholdDirections)
+            {
                 thresholdDirectionPicker.Items.Add(thresholdDirection.ToString());
+            }
 
             thresholdDirectionPicker.SelectedIndexChanged += (o, e) =>
             {
                 if (thresholdDirectionPicker.SelectedIndex < 0)
+                {
                     _thresholdDirection = ProximityThresholdDirection.Within;
+                }
                 else
+                {
                     _thresholdDirection = thresholdDirections[thresholdDirectionPicker.SelectedIndex];
+                }
             };
 
             contentLayout.Children.Add(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { thresholdDirectionLabel, thresholdDirectionPicker }
-                });
+            {
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children = { thresholdDirectionLabel, thresholdDirectionPicker }
+            });
             #endregion
 
             Button okButton = new Button
@@ -173,7 +187,7 @@ namespace Sensus.UI
                 catch (Exception ex)
                 {
                     string message = "Failed to add trigger:  " + ex.Message;
-                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
                     SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 }
             };

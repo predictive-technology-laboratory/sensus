@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace Sensus.UI.UiProperties
 {
     /// <summary>
-    /// Decorated members should be rendered as lists.
+    /// Decorated members should be rendered as multiple-choice lists.
     /// </summary>
     public class ListUiProperty : UiProperty
     {

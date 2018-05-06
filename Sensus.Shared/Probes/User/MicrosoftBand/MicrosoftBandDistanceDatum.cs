@@ -14,6 +14,8 @@
 
 using System;
 using Microsoft.Band.Portable.Sensors;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
@@ -40,6 +42,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
+        [JsonConverter(typeof(StringEnumConverter))]
         public MotionType MotionType
         {
             get
@@ -58,6 +61,18 @@ namespace Sensus.Probes.User.MicrosoftBand
             get
             {
                 return "Total Distance:  " + Math.Round(_totalDistance, 1) + ", Motion Type:  " + _motionType;
+            }
+        }
+
+        /// <summary>
+        /// Gets the string placeholder value, which is the total distance.
+        /// </summary>
+        /// <value>The string placeholder value.</value>
+        public override object StringPlaceholderValue
+        {
+            get
+            {
+                return Math.Round(_totalDistance, 1);
             }
         }
 

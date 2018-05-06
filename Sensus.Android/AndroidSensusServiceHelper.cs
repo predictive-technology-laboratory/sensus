@@ -72,7 +72,7 @@ namespace Sensus.Android
                 }
 
 
-                // https://github.com/predictive-technology-laboratory/sensus/wiki/Backwards-Compatibility
+                // see the Backwards Compatibility article for more information
 #if __ANDROID_21__
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                     return connectivityManager.GetAllNetworks().Select(network => connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo != null && networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 21
@@ -94,6 +94,33 @@ namespace Sensus.Android
                 IntentFilter filter = new IntentFilter(Intent.ActionBatteryChanged);
                 BatteryStatus status = (BatteryStatus)_service.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
                 return status == BatteryStatus.Charging || status == BatteryStatus.Full;
+            }
+        }
+
+        public override float BatteryChargePercent
+        {
+            get
+            {
+                Intent batteryIntent = Application.Context.RegisterReceiver(null, new IntentFilter(Intent.ActionBatteryChanged));
+
+                if (batteryIntent == null)
+                {
+                    throw new Exception("Failed to poll battery status.");
+                }
+                else
+                {
+                    float level = batteryIntent.GetIntExtra(BatteryManager.ExtraLevel, -1);
+                    float scale = batteryIntent.GetIntExtra(BatteryManager.ExtraScale, -1);
+
+                    if (level >= 0 && scale >= 0)
+                    {
+                        return 100 * level / scale;
+                    }
+                    else
+                    {
+                        throw new Exception("Failed to obtain battery charge percent. Level or scale <= 0.");
+                    }
+                }
             }
         }
 
@@ -181,51 +208,55 @@ namespace Sensus.Android
         /// <param name="startMainActivityIfNotFocused">Whether or not to start the main activity if it is not currently focused.</param>
         /// <param name="holdActionIfNoActivity">If the main activity is not focused and we're not starting a new one to refocus it, whether 
         /// or not to hold the action for later when the activity is refocused.</param>
-        public void RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
+        public Task RunActionUsingMainActivityAsync(Action<AndroidMainActivity> action, bool startMainActivityIfNotFocused, bool holdActionIfNoActivity)
         {
-            // this must be done asynchronously because it blocks waiting for the activity to start. calling this method from the UI would create deadlocks.
-            new Thread(() =>
+            return Task.Run(() =>
+            {
+                lock (_focusedMainActivityLocker)
                 {
-                    lock (_focusedMainActivityLocker)
+                    // run actions now only if the main activity is focused. this is a stronger requirement than merely started/resumed since it
+                    // implies that the user interface is up. this is important because if certain actions (e.g., speech recognition) are run
+                    // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
+                    // action's window.
+                    if (_focusedMainActivity == null)
                     {
-                        // run actions now only if the main activity is focused. this is a stronger requirement than merely started/resumed since it
-                        // implies that the user interface is up. this is important because if certain actions (e.g., speech recognition) are run
-                        // after the activity is resumed but before the window is up, the appearance of the activity's window can hide/cancel the
-                        // action's window.
-                        if (_focusedMainActivity == null)
+                        if (startMainActivityIfNotFocused)
                         {
-                            if (startMainActivityIfNotFocused)
-                            {
-                                // we'll run the action when the activity is focused
-                                lock (_actionsToRunUsingMainActivity)
-                                    _actionsToRunUsingMainActivity.Add(action);
-
-                                Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
-
-                                // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
-                                // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
-                                Intent intent = new Intent(_service, typeof(AndroidMainActivity));
-                                intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
-                                _service.StartActivity(intent);
-                            }
-                            else if (holdActionIfNoActivity)
-                            {
-                                // we'll run the action the next time the activity is focused
-                                lock (_actionsToRunUsingMainActivity)
-                                    _actionsToRunUsingMainActivity.Add(action);
-                            }
-                        }
-                        else
-                        {
-                            // we'll run the action now
+                            // we'll run the action when the activity is focused
                             lock (_actionsToRunUsingMainActivity)
+                            {
                                 _actionsToRunUsingMainActivity.Add(action);
+                            }
 
-                            RunActionsUsingMainActivity();
+                            Logger.Log("Starting main activity to run action.", LoggingLevel.Normal, GetType());
+
+                            // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
+                            // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
+                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                            intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
+                            _service.StartActivity(intent);
+                        }
+                        else if (holdActionIfNoActivity)
+                        {
+                            // we'll run the action the next time the activity is focused
+                            lock (_actionsToRunUsingMainActivity)
+                            {
+                                _actionsToRunUsingMainActivity.Add(action);
+                            }
                         }
                     }
+                    else
+                    {
+                        // we'll run the action now
+                        lock (_actionsToRunUsingMainActivity)
+                        {
+                            _actionsToRunUsingMainActivity.Add(action);
+                        }
 
-                }).Start();
+                        RunActionsUsingMainActivity();
+                    }
+                }
+            });
         }
 
         public void SetFocusedMainActivity(AndroidMainActivity focusedMainActivity)
@@ -235,7 +266,9 @@ namespace Sensus.Android
                 _focusedMainActivity = focusedMainActivity;
 
                 if (_focusedMainActivity == null)
+                {
                     Logger.Log("Main activity not focused.", LoggingLevel.Normal, GetType());
+                }
                 else
                 {
                     Logger.Log("Main activity focused.", LoggingLevel.Normal, GetType());
@@ -253,7 +286,9 @@ namespace Sensus.Android
                     Logger.Log("Running " + _actionsToRunUsingMainActivity.Count + " actions using main activity.", LoggingLevel.Debug, GetType());
 
                     foreach (Action<AndroidMainActivity> action in _actionsToRunUsingMainActivity)
+                    {
                         action(_focusedMainActivity);
+                    }
 
                     _actionsToRunUsingMainActivity.Clear();
                 }
@@ -263,9 +298,9 @@ namespace Sensus.Android
         #endregion
 
         #region miscellaneous platform-specific functions
-        public override void PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            new Thread(() =>
+            return Task.Run(async () =>
             {
                 try
                 {
@@ -273,7 +308,7 @@ namespace Sensus.Android
                     intent.SetType("*/*");
                     intent.AddCategory(Intent.CategoryOpenable);
 
-                    RunActionUsingMainActivityAsync(mainActivity =>
+                    await RunActionUsingMainActivityAsync(mainActivity =>
                     {
                         mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
                         {
@@ -297,51 +332,51 @@ namespace Sensus.Android
                 }
                 catch (ActivityNotFoundException)
                 {
-                    FlashNotificationAsync("Please install a file manager from the Apps store.");
+                    await FlashNotificationAsync("Please install a file manager from the Apps store.");
                 }
                 catch (Exception ex)
                 {
-                    FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
+                    await FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
                 }
-
-            }).Start();
+            });
         }
 
-        public override void ShareFileAsync(string path, string subject, string mimeType)
+        public override Task ShareFileAsync(string path, string subject, string mimeType)
         {
-            new Thread(() =>
+            return Task.Run(async () =>
+            {
+                try
                 {
-                    try
+                    Intent intent = new Intent(Intent.ActionSend);
+                    intent.SetType(mimeType);
+                    intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+
+                    if (!string.IsNullOrWhiteSpace(subject))
                     {
-                        Intent intent = new Intent(Intent.ActionSend);
-                        intent.SetType(mimeType);
-                        intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                        if (!string.IsNullOrWhiteSpace(subject))
-                            intent.PutExtra(Intent.ExtraSubject, subject);
-
-                        Java.IO.File file = new Java.IO.File(path);
-                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
-                        intent.PutExtra(Intent.ExtraStream, uri);
-
-                        // run from main activity to get a smoother transition back to sensus
-                        RunActionUsingMainActivityAsync(mainActivity =>
-                            {
-                                mainActivity.StartActivity(intent);
-
-                            }, true, false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                        intent.PutExtra(Intent.ExtraSubject, subject);
                     }
 
-                }).Start();
+                    Java.IO.File file = new Java.IO.File(path);
+                    global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                    intent.PutExtra(Intent.ExtraStream, uri);
+
+                    // run from main activity to get a smoother transition back to sensus
+                    await RunActionUsingMainActivityAsync(mainActivity =>
+                    {
+                        mainActivity.StartActivity(intent);
+
+                    }, true, false);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            });
         }
 
-        public override void SendEmailAsync(string toAddress, string subject, string message)
+        public override Task SendEmailAsync(string toAddress, string subject, string message)
         {
-            RunActionUsingMainActivityAsync(mainActivity =>
+            return RunActionUsingMainActivityAsync(mainActivity =>
             {
                 Intent emailIntent = new Intent(Intent.ActionSend);
                 emailIntent.PutExtra(Intent.ExtraEmail, new string[] { toAddress });
@@ -366,12 +401,12 @@ namespace Sensus.Android
 
         public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 string input = null;
                 ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
 
-                RunActionUsingMainActivityAsync(mainActivity =>
+                await RunActionUsingMainActivityAsync(mainActivity =>
                 {
                     mainActivity.RunOnUiThread(() =>
                     {
@@ -406,9 +441,7 @@ namespace Sensus.Android
                         dialog.ShowEvent += (o, e) =>
                         {
                             dialogShowWait.Set();
-
-                            if (postDisplayCallback != null)
-                                postDisplayCallback();
+                            postDisplayCallback?.Invoke();
                         };
 
                         // dismiss the keyguard when dialog appears
@@ -448,10 +481,12 @@ namespace Sensus.Android
                                 {
                                     IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
                                     if (matches != null && matches.Count > 0)
-                                        mainActivity.RunOnUiThread(() =>
                                     {
-                                        inputEdit.Text = matches[0];
-                                    });
+                                        mainActivity.RunOnUiThread(() =>
+                                        {
+                                            inputEdit.Text = matches[0];
+                                        });
+                                    }
                                 }
                             });
                         });
@@ -468,23 +503,19 @@ namespace Sensus.Android
 
         #endregion
 
-        protected override void ProtectedFlashNotificationAsync(string message, bool flashLaterIfNotVisible, TimeSpan duration, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
         {
-            Task.Run(() =>
+            return Task.Run(async () =>
             {
-                RunActionUsingMainActivityAsync(mainActivity =>
+                await RunActionUsingMainActivityAsync(mainActivity =>
                 {
                     mainActivity.RunOnUiThread(() =>
                     {
-                        int shortToasts = (int)Math.Ceiling(duration.TotalSeconds / 2);  // each short toast is 2 seconds.
-
-                        for (int i = 0; i < shortToasts; ++i)
-                            Toast.MakeText(mainActivity, message, ToastLength.Short).Show();
-
+                        Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
                         callback?.Invoke();
                     });
 
-                }, false, flashLaterIfNotVisible);
+                }, false, false);
             });
         }
 
@@ -526,7 +557,7 @@ namespace Sensus.Android
             if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth) ||
                 bluetoothAdapter == null)
             {
-                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".", false);
+                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
                 return enabled;
             }
 
@@ -695,17 +726,12 @@ namespace Sensus.Android
             }
         }
 
-        public override void BringToForeground()
+        /// <summary>
+        /// Brings the Sensus UI to the foreground.
+        /// </summary>
+        public override Task BringToForegroundAsync()
         {
-            ManualResetEvent foregroundWait = new ManualResetEvent(false);
-
-            RunActionUsingMainActivityAsync(mainActivity =>
-            {
-                foregroundWait.Set();
-
-            }, true, false);
-
-            foregroundWait.WaitOne();
+            return RunActionUsingMainActivityAsync(activity => { }, true, false);
         }
 
         #endregion

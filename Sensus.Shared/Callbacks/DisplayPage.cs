@@ -14,9 +14,19 @@
 
 namespace Sensus.Callbacks
 {
+    /// <summary>
+    /// Page to display when a callback notification is tapped by the user.
+    /// </summary>
     public enum DisplayPage
     {
+        /// <summary>
+        /// Display no page.
+        /// </summary>
         None,
+
+        /// <summary>
+        /// Display the <see cref="UI.PendingScriptsPage"/>.
+        /// </summary>
         PendingSurveys
     };
 }
