@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -166,7 +166,7 @@ namespace Sensus.UI.Inputs
                     HorizontalOptions = LayoutOptions.FillAndExpand
 
                     // set the style ID on the view so that we can retrieve it when UI testing
-#if UI_TESTING
+#if ENABLE_TEST_CLOUD
                     , StyleId = Name
 #endif
                 };

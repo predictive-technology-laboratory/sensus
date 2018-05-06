@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ namespace Sensus
         private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
-#if DEBUG || UI_TESTING
+#if DEBUG || ENABLE_TEST_CLOUD
         // test every 30 seconds in debug
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
@@ -479,7 +479,7 @@ namespace Sensus
                 Directory.CreateDirectory(SHARE_DIRECTORY);
             }
 
-#if DEBUG || UI_TESTING
+#if DEBUG || ENABLE_TEST_CLOUD
             LoggingLevel loggingLevel = LoggingLevel.Debug;
 #elif RELEASE
             LoggingLevel loggingLevel = LoggingLevel.Normal;

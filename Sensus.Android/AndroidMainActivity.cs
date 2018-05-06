@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ namespace Sensus.Android
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
             CrossCurrentActivity.Current.Activity = this;
 
-#if UI_TESTING
+#if ENABLE_TEST_CLOUD
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
@@ -109,7 +109,7 @@ namespace Sensus.Android
                 _serviceBindWait.Set();
 
                 // if we're UI testing, try to load and run the UI testing protocol from the embedded assets
-#if UI_TESTING
+#if ENABLE_TEST_CLOUD
                 using (Stream protocolFile = Assets.Open("UiTestingProtocol.json"))
                 {
                     Protocol.RunUiTestingProtocol(protocolFile);
