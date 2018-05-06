@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ namespace Sensus.iOS
 
             LoadApplication(new App());
 
-#if ENABLE_TEST_CLOUD
+#if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
@@ -157,7 +157,7 @@ namespace Sensus.iOS
                     // update/run all callbacks
                     await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
-#if ENABLE_TEST_CLOUD
+#if UI_TESTING
                     // load and run the UI testing protocol
                     string filePath = NSBundle.MainBundle.PathForResource("UiTestingProtocol", "json");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
