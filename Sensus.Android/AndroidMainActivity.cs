@@ -29,6 +29,9 @@ using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
+using Android.Gms.Common;
+using Firebase.Iid;
+using Firebase.Messaging;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -58,6 +61,30 @@ namespace Sensus.Android
         public ICallbackManager FacebookCallbackManager
         {
             get { return _facebookCallbackManager; }
+        }
+
+        public bool IsPlayServicesAvailable()
+        {
+            int resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(this);
+            if (resultCode != ConnectionResult.Success)
+            {
+                if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+                {
+                    // note: you can give the user a chance to fix the issue.
+                    Console.WriteLine($"Error: {GoogleApiAvailability.Instance.GetErrorString(resultCode)}");
+                }
+                else
+                {
+                    Console.WriteLine("Error: Play services not supported!");
+                    Finish();
+                }
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Play Services available.");
+                return true;
+            }
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -126,6 +153,17 @@ namespace Sensus.Android
             };
 
             OpenIntentAsync(Intent);
+
+            // detect connection with Google Play services, finishes if not able to connect.
+            IsPlayServicesAvailable();
+#if DEBUG
+            // on debugging, a redeploy of the app will delete the old token and effectively force a token refresh
+            Task.Run(() =>
+            {
+                Console.WriteLine("DEBUG: deleting prior token: " + FirebaseInstanceId.Instance.Token);
+                FirebaseInstanceId.Instance.DeleteInstanceId();
+            });
+#endif
         }
 
         protected override void OnStart()
@@ -262,8 +300,45 @@ namespace Sensus.Android
                 }
             }
         }
+        [Service]
+        [IntentFilter(new[] { "com.google.firebase.INSTANCE_ID_EVENT" })]
+        public class MyFirebaseIIDService : FirebaseInstanceIdService
+        {
+            const string TAG = "MyFirebaseIIDService";
+            public override void OnTokenRefresh()
+            {
+                var refreshedToken = FirebaseInstanceId.Instance.Token;
+                Console.WriteLine("Refreshed token, new val: " + refreshedToken);
+                SendRegistrationToServer(refreshedToken);
+            }
+            void SendRegistrationToServer(string token)
+            {
+                // Add custom implementation, as needed.
+            }
+        }
 
-#region intent handling
+        [Service]
+        [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
+        public class MyFirebaseMessagingService : FirebaseMessagingService
+        {
+            public override void OnMessageReceived(RemoteMessage message)
+            {
+                try
+                {
+                    // log for testing
+                    var from = message.From;
+                    var body = message.GetNotification().Body;
+                    Console.WriteLine("From: " + from);
+                    Console.WriteLine("Notification Message Body: " + body);
+                }
+                catch (Exception ex)
+                {
+                    // TODO : better error handling
+                    Console.WriteLine("Error extracting message from notification: " + ex);
+                }
+            }
+        }
+        #region intent handling
 
         protected override void OnNewIntent(Intent intent)
         {
