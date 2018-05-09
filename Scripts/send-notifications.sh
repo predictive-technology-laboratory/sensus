@@ -44,10 +44,18 @@ then
                         then
                                 response=$(curl --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $participant" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --data '{"notification":{"body":"'"$message"'"}}' -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null servername)
 
-                                if [[ $response -eq 201000  ]]
+                                 #filter status code (first 3 digits of response)
+                                code=$(echo "${response:0:3}")
+                                # echo "recieved status code $code"
+
+                                if [[ $code -eq 201 ]]
                                 then
                                         echo "201- notification created in Hub."
                                         # On success, delete the notification locally
+                                        rm "$n"
+                                elif [[ $code -eq 400  ]]
+                                then
+                                        echo "400- invalid device, removing notification."
                                         rm "$n"
                                 else
                                         echo "Error creating notification, retrying on next cycle..."
