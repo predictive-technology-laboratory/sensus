@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "470815093032",
+    "firebase_url": "https://sensus-1022.firebaseio.com",
+    "project_id": "sensus-1022",
+    "storage_bucket": "sensus-1022.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470815093032:android:0231e27e1cc99ee9",
+        "android_client_info": {
+          "package_name": "edu.virginia.sie.ptl.sensus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "470815093032-l36vmf2mcibuhqqi5h5fbq4965af4oam.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBau7P3uVnltPe7B2_PMcBCpRHktQAO558"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -24,8 +24,8 @@ namespace Sensus.XTC.UiTests
     [TestFixture]
     public abstract class Tests
     {
-        private const string ENABLE_TEST_CLOUD_PROTOCOL_RUNNING_NAME = "UI Testing Protocol (Running)";
-        private const string ENABLE_TEST_CLOUD_PROTOCOL_STOPPED_NAME = "UI Testing Protocol (Stopped)";
+        private const string UI_TESTING_PROTOCOL_RUNNING_NAME = "UI Testing Protocol (Running)";
+        private const string UI_TESTING_PROTOCOL_STOPPED_NAME = "UI Testing Protocol (Stopped)";
 
         private const string PROTOCOL_ACTION_SHEET_START = "Start";
         private const string PROTOCOL_ACTION_SHEET_EDIT = "Edit";
@@ -116,7 +116,7 @@ namespace Sensus.XTC.UiTests
 
         private void TapProtocol(bool running)
         {
-            _app.WaitForElementThenTap(running ? ENABLE_TEST_CLOUD_PROTOCOL_RUNNING_NAME : ENABLE_TEST_CLOUD_PROTOCOL_STOPPED_NAME, true);
+            _app.WaitForElementThenTap(running ? UI_TESTING_PROTOCOL_RUNNING_NAME : UI_TESTING_PROTOCOL_STOPPED_NAME, true);
             _app.WaitForElement(PROTOCOL_ACTION_SHEET_EDIT);  // wait for action sheet to come up
         }
 
