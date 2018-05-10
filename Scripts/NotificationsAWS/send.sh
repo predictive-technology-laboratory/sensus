@@ -14,6 +14,7 @@ then
         NOTIFS=/home/ec2-user/sensus-notifications/notifications/*
 
         # refresh SAS for communication with azure(lasts one minute)
+        # uses node package 'npm install shared-access-signature'
         sas=$(node refresh-sas.js)
 
         for n in $NOTIFS
