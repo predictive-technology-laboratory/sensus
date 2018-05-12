@@ -19,6 +19,9 @@ using Sensus.Context;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
+using Sensus.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sensus.UI
 {
@@ -75,7 +78,19 @@ namespace Sensus.UI
             scriptList.ItemTemplate = new DataTemplate(typeof(PendingScriptTextCell));
             scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Script.Caption));
             scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Script.SubCaption));
-            scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
+
+            //We want to display the scripts in order of their birthdates.  Using Linq we can get
+            //a sorted list of Scripts and add them to the ConcurrentObservableCollection.  This is done
+            //on screen load.  It could be done in Sensus helper on add, but the benefits are  negligible. 
+            List<Script> scriptsList = SensusServiceHelper.Get().ScriptsToRun.OrderBy(script => script.Birthdate).ToList<Script>();
+            ConcurrentObservableCollection<Script> scriptsToDisplay = new ConcurrentObservableCollection<Script>();
+            foreach (Script curScript in scriptsList)
+            {
+                scriptsToDisplay.Add(curScript);
+            }
+            //Add the scripts to the list view for display
+            scriptList.ItemsSource = scriptsToDisplay;
+           
             scriptList.ItemTapped += (o, e) =>
             {
                 if (scriptList.SelectedItem == null)
