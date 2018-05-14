@@ -52,7 +52,7 @@ namespace Sensus.DataStores.Remote
         private string _userNotificationMessage;
 
         /// <summary>
-        /// How many milliseconds to pause between each writing data.
+        /// How many milliseconds to pause between each data write cycle.
         /// </summary>
         /// <value>The write delay in milliseconds.</value>
         [EntryIntegerUiProperty("Write Delay (MS):", true, 2)]
