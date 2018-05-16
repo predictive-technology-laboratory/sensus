@@ -79,17 +79,9 @@ namespace Sensus.UI
             scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Script.Caption));
             scriptList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Script.SubCaption));
 
-            //We want to display the scripts in order of their birthdates.  Using Linq we can get
-            //a sorted list of Scripts and add them to the ConcurrentObservableCollection.  This is done
-            //on screen load.  It could be done in Sensus helper on add, but the benefits are  negligible. 
-            List<Script> scriptsList = SensusServiceHelper.Get().ScriptsToRun.OrderBy(script => script.Birthdate).ToList<Script>();
-            ConcurrentObservableCollection<Script> scriptsToDisplay = new ConcurrentObservableCollection<Script>();
-            foreach (Script curScript in scriptsList)
-            {
-                scriptsToDisplay.Add(curScript);
-            }
+
             //Add the scripts to the list view for display
-            scriptList.ItemsSource = scriptsToDisplay;
+            scriptList.ItemsSource = SensusServiceHelper.Get().ScriptsToRun;
            
             scriptList.ItemTapped += (o, e) =>
             {

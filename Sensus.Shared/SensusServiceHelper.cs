@@ -738,7 +738,7 @@ namespace Sensus
 
                 if (runMode == RunMode.Multiple)
                 {
-                    _scriptsToRun.Insert(0, script);
+                    _scriptsToRun.Insert(ScriptToAddIndex(script), script);
                     modifiedScriptsToRun = true;
                 }
                 else
@@ -776,7 +776,7 @@ namespace Sensus
 
                     if (!_scriptsToRun.Contains(scriptToKeep))
                     {
-                        _scriptsToRun.Insert(0, scriptToKeep);
+                        _scriptsToRun.Insert(ScriptToAddIndex(scriptToKeep), scriptToKeep);
                         modifiedScriptsToRun = true;
                     }
                 }
@@ -1461,6 +1461,29 @@ namespace Sensus
             {
                 IssuePendingSurveysNotificationAsync(null, false);
             }
+        }
+
+        //A quick binary search to determine the index placement in order to insert a new Script
+        private int ScriptToAddIndex(Script item)
+        {
+            List<Script> scripts = _scriptsToRun.ToList();
+            int index;
+            if (scripts.Count == 0 || scripts[0].CompareTo(item) >= 0)
+            {
+                index = 0;
+            }
+            else if (scripts[scripts.Count - 1].CompareTo(item) <= 0)
+            {
+                index = scripts.Count;
+            }
+            else
+            {
+                index = scripts.BinarySearch(item);
+                if (index < 0)
+                    index = ~index;
+            }
+
+            return index;
         }
         #endregion
     }
