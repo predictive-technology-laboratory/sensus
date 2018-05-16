@@ -204,18 +204,7 @@ namespace Sensus.Probes.User.Scripts
         //Compare to using the DisplayDateTime.  This is used in order to determine the sort order for placement
         public int CompareTo(Script that)
         {
-            if (this.DisplayDateTime > that.DisplayDateTime)
-            {
-                return 1;
-            }
-            else if (this.DisplayDateTime < that.DisplayDateTime)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
+            return this.DisplayDateTime.CompareTo(that.DisplayDateTime);
         }
     }
 }

@@ -19,9 +19,6 @@ using Sensus.Context;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
-using Sensus.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Sensus.UI
 {
