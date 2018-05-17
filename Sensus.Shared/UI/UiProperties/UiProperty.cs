@@ -26,6 +26,7 @@ namespace Sensus.UI.UiProperties
     [AttributeUsage(AttributeTargets.Property)]
     public abstract class UiProperty : Attribute
     {
+        private const string requiredMark = "*";
         /// <summary>
         /// Gets the <see cref="UiProperty"/> attribute associated with a property.
         /// </summary>
@@ -75,7 +76,7 @@ namespace Sensus.UI.UiProperties
                  .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                  .Select(p => new Tuple<PropertyInfo, UiProperty>(p, GetUiPropertyAttribute(p)))
                  .Where(p => p.Item2 != null)
-                 .OrderBy(p => p.Item2._order).ToList();
+                 .OrderBy(p => p.Item2._order).ToList(); 
 
             List<StackLayout> propertyStacks = new List<StackLayout>();
 
@@ -84,9 +85,11 @@ namespace Sensus.UI.UiProperties
                 PropertyInfo property = propertyUiElement.Item1;
                 UiProperty uiElement = propertyUiElement.Item2;
 
+                var labelText = uiElement.LabelText ?? (property.Name + (uiElement._required ? requiredMark : "")+":");
+
                 Label propertyLabel = new Label
                 {
-                    Text = uiElement.LabelText ?? property.Name + ":",
+                    Text = labelText,
                     FontSize = 20
                 };
 
@@ -136,6 +139,7 @@ namespace Sensus.UI.UiProperties
         private string _labelText;
         private bool _editable;
         private int _order;
+        private bool _required;
 
         public string LabelText
         {
@@ -149,11 +153,20 @@ namespace Sensus.UI.UiProperties
             set { _editable = value; }
         }
 
-        protected UiProperty(string labelText, bool editable, int order)
+        protected UiProperty(string labelText, bool editable, int order, bool required)
         {
-            _labelText = labelText;
+            var requiredText = required ? requiredMark : string.Empty;
+            if(required == true && string.IsNullOrWhiteSpace(labelText) == false)
+            {
+                _labelText = requiredMark + labelText;
+            }
+            else
+            {
+                _labelText = labelText;
+            }
             _editable = editable;
             _order = order;
+            _required = required;
         }
 
         public abstract View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter);
