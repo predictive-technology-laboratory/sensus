@@ -444,7 +444,6 @@ namespace Sensus.Probes.User.Scripts
         public void Reset()
         {
             UnscheduleCallbacks();
-
             RunTimes.Clear();
             CompletionTimes.Clear();
         }

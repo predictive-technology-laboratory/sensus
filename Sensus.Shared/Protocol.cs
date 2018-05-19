@@ -1308,6 +1308,24 @@ namespace Sensus
 
                 // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
                 probe.Enabled = probe.OriginallyEnabled;
+
+                // if we reset the protocol id, assign new group and input ids to all scripts
+                if (probe is ScriptProbe && resetId)
+                {
+                    foreach (ScriptRunner runner in (probe as ScriptProbe).ScriptRunners)
+                    {
+                        foreach (InputGroup inputGroup in runner.Script.InputGroups)
+                        {
+                            inputGroup.Id = Guid.NewGuid().ToString();
+
+                            foreach (Input input in inputGroup.Inputs)
+                            {
+                                input.GroupId = inputGroup.Id;
+                                input.Id = Guid.NewGuid().ToString();
+                            }
+                        }
+                    }
+                }
             }
 
             if (_localDataStore != null)
