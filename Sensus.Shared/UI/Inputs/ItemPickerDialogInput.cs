@@ -158,7 +158,12 @@ namespace Sensus.UI.Inputs
 
         public override View GetView(int index)
         {
-            if (base.GetView(index) == null && _items.Count > 0)
+            if (_items.Count == 0)
+            {
+                return null;
+            }
+
+            if (base.GetView(index) == null)
             {
                 _picker = new Picker
                 {
