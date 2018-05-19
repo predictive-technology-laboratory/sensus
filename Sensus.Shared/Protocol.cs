@@ -494,6 +494,8 @@ namespace Sensus
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
         private Dictionary<string, string> _variableValue;
+        private ProtocolStartConfirmationMode _protocolStartConfirmationMode;
+        private string _participantId;
 
         private readonly object _locker = new object();
 
@@ -1052,6 +1054,40 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
+        /// for more information.
+        /// </summary>
+        /// <value>The protocol start confirmation mode.</value>
+        [ListUiProperty("Start Confirmation Mode:", true, 31, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.UserIdDigits, ProtocolStartConfirmationMode.UserIdText, ProtocolStartConfirmationMode.UserIdQrCode })]
+        public ProtocolStartConfirmationMode ProtocolStartConfirmationMode
+        {
+            get
+            {
+                return _protocolStartConfirmationMode;
+            }
+            set
+            {
+                _protocolStartConfirmationMode = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the participant identifier.
+        /// </summary>
+        /// <value>The participant identifier.</value>
+        public string ParticipantId
+        {
+            get
+            {
+                return _participantId;
+            }
+            set
+            {
+                _participantId = value;
+            }
+        }
+
         #region iOS-specific protocol properties
 
 #if __IOS__
@@ -1162,22 +1198,16 @@ namespace Sensus
         ///     openssl genrsa -des3 -out private.pem 2048
         ///     ```
         /// 
-        ///   * Convert the `RSA PRIVATE KEY` to a `PRIVATE KEY`:  
-        /// 
-        ///     ```
-        ///     openssl pkcs8 -topk8 -nocrypt -in private.pem
-        ///     ```
-        /// 
         ///   * Extract the `PUBLIC KEY` for entering into your Sensus <see cref="Protocol"/>:
         /// 
         ///     ```
         ///     openssl rsa -in private.pem -outform PEM -pubout -out public.pem
         ///     ```
         /// 
-        ///   * Use the `PUBLIC KEY` (public.pem) as <see cref="AsymmetricEncryptionPublicKey"/>.
-        ///   * Enable <see cref="FileLocalDataStore.Encrypt"/>.
+        ///   * Use the `PUBLIC KEY` contained within public.pem as <see cref="AsymmetricEncryptionPublicKey"/>.
         /// 
         /// Keep all `PRIVATE KEY` information safe and secure. Never share it.
+        /// 
         /// </summary>
         /// <value>The asymmetric encryption public key.</value>
         [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37)]
@@ -1254,6 +1284,7 @@ namespace Sensus
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _variableValue = new Dictionary<string, string>();
+            _protocolStartConfirmationMode = ProtocolStartConfirmationMode.None;
         }
 
         /// <summary>
@@ -1630,7 +1661,21 @@ namespace Sensus
                 return;
             }
 
-            int consentCode = new Random().Next(1000, 10000);
+            List<Input> inputs = new List<Input>();
+
+            if (!string.IsNullOrWhiteSpace(startupMessage))
+            {
+                inputs.Add(new LabelOnlyInput(startupMessage));
+            }
+
+            if (!string.IsNullOrWhiteSpace(_description))
+            {
+                inputs.Add(new LabelOnlyInput(_description));
+            }
+
+            inputs.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
+                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
+                                           " The following data will be collected:"));
 
             StringBuilder collectionDescription = new StringBuilder();
             foreach (Probe probe in _probes.OrderBy(probe => probe.DisplayName))
@@ -1645,22 +1690,6 @@ namespace Sensus
                 }
             }
 
-            List<Input> consent = new List<Input>();
-
-            if (!string.IsNullOrWhiteSpace(startupMessage))
-            {
-                consent.Add(new LabelOnlyInput(startupMessage));
-            }
-
-            if (!string.IsNullOrWhiteSpace(_description))
-            {
-                consent.Add(new LabelOnlyInput(_description));
-            }
-
-            consent.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
-                                           " The following data will be collected:"));
-
             LabelOnlyInput collectionDescriptionLabel = null;
             int collectionDescriptionFontSize = 15;
             if (collectionDescription.Length == 0)
@@ -1673,17 +1702,51 @@ namespace Sensus
             }
 
             collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
-            consent.Add(collectionDescriptionLabel);
+            inputs.Add(collectionDescriptionLabel);
 
-            // the name in the following text input is used to grab the UI element when UI testing
-            consent.Add(new SingleLineTextInput("To participate in this study as described above, please enter the following code:  " + consentCode, "ConsentCode", Keyboard.Numeric)
+            if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.None)
             {
-                DisplayNumber = false
-            });
+                inputs.Add(new LabelOnlyInput("Tap Submit below to begin."));
+            }
+            else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
+            {
+                inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter the following code:  " + new Random().Next(1000, 10000), "code", Keyboard.Numeric)
+                {
+                    DisplayNumber = false
+                });
+            }
+            else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdDigits)
+            {
+                inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Numeric)
+                {
+                    DisplayNumber = false
+                });
+
+                inputs.Add(new SingleLineTextInput("Please re-enter your participant identifier to confirm.", "confirm", Keyboard.Numeric)
+                {
+                    DisplayNumber = false
+                });
+            }
+            else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdQrCode)
+            {
+                inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", "To participate in this study as described above, please scan your participant barcode."));
+            }
+            else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdText)
+            {
+                inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Text)
+                {
+                    DisplayNumber = false
+                });
+
+                inputs.Add(new SingleLineTextInput("Please re-enter your participant identifier to confirm.", "confirm", Keyboard.Text)
+                {
+                    DisplayNumber = false
+                });
+            }
 
             SensusServiceHelper.Get().PromptForInputsAsync(
-                "Protocol Consent",
-                consent.ToArray(),
+                "Confirm Study Participation",
+                inputs.ToArray(),
                 null,
                 true,
                 null,
@@ -1691,21 +1754,71 @@ namespace Sensus
                 null,
                 null,
                 false,
-                inputs =>
+                completedInputs =>
                 {
-                    if (inputs != null && inputs.Count > 0)
-                    {
-                        string consentCodeStr = inputs.Last().Value as string;
+                    bool start = false;
 
-                        int consentCodeInt;
-                        if (int.TryParse(consentCodeStr, out consentCodeInt) && consentCodeInt == consentCode)
+                    if (completedInputs != null)
+                    {
+                        if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.None)
                         {
-                            Start();
+                            start = true;
                         }
-                        else
+                        else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
                         {
-                            SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
+                            Input codeInput = completedInputs.Last();
+                            string codeInputValue = codeInput.Value as string;
+                            int requiredCode = int.Parse(codeInput.LabelText.Substring(codeInput.LabelText.LastIndexOf(':') + 1));
+
+                            if (int.TryParse(codeInputValue, out int codeInputValueInt) && codeInputValueInt == requiredCode)
+                            {
+                                start = true;
+                            }
+                            else
+                            {
+                                SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
+                            }
                         }
+                        else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdDigits ||
+                                 _protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdText)
+                        {
+                            string codeValue = completedInputs[completedInputs.Count - 2].Value as string;
+                            string codeConfirmValue = completedInputs.Last().Value as string;
+                            if (codeValue == codeConfirmValue)
+                            {
+                                if (string.IsNullOrWhiteSpace(codeValue))
+                                {
+                                    SensusServiceHelper.Get().FlashNotificationAsync("Your identifier cannot be blank.");
+                                }
+                                else
+                                {
+                                    _participantId = codeValue;
+                                    start = true;
+                                }
+                            }
+                            else
+                            {
+                                SensusServiceHelper.Get().FlashNotificationAsync("The identifiers that you entered did not match.");
+                            }
+                        }
+                        else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdQrCode)
+                        {
+                            string codeValue = completedInputs.Last().Value as string;
+                            if (string.IsNullOrWhiteSpace(codeValue))
+                            {
+                                SensusServiceHelper.Get().FlashNotificationAsync("Your participant barcode was empty.");
+                            }
+                            else
+                            {
+                                _participantId = codeValue;
+                                start = true;
+                            }
+                        }
+                    }
+
+                    if (start)
+                    {
+                        Start();
                     }
 
                     callback?.Invoke();

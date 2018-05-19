@@ -854,11 +854,11 @@ namespace Sensus
 #endif
         }
 
-        public Task<Result> ScanQrCodeAsync(INavigation navigation)
+        public Task<string> ScanQrCodeAsync(string resultPrefix, INavigation navigation)
         {
             return Task.Run(() =>
             {
-                Result result = null;
+                string result = null;
                 ManualResetEvent resultWait = new ManualResetEvent(false);
 
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
@@ -879,13 +879,16 @@ namespace Sensus
 
                     barcodeScannerPage.OnScanResult += r =>
                     {
-                        result = r;
+                        if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
+                        {
+                            result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
 
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {                            
-                            barcodeScannerPage.IsScanning = false;
-                            await navigation.PopAsync();
-                        });
+                            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                            {
+                                barcodeScannerPage.IsScanning = false;
+                                await navigation.PopModalAsync();
+                            });
+                        }
                     };
 
                     barcodeScannerPage.Disappearing += (sender, e) => 
@@ -893,7 +896,7 @@ namespace Sensus
                         resultWait.Set();
                     };
 
-                    await navigation.PushAsync(barcodeScannerPage);
+                    await navigation.PushModalAsync(barcodeScannerPage);
                 });
 
                 resultWait.WaitOne();

@@ -106,7 +106,7 @@ namespace Sensus.UI
 
                 contentLayout.Children.Add(new Image
                 {
-                    Source = SensusServiceHelper.Get().GetQrCodeImageSource(protocol.RemoteDataStore.GetDatumKey(participationRewardDatum)),
+                    Source = SensusServiceHelper.Get().GetQrCodeImageSource(QrCodePrefix.SENSUS_PARTICIPATION + protocol.RemoteDataStore.GetDatumKey(participationRewardDatum)),
                     HorizontalOptions = LayoutOptions.CenterAndExpand
                 });
             }

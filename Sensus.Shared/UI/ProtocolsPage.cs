@@ -218,6 +218,7 @@ namespace Sensus.UI
                         {
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
                             participationRewardDatum.ProtocolId = selectedProtocol.Id;
+                            participationRewardDatum.ParticipantId = selectedProtocol.ParticipantId;
 
                             bool writeFailed = false;
                             try
@@ -261,7 +262,7 @@ namespace Sensus.UI
                 {
                     try
                     {
-                        Result barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(Navigation);
+                        string barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PARTICIPATION, Navigation);
 
                         if (barcodeResult == null)
                         {
@@ -288,7 +289,7 @@ namespace Sensus.UI
                                     // after the page shows up, attempt to retrieve the participation reward datum.
                                     try
                                     {
-                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult.Text, cancellationTokenSource.Token);
+                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult, cancellationTokenSource.Token);
 
                                         // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
                                         if (!cancellationTokenSource.IsCancellationRequested)
@@ -441,11 +442,18 @@ namespace Sensus.UI
 
                 if (action == "From QR Code")
                 {
-                    Result result = await SensusServiceHelper.Get().ScanQrCodeAsync(Navigation);
+                    string result = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL, Navigation);
 
                     if (result != null)
                     {
-                        Protocol.DeserializeAsync(new Uri(result.Text), Protocol.DisplayAndStartAsync);
+                        try
+                        {
+                            Protocol.DeserializeAsync(new Uri(result), Protocol.DisplayAndStartAsync);
+                        }
+                        catch (Exception ex)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from QR code:  " + ex.Message);
+                        }
                     }
                 }
                 else if (action == "From URL")

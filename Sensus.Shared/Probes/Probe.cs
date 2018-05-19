@@ -397,6 +397,7 @@ namespace Sensus.Probes
             if (datum != null)
             {
                 datum.ProtocolId = Protocol.Id;
+                datum.ParticipantId = Protocol.ParticipantId;
 
                 if (_storeData)
                 {

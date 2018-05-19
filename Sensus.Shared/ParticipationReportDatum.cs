@@ -74,6 +74,7 @@ namespace Sensus
         {
             _probeParticipation = new Dictionary<string, double>();
             ProtocolId = protocol.Id;
+            ParticipantId = protocol.ParticipantId;
 
             List<Tuple<Probe, double?>> probeParticipations = protocol.Probes.Select(probe => new Tuple<Probe, double?>(probe, probe.GetParticipation()))
                                                                             .Where(probeParticipation => probeParticipation.Item2.HasValue)
