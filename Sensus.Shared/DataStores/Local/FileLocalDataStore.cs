@@ -37,13 +37,13 @@ namespace Sensus.DataStores.Local
         /// <summary>
         /// Number of <see cref="Datum"/> to write before checking the size of the data store.
         /// </summary>
-        private const int DATA_WRITES_PER_SIZE_CHECK = 10000;
+        private const int DATA_WRITES_PER_SIZE_CHECK = 1000;
 
         /// <summary>
         /// Threshold on the size of the local storage directory in MB. When this is exceeded, a write to the <see cref="Remote.RemoteDataStore"/> 
         /// will be forced.
         /// </summary>
-        private const double REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;
+        private const double REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 1;
 
         /// <summary>
         /// Threshold on the size of files within the local storage directory. When this is exceeded, a new file will be started.
@@ -247,7 +247,6 @@ namespace Sensus.DataStores.Local
                 }
             }
 
-            // file needs to be ready to accept data immediately, so write new file before calling base.Start
             OpenFile();
         }
 
@@ -255,7 +254,7 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
-                // it's possible to stop the datastore before entering this lock.
+                // it's possible to stop the data store before entering this lock.
                 if (!Running)
                 {
                     return;
@@ -368,24 +367,36 @@ namespace Sensus.DataStores.Local
                             }
                         }
                     }
+
+                    // periodically check the size of the file
+                    if (written && (_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK) == 0)
+                    {
+                        // must do the check within the lock, since other callers might be trying to close the file and null the path.
+                        if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
+                        {
+                            CloseFile();
+                            OpenFile();
+                        }
+                    }
                 }
 
-                // every so often, check the sizes of the file and data store
-                if ((_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK) == 0)
+                // periodically check the size of the data store
+                if (written && (_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK) == 0)
                 {
-                    // switch to a new file if the current one has grown too large
-                    if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
-                    {
-                        CloseFile();
-                        OpenFile();
-                    }
-
                     // write the local data to remote if the overall size has grown too large
                     await WriteToRemoteIfTooLargeAsync(cancellationToken);
                 }
 
                 return written;
             });
+        }
+
+        protected override bool IsTooLarge()
+        {
+            lock (_locker)
+            {
+                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) >= REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
+            }
         }
 
         public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
@@ -402,6 +413,16 @@ namespace Sensus.DataStores.Local
                 PromoteFiles();
                 OpenFile();
 
+                // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
+                string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+                string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+
+                // if no paths were promoted, then we have nothing to do.
+                if (promotedPaths.Length == 0)
+                {
+                    return Task.CompletedTask;
+                }
+
                 // if this is the first write or the previous write is finished, run a new task.
                 if (_writeToRemoteTask == null ||
                     _writeToRemoteTask.Status == TaskStatus.Canceled ||
@@ -410,17 +431,8 @@ namespace Sensus.DataStores.Local
                 {
                     _writeToRemoteTask = Task.Run(async () =>
                     {
-                        // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin)
-                        string promotedPathExtension =
-                            JSON_FILE_EXTENSION +
-                            (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") +
-                            (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
-
-                        // get paths to write
-                        string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
-
                         // write each promoted file
-                        foreach (string protmotedPath in promotedPaths)
+                        foreach (string promotedPath in promotedPaths)
                         {
                             if (cancellationToken.IsCancellationRequested)
                             {
@@ -431,7 +443,7 @@ namespace Sensus.DataStores.Local
                             try
                             {
                                 // get stream name and content type
-                                string streamName = System.IO.Path.GetFileName(protmotedPath);
+                                string streamName = System.IO.Path.GetFileName(promotedPath);
                                 string streamContentType;
                                 if (streamName.EndsWith(JSON_FILE_EXTENSION))
                                 {
@@ -452,13 +464,18 @@ namespace Sensus.DataStores.Local
                                     SensusException.Report("Unknown stream file extension:  " + streamName);
                                 }
 
-                                using (FileStream fileToWrite = new FileStream(protmotedPath, FileMode.Open, FileAccess.Read))
+                                using (FileStream fileToWrite = new FileStream(promotedPath, FileMode.Open, FileAccess.Read))
                                 {
                                     await Protocol.RemoteDataStore.WriteDataStreamAsync(fileToWrite, streamName, streamContentType, cancellationToken);
                                 }
 
-                                // file was written remotely. delete it locally.
-                                File.Delete(protmotedPath);
+                                // file was written remotely. delete it locally, and do this within a lock to prevent concurrent access
+                                // by the code that checks the size of the data store.
+                                lock (_locker)
+                                {
+                                    File.Delete(promotedPath);
+                                }
+
                                 _filesWrittenToRemote++;
                             }
                             catch (Exception ex)
@@ -471,14 +488,6 @@ namespace Sensus.DataStores.Local
                 }
 
                 return _writeToRemoteTask;
-            }
-        }
-
-        protected override bool IsTooLarge()
-        {
-            lock (_locker)
-            {
-                return SensusServiceHelper.GetDirectorySizeMB(StorageDirectory) >= REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
             }
         }
 
@@ -521,28 +530,22 @@ namespace Sensus.DataStores.Local
                             continue;
                         }
 
-                        // add the .json file extension, marking the file as complete.
-                        string finalPath = path + JSON_FILE_EXTENSION;
-                        File.Move(path, finalPath);
+                        string promotedPath = path + JSON_FILE_EXTENSION;
 
-                        // add the gzip file extension if we're doing compression
                         if (_compressionLevel != CompressionLevel.NoCompression)
                         {
-                            // add the .gz extension to the path
-                            string gzipPath = finalPath + GZIP_FILE_EXTENSION;
-                            File.Move(finalPath, gzipPath);
-                            finalPath = gzipPath;
+                            promotedPath += GZIP_FILE_EXTENSION;
                         }
 
-                        // encrypt the file if needed
                         if (_encrypt)
                         {
-                            string encryptedPath = finalPath + ENCRYPTED_FILE_EXTENSION;
-
-                            Protocol.AsymmetricEncryption.EncryptSymmetrically(File.ReadAllBytes(finalPath), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, encryptedPath);
-
-                            // if everything went through okay, delete the unencrypted file.
-                            File.Delete(finalPath);
+                            promotedPath += ENCRYPTED_FILE_EXTENSION;
+                            Protocol.AsymmetricEncryption.EncryptSymmetrically(File.ReadAllBytes(path), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedPath);
+                            File.Delete(path);
+                        }
+                        else
+                        {
+                            File.Move(path, promotedPath);
                         }
 
                         _filesPromoted++;

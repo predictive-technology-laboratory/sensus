@@ -164,9 +164,6 @@ for the project endpoint that is intended for the App Center.</Description>
     <Reference Include="ZXing.Net.Mobile.Forms">
       <HintPath>..\packages\ZXing.Net.Mobile.Forms.2.3.2\lib\MonoAndroid403\ZXing.Net.Mobile.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="Estimote.Android.Proximity">
-      <HintPath>..\dependencies\estimote\android\Estimote.Android.Proximity.dll</HintPath>
-    </Reference>
     <Reference Include="Plugin.Permissions.Abstractions">
       <HintPath>..\packages\Plugin.Permissions.2.2.1\lib\MonoAndroid10\Plugin.Permissions.Abstractions.dll</HintPath>
     </Reference>
@@ -295,6 +292,9 @@ for the project endpoint that is intended for the App Center.</Description>
     </Reference>
     <Reference Include="Xamarin.Android.Support.v7.MediaRouter">
       <HintPath>..\packages\Xamarin.Android.Support.v7.MediaRouter.27.0.2\lib\MonoAndroid81\Xamarin.Android.Support.v7.MediaRouter.dll</HintPath>
+    </Reference>
+    <Reference Include="Estimote.Android.Proximity">
+      <HintPath>..\dependencies\estimote\android\Estimote.Android.Proximity.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
