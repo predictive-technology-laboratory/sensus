@@ -384,6 +384,15 @@ namespace Sensus.Probes
         /// <param name="cancellationToken">Cancellation token.</param>
         public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken)
         {
+            // set properties that we were unable to set within the datum constructor. datum is allowed to 
+            // be null, indicating the the probe attempted to obtain data but it didn't find any (in the 
+            // case of polling probes).
+            if (datum != null)
+            {
+                datum.ProtocolId = Protocol.Id;
+                datum.ParticipantId = Protocol.ParticipantId;
+            }
+
             // track the most recent datum regardless of whether the datum is null or whether we're storing data
             Datum previousDatum = _mostRecentDatum;
             _mostRecentDatum = datum;
@@ -393,47 +402,43 @@ namespace Sensus.Probes
             MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
 
-            // datum is allowed to be null, indicating the the probe attempted to obtain data but it didn't find any (in the case of polling probes).
-            if (datum != null)
+            // store non-null data
+            if (_storeData && datum != null)
             {
-                datum.ProtocolId = Protocol.Id;
-                datum.ParticipantId = Protocol.ParticipantId;
+                #region update chart data
+                ChartDataPoint chartDataPoint = null;
 
-                if (_storeData)
+                try
                 {
-                    ChartDataPoint chartDataPoint = null;
+                    chartDataPoint = GetChartDataPointFromDatum(datum);
+                }
+                catch (NotImplementedException)
+                {
+                }
 
-                    try
+                if (chartDataPoint != null)
+                {
+                    lock (_chartData)
                     {
-                        chartDataPoint = GetChartDataPointFromDatum(datum);
-                    }
-                    catch (NotImplementedException)
-                    {
-                    }
+                        _chartData.Add(chartDataPoint);
 
-                    if (chartDataPoint != null)
-                    {
-                        lock (_chartData)
+                        while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
                         {
-                            _chartData.Add(chartDataPoint);
-
-                            while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
-                            {
-                                _chartData.RemoveAt(0);
-                            }
+                            _chartData.RemoveAt(0);
                         }
                     }
+                }
+                #endregion
 
-                    // catch any exceptions, as the caller (e.g., a listening probe) could very well be unprotected on the UI thread. throwing
-                    // an exception here can crash the app.
-                    try
-                    {
-                        return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
-                    }
+                // write datum to local data store. catch any exceptions, as the caller (e.g., a listening 
+                // probe) could very well be unprotected on the UI thread. throwing an exception here can crash the app.
+                try
+                {
+                    return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
                 }
             }
 
