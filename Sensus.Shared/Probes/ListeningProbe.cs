@@ -300,12 +300,13 @@ namespace Sensus.Probes
 
             float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
 
-            // 0 (or negligible) data per second:  don't store. if max data per second is not set, the following inequality will be false.
+            // 0 (or negligible) data per second:  don't store. if max data per second is not set, the following inequality will 
+            // be false due to the absolute value.
             if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
             {
                 store = false;
             }
-            // non-negligible (or default -1) data per second:  check data rate
+            // non-negligible data per second:  check data rate
             else if (maxDataStoresPerSecond > 0)
             {
                 _incomingDataRateCalculator.Add(datum);

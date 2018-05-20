@@ -53,14 +53,20 @@ namespace Sensus.Android.Probes
         public void Start()
         {
             if (_sensor == null)
+            {
                 return;
+            }
 
             lock (_locker)
             {
                 if (_listening)
+                {
                     return;
+                }
                 else
+                {
                     _listening = true;
+                }
             }
 
             // use the largest delay that will provide samples at the desired rate:  https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-monitor
@@ -69,27 +75,39 @@ namespace Sensus.Android.Probes
             {
                 long sensorDelayMicroseconds = _sensorDelay.Value.Ticks / 10;
                 if (sensorDelayMicroseconds >= 200000)
+                {
                     sensorDelay = SensorDelay.Normal;
+                }
                 else if (sensorDelayMicroseconds >= 60000)
+                {
                     sensorDelay = SensorDelay.Ui;
+                }
                 else if (sensorDelayMicroseconds >= 20000)
+                {
                     sensorDelay = SensorDelay.Game;
+                }
             }
-            
+
             _sensorManager.RegisterListener(this, _sensor, sensorDelay);
         }
 
         public void Stop()
         {
             if (_sensor == null)
+            {
                 return;
+            }
 
             lock (_locker)
             {
                 if (_listening)
+                {
                     _listening = false;
+                }
                 else
+                {
                     return;
+                }
             }
 
             _sensorManager.UnregisterListener(this);
@@ -97,14 +115,15 @@ namespace Sensus.Android.Probes
 
         public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
         {
-            if (_sensorAccuracyChangedCallback != null)
-                _sensorAccuracyChangedCallback(accuracy);
+            _sensorAccuracyChangedCallback?.Invoke(accuracy);
         }
 
         public void OnSensorChanged(SensorEvent e)
         {
-            if (_sensorValueChangedCallback != null && e != null && e.Values != null && e.Values.Count > 0)
-                _sensorValueChangedCallback(e);
+            if (e != null && e.Values != null && e.Values.Count > 0)
+            {
+                _sensorValueChangedCallback?.Invoke(e);
+            }
         }
     }
 }

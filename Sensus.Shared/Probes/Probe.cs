@@ -424,7 +424,7 @@ namespace Sensus.Probes
                         }
                     }
 
-                    // catch any exceptions, as the caller (e.g., a probe listening) could very well be unprotected on the UI thread. throwing
+                    // catch any exceptions, as the caller (e.g., a listening probe) could very well be unprotected on the UI thread. throwing
                     // an exception here can crash the app.
                     try
                     {
