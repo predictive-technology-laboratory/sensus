@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,11 +46,11 @@ namespace Sensus.iOS.Probes.Movement
         {
             base.StartListening();
 
-            _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
+            _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), (data, error) =>
             {
                 if (!Stabilizing && data != null && error == null)
                 {
-                    await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
+                    StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
                 }
             });
         }

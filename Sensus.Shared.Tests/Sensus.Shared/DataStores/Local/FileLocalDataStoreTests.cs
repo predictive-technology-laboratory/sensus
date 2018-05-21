@@ -295,7 +295,7 @@ namespace Sensus.Tests.DataStores.Local
         {
             for (int i = 0; i < data.Count; ++i)
             {
-                localDataStore.WriteDatumAsync(data[i], CancellationToken.None).Wait();
+                localDataStore.WriteDatum(data[i], CancellationToken.None);
                 postWriteAction?.Invoke(localDataStore);
             }
         }

@@ -80,6 +80,10 @@ namespace Sensus.DataStores.Local
         /// </summary>
         private const int ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS = 16 * 8;
 
+        private List<Datum> _storeBuffer;
+        private List<Datum> _toWriteBuffer;
+        private Task _writeToFileTask;
+        private AutoResetEvent _writeToFileWait;
         private string _path;
         private BufferedStream _file;
         private CompressionLevel _compressionLevel;
@@ -221,6 +225,9 @@ namespace Sensus.DataStores.Local
 
         public FileLocalDataStore()
         {
+            _storeBuffer = new List<Datum>();
+            _toWriteBuffer = new List<Datum>();
+            _writeToFileWait = new AutoResetEvent(false);
             _compressionLevel = CompressionLevel.Optimal;
             _bufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
             _encrypt = false;
@@ -303,92 +310,146 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        public override Task<bool> WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
+        public override void WriteDatum(Datum datum, CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            lock (_storeBuffer)
             {
-                bool written = false;
+                _storeBuffer.Add(datum);
+                _writeToFileWait.Set();
 
-                // only 1 write operation at once
-                lock (_locker)
+                // start the long-running task for writing data to file. also check the status of the task after it has been created
+                // and restart the task if it stops for some reason.
+                if (_writeToFileTask == null ||
+                    _writeToFileTask.Status == TaskStatus.Canceled ||
+                    _writeToFileTask.Status == TaskStatus.Faulted ||
+                    _writeToFileTask.Status == TaskStatus.RanToCompletion)
                 {
-                    // it's possible to stop the datastore before entering this lock, in which case we won't
-                    // have a file to write to. check for a running data store here.
-                    if (!Running)
+                    _writeToFileTask = Task.Run(async () =>
                     {
-                        return written;
-                    }
-
-                    // get anonymized JSON for datum
-                    string datumJSON = null;
-                    try
-                    {
-                        datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusException.Report("Failed to get JSON for datum.", ex);
-                    }
-
-                    // write JSON to file
-                    if (datumJSON != null)
-                    {
-                        try
+                        while (Running)
                         {
-                            byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_dataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
-                            _file.Write(datumJsonBytes, 0, datumJsonBytes.Length);
-                            _bytesWrittenToCurrentFile += datumJsonBytes.Length;
-                            _dataWrittenToCurrentFile++;
-                            _totalDataWritten++;
-                            written = true;
+                            // wait for more data to show up
+                            _writeToFileWait.WaitOne();
+
+                            // we might have stopped running
+                            if (!Running)
+                            {
+                                break;
+                            }
+
+                            bool checkSize = false;
+
+                            lock (_toWriteBuffer)
+                            {
+                                // copy the current data to the buffer to write, and clear the current buffer.
+                                lock (_storeBuffer)
+                                {
+                                    _toWriteBuffer.AddRange(_storeBuffer);
+                                    _storeBuffer.Clear();
+                                }
+
+                                // write each datum
+                                for (int i = 0; i < _toWriteBuffer.Count;)
+                                {
+                                    Datum datumToWrite = _toWriteBuffer[i];
+
+                                    bool datumWritten = false;
+
+                                    // lock the file so that we can safely write the current datum to it
+                                    lock (_locker)
+                                    {
+                                        // it's possible to stop the datastore before entering this lock, in which case we won't
+                                        // have a file to write to. check for a running data store here.
+                                        if (Running)
+                                        {
+                                            #region write JSON for datum to file
+                                            string datumJSON = null;
+                                            try
+                                            {
+                                                datumJSON = datumToWrite.GetJSON(Protocol.JsonAnonymizer, false);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                SensusException.Report("Failed to get JSON for datum.", ex);
+                                            }
+
+                                            if (datumJSON != null)
+                                            {
+                                                try
+                                                {
+                                                    byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_dataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
+                                                    _file.Write(datumJsonBytes, 0, datumJsonBytes.Length);
+                                                    _bytesWrittenToCurrentFile += datumJsonBytes.Length;
+                                                    _dataWrittenToCurrentFile++;
+                                                    _totalDataWritten++;
+                                                    datumWritten = true;
+
+                                                    if (_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK == 0)
+                                                    {
+                                                        checkSize = true;
+                                                    }
+                                                }
+                                                catch (Exception writeException)
+                                                {
+                                                    SensusException.Report("Failed to write datum JSON bytes to file.", writeException);
+
+                                                    #region something went wrong with file write...switch to a new file in the hope that it will work better.
+                                                    try
+                                                    {
+                                                        CloseFile();
+                                                    }
+                                                    catch (Exception closeException)
+                                                    {
+                                                        SensusException.Report("Failed to close file after failing to write it.", closeException);
+                                                    }
+
+                                                    try
+                                                    {
+                                                        OpenFile();
+                                                    }
+                                                    catch (Exception openException)
+                                                    {
+                                                        SensusException.Report("Failed to open new file after failing to write the previous one.", openException);
+                                                    }
+                                                    #endregion
+                                                }
+                                            }
+                                            #endregion
+                                        }
+                                    }
+
+                                    if (datumWritten)
+                                    {
+                                        _toWriteBuffer.RemoveAt(i);
+                                    }
+                                    else
+                                    {
+                                        i++;
+                                    }
+                                }
+                            }
+
+                            #region periodically check the size of the current file and the entire local data store
+                            if (checkSize)
+                            {
+                                // must do the check within the lock, since other callers might be trying to close the file and null the path.
+                                lock (_locker)
+                                {
+                                    if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
+                                    {
+                                        CloseFile();
+                                        OpenFile();
+                                    }
+                                }
+
+                                // write the local data to remote if the overall size has grown too large
+                                await WriteToRemoteIfTooLargeAsync(cancellationToken);
+                            }
+                            #endregion
                         }
-                        catch (Exception writeException)
-                        {
-                            SensusException.Report("Failed to write datum JSON bytes to file.", writeException);
-
-                            // something went wrong with file write...switch to a new file in the hope that it will work better.
-
-                            try
-                            {
-                                CloseFile();
-                            }
-                            catch (Exception closeException)
-                            {
-                                SensusException.Report("Failed to close file after failing to write it.", closeException);
-                            }
-
-                            try
-                            {
-                                OpenFile();
-                            }
-                            catch (Exception openException)
-                            {
-                                SensusException.Report("Failed to open new file after failing to write the previous one.", openException);
-                            }
-                        }
-                    }
-
-                    // periodically check the size of the file
-                    if (written && (_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK) == 0)
-                    {
-                        // must do the check within the lock, since other callers might be trying to close the file and null the path.
-                        if (SensusServiceHelper.GetFileSizeMB(_path) >= MAX_FILE_SIZE_MB)
-                        {
-                            CloseFile();
-                            OpenFile();
-                        }
-                    }
+                    });
                 }
-
-                // periodically check the size of the data store
-                if (written && (_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK) == 0)
-                {
-                    // write the local data to remote if the overall size has grown too large
-                    await WriteToRemoteIfTooLargeAsync(cancellationToken);
-                }
-
-                return written;
-            });
+            }
         }
 
         protected override bool IsTooLarge()
@@ -561,6 +622,20 @@ namespace Sensus.DataStores.Local
         public override void Stop()
         {
             base.Stop();
+
+            // signal the long-running write task. it is likely waiting on this handle, and signalling
+            // the handle will cause it 
+            _writeToFileWait.Set();
+
+            lock (_storeBuffer)
+            {
+                _storeBuffer.Clear();
+            }
+
+            lock (_toWriteBuffer)
+            {
+                _toWriteBuffer.Clear();
+            }
 
             lock (_locker)
             {

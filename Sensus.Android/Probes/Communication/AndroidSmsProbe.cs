@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,20 +29,20 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidSmsProbe()
         {
-            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, async outgoingSmsDatum =>
+            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, outgoingSmsDatum =>
             {
                 // the observer doesn't set the from number (current device)
                 outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
 
-                await StoreDatumAsync(outgoingSmsDatum);
+                StoreDatum(outgoingSmsDatum);
             });
 
-            _incomingSmsCallback = async (sender, incomingSmsDatum) =>
+            _incomingSmsCallback = (sender, incomingSmsDatum) =>
             {
                 // the observer doesn't set the destination number (simply the device's primary number)
                 incomingSmsDatum.ToNumber = _telephonyManager.Line1Number;
 
-                await StoreDatumAsync(incomingSmsDatum);
+                StoreDatum(incomingSmsDatum);
             };
         }
 

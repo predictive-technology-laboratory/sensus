@@ -291,7 +291,7 @@ namespace Sensus.Probes
 
                 _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
-                    return Task.Run(async () =>
+                    return Task.Run(() =>
                     {
                         if (Running)
                         {
@@ -325,7 +325,7 @@ namespace Sensus.Probes
 
                                     try
                                     {
-                                        await StoreDatumAsync(datum, cancellationToken);
+                                        StoreDatum(datum, cancellationToken);
                                     }
                                     catch (Exception ex)
                                     {

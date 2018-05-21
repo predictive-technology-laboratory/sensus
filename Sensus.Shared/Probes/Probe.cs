@@ -379,10 +379,9 @@ namespace Sensus.Probes
         /// <summary>
         /// Stores a <see cref="Datum"/> within the <see cref="LocalDataStore"/>. Will not throw an <see cref="Exception"/>.
         /// </summary>
-        /// <returns>The datum async.</returns>
         /// <param name="datum">Datum.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public virtual Task<bool> StoreDatumAsync(Datum datum, CancellationToken? cancellationToken)
+        public virtual void StoreDatum(Datum datum, CancellationToken? cancellationToken)
         {
             // set properties that we were unable to set within the datum constructor. datum is allowed to 
             // be null, indicating the the probe attempted to obtain data but it didn't find any (in the 
@@ -434,15 +433,13 @@ namespace Sensus.Probes
                 // probe) could very well be unprotected on the UI thread. throwing an exception here can crash the app.
                 try
                 {
-                    return _protocol.LocalDataStore.WriteDatumAsync(datum, cancellationToken.GetValueOrDefault());
+                    _protocol.LocalDataStore.WriteDatum(datum, cancellationToken.GetValueOrDefault());
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
                 }
             }
-
-            return Task.FromResult(false);
         }
 
         protected void StopAsync()

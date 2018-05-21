@@ -123,7 +123,7 @@ namespace Sensus.UI
                             inputView = new Frame
                             {
                                 Content = inputView,
-                                OutlineColor = Color.Accent,
+                                BorderColor = Color.Accent,
                                 VerticalOptions = LayoutOptions.Start,
                                 HasShadow = true,
                                 Padding = new Thickness(10)

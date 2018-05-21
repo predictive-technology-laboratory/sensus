@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,30 +30,32 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidTelephonyProbe()
         {
-            _outgoingCallCallback = async (sender, outgoingNumber) =>
+            _outgoingCallCallback = (sender, outgoingNumber) =>
             {
                 _outgoingIncomingTime = DateTime.Now;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
-            _idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
+            _idleIncomingCallListener.IncomingCall += (o, incomingNumber) =>
             {
                 _outgoingIncomingTime = DateTime.Now;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
             };
 
-            _idleIncomingCallListener.Idle += async (o, e) =>
+            _idleIncomingCallListener.Idle += (o, e) =>
             {
                 // only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
                 double? callDurationSeconds = null;
                 if (_outgoingIncomingTime != null)
+                {
                     callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
+                }
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
+                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
             };
         }
 

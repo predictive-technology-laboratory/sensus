@@ -33,17 +33,21 @@ namespace Sensus.Android.Probes.Location
         public AndroidCompassProbe()
         {
             _magneticFieldValues = new float[3];
-            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, null, async e =>
+            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, null, e =>
             {
                 if (e.Values != null && e.Values.Count == 3)
-                    await StoreHeadingAsync(magneticFieldValues: e.Values.ToArray());
+                {
+                    StoreHeading(magneticFieldValues: e.Values.ToArray());
+                }
             });
 
             _accelerometerValues = new float[3];
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, e =>
             {
                 if (e.Values != null && e.Values.Count == 3)
-                    await StoreHeadingAsync(accelerometerValues: e.Values.ToArray());
+                {
+                    StoreHeading(accelerometerValues: e.Values.ToArray());
+                }
             });
         }
 
@@ -61,7 +65,7 @@ namespace Sensus.Android.Probes.Location
             _accelerometerListener.Start();
         }
 
-        private Task StoreHeadingAsync(float[] magneticFieldValues = null, float[] accelerometerValues = null)
+        private void StoreHeading(float[] magneticFieldValues = null, float[] accelerometerValues = null)
         {
             lock (this)
             {
@@ -77,7 +81,9 @@ namespace Sensus.Android.Probes.Location
                     double heading = azimuthPitchRoll[0] * (180 / Math.PI);  // convert heading radians to heading degrees
 
                     if (heading < 0)
+                    {
                         heading = 180 + (180 - Math.Abs(heading));  // convert to [0, 360] degrees from north
+                    }
 
                     // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                     // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
@@ -87,18 +93,20 @@ namespace Sensus.Android.Probes.Location
                     // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                     // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                     // will only happen when all listening probes are configured to allow the device to sleep.
-                    return StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, heading));
+                    StoreDatum(new CompassDatum(DateTimeOffset.UtcNow, heading));
                 }
 
                 // update values for next call
                 if (magneticFieldValues != null)
+                {
                     _magneticFieldValues = magneticFieldValues;
+                }
 
                 if (accelerometerValues != null)
+                {
                     _accelerometerValues = accelerometerValues;
+                }
             }
-
-            return Task.FromResult(false);
         }
 
         protected override void StopListening()

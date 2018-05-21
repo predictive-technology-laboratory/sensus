@@ -1832,7 +1832,7 @@ namespace Sensus
 
         public Task<List<Tuple<string, Dictionary<string, string>>>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
                 ParticipationReportDatum participationReport;
 
@@ -1935,7 +1935,7 @@ namespace Sensus
                     SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + participationReport, LoggingLevel.Normal, GetType());
                 }
 
-                await _localDataStore.WriteDatumAsync(participationReport, cancellationToken);
+                _localDataStore.WriteDatum(participationReport, cancellationToken);
 
                 return events;
             });

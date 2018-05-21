@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ namespace Sensus.Android.Probes.Network
         public AndroidCellTowerProbe()
         {
             _cellTowerChangeListener = new AndroidCellTowerChangeListener();
-            _cellTowerChangeListener.CellTowerChanged += async (o, cellTowerLocation) =>
+            _cellTowerChangeListener.CellTowerChanged += (o, cellTowerLocation) =>
             {
-                await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
+                StoreDatum(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
             };
         }
 
