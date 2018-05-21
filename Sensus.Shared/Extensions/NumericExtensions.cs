@@ -30,6 +30,18 @@ namespace Sensus.Extensions
             }
         }
 
+        public static long? RoundedPercentageOf(this long numerator, long denominator, int round)
+        {
+            if (denominator == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return (100.0 * (numerator / (double)denominator)).Round(round);
+            }
+        }
+
         public static int Round(this int value, int round)
         {
             return round * (int)Math.Round(value / (double)round);

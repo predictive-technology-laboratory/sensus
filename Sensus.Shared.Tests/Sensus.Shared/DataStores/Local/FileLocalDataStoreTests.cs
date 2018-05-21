@@ -84,6 +84,7 @@ namespace Sensus.Tests.DataStores.Local
 
             string path = WriteLocalDataStore(data, CompressionLevel.NoCompression, fileLocalDataStore =>
             {
+                fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
                 currentSizeMB = newSizeMB;
@@ -102,6 +103,7 @@ namespace Sensus.Tests.DataStores.Local
 
             string path = WriteLocalDataStore(data, CompressionLevel.Fastest, fileLocalDataStore =>
             {
+                fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
                 currentSizeMB = newSizeMB;
@@ -120,6 +122,7 @@ namespace Sensus.Tests.DataStores.Local
 
             string path = WriteLocalDataStore(data, CompressionLevel.Optimal, fileLocalDataStore =>
             {
+                fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
                 currentSizeMB = newSizeMB;
@@ -131,7 +134,7 @@ namespace Sensus.Tests.DataStores.Local
 
         #region compression should reduce file size
         [Test]
-        public void UncompressedBytesGreaterThanFastestCompressedBytes()
+        public void UncompressedBytesGreaterThanFastestCompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -143,7 +146,7 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void FastestCompressedBytesGreaterOrEqualOptimalCompressedBytes()
+        public void FastestCompressedBytesGreaterOrEqualOptimalCompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -157,7 +160,7 @@ namespace Sensus.Tests.DataStores.Local
 
         #region data store should create/promote files
         [Test]
-        public void UncompressedRemoteWriteClearsFiles()
+        public void UncompressedRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -177,7 +180,7 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void FastestCompressionRemoteWriteClearsFiles()
+        public void FastestCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -197,7 +200,7 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void OptimalCompressionRemoteWriteClearsFiles()
+        public void OptimalCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -264,9 +267,11 @@ namespace Sensus.Tests.DataStores.Local
             FileLocalDataStore localDataStore = protocol.LocalDataStore as FileLocalDataStore;
             protocol.LocalDataStore.Start();
             WriteData(data, localDataStore, postWriteAction);
-            Thread.Sleep(1000);  // before we stop the datastore, pause for a bit to ensure that the data write task is waiting for our signal.
             string path = localDataStore.Path;
             localDataStore.Stop();
+
+            Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
+
             return path;
         }
 
@@ -294,9 +299,9 @@ namespace Sensus.Tests.DataStores.Local
 
         private void WriteData(List<Datum> data, FileLocalDataStore localDataStore, Action<FileLocalDataStore> postWriteAction = null)
         {
-            for (int i = 0; i < data.Count; ++i)
+            foreach (Datum datum in data)
             {
-                localDataStore.WriteDatum(data[i], CancellationToken.None);
+                localDataStore.WriteDatum(datum, CancellationToken.None);
                 postWriteAction?.Invoke(localDataStore);
             }
         }
