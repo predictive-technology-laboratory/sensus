@@ -312,6 +312,11 @@ namespace Sensus.DataStores.Local
 
         public override void WriteDatum(Datum datum, CancellationToken cancellationToken)
         {
+            if(!Running)
+            {
+                return;
+            }
+
             lock (_storeBuffer)
             {
                 _storeBuffer.Add(datum);
@@ -330,12 +335,6 @@ namespace Sensus.DataStores.Local
                         {
                             // wait for more data to show up
                             _writeToFileWait.WaitOne();
-
-                            // we might have stopped running
-                            if (!Running)
-                            {
-                                break;
-                            }
 
                             bool checkSize = false;
 
@@ -360,7 +359,7 @@ namespace Sensus.DataStores.Local
                                     {
                                         // it's possible to stop the datastore before entering this lock, in which case we won't
                                         // have a file to write to. check for a running data store here.
-                                        if (Running)
+                                        if (_file != null)
                                         {
                                             #region write JSON for datum to file
                                             string datumJSON = null;
@@ -623,9 +622,9 @@ namespace Sensus.DataStores.Local
         {
             base.Stop();
 
-            // signal the long-running write task. it is likely waiting on this handle, and signalling
-            // the handle will cause it 
+            // signal the long-running write task and wait for it to finish.
             _writeToFileWait.Set();
+            _writeToFileTask.Wait();
 
             lock (_storeBuffer)
             {

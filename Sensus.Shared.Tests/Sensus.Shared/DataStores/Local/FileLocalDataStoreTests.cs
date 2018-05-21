@@ -264,6 +264,7 @@ namespace Sensus.Tests.DataStores.Local
             FileLocalDataStore localDataStore = protocol.LocalDataStore as FileLocalDataStore;
             protocol.LocalDataStore.Start();
             WriteData(data, localDataStore, postWriteAction);
+            Thread.Sleep(1000);  // before we stop the datastore, pause for a bit to ensure that the data write task is waiting for our signal.
             string path = localDataStore.Path;
             localDataStore.Stop();
             return path;
