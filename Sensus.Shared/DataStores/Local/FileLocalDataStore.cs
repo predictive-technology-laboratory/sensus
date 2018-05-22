@@ -83,8 +83,8 @@ namespace Sensus.DataStores.Local
         private List<Datum> _storeBuffer;
         private List<Datum> _toWriteBuffer;
         private Task _writeToFileTask;
-        private AutoResetEvent _checkForDataToWriteWait;
-        private AutoResetEvent _checkForDataCompleteWait;
+        private AutoResetEvent _checkForBufferedData;
+        private AutoResetEvent _finishedCheckingForBufferedData;
         private string _path;
         private BufferedStream _file;
         private CompressionLevel _compressionLevel;
@@ -241,8 +241,8 @@ namespace Sensus.DataStores.Local
         {
             _storeBuffer = new List<Datum>();
             _toWriteBuffer = new List<Datum>();
-            _checkForDataToWriteWait = new AutoResetEvent(false);
-            _checkForDataCompleteWait = new AutoResetEvent(false);
+            _checkForBufferedData = new AutoResetEvent(false);
+            _finishedCheckingForBufferedData = new AutoResetEvent(false);
             _compressionLevel = CompressionLevel.Optimal;
             _bufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
             _encrypt = false;
@@ -337,7 +337,7 @@ namespace Sensus.DataStores.Local
             {
                 _storeBuffer.Add(datum);
                 _totalDataBuffered++;
-                _checkForDataToWriteWait.Set();
+                _checkForBufferedData.Set();
 
                 // start the long-running task for writing data to file. also check the status of the task after 
                 // it has been created and restart the task if it stops for some reason.
@@ -353,7 +353,7 @@ namespace Sensus.DataStores.Local
                             while (Running)
                             {
                                 // wait for the signal to check for and write data
-                                _checkForDataToWriteWait.WaitOne();
+                                _checkForBufferedData.WaitOne();
 
                                 bool checkSize = false;
 
@@ -466,7 +466,7 @@ namespace Sensus.DataStores.Local
                                 }
                                 #endregion
 
-                                _checkForDataCompleteWait.Set();
+                                _finishedCheckingForBufferedData.Set();
                             }
                         }
                         catch (Exception taskException)
@@ -505,8 +505,8 @@ namespace Sensus.DataStores.Local
                 }
                 else
                 {
-                    _checkForDataToWriteWait.Set();
-                    _checkForDataCompleteWait.WaitOne();
+                    _checkForBufferedData.Set();
+                    _finishedCheckingForBufferedData.WaitOne();
                 }
             }
         }
@@ -690,7 +690,7 @@ namespace Sensus.DataStores.Local
             // the data stores state is stopped, but the file write task will still be running if the
             // condition in its while-loop hasn't been checked. to ensure that this condition is checked, 
             // signal the long-running write task to check for data, and wait for the task to finish.
-            _checkForDataToWriteWait.Set();
+            _checkForBufferedData.Set();
             _writeToFileTask.Wait();
 
             lock (_storeBuffer)
