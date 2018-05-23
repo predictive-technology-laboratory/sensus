@@ -31,7 +31,7 @@ namespace Sensus.Probes
         public const float DATA_RATE_EPSILON = 0.00000000001f;
 
         private readonly long _sampleSize;
-        private float? _maxDataStoresPerSecond;
+        private double? _maxDataStoresPerSecond;
         private DateTimeOffset? _startTimestamp;
         private long _dataCount;
         private double? _dataPerSecond;
@@ -45,7 +45,7 @@ namespace Sensus.Probes
             get { return _dataPerSecond; }
         }
 
-        public DataRateCalculator(long sampleSize, float? maxDataStoresPerSecond = null)
+        public DataRateCalculator(long sampleSize, double? maxDataStoresPerSecond = null)
         {
             if (sampleSize <= 1)
             {
@@ -84,13 +84,22 @@ namespace Sensus.Probes
 
                 if (datum != null)
                 {
-                    float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(float.MaxValue);
+                    double maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(float.MaxValue);
 
                     // non-negligible data per second:  check data rate
                     if (maxDataStoresPerSecond > DATA_RATE_EPSILON)
                     {
                         _dataCount++;
 
+                        // check whether the current datum should be kept as part of sampling
+                        bool isModulusMatch = (_dataCount % _samplingModulus) == 0;
+                        if ((_samplingModulusMatchAction == SamplingModulusMatchAction.Store && isModulusMatch) ||
+                            (_samplingModulusMatchAction == SamplingModulusMatchAction.Drop && !isModulusMatch))
+                        {
+                            keepDatum = true;
+                        }
+
+                        // recalculate data per second and sampling parameters
                         if (_dataCount == _sampleSize)
                         {
                             _dataPerSecond = _dataCount / (datum.Timestamp - _startTimestamp.Value).TotalSeconds;
@@ -128,18 +137,8 @@ namespace Sensus.Probes
                                 }
                             }
                             #endregion
-                        }
 
-                        bool isModulusMatch = (_dataCount % _samplingModulus) == 0;
-
-                        if ((_samplingModulusMatchAction == SamplingModulusMatchAction.Store && isModulusMatch) ||
-                            (_samplingModulusMatchAction == SamplingModulusMatchAction.Drop && !isModulusMatch))
-                        {
-                            keepDatum = true;
-                        }
-
-                        if (_dataCount == _sampleSize)
-                        {
+                            // start a new sample
                             _dataCount = 0;
                             _startTimestamp = datum.Timestamp;
                         }

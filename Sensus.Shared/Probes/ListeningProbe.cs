@@ -28,7 +28,7 @@ namespace Sensus.Probes
     /// </summary>
     public abstract class ListeningProbe : Probe
     {
-        private float? _maxDataStoresPerSecond;
+        private double? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
         private DataRateCalculator _incomingDataRateCalculator;
@@ -39,8 +39,8 @@ namespace Sensus.Probes
         /// The maximum number of readings that may be stored in one second.
         /// </summary>
         /// <value>Maximum data stores per second.</value>
-        [EntryFloatUiProperty("Max Data / Second:", true, int.MaxValue)]
-        public float? MaxDataStoresPerSecond
+        [EntryDoubleUiProperty("Max Data / Second:", true, int.MaxValue)]
+        public double? MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
             set
@@ -59,7 +59,7 @@ namespace Sensus.Probes
         {
             get
             {
-                float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
+                double maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
 
                 // 0 (or negligible) data per second:  maximum delay
                 if (Math.Abs(maxDataStoresPerSecond) < DataRateCalculator.DATA_RATE_EPSILON)
