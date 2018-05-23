@@ -28,20 +28,10 @@ namespace Sensus.Probes
     /// </summary>
     public abstract class ListeningProbe : Probe
     {
-        private enum SamplingModulusMatchAction
-        {
-            Store,
-            Drop
-        }
-
-        private const float DATA_RATE_EPSILON = 0.00000000001f;
-
         private float? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
         private DataRateCalculator _incomingDataRateCalculator;
-        private int _samplingModulus;
-        private SamplingModulusMatchAction _samplingModulusMatchAction;
 
         private readonly object _locker = new object();
 
@@ -72,7 +62,7 @@ namespace Sensus.Probes
                 float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
 
                 // 0 (or negligible) data per second:  maximum delay
-                if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
+                if (Math.Abs(maxDataStoresPerSecond) < DataRateCalculator.DATA_RATE_EPSILON)
                 {
                     return TimeSpan.MaxValue;
                 }
@@ -246,18 +236,14 @@ namespace Sensus.Probes
             _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
             _deviceAwake = false;
-            _incomingDataRateCalculator = new DataRateCalculator(100);
-            
-            // store all data to start with. we'll compute a store/drop rate after data have arrived.
-            _samplingModulus = 1;
-            _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
         }
 
         protected sealed override void InternalStart()
         {
             lock (_locker)
             {
-                _incomingDataRateCalculator.Clear();
+                _incomingDataRateCalculator = new DataRateCalculator(100, _maxDataStoresPerSecond);
+                _incomingDataRateCalculator.Start();
 
                 // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
                 if (!Running && _keepDeviceAwake)
@@ -274,6 +260,14 @@ namespace Sensus.Probes
 
         protected abstract void StartListening();
 
+        public sealed override void StoreDatum(Datum datum, CancellationToken? cancellationToken = default(CancellationToken?))
+        {
+            if (_incomingDataRateCalculator.Add(datum))
+            {
+                base.StoreDatum(datum, cancellationToken.GetValueOrDefault());
+            }
+        }
+
         public sealed override void Stop()
         {
             lock (_locker)
@@ -287,80 +281,10 @@ namespace Sensus.Probes
                     SensusServiceHelper.Get().LetDeviceSleep();
                     _deviceAwake = false;
                 }
-
-                _incomingDataRateCalculator.Clear();
             }
         }
 
         protected abstract void StopListening();
-
-        public sealed override void StoreDatum(Datum datum, CancellationToken? cancellationToken = default(CancellationToken?))
-        {
-            bool store = true;
-
-            float maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(-1);
-
-            // 0 (or negligible) data per second:  don't store. if max data per second is not set, the following inequality will 
-            // be false due to the absolute value.
-            if (Math.Abs(maxDataStoresPerSecond) < DATA_RATE_EPSILON)
-            {
-                store = false;
-            }
-            // non-negligible data per second:  check data rate
-            else if (maxDataStoresPerSecond > 0)
-            {
-                _incomingDataRateCalculator.Add(datum);
-
-                // recalculate the sampling modulus after accumulating a full sample size in the data rate calculator
-                if ((_incomingDataRateCalculator.TotalAdded % _incomingDataRateCalculator.SampleSize) == 0)
-                {
-                    double incomingDataPerSecond = _incomingDataRateCalculator.DataPerSecond;
-                    double extraDataPerSecond = incomingDataPerSecond - maxDataStoresPerSecond;
-
-                    // if we're not over the limit then store all samples
-                    if (extraDataPerSecond <= 0)
-                    {
-                        _samplingModulus = 1;
-                        _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
-                    }
-                    // otherwise calculate a modulus that will get as close as possible to the desired rate given the empirical rate
-                    else
-                    {
-                        double samplingModulusMatchRate = extraDataPerSecond / incomingDataPerSecond;
-                        _samplingModulusMatchAction = SamplingModulusMatchAction.Drop;
-
-                        if (samplingModulusMatchRate > 0.5)
-                        {
-                            samplingModulusMatchRate = 1 - samplingModulusMatchRate;
-                            _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
-                        }
-
-                        if (_samplingModulusMatchAction == SamplingModulusMatchAction.Store)
-                        {
-                            // round the (store) modulus down to oversample -- more is better, right?
-                            _samplingModulus = (int)Math.Floor(1 / samplingModulusMatchRate);
-                        }
-                        else
-                        {
-                            // round the (drop) modulus up to oversample -- more is better, right?
-                            _samplingModulus = (int)Math.Ceiling(1 / samplingModulusMatchRate);
-                        }
-                    }
-                }
-
-                bool isModulusMatch = (_incomingDataRateCalculator.TotalAdded % _samplingModulus) == 0;
-
-                if ((_samplingModulusMatchAction == SamplingModulusMatchAction.Store && !isModulusMatch) || (_samplingModulusMatchAction == SamplingModulusMatchAction.Drop && isModulusMatch))
-                {
-                    store = false;
-                }
-            }
-
-            if (store)
-            {
-                base.StoreDatum(datum, cancellationToken.GetValueOrDefault());
-            }
-        }
 
         public override void Reset()
         {
