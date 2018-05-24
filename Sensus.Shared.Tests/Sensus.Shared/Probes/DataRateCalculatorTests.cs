@@ -158,7 +158,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
                 }
             });
 
-            Assert.LessOrEqual(Math.Abs(samplingRateCalculator.DataPerSecond.Value - nominalSamplingDataRatePerSecond), 1);
+            Assert.LessOrEqual(Math.Abs(samplingRateCalculator.GetDataPerSecond().Value - nominalSamplingDataRatePerSecond), 1);
         }
 
         private void WriteData(long sampleSize, double dataPerSecond, TimeSpan duration, double? maxSamplesToKeepPerSecond, Action<Datum, double, DataRateCalculator.SamplingAction> calculatedDataRateKeepCallback)
@@ -175,7 +175,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
                 AccelerometerDatum datum = new AccelerometerDatum(simulatedCurrentTime, 1, 1, 1);
                 DataRateCalculator.SamplingAction samplingAction = dataRateCalculator.Add(datum);
 
-                double? calculatedDataPerSecond = dataRateCalculator.DataPerSecond;
+                double? calculatedDataPerSecond = dataRateCalculator.GetDataPerSecond();
 
                 if (i < sampleSize - 1)
                 {

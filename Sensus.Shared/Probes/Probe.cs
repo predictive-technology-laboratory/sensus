@@ -71,6 +71,7 @@ namespace Sensus.Probes
         private List<DateTime> _successfulHealthTestTimes;
         private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
+        private DataRateCalculator _rawRateCalculator;
         private DataRateCalculator _storageRateCalculator;
         private DataRateCalculator _uiUpdateRateCalculator;
 
@@ -274,8 +275,11 @@ namespace Sensus.Probes
 
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
-            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
-            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
+
+            // data rate calculators
+            _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);  // track/limit the raw data rate
+            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);                      // track the storage rate
+            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);                  // track/limit the UI update rate
         }
 
         /// <summary>
@@ -384,6 +388,7 @@ namespace Sensus.Probes
                         _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                     }
 
+                    _rawRateCalculator.Start();
                     _storageRateCalculator.Start();
                     _uiUpdateRateCalculator.Start();
                 }
@@ -397,10 +402,14 @@ namespace Sensus.Probes
         /// <param name="cancellationToken">Cancellation token.</param>
         public void StoreDatum(Datum datum, CancellationToken? cancellationToken = null)
         {
-            if (_storageRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Drop)
+            // track/limit the raw rate
+            if (_rawRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Drop)
             {
                 return;
             }
+
+            // track the storage rate
+            _storageRateCalculator.Add(datum);
 
             // set properties that we were unable to set within the datum constructor. datum is allowed to 
             // be null, indicating the the probe attempted to obtain data but it didn't find any (in the 
@@ -525,17 +534,28 @@ namespace Sensus.Probes
                 restart = true;
             }
 
+            double? rawDataPerSecond = _rawRateCalculator.GetDataPerSecond();
+            double? storedDataPerSecond = _storageRateCalculator.GetDataPerSecond();
+            double? percentageNominalStoreRate = null;
+            if(storedDataPerSecond.HasValue &&
+               MaxDataStoresPerSecond.HasValue)
+            {
+                percentageNominalStoreRate = storedDataPerSecond.Value / MaxDataStoresPerSecond.Value;
+            }                                                        
+
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Running", _running.ToString() }
+                { "Running", _running.ToString() },
+                { "Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)) }
             };
 
             Analytics.TrackEvent(eventName, properties);
 
-            // we don't have a great way of tracking the data rate, as it's a continuous value and event tracking is string-based. so,
-            // just add the sampling rate to the properties after event tracking. this way it will still be included in the status
-            properties.Add("Storage Rate", Convert.ToString(_storageRateCalculator.DataPerSecond.HasValue ? Math.Round(_storageRateCalculator.DataPerSecond.Value, 2) : default(double?)));
+            // we don't have a great way of tracking data rates, as they are continuous values and event tracking is string-based. so,
+            // just add the rates to the properties after event tracking. this way it will still be included in the status.
+            properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
+            properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
 
             events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 

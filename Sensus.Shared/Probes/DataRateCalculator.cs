@@ -40,20 +40,16 @@ namespace Sensus.Probes
 
         public const float DATA_RATE_EPSILON = 0.00000001f;
 
-        private readonly long _sampleSize;
-        private double? _maxSamplesToKeepPerSecond;
+        private long _sampleSize;
+        private readonly long _originalSampleSize;
+        private readonly double? _maxSamplesToKeepPerSecond;
         private DateTimeOffset? _startTimestamp;
         private long _dataCount;
         private double? _dataPerSecond;
-        private int _samplingModulus;
+        private long _samplingModulus;
         private SamplingAction _samplingModulusMatchAction;
 
         private readonly object _locker = new object();
-
-        public double? DataPerSecond
-        {
-            get { return _dataPerSecond; }
-        }
 
         public DataRateCalculator(long sampleSize, double? maxSamplesToKeepPerSecond = null)
         {
@@ -62,7 +58,7 @@ namespace Sensus.Probes
                 throw new ArgumentOutOfRangeException(nameof(sampleSize), sampleSize, "Must be greater than 1.");
             }
 
-            _sampleSize = sampleSize;
+            _sampleSize = _originalSampleSize = sampleSize;
             _maxSamplesToKeepPerSecond = maxSamplesToKeepPerSecond;
         }
 
@@ -76,6 +72,7 @@ namespace Sensus.Probes
             {
                 _startTimestamp = startTimestamp ?? DateTimeOffset.UtcNow;
 
+                _sampleSize = _originalSampleSize;
                 _dataCount = 0;
                 _dataPerSecond = null;
 
@@ -89,7 +86,7 @@ namespace Sensus.Probes
         /// Add the specified datum to the data rate calculation. You must call <see cref="Start"/> before calling this method.
         /// </summary>
         /// <returns><see cref="SamplingAction"/> indicating whether the <see cref="Datum"/> should be kept (<see cref="SamplingAction.Keep"/>)
-        /// or dropped (<see cref="SamplingAction.Drop"/>) to meet the <see cref="_maxSamplesToKeepPerSecond"/> requirement.
+        /// or dropped (<see cref="SamplingAction.Drop"/>) to meet the <see cref="_maxSamplesToKeepPerSecond"/> requirement.</returns>
         /// <param name="datum">Datum to add.</param>
         public SamplingAction Add(Datum datum)
         {
@@ -106,11 +103,11 @@ namespace Sensus.Probes
                 {
                     _dataCount++;
 
-                    double maxDataStoresPerSecond = _maxSamplesToKeepPerSecond.GetValueOrDefault(double.MaxValue);
-                                           
+                    double maxSamplesToKeepPerSecond = _maxSamplesToKeepPerSecond.GetValueOrDefault(double.MaxValue);
+
                     // check whether the current datum should be kept as part of sampling. if a negligible data
                     // rate has been specified (e.g., 0 or something close to it), then we will never keep it.
-                    if (maxDataStoresPerSecond > DATA_RATE_EPSILON)
+                    if (maxSamplesToKeepPerSecond > DATA_RATE_EPSILON)
                     {
                         bool isModulusMatch = (_dataCount % _samplingModulus) == 0;
                         if ((isModulusMatch && _samplingModulusMatchAction == SamplingAction.Keep) ||
@@ -130,11 +127,11 @@ namespace Sensus.Probes
                         // in theory, the following code should work fine if a data rate of 0. however, the sampling
                         // modulus would then be infinity, and we cannot represent this with an integer. so check for
                         // a data rate of 0 and don't recalculate.
-                        if (maxDataStoresPerSecond > DATA_RATE_EPSILON)
+                        if (maxSamplesToKeepPerSecond > DATA_RATE_EPSILON)
                         {
                             // if no data rate is specified, maxDataStoresPerSecond will be double.MaxValue, making
                             // overage always negative and keeping all data.
-                            double overagePerSecond = _dataPerSecond.Value - maxDataStoresPerSecond;
+                            double overagePerSecond = _dataPerSecond.Value - maxSamplesToKeepPerSecond;
 
                             // if we're not over the limit then keep all samples
                             if (overagePerSecond <= 0)
@@ -171,10 +168,23 @@ namespace Sensus.Probes
                         // start a new sample
                         _dataCount = 0;
                         _startTimestamp = datum.Timestamp;
+
+                        // the sample size must be at least as large as the sampling modulus, in order to hit the modulus
+                        // at some point in the future. if the sampling modulus is smaller than the original, then use 
+                        // the original as requested.
+                        _sampleSize = Math.Max(_originalSampleSize, _samplingModulus);
                     }
                 }
 
                 return samplingAction;
+            }
+        }
+
+        public double? GetDataPerSecond()
+        {
+            lock (_locker)
+            {
+                return _dataPerSecond.HasValue ? _dataPerSecond.Value : default(double?);
             }
         }
     }
