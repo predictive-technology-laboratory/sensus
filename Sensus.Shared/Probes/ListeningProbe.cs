@@ -31,7 +31,6 @@ namespace Sensus.Probes
         private double? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
-        private DataRateCalculator _incomingDataRateCalculator;
 
         private readonly object _locker = new object();
 
@@ -40,7 +39,7 @@ namespace Sensus.Probes
         /// </summary>
         /// <value>Maximum data stores per second.</value>
         [EntryDoubleUiProperty("Max Data / Second:", true, int.MaxValue)]
-        public double? MaxDataStoresPerSecond
+        public override double? MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }
             set
@@ -223,6 +222,8 @@ namespace Sensus.Probes
             }
         }
 
+        protected override long DataRateSampleSize => 10;
+
         public override string CollectionDescription
         {
             get
@@ -242,9 +243,6 @@ namespace Sensus.Probes
         {
             lock (_locker)
             {
-                _incomingDataRateCalculator = new DataRateCalculator(100, _maxDataStoresPerSecond);
-                _incomingDataRateCalculator.Start();
-
                 // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
                 if (!Running && _keepDeviceAwake)
                 {
@@ -259,14 +257,6 @@ namespace Sensus.Probes
         }
 
         protected abstract void StartListening();
-
-        public sealed override void StoreDatum(Datum datum, CancellationToken? cancellationToken = default(CancellationToken?))
-        {
-            if (_incomingDataRateCalculator.Add(datum))
-            {
-                base.StoreDatum(datum, cancellationToken.GetValueOrDefault());
-            }
-        }
 
         public sealed override void Stop()
         {

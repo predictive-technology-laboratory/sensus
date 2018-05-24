@@ -132,6 +132,10 @@ namespace Sensus.Probes
             }
         }
 
+        protected override long DataRateSampleSize => 10;
+
+        public override double? MaxDataStoresPerSecond { get => null; set { } }
+
         public List<DateTime> PollTimes
         {
             get { return _pollTimes; }

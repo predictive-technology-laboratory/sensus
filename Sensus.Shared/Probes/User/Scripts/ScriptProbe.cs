@@ -45,6 +45,10 @@ namespace Sensus.Probes.User.Scripts
             get { return typeof(ScriptDatum); }
         }
 
+        protected override long DataRateSampleSize => 10;
+
+        public override double? MaxDataStoresPerSecond { get => null; set { } }
+
         protected override double RawParticipation
         {
             get

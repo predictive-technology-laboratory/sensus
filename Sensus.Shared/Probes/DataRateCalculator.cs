@@ -22,21 +22,31 @@ namespace Sensus.Probes
     /// </summary>
     public class DataRateCalculator
     {
-        private enum SamplingModulusMatchAction
+        /// <summary>
+        /// Sampling action.
+        /// </summary>
+        public enum SamplingAction
         {
-            Store,
+            /// <summary>
+            /// Sample should be kept.
+            /// </summary>
+            Keep,
+
+            /// <summary>
+            /// Sample should be dropped
+            /// </summary>
             Drop
         }
 
-        public const float DATA_RATE_EPSILON = 0.00000000001f;
+        public const float DATA_RATE_EPSILON = 0.00000001f;
 
         private readonly long _sampleSize;
-        private double? _maxDataStoresPerSecond;
+        private double? _maxSamplesToKeepPerSecond;
         private DateTimeOffset? _startTimestamp;
         private long _dataCount;
         private double? _dataPerSecond;
         private int _samplingModulus;
-        private SamplingModulusMatchAction _samplingModulusMatchAction;
+        private SamplingAction _samplingModulusMatchAction;
 
         private readonly object _locker = new object();
 
@@ -45,17 +55,21 @@ namespace Sensus.Probes
             get { return _dataPerSecond; }
         }
 
-        public DataRateCalculator(long sampleSize, double? maxDataStoresPerSecond = null)
+        public DataRateCalculator(long sampleSize, double? maxSamplesToKeepPerSecond = null)
         {
             if (sampleSize <= 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(sampleSize), sampleSize, "Must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(sampleSize), sampleSize, "Must be greater than 1.");
             }
 
             _sampleSize = sampleSize;
-            _maxDataStoresPerSecond = maxDataStoresPerSecond;
+            _maxSamplesToKeepPerSecond = maxSamplesToKeepPerSecond;
         }
 
+        /// <summary>
+        /// Start the data rate calculation. Must be called prior to calling <see cref="Add"/>.
+        /// </summary>
+        /// <param name="startTimestamp">Start timestamp. If null, the current time will be used.</param>
         public void Start(DateTimeOffset? startTimestamp = null)
         {
             lock (_locker)
@@ -67,11 +81,17 @@ namespace Sensus.Probes
 
                 // store all data to start with. we'll compute a store/drop rate after a data sample has been taken.
                 _samplingModulus = 1;
-                _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
+                _samplingModulusMatchAction = SamplingAction.Keep;
             }
         }
 
-        public bool Add(Datum datum)
+        /// <summary>
+        /// Add the specified datum to the data rate calculation. You must call <see cref="Start"/> before calling this method.
+        /// </summary>
+        /// <returns><see cref="SamplingAction"/> indicating whether the <see cref="Datum"/> should be kept (<see cref="SamplingAction.Keep"/>)
+        /// or dropped (<see cref="SamplingAction.Drop"/>) to meet the <see cref="_maxSamplesToKeepPerSecond"/> requirement.
+        /// <param name="datum">Datum to add.</param>
+        public SamplingAction Add(Datum datum)
         {
             lock (_locker)
             {
@@ -80,52 +100,61 @@ namespace Sensus.Probes
                     throw SensusException.Report("Data rate calculator has not been started.");
                 }
 
-                bool keepDatum = false;
+                SamplingAction samplingAction = SamplingAction.Drop;
 
                 if (datum != null)
                 {
-                    double maxDataStoresPerSecond = _maxDataStoresPerSecond.GetValueOrDefault(float.MaxValue);
+                    _dataCount++;
 
-                    // non-negligible data per second:  check data rate
+                    double maxDataStoresPerSecond = _maxSamplesToKeepPerSecond.GetValueOrDefault(double.MaxValue);
+                                           
+                    // check whether the current datum should be kept as part of sampling. if a negligible data
+                    // rate has been specified (e.g., 0 or something close to it), then we will never keep it.
                     if (maxDataStoresPerSecond > DATA_RATE_EPSILON)
                     {
-                        _dataCount++;
-
-                        // check whether the current datum should be kept as part of sampling
                         bool isModulusMatch = (_dataCount % _samplingModulus) == 0;
-                        if ((_samplingModulusMatchAction == SamplingModulusMatchAction.Store && isModulusMatch) ||
-                            (_samplingModulusMatchAction == SamplingModulusMatchAction.Drop && !isModulusMatch))
+                        if ((isModulusMatch && _samplingModulusMatchAction == SamplingAction.Keep) ||
+                            (!isModulusMatch && _samplingModulusMatchAction == SamplingAction.Drop))
                         {
-                            keepDatum = true;
+                            samplingAction = SamplingAction.Keep;
                         }
+                    }
 
-                        // recalculate data per second and sampling parameters
-                        if (_dataCount == _sampleSize)
+                    // recalculate for each new sample
+                    if (_dataCount >= _sampleSize)
+                    {
+                        // recalculate data per second
+                        _dataPerSecond = _dataCount / (datum.Timestamp - _startTimestamp.Value).TotalSeconds;
+
+                        #region recalculate the sampling modulus/action, but only if we've got a non-negligible data rate.
+                        // in theory, the following code should work fine if a data rate of 0. however, the sampling
+                        // modulus would then be infinity, and we cannot represent this with an integer. so check for
+                        // a data rate of 0 and don't recalculate.
+                        if (maxDataStoresPerSecond > DATA_RATE_EPSILON)
                         {
-                            _dataPerSecond = _dataCount / (datum.Timestamp - _startTimestamp.Value).TotalSeconds;
-
-                            #region recalculate the sampling modulus
+                            // if no data rate is specified, maxDataStoresPerSecond will be double.MaxValue, making
+                            // overage always negative and keeping all data.
                             double overagePerSecond = _dataPerSecond.Value - maxDataStoresPerSecond;
 
-                            // if we're not over the limit then store all samples
+                            // if we're not over the limit then keep all samples
                             if (overagePerSecond <= 0)
                             {
                                 _samplingModulus = 1;
-                                _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
+                                _samplingModulusMatchAction = SamplingAction.Keep;
                             }
                             // otherwise calculate a modulus that will get as close as possible to the desired rate given the empirical rate
                             else
                             {
                                 double samplingModulusMatchRate = overagePerSecond / _dataPerSecond.Value;
-                                _samplingModulusMatchAction = SamplingModulusMatchAction.Drop;
+                                _samplingModulusMatchAction = SamplingAction.Drop;
 
                                 if (samplingModulusMatchRate > 0.5)
                                 {
                                     samplingModulusMatchRate = 1 - samplingModulusMatchRate;
-                                    _samplingModulusMatchAction = SamplingModulusMatchAction.Store;
+                                    _samplingModulusMatchAction = SamplingAction.Keep;
                                 }
 
-                                if (_samplingModulusMatchAction == SamplingModulusMatchAction.Store)
+                                if (_samplingModulusMatchAction == SamplingAction.Keep)
                                 {
                                     // round the (store) modulus down to oversample -- more is better, right?
                                     _samplingModulus = (int)Math.Floor(1 / samplingModulusMatchRate);
@@ -136,16 +165,16 @@ namespace Sensus.Probes
                                     _samplingModulus = (int)Math.Ceiling(1 / samplingModulusMatchRate);
                                 }
                             }
-                            #endregion
-
-                            // start a new sample
-                            _dataCount = 0;
-                            _startTimestamp = datum.Timestamp;
                         }
+                        #endregion
+
+                        // start a new sample
+                        _dataCount = 0;
+                        _startTimestamp = datum.Timestamp;
                     }
                 }
 
-                return keepDatum;
+                return samplingAction;
             }
         }
     }

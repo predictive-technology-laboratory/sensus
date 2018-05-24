@@ -70,6 +70,7 @@ namespace Sensus.Probes
         private List<DateTime> _successfulHealthTestTimes;
         private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
+        private DataRateCalculator _storageRateCalculator;
 
         private readonly object _locker = new object();
 
@@ -166,6 +167,12 @@ namespace Sensus.Probes
 
         [JsonIgnore]
         protected abstract double RawParticipation { get; }
+
+        [JsonIgnore]
+        protected abstract long DataRateSampleSize { get; }
+
+        [JsonIgnore]
+        public abstract double? MaxDataStoresPerSecond { get; set; }
 
         /// <summary>
         /// Gets a list of times at which the probe was started (tuple bool = True) and stopped (tuple bool = False). Only includes 
@@ -265,6 +272,7 @@ namespace Sensus.Probes
 
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
+            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
         }
 
         /// <summary>
@@ -372,6 +380,8 @@ namespace Sensus.Probes
                         _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
                         _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                     }
+
+                    _storageRateCalculator.Start();
                 }
             }
         }
@@ -381,8 +391,13 @@ namespace Sensus.Probes
         /// </summary>
         /// <param name="datum">Datum.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public virtual void StoreDatum(Datum datum, CancellationToken? cancellationToken)
+        public void StoreDatum(Datum datum, CancellationToken? cancellationToken = null)
         {
+            if (_storageRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Drop)
+            {
+                return;
+            }
+
             // set properties that we were unable to set within the datum constructor. datum is allowed to 
             // be null, indicating the the probe attempted to obtain data but it didn't find any (in the 
             // case of polling probes).
