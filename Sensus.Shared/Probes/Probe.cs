@@ -25,6 +25,7 @@ using Sensus.Context;
 using Sensus.Probes.User.MicrosoftBand;
 using Microsoft.AppCenter.Analytics;
 using System.ComponentModel;
+using Sensus.Extensions;
 
 namespace Sensus.Probes
 {
@@ -531,6 +532,10 @@ namespace Sensus.Probes
             };
 
             Analytics.TrackEvent(eventName, properties);
+
+            // we don't have a great way of tracking the data rate, as it's a continuous value and event tracking is string-based. so,
+            // just add the sampling rate to the properties after event tracking. this way it will still be included in the status
+            properties.Add("Storage Rate", Convert.ToString(_storageRateCalculator.DataPerSecond.HasValue ? Math.Round(_storageRateCalculator.DataPerSecond.Value, 2) : default(double?)));
 
             events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 

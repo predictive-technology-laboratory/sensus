@@ -746,10 +746,10 @@ namespace Sensus.DataStores.Local
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Percent Buffer Written", Convert.ToString(_totalDataWritten.RoundedPercentageOf(_totalDataBuffered, 5)) },
-                { "Percent Closed", Convert.ToString(_filesClosed.RoundedPercentageOf(_filesOpened, 5)) },
-                { "Percent Promoted", Convert.ToString(_filesPromoted.RoundedPercentageOf(_filesClosed, 5)) },
-                { "Percent Written", Convert.ToString(_filesWrittenToRemote.RoundedPercentageOf(_filesPromoted, 5)) },
+                { "Percent Buffer Written", Convert.ToString(_totalDataWritten.RoundToWholePercentageOf(_totalDataBuffered, 5)) },
+                { "Percent Closed", Convert.ToString(_filesClosed.RoundToWholePercentageOf(_filesOpened, 5)) },
+                { "Percent Promoted", Convert.ToString(_filesPromoted.RoundToWholePercentageOf(_filesClosed, 5)) },
+                { "Percent Written", Convert.ToString(_filesWrittenToRemote.RoundToWholePercentageOf(_filesPromoted, 5)) },
             };
 
             Analytics.TrackEvent(eventName, properties);
