@@ -71,6 +71,7 @@ namespace Sensus.Probes
         private List<ChartDataPoint> _chartData;
         private int _maxChartDataCount;
         private DataRateCalculator _storageRateCalculator;
+        private DataRateCalculator _uiUpdateRateCalculator;
 
         private readonly object _locker = new object();
 
@@ -273,6 +274,7 @@ namespace Sensus.Probes
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
             _storageRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
+            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
         }
 
         /// <summary>
@@ -382,6 +384,7 @@ namespace Sensus.Probes
                     }
 
                     _storageRateCalculator.Start();
+                    _uiUpdateRateCalculator.Start();
                 }
             }
         }
@@ -414,7 +417,12 @@ namespace Sensus.Probes
 
             // fire events to notify observers of the stored data and associated UI values
             MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
+
+            // don't update the UI too often, as doing so at really high rates causes UI deadlocks.
+            if (_uiUpdateRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Keep)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
+            }
 
             // store non-null data
             if (_storeData && datum != null)
