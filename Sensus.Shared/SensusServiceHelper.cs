@@ -744,14 +744,13 @@ namespace Sensus
 
                 if (runMode == RunMode.Multiple)
                 {
-                    _scriptsToRun.Insert(0, script);
+                    _scriptsToRun.Insert(GetScriptIndex(script), script);
                     modifiedScriptsToRun = true;
                 }
                 else
                 {
                     List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
                     scriptsFromSameRunner.Add(script);
-                    scriptsFromSameRunner.Sort((script1, script2) => script1.Birthdate.CompareTo(script2.Birthdate));
 
                     Script scriptToKeep = null;
                     List<Script> scriptsToRemove = null;
@@ -782,7 +781,7 @@ namespace Sensus
 
                     if (!_scriptsToRun.Contains(scriptToKeep))
                     {
-                        _scriptsToRun.Insert(0, scriptToKeep);
+                        _scriptsToRun.Insert(GetScriptIndex(scriptToKeep), scriptToKeep);
                         modifiedScriptsToRun = true;
                     }
                 }
@@ -1475,6 +1474,33 @@ namespace Sensus
             {
                 IssuePendingSurveysNotificationAsync(null, false);
             }
+        }
+
+        private int GetScriptIndex(Script script)
+        {
+            List<Script> scripts = _scriptsToRun.ToList();
+
+            int index;
+
+            if (scripts.Count == 0)
+            {
+                index = 0;
+            }
+            else if (scripts[scripts.Count - 1].CompareTo(script) <= 0)
+            {
+                index = scripts.Count;
+            }
+            else
+            {
+                index = scripts.BinarySearch(script);
+
+                if (index < 0)
+                {
+                    index = ~index;
+                }
+            }
+
+            return index;
         }
         #endregion
     }

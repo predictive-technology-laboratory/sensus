@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script : INotifyPropertyChanged
+    public class Script : INotifyPropertyChanged, IComparable<Script>
     {
         /// <summary>
         /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
@@ -133,7 +133,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         [JsonIgnore]
-        public string SubCaption
+        private DateTime DisplayDateTime
         {
             get
             {
@@ -144,7 +144,16 @@ namespace Sensus.Probes.User.Scripts
                     displayDateTime = _currentDatum.Timestamp.ToLocalTime().DateTime;
                 }
 
-                return Runner.Probe.Protocol.Name + " - " + displayDateTime;
+                return displayDateTime;
+            }
+        }
+
+        [JsonIgnore]
+        public string SubCaption
+        {
+            get
+            {
+                return Runner.Probe.Protocol.Name + " - " + DisplayDateTime;
             }
         }
 
@@ -188,6 +197,11 @@ namespace Sensus.Probes.User.Scripts
             copy.Runner = Runner;
 
             return copy;
+        }
+
+        public int CompareTo(Script script)
+        {
+            return DisplayDateTime.CompareTo(script.DisplayDateTime);
         }
     }
 }
