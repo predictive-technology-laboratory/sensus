@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script : INotifyPropertyChanged
+    public class Script : INotifyPropertyChanged, IComparable<Script>
     {
         /// <summary>
         /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
@@ -133,7 +133,9 @@ namespace Sensus.Probes.User.Scripts
         }
 
         [JsonIgnore]
-        public string SubCaption
+        //Pulling out the display date time from the sub caption in order
+        // to be able to sort on this localized time.
+        public DateTime DisplayDateTime
         {
             get
             {
@@ -144,7 +146,16 @@ namespace Sensus.Probes.User.Scripts
                     displayDateTime = _currentDatum.Timestamp.ToLocalTime().DateTime;
                 }
 
-                return Runner.Probe.Protocol.Name + " - " + displayDateTime;
+                return displayDateTime;
+            }
+        }
+
+        [JsonIgnore]
+        public string SubCaption
+        {
+            get
+            {
+                return Runner.Probe.Protocol.Name + " - " + DisplayDateTime;
             }
         }
 
@@ -188,6 +199,12 @@ namespace Sensus.Probes.User.Scripts
             copy.Runner = Runner;
 
             return copy;
+        }
+
+        //Compare to using the DisplayDateTime.  This is used in order to determine the sort order for placement
+        public int CompareTo(Script that)
+        {
+            return this.DisplayDateTime.CompareTo(that.DisplayDateTime);
         }
     }
 }

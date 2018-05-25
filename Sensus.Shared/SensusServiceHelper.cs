@@ -744,14 +744,13 @@ namespace Sensus
 
                 if (runMode == RunMode.Multiple)
                 {
-                    _scriptsToRun.Insert(0, script);
+                    _scriptsToRun.Insert(ScriptToAddIndex(script), script);
                     modifiedScriptsToRun = true;
                 }
                 else
                 {
                     List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
                     scriptsFromSameRunner.Add(script);
-                    scriptsFromSameRunner.Sort((script1, script2) => script1.Birthdate.CompareTo(script2.Birthdate));
 
                     Script scriptToKeep = null;
                     List<Script> scriptsToRemove = null;
@@ -782,7 +781,7 @@ namespace Sensus
 
                     if (!_scriptsToRun.Contains(scriptToKeep))
                     {
-                        _scriptsToRun.Insert(0, scriptToKeep);
+                        _scriptsToRun.Insert(ScriptToAddIndex(scriptToKeep), scriptToKeep);
                         modifiedScriptsToRun = true;
                     }
                 }
@@ -1475,6 +1474,35 @@ namespace Sensus
             {
                 IssuePendingSurveysNotificationAsync(null, false);
             }
+        }
+
+        //A quick binary search to determine the index placement in order to insert a new Script.  We are using a binary sort because
+        //the list is always going to be sorted so there is no need to keep sorting after every insertion
+        private int ScriptToAddIndex(Script item)
+        {
+            List<Script> scripts = _scriptsToRun.ToList();
+            int index;
+
+            //The code here is a little different than a strict binary search.  Given that this data set is generally small or will
+            //be inserting into the end of the list, we want to check those conditions first.
+            if (scripts.Count == 0) //check to see if the list is empty.  If it is, we know we should be just inserting into the start of the list
+            {
+                index = 0;
+            }
+            // check to see if the last item of the list is smaller than the item inserting.  If it is, then we know the item is going to 
+            //go at the end of the list.
+            else if (scripts[scripts.Count - 1].CompareTo(item) <= 0) 
+            {
+                index = scripts.Count;
+            }
+            else //If those 2 conditions are not met, then we are inserting somewhere else in the list and need to perform the binary search.
+            {
+                index = scripts.BinarySearch(item);
+                if (index < 0)
+                    index = ~index;
+            }
+
+            return index;
         }
         #endregion
     }
