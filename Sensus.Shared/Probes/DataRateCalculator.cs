@@ -117,13 +117,13 @@ namespace Sensus.Probes
                         }
                     }
 
-                    // recalculate for each new sample
+                    // update data per second and sampling parameters for each new sample
                     if (_dataCount >= _sampleSize)
                     {
                         // recalculate data per second
                         _dataPerSecond = _dataCount / (datum.Timestamp - _startTimestamp.Value).TotalSeconds;
 
-                        #region recalculate the sampling modulus/action, but only if we've got a non-negligible data rate.
+                        #region recalculate the sampling modulus/action for the new sampling rate
                         // in theory, the following code should work fine if a data rate of 0. however, the sampling
                         // modulus would then be infinity, and we cannot represent this with an integer. so check for
                         // a data rate of 0 and don't recalculate.
@@ -165,14 +165,14 @@ namespace Sensus.Probes
                         }
                         #endregion
 
-                        // start a new sample
-                        _dataCount = 0;
-                        _startTimestamp = datum.Timestamp;
-
                         // the sample size must be at least as large as the sampling modulus, in order to hit the modulus
                         // at some point in the future. if the sampling modulus is smaller than the original, then use 
                         // the original as requested.
                         _sampleSize = Math.Max(_originalSampleSize, _samplingModulus);
+
+                        // start a new sample
+                        _dataCount = 0;
+                        _startTimestamp = datum.Timestamp;
                     }
                 }
 

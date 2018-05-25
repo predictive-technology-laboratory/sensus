@@ -161,6 +161,14 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             Assert.LessOrEqual(Math.Abs(samplingRateCalculator.GetDataPerSecond().Value - nominalSamplingDataRatePerSecond), 1);
         }
 
+        [Test]
+        public void DropNullDatumTest()
+        {
+            DataRateCalculator samplingRateCalculator = new DataRateCalculator(100);
+            samplingRateCalculator.Start();
+            Assert.AreEqual(samplingRateCalculator.Add(null), DataRateCalculator.SamplingAction.Drop);
+        }
+
         private void WriteData(long sampleSize, double dataPerSecond, TimeSpan duration, double? maxSamplesToKeepPerSecond, Action<Datum, double, DataRateCalculator.SamplingAction> calculatedDataRateKeepCallback)
         {
             DataRateCalculator dataRateCalculator = new DataRateCalculator(sampleSize, maxSamplesToKeepPerSecond);
