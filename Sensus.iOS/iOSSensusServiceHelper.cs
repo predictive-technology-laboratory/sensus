@@ -73,6 +73,16 @@ namespace Sensus.iOS
             }
         }
 
+        public override string DeviceManufacturer
+        {
+            get { return "Apple"; }
+        }
+
+        public override string DeviceModel
+        {
+            get { return Xamarin.iOS.DeviceHardware.Version; }
+        }
+
         public override string OperatingSystem
         {
             get

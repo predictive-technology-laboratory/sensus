@@ -378,6 +378,12 @@ namespace Sensus
         [JsonIgnore]
         public abstract string Version { get; }
 
+        [JsonIgnore]
+        public abstract string DeviceManufacturer { get; }
+
+        [JsonIgnore]
+        public abstract string DeviceModel { get; }
+
         #region iOS GPS listener settings
 
 #if __IOS__

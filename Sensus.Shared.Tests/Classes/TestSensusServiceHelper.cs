@@ -29,6 +29,16 @@ namespace Sensus.Tests.Classes
             }
         }
 
+        public override string DeviceManufacturer
+        {
+            get { return "Testing Manufacturer"; }
+        }
+
+        public override string DeviceModel
+        {
+            get { return "Testing Device"; }
+        }
+
         public override bool IsCharging
         {
             get
