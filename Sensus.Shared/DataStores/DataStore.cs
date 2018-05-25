@@ -26,8 +26,11 @@ namespace Sensus.DataStores
     /// </summary>
     public abstract class DataStore
     {
+        public event EventHandler<string> UpdatedCaptionText;
+
         private bool _running;
         private Protocol _protocol;
+        private string _captionText;
 
         [JsonIgnore]
         public bool Running
@@ -39,6 +42,16 @@ namespace Sensus.DataStores
         {
             get { return _protocol; }
             set { _protocol = value; }
+        }
+
+        public string CaptionText
+        {
+            get { return _captionText; }
+            protected set
+            {
+                _captionText = value;
+                UpdatedCaptionText?.Invoke(this, _captionText);
+            }
         }
 
         [JsonIgnore]

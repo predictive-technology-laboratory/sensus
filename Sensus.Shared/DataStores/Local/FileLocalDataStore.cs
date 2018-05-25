@@ -552,8 +552,14 @@ namespace Sensus.DataStores.Local
                     _writeToRemoteTask = Task.Run(async () =>
                     {
                         // write each promoted file
-                        foreach (string promotedPath in promotedPaths)
+                        for (int i = 0; i < promotedPaths.Length; ++i)
                         {
+#if __IOS__
+                            CaptionText = "Uploading file " + (i + 1) + " of " + promotedPaths.Length + ". Please keep Sensus open...";
+#endif
+
+                            string promotedPath = promotedPaths[i];
+
                             if (cancellationToken.IsCancellationRequested)
                             {
                                 break;
@@ -603,6 +609,8 @@ namespace Sensus.DataStores.Local
                                 SensusServiceHelper.Get().Logger.Log("Failed to write file:  " + ex, LoggingLevel.Normal, GetType());
                             }
                         }
+
+                        CaptionText = null;
 
                     }, cancellationToken);
                 }

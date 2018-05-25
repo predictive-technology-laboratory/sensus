@@ -269,35 +269,19 @@ namespace Sensus.DataStores.Remote
                 write = true;
             }
 
-            bool written = false;
-
             if (write)
             {
                 return Task.Run(async () =>
                 {
-#if __IOS__
-                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
-                    // going to happen and might take some time. if they background the app the write will be canceled if it runs out of background
-                    // time.
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
-#endif
-
                     // instruct the local data store to write its data to the remote data store.
                     await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
                     _mostRecentSuccessfulWriteTime = DateTime.Now;
-                    written = true;
-
-#if __IOS__
-                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Submitted data to the \"" + Protocol.Name + "\" study. Thank you!");
-#endif
-
-                    return written;
+                    return true;
                 });
             }
             else
             {
-                return Task.FromResult(written);
+                return Task.FromResult(false);
             }
         }
 

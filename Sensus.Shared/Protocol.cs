@@ -552,6 +552,11 @@ namespace Sensus
                 {
                     _localDataStore = value;
                     _localDataStore.Protocol = this;
+
+                    _localDataStore.UpdatedCaptionText += (o, status) =>
+                    {
+                        SubCaptionChanged();
+                    };
                 }
             }
         }
@@ -1274,6 +1279,15 @@ namespace Sensus
             get
             {
                 return Name + " (" + (Running ? "Running" : (ScheduledStartCallback == null ? "Stopped" : "Scheduled: " + StartDate.ToShortDateString() + " " + (StartDate.Date + StartTime).ToShortTimeString())) + ")";
+            }
+        }
+
+        [JsonIgnore]
+        public string SubCaption
+        {
+            get
+            {
+                return _localDataStore?.CaptionText;
             }
         }
 
@@ -2073,6 +2087,11 @@ namespace Sensus
         private void CaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+        }
+
+        private void SubCaptionChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
         }
     }
 }

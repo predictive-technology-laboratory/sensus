@@ -89,6 +89,7 @@ namespace Sensus.UI
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
+            _protocolsList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Protocol.SubCaption));
             _protocolsList.ItemsSource = SensusServiceHelper.Get()?.RegisteredProtocols;
             _protocolsList.ItemTapped += async (o, e) =>
             {
