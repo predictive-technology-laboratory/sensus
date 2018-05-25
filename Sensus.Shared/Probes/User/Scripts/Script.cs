@@ -133,8 +133,6 @@ namespace Sensus.Probes.User.Scripts
         }
 
         [JsonIgnore]
-        //Pulling out the display date time from the sub caption in order
-        // to be able to sort on this localized time.
         public DateTime DisplayDateTime
         {
             get
@@ -201,10 +199,9 @@ namespace Sensus.Probes.User.Scripts
             return copy;
         }
 
-        //Compare to using the DisplayDateTime.  This is used in order to determine the sort order for placement
-        public int CompareTo(Script that)
+        public int CompareTo(Script script)
         {
-            return this.DisplayDateTime.CompareTo(that.DisplayDateTime);
+            return DisplayDateTime.CompareTo(script.DisplayDateTime);
         }
     }
 }

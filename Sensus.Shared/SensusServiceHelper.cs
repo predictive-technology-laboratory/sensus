@@ -744,7 +744,7 @@ namespace Sensus
 
                 if (runMode == RunMode.Multiple)
                 {
-                    _scriptsToRun.Insert(ScriptToAddIndex(script), script);
+                    _scriptsToRun.Insert(GetScriptIndex(script), script);
                     modifiedScriptsToRun = true;
                 }
                 else
@@ -781,7 +781,7 @@ namespace Sensus
 
                     if (!_scriptsToRun.Contains(scriptToKeep))
                     {
-                        _scriptsToRun.Insert(ScriptToAddIndex(scriptToKeep), scriptToKeep);
+                        _scriptsToRun.Insert(GetScriptIndex(scriptToKeep), scriptToKeep);
                         modifiedScriptsToRun = true;
                     }
                 }
@@ -1476,30 +1476,28 @@ namespace Sensus
             }
         }
 
-        //A quick binary search to determine the index placement in order to insert a new Script.  We are using a binary sort because
-        //the list is always going to be sorted so there is no need to keep sorting after every insertion
-        private int ScriptToAddIndex(Script item)
+        private int GetScriptIndex(Script script)
         {
             List<Script> scripts = _scriptsToRun.ToList();
+
             int index;
 
-            //The code here is a little different than a strict binary search.  Given that this data set is generally small or will
-            //be inserting into the end of the list, we want to check those conditions first.
-            if (scripts.Count == 0) //check to see if the list is empty.  If it is, we know we should be just inserting into the start of the list
+            if (scripts.Count == 0)
             {
                 index = 0;
             }
-            // check to see if the last item of the list is smaller than the item inserting.  If it is, then we know the item is going to 
-            //go at the end of the list.
-            else if (scripts[scripts.Count - 1].CompareTo(item) <= 0) 
+            else if (scripts[scripts.Count - 1].CompareTo(script) <= 0)
             {
                 index = scripts.Count;
             }
-            else //If those 2 conditions are not met, then we are inserting somewhere else in the list and need to perform the binary search.
+            else
             {
-                index = scripts.BinarySearch(item);
+                index = scripts.BinarySearch(script);
+
                 if (index < 0)
+                {
                     index = ~index;
+                }
             }
 
             return index;
