@@ -281,7 +281,7 @@ public string UserNotificationMessage { get; set; }</code></pre>
   
   <a id="Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS*"></a>
   <h4 id="Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS" data-uid="Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS">WriteDelayMS</h4>
-  <div class="markdown level1 summary"><p>How many milliseconds to pause between each writing data.</p>
+  <div class="markdown level1 summary"><p>How many milliseconds to pause between each data write cycle.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -649,7 +649,7 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task WriteLocalDataStoreAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; WriteLocalDataStoreAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -678,7 +678,7 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

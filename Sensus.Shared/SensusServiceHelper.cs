@@ -803,6 +803,12 @@ namespace Sensus
             RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
+        public void ClearScripts()
+        {
+            _scriptsToRun.Clear();
+            IssuePendingSurveysNotificationAsync(null, false);
+        }
+
         /// <summary>
         /// Issues the pending surveys notification.
         /// </summary>

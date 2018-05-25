@@ -98,13 +98,13 @@
   </h3>
   
   
-  <a id="Sensus_Extensions_NumericExtensions_Round_" data-uid="Sensus.Extensions.NumericExtensions.Round*"></a>
-  <h4 id="Sensus_Extensions_NumericExtensions_Round_System_Double_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.Round(System.Double,System.Int32)">Round(Double, Int32)</h4>
+  <a id="Sensus_Extensions_NumericExtensions_RoundToWhole_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWhole*"></a>
+  <h4 id="Sensus_Extensions_NumericExtensions_RoundToWhole_System_Double_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWhole(System.Double,System.Int32)">RoundToWhole(Double, Int32)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int Round(this double value, int round)</code></pre>
+    <pre><code class="lang-csharp hljs">public static int RoundToWhole(this double value, int wholeNumber)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -123,7 +123,7 @@
       </tr>
       <tr>
         <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">round</span></td>
+        <td><span class="parametername">wholeNumber</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -145,13 +145,13 @@
   </table>
   
   
-  <a id="Sensus_Extensions_NumericExtensions_Round_" data-uid="Sensus.Extensions.NumericExtensions.Round*"></a>
-  <h4 id="Sensus_Extensions_NumericExtensions_Round_System_Int32_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.Round(System.Int32,System.Int32)">Round(Int32, Int32)</h4>
+  <a id="Sensus_Extensions_NumericExtensions_RoundToWhole_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWhole*"></a>
+  <h4 id="Sensus_Extensions_NumericExtensions_RoundToWhole_System_Int32_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWhole(System.Int32,System.Int32)">RoundToWhole(Int32, Int32)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static int Round(this int value, int round)</code></pre>
+    <pre><code class="lang-csharp hljs">public static int RoundToWhole(this int value, int wholeNumber)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -170,7 +170,7 @@
       </tr>
       <tr>
         <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">round</span></td>
+        <td><span class="parametername">wholeNumber</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -192,13 +192,65 @@
   </table>
   
   
-  <a id="Sensus_Extensions_NumericExtensions_RoundedPercentageOf_" data-uid="Sensus.Extensions.NumericExtensions.RoundedPercentageOf*"></a>
-  <h4 id="Sensus_Extensions_NumericExtensions_RoundedPercentageOf_System_Int32_System_Int32_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.RoundedPercentageOf(System.Int32,System.Int32,System.Int32)">RoundedPercentageOf(Int32, Int32, Int32)</h4>
+  <a id="Sensus_Extensions_NumericExtensions_RoundToWholePercentageOf_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf*"></a>
+  <h4 id="Sensus_Extensions_NumericExtensions_RoundToWholePercentageOf_System_Double_System_Double_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf(System.Double,System.Double,System.Int32)">RoundToWholePercentageOf(Double, Double, Int32)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Nullable&lt;int&gt; RoundedPercentageOf(this int numerator, int denominator, int round)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Nullable&lt;long&gt; RoundToWholePercentageOf(this double numerator, double denominator, int wholeNumber)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">numerator</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">denominator</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">wholeNumber</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int64</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Extensions_NumericExtensions_RoundToWholePercentageOf_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf*"></a>
+  <h4 id="Sensus_Extensions_NumericExtensions_RoundToWholePercentageOf_System_Int32_System_Int32_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf(System.Int32,System.Int32,System.Int32)">RoundToWholePercentageOf(Int32, Int32, Int32)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Nullable&lt;int&gt; RoundToWholePercentageOf(this int numerator, int denominator, int wholeNumber)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -222,7 +274,7 @@
       </tr>
       <tr>
         <td><span class="xref">System.Int32</span></td>
-        <td><span class="parametername">round</span></td>
+        <td><span class="parametername">wholeNumber</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -238,6 +290,58 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Extensions_NumericExtensions_RoundToWholePercentageOf_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf*"></a>
+  <h4 id="Sensus_Extensions_NumericExtensions_RoundToWholePercentageOf_System_Int64_System_Int64_System_Int32_" data-uid="Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf(System.Int64,System.Int64,System.Int32)">RoundToWholePercentageOf(Int64, Int64, Int32)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Nullable&lt;long&gt; RoundToWholePercentageOf(this long numerator, long denominator, int wholeNumber)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">numerator</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">denominator</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">wholeNumber</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int64</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

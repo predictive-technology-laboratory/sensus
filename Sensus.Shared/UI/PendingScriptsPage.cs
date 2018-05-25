@@ -179,6 +179,14 @@ namespace Sensus.UI
 
             Content = contentGrid;
 
+            ToolbarItems.Add(new ToolbarItem("Clear", null, async () =>
+            {
+                if (await DisplayAlert("Clear surveys?", "This action cannot be undone.", "Clear", "Cancel"))
+                {
+                    SensusServiceHelper.Get().ClearScripts();
+                }
+            }));
+
             // use timer to update available surveys
             System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
 

@@ -81,7 +81,8 @@
   
   <h1 id="Sensus_Probes_DataRateCalculator" data-uid="Sensus.Probes.DataRateCalculator" class="text-break">Class DataRateCalculator
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>A memoryless data rate calculator.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -99,12 +100,12 @@
   
   
   <a id="Sensus_Probes_DataRateCalculator__ctor_" data-uid="Sensus.Probes.DataRateCalculator.#ctor*"></a>
-  <h4 id="Sensus_Probes_DataRateCalculator__ctor_System_Int32_" data-uid="Sensus.Probes.DataRateCalculator.#ctor(System.Int32)">DataRateCalculator(Int32)</h4>
+  <h4 id="Sensus_Probes_DataRateCalculator__ctor_System_Int64_System_Nullable_System_Double__" data-uid="Sensus.Probes.DataRateCalculator.#ctor(System.Int64,System.Nullable{System.Double})">DataRateCalculator(Int64, Nullable&lt;Double&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DataRateCalculator(int sampleSize)</code></pre>
+    <pre><code class="lang-csharp hljs">public DataRateCalculator(long sampleSize, Nullable&lt;double&gt; maxSamplesToKeepPerSecond = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -117,25 +118,29 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><span class="xref">System.Int64</span></td>
         <td><span class="parametername">sampleSize</span></td>
         <td></td>
       </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><span class="parametername">maxSamplesToKeepPerSecond</span></td>
+        <td></td>
+      </tr>
     </tbody>
   </table>
-  <h3 id="properties">Properties
+  <h3 id="fields">Fields
   </h3>
   
   
-  <a id="Sensus_Probes_DataRateCalculator_DataPerSecond_" data-uid="Sensus.Probes.DataRateCalculator.DataPerSecond*"></a>
-  <h4 id="Sensus_Probes_DataRateCalculator_DataPerSecond" data-uid="Sensus.Probes.DataRateCalculator.DataPerSecond">DataPerSecond</h4>
+  <h4 id="Sensus_Probes_DataRateCalculator_DATA_RATE_EPSILON" data-uid="Sensus.Probes.DataRateCalculator.DATA_RATE_EPSILON">DATA_RATE_EPSILON</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double DataPerSecond { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public const float DATA_RATE_EPSILON = 1E-08F</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
@@ -145,57 +150,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_DataRateCalculator_SampleSize_" data-uid="Sensus.Probes.DataRateCalculator.SampleSize*"></a>
-  <h4 id="Sensus_Probes_DataRateCalculator_SampleSize" data-uid="Sensus.Probes.DataRateCalculator.SampleSize">SampleSize</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int SampleSize { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_DataRateCalculator_TotalAdded_" data-uid="Sensus.Probes.DataRateCalculator.TotalAdded*"></a>
-  <h4 id="Sensus_Probes_DataRateCalculator_TotalAdded" data-uid="Sensus.Probes.DataRateCalculator.TotalAdded">TotalAdded</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long TotalAdded { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
+        <td><span class="xref">System.Single</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -206,11 +161,12 @@
   
   <a id="Sensus_Probes_DataRateCalculator_Add_" data-uid="Sensus.Probes.DataRateCalculator.Add*"></a>
   <h4 id="Sensus_Probes_DataRateCalculator_Add_Sensus_Datum_" data-uid="Sensus.Probes.DataRateCalculator.Add(Sensus.Datum)">Add(Datum)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Add the specified datum to the data rate calculation. You must call <a class="xref" href="Sensus.Probes.DataRateCalculator.html#Sensus_Probes_DataRateCalculator_Start_System_Nullable_System_DateTimeOffset__">Start(Nullable&lt;DateTimeOffset&gt;)</a> before calling this method.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Add(Datum datum)</code></pre>
+    <pre><code class="lang-csharp hljs">public DataRateCalculator.SamplingAction Add(Datum datum)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -225,20 +181,82 @@
       <tr>
         <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
         <td><span class="parametername">datum</span></td>
+        <td><p>Datum to add.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.DataRateCalculator.SamplingAction.html">DataRateCalculator.SamplingAction</a></td>
+        <td><p><a class="xref" href="Sensus.Probes.DataRateCalculator.SamplingAction.html">DataRateCalculator.SamplingAction</a> indicating whether the <a class="xref" href="Sensus.Datum.html">Datum</a> should be kept (<a class="xref" href="Sensus.Probes.DataRateCalculator.SamplingAction.html#Sensus_Probes_DataRateCalculator_SamplingAction_Keep">Keep</a>)
+            or dropped (<a class="xref" href="Sensus.Probes.DataRateCalculator.SamplingAction.html#Sensus_Probes_DataRateCalculator_SamplingAction_Drop">Drop</a>) to meet the <span class="xref">Sensus.Probes.DataRateCalculator._maxSamplesToKeepPerSecond</span> requirement.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_DataRateCalculator_GetDataPerSecond_" data-uid="Sensus.Probes.DataRateCalculator.GetDataPerSecond*"></a>
+  <h4 id="Sensus_Probes_DataRateCalculator_GetDataPerSecond" data-uid="Sensus.Probes.DataRateCalculator.GetDataPerSecond">GetDataPerSecond()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;double&gt; GetDataPerSecond()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_Probes_DataRateCalculator_Clear_" data-uid="Sensus.Probes.DataRateCalculator.Clear*"></a>
-  <h4 id="Sensus_Probes_DataRateCalculator_Clear" data-uid="Sensus.Probes.DataRateCalculator.Clear">Clear()</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="Sensus_Probes_DataRateCalculator_Start_" data-uid="Sensus.Probes.DataRateCalculator.Start*"></a>
+  <h4 id="Sensus_Probes_DataRateCalculator_Start_System_Nullable_System_DateTimeOffset__" data-uid="Sensus.Probes.DataRateCalculator.Start(System.Nullable{System.DateTimeOffset})">Start(Nullable&lt;DateTimeOffset&gt;)</h4>
+  <div class="markdown level1 summary"><p>Start the data rate calculation. Must be called prior to calling <a class="xref" href="Sensus.Probes.DataRateCalculator.html#Sensus_Probes_DataRateCalculator_Add_Sensus_Datum_">Add(Datum)</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+    <pre><code class="lang-csharp hljs">public void Start(Nullable&lt;DateTimeOffset&gt; startTimestamp = null)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;</td>
+        <td><span class="parametername">startTimestamp</span></td>
+        <td><p>Start timestamp. If null, the current time will be used.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           

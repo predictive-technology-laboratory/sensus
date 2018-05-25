@@ -1216,18 +1216,38 @@ namespace Sensus
 
         #endregion
 
+        /// <summary>
+        /// Whether or not to allow the user to view data being collected by the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow View Data:", true, 38)]
         public bool AllowViewData { get; set; } = false;
 
+        /// <summary>
+        /// Whether or not to allow the user to manually submit data being collected by the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Submit Data:", true, 39)]
         public bool AllowSubmitData { get; set; } = false;
 
+        /// <summary>
+        /// Whether or not to allow the user to display/scan participation QR codes for the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Participation Scanning:", true, 40)]
         public bool AllowParticipationScanning { get; set; } = false;
 
+        /// <summary>
+        /// Whether or not to allow the user to copy the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Copy:", true, 41)]
         public bool AllowCopy { get; set; } = false;
 
+        /// <summary>
+        /// Whether or not to allow the user to share the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Share:", true, 42)]
         public bool Shareable { get; set; } = false;
 

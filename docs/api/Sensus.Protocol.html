@@ -241,6 +241,118 @@ public string AlertExclusionWindowString { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowCopy_" data-uid="Sensus.Protocol.AllowCopy*"></a>
+  <h4 id="Sensus_Protocol_AllowCopy" data-uid="Sensus.Protocol.AllowCopy">AllowCopy</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to copy the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Copy:&quot;, true, 41)]
+public bool AllowCopy { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AllowParticipationScanning_" data-uid="Sensus.Protocol.AllowParticipationScanning*"></a>
+  <h4 id="Sensus_Protocol_AllowParticipationScanning" data-uid="Sensus.Protocol.AllowParticipationScanning">AllowParticipationScanning</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to display/scan participation QR codes for the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Participation Scanning:&quot;, true, 40)]
+public bool AllowParticipationScanning { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AllowSubmitData_" data-uid="Sensus.Protocol.AllowSubmitData*"></a>
+  <h4 id="Sensus_Protocol_AllowSubmitData" data-uid="Sensus.Protocol.AllowSubmitData">AllowSubmitData</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to manually submit data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Submit Data:&quot;, true, 39)]
+public bool AllowSubmitData { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AllowViewData_" data-uid="Sensus.Protocol.AllowViewData*"></a>
+  <h4 id="Sensus_Protocol_AllowViewData" data-uid="Sensus.Protocol.AllowViewData">AllowViewData</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to view data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow View Data:&quot;, true, 38)]
+public bool AllowViewData { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AsymmetricEncryption_" data-uid="Sensus.Protocol.AsymmetricEncryption*"></a>
   <h4 id="Sensus_Protocol_AsymmetricEncryption" data-uid="Sensus.Protocol.AsymmetricEncryption">AsymmetricEncryption</h4>
   <div class="markdown level1 summary"></div>
@@ -284,16 +396,11 @@ appropriate format using the following steps (on Mac):</p>
 </ul>
 <pre><code>openssl genrsa -des3 -out private.pem 2048
 </code></pre><ul>
-<li>Convert the <code>RSA PRIVATE KEY</code> to a <code>PRIVATE KEY</code>:  </li>
-</ul>
-<pre><code>openssl pkcs8 -topk8 -nocrypt -in private.pem
-</code></pre><ul>
 <li>Extract the <code>PUBLIC KEY</code> for entering into your Sensus <a class="xref" href="Sensus.Protocol.html">Protocol</a>:</li>
 </ul>
 <pre><code>openssl rsa -in private.pem -outform PEM -pubout -out public.pem
 </code></pre><ul>
-<li>Use the <code>PUBLIC KEY</code> (public.pem) as <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>.</li>
-<li>Enable <a class="xref" href="Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Encrypt">Encrypt</a>.</li>
+<li>Use the <code>PUBLIC KEY</code> contained within public.pem as <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>.</li>
 </ul>
 <p>Keep all <code>PRIVATE KEY</code> information safe and secure. Never share it.</p>
 </div>
@@ -754,6 +861,33 @@ public string Name { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_ParticipantId_" data-uid="Sensus.Protocol.ParticipantId*"></a>
+  <h4 id="Sensus_Protocol_ParticipantId" data-uid="Sensus.Protocol.ParticipantId">ParticipantId</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the participant identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ParticipantId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The participant identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_Participation_" data-uid="Sensus.Protocol.Participation*"></a>
   <h4 id="Sensus_Protocol_Participation" data-uid="Sensus.Protocol.Participation">Participation</h4>
   <div class="markdown level1 summary"></div>
@@ -880,6 +1014,35 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Probe.html">Probe</a>&gt;</td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ProtocolStartConfirmationMode_" data-uid="Sensus.Protocol.ProtocolStartConfirmationMode*"></a>
+  <h4 id="Sensus_Protocol_ProtocolStartConfirmationMode" data-uid="Sensus.Protocol.ProtocolStartConfirmationMode">ProtocolStartConfirmationMode</h4>
+  <div class="markdown level1 summary"><p>The user can be asked to confirm starting the <a class="xref" href="Sensus.Protocol.html">Protocol</a> in serveral ways. See <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ProtocolStartConfirmationMode">ProtocolStartConfirmationMode</a>
+for more information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListUiProperty]
+public ProtocolStartConfirmationMode ProtocolStartConfirmationMode { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.ProtocolStartConfirmationMode.html">ProtocolStartConfirmationMode</a></td>
+        <td><p>The protocol start confirmation mode.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1040,12 +1203,12 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_Shareable_" data-uid="Sensus.Protocol.Shareable*"></a>
   <h4 id="Sensus_Protocol_Shareable" data-uid="Sensus.Protocol.Shareable">Shareable</h4>
-  <div class="markdown level1 summary"><p>Whether the user should be permitted to share the <a class="xref" href="Sensus.Protocol.html">Protocol</a> with another device.</p>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to share the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Shareable:&quot;, true, 10)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Share:&quot;, true, 42)]
 public bool Shareable { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1059,7 +1222,7 @@ public bool Shareable { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td><p><code>true</code> if shareable; otherwise, <code>false</code>.</p>
+        <td><p><code>true</code> to allow; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>

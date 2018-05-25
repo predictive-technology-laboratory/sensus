@@ -129,6 +129,9 @@ data unless such state changes occur.</p>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
     </div>
     <div>
@@ -245,6 +248,33 @@ data unless such state changes occur.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_CollectionDescription">Probe.CollectionDescription</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_DataRateSampleSize_" data-uid="Sensus.Probes.ListeningProbe.DataRateSampleSize*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_DataRateSampleSize" data-uid="Sensus.Probes.ListeningProbe.DataRateSampleSize">DataRateSampleSize</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override long DataRateSampleSize { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DataRateSampleSize">Probe.DataRateSampleSize</a></div>
   
   
   <a id="Sensus_Probes_ListeningProbe_DefaultKeepDeviceAwake_" data-uid="Sensus.Probes.ListeningProbe.DefaultKeepDeviceAwake*"></a>
@@ -364,8 +394,8 @@ public bool KeepDeviceAwake { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;Max Data / Second:&quot;, true, 2147483647)]
-public Nullable&lt;float&gt; MaxDataStoresPerSecond { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[EntryDoubleUiProperty(&quot;Max Data / Second:&quot;, true, 2147483647)]
+public override Nullable&lt;double&gt; MaxDataStoresPerSecond { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -377,12 +407,14 @@ public Nullable&lt;float&gt; MaxDataStoresPerSecond { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Single</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
         <td><p>Maximum data stores per second.</p>
 </td>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MaxDataStoresPerSecond">Probe.MaxDataStoresPerSecond</a></div>
   
   
   <a id="Sensus_Probes_ListeningProbe_MinDataStoreDelay_" data-uid="Sensus.Probes.ListeningProbe.MinDataStoreDelay*"></a>
@@ -493,55 +525,6 @@ public Nullable&lt;float&gt; MaxDataStoresPerSecond { get; set; }</code></pre>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected abstract void StopListening()</code></pre>
   </div>
-  
-  
-  <a id="Sensus_Probes_ListeningProbe_StoreDatumAsync_" data-uid="Sensus.Probes.ListeningProbe.StoreDatumAsync*"></a>
-  <h4 id="Sensus_Probes_ListeningProbe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.ListeningProbe.StoreDatumAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override sealed Task&lt;bool&gt; StoreDatumAsync(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken = null)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
-        <td><span class="parametername">datum</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Threading.CancellationToken</span>&gt;</td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class ImpreciseDatum
+    <title>Class DataRateCalculator.SamplingAction
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class ImpreciseDatum
+    <meta name="title" content="Class DataRateCalculator.SamplingAction
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,130 +76,63 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.ImpreciseDatum">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.DataRateCalculator.SamplingAction">
   
   
-  <h1 id="Sensus_ImpreciseDatum" data-uid="Sensus.ImpreciseDatum" class="text-break">Class ImpreciseDatum
+  <h1 id="Sensus_Probes_DataRateCalculator_SamplingAction" data-uid="Sensus.Probes.DataRateCalculator.SamplingAction" class="text-break">Class DataRateCalculator.SamplingAction
   </h1>
-  <div class="markdown level0 summary"><p>Represents a Datum that could be imprecisely measured.</p>
+  <div class="markdown level0 summary"><p>Sampling action.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
-    <div class="level2"><span class="xref">ImpreciseDatum</span></div>
-      <div class="level3"><a class="xref" href="Sensus.Probes.Location.AltitudeDatum.html">AltitudeDatum</a></div>
-      <div class="level3"><a class="xref" href="Sensus.Probes.Location.LocationDatum.html">LocationDatum</a></div>
-      <div class="level3"><a class="xref" href="Sensus.Probes.Movement.SpeedDatum.html">SpeedDatum</a></div>
+    <div class="level0"><span class="xref">System.Enum</span></div>
+    <div class="level1"><span class="xref">DataRateCalculator.SamplingAction</span></div>
   </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_FromJSON_System_String_">Datum.FromJSON(String)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_GetJSON_Sensus_Anonymization_AnonymizedJsonContractResolver_System_Boolean_">Datum.GetJSON(AnonymizedJsonContractResolver, Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_GetHashCode">Datum.GetHashCode()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Equals_System_Object_">Datum.Equals(Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Datum.Id</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_DeviceId">Datum.DeviceId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Datum.Timestamp</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_ProtocolId">Datum.ProtocolId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Anonymized">Datum.Anonymized</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_BuildId">Datum.BuildId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_ParticipantId">Datum.ParticipantId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_DisplayDetail">Datum.DisplayDetail</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_StringPlaceholderValue">Datum.StringPlaceholderValue</a>
-    </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.html">Sensus.Probes</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_ImpreciseDatum_syntax">Syntax</h5>
+  <h5 id="Sensus_Probes_DataRateCalculator_SamplingAction_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class ImpreciseDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class SamplingAction : Enum</code></pre>
   </div>
-  <h3 id="constructors">Constructors
+  <h3 id="fields">Fields
   </h3>
   
   
-  <a id="Sensus_ImpreciseDatum__ctor_" data-uid="Sensus.ImpreciseDatum.#ctor*"></a>
-  <h4 id="Sensus_ImpreciseDatum__ctor" data-uid="Sensus.ImpreciseDatum.#ctor">ImpreciseDatum()</h4>
-  <div class="markdown level1 summary"><p>For JSON deserialization.</p>
+  <h4 id="Sensus_Probes_DataRateCalculator_SamplingAction_Drop" data-uid="Sensus.Probes.DataRateCalculator.SamplingAction.Drop">Drop</h4>
+  <div class="markdown level1 summary"><p>Sample should be dropped</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ImpreciseDatum()</code></pre>
+    <pre><code class="lang-csharp hljs">public const DataRateCalculator.SamplingAction Drop</code></pre>
   </div>
-  
-  
-  <a id="Sensus_ImpreciseDatum__ctor_" data-uid="Sensus.ImpreciseDatum.#ctor*"></a>
-  <h4 id="Sensus_ImpreciseDatum__ctor_System_DateTimeOffset_System_Double_" data-uid="Sensus.ImpreciseDatum.#ctor(System.DateTimeOffset,System.Double)">ImpreciseDatum(DateTimeOffset, Double)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ImpreciseDatum(DateTimeOffset timestamp, double accuracy)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.DateTimeOffset</span></td>
-        <td><span class="parametername">timestamp</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">accuracy</span></td>
+        <td><a class="xref" href="Sensus.Probes.DataRateCalculator.SamplingAction.html">DataRateCalculator.SamplingAction</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h3 id="properties">Properties
-  </h3>
   
   
-  <a id="Sensus_ImpreciseDatum_Accuracy_" data-uid="Sensus.ImpreciseDatum.Accuracy*"></a>
-  <h4 id="Sensus_ImpreciseDatum_Accuracy" data-uid="Sensus.ImpreciseDatum.Accuracy">Accuracy</h4>
-  <div class="markdown level1 summary"><p>Meters +/- that the reading is accurate to.</p>
+  <h4 id="Sensus_Probes_DataRateCalculator_SamplingAction_Keep" data-uid="Sensus.Probes.DataRateCalculator.SamplingAction.Keep">Keep</h4>
+  <div class="markdown level1 summary"><p>Sample should be kept.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double Accuracy { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public const DataRateCalculator.SamplingAction Keep</code></pre>
   </div>
-  <h5 class="propertyValue">Property Value</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
@@ -209,24 +142,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span></td>
+        <td><a class="xref" href="Sensus.Probes.DataRateCalculator.SamplingAction.html">DataRateCalculator.SamplingAction</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h3 id="methods">Methods
-  </h3>
   
   
-  <a id="Sensus_ImpreciseDatum_ToString_" data-uid="Sensus.ImpreciseDatum.ToString*"></a>
-  <h4 id="Sensus_ImpreciseDatum_ToString" data-uid="Sensus.ImpreciseDatum.ToString">ToString()</h4>
+  <h4 id="Sensus_Probes_DataRateCalculator_SamplingAction_value__" data-uid="Sensus.Probes.DataRateCalculator.SamplingAction.value__">value__</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+    <pre><code class="lang-csharp hljs">public int value__</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
@@ -236,13 +166,11 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Int32</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
 </article>
           </div>
           
