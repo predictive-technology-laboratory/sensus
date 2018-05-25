@@ -121,7 +121,7 @@ namespace Sensus.Android.Probes.Movement
                     ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(AwarenessApiClient);
                     global::Android.Locations.Location location = locationResult.Location;
                     DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
-                    await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
+                    StoreDatum(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
 
                     // replace the previous location fence with one around the current location. additions and removals are handled
                     // in the order specified below.

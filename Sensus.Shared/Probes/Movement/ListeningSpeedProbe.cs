@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,10 +73,12 @@ namespace Sensus.Probes.Movement
 
         public ListeningSpeedProbe()
         {
-            _positionChangedHandler = async (o, e) =>
+            _positionChangedHandler = (o, e) =>
             {
                 if (e.Position == null)
+                {
                     return;
+                }
 
                 Datum datum = null;
 
@@ -85,7 +87,9 @@ namespace Sensus.Probes.Movement
                     SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
                     if (_previousPosition == null)
+                    {
                         _previousPosition = e.Position;
+                    }
                     else if (e.Position.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
                     {
                         datum = new SpeedDatum(e.Position.Timestamp, _previousPosition, e.Position);
@@ -94,7 +98,9 @@ namespace Sensus.Probes.Movement
                 }
 
                 if (datum != null)
-                    await StoreDatumAsync(datum);
+                {
+                    StoreDatum(datum);
+                }
             };
         }
 

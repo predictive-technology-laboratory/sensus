@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Extensions\NumericExtensionsTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DatumTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\ScriptTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\DataRateCalculatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\" />

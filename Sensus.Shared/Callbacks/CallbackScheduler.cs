@@ -253,7 +253,7 @@ namespace Sensus.Callbacks
                             string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                             Dictionary<string, string> properties = new Dictionary<string, string>
                             {
-                                { "Callback Latency", latency.TotalMinutes.Round(5) + ":" + callback.Id }
+                                { "Callback Latency", latency.TotalMinutes.RoundToWhole(5) + ":" + callback.Id }
                             };
 
                             Analytics.TrackEvent(eventName, properties);

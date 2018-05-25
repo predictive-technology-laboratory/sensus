@@ -18,7 +18,7 @@ namespace Sensus.Extensions
 {
     public static class NumericExtensions
     {
-        public static int? RoundedPercentageOf(this int numerator, int denominator, int round)
+        public static int? RoundToWholePercentageOf(this int numerator, int denominator, int wholeNumber)
         {
             if (denominator == 0)
             {
@@ -26,18 +26,42 @@ namespace Sensus.Extensions
             }
             else
             {
-                return (100.0 * (numerator / (double)denominator)).Round(round);
+                return (100.0 * (numerator / (double)denominator)).RoundToWhole(wholeNumber);
             }
         }
 
-        public static int Round(this int value, int round)
+        public static long? RoundToWholePercentageOf(this long numerator, long denominator, int wholeNumber)
         {
-            return round * (int)Math.Round(value / (double)round);
+            if (denominator == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return (100.0 * (numerator / (double)denominator)).RoundToWhole(wholeNumber);
+            }
         }
 
-        public static int Round(this double value, int round)
+        public static long? RoundToWholePercentageOf(this double numerator, double denominator, int wholeNumber)
         {
-            return round * (int)Math.Round(value / round);
+            if (Math.Abs(denominator) < 0.000000d)
+            {
+                return null;
+            }
+            else
+            {
+                return (100.0 * (numerator / (double)denominator)).RoundToWhole(wholeNumber);
+            }
+        }
+
+        public static int RoundToWhole(this int value, int wholeNumber)
+        {
+            return wholeNumber * (int)Math.Round(value / (double)wholeNumber);
+        }
+
+        public static int RoundToWhole(this double value, int wholeNumber)
+        {
+            return wholeNumber * (int)Math.Round(value / wholeNumber);
         }
     }
 }

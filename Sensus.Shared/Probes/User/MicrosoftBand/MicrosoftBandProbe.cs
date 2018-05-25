@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -77,12 +77,12 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected virtual void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<ReadingType> args)
         {
-            Task.Run(async () =>
+            Task.Run(() =>
             {
                 try
                 {
                     Datum datum = GetDatumFromReading(args.SensorReading);
-                    await StoreDatumAsync(datum);
+                    StoreDatum(datum);
                 }
                 catch (Exception ex)
                 {

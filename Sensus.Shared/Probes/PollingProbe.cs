@@ -132,6 +132,10 @@ namespace Sensus.Probes
             }
         }
 
+        protected override long DataRateSampleSize => 10;
+
+        public override double? MaxDataStoresPerSecond { get => null; set { } }
+
         public List<DateTime> PollTimes
         {
             get { return _pollTimes; }
@@ -291,7 +295,7 @@ namespace Sensus.Probes
 
                 _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
-                    return Task.Run(async () =>
+                    return Task.Run(() =>
                     {
                         if (Running)
                         {
@@ -325,7 +329,7 @@ namespace Sensus.Probes
 
                                     try
                                     {
-                                        await StoreDatumAsync(datum, cancellationToken);
+                                        StoreDatum(datum, cancellationToken);
                                     }
                                     catch (Exception ex)
                                     {
@@ -415,7 +419,7 @@ namespace Sensus.Probes
                     string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
                     {
-                        { "Polling Latency", (timeElapsedSincePreviousStore.TotalMilliseconds - _pollingSleepDurationMS).Round(1000).ToString() }
+                        { "Polling Latency", (timeElapsedSincePreviousStore.TotalMilliseconds - _pollingSleepDurationMS).RoundToWhole(1000).ToString() }
                     };
 
                     Analytics.TrackEvent(eventName, properties);

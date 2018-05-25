@@ -215,7 +215,7 @@ namespace Sensus.DataStores.Remote
                     string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
                     {
-                        { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).Round(1000).ToString() }
+                        { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).RoundToWhole(1000).ToString() }
                     };
 
                     Analytics.TrackEvent(eventName, properties);

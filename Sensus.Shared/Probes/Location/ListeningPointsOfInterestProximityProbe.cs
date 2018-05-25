@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ namespace Sensus.Probes.Location
         {
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
 
-            _positionChangedHandler = async (o, e) =>
+            _positionChangedHandler = (o, e) =>
             {
                 List<Datum> data = new List<Datum>();
 
@@ -106,12 +106,12 @@ namespace Sensus.Probes.Location
                 {
                     foreach (Datum datum in data)
                     {
-                        await StoreDatumAsync(datum);
+                        StoreDatum(datum);
                     }
                 }
                 else
                 {
-                    await StoreDatumAsync(null);
+                    StoreDatum(null);
                 }
             };
         }
