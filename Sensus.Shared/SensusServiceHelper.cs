@@ -510,7 +510,7 @@ namespace Sensus
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform. we are gradually migrating this functionality into the ISensusContext object.
 
-        protected abstract Task ProtectedFlashNotificationAsync(string message, Action callback);
+        protected abstract Task ProtectedFlashNotificationAsync(string message);
 
         public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
 
@@ -838,14 +838,13 @@ namespace Sensus
         /// </summary>
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
-        /// <param name="callback">Callback.</param>
-        public Task FlashNotificationAsync(string message, Action callback = null)
+        public Task FlashNotificationAsync(string message)
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
             if (_flashNotificationsEnabled)
             {
-                return ProtectedFlashNotificationAsync(message, callback);
+                return ProtectedFlashNotificationAsync(message);
             }
             else
             {

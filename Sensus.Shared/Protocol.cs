@@ -476,7 +476,6 @@ namespace Sensus
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _randomTimeAnchor;
-        private bool _shareable;
         private ConcurrentObservableCollection<PointOfInterest> _pointsOfInterest;
         private string _description;
         private DateTime _startTimestamp;
@@ -647,23 +646,6 @@ namespace Sensus
             set
             {
                 _randomTimeAnchor = value;
-            }
-        }
-
-        /// <summary>
-        /// Whether the user should be permitted to share the <see cref="Protocol"/> with another device.
-        /// </summary>
-        /// <value><c>true</c> if shareable; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Shareable:", true, 10)]
-        public bool Shareable
-        {
-            get
-            {
-                return _shareable;
-            }
-            set
-            {
-                _shareable = value;
             }
         }
 
@@ -1234,6 +1216,21 @@ namespace Sensus
 
         #endregion
 
+        [OnOffUiProperty("Allow View Data:", true, 38)]
+        public bool AllowViewData { get; set; } = false;
+
+        [OnOffUiProperty("Allow Submit Data:", true, 39)]
+        public bool AllowSubmitData { get; set; } = false;
+
+        [OnOffUiProperty("Allow Participation Scanning:", true, 40)]
+        public bool AllowParticipationScanning { get; set; } = false;
+
+        [OnOffUiProperty("Allow Copy:", true, 41)]
+        public bool AllowCopy { get; set; } = false;
+
+        [OnOffUiProperty("Allow Share:", true, 42)]
+        public bool Shareable { get; set; } = false;
+
         [JsonIgnore]
         public bool StartIsScheduled
         {
@@ -1268,7 +1265,6 @@ namespace Sensus
             _running = false;
             _lockPasswordHash = "";
             _jsonAnonymizer = new AnonymizedJsonContractResolver(this);
-            _shareable = false;
             _pointsOfInterest = new ConcurrentObservableCollection<PointOfInterest>();
             _participationHorizonDays = 1;
             _alertExclusionWindows = new List<Window>();

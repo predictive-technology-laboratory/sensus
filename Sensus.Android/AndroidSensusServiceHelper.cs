@@ -40,6 +40,7 @@ using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using Sensus.Android;
 using System.Threading.Tasks;
+using Sensus.Context;
 
 namespace Sensus.Android
 {
@@ -503,19 +504,14 @@ namespace Sensus.Android
 
         #endregion
 
-        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
-                await RunActionUsingMainActivityAsync(mainActivity =>
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    mainActivity.RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
-                        callback?.Invoke();
-                    });
-
-                }, false, false);
+                    Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
+                });
             });
         }
 

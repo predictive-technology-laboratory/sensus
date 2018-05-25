@@ -114,19 +114,40 @@ namespace Sensus.UI
                     actions.Add("Status");
                 }
 
-                actions.Add("View Data");
+                if (selectedProtocol.AllowViewData)
+                {
+                    actions.Add("View Data");
+                }
 
                 if (selectedProtocol.Running)
                 {
-                    actions.Add("Display Participation");
+                    if (selectedProtocol.AllowSubmitData)
+                    {
+                        actions.Add("Submit Data");
+                    }
+
+                    if (selectedProtocol.AllowParticipationScanning)
+                    {
+                        actions.Add("Display Participation");
+                    }
                 }
 
-                if (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)
+                if (selectedProtocol.AllowParticipationScanning && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false))
                 {
                     actions.Add("Scan Participation Barcode");
                 }
 
-                actions.AddRange(new string[] { "Edit", "Copy", "Share" });
+                actions.Add("Edit");
+
+                if(selectedProtocol.AllowCopy)
+                {
+                    actions.Add("Copy");
+                }
+
+                if (selectedProtocol.Shareable)
+                {
+                    actions.Add("Share");
+                }
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
                 if (selectedProtocol.Groupable)
@@ -198,6 +219,24 @@ namespace Sensus.UI
                 else if (selectedAction == "View Data")
                 {
                     await Navigation.PushAsync(new ProbesViewPage(selectedProtocol));
+                }
+                else if (selectedAction == "Submit Data")
+                {
+                    try
+                    {
+                        if (await selectedProtocol.RemoteDataStore?.WriteLocalDataStoreAsync(CancellationToken.None))
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Data submitted.");
+                        }
+                        else
+                        {
+                            throw new Exception("Failed to submit data.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Error:  " + ex.Message);
+                    }
                 }
                 else if (selectedAction == "Display Participation")
                 {
@@ -361,27 +400,15 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Share")
                 {
-                    Action ShareSelectedProtocol = new Action(() =>
+                    // make a deep copy of the selected protocol so we can reset it for sharing. don't reset the id of the protocol to keep
+                    // it in the same study. also do not register the copy since we're just going to send it off.
+                    selectedProtocol.CopyAsync(false, false, async selectedProtocolCopy =>
                     {
-                        // make a deep copy of the selected protocol so we can reset it for sharing. don't reset the id of the protocol to keep
-                        // it in the same study. also do not register the copy since we're just going to send it off.
-                        selectedProtocol.CopyAsync(false, false, async selectedProtocolCopy =>
-                        {
-                            // write protocol to file and share
-                            string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
-                            selectedProtocolCopy.Save(sharePath);
-                            await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
-                        });
+                        // write protocol to file and share
+                        string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
+                        selectedProtocolCopy.Save(sharePath);
+                        await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
                     });
-
-                    if (selectedProtocol.Shareable)
-                    {
-                        ShareSelectedProtocol();
-                    }
-                    else
-                    {
-                        ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
-                    }
                 }
                 else if (selectedAction == "Group")
                 {

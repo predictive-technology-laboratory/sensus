@@ -100,7 +100,7 @@ namespace Sensus.iOS
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
-        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message)
         {
             return Task.Run(() =>
             {
@@ -109,7 +109,6 @@ namespace Sensus.iOS
                     TTGSnackbar snackbar = new TTGSnackbar(message);
                     snackbar.Duration = TimeSpan.FromSeconds(5);
                     snackbar.Show();
-                    callback?.Invoke();
                 });
             });
         }
