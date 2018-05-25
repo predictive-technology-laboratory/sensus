@@ -147,6 +147,9 @@ namespace Sensus.UI
                     actions.Insert(0, "Cancel Scheduled Start");
                 }
 
+                //https://github.com/predictive-technology-laboratory/sensus/issues/453
+
+                actions.Add("Submit Data Now");
                 actions.Add("Delete");
                 #endregion
 
@@ -159,7 +162,12 @@ namespace Sensus.UI
                     _protocolsList.SelectedItem = null;
                 });
 
-                if (selectedAction == "Status")
+
+                if (selectedAction  == "Submit Data Now"){
+                    selectedProtocol.RemoteDataStore?.WriteLocalDataStoreAsync(CancellationToken.None);
+
+                }
+                else  if (selectedAction == "Status")
                 {
                     List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
                     await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
