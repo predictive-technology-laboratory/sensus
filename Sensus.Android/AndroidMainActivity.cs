@@ -202,7 +202,6 @@ namespace Sensus.Android
             if (serviceHelper != null)
             {
                 serviceHelper.Save();
-                serviceHelper.IssuePendingSurveysNotificationAsync(null, true);
             }
         }
 
