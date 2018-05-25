@@ -127,7 +127,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message)
         {
             throw new NotImplementedException();
         }

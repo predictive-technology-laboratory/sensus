@@ -79,7 +79,10 @@ namespace Sensus.DataStores.Local
                             { "Write", "Size Triggered" }
                         });
 
-                        await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken);
+                        if (!await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken))
+                        {
+                            throw new Exception("Failed to write local data store to remote.");
+                        }
                     }
                     catch (Exception ex)
                     {
