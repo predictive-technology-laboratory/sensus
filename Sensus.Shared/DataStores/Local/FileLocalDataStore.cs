@@ -43,7 +43,7 @@ namespace Sensus.DataStores.Local
         /// Threshold on the size of the local storage directory in MB. When this is exceeded, a write to the <see cref="Remote.RemoteDataStore"/> 
         /// will be forced.
         /// </summary>
-        private const double REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 1;
+        private const double REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB = 10;
 
         /// <summary>
         /// Threshold on the size of files within the local storage directory. When this is exceeded, a new file will be started.
@@ -744,6 +744,12 @@ namespace Sensus.DataStores.Local
         {
             bool restart = base.TestHealth(ref events);
 
+            double storageDirectorySizeMB;
+            lock (_locker)
+            {
+                storageDirectorySizeMB = SensusServiceHelper.GetDirectorySizeMB(StorageDirectory);
+            }
+
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
@@ -751,6 +757,7 @@ namespace Sensus.DataStores.Local
                 { "Percent Closed", Convert.ToString(_filesClosed.RoundToWholePercentageOf(_filesOpened, 5)) },
                 { "Percent Promoted", Convert.ToString(_filesPromoted.RoundToWholePercentageOf(_filesClosed, 5)) },
                 { "Percent Written", Convert.ToString(_filesWrittenToRemote.RoundToWholePercentageOf(_filesPromoted, 5)) },
+                { "Size MB", Convert.ToString(Math.Round(storageDirectorySizeMB, 0)) }
             };
 
             Analytics.TrackEvent(eventName, properties);
