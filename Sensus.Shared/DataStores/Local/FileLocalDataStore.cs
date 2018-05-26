@@ -91,9 +91,8 @@ namespace Sensus.DataStores.Local
         private int _bufferSizeBytes;
         private bool _encrypt;
         private Task _writeToRemoteTask;
-        private long _totalDataWritten;
         private long _totalDataBuffered;
-        private long _bytesWrittenToCurrentFile;
+        private long _totalDataWritten;
         private long _dataWrittenToCurrentFile;
         private int _filesOpened;
         private int _filesClosed;
@@ -189,12 +188,6 @@ namespace Sensus.DataStores.Local
         }
 
         [JsonIgnore]
-        public long BytesWrittenToCurrentFile
-        {
-            get { return _bytesWrittenToCurrentFile; }
-        }
-
-        [JsonIgnore]
         public long DataWrittenToCurrentFile
         {
             get { return _dataWrittenToCurrentFile; }
@@ -246,11 +239,6 @@ namespace Sensus.DataStores.Local
             _compressionLevel = CompressionLevel.Optimal;
             _bufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
             _encrypt = false;
-            _totalDataWritten = 0;
-            _totalDataBuffered = 0;
-            _bytesWrittenToCurrentFile = 0;
-            _dataWrittenToCurrentFile = 0;
-            _filesOpened = _filesClosed = _filesPromoted = _filesWrittenToRemote;
         }
 
         public override void Start()
@@ -269,6 +257,14 @@ namespace Sensus.DataStores.Local
                     throw new Exception("Ensure that a valid public key is set on the Protocol.");
                 }
             }
+
+            _totalDataBuffered = 0;
+            _totalDataWritten = 0;
+            _dataWrittenToCurrentFile = 0;
+            _filesOpened = 0;
+            _filesClosed = 0;
+            _filesPromoted = 0;
+            _filesWrittenToRemote = 0;
 
             OpenFile();
         }
@@ -301,7 +297,6 @@ namespace Sensus.DataStores.Local
 
                         // use buffering for compression and runtime performance
                         _file = new BufferedStream(file, _bufferSizeBytes);
-                        _bytesWrittenToCurrentFile = 0;
                         _dataWrittenToCurrentFile = 0;
                         _filesOpened++;
                     }
@@ -398,7 +393,6 @@ namespace Sensus.DataStores.Local
                                                     {
                                                         byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_dataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
                                                         _file.Write(datumJsonBytes, 0, datumJsonBytes.Length);
-                                                        _bytesWrittenToCurrentFile += datumJsonBytes.Length;
                                                         _dataWrittenToCurrentFile++;
                                                         _totalDataWritten++;
                                                         datumWritten = true;
@@ -714,7 +708,6 @@ namespace Sensus.DataStores.Local
             lock (_locker)
             {
                 CloseFile();
-                _bytesWrittenToCurrentFile = 0;
                 _dataWrittenToCurrentFile = 0;
             }
         }
