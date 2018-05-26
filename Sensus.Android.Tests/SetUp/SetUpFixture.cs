@@ -1,5 +1,5 @@
 using Sensus.Context;
-using Sensus.Test.Classes;
+using Sensus.Tests.Classes;
 using Sensus.Android.Concurrent;
 
 namespace Sensus.Android.Tests.SetUp

@@ -457,7 +457,7 @@ namespace Sensus.Probes.User.Scripts
         public void Stop()
         {
             UnscheduleCallbacks();
-            SensusServiceHelper.Get().RemoveScriptRunner(this);
+            SensusServiceHelper.Get().RemoveScriptsForRunner(this);
         }
         #endregion
 
@@ -701,7 +701,7 @@ namespace Sensus.Probes.User.Scripts
                 script.CurrentDatum = currentDatum;
             }
 
-            SensusServiceHelper.Get().AddScriptToRun(script, RunMode);
+            SensusServiceHelper.Get().AddScript(script, RunMode);
         }
         #endregion
     }

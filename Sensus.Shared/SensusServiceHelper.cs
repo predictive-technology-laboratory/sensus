@@ -718,7 +718,7 @@ namespace Sensus
             }
         }
 
-        public void AddScriptToRun(Script script, RunMode runMode)
+        public void AddScript(Script script, RunMode runMode)
         {
             // scripts can be added from several threads, particularly on ios when several script runs can execute concurrently when
             // the user opens the app. execute all additions to the _scriptsToRun collection on the main thread for safety.
@@ -732,9 +732,9 @@ namespace Sensus
                 }
 
                 // shuffle inputs in groups if needed
-                foreach(InputGroup inputGroup in script.InputGroups)
+                foreach (InputGroup inputGroup in script.InputGroups)
                 {
-                    if(inputGroup.ShuffleInputs)
+                    if (inputGroup.ShuffleInputs)
                     {
                         random.Shuffle(inputGroup.Inputs);
                     }
@@ -798,7 +798,7 @@ namespace Sensus
             RemoveScripts(true, script);
         }
 
-        public void RemoveScriptRunner(ScriptRunner runner)
+        public void RemoveScriptsForRunner(ScriptRunner runner)
         {
             RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }

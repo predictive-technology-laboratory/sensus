@@ -133,7 +133,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         [JsonIgnore]
-        private DateTime DisplayDateTime
+        public DateTime DisplayDateTime
         {
             get
             {
