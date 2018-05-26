@@ -181,7 +181,7 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("Clear", null, async () =>
             {
-                if (await DisplayAlert("Clear surveys?", "This action cannot be undone.", "Clear", "Cancel"))
+                if (await DisplayAlert("Clear all surveys?", "This action cannot be undone.", "Clear", "Cancel"))
                 {
                     SensusServiceHelper.Get().ClearScripts();
                 }

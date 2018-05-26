@@ -190,9 +190,9 @@ namespace Sensus.Android.Callbacks
                 }
                 else
                 {
-                    Intent notificationIntent = new Intent(_service, typeof(AndroidSensusService));
+                    Intent notificationIntent = new Intent(_service, typeof(AndroidMainActivity));
                     notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
-                    PendingIntent notificationPendingIntent = PendingIntent.GetService(_service, 0, notificationIntent, PendingIntentFlags.UpdateCurrent);
+                    PendingIntent notificationPendingIntent = PendingIntent.GetActivity(_service, 0, notificationIntent, PendingIntentFlags.OneShot);
 
                     SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
 

@@ -29,6 +29,7 @@ using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
+using Sensus.Callbacks;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -150,7 +151,7 @@ namespace Sensus.Android
 
             // make sure that the service is running and bound any time the activity is resumed. the service is both started
             // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
-            Intent serviceIntent = AndroidSensusService.StartService(this);
+            Intent serviceIntent = AndroidSensusService.StartService(this, false);
             BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
 
             // start new task to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
@@ -296,6 +297,8 @@ namespace Sensus.Android
                     return;
                 }
 
+                DisplayPage displayPage;
+
                 // open page to view protocol if a protocol was passed to us
                 if (intent.Data != null)
                 {
@@ -341,6 +344,10 @@ namespace Sensus.Android
                             new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
                         });
                     }
+                }
+                else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
+                {
+                    SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
                 }
             });
         }
