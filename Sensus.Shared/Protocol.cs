@@ -1229,6 +1229,13 @@ namespace Sensus
         public bool AllowViewData { get; set; } = false;
 
         /// <summary>
+        /// Whether or not to allow the user to view the status of the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow View Status:", true, 38)]
+        public bool AllowViewStatus { get; set; } = false;
+
+        /// <summary>
         /// Whether or not to allow the user to manually submit data being collected by the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>

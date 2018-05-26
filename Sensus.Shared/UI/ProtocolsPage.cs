@@ -110,7 +110,7 @@ namespace Sensus.UI
                     actions.Add("Email Study Manager for Help");
                 }
 
-                if (selectedProtocol.Running)
+                if (selectedProtocol.Running && selectedProtocol.AllowViewStatus)
                 {
                     actions.Add("Status");
                 }
