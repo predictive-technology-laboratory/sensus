@@ -271,6 +271,12 @@ references:
   commentId: F:Sensus.Android.AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
   fullName: Sensus.Android.AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
   nameWithType: AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
+- uid: Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
+  name: FROM_ON_BOOT_KEY
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_FROM_ON_BOOT_KEY
+  commentId: F:Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
+  fullName: Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
+  nameWithType: AndroidSensusService.FROM_ON_BOOT_KEY
 - uid: Sensus.Android.AndroidSensusService.OnBind(Android.Content.Intent)
   name: OnBind(Intent)
   href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_OnBind_Android_Content_Intent_
@@ -331,12 +337,12 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification
   fullName: Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification
   nameWithType: AndroidSensusService.ReissueForegroundServiceNotification
-- uid: Sensus.Android.AndroidSensusService.StartService(Android.Content.Context)
-  name: StartService(Context)
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_StartService_Android_Content_Context_
-  commentId: M:Sensus.Android.AndroidSensusService.StartService(Android.Content.Context)
-  fullName: Sensus.Android.AndroidSensusService.StartService(Android.Content.Context)
-  nameWithType: AndroidSensusService.StartService(Context)
+- uid: Sensus.Android.AndroidSensusService.StartService(Android.Content.Context,System.Boolean)
+  name: StartService(Context, Boolean)
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_StartService_Android_Content_Context_System_Boolean_
+  commentId: M:Sensus.Android.AndroidSensusService.StartService(Android.Content.Context,System.Boolean)
+  fullName: Sensus.Android.AndroidSensusService.StartService(Android.Content.Context, System.Boolean)
+  nameWithType: AndroidSensusService.StartService(Context, Boolean)
 - uid: Sensus.Android.AndroidSensusService.StartService*
   name: StartService
   href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_StartService_
@@ -541,6 +547,30 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.DeviceId
   fullName: Sensus.Android.AndroidSensusServiceHelper.DeviceId
   nameWithType: AndroidSensusServiceHelper.DeviceId
+- uid: Sensus.Android.AndroidSensusServiceHelper.DeviceManufacturer
+  name: DeviceManufacturer
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DeviceManufacturer
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.DeviceManufacturer
+  fullName: Sensus.Android.AndroidSensusServiceHelper.DeviceManufacturer
+  nameWithType: AndroidSensusServiceHelper.DeviceManufacturer
+- uid: Sensus.Android.AndroidSensusServiceHelper.DeviceManufacturer*
+  name: DeviceManufacturer
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DeviceManufacturer_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.DeviceManufacturer
+  fullName: Sensus.Android.AndroidSensusServiceHelper.DeviceManufacturer
+  nameWithType: AndroidSensusServiceHelper.DeviceManufacturer
+- uid: Sensus.Android.AndroidSensusServiceHelper.DeviceModel
+  name: DeviceModel
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DeviceModel
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.DeviceModel
+  fullName: Sensus.Android.AndroidSensusServiceHelper.DeviceModel
+  nameWithType: AndroidSensusServiceHelper.DeviceModel
+- uid: Sensus.Android.AndroidSensusServiceHelper.DeviceModel*
+  name: DeviceModel
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DeviceModel_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.DeviceModel
+  fullName: Sensus.Android.AndroidSensusServiceHelper.DeviceModel
+  nameWithType: AndroidSensusServiceHelper.DeviceModel
 - uid: Sensus.Android.AndroidSensusServiceHelper.DisableBluetooth(System.Boolean,System.Boolean,System.String)
   name: DisableBluetooth(Boolean, Boolean, String)
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DisableBluetooth_System_Boolean_System_Boolean_System_String_
@@ -20948,6 +20978,18 @@ references:
   commentId: Overload:Sensus.DataStores.DataStore.#ctor
   fullName: Sensus.DataStores.DataStore.DataStore
   nameWithType: DataStore.DataStore
+- uid: Sensus.DataStores.DataStore.CaptionText
+  name: CaptionText
+  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CaptionText
+  commentId: P:Sensus.DataStores.DataStore.CaptionText
+  fullName: Sensus.DataStores.DataStore.CaptionText
+  nameWithType: DataStore.CaptionText
+- uid: Sensus.DataStores.DataStore.CaptionText*
+  name: CaptionText
+  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CaptionText_
+  commentId: Overload:Sensus.DataStores.DataStore.CaptionText
+  fullName: Sensus.DataStores.DataStore.CaptionText
+  nameWithType: DataStore.CaptionText
 - uid: Sensus.DataStores.DataStore.Copy
   name: Copy()
   href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy
@@ -21059,6 +21101,12 @@ references:
   commentId: Overload:Sensus.DataStores.DataStore.TestHealth
   fullName: Sensus.DataStores.DataStore.TestHealth
   nameWithType: DataStore.TestHealth
+- uid: Sensus.DataStores.DataStore.UpdatedCaptionText
+  name: UpdatedCaptionText
+  href: api/Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_UpdatedCaptionText
+  commentId: E:Sensus.DataStores.DataStore.UpdatedCaptionText
+  fullName: Sensus.DataStores.DataStore.UpdatedCaptionText
+  nameWithType: DataStore.UpdatedCaptionText
 - uid: Sensus.DataStores.IClearableDataStore
   name: IClearableDataStore
   href: api/Sensus.DataStores.IClearableDataStore.html
@@ -21989,6 +22037,30 @@ references:
   commentId: Overload:Sensus.Datum.DeviceId
   fullName: Sensus.Datum.DeviceId
   nameWithType: Datum.DeviceId
+- uid: Sensus.Datum.DeviceManufacturer
+  name: DeviceManufacturer
+  href: api/Sensus.Datum.html#Sensus_Datum_DeviceManufacturer
+  commentId: P:Sensus.Datum.DeviceManufacturer
+  fullName: Sensus.Datum.DeviceManufacturer
+  nameWithType: Datum.DeviceManufacturer
+- uid: Sensus.Datum.DeviceManufacturer*
+  name: DeviceManufacturer
+  href: api/Sensus.Datum.html#Sensus_Datum_DeviceManufacturer_
+  commentId: Overload:Sensus.Datum.DeviceManufacturer
+  fullName: Sensus.Datum.DeviceManufacturer
+  nameWithType: Datum.DeviceManufacturer
+- uid: Sensus.Datum.DeviceModel
+  name: DeviceModel
+  href: api/Sensus.Datum.html#Sensus_Datum_DeviceModel
+  commentId: P:Sensus.Datum.DeviceModel
+  fullName: Sensus.Datum.DeviceModel
+  nameWithType: Datum.DeviceModel
+- uid: Sensus.Datum.DeviceModel*
+  name: DeviceModel
+  href: api/Sensus.Datum.html#Sensus_Datum_DeviceModel_
+  commentId: Overload:Sensus.Datum.DeviceModel
+  fullName: Sensus.Datum.DeviceModel
+  nameWithType: Datum.DeviceModel
 - uid: Sensus.Datum.DisplayDetail
   name: DisplayDetail
   href: api/Sensus.Datum.html#Sensus_Datum_DisplayDetail
@@ -22061,6 +22133,18 @@ references:
   commentId: Overload:Sensus.Datum.Id
   fullName: Sensus.Datum.Id
   nameWithType: Datum.Id
+- uid: Sensus.Datum.OperatingSystem
+  name: OperatingSystem
+  href: api/Sensus.Datum.html#Sensus_Datum_OperatingSystem
+  commentId: P:Sensus.Datum.OperatingSystem
+  fullName: Sensus.Datum.OperatingSystem
+  nameWithType: Datum.OperatingSystem
+- uid: Sensus.Datum.OperatingSystem*
+  name: OperatingSystem
+  href: api/Sensus.Datum.html#Sensus_Datum_OperatingSystem_
+  commentId: Overload:Sensus.Datum.OperatingSystem
+  fullName: Sensus.Datum.OperatingSystem
+  nameWithType: Datum.OperatingSystem
 - uid: Sensus.Datum.ParticipantId
   name: ParticipantId
   href: api/Sensus.Datum.html#Sensus_Datum_ParticipantId
@@ -23783,6 +23867,30 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.DeviceId
   fullName: Sensus.iOS.iOSSensusServiceHelper.DeviceId
   nameWithType: iOSSensusServiceHelper.DeviceId
+- uid: Sensus.iOS.iOSSensusServiceHelper.DeviceManufacturer
+  name: DeviceManufacturer
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_DeviceManufacturer
+  commentId: P:Sensus.iOS.iOSSensusServiceHelper.DeviceManufacturer
+  fullName: Sensus.iOS.iOSSensusServiceHelper.DeviceManufacturer
+  nameWithType: iOSSensusServiceHelper.DeviceManufacturer
+- uid: Sensus.iOS.iOSSensusServiceHelper.DeviceManufacturer*
+  name: DeviceManufacturer
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_DeviceManufacturer_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.DeviceManufacturer
+  fullName: Sensus.iOS.iOSSensusServiceHelper.DeviceManufacturer
+  nameWithType: iOSSensusServiceHelper.DeviceManufacturer
+- uid: Sensus.iOS.iOSSensusServiceHelper.DeviceModel
+  name: DeviceModel
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_DeviceModel
+  commentId: P:Sensus.iOS.iOSSensusServiceHelper.DeviceModel
+  fullName: Sensus.iOS.iOSSensusServiceHelper.DeviceModel
+  nameWithType: iOSSensusServiceHelper.DeviceModel
+- uid: Sensus.iOS.iOSSensusServiceHelper.DeviceModel*
+  name: DeviceModel
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_DeviceModel_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.DeviceModel
+  fullName: Sensus.iOS.iOSSensusServiceHelper.DeviceModel
+  nameWithType: iOSSensusServiceHelper.DeviceModel
 - uid: Sensus.iOS.iOSSensusServiceHelper.EnableBluetooth(System.Boolean,System.String)
   name: EnableBluetooth(Boolean, String)
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_EnableBluetooth_System_Boolean_System_String_
@@ -36287,6 +36395,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.Script.Caption
   fullName: Sensus.Probes.User.Scripts.Script.Caption
   nameWithType: Script.Caption
+- uid: Sensus.Probes.User.Scripts.Script.CompareTo(Sensus.Probes.User.Scripts.Script)
+  name: CompareTo(Script)
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_CompareTo_Sensus_Probes_User_Scripts_Script_
+  commentId: M:Sensus.Probes.User.Scripts.Script.CompareTo(Sensus.Probes.User.Scripts.Script)
+  fullName: Sensus.Probes.User.Scripts.Script.CompareTo(Sensus.Probes.User.Scripts.Script)
+  nameWithType: Script.CompareTo(Script)
+- uid: Sensus.Probes.User.Scripts.Script.CompareTo*
+  name: CompareTo
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_CompareTo_
+  commentId: Overload:Sensus.Probes.User.Scripts.Script.CompareTo
+  fullName: Sensus.Probes.User.Scripts.Script.CompareTo
+  nameWithType: Script.CompareTo
 - uid: Sensus.Probes.User.Scripts.Script.Copy(System.Boolean)
   name: Copy(Boolean)
   href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_Copy_System_Boolean_
@@ -36311,6 +36431,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.Script.CurrentDatum
   fullName: Sensus.Probes.User.Scripts.Script.CurrentDatum
   nameWithType: Script.CurrentDatum
+- uid: Sensus.Probes.User.Scripts.Script.DisplayDateTime
+  name: DisplayDateTime
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_DisplayDateTime
+  commentId: P:Sensus.Probes.User.Scripts.Script.DisplayDateTime
+  fullName: Sensus.Probes.User.Scripts.Script.DisplayDateTime
+  nameWithType: Script.DisplayDateTime
+- uid: Sensus.Probes.User.Scripts.Script.DisplayDateTime*
+  name: DisplayDateTime
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_DisplayDateTime_
+  commentId: Overload:Sensus.Probes.User.Scripts.Script.DisplayDateTime
+  fullName: Sensus.Probes.User.Scripts.Script.DisplayDateTime
+  nameWithType: Script.DisplayDateTime
 - uid: Sensus.Probes.User.Scripts.Script.ExpirationDate
   name: ExpirationDate
   href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_ExpirationDate
@@ -37811,6 +37943,18 @@ references:
   commentId: Overload:Sensus.Protocol.AllowViewData
   fullName: Sensus.Protocol.AllowViewData
   nameWithType: Protocol.AllowViewData
+- uid: Sensus.Protocol.AllowViewStatus
+  name: AllowViewStatus
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowViewStatus
+  commentId: P:Sensus.Protocol.AllowViewStatus
+  fullName: Sensus.Protocol.AllowViewStatus
+  nameWithType: Protocol.AllowViewStatus
+- uid: Sensus.Protocol.AllowViewStatus*
+  name: AllowViewStatus
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowViewStatus_
+  commentId: Overload:Sensus.Protocol.AllowViewStatus
+  fullName: Sensus.Protocol.AllowViewStatus
+  nameWithType: Protocol.AllowViewStatus
 - uid: Sensus.Protocol.AsymmetricEncryption
   name: AsymmetricEncryption
   href: api/Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryption
@@ -38537,6 +38681,18 @@ references:
   commentId: Overload:Sensus.Protocol.StorageDirectory
   fullName: Sensus.Protocol.StorageDirectory
   nameWithType: Protocol.StorageDirectory
+- uid: Sensus.Protocol.SubCaption
+  name: SubCaption
+  href: api/Sensus.Protocol.html#Sensus_Protocol_SubCaption
+  commentId: P:Sensus.Protocol.SubCaption
+  fullName: Sensus.Protocol.SubCaption
+  nameWithType: Protocol.SubCaption
+- uid: Sensus.Protocol.SubCaption*
+  name: SubCaption
+  href: api/Sensus.Protocol.html#Sensus_Protocol_SubCaption_
+  commentId: Overload:Sensus.Protocol.SubCaption
+  fullName: Sensus.Protocol.SubCaption
+  nameWithType: Protocol.SubCaption
 - uid: Sensus.Protocol.TestHealthAsync(System.Boolean,System.Threading.CancellationToken)
   name: TestHealthAsync(Boolean, CancellationToken)
   href: api/Sensus.Protocol.html#Sensus_Protocol_TestHealthAsync_System_Boolean_System_Threading_CancellationToken_
@@ -38693,18 +38849,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.AddRunningProtocolId
   fullName: Sensus.SensusServiceHelper.AddRunningProtocolId
   nameWithType: SensusServiceHelper.AddRunningProtocolId
-- uid: Sensus.SensusServiceHelper.AddScriptToRun(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)
-  name: AddScriptToRun(Script, RunMode)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddScriptToRun_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_
-  commentId: M:Sensus.SensusServiceHelper.AddScriptToRun(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)
-  fullName: Sensus.SensusServiceHelper.AddScriptToRun(Sensus.Probes.User.Scripts.Script, Sensus.Probes.User.Scripts.RunMode)
-  nameWithType: SensusServiceHelper.AddScriptToRun(Script, RunMode)
-- uid: Sensus.SensusServiceHelper.AddScriptToRun*
-  name: AddScriptToRun
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddScriptToRun_
-  commentId: Overload:Sensus.SensusServiceHelper.AddScriptToRun
-  fullName: Sensus.SensusServiceHelper.AddScriptToRun
-  nameWithType: SensusServiceHelper.AddScriptToRun
+- uid: Sensus.SensusServiceHelper.AddScript(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)
+  name: AddScript(Script, RunMode)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddScript_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_
+  commentId: M:Sensus.SensusServiceHelper.AddScript(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)
+  fullName: Sensus.SensusServiceHelper.AddScript(Sensus.Probes.User.Scripts.Script, Sensus.Probes.User.Scripts.RunMode)
+  nameWithType: SensusServiceHelper.AddScript(Script, RunMode)
+- uid: Sensus.SensusServiceHelper.AddScript*
+  name: AddScript
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddScript_
+  commentId: Overload:Sensus.SensusServiceHelper.AddScript
+  fullName: Sensus.SensusServiceHelper.AddScript
+  nameWithType: SensusServiceHelper.AddScript
 - uid: Sensus.SensusServiceHelper.APP_CENTER_KEY_ANDROID
   name: APP_CENTER_KEY_ANDROID
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_APP_CENTER_KEY_ANDROID
@@ -38831,6 +38987,30 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.DeviceId
   fullName: Sensus.SensusServiceHelper.DeviceId
   nameWithType: SensusServiceHelper.DeviceId
+- uid: Sensus.SensusServiceHelper.DeviceManufacturer
+  name: DeviceManufacturer
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceManufacturer
+  commentId: P:Sensus.SensusServiceHelper.DeviceManufacturer
+  fullName: Sensus.SensusServiceHelper.DeviceManufacturer
+  nameWithType: SensusServiceHelper.DeviceManufacturer
+- uid: Sensus.SensusServiceHelper.DeviceManufacturer*
+  name: DeviceManufacturer
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceManufacturer_
+  commentId: Overload:Sensus.SensusServiceHelper.DeviceManufacturer
+  fullName: Sensus.SensusServiceHelper.DeviceManufacturer
+  nameWithType: SensusServiceHelper.DeviceManufacturer
+- uid: Sensus.SensusServiceHelper.DeviceModel
+  name: DeviceModel
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceModel
+  commentId: P:Sensus.SensusServiceHelper.DeviceModel
+  fullName: Sensus.SensusServiceHelper.DeviceModel
+  nameWithType: SensusServiceHelper.DeviceModel
+- uid: Sensus.SensusServiceHelper.DeviceModel*
+  name: DeviceModel
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceModel_
+  commentId: Overload:Sensus.SensusServiceHelper.DeviceModel
+  fullName: Sensus.SensusServiceHelper.DeviceModel
+  nameWithType: SensusServiceHelper.DeviceModel
 - uid: Sensus.SensusServiceHelper.DisableBluetooth(System.Boolean,System.Boolean,System.String)
   name: DisableBluetooth(Boolean, Boolean, String)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DisableBluetooth_System_Boolean_System_Boolean_System_String_
@@ -39344,18 +39524,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.RemoveScript
   fullName: Sensus.SensusServiceHelper.RemoveScript
   nameWithType: SensusServiceHelper.RemoveScript
-- uid: Sensus.SensusServiceHelper.RemoveScriptRunner(Sensus.Probes.User.Scripts.ScriptRunner)
-  name: RemoveScriptRunner(ScriptRunner)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptRunner_Sensus_Probes_User_Scripts_ScriptRunner_
-  commentId: M:Sensus.SensusServiceHelper.RemoveScriptRunner(Sensus.Probes.User.Scripts.ScriptRunner)
-  fullName: Sensus.SensusServiceHelper.RemoveScriptRunner(Sensus.Probes.User.Scripts.ScriptRunner)
-  nameWithType: SensusServiceHelper.RemoveScriptRunner(ScriptRunner)
-- uid: Sensus.SensusServiceHelper.RemoveScriptRunner*
-  name: RemoveScriptRunner
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptRunner_
-  commentId: Overload:Sensus.SensusServiceHelper.RemoveScriptRunner
-  fullName: Sensus.SensusServiceHelper.RemoveScriptRunner
-  nameWithType: SensusServiceHelper.RemoveScriptRunner
+- uid: Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)
+  name: RemoveScriptsForRunner(ScriptRunner)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunner_Sensus_Probes_User_Scripts_ScriptRunner_
+  commentId: M:Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)
+  fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)
+  nameWithType: SensusServiceHelper.RemoveScriptsForRunner(ScriptRunner)
+- uid: Sensus.SensusServiceHelper.RemoveScriptsForRunner*
+  name: RemoveScriptsForRunner
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunner_
+  commentId: Overload:Sensus.SensusServiceHelper.RemoveScriptsForRunner
+  fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunner
+  nameWithType: SensusServiceHelper.RemoveScriptsForRunner
 - uid: Sensus.SensusServiceHelper.RunningProtocolIds
   name: RunningProtocolIds
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RunningProtocolIds

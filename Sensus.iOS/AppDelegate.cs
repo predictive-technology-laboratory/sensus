@@ -249,8 +249,6 @@ namespace Sensus.iOS
 
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            serviceHelper.IssuePendingSurveysNotificationAsync(null, true);
-
             // save app state in background
             nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
             {
