@@ -184,8 +184,8 @@ namespace Sensus.Tests.Concurrent
             Task.Delay(DelayTime).Wait();
             test.Add(5);
 
-            Assert.Contains(4, test);
-            Assert.Contains(5, test);
+            Assert.True(test.Contains(4));
+            Assert.True(test.Contains(5));
         }
 
         [Test]
@@ -207,8 +207,8 @@ namespace Sensus.Tests.Concurrent
             Task.Delay(DelayTime).Wait();
             test.Add(5);
 
-            Assert.Contains(4, test);
-            Assert.Contains(5, test);
+            Assert.True(test.Contains(4));
+            Assert.True(test.Contains(5));
         }
 
         [Test]

@@ -2,6 +2,7 @@
 
 using Android.App;
 using Android.OS;
+using Sensus.Android.Tests.SetUp;
 using Xamarin.Android.NUnitLite;
 
 namespace Sensus.Android.Tests
@@ -11,10 +12,13 @@ namespace Sensus.Android.Tests
     {
         protected override void OnCreate(Bundle bundle)
         {
-            // tests can be inside the main assembly
+            SetUpFixture.SetUp();
+
             AddTest(Assembly.GetExecutingAssembly());
-            // or in any reference assemblies
+
             // AddTest (typeof (Your.Library.TestClass).Assembly);
+
+            Intent.PutExtra("automated", true);
 
             // Once you called base.OnCreate(), you cannot add more assemblies.
             base.OnCreate(bundle);

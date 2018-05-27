@@ -25,6 +25,7 @@ using Sensus.Probes.Device;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
+using System.Linq;
 
 namespace Sensus.Tests.DataStores.Local
 {
@@ -41,7 +42,7 @@ namespace Sensus.Tests.DataStores.Local
             byte[] uncompressedBytes1 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
             byte[] uncompressedBytes2 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
 
-            CollectionAssert.AreEqual(uncompressedBytes1, uncompressedBytes2);
+            Assert.True(uncompressedBytes1.SequenceEqual(uncompressedBytes2));
         }
 
         [Test]
@@ -55,7 +56,7 @@ namespace Sensus.Tests.DataStores.Local
             Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
             byte[] decompressedBytes = compressor.Decompress(GetLocalDataStoreBytes(data, CompressionLevel.Fastest));
 
-            CollectionAssert.AreEqual(uncompressedBytes, decompressedBytes);
+            Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
 
         [Test]
@@ -69,7 +70,7 @@ namespace Sensus.Tests.DataStores.Local
             Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
             byte[] decompressedBytes = compressor.Decompress(GetLocalDataStoreBytes(data, CompressionLevel.Optimal));
 
-            CollectionAssert.AreEqual(uncompressedBytes, decompressedBytes);
+            Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
         #endregion
 
@@ -90,7 +91,7 @@ namespace Sensus.Tests.DataStores.Local
                 currentSizeMB = newSizeMB;
             });
 
-            Assert.Greater(currentSizeMB, 0);
+            Assert.True(currentSizeMB > 0);
         }
 
         [Test]
@@ -109,7 +110,7 @@ namespace Sensus.Tests.DataStores.Local
                 currentSizeMB = newSizeMB;
             });
 
-            Assert.Greater(currentSizeMB, 0);
+            Assert.True(currentSizeMB > 0);
         }
 
         [Test]
@@ -128,7 +129,7 @@ namespace Sensus.Tests.DataStores.Local
                 currentSizeMB = newSizeMB;
             });
 
-            Assert.Greater(currentSizeMB, 0);
+            Assert.True(currentSizeMB > 0);
         }
         #endregion
 
@@ -142,7 +143,7 @@ namespace Sensus.Tests.DataStores.Local
             byte[] bytes1 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
             byte[] bytes2 = GetLocalDataStoreBytes(data, CompressionLevel.Fastest).ToArray();
 
-            Assert.Greater(bytes1.Length, bytes2.Length);
+            Assert.True(bytes1.Length > bytes2.Length);
         }
 
         [Test]

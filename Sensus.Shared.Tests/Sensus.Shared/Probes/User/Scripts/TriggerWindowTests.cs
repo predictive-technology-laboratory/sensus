@@ -34,7 +34,7 @@ namespace Sensus.Tests.Probes.User.Scripts
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, null);
 
                 Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
                 Assert.AreEqual(null, nextTriggerTime.Expiration);
             }
         }
@@ -101,7 +101,7 @@ namespace Sensus.Tests.Probes.User.Scripts
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expire);
 
                 Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
                 Assert.AreEqual(reference + nextTriggerTime.ReferenceTillTrigger + expire, nextTriggerTime.Expiration);
             }
         }
@@ -119,7 +119,7 @@ namespace Sensus.Tests.Probes.User.Scripts
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, true, null);
 
                 Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
                 Assert.AreEqual(reference.AddDays(8).AddHours(2), nextTriggerTime.Expiration);
             }
         }
@@ -138,7 +138,7 @@ namespace Sensus.Tests.Probes.User.Scripts
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, expire);
 
                 Assert.GreaterOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8));
-                Assert.LessOrEqual(nextTriggerTime.ReferenceTillTrigger, TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
+                Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
                 Assert.That(nextTriggerTime.Expiration, Is.EqualTo(reference + nextTriggerTime.ReferenceTillTrigger + expire).Within(TimeSpan.FromSeconds(1)));
             }
         }
