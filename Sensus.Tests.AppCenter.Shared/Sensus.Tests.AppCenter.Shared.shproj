@@ -3,6 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{1D5FB22F-8472-400C-95B1-CBDD1DB68358}</ProjectGuid>
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <Description>Code that is shared between the Android and iOS-specific AppCenter testing projects.</Description>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />

@@ -16,11 +16,13 @@
     <AndroidResgenClass>Resource</AndroidResgenClass>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>true</AndroidUseLatestPlatformSdk>
+    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <AndroidManifest>..\Sensus.Android\Properties\AndroidManifest.xml</AndroidManifest>
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+    <Description>Endpoint for the Sensus unit tests. This can be run on physical and virtual Android devices. See
+Sensus.Android.Tests.AppCenter for more on running these tests in the AppCenter cloud.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

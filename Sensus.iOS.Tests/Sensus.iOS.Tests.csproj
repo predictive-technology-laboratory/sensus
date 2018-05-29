@@ -11,6 +11,8 @@
     <AssemblyName>Sensus.iOS.Tests</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <Description>Endpoint for the Sensus unit tests. This can be run on physical and virtual iOS devices. See
+Sensus.iOS.Tests.AppCenter for more on running these tests in the AppCenter cloud.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
