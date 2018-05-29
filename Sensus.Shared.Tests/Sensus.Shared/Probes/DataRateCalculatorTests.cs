@@ -54,7 +54,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 13;
             WriteData(12, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
-                Assert.LessOrEqual(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond), 1);
+                Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
                 Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
@@ -67,7 +67,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 13;
             WriteData(14, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
-                Assert.LessOrEqual(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond), 1);
+                Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
                 Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
@@ -80,7 +80,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 47;
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
-                Assert.LessOrEqual(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond), 1);
+                Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
                 Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
@@ -93,7 +93,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 113;
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
-                Assert.LessOrEqual(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond), 1);
+                Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
                 Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
@@ -106,7 +106,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 192;
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datu, calculatedDataPerSecond, action) =>
             {
-                Assert.LessOrEqual(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond), 1);
+                Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
                 Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
@@ -119,7 +119,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 192;
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), 0, (datum, calculatedDataPerSecond, action) =>
             {
-                Assert.LessOrEqual(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond), 1);
+                Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
                 Assert.AreEqual(action, DataRateCalculator.SamplingAction.Drop);
             });
         }
@@ -158,7 +158,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
                 }
             });
 
-            Assert.LessOrEqual(Math.Abs(samplingRateCalculator.GetDataPerSecond().Value - nominalSamplingDataRatePerSecond), 1);
+            Assert.True(Math.Abs(samplingRateCalculator.GetDataPerSecond().Value - nominalSamplingDataRatePerSecond) <= 1);
         }
 
         [Test]

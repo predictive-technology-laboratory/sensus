@@ -30,7 +30,7 @@ namespace Sensus.Tests
         #endregion
 
         #region SetUp
-        [OneTimeSetUp]
+        [SetUp]
         public void TestFixtureSetUp()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
@@ -213,7 +213,7 @@ namespace Sensus.Tests
 
             for (int i = 1; i < service1.ScriptsToRun.Count; ++i)
             {
-                Assert.GreaterOrEqual(service1.ScriptsToRun.ElementAt(i).DisplayDateTime, service1.ScriptsToRun.ElementAt(i - 1).DisplayDateTime);
+                Assert.True(service1.ScriptsToRun.ElementAt(i).DisplayDateTime >= service1.ScriptsToRun.ElementAt(i - 1).DisplayDateTime);
             }
         }
     }
