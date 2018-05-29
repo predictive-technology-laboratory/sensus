@@ -19,6 +19,7 @@ using Foundation;
 using UIKit;
 using MonoTouch.NUnit.UI;
 using Sensus.iOS.Tests.SetUp;
+using Sensus.Tests.Classes;
 
 namespace Sensus.iOS.Tests
 {
@@ -28,9 +29,39 @@ namespace Sensus.iOS.Tests
     [Register("UnitTestAppDelegate")]
     public partial class UnitTestAppDelegate : UIApplicationDelegate
     {
-        // class-level declarations
-        UIWindow window;
-        TouchRunner runner;
+        private class NonterminatingTouchRunner : TouchRunner
+        {
+            private UIWindow _window;
+            private LogSaver _logSaver;
+
+            public NonterminatingTouchRunner(UIWindow window, LogSaver logSaver)
+                : base(window)
+            {
+                _window = window;
+                _logSaver = logSaver;
+            }
+
+            protected override void TerminateWithSuccess()
+            {
+                _window.BeginInvokeOnMainThread(() =>
+                {
+                    UITextView textView = new UITextView
+                    {
+                        AccessibilityLabel = "sensus-test-log",
+                        Text = _logSaver.Log.ToString().Trim()
+                    };
+
+                    UIScrollView scrollView = new UIScrollView();
+                    scrollView.Add(textView);
+
+                    _window.RootViewController.View = textView;
+                });
+            }
+        }
+
+        private LogSaver _logSaver = new LogSaver();
+        private UIWindow _window;
+        private TouchRunner _runner;
 
         //
         // This method is invoked when the application has loaded and is ready to run. In this 
@@ -41,20 +72,22 @@ namespace Sensus.iOS.Tests
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            Console.SetOut(_logSaver);
             SetUpFixture.SetUp();
 
             // create a new window instance based on the screen size
-            window = new UIWindow(UIScreen.MainScreen.Bounds);
-            runner = new TouchRunner(window);
+            _window = new UIWindow(UIScreen.MainScreen.Bounds);
+            _runner = new NonterminatingTouchRunner(_window, _logSaver);
 
             // register every tests included in the main application/assembly
-            runner.Add(System.Reflection.Assembly.GetExecutingAssembly());
-            runner.AutoStart = true;
+            _runner.Add(System.Reflection.Assembly.GetExecutingAssembly());
+            _runner.AutoStart = true;
+            _runner.TerminateAfterExecution = true;
 
-            window.RootViewController = new UINavigationController(runner.GetViewController());
+            _window.RootViewController = new UINavigationController(_runner.GetViewController());
 
             // make the window visible
-            window.MakeKeyAndVisible();
+            _window.MakeKeyAndVisible();
 
             return true;
         }

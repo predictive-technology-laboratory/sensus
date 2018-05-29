@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\DataRateCalculatorTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\LogSaver.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\" />

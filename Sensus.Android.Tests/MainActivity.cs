@@ -7,6 +7,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
 using Sensus.Android.Tests.SetUp;
+using Sensus.Tests.Classes;
 using Xamarin.Android.NUnitLite;
 
 namespace Sensus.Android.Tests
@@ -14,47 +15,11 @@ namespace Sensus.Android.Tests
     [Activity(Label = "Sensus.Android.Tests", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : TestSuiteActivity
     {
-        private class LogBuilder : TextWriter
-        {
-            public override Encoding Encoding => Encoding.Unicode;
-
-            public StringBuilder Log { get; } = new StringBuilder();
-
-            public override void Write(string value)
-            {
-                base.Write(value);
-
-                lock (Log)
-                {
-                    Log.Append(value);
-                }
-            }
-
-            public override void WriteLine()
-            {
-                base.WriteLine();
-
-                lock(Log)
-                {
-                    Log.AppendLine();
-                }
-            }
-
-            public override void WriteLine(string value)
-            {
-                base.WriteLine(value);
-
-                lock (Log)
-                {
-                    Log.AppendLine(value);
-                }
-            }
-        }
-
-        private LogBuilder _logBuilder = new LogBuilder();
+        private LogSaver _logSaver = new LogSaver();
 
         protected override void OnCreate(Bundle bundle)
         {
+            Console.SetOut(_logSaver);
             SetUpFixture.SetUp();
 
             AddTest(Assembly.GetExecutingAssembly());
@@ -64,9 +29,6 @@ namespace Sensus.Android.Tests
 
             // there is currently an issue where the test runner blocks the UI thread.
             Intent.PutExtra("automated", true);
-
-            // redirect the output to our writer
-            Console.SetOut(_logBuilder);
 
             // Once you called base.OnCreate(), you cannot add more assemblies.
             base.OnCreate(bundle);
@@ -79,7 +41,7 @@ namespace Sensus.Android.Tests
                 TextView logView = new TextView(this)
                 {
                     ContentDescription = "sensus-test-log",
-                    Text = _logBuilder.Log.ToString().Trim()
+                    Text = _logSaver.Log.ToString().Trim()
                 };
 
                 ScrollView logScroll = new ScrollView(this);
