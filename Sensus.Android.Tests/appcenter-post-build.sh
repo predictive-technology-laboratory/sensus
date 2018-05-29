@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # build the UI test project
-msbuild $APPCENTER_SOURCE_DIRECTORY/Sensus.Android.Tests.AppCenter/Sensus.Android.Tests.AppCenter.csproj
+msbuild /p:Configuration=Release $APPCENTER_SOURCE_DIRECTORY/Sensus.Android.Tests.AppCenter/Sensus.Android.Tests.AppCenter.csproj
 
 # log in to the app center
 appcenter login --token $TEST_CLOUD_API_TOKEN
