@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}</ProjectGuid>
+    <ProjectGuid>{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Sensus.Android.Tests.AppCenter</RootNamespace>
-    <AssemblyName>Sensus.Android.Tests.AppCenter</AssemblyName>
+    <RootNamespace>Sensus.iOS.Tests.AppCenter</RootNamespace>
+    <AssemblyName>Sensus.iOS.Tests.AppCenter</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <ReleaseVersion>2.0.0</ReleaseVersion>
   </PropertyGroup>
@@ -15,14 +15,14 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;__ANDROID__</DefineConstants>
+    <DefineConstants>DEBUG;__IOS__</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>__ANDROID__</DefineConstants>
+    <DefineConstants>__IOS__</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -39,9 +39,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sensus.Android.Tests\Sensus.Android.Tests.csproj">
-      <Project>{1F5EE54C-7499-4FFA-A088-B1F36A189167}</Project>
-      <Name>Sensus.Android.Tests</Name>
+    <ProjectReference Include="..\Sensus.iOS.Tests\Sensus.iOS.Tests.csproj">
+      <Project>{CC6093B2-4BA6-49D6-9143-CADCEDEBCA66}</Project>
+      <Name>Sensus.iOS.Tests</Name>
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
       <Private>False</Private>
     </ProjectReference>

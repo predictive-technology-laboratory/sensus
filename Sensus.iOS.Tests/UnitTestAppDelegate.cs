@@ -89,6 +89,10 @@ namespace Sensus.iOS.Tests
             // make the window visible
             _window.MakeKeyAndVisible();
 
+            #if ENABLE_TEST_CLOUD
+            Xamarin.Calabash.Start();
+            #endif           
+
             return true;
         }
     }
