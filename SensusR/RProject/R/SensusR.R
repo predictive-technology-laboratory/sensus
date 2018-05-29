@@ -174,9 +174,9 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     print(paste("Parsing JSON file ", file.num, " of ", num.files, ":  ", path, sep = ""))
 
-    # skip zero-length files
+    # skip zero-length files as well as participation reward files.
     file.size = file.info(path)$size
-    if(file.size == 0)
+    if(file.size == 0 || length(grep('ParticipationRewardDatum', path)) > 0)
     {
       next
     }
@@ -192,7 +192,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     }
     
     # file.json is a list with one entry per column (e.g., for the X coordinates of accelerometer readings). sub-list
-    # the file.json list to include only those columns that are not themselves lists.
+    # the file.json list to include only those columns that are not themselves lists. we column lists in cases like
+    # the survey data, which are currently excluded from this R package.
     file.json = file.json[sapply(file.json, typeof) != "list"]
     
     # add to expected total count of data, which is the length of the Id list entry
