@@ -456,27 +456,27 @@ namespace Sensus.Tests.Probes.User.Scripts
 
             var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
 
-            Assert.GreaterOrEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, 2, 0, 0));
+            Assert.True(triggerTimes[0].Trigger >= reference + new TimeSpan(6, 2, 0, 0));
             Assert.True(triggerTimes[0].Trigger <= reference + new TimeSpan(6, 4, 0, 0));
             Assert.AreEqual(triggerTimes[0].Expiration.Value, reference + new TimeSpan(6, 4, 0, 0));
 
-            Assert.GreaterOrEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, 2, 0, 0));
+            Assert.True(triggerTimes[1].Trigger >= reference + new TimeSpan(13, 2, 0, 0));
             Assert.True(triggerTimes[1].Trigger <= reference + new TimeSpan(13, 4, 0, 0));
             Assert.AreEqual(triggerTimes[1].Expiration.Value, reference + new TimeSpan(13, 4, 0, 0));
 
-            Assert.GreaterOrEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, 2, 0, 0));
+            Assert.True(triggerTimes[2].Trigger >= reference + new TimeSpan(20, 2, 0, 0));
             Assert.True(triggerTimes[2].Trigger <= reference + new TimeSpan(20, 4, 0, 0));
             Assert.AreEqual(triggerTimes[2].Expiration.Value, reference + new TimeSpan(20, 4, 0, 0));
 
-            Assert.GreaterOrEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, 2, 0, 0));
+            Assert.True(triggerTimes[3].Trigger >= reference + new TimeSpan(27, 2, 0, 0));
             Assert.True(triggerTimes[3].Trigger <= reference + new TimeSpan(27, 4, 0, 0));
             Assert.AreEqual(triggerTimes[3].Expiration.Value, reference + new TimeSpan(27, 4, 0, 0));
 
-            Assert.GreaterOrEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, 2, 0, 0));
+            Assert.True(triggerTimes[4].Trigger >= reference + new TimeSpan(34, 2, 0, 0));
             Assert.True(triggerTimes[4].Trigger <= reference + new TimeSpan(34, 4, 0, 0));
             Assert.AreEqual(triggerTimes[4].Expiration.Value, reference + new TimeSpan(34, 4, 0, 0));
 
-            Assert.GreaterOrEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, 2, 0, 0));
+            Assert.True(triggerTimes[5].Trigger >= reference + new TimeSpan(41, 2, 0, 0));
             Assert.True(triggerTimes[5].Trigger <= reference + new TimeSpan(41, 4, 0, 0));
             Assert.AreEqual(triggerTimes[5].Expiration.Value, reference + new TimeSpan(41, 4, 0, 0));
         }

@@ -87,7 +87,7 @@ namespace Sensus.Tests.DataStores.Local
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
-                Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
+                Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
 
@@ -106,7 +106,7 @@ namespace Sensus.Tests.DataStores.Local
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
-                Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
+                Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
 
@@ -125,7 +125,7 @@ namespace Sensus.Tests.DataStores.Local
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
-                Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
+                Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
 
@@ -155,7 +155,7 @@ namespace Sensus.Tests.DataStores.Local
             byte[] bytes1 = GetLocalDataStoreBytes(data, CompressionLevel.Fastest).ToArray();
             byte[] bytes2 = GetLocalDataStoreBytes(data, CompressionLevel.Optimal).ToArray();
 
-            Assert.GreaterOrEqual(bytes1.Length, bytes2.Length);
+            Assert.True(bytes1.Length >= bytes2.Length);
         }
         #endregion
 

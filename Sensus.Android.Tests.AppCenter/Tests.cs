@@ -22,6 +22,7 @@ namespace Sensus.Android.Tests.AppCenter
         {
             string log = app.WaitForElement(c => c.All().Marked("sensus-test-log"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;
             Assert.NotNull(log);
+            Console.Out.WriteLine(log);
 
             string[] logLines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
             string[] resultParts = logLines.Last().Split(',');
