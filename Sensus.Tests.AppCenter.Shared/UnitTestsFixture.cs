@@ -80,7 +80,7 @@ namespace Sensus.Tests.AppCenter.Shared
             int testsSkipped = int.Parse(resultParts[3].Split(':')[1]);
             int testsInconclusive = int.Parse(resultParts[4].Split(':')[1]);
 
-            Assert.True(testsRun >= 145);  // will need to update this as we develop. ensures that tests are actually run.
+            Assert.True(testsRun >= 143);  // will need to update this as we develop. ensures that tests are actually run.
 #endif
             Assert.AreEqual(testsRun, testsPassed);
             Assert.AreEqual(testsFailed, 0);
