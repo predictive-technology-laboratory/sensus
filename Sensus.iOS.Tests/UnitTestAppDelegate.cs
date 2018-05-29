@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Foundation;
 using UIKit;
 using MonoTouch.NUnit.UI;
+using Sensus.iOS.Tests.SetUp;
 
 namespace Sensus.iOS.Tests
 {
@@ -40,12 +41,15 @@ namespace Sensus.iOS.Tests
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            SetUpFixture.SetUp();
+
             // create a new window instance based on the screen size
             window = new UIWindow(UIScreen.MainScreen.Bounds);
             runner = new TouchRunner(window);
 
             // register every tests included in the main application/assembly
             runner.Add(System.Reflection.Assembly.GetExecutingAssembly());
+            runner.AutoStart = true;
 
             window.RootViewController = new UINavigationController(runner.GetViewController());
 
