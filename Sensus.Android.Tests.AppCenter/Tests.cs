@@ -21,7 +21,22 @@ namespace Sensus.Android.Tests.AppCenter
         public void UnitTests()
         {
             string log = app.WaitForElement(c => c.All().Marked("sensus-test-log"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;
-            Console.Out.WriteLine(log);
+            Assert.NotNull(log);
+
+            string[] logLines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            string[] resultParts = logLines.Last().Split(',');
+            Assert.AreEqual(resultParts.Length, 5);
+
+            int testsRun = int.Parse(resultParts[0].Split(':')[1]);
+            int testsPassed = int.Parse(resultParts[1].Split(':')[1]);
+            int testsFailed = int.Parse(resultParts[2].Split(':')[1]);
+            int testsSkipped = int.Parse(resultParts[3].Split(':')[1]);
+            int testsInconclusive = int.Parse(resultParts[4].Split(':')[1]);
+
+            Assert.AreEqual(testsRun, testsPassed);
+            Assert.AreEqual(testsFailed, 0);
+            Assert.AreEqual(testsSkipped, 0);
+            Assert.AreEqual(testsInconclusive, 0);
         }
     }
 }
