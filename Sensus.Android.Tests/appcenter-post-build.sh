@@ -25,4 +25,4 @@ else
 
 fi
 
-appcenter test run uitest --app "uva-predictive-technology-lab/sensus-android" --devices "$devices" --app-path $APPCENTER_OUTPUT_DIRECTORY/*.apk --test-series "master" --locale "en_US" --build-dir "$APPCENTER_SOURCE_DIRECTORY/Sensus.Android.Tests.AppCenter/bin/Release" --async
+appcenter test run uitest --app "uva-predictive-technology-lab/sensus-android" --devices "$devices" --app-path "$APPCENTER_OUTPUT_DIRECTORY/*.apk" --test-series "master" --locale "en_US" --build-dir "$APPCENTER_SOURCE_DIRECTORY/Sensus.Android.Tests.AppCenter/bin/Release" --async
