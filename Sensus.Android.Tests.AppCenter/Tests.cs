@@ -33,6 +33,7 @@ namespace Sensus.Android.Tests.AppCenter
             int testsSkipped = int.Parse(resultParts[3].Split(':')[1]);
             int testsInconclusive = int.Parse(resultParts[4].Split(':')[1]);
 
+            Assert.GreaterOrEqual(testsRun, 145);  // will need to update this as we develop. ensures that tests are actually run.
             Assert.AreEqual(testsRun, testsPassed);
             Assert.AreEqual(testsFailed, 0);
             Assert.AreEqual(testsSkipped, 0);
