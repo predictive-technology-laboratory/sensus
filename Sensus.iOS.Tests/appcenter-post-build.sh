@@ -6,17 +6,16 @@ msbuild /p:Configuration=Debug $APPCENTER_SOURCE_DIRECTORY/Sensus.iOS.Tests.AppC
 # log in to the app center
 appcenter login --token $TEST_CLOUD_API_TOKEN
 
-# submit test
-
-devices=""
+# get devices for test depending on branch
+DEVICES=""
 
 if [ "$APPCENTER_BRANCH" == "develop-ui-test-single-device" ] ; then
     
-    devices="uva-predictive-technology-lab/single-ios-device"
+    DEVICES="uva-predictive-technology-lab/single-ios-device"
 
 elif [ "$APPCENTER_BRANCH" == "develop-ui-test-lmco-devices" ] ; then
 
-    devices="uva-predictive-technology-lab/lmco-ios-test-devices"
+    DEVICES="uva-predictive-technology-lab/lmco-ios-test-devices"
 
 else
 
@@ -25,4 +24,5 @@ else
 
 fi
 
-appcenter test run uitest --app "uva-predictive-technology-lab/sensus-iOS-1" --devices "$devices" --app-path "$APPCENTER_OUTPUT_DIRECTORY/*.ipa" --test-series "master" --locale "en_US" --build-dir "$APPCENTER_SOURCE_DIRECTORY/Sensus.iOS.Tests.AppCenter/bin/Debug" --async
+# submit test -- don't quote the --app-path value in order to use wildcard matching
+appcenter test run uitest --app "uva-predictive-technology-lab/sensus-iOS-1" --devices "$DEVICES" --app-path $APPCENTER_OUTPUT_DIRECTORY/*.ipa --test-series "master" --locale "en_US" --build-dir "$APPCENTER_SOURCE_DIRECTORY/Sensus.iOS.Tests.AppCenter/bin/Debug" --async
