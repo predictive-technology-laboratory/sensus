@@ -1101,7 +1101,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Callbacks.CallbackScheduler.html",
-          "hash": "H7vUofvKVoP6obPOuBPVCw=="
+          "hash": "CpfrkvEiCH42jHgZ3PYm6w=="
         }
       },
       "is_incremental": false,
@@ -1149,7 +1149,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Callbacks.Notifier.html",
-          "hash": "uTPcvlAdWt+UJPbjkvG4cw=="
+          "hash": "w1dJC0lz0qa/cOCG1xudYQ=="
         }
       },
       "is_incremental": false,
@@ -1461,7 +1461,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Dispose.Disposable.html",
-          "hash": "xWl0Gs0Tgj234dZjCtv3gw=="
+          "hash": "dGZ0xH95sgf0cC0h2uvvEw=="
         }
       },
       "is_incremental": false,
@@ -1701,7 +1701,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Apps.FacebookProbe.html",
-          "hash": "FI6SCbHX7CIe1xgVsYSOrw=="
+          "hash": "8S0rzR+I0+qIMzG/nD/YIA=="
         }
       },
       "is_incremental": false,
@@ -1833,7 +1833,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html",
-          "hash": "X9k6QPzWCbV1O2doJbzmJQ=="
+          "hash": "KnR2Y2uPuTdpeREoa5tMDQ=="
         }
       },
       "is_incremental": false,
@@ -1893,7 +1893,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Context.SoundProbe.html",
-          "hash": "8JTOo8tdY/7nIrtWgFjQ1w=="
+          "hash": "hp7UMPUJJ7Zb4Ec4Uc3EIg=="
         }
       },
       "is_incremental": false,
@@ -1929,7 +1929,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.DataRateCalculator.html",
-          "hash": "KivJ9iKGUvlkV47mNb7cuQ=="
+          "hash": "5e8gYL96VhtyBUjLIoHG/w=="
         }
       },
       "is_incremental": false,
@@ -2049,7 +2049,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.CompassProbe.html",
-          "hash": "4RgqzpqlcrlaiZEyG8r0lQ=="
+          "hash": "rtkqbgepBR+6JLhEIEG2lA=="
         }
       },
       "is_incremental": false,
@@ -2085,7 +2085,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.EstimoteBeaconProbe.html",
-          "hash": "ZRdAETrFOZkUYe3XPBigUw=="
+          "hash": "uNEmsH6+OjhWSbyyUQI6fA=="
         }
       },
       "is_incremental": false,
@@ -2265,7 +2265,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Movement.AccelerometerProbe.html",
-          "hash": "ydc2r9CISfVBX7uKgXVbpw=="
+          "hash": "7TS24nBAN2njKJoFR+Viiw=="
         }
       },
       "is_incremental": false,
@@ -2409,7 +2409,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Network.PollingWlanProbe.html",
-          "hash": "P8BdyYF6/xx3L4PWUEbVvA=="
+          "hash": "flQGggJ2k9qZ149pvyfPnA=="
         }
       },
       "is_incremental": false,
@@ -2445,7 +2445,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.PollingProbe.html",
-          "hash": "1jlt8etIrosked0pkJeTaQ=="
+          "hash": "X1Rom/kh/nH/fl1rEFDblg=="
         }
       },
       "is_incremental": false,
@@ -3225,7 +3225,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.SensusServiceHelper.html",
-          "hash": "6P1lE4SaONIyqv+95PPPnA=="
+          "hash": "37ohFSrug1u8ItWNUguRQw=="
         }
       },
       "is_incremental": false,
@@ -4097,6 +4097,570 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.AppDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.AppDelegate.html",
+          "hash": "2tqWBy+QL5KOMxTAtrhWfg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Application.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Application.html",
+          "hash": "mcE4qA3veTYxj1KqJM9DSw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.IiOSCallbackScheduler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.IiOSCallbackScheduler.html",
+          "hash": "nmsXbqazKGc3Ufq/r8E8gQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.IUILocalNotificationNotifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.IUILocalNotificationNotifier.html",
+          "hash": "wFPvvrqaRdzpzvdBS/6u6w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationCallbackScheduler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationCallbackScheduler.html",
+          "hash": "Hg15TuQCnv1SjEh4hURWSA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationNotifier.html",
+          "hash": "OJ/kKd8cqaZR0XKOZIc+pg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UILocalNotifications.html",
+          "hash": "8rrlN2adzu6ch93L1BIb2w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.IUNUserNotificationNotifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.IUNUserNotificationNotifier.html",
+          "hash": "oq7Dzq50R2+nvgRKHHdsBQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationCallbackScheduler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationCallbackScheduler.html",
+          "hash": "xXfAZNOYHc6h8hNjSxic5g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationDelegate.html",
+          "hash": "i6JBzxBguju5ZRXLDafrOQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationNotifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationNotifier.html",
+          "hash": "CckTW25DAq3FdwyXE7QFjQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.UNUserNotifications.html",
+          "hash": "plwMLQSuiFWJNtwQuqRZOw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.iOSCallbackScheduler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html",
+          "hash": "kFY8BKv+xhiuI1BjVty/zQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.iOSNotifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.iOSNotifier.html",
+          "hash": "d7EOzFkUmrG5HJYL4D6DRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Callbacks.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Callbacks.html",
+          "hash": "TEvB+M+T96exAFapH68KYQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Concurrent.MainConcurrent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Concurrent.MainConcurrent.html",
+          "hash": "fVjznMxHkuETLoJdIDx+ZA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Concurrent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Concurrent.html",
+          "hash": "NynDxZEL5tb5SHeTOZKudg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Context.iOSSensusContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Context.iOSSensusContext.html",
+          "hash": "Ctygm1HP87OB2SOyhxuxoQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Context.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Context.html",
+          "hash": "GAJkIKUGOcBqztbXAlWiFg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Network.Probes.iOSPollingWlanProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Network.Probes.iOSPollingWlanProbe.html",
+          "hash": "HxwOFFgO9HzWtRDCH+Lcuw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Network.Probes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Network.Probes.html",
+          "hash": "Te/6jRgDWjted2fCjJ+UYw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.NetworkConnectivity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.NetworkConnectivity.html",
+          "hash": "IQk4SZYWHmFUJKgIjX1j2Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.NetworkStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.NetworkStatus.html",
+          "hash": "S1y1CHAmYBVxDgvOaqR27g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Apps.iOSFacebookProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Apps.iOSFacebookProbe.html",
+          "hash": "0tAWS/3l/KkKfK9NZFifxw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Apps.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Apps.html",
+          "hash": "TleSSrVoa8RMHPYXdOrBmA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html",
+          "hash": "GQ9TgBzSy+Kxfh0c3xLOZw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html",
+          "hash": "MlZXU2Ww5BigV7c3Xa1z2A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.html",
+          "hash": "sB14IU2O+q5j/jMYV2WPoA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Context.iOSSoundProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Context.iOSSoundProbe.html",
+          "hash": "xF4iEx3EUxxEuV6xS27plg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Context.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Context.html",
+          "hash": "A9XiZmPaKxAPxR+P91PC7g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Location.iOSCompassProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Location.iOSCompassProbe.html",
+          "hash": "Aqb9RFOOMxNPEpuIfcZPqw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html",
+          "hash": "3MmPa1FFPm0kbiiPPw7R8A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Location.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Location.html",
+          "hash": "DOYDyOZmpfEqR0YeQ8N0lw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Movement.iOSAccelerometerProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Movement.iOSAccelerometerProbe.html",
+          "hash": "OiAI2TVJwupaAjnlHg0FAg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Movement.iOSActivityProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Movement.iOSActivityProbe.html",
+          "hash": "vgOctqcdp765pP6PaH7aRA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.Movement.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.Movement.html",
+          "hash": "arTt344HPDkoa+c+mVs6Wg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitBiologicalSexProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitBiologicalSexProbe.html",
+          "hash": "LZi0wLAI64MzldVxUFJA8w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitBirthdateProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitBirthdateProbe.html",
+          "hash": "3x2VINLrDkG2yB7j6R3SFg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitBloodTypeProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitBloodTypeProbe.html",
+          "hash": "K9lRIjfsa/kp4EDvMELm/A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitHeightProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitHeightProbe.html",
+          "hash": "ZzMQ4eoH7qA74Fum82ycrg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitProbe.html",
+          "hash": "BNsI5oehZr9Q9hvJ0obFzw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitSamplingProbe.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.iOSHealthKitSamplingProbe.html",
+          "hash": "fF5mD6lz89W9q4XGXRXwJQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.Probes.User.Health.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.Probes.User.Health.html",
+          "hash": "3eahz07zXcEdWLZa+mmCfg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.UI.SliderInputEffect.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.UI.SliderInputEffect.html",
+          "hash": "Dgnwa+22fZmxY3yPV92fUQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.UI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.UI.html",
+          "hash": "430j6NOTHVyCehqvbNsxTQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.iOSSensusServiceHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.iOSSensusServiceHelper.html",
+          "hash": "doIEV3E0grFTBWePchSuVQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.html",
+          "hash": "Nd0+yNowRkpF13HKk6WXOw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.yml",
       "output": {
         ".html": {
@@ -4125,7 +4689,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "y14bOv5to4cl4bvN5JKlZg=="
+          "hash": "ZXsZiH0cCuDWbGde3muunw=="
         }
       },
       "is_incremental": false,
@@ -4404,11 +4968,11 @@
           "details": "Processor ResourceDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
-        "ManagedReferenceDocumentProcessor": {
+        "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
-        "ConceptualDocumentProcessor": {
+        "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
