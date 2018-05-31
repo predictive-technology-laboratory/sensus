@@ -44,18 +44,21 @@ namespace Sensus.Android.Probes.Communication
         {
             // for some reason, we get multiple calls to OnChange for the same outgoing text. ignore repeats.
             if (_mostRecentlyObservedSmsURI != null && uri.ToString() == _mostRecentlyObservedSmsURI)
+            {
                 return;
+            }
 
             // TODO:  Fix issue #75 -- need to handle MMS. they are structured differently than SMS, and the code below does not work.
-            if (uri.ToString() == "content://sms/raw")
+            if (uri.ToString().StartsWith("content://sms/raw"))
+            {
                 return;
+            }
 
             ICursor cursor = _context.ContentResolver.Query(uri, null, null, null, null);
 
             if (cursor.MoveToNext())
             {
-                // we've been seeing some issues with missing fields:  https://insights.xamarin.com/app/Sensus-Production/issues/23
-                // catch any exceptions that occur here and report them.
+                // we've been seeing some issues with missing fields. catch any exceptions that occur here and report them.
                 try
                 {
                     string protocol = cursor.GetString(cursor.GetColumnIndexOrThrow("protocol"));
