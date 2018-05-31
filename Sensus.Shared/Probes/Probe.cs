@@ -534,28 +534,36 @@ namespace Sensus.Probes
                 restart = true;
             }
 
-            double? rawDataPerSecond = _rawRateCalculator.GetDataPerSecond();
-            double? storedDataPerSecond = _storageRateCalculator.GetDataPerSecond();
-            double? percentageNominalStoreRate = null;
-            if(storedDataPerSecond.HasValue &&
-               MaxDataStoresPerSecond.HasValue)
-            {
-                percentageNominalStoreRate = storedDataPerSecond.Value / MaxDataStoresPerSecond.Value;
-            }                                                        
-
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Running", _running.ToString() },
-                { "Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)) }
+                { "Running", _running.ToString() }
             };
 
-            Analytics.TrackEvent(eventName, properties);
+            // we'll only have data rates if the probe is running -- it might have failed to initialize.
+            if (_running)
+            {
+                double? rawDataPerSecond = _rawRateCalculator.GetDataPerSecond();
+                double? storedDataPerSecond = _storageRateCalculator.GetDataPerSecond();
+                double? percentageNominalStoreRate = null;
+                if (storedDataPerSecond.HasValue && MaxDataStoresPerSecond.HasValue)
+                {
+                    percentageNominalStoreRate = storedDataPerSecond.Value / MaxDataStoresPerSecond.Value;
+                }
 
-            // we don't have a great way of tracking data rates, as they are continuous values and event tracking is string-based. so,
-            // just add the rates to the properties after event tracking. this way it will still be included in the status.
-            properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
-            properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
+                properties.Add("Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)));
+
+                Analytics.TrackEvent(eventName, properties);
+
+                // we don't have a great way of tracking data rates, as they are continuous values and event tracking is string-based. so,
+                // just add the rates to the properties after event tracking. this way it will still be included in the status.
+                properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
+                properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
+            }
+            else
+            {
+                Analytics.TrackEvent(eventName, properties);
+            }
 
             events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 

@@ -45,11 +45,17 @@ namespace Sensus.Probes
         private readonly double? _maxSamplesToKeepPerSecond;
         private DateTimeOffset? _startTimestamp;
         private long _dataCount;
+        private DateTimeOffset? _mostRecentTimestamp;
         private double? _dataPerSecond;
         private long _samplingModulus;
         private SamplingAction _samplingModulusMatchAction;
 
         private readonly object _locker = new object();
+
+        public long SampleSize
+        {
+            get { return _sampleSize; }
+        }
 
         public DataRateCalculator(long sampleSize, double? maxSamplesToKeepPerSecond = null)
         {
@@ -74,6 +80,7 @@ namespace Sensus.Probes
 
                 _sampleSize = _originalSampleSize;
                 _dataCount = 0;
+                _mostRecentTimestamp = null;
                 _dataPerSecond = null;
 
                 // store all data to start with. we'll compute a store/drop rate after a data sample has been taken.
@@ -99,9 +106,19 @@ namespace Sensus.Probes
 
                 SamplingAction samplingAction = SamplingAction.Drop;
 
-                if (datum != null)
+                if (datum != null && datum.Timestamp >= _startTimestamp.Value)
                 {
                     _dataCount++;
+
+                    // update the most recent timestamp (samples might come out of order)
+                    if (_mostRecentTimestamp == null)
+                    {
+                        _mostRecentTimestamp = datum.Timestamp;
+                    }
+                    else if (datum.Timestamp > _mostRecentTimestamp.Value)
+                    {
+                        _mostRecentTimestamp = datum.Timestamp;
+                    }
 
                     double maxSamplesToKeepPerSecond = _maxSamplesToKeepPerSecond.GetValueOrDefault(double.MaxValue);
 
@@ -120,8 +137,8 @@ namespace Sensus.Probes
                     // update data per second and sampling parameters for each new sample
                     if (_dataCount >= _sampleSize)
                     {
-                        // recalculate data per second
-                        _dataPerSecond = _dataCount / (datum.Timestamp - _startTimestamp.Value).TotalSeconds;
+                        // recalculate data per second based on current count and most recent timestamp
+                        _dataPerSecond = _dataCount / (_mostRecentTimestamp.Value - _startTimestamp.Value).TotalSeconds;
 
                         #region recalculate the sampling modulus/action for the new sampling rate
                         // in theory, the following code should work fine if a data rate of 0. however, the sampling
@@ -139,6 +156,14 @@ namespace Sensus.Probes
                                 _samplingModulus = 1;
                                 _samplingModulusMatchAction = SamplingAction.Keep;
                             }
+                            // we've seen cases where the data and start timestamps are identical, resulting in an infinite data per second.
+                            // the creates a sampling modulus of zero below and subsequent divide-by-zero errors above. drop all data until 
+                            // a sample with more reasonable data timestamps comes in.
+                            else if (double.IsInfinity(overagePerSecond))
+                            {
+                                _samplingModulus = 1;
+                                _samplingModulusMatchAction = SamplingAction.Drop;
+                            }
                             // otherwise calculate a modulus that will get as close as possible to the desired rate given the empirical rate
                             else
                             {
@@ -154,12 +179,12 @@ namespace Sensus.Probes
                                 if (_samplingModulusMatchAction == SamplingAction.Keep)
                                 {
                                     // round the (store) modulus down to oversample -- more is better, right?
-                                    _samplingModulus = (int)Math.Floor(1 / samplingModulusMatchRate);
+                                    _samplingModulus = (long)Math.Floor(1 / samplingModulusMatchRate);
                                 }
                                 else
                                 {
                                     // round the (drop) modulus up to oversample -- more is better, right?
-                                    _samplingModulus = (int)Math.Ceiling(1 / samplingModulusMatchRate);
+                                    _samplingModulus = (long)Math.Ceiling(1 / samplingModulusMatchRate);
                                 }
                             }
                         }
@@ -172,7 +197,7 @@ namespace Sensus.Probes
 
                         // start a new sample
                         _dataCount = 0;
-                        _startTimestamp = datum.Timestamp;
+                        _startTimestamp = _mostRecentTimestamp.Value;
                     }
                 }
 

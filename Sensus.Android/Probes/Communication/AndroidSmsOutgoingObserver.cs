@@ -18,7 +18,6 @@ using Android.OS;
 using Android.Provider;
 using Sensus.Exceptions;
 using Sensus.Probes.Communication;
-using Xamarin;
 
 namespace Sensus.Android.Probes.Communication
 {

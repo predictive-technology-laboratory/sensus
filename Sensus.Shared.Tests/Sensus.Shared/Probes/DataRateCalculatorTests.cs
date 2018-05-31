@@ -169,6 +169,29 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             Assert.AreEqual(samplingRateCalculator.Add(null), DataRateCalculator.SamplingAction.Drop);
         }
 
+        [Test]
+        public void ImmediateDataTest()
+        {
+            InitServiceHelper();
+
+            DataRateCalculator calculator = new DataRateCalculator(10, 1);
+            AccelerometerDatum datum = new AccelerometerDatum(DateTimeOffset.UtcNow, 1, 1, 1);
+            calculator.Start(datum.Timestamp);
+            for (int i = 0; i < calculator.SampleSize * 2; ++i)
+            {
+                DataRateCalculator.SamplingAction action = calculator.Add(datum);
+
+                if (i < calculator.SampleSize)
+                {
+                    Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                }
+                else
+                {
+                    Assert.AreEqual(action, DataRateCalculator.SamplingAction.Drop);
+                }
+            }
+        }
+
         private void WriteData(long sampleSize, double dataPerSecond, TimeSpan duration, double? maxSamplesToKeepPerSecond, Action<Datum, double, DataRateCalculator.SamplingAction> calculatedDataRateKeepCallback)
         {
             DataRateCalculator dataRateCalculator = new DataRateCalculator(sampleSize, maxSamplesToKeepPerSecond);
