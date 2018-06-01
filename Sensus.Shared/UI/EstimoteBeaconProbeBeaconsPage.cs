@@ -64,6 +64,7 @@ namespace Sensus.UI
                     try
                     {
                         beacons = estimoteBeaconProbe.GetSensusBeaconNamesFromCloud();
+
                         if (beacons == null)
                         {
                             throw new Exception("No beacons");

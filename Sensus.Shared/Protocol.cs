@@ -86,7 +86,7 @@ namespace Sensus
 
         public static Task<Protocol> DeserializeAsync(Uri webURI)
         {
-            return Task.Run<Protocol>(async () =>
+            return Task.Run(async () =>
             {
                 Protocol protocol = null;
 
@@ -138,7 +138,7 @@ namespace Sensus
 
         public static Task<Protocol> DeserializeAsync(byte[] bytes)
         {
-            return Task.Run<Protocol>(async () =>
+            return Task.Run(async () =>
             {
                 // decrypt the bytes to JSON
                 string json;
@@ -380,8 +380,7 @@ namespace Sensus
 
                     if (protocol == null)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON.", LoggingLevel.Normal, typeof(Protocol));
-                        SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON.");
+                        throw new Exception("Failed to deserialize protocol from JSON.");
                     }
                 }
                 catch (Exception ex)
@@ -1468,7 +1467,7 @@ namespace Sensus
 
         public Task<Protocol> CopyAsync(bool resetId, bool register)
         {
-            return Task.Run<Protocol>(async () =>
+            return Task.Run(async () =>
             {
                 Protocol protocol = await DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
 

@@ -87,7 +87,11 @@ namespace Sensus.UI
                             }
                         }
 
-                        if (error != null)
+                        if (error == null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Logged in.");
+                        }
+                        else
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync(error);
                         }
