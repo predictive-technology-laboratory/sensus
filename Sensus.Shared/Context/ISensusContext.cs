@@ -28,5 +28,7 @@ namespace Sensus.Context
         IEncryption SymmetricEncryption { get; set; }
         INotifier Notifier { get; set; }
         ICallbackScheduler CallbackScheduler { get; set; }
+        string IamAccessKey { get; set; }
+        string IamAccessKeySecret { get; set; }
     }
 }

@@ -196,37 +196,28 @@ namespace Sensus.UI
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            lockButton.Clicked += (o, e) =>
+            lockButton.Clicked += async (o, e) =>
             {
                 if (lockButton.Text == "Lock")
                 {
-                    SensusServiceHelper.Get().PromptForInputAsync(
-                        "Lock Protocol",
-                        new SingleLineTextInput("Password:", Keyboard.Text, true),
-                        null,
-                        true,
-                        null,
-                        null,
-                        null,
-                        null,
-                        false,
-                        input =>
-                        {
-                            if (input == null)
-                                return;
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Lock Protocol", new SingleLineTextInput("Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
 
-                            string password = input.Value as string;
+                    if (input == null)
+                    {
+                        return;
+                    }
 
-                            if (string.IsNullOrWhiteSpace(password))
-                            {
-                                SensusServiceHelper.Get().FlashNotificationAsync("Please enter a non-empty password.");
-                            }
-                            else
-                            {
-                                _protocol.LockPasswordHash = SensusServiceHelper.Get().GetHash(password);
-                                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => lockButton.Text = "Unlock");
-                            }
-                        });
+                    string password = input.Value as string;
+
+                    if (string.IsNullOrWhiteSpace(password))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Please enter a non-empty password.");
+                    }
+                    else
+                    {
+                        _protocol.LockPasswordHash = SensusServiceHelper.Get().GetHash(password);
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => lockButton.Text = "Unlock");
+                    }
                 }
                 else if (lockButton.Text == "Unlock")
                 {

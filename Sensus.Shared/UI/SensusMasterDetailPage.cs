@@ -42,9 +42,16 @@ namespace Sensus.UI
 
             if (selectedDetailPageItem != null)
             {
-                Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
-                _masterPage.MasterPageItemsListView.SelectedItem = null;
-                IsPresented = false;
+                if (selectedDetailPageItem.TargetType != null)
+                {
+                    Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
+                    _masterPage.MasterPageItemsListView.SelectedItem = null;
+                    IsPresented = false;
+                }
+                else
+                {
+                    selectedDetailPageItem.Action?.Invoke();
+                }
             }
         }
     }

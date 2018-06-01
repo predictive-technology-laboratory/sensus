@@ -901,7 +901,7 @@ namespace Sensus
                         }
                     };
 
-                    barcodeScannerPage.Disappearing += (sender, e) => 
+                    barcodeScannerPage.Disappearing += (sender, e) =>
                     {
                         resultWait.Set();
                     };
@@ -915,37 +915,39 @@ namespace Sensus
             });
         }
 
-        public void PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<Input> callback)
+        public Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, inputs =>
+            return Task.Run<Input>(async () =>
             {
-                callback(inputs?.First());
+                List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+                return inputs?.First();
             });
         }
 
-        public void PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action<List<Input>> callback)
+        public Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            var inputGroup = new InputGroup { Name = windowTitle };
-
-            foreach (var input in inputs)
+            return Task.Run<List<Input>>(async () =>
             {
-                inputGroup.Inputs.Add(input);
-            }
+                InputGroup inputGroup = new InputGroup { Name = windowTitle };
 
-            PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null, inputGroups =>
-            {
-                callback(inputGroups?.SelectMany(g => g.Inputs).ToList());
+                foreach (var input in inputs)
+                {
+                    inputGroup.Inputs.Add(input);
+                }
+
+                IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
+
+                return inputGroups?.SelectMany(g => g.Inputs).ToList();
             });
         }
 
-        public void PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action<IEnumerable<InputGroup>> callback)
+        public Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
         {
-            Task.Run(async () =>
+            return Task.Run(async () =>
             {
                 if (inputGroups == null || inputGroups.Count() == 0 || inputGroups.All(inputGroup => inputGroup == null))
                 {
-                    callback(inputGroups);
-                    return;
+                    return inputGroups;
                 }
 
                 bool firstPageDisplay = true;
@@ -1170,7 +1172,7 @@ namespace Sensus
                     #endregion
                 }
 
-                callback(inputGroups);
+                return inputGroups;
             });
         }
 
@@ -1321,7 +1323,7 @@ namespace Sensus
                     {
                         rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
                     }
-                    else if(permission == Permission.Contacts)
+                    else if (permission == Permission.Contacts)
                     {
                         rationale = "Sensus collects calendar information for studies you enroll in.";
                     }

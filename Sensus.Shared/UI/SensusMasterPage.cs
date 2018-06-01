@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using Sensus.Context;
+using Sensus.UI.Inputs;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -52,6 +54,45 @@ namespace Sensus.UI
                 Title = "Privacy Policy",
                 IconSource = "privacy.png",
                 TargetType = typeof(PrivacyPolicyPage)
+            });
+
+            detailPageItems.Add(new SensusDetailPageItem
+            {
+                Title = "Log In",
+                IconSource = "privacy.png",
+                Action = () =>
+                {
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Log In", new QrCodeInput("iam-credentials", "Account:  ", "Please scan your account barcode."), null, true, null, null, null, null, false);
+
+                        string error = null;
+
+                        string credentials = input?.Value?.ToString();
+                        if (string.IsNullOrWhiteSpace(credentials))
+                        {
+                            error = "Empty credentials barcode.";
+                        }
+                        else
+                        {
+                            string[] parts = credentials.Split(':');
+                            if (parts.Length == 2)
+                            {
+                                SensusContext.Current.IamAccessKey = parts[0];
+                                SensusContext.Current.IamAccessKeySecret = parts[1];
+                            }
+                            else
+                            {
+                                error = "Invalid credentials barcode.";
+                            }
+                        }
+
+                        if (error != null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync(error);
+                        }
+                    });
+                }
             });
 
             _masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)

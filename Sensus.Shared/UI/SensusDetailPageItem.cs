@@ -23,5 +23,7 @@ namespace Sensus.UI
         public string IconSource { get; set; }
 
         public Type TargetType { get; set; }
+
+        public Action Action { get; set; }
     }
 }

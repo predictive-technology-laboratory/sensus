@@ -66,79 +66,69 @@ namespace Sensus.UI
 
             CancellationTokenSource gpsCancellationTokenSource = null;
 
-            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
+            ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
             {
-                SensusServiceHelper.Get().PromptForInputsAsync(
-                    "Define Point Of Interest",
-                    new Input[]
+                List<Input> inputs = await SensusServiceHelper.Get().PromptForInputsAsync("Define Point Of Interest", new Input[]
+                {
+                    new SingleLineTextInput("POI Name:", Keyboard.Text) { Required = false },
+                    new SingleLineTextInput("POI Type:", Keyboard.Text) { Required = false },
+                    new SingleLineTextInput("Address:", Keyboard.Text) { Required = false }
+
+                }, null, true, null, null, null, null, false);
+
+                if (inputs == null)
+                {
+                    return;
+                }
+
+                string name = inputs[0].Value as string;
+                string type = inputs[1].Value as string;
+                string address = inputs[2].Value as string;
+
+                if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("You must enter either a name or type (or both).");
+                }
+                else
+                {
+                    Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
                     {
-                        new SingleLineTextInput("POI Name:", Keyboard.Text) { Required = false },
-                        new SingleLineTextInput("POI Type:", Keyboard.Text) { Required = false },
-                        new SingleLineTextInput("Address:", Keyboard.Text) { Required = false }
-                    },
-                    null,
-                    true,
-                    null,
-                    null,
-                    null,
-                    null,
-                    false,
-                    inputs =>
-                    {
-                        if (inputs == null)
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
-                            return;
-                        }
-
-                        string name = inputs[0].Value as string;
-                        string type = inputs[1].Value as string;
-                        string address = inputs[2].Value as string;
-
-                        if (string.IsNullOrWhiteSpace(name) && string.IsNullOrWhiteSpace(type))
-                        {
-                            SensusServiceHelper.Get().FlashNotificationAsync("You must enter either a name or type (or both).");
-                        }
-                        else
-                        {
-                            Action<List<Position>> addPOI = new Action<List<Position>>(poiPositions =>
+                            if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
                             {
-                                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                                foreach (Position poiPosition in poiPositions)
                                 {
-                                    if (poiPositions != null && poiPositions.Count > 0 && await DisplayAlert("Add POI?", "Would you like to add " + poiPositions.Count + " point(s) of interest?", "Yes", "No"))
-                                    {
-                                        foreach (Position poiPosition in poiPositions)
-                                        {
-                                            pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
-                                        }
-                                    }
-                                });
-                            });
-
-                            string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
-
-                            if (string.IsNullOrWhiteSpace(address))
-                            {
-                                // cancel existing token source if we have one
-                                if (gpsCancellationTokenSource != null && !gpsCancellationTokenSource.IsCancellationRequested)
-                                {
-                                    gpsCancellationTokenSource.Cancel();
-                                }
-
-                                gpsCancellationTokenSource = new CancellationTokenSource();
-
-                                Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(gpsCancellationTokenSource.Token, true);
-
-                                if (gpsPosition != null)
-                                {
-                                    SensusServiceHelper.Get().GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
+                                    pointsOfInterest.Add(new PointOfInterest(name, type, poiPosition.ToGeolocationPosition()));
                                 }
                             }
-                            else
-                            {
-                                SensusServiceHelper.Get().GetPositionsFromMapAsync(address, newPinName, addPOI);
-                            }
-                        }
+                        });
                     });
+
+                    string newPinName = name + (string.IsNullOrWhiteSpace(type) ? "" : " (" + type + ")");
+
+                    if (string.IsNullOrWhiteSpace(address))
+                    {
+                        // cancel existing token source if we have one
+                        if (gpsCancellationTokenSource != null && !gpsCancellationTokenSource.IsCancellationRequested)
+                        {
+                            gpsCancellationTokenSource.Cancel();
+                        }
+
+                        gpsCancellationTokenSource = new CancellationTokenSource();
+
+                        Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(gpsCancellationTokenSource.Token, true);
+
+                        if (gpsPosition != null)
+                        {
+                            SensusServiceHelper.Get().GetPositionsFromMapAsync(gpsPosition.ToFormsPosition(), newPinName, addPOI);
+                        }
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().GetPositionsFromMapAsync(address, newPinName, addPOI);
+                    }
+                }
             }));
 
             Disappearing += (o, e) =>
