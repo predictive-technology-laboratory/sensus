@@ -289,7 +289,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    await Put(s3, stream, SensusServiceHelper.Get().DeviceId + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + name, contentType, cancellationToken);
+                    await Put(s3, stream, (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + name, contentType, cancellationToken);
                 }
                 finally
                 {
@@ -371,7 +371,7 @@ namespace Sensus.DataStores.Remote
 
         public override string GetDatumKey(Datum datum)
         {
-            return SensusServiceHelper.Get().DeviceId + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
+            return (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
         }
 
         public override async Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)
