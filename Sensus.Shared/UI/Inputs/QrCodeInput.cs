@@ -25,6 +25,7 @@ namespace Sensus.UI.Inputs
         private string _scanResult;
         private string _barcodeValueLabelTextPrefix;
         private string _qrCodePrefix;
+        private bool _masked;
 
         public override object Value
         {
@@ -52,18 +53,20 @@ namespace Sensus.UI.Inputs
         {
         }
 
-        public QrCodeInput(string qrCodePrefix, string barcodeValueLabelTextPrefix, string labelText)
+        public QrCodeInput(string qrCodePrefix, string barcodeValueLabelTextPrefix, bool masked, string labelText)
             : base(labelText)
         {
             _qrCodePrefix = qrCodePrefix;
             _barcodeValueLabelTextPrefix = barcodeValueLabelTextPrefix;
+            _masked = masked;
         }
 
-        public QrCodeInput(string qrCodePrefix, string barcodeValueLabelTextPrefix, string labelText, string name)
+        public QrCodeInput(string qrCodePrefix, string barcodeValueLabelTextPrefix, bool masked, string labelText, string name)
             : base(labelText, name)
         {
             _qrCodePrefix = qrCodePrefix;
             _barcodeValueLabelTextPrefix = barcodeValueLabelTextPrefix;
+            _masked = masked;
         }
 
         public override View GetView(int index)
@@ -97,7 +100,14 @@ namespace Sensus.UI.Inputs
 
                     Complete = Value != null;
 
-                    codeLabel.Text = _barcodeValueLabelTextPrefix + Value?.ToString();
+                    // make the displayed value if needed
+                    string displayValue = Value?.ToString();
+                    if (displayValue != null && _masked)
+                    {
+                        displayValue = new string('*', displayValue.Length);
+                    }
+
+                    codeLabel.Text = _barcodeValueLabelTextPrefix + displayValue;
                 };
 
                 base.SetView(new StackLayout

@@ -45,13 +45,14 @@ namespace Sensus.UI
                 if (selectedDetailPageItem.TargetType != null)
                 {
                     Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
-                    _masterPage.MasterPageItemsListView.SelectedItem = null;
                     IsPresented = false;
                 }
                 else
                 {
                     selectedDetailPageItem.Action?.Invoke();
                 }
+
+                _masterPage.MasterPageItemsListView.SelectedItem = null;
             }
         }
     }

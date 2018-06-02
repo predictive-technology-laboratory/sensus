@@ -478,15 +478,25 @@ namespace Sensus.UI
                     // input might be null (user cancelled), or the value might be null (blank input submitted)
                     if (!string.IsNullOrEmpty(input?.Value?.ToString()))
                     {
-                        protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
+                        try
+                        {
+                            protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
+                        }
+                        catch(Exception ex)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
+                        }
                     }
                 }
                 else if (action == "New")
                 {
-                    protocol = Protocol.Create("New Protocol");
+                    Protocol.Create("New Protocol");
                 }
 
-                await Protocol.DisplayAndStartAsync(protocol);
+                if (protocol != null)
+                {
+                    await Protocol.DisplayAndStartAsync(protocol);
+                }
             }));
 
             ToolbarItems.Add(new ToolbarItem("ID", null, async () =>

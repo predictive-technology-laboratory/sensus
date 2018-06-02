@@ -33,5 +33,10 @@ namespace Sensus
         /// Sensus participant identifiers.
         /// </summary>
         public const string SENSUS_PARTICIPANT_ID = "sensus-participant:";
+
+        /// <summary>
+        /// IAM credentials.
+        /// </summary>
+        public const string IAM_CREDENTIALS = "iam-credentials:";
     }
 }

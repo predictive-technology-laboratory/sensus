@@ -27,6 +27,7 @@ namespace Sensus.Android.Context
         public ICallbackScheduler CallbackScheduler { get; set; }
         public INotifier Notifier { get; set; }
         public string ActivationId { get; set; }
+        public string IamRegion { get; set; }
         public string IamAccessKey { get; set; }
         public string IamAccessKeySecret { get; set; }
     }

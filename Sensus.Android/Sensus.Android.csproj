@@ -361,6 +361,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <AndroidResource Include="Resources\drawable\studies.png" />
     <AndroidResource Include="Resources\drawable\surveys.png" />
     <AndroidResource Include="Resources\drawable\x.png" />
+    <AndroidResource Include="Resources\drawable\account.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

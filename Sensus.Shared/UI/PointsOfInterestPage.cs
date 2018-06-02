@@ -117,7 +117,7 @@ namespace Sensus.UI
 
                         gpsCancellationTokenSource = new CancellationTokenSource();
 
-                        Plugin.Geolocator.Abstractions.Position gpsPosition = GpsReceiver.Get().GetReading(gpsCancellationTokenSource.Token, true);
+                        Plugin.Geolocator.Abstractions.Position gpsPosition = await GpsReceiver.Get().GetReadingAsync(gpsCancellationTokenSource.Token, true);
 
                         if (gpsPosition != null)
                         {

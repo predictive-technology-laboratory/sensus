@@ -102,7 +102,7 @@ namespace Sensus.UI
                         {
                             // if the user canceled the prompts, reset the input. we reset here within the above if-check because if an
                             // input has already been stored we should not reset it. its value and read-only status are fixed for all 
-                            // time, even if the prompts are later redisplayed by the invalid script handler.
+                            // time, even if the prompts are later redisplayed.
                             if (canceled)
                             {
                                 input.Reset();

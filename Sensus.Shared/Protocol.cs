@@ -44,6 +44,8 @@ using System.ComponentModel;
 using Sensus.Concurrent;
 using Amazon.S3;
 using Amazon.S3.Util;
+using Amazon;
+using Amazon.S3.Model;
 
 #if __IOS__
 using HealthKit;
@@ -92,15 +94,17 @@ namespace Sensus
 
                 try
                 {
-                    if (webURI.Scheme == "s3")
+                    // check if the URI points to an S3 bucket
+                    AmazonS3Uri s3URI = null;
+                    try
                     {
-                        AmazonS3Client s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret);
-                        AmazonS3Uri s3URI = new AmazonS3Uri(webURI);
-                        MemoryStream byteStream = new MemoryStream();
-                        (await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key)).ResponseStream.CopyTo(byteStream);
-                        protocol = await DeserializeAsync(byteStream.ToArray());
+                        s3URI = new AmazonS3Uri(webURI);
                     }
-                    else
+                    catch (Exception)
+                    {
+                    }
+
+                    if (s3URI == null)
                     {
                         TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();
                         WebClient downloadClient = new WebClient();
@@ -123,6 +127,17 @@ namespace Sensus
                         downloadClient.DownloadDataAsync(webURI);
 
                         protocol = await completionSource.Task;
+                    }
+                    else
+                    {
+                        AmazonS3Client s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
+                        GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
+                        if (response.HttpStatusCode == HttpStatusCode.OK)
+                        {
+                            MemoryStream byteStream = new MemoryStream();
+                            response.ResponseStream.CopyTo(byteStream);
+                            protocol = await DeserializeAsync(byteStream.ToArray());
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -1812,7 +1827,7 @@ namespace Sensus
                 }
                 else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdQrCode)
                 {
-                    inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", "To participate in this study as described above, please scan your participant barcode."));
+                    inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", false, "To participate in this study as described above, please scan your participant barcode."));
                 }
                 else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdText)
                 {

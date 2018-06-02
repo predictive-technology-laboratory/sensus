@@ -907,6 +907,8 @@ namespace Sensus
                     };
 
                     await navigation.PushModalAsync(barcodeScannerPage);
+
+                    barcodeScannerPage.IsScanning = true;
                 });
 
                 resultWait.WaitOne();
