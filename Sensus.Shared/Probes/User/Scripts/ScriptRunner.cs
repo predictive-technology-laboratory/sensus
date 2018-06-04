@@ -62,7 +62,7 @@ namespace Sensus.Probes.User.Scripts
         /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
         /// </summary>
         /// <value>The name.</value>
-        [EntryStringUiProperty("Name:", true, 1)]
+        [EntryStringUiProperty("Name:", true, 1, true)]
         public string Name 
         {
             get { return _name; }
@@ -118,7 +118,7 @@ namespace Sensus.Probes.User.Scripts
         /// The maximum number of minutes, following delivery to the user, that this survey should remain available for completion.
         /// </summary>
         /// <value>The max age minutes.</value>
-        [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7)]
+        [EntryDoubleUiProperty("Maximum Age (Mins.):", true, 7, false)]
         public double? MaxAgeMinutes
         {
             get
@@ -167,7 +167,7 @@ namespace Sensus.Probes.User.Scripts
         /// 
         /// </summary>
         /// <value>The trigger windows string.</value>
-        [EntryStringUiProperty("Trigger Windows:", true, 8)]
+        [EntryStringUiProperty("Trigger Windows:", true, 8, false)]
         public string TriggerWindowsString
         {
             get
@@ -188,7 +188,7 @@ namespace Sensus.Probes.User.Scripts
         /// fired every other day at some time between 9am and 10am.
         /// </summary>
         /// <value>The non-DOW trigger interval days.</value>
-        [EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9)]
+        [EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9, true)]
         public int NonDowTriggerIntervalDays
         {
             get
@@ -252,14 +252,14 @@ namespace Sensus.Probes.User.Scripts
         /// <see cref="RunMode.SingleKeepNewest"/>, and <see cref="RunMode.SingleKeepOldest"/>.
         /// </summary>
         /// <value>The run mode.</value>
-        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleKeepNewest, RunMode.SingleKeepOldest })]
+        [ListUiProperty("Run Mode:", true, 14, new object[] { RunMode.Multiple, RunMode.SingleKeepNewest, RunMode.SingleKeepOldest }, true)]
         public RunMode RunMode { get; set; }
 
         /// <summary>
         /// The message to display to the user if a required field is invalid.
         /// </summary>
         /// <value>The incomplete submission confirmation.</value>
-        [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15)]
+        [EntryStringUiProperty("Incomplete Submission Confirmation:", true, 15, false)]
         public string IncompleteSubmissionConfirmation { get; set; }
 
         /// <summary>

@@ -116,7 +116,7 @@ namespace Sensus.DataStores.Local
         /// (computationally faster but less compression), and <see cref="CompressionLevel.Optimal"/> (computationally slower but more compression).
         /// </summary>
         /// <value>The compression level.</value>
-        [ListUiProperty("Compression Level:", true, 1, new object[] { CompressionLevel.NoCompression, CompressionLevel.Fastest, CompressionLevel.Optimal })]
+        [ListUiProperty("Compression Level:", true, 1, new object[] { CompressionLevel.NoCompression, CompressionLevel.Fastest, CompressionLevel.Optimal }, true)]
         public CompressionLevel CompressionLevel
         {
             get
@@ -136,7 +136,7 @@ namespace Sensus.DataStores.Local
         /// of data loss when the app is killed or crashes (as the buffer resides in RAM).
         /// </summary>
         /// <value>The buffer size in bytes.</value>
-        [EntryIntegerUiProperty("Buffer Size (Bytes):", true, 2)]
+        [EntryIntegerUiProperty("Buffer Size (Bytes):", true, 2, true)]
         public int BufferSizeBytes
         {
             get { return _bufferSizeBytes; }

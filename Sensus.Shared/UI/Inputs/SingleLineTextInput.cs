@@ -51,7 +51,7 @@ namespace Sensus.UI.Inputs
         /// the value for this variable. 
         /// </summary>
         /// <value>The defined variable.</value>
-        [EntryStringUiProperty("Define Variable:", true, 2)]
+        [EntryStringUiProperty("Define Variable:", true, 2, false)]
         public string DefinedVariable
         {
             get

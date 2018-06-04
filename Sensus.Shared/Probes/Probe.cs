@@ -201,7 +201,7 @@ namespace Sensus.Probes
         /// How much data to save from the <see cref="Probe"/>  for the purpose of charting within the Sensus app.
         /// </summary>
         /// <value>The maximum chart data count.</value>
-        [EntryIntegerUiProperty("Max Chart Data Count:", true, 50)]
+        [EntryIntegerUiProperty("Max Chart Data Count:", true, 50, true)]
         public int MaxChartDataCount
         {
             get
@@ -219,7 +219,9 @@ namespace Sensus.Probes
                 lock (_chartData)
                 {
                     while (_chartData.Count > 0 && _chartData.Count > _maxChartDataCount)
+                    {
                         _chartData.RemoveAt(0);
+                    }
                 }
             }
         }

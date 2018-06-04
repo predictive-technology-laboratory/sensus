@@ -38,7 +38,7 @@ namespace Sensus.Probes
         /// The maximum number of readings that may be stored in one second.
         /// </summary>
         /// <value>Maximum data stores per second.</value>
-        [EntryDoubleUiProperty("Max Data / Second:", true, int.MaxValue)]
+        [EntryDoubleUiProperty("Max Data / Second:", true, int.MaxValue, false)]
         public override double? MaxDataStoresPerSecond
         {
             get { return _maxDataStoresPerSecond; }

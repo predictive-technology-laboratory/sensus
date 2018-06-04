@@ -55,7 +55,7 @@ namespace Sensus.DataStores.Remote
         /// How many milliseconds to pause between each data write cycle.
         /// </summary>
         /// <value>The write delay in milliseconds.</value>
-        [EntryIntegerUiProperty("Write Delay (MS):", true, 2)]
+        [EntryIntegerUiProperty("Write Delay (MS):", true, 2, true)]
         public int WriteDelayMS
         {
             get { return _writeDelayMS; }
@@ -74,7 +74,7 @@ namespace Sensus.DataStores.Remote
         /// How many minutes the data store has to complete a write before being cancelled.
         /// </summary>
         /// <value>The write timeout in minutes.</value>
-        [EntryIntegerUiProperty("Write Timeout (Mins.):", true, 3)]
+        [EntryIntegerUiProperty("Write Timeout (Mins.):", true, 3, true)]
         public int WriteTimeoutMinutes
         {
             get
@@ -124,7 +124,7 @@ namespace Sensus.DataStores.Remote
         /// power source only when the battery is almost fully charged. This will minimize user irritation.
         /// </summary>
         /// <value>The required battery charge level percent.</value>
-        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, int.MaxValue)]
+        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, int.MaxValue, false)]
         public float RequiredBatteryChargeLevelPercent
         {
             get { return _requiredBatteryChargeLevelPercent; }
@@ -145,7 +145,7 @@ namespace Sensus.DataStores.Remote
         /// will open Sensus to transmit the data.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("User Notification Message:", true, int.MaxValue)]
+        [EntryStringUiProperty("User Notification Message:", true, int.MaxValue, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }

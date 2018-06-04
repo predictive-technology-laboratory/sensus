@@ -90,7 +90,7 @@ namespace Sensus.DataStores.Remote
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
         /// <value>The region.</value>
-        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" })]
+        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" }, true)]
         public string Region
         {
             get
@@ -107,7 +107,7 @@ namespace Sensus.DataStores.Remote
         /// The AWS S3 bucket in which data should be stored. This is the bucket identifier output by the steps described in the summary for this class.
         /// </summary>
         /// <value>The bucket.</value>
-        [EntryStringUiProperty(null, true, 2)]
+        [EntryStringUiProperty(null, true, 2, true)]
         public string Bucket
         {
             get
@@ -129,7 +129,7 @@ namespace Sensus.DataStores.Remote
         /// The folder within <see cref="Bucket"/> where data should be stored.
         /// </summary>
         /// <value>The folder.</value>
-        [EntryStringUiProperty(null, true, 3)]
+        [EntryStringUiProperty(null, true, 3, false)]
         public string Folder
         {
             get
@@ -151,7 +151,7 @@ namespace Sensus.DataStores.Remote
         /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
-        [EntryStringUiProperty("Pinned Service URL:", true, 7)]
+        [EntryStringUiProperty("Pinned Service URL:", true, 7, false)]
         public string PinnedServiceURL
         {
             get
@@ -185,7 +185,7 @@ namespace Sensus.DataStores.Remote
         /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned public key.</value>
-        [EntryStringUiProperty("Pinned Public Key:", true, 8)]
+        [EntryStringUiProperty("Pinned Public Key:", true, 8, false)]
         public string PinnedPublicKey
         {
             get

@@ -48,7 +48,7 @@ namespace Sensus.UI.Inputs
         /// The text to show for the "Other" option in a multiple-choice list.
         /// </summary>
         /// <value>The other option text.</value>
-        [EntryStringUiProperty("Text for \"Other\" Option:", true, 14)]
+        [EntryStringUiProperty("Text for \"Other\" Option:", true, 14, false)]
         public string OtherOptionText { get; set; }
 
         public ItemPickerInput()

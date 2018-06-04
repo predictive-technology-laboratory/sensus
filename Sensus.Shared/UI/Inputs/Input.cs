@@ -60,7 +60,7 @@ namespace Sensus.UI.Inputs
         /// The name by which this input will be referred to within the Sensus app.
         /// </summary>
         /// <value>The name.</value>
-        [EntryStringUiProperty("Name:", true, 0)]
+        [EntryStringUiProperty("Name:", true, 0, false)]
         public string Name
         {
             get { return _name; }
@@ -106,7 +106,7 @@ namespace Sensus.UI.Inputs
         /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
         /// </summary>
         /// <value>The label text.</value>
-        [EntryStringUiProperty("Label Text:", true, 1)]
+        [EntryStringUiProperty("Label Text:", true, 1, true)]
         public string LabelText
         {
             get
