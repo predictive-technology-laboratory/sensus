@@ -113,7 +113,7 @@ namespace Sensus.Android
 #if UI_TESTING
                 using (Stream protocolFile = Assets.Open("UiTestingProtocol.json"))
                 {
-                    Protocol.RunUiTestingProtocol(protocolFile);
+                    Protocol.RunUiTestingProtocolAsync(protocolFile);
                 }
 #endif
             };
@@ -274,7 +274,7 @@ namespace Sensus.Android
 
         private Task OpenIntentAsync(Intent intent)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 // wait for service helper to be initialized, since this method might be called before the service starts up
                 // and initializes the service helper.
@@ -302,13 +302,15 @@ namespace Sensus.Android
                 // open page to view protocol if a protocol was passed to us
                 if (intent.Data != null)
                 {
-                    global::Android.Net.Uri dataURI = intent.Data;
-
                     try
                     {
+                        global::Android.Net.Uri dataURI = intent.Data;
+
+                        Protocol protocol = null;
+
                         if (intent.Scheme == "http" || intent.Scheme == "https")
                         {
-                            Protocol.DeserializeAsync(new Uri(dataURI.ToString()), Protocol.DisplayAndStartAsync);
+                            protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()));
                         }
                         else if (intent.Scheme == "content" || intent.Scheme == "file")
                         {
@@ -324,24 +326,27 @@ namespace Sensus.Android
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                                throw new Exception("Failed to read bytes from local file URI \"" + dataURI + "\":  " + ex.Message);
                             }
 
                             if (bytes != null)
                             {
-                                Protocol.DeserializeAsync(bytes, Protocol.DisplayAndStartAsync);
+                                protocol = await Protocol.DeserializeAsync(bytes);
                             }
                         }
                         else
                         {
-                            SensusServiceHelper.Get().Logger.Log("Sensus didn't know what to do with URI \"" + dataURI + "\".", LoggingLevel.Normal, GetType());
+                            throw new Exception("Sensus didn't know what to do with URI \"" + dataURI + "\".");
                         }
+
+                        await Protocol.DisplayAndStartAsync(protocol);
                     }
                     catch (Exception ex)
                     {
                         SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
-                            new AlertDialog.Builder(this).SetTitle("Failed to get protocol").SetMessage(ex.Message).Show();
+                            new AlertDialog.Builder(this).SetTitle("Failed to start protocol").SetMessage(ex.Message).Show();
+                            SensusServiceHelper.Get().Logger.Log(ex.Message, LoggingLevel.Normal, GetType());
                         });
                     }
                 }

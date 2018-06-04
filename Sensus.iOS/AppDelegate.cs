@@ -101,45 +101,52 @@ namespace Sensus.iOS
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            if (url != null)
+            System.Threading.Tasks.Task.Run(async () =>
             {
-                if (url.PathExtension == "json")
+                if (url != null)
                 {
-                    if (url.Scheme == "sensus")
+                    if (url.PathExtension == "json")
                     {
-                        try
+                        Protocol protocol = null;
+
+                        if (url.Scheme == "sensus")
                         {
-                            Protocol.DeserializeAsync(new Uri("http://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), Protocol.DisplayAndStartAsync);
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(new Uri("http://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()));
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTP URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                            }
                         }
-                        catch (Exception ex)
+                        else if (url.Scheme == "sensuss")
                         {
-                            SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTP URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()));
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                            }
                         }
-                    }
-                    else if (url.Scheme == "sensuss")
-                    {
-                        try
+                        else
                         {
-                            Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), Protocol.DisplayAndStartAsync);
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(File.ReadAllBytes(url.Path));
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                            }
                         }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
-                        }
-                    }
-                    else
-                    {
-                        try
-                        {
-                            Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), Protocol.DisplayAndStartAsync);
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
-                        }
+
+                        await Protocol.DisplayAndStartAsync(protocol);
                     }
                 }
-            }
+            });
 
             // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
             return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
@@ -162,7 +169,7 @@ namespace Sensus.iOS
                     string filePath = NSBundle.MainBundle.PathForResource("UiTestingProtocol", "json");
                     using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        Protocol.RunUiTestingProtocol(file);
+                        await Protocol.RunUiTestingProtocolAsync(file);
                     }
 #endif
                 }

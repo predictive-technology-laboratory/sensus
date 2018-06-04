@@ -13,15 +13,33 @@
 // limitations under the License.
 
 using System;
+using System.ComponentModel;
 
 namespace Sensus.UI
 {
-    public class SensusDetailPageItem
+    public class SensusDetailPageItem : INotifyPropertyChanged
     {
-        public string Title { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string _title;
+
+        public string Title
+        {
+            get
+            {
+                return _title;
+            }
+            set
+            {
+                _title = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Title)));
+            }
+        }
 
         public string IconSource { get; set; }
 
         public Type TargetType { get; set; }
+
+        public Action Action { get; set; }
     }
 }

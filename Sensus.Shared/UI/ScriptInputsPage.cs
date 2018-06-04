@@ -88,74 +88,56 @@ namespace Sensus.UI
                 {
                     string abortMessage = "Condition is not complete. Abort?";
 
-                    SensusServiceHelper.Get().PromptForInputsAsync("Display Condition", new Input[]
-                        {
-                            new ItemPickerPageInput("Input:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList()),
-                            new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList()),
-                            new ItemPickerPageInput("Conjunctive/Disjunctive:", new object[] { "Conjunctive", "Disjunctive" }.ToList())
-                        },
-                        null,
-                        true,
-                        null,
-                        null,
-                        abortMessage,
-                        null,
-                        false,
-                        inputs =>
-                        {
-                            if (inputs == null)
-                            {
-                                return;
-                            }
+                    List<Input> inputs = await SensusServiceHelper.Get().PromptForInputsAsync("Display Condition", new Input[]
+                    {
+                        new ItemPickerPageInput("Input:", previousInputGroups.SelectMany(previousInputGroup => previousInputGroup.Inputs.Cast<object>()).ToList()),
+                        new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList()),
+                        new ItemPickerPageInput("Conjunctive/Disjunctive:", new object[] { "Conjunctive", "Disjunctive" }.ToList())
 
-                            if (inputs.All(input => input.Valid))
-                            {
-                                Input conditionInput = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
-                                InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();
-                                bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Conjunctive");
+                    }, null, true, null, null, abortMessage, null, false);
 
-                                if (condition == InputValueCondition.IsComplete)
-                                {
-                                    selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, null, conjunctive));
-                                }
-                                else
-                                {
-                                    Regex uppercaseSplitter = new Regex(@"
+                    if (inputs == null)
+                    {
+                        return;
+                    }
+
+                    if (inputs.All(input => input.Valid))
+                    {
+                        Input conditionInput = ((inputs[0] as ItemPickerPageInput).Value as IEnumerable<object>).First() as Input;
+                        InputValueCondition condition = (InputValueCondition)((inputs[1] as ItemPickerPageInput).Value as IEnumerable<object>).First();
+                        bool conjunctive = ((inputs[2] as ItemPickerPageInput).Value as IEnumerable<object>).First().Equals("Conjunctive");
+
+                        if (condition == InputValueCondition.IsComplete)
+                        {
+                            selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, null, conjunctive));
+                        }
+                        else
+                        {
+                            Regex uppercaseSplitter = new Regex(@"
                                     (?<=[A-Z])(?=[A-Z][a-z]) |
                                     (?<=[^A-Z])(?=[A-Z]) |
                                     (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
 
-                                    // show the user a required copy of the condition input and prompt for the condition value
-                                    Input conditionInputCopy = conditionInput.Copy(false);
-                                    conditionInputCopy.DisplayConditions.Clear();
-                                    conditionInputCopy.LabelText = "Value that " + conditionInputCopy.Name + " " + uppercaseSplitter.Replace(condition.ToString(), " ").ToLower() + ":";
-                                    conditionInputCopy.Required = true;
+                            // show the user a required copy of the condition input and prompt for the condition value
+                            Input conditionInputCopy = conditionInput.Copy(false);
+                            conditionInputCopy.DisplayConditions.Clear();
+                            conditionInputCopy.LabelText = "Value that " + conditionInputCopy.Name + " " + uppercaseSplitter.Replace(condition.ToString(), " ").ToLower() + ":";
+                            conditionInputCopy.Required = true;
 
-                                    // ensure that the copied input cannot define a variable
-                                    if (conditionInputCopy is IVariableDefiningInput)
-                                    {
-                                        (conditionInputCopy as IVariableDefiningInput).DefinedVariable = null;
-                                    }
-
-                                    SensusServiceHelper.Get().PromptForInputAsync("Display Condition",
-                                        conditionInputCopy,
-                                        null,
-                                        true,
-                                        "OK",
-                                        null,
-                                        abortMessage,
-                                        null,
-                                        false,
-                                        input =>
-                                        {
-                                            if (input?.Valid ?? false)
-                                            {
-                                                selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, input.Value, conjunctive));
-                                            }
-                                        });
-                                }
+                            // ensure that the copied input cannot define a variable
+                            if (conditionInputCopy is IVariableDefiningInput)
+                            {
+                                (conditionInputCopy as IVariableDefiningInput).DefinedVariable = null;
                             }
-                        });
+
+                            Input input = await SensusServiceHelper.Get().PromptForInputAsync("Display Condition", conditionInputCopy, null, true, "OK", null, abortMessage, null, false);
+
+                            if (input?.Valid ?? false)
+                            {
+                                selectedInput.DisplayConditions.Add(new InputDisplayCondition(conditionInput, condition, input.Value, conjunctive));
+                            }
+                        }
+                    }
                 }
                 else if (selectedAction == "View Display Conditions")
                 {
