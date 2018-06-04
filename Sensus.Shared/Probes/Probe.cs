@@ -174,7 +174,6 @@ namespace Sensus.Probes
         [JsonIgnore]
         protected abstract long DataRateSampleSize { get; }
 
-        [JsonIgnore]
         public abstract double? MaxDataStoresPerSecond { get; set; }
 
         /// <summary>

@@ -2,26 +2,47 @@
 
 if [ $# -ne 1 ]; then
     echo "Usage:  ./deconfigure-s3.sh [bucket]"
-    echo "\t[bucket]:  Bucket to deconfigure"
+    echo "\t[bucket]:  Bucket to deconfigure."
+    echo ""
+    echo "Effect:  Deletes the IAM group and user associated with the bucket. Does not delete the bucket or its data."
     exit 1
 fi
 
-# delete bucket policy
-echo "Deleting S3 bucket policy..."
-aws s3api delete-bucket-policy --bucket $1
+iamWriteOnlyUserName="$1-write-only-user"
+iamWriteOnlyGroupName="$1-write-only-group"
+
+# remove write-only user from write-only group
+echo "Removing write-only user from write-only group..."
+aws iam remove-user-from-group --user-name $iamWriteOnlyUserName --group-name $iamWriteOnlyGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete bucket policy."
+    echo "Failed to remove write-only user from write-only group."
 fi
 
-# delete iam user policy and user
-iamUserName="$1"
-aws iam delete-user-policy --user-name $iamUserName --policy-name $iamUserName
+# delete access key for write-only user
+echo "Deleting access key from write-only user..."
+accessKeyID=$(aws iam list-access-keys --user-name $iamWriteOnlyUserName | jq -r .AccessKeyMetadata[0].AccessKeyId)
+aws iam delete-access-key --access-key $accessKeyID --user-name $iamWriteOnlyUserName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete IAM user policy."
+    echo "Failed to delete access key."
 fi
 
-echo "Deleting IAM user..."
-aws iam delete-user --user-name $iamUserName
+# delete write-only user
+echo "Deleting write-only IAM user..."
+aws iam delete-user --user-name $iamWriteOnlyUserName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete IAM user."
+    echo "Failed to delete write-only IAM user."
+fi
+
+# delete write-only group policy
+echo "Deleting write-only IAM group policy..."
+aws iam delete-group-policy --group-name $iamWriteOnlyGroupName --policy-name "${iamWriteOnlyGroupName}-policy"
+if [ $? -ne 0 ]; then
+    echo "Failed to delete write-only IAM group policy."
+fi
+
+# delete write-only group
+echo "Deleting IAM group..."
+aws iam delete-group --group-name $iamWriteOnlyGroupName
+if [ $? -ne 0 ]; then
+    echo "Failed to delete write-only IAM group."
 fi

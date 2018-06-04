@@ -97,6 +97,11 @@ namespace Sensus.UI
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
 
+                if (!selectedProtocol.Running && selectedProtocol.AllowParticipantIdReset)
+                {
+                    actions.Add("Reset ID");
+                }
+
                 if (!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
                 {
                     actions.Add("Email Study Manager for Help");
@@ -132,7 +137,7 @@ namespace Sensus.UI
 
                 actions.Add("Edit");
 
-                if(selectedProtocol.AllowCopy)
+                if (selectedProtocol.AllowCopy)
                 {
                     actions.Add("Copy");
                 }
@@ -173,16 +178,7 @@ namespace Sensus.UI
                     _protocolsList.SelectedItem = null;
                 });
 
-                if (selectedAction == "Status")
-                {
-                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
-                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
-                    {
-                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
-
-                    }).ToList(), null, null));
-                }
-                else if (selectedAction == "Start")
+                if (selectedAction == "Start")
                 {
                     await selectedProtocol.StartWithUserAgreementAsync(null);
                 }
@@ -199,6 +195,20 @@ namespace Sensus.UI
                     {
                         await selectedProtocol.StopAsync();
                     }
+                }
+                else if (selectedAction == "Reset ID")
+                {
+                    selectedProtocol.ParticipantId = null;
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Your ID has been reset.");
+                }
+                else if (selectedAction == "Status")
+                {
+                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
+                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
+                    {
+                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
+
+                    }).ToList(), null, null));
                 }
                 else if (selectedAction == "Email Study Manager for Help")
                 {

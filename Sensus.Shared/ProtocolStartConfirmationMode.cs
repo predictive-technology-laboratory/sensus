@@ -16,33 +16,33 @@ namespace Sensus
 {
     /// <summary>
     /// Protocol start confirmation mode. Different ways of confirming that the
-    /// user would indeed like to start the protocol
+    /// participant would indeed like to start the protocol
     /// </summary>
     public enum ProtocolStartConfirmationMode
     {
         /// <summary>
-        /// Do not ask the user to input anything.
+        /// Do not ask the participant to input anything.
         /// </summary>
         None,
 
         /// <summary>
-        /// Ask the user to enter a string of random digits.
+        /// Ask the participant to enter a string of random digits.
         /// </summary>
         RandomDigits,
 
         /// <summary>
-        /// Ask the user to enter their ID (text).
+        /// Ask the participant to enter their ID (text).
         /// </summary>
-        UserIdText,
+        ParticipantIdText,
 
         /// <summary>
-        /// Ask the user to enter their ID (digits).
+        /// Ask the participant to enter their ID (digits).
         /// </summary>
-        UserIdDigits,
+        ParticipantIdDigits,
 
         /// <summary>
-        /// Ask the user to scan a QR code containing their ID.
+        /// Ask the participant to scan a QR code containing their ID.
         /// </summary>
-        UserIdQrCode
+        ParticipantIdQrCode
     }
 }

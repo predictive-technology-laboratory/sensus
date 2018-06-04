@@ -44,21 +44,23 @@ namespace Sensus.DataStores.Remote
     ///   * Install the [jq](https://stedolan.github.io/jq) command-line utility.
     ///   * Download and unzip our [AWS configuration scripts](https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip).
     ///   * Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where `NAME` is an informative name
-    ///     (alphanumerics only), `REGION` is the region in which your bucket will reside (e.g., `us-east-1`), and `ROOT_ID` is the 12-digit (no dashes) 
-    ///     AWS account identifier that will own your data:
+    ///     (alphanumerics only) and `REGION` is the region in which your bucket will reside (e.g., `us-east-1`):
     /// 
     ///     ```
-    ///     ./ConfigureS3.sh NAME REGION ROOT_ID
+    ///     ./ConfigureS3.sh NAME REGION
     ///     ```
     /// 
-    ///   * The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
-    ///     like the following:
+    ///   * The previous command will create a bucket as well as an IAM group and user with write-only access to the bucket. If successful, the command will 
+    ///     output something like the following:
     /// 
     ///     ```
-    ///     All done. Bucket:  testing-21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+    ///     Done. Details:
+    ///       Sensus S3 bucket:  test-bucket-eee8ef46-5d6a-4508-b745-e6635d195a85
+    ///       Sensus S3 IAM account:  XXXX:XXXX
     ///     ```
     /// 
-    ///   * The bucket produced on the final line should be kept confidential. Use this value as <see cref="Bucket"/>.
+    ///   * The bucket and IAM account produced on the final line should be kept confidential. Use these values as <see cref="Bucket"/> and 
+    ///     <see cref="IamAccountString"/>, respectively.
     /// 
     /// # Downloading Data from Amazon S3
     /// 
@@ -81,6 +83,8 @@ namespace Sensus.DataStores.Remote
         private string _region;
         private string _bucket;
         private string _folder;
+        private string _iamAccessKey;
+        private string _iamSecretKey;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
         private int _putCount;
@@ -148,10 +152,35 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
+        /// The IAM user's access and secret keys output by the steps described in the summary for this class.
+        /// </summary>
+        /// <value>The iam account string.</value>
+        [EntryStringUiProperty("IAM Account:", true, 4, true)]
+        public string IamAccountString
+        {
+            get
+            {
+                return _iamAccessKey + ":" + _iamSecretKey;
+            }
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    string[] parts = value.Split(':');
+                    if (parts.Length == 2)
+                    {
+                        _iamAccessKey = parts[0].Trim();
+                        _iamSecretKey = parts[1].Trim();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
-        [EntryStringUiProperty("Pinned Service URL:", true, 7, false)]
+        [EntryStringUiProperty("Pinned Service URL:", true, 5, false)]
         public string PinnedServiceURL
         {
             get
@@ -185,7 +214,7 @@ namespace Sensus.DataStores.Remote
         /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned public key.</value>
-        [EntryStringUiProperty("Pinned Public Key:", true, 8, false)]
+        [EntryStringUiProperty("Pinned Public Key:", true, 6, false)]
         public string PinnedPublicKey
         {
             get
@@ -240,6 +269,11 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(_iamAccessKey) || string.IsNullOrWhiteSpace(_iamSecretKey))
+            {
+                throw new Exception("Must specify an IAM account within the S3 remote data store.");
+            }
+
             // start base last so we're set up for any callbacks that get scheduled
             base.Start();
         }
@@ -276,7 +310,7 @@ namespace Sensus.DataStores.Remote
                 clientConfig.ServiceURL = _pinnedServiceURL;
             }
 
-            return new AmazonS3Client(null, clientConfig);
+            return new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig);
         }
 
         public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
@@ -289,7 +323,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    await Put(s3, stream, (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + name, contentType, cancellationToken);
+                    await Put(s3, stream, (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
                 }
                 finally
                 {
@@ -371,7 +405,7 @@ namespace Sensus.DataStores.Remote
 
         public override string GetDatumKey(Datum datum)
         {
-            return (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
+            return (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
         }
 
         public override async Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)

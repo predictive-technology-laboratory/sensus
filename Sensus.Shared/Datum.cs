@@ -154,11 +154,11 @@ namespace Sensus
 
         /// <summary>
         /// The identifier for the participant that generated this datum. This will be null if 
-        /// <see cref="Protocol.ProtocolStartConfirmationMode"/> is set to <see cref="ProtocolStartConfirmationMode.None"/> or
-        /// <see cref="ProtocolStartConfirmationMode.RandomDigits"/>. If <see cref="Protocol.ProtocolStartConfirmationMode"/> is 
-        /// set to <see cref="ProtocolStartConfirmationMode.UserIdDigits"/> or <see cref="ProtocolStartConfirmationMode.UserIdText"/>
-        /// then this will be the value entered by the user. If <see cref="Protocol.ProtocolStartConfirmationMode"/> is set to 
-        /// <see cref="ProtocolStartConfirmationMode.UserIdQrCode"/> then this will be the value of the scanned QR code.
+        /// <see cref="Protocol.StartConfirmationMode"/> is set to <see cref="ProtocolStartConfirmationMode.None"/> or
+        /// <see cref="ProtocolStartConfirmationMode.RandomDigits"/>. If <see cref="Protocol.StartConfirmationMode"/> is 
+        /// set to <see cref="ProtocolStartConfirmationMode.ParticipantIdDigits"/> or <see cref="ProtocolStartConfirmationMode.ParticipantIdText"/>
+        /// then this will be the value entered by the user. If <see cref="Protocol.StartConfirmationMode"/> is set to 
+        /// <see cref="ProtocolStartConfirmationMode.ParticipantIdQrCode"/> then this will be the value of the scanned QR code.
         /// </summary>
         /// <value>The participant identifier.</value>
         public string ParticipantId

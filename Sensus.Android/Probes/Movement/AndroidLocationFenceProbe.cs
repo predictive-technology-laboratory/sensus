@@ -38,7 +38,7 @@ namespace Sensus.Android.Probes.Movement
         /// How far in meters the device must travel before issuing a location-changed event.
         /// </summary>
         /// <value>The location change radius, in meters.</value>
-        [EntryIntegerUiProperty("Location Change Radius (Meters):", true, 30)]
+        [EntryIntegerUiProperty("Location Change Radius (Meters):", true, 30, true)]
         public int LocationChangeRadiusMeters
         {
             get

@@ -552,7 +552,7 @@ namespace Sensus
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
         private Dictionary<string, string> _variableValue;
-        private ProtocolStartConfirmationMode _protocolStartConfirmationMode;
+        private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
 
         private readonly object _locker = new object();
@@ -1312,20 +1312,27 @@ namespace Sensus
         public bool Shareable { get; set; } = false;
 
         /// <summary>
+        /// Whether or not to allow the user to reset their participant ID. See <see cref="Protocol.ParticipantId"/> and <see cref="Protocol.StartConfirmationMode"/> for more information.
+        /// </summary>
+        /// <value><c>true</c> if allow participant identifier reset; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow ID Reset:", true, 44)]
+        public bool AllowParticipantIdReset { get; set; } = false;
+
+        /// <summary>
         /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 44, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.UserIdDigits, ProtocolStartConfirmationMode.UserIdText, ProtocolStartConfirmationMode.UserIdQrCode }, true)]
-        public ProtocolStartConfirmationMode ProtocolStartConfirmationMode
+        [ListUiProperty("Start Confirmation Mode:", true, 45, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
             {
-                return _protocolStartConfirmationMode;
+                return _startConfirmationMode;
             }
             set
             {
-                _protocolStartConfirmationMode = value;
+                _startConfirmationMode = value;
             }
         }
 
@@ -1387,7 +1394,7 @@ namespace Sensus
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _variableValue = new Dictionary<string, string>();
-            _protocolStartConfirmationMode = ProtocolStartConfirmationMode.None;
+            _startConfirmationMode = ProtocolStartConfirmationMode.None;
         }
 
         /// <summary>
@@ -1425,6 +1432,10 @@ namespace Sensus
                 _id = Guid.NewGuid().ToString();
             }
 
+            // nobody else should receive the participant ID
+            _participantId = null;
+
+            // reset local storage
             ResetStorageDirectory();
 
             // pick a random time anchor within the first 1000 years AD. we got a strange exception in insights about the resulting datetime having a year
@@ -1809,18 +1820,19 @@ namespace Sensus
                 collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
                 inputs.Add(collectionDescriptionLabel);
 
-                if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.None)
+                // don't repeatedly prompt the participant for their ID
+                if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
                 {
                     inputs.Add(new LabelOnlyInput("Tap Submit below to begin."));
                 }
-                else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
+                else if (_startConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
                 {
                     inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter the following code:  " + new Random().Next(1000, 10000), "code", Keyboard.Numeric)
                     {
                         DisplayNumber = false
                     });
                 }
-                else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdDigits)
+                else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdDigits)
                 {
                     inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Numeric)
                     {
@@ -1832,11 +1844,11 @@ namespace Sensus
                         DisplayNumber = false
                     });
                 }
-                else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdQrCode)
+                else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdQrCode)
                 {
                     inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", false, "To participate in this study as described above, please scan your participant barcode."));
                 }
-                else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdText)
+                else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdText)
                 {
                     inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Text)
                     {
@@ -1855,11 +1867,11 @@ namespace Sensus
 
                 if (completedInputs != null)
                 {
-                    if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.None)
+                    if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
                     {
                         start = true;
                     }
-                    else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
+                    else if (_startConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
                     {
                         Input codeInput = completedInputs.Last();
                         string codeInputValue = codeInput.Value as string;
@@ -1874,7 +1886,7 @@ namespace Sensus
                             await SensusServiceHelper.Get().FlashNotificationAsync("Incorrect code entered.");
                         }
                     }
-                    else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdDigits || _protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdText)
+                    else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdDigits || _startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdText)
                     {
                         string codeValue = completedInputs[completedInputs.Count - 2].Value as string;
                         string codeConfirmValue = completedInputs.Last().Value as string;
@@ -1895,7 +1907,7 @@ namespace Sensus
                             await SensusServiceHelper.Get().FlashNotificationAsync("The identifiers that you entered did not match.");
                         }
                     }
-                    else if (_protocolStartConfirmationMode == ProtocolStartConfirmationMode.UserIdQrCode)
+                    else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdQrCode)
                     {
                         string codeValue = completedInputs.Last().Value as string;
                         if (string.IsNullOrWhiteSpace(codeValue))
