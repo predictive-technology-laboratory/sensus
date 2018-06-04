@@ -58,8 +58,8 @@ namespace Sensus.UI.UiProperties
             }
         }
 
-        public EditableListUiProperty(string labelText, bool editable, int order)
-            : base(labelText, editable, order)
+        public EditableListUiProperty(string labelText, bool editable, int order, bool required = false)
+            : base(labelText, editable, order, required)
         {
         }
 

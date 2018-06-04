@@ -55,8 +55,8 @@ namespace Sensus.UI.UiProperties
             }
         }
 
-        public EntryDoubleUiProperty(string labelText, bool editable, int order)
-            : base(labelText, editable, order)
+        public EntryDoubleUiProperty(string labelText, bool editable, int order, bool required = false)
+            : base(labelText, editable, order, required)
         {
         }
 

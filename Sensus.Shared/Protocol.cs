@@ -567,7 +567,7 @@ namespace Sensus
         /// A descriptive name for the <see cref="Protocol"/>.
         /// </summary>
         /// <value>The name.</value>
-        [EntryStringUiProperty("Name:", true, 1)]
+        [EntryStringUiProperty("Name:", true, 1, true)]
         public string Name
         {
             get { return _name; }

@@ -26,8 +26,8 @@ namespace Sensus.UI.UiProperties
     {
         private List<object> _items;
 
-        public ListUiProperty(string labelText, bool editable, int order, object[] items)
-            : base(labelText, editable, order)
+        public ListUiProperty(string labelText, bool editable, int order, object[] items, bool required = false)
+            : base(labelText, editable, order, required)
         {
             if (items == null)
             {

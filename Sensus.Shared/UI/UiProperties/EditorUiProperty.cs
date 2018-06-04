@@ -23,8 +23,8 @@ namespace Sensus.UI.UiProperties
     /// </summary>
     public class EditorUiProperty : UiProperty
     {
-        public EditorUiProperty(string labelText, bool editable, int order)
-            : base(labelText, editable, order)
+        public EditorUiProperty(string labelText, bool editable, int order, bool required = false)
+            : base(labelText, editable, order, required)
         {
         }
 
