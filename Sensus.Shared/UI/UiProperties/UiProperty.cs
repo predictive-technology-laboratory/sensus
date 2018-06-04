@@ -77,7 +77,7 @@ namespace Sensus.UI.UiProperties
                  .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                  .Select(p => new Tuple<PropertyInfo, UiProperty>(p, GetUiPropertyAttribute(p)))
                  .Where(p => p.Item2 != null)
-                 .OrderBy(p => p.Item2._order).ToList(); 
+                 .OrderBy(p => p.Item2._order).ToList();
 
             List<StackLayout> propertyStacks = new List<StackLayout>();
 

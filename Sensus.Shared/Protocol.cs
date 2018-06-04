@@ -846,7 +846,7 @@ namespace Sensus
         /// The number of days used to calculate the participation percentage. For example, if the participation horizon is
         /// 7 days, and the user has been running a <see cref="ListeningProbe"/> for 1 day, then the participation percentage
         /// would be 1/7 (~14%). On the other hand, if the participation horizon is 1 day, then the same user would have a 
-        /// participation percentage of 1/1 (100%).
+        /// participation percentage of 1/1 (100%). Must be at least 1.
         /// </summary>
         /// <value>The participation horizon, in days.</value>
         [EntryIntegerUiProperty("Participation Horizon (Days):", true, 23, true)]
@@ -1104,24 +1104,6 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
-        /// for more information.
-        /// </summary>
-        /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 31, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.UserIdDigits, ProtocolStartConfirmationMode.UserIdText, ProtocolStartConfirmationMode.UserIdQrCode }, true)]
-        public ProtocolStartConfirmationMode ProtocolStartConfirmationMode
-        {
-            get
-            {
-                return _protocolStartConfirmationMode;
-            }
-            set
-            {
-                _protocolStartConfirmationMode = value;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the participant identifier.
         /// </summary>
         /// <value>The participant identifier.</value>
@@ -1298,36 +1280,54 @@ namespace Sensus
         /// Whether or not to allow the user to view the status of the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow View Status:", true, 38)]
+        [OnOffUiProperty("Allow View Status:", true, 39)]
         public bool AllowViewStatus { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to manually submit data being collected by the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Submit Data:", true, 39)]
+        [OnOffUiProperty("Allow Submit Data:", true, 40)]
         public bool AllowSubmitData { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to display/scan participation QR codes for the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Participation Scanning:", true, 40)]
+        [OnOffUiProperty("Allow Participation Scanning:", true, 41)]
         public bool AllowParticipationScanning { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to copy the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Copy:", true, 41)]
+        [OnOffUiProperty("Allow Copy:", true, 42)]
         public bool AllowCopy { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to share the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Share:", true, 42)]
+        [OnOffUiProperty("Allow Share:", true, 43)]
         public bool Shareable { get; set; } = false;
+
+        /// <summary>
+        /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
+        /// for more information.
+        /// </summary>
+        /// <value>The protocol start confirmation mode.</value>
+        [ListUiProperty("Start Confirmation Mode:", true, 44, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.UserIdDigits, ProtocolStartConfirmationMode.UserIdText, ProtocolStartConfirmationMode.UserIdQrCode }, true)]
+        public ProtocolStartConfirmationMode ProtocolStartConfirmationMode
+        {
+            get
+            {
+                return _protocolStartConfirmationMode;
+            }
+            set
+            {
+                _protocolStartConfirmationMode = value;
+            }
+        }
 
         [JsonIgnore]
         public bool StartIsScheduled

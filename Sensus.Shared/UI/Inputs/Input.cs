@@ -60,7 +60,7 @@ namespace Sensus.UI.Inputs
         /// The name by which this input will be referred to within the Sensus app.
         /// </summary>
         /// <value>The name.</value>
-        [EntryStringUiProperty("Name:", true, 0, false)]
+        [EntryStringUiProperty("Name:", true, 0, true)]
         public string Name
         {
             get { return _name; }
