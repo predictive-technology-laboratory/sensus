@@ -28,6 +28,7 @@ namespace Sensus.Tests.Classes
         public INotifier Notifier { get; set; }
         public ICallbackScheduler CallbackScheduler { get; set; }
         public string ActivationId { get; set; }
+        public string IamRegion { get; set; }
         public string IamAccessKey { get; set; }
         public string IamAccessKeySecret { get; set; }
 

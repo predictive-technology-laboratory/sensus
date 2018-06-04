@@ -102,7 +102,7 @@ namespace Sensus
             TypeNameHandling = TypeNameHandling.All,
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
 
-            #region need the following in order to deserialize protocols between OSs, whose objects contain different members (e.g., iOS service helper has ActivationId, which Android does not)
+            #region need the following in order to deserialize protocols between OSs, which have different probes, etc.
             Error = (o, e) =>
             {
                 if (Get() != null)
