@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,8 +55,8 @@ namespace Sensus.UI.UiProperties
             }
         }
 
-        public EntryDoubleUiProperty(string labelText, bool editable, int order)
-            : base(labelText, editable, order)
+        public EntryDoubleUiProperty(string labelText, bool editable, int order, bool required)
+            : base(labelText, editable, order, required)
         {
         }
 

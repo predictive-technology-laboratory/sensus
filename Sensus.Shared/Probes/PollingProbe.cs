@@ -76,7 +76,7 @@ namespace Sensus.Probes
         /// How long to sleep (become inactive) between successive polling operations.
         /// </summary>
         /// <value>The polling sleep duration in milliseconds.</value>
-        [EntryIntegerUiProperty("Sleep Duration (MS):", true, 5)]
+        [EntryIntegerUiProperty("Sleep Duration (MS):", true, 5, true)]
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
@@ -96,7 +96,7 @@ namespace Sensus.Probes
         /// How long the <see cref="PollingProbe"/>  has to complete a single poll operation before being cancelled.
         /// </summary>
         /// <value>The polling timeout minutes.</value>
-        [EntryIntegerUiProperty("Timeout (Mins.):", true, 6)]
+        [EntryIntegerUiProperty("Timeout (Mins.):", true, 6, true)]
         public int PollingTimeoutMinutes
         {
             get

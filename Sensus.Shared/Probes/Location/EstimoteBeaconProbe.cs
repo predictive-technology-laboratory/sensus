@@ -61,14 +61,14 @@ namespace Sensus.Probes.Location
         /// The App Id from the [Estimote Cloud console](https://cloud.estimote.com/#/apps) that is associated with the beacons to be tracked.
         /// </summary>
         /// <value>The Estimote Cloud app identifier.</value>
-        [EntryStringUiProperty("Estimote Cloud App Id:", true, 35)]
+        [EntryStringUiProperty("Estimote Cloud App Id:", true, 35, true)]
         public string EstimoteCloudAppId { get; set; }
 
         /// <summary>
         /// The App Token from the [Estimote Cloud console](https://cloud.estimote.com/#/apps) that is associated with the beacons to be tracked.
         /// </summary>
         /// <value>The Estimote Cloud app token.</value>
-        [EntryStringUiProperty("Estimote Cloud App Token:", true, 36)]
+        [EntryStringUiProperty("Estimote Cloud App Token:", true, 36, true)]
         public string EstimoteCloudAppToken { get; set; }
 
         [JsonIgnore]

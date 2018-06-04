@@ -567,7 +567,7 @@ namespace Sensus
         /// A descriptive name for the <see cref="Protocol"/>.
         /// </summary>
         /// <value>The name.</value>
-        [EntryStringUiProperty("Name:", true, 1)]
+        [EntryStringUiProperty("Name:", true, 1, true)]
         public string Name
         {
             get { return _name; }
@@ -722,7 +722,7 @@ namespace Sensus
         /// A detailed description of the <see cref="Protocol"/> (e.g., what it does, who it is intended for, etc.).
         /// </summary>
         /// <value>The description.</value>
-        [EditorUiProperty(null, true, 15)]
+        [EditorUiProperty(null, true, 15, false)]
         public string Description
         {
             get
@@ -757,7 +757,7 @@ namespace Sensus
         /// is `false`.
         /// </summary>
         /// <value>The start date.</value>
-        [DateUiProperty("Start Date:", true, 17)]
+        [DateUiProperty("Start Date:", true, 17, false)]
         public DateTime StartDate
         {
             get
@@ -776,7 +776,7 @@ namespace Sensus
         /// The time at which the <see cref="Protocol"/> will start running. Only has an effect if <see cref="StartImmediately"/> is `false`.
         /// </summary>
         /// <value>The start time.</value>
-        [TimeUiProperty("Start Time:", true, 18)]
+        [TimeUiProperty("Start Time:", true, 18, false)]
         public TimeSpan StartTime
         {
             get
@@ -812,7 +812,7 @@ namespace Sensus
         /// The date on which the <see cref="Protocol"/> will stop running. Only has an effect if <see cref="ContinueIndefinitely"/> is `false`.
         /// </summary>
         /// <value>The end date.</value>
-        [DateUiProperty("End Date:", true, 20)]
+        [DateUiProperty("End Date:", true, 20, false)]
         public DateTime EndDate
         {
             get
@@ -829,7 +829,7 @@ namespace Sensus
         /// The time at which the <see cref="Protocol"/> will stop running. Only has an effect if <see cref="ContinueIndefinitely"/> is `false`.
         /// </summary>
         /// <value>The end time.</value>
-        [TimeUiProperty("End Time:", true, 21)]
+        [TimeUiProperty("End Time:", true, 21, false)]
         public TimeSpan EndTime
         {
             get
@@ -846,10 +846,10 @@ namespace Sensus
         /// The number of days used to calculate the participation percentage. For example, if the participation horizon is
         /// 7 days, and the user has been running a <see cref="ListeningProbe"/> for 1 day, then the participation percentage
         /// would be 1/7 (~14%). On the other hand, if the participation horizon is 1 day, then the same user would have a 
-        /// participation percentage of 1/1 (100%).
+        /// participation percentage of 1/1 (100%). Must be at least 1.
         /// </summary>
         /// <value>The participation horizon, in days.</value>
-        [EntryIntegerUiProperty("Participation Horizon (Days):", true, 23)]
+        [EntryIntegerUiProperty("Participation Horizon (Days):", true, 23, true)]
         public int ParticipationHorizonDays
         {
             get
@@ -858,7 +858,10 @@ namespace Sensus
             }
             set
             {
-                _participationHorizonDays = value;
+                if (value >= 1)
+                {
+                    _participationHorizonDays = value;
+                }
             }
         }
 
@@ -873,7 +876,7 @@ namespace Sensus
         /// associated with this study.
         /// </summary>
         /// <value>The contact email.</value>
-        [EntryStringUiProperty("Contact Email:", true, 24)]
+        [EntryStringUiProperty("Contact Email:", true, 24, false)]
         public string ContactEmail
         {
             get
@@ -920,7 +923,7 @@ namespace Sensus
         /// The participation percentage required for a user to be considered eligible for rewards.
         /// </summary>
         /// <value>The reward threshold.</value>
-        [EntryFloatUiProperty("Reward Threshold:", true, 26)]
+        [EntryFloatUiProperty("Reward Threshold:", true, 26, false)]
         public float? RewardThreshold
         {
             get
@@ -976,7 +979,7 @@ namespace Sensus
         /// will be achieved.
         /// </summary>
         /// <value>The GPS desired accuracy, in meters.</value>
-        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27)]
+        [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27, true)]
         public float GpsDesiredAccuracyMeters
         {
             get { return _gpsDesiredAccuracyMeters; }
@@ -995,7 +998,7 @@ namespace Sensus
         /// The minimum amount of time in milliseconds to wait between deliveries of GPS readings.
         /// </summary>
         /// <value>The GPS minimum time delay, in milliseconds.</value>
-        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28)]
+        [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28, true)]
         public int GpsMinTimeDelayMS
         {
             get { return _gpsMinTimeDelayMS; }
@@ -1014,7 +1017,7 @@ namespace Sensus
         /// The minimum distance in meters to wait between deliveries of GPS readings.
         /// </summary>
         /// <value>The GPS minimum distance delay, in meters.</value>
-        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29)]
+        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29, true)]
         public float GpsMinDistanceDelayMeters
         {
             get
@@ -1052,7 +1055,7 @@ namespace Sensus
         /// of this field is `variable-name:variable-value`.
         /// </summary>
         /// <value>The variable value user interface property.</value>
-        [EditableListUiProperty("Variables:", true, 30)]
+        [EditableListUiProperty("Variables:", true, 30, false)]
         [JsonIgnore]
         public List<string> VariableValueUiProperty
         {
@@ -1101,24 +1104,6 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
-        /// for more information.
-        /// </summary>
-        /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 31, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.UserIdDigits, ProtocolStartConfirmationMode.UserIdText, ProtocolStartConfirmationMode.UserIdQrCode })]
-        public ProtocolStartConfirmationMode ProtocolStartConfirmationMode
-        {
-            get
-            {
-                return _protocolStartConfirmationMode;
-            }
-            set
-            {
-                _protocolStartConfirmationMode = value;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the participant identifier.
         /// </summary>
         /// <value>The participant identifier.</value>
@@ -1140,7 +1125,7 @@ namespace Sensus
         [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 31, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation })]
+        [ListUiProperty("GPS - Pause Activity Type:", true, 31, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation }, false)]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
         [OnOffUiProperty("GPS - Significant Changes:", true, 32)]
@@ -1151,7 +1136,7 @@ namespace Sensus
 
         private float _gpsDeferralDistanceMeters = 500;
 
-        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34)]
+        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34, false)]
         public float GpsDeferralDistanceMeters
         {
             get
@@ -1161,7 +1146,9 @@ namespace Sensus
             set
             {
                 if (value < 0)
+                {
                     value = -1;
+                }
 
                 _gpsDeferralDistanceMeters = value;
             }
@@ -1169,14 +1156,16 @@ namespace Sensus
 
         private float _gpsDeferralTimeMinutes = 5;
 
-        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35)]
+        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35, false)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
             set
             {
                 if (value < 0)
+                {
                     value = -1;
+                }
 
                 _gpsDeferralTimeMinutes = value;
             }
@@ -1190,7 +1179,7 @@ namespace Sensus
         /// exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.
         /// </summary>
         /// <value>The alert exclusion window string.</value>
-        [EntryStringUiProperty("Alert Exclusion Windows:", true, 36)]
+        [EntryStringUiProperty("Alert Exclusion Windows:", true, 36, false)]
         public string AlertExclusionWindowString
         {
             get
@@ -1256,7 +1245,7 @@ namespace Sensus
         /// 
         /// </summary>
         /// <value>The asymmetric encryption public key.</value>
-        [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37)]
+        [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37, false)]
         public string AsymmetricEncryptionPublicKey
         {
             get
@@ -1291,36 +1280,54 @@ namespace Sensus
         /// Whether or not to allow the user to view the status of the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow View Status:", true, 38)]
+        [OnOffUiProperty("Allow View Status:", true, 39)]
         public bool AllowViewStatus { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to manually submit data being collected by the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Submit Data:", true, 39)]
+        [OnOffUiProperty("Allow Submit Data:", true, 40)]
         public bool AllowSubmitData { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to display/scan participation QR codes for the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Participation Scanning:", true, 40)]
+        [OnOffUiProperty("Allow Participation Scanning:", true, 41)]
         public bool AllowParticipationScanning { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to copy the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Copy:", true, 41)]
+        [OnOffUiProperty("Allow Copy:", true, 42)]
         public bool AllowCopy { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to share the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Share:", true, 42)]
+        [OnOffUiProperty("Allow Share:", true, 43)]
         public bool Shareable { get; set; } = false;
+
+        /// <summary>
+        /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
+        /// for more information.
+        /// </summary>
+        /// <value>The protocol start confirmation mode.</value>
+        [ListUiProperty("Start Confirmation Mode:", true, 44, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.UserIdDigits, ProtocolStartConfirmationMode.UserIdText, ProtocolStartConfirmationMode.UserIdQrCode }, true)]
+        public ProtocolStartConfirmationMode ProtocolStartConfirmationMode
+        {
+            get
+            {
+                return _protocolStartConfirmationMode;
+            }
+            set
+            {
+                _protocolStartConfirmationMode = value;
+            }
+        }
 
         [JsonIgnore]
         public bool StartIsScheduled

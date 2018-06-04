@@ -26,6 +26,8 @@ namespace Sensus.UI.UiProperties
     [AttributeUsage(AttributeTargets.Property)]
     public abstract class UiProperty : Attribute
     {
+        private const string REQUIRED_MARK = "*";
+
         /// <summary>
         /// Gets the <see cref="UiProperty"/> attribute associated with a property.
         /// </summary>
@@ -86,7 +88,7 @@ namespace Sensus.UI.UiProperties
 
                 Label propertyLabel = new Label
                 {
-                    Text = uiElement.LabelText ?? property.Name + ":",
+                    Text = uiElement.LabelText ?? property.Name + ":" + (uiElement._required ? REQUIRED_MARK : ""),
                     FontSize = 20
                 };
 
@@ -136,6 +138,7 @@ namespace Sensus.UI.UiProperties
         private string _labelText;
         private bool _editable;
         private int _order;
+        private bool _required;
 
         public string LabelText
         {
@@ -149,11 +152,12 @@ namespace Sensus.UI.UiProperties
             set { _editable = value; }
         }
 
-        protected UiProperty(string labelText, bool editable, int order)
+        protected UiProperty(string labelText, bool editable, int order, bool required)
         {
-            _labelText = labelText;
+            _labelText = string.IsNullOrWhiteSpace(labelText) ? null : labelText + (required ? REQUIRED_MARK : "");
             _editable = editable;
             _order = order;
+            _required = required;
         }
 
         public abstract View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter);

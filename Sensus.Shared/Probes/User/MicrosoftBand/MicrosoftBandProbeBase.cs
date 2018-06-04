@@ -289,7 +289,7 @@ namespace Sensus.Probes.User.MicrosoftBand
         /// <see cref="BandSensorSampleRate.Ms128"/>.
         /// </summary>
         /// <value>The sampling rate.</value>
-        [ListUiProperty("Sampling Rate:", true, 5, new object[] { BandSensorSampleRate.Ms16, BandSensorSampleRate.Ms32, BandSensorSampleRate.Ms128 })]
+        [ListUiProperty("Sampling Rate:", true, 5, new object[] { BandSensorSampleRate.Ms16, BandSensorSampleRate.Ms32, BandSensorSampleRate.Ms128 }, true)]
         public BandSensorSampleRate SamplingRate
         {
             get

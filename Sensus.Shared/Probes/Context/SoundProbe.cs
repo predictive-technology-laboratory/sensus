@@ -28,7 +28,7 @@ namespace Sensus.Probes.Context
         /// decibel level.
         /// </summary>
         /// <value>The sample length ms.</value>
-        [EntryIntegerUiProperty("Sample Length (MS):", true, 5)]
+        [EntryIntegerUiProperty("Sample Length (MS):", true, 5, true)]
         public int SampleLengthMS
         {
             get { return _sampleLengthMS; }
