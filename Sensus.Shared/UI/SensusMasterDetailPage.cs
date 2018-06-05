@@ -32,7 +32,7 @@ namespace Sensus.UI
             // ProtocolsPage to the Detail property. instead, just assign a blank content page and show the user the master
             // detail list. by the time the user selects from the list, the service helper will be available and the protocols
             // page will be ready to go.
-            Detail = new ContentPage();  
+            Detail = new NavigationPage(new ContentPage());
             IsPresented = true;
         }
 
@@ -48,7 +48,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    Detail = (Page)Activator.CreateInstance(selectedDetailPageItem.TargetType);
+                    Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
                     IsPresented = false;
                 }
 

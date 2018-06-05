@@ -96,7 +96,7 @@ namespace Sensus.UI.Inputs
 
                 _button.Clicked += async (o, e) =>
                 {
-                    _scanResult = await SensusServiceHelper.Get().ScanQrCodeAsync(_qrCodePrefix, Application.Current.MainPage.Navigation);
+                    _scanResult = await SensusServiceHelper.Get().ScanQrCodeAsync(_qrCodePrefix);
 
                     Complete = Value != null;
 

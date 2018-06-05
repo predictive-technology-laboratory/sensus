@@ -302,7 +302,7 @@ namespace Sensus.UI
                 {
                     try
                     {
-                        string barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PARTICIPATION, Navigation);
+                        string barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PARTICIPATION);
 
                         if (barcodeResult == null)
                         {
@@ -467,7 +467,7 @@ namespace Sensus.UI
 
                 if (action == "From QR Code")
                 {
-                    string result = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL, Navigation);
+                    string result = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
 
                     if (result != null)
                     {

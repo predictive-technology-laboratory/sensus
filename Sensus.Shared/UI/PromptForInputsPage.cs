@@ -287,19 +287,5 @@ namespace Sensus.UI
                 Content = contentLayout
             };
         }
-
-        /// <summary>
-        /// Disable the device's back button. The user must complete the form.
-        /// </summary>
-        /// <returns>True</returns>
-        protected override bool OnBackButtonPressed()
-        {
-            if (_canNavigateBack)
-            {
-                _finishedCallback(Result.NavigateBackward);
-            }
-
-            return true;
-        }
     }
 }

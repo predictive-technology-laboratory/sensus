@@ -21,9 +21,15 @@ namespace Sensus.UI
 {
     public class App : Application
     {
+        public Page DetailPage
+        {
+            get { return (MainPage as SensusMasterDetailPage).Detail; }
+            set { (MainPage as SensusMasterDetailPage).Detail = value; }
+        }
+
         public App()
         {
-            MainPage = new NavigationPage(new SensusMasterDetailPage());
+            MainPage = new SensusMasterDetailPage();
         }
 
         protected override void OnStart()

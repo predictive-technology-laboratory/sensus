@@ -428,21 +428,6 @@ namespace Sensus
                 {
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        ProtocolsPage protocolsPage = null;
-
-                        // display the protocols page if it isn't already up
-                        INavigation navigation = Application.Current.MainPage.Navigation;
-                        Page topPage = navigation.NavigationStack.Count > 0 ? navigation.NavigationStack.Last() : null;
-                        if (topPage is ProtocolsPage)
-                        {
-                            protocolsPage = topPage as ProtocolsPage;
-                        }
-                        else
-                        {
-                            protocolsPage = new ProtocolsPage();
-                        }
-
-                        // ask user to start protocol
                         await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
                     });
                 }

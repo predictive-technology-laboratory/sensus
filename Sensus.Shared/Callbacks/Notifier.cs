@@ -51,7 +51,7 @@ namespace Sensus.Callbacks
                     return;
                 }
 
-                (Application.Current.MainPage as SensusMasterDetailPage).Detail = new NavigationPage(desiredTopPage);
+                (Application.Current as App).DetailPage = new NavigationPage(desiredTopPage);
             });
         }
     }

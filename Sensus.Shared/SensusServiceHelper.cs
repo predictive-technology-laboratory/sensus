@@ -864,7 +864,7 @@ namespace Sensus
 #endif
         }
 
-        public Task<string> ScanQrCodeAsync(string resultPrefix, INavigation navigation)
+        public Task<string> ScanQrCodeAsync(string resultPrefix)
         {
             return Task.Run(() =>
             {
@@ -886,6 +886,8 @@ namespace Sensus
                     {
                         PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
                     });
+
+                    INavigation navigation = (Application.Current as App).DetailPage.Navigation;
 
                     barcodeScannerPage.OnScanResult += r =>
                     {
@@ -1005,7 +1007,7 @@ namespace Sensus
                                         {
                                             // the prompt page has finished and needs to be popped. either the user finished the page or the cancellation token did, and there 
                                             // might be a race condition. lock down the navigation object and check whether the page was already popped. don't do it again.
-                                            INavigation navigation = Application.Current.MainPage.Navigation;
+                                            INavigation navigation = (Application.Current as App).DetailPage.Navigation;
                                             bool pageWasAlreadyPopped;
                                             lock (navigation)
                                             {
@@ -1075,7 +1077,7 @@ namespace Sensus
                                     else
                                     {
                                         // display page, which will handle setting the response wait. only animate the display for the first page.
-                                        await Application.Current.MainPage.Navigation.PushAsync(promptForInputsPage, firstPageDisplay);
+                                        await (Application.Current as App).DetailPage.Navigation.PushAsync(promptForInputsPage, firstPageDisplay);
 
                                         // only run the post-display callback the first time a page is displayed. the caller expects the callback
                                         // to fire only once upon first display.
@@ -1193,7 +1195,7 @@ namespace Sensus
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                    await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
                 }
             });
         }
@@ -1215,7 +1217,7 @@ namespace Sensus
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await Application.Current.MainPage.Navigation.PushModalAsync(mapPage);
+                    await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
                 }
             });
         }

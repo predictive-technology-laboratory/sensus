@@ -51,7 +51,6 @@ namespace Sensus.Android
         private AndroidActivityResultRequestCode _activityResultRequestCode;
         private Tuple<Result, Intent> _activityResult;
         private ICallbackManager _facebookCallbackManager;
-        private App _app;
         private ManualResetEvent _serviceBindWait;
 
         private readonly object _locker = new object();
@@ -88,8 +87,7 @@ namespace Sensus.Android
             };
 #endif
 
-            _app = new App();
-            LoadApplication(_app);
+            LoadApplication(new App());
 
             _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += (o, e) =>
