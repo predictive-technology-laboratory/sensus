@@ -135,7 +135,11 @@ namespace Sensus.UI
 
                 selectedScript.Submitting = false;
 
-                if (!canceled)
+                if (canceled)
+                {
+                    scriptList.SelectedItem = null;
+                }
+                else
                 {
                     SensusServiceHelper.Get().RemoveScript(selectedScript);
                 }

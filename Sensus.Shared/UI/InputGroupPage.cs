@@ -16,24 +16,24 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
-using Sensus.Context;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
+using System.Threading.Tasks;
 
 namespace Sensus.UI
 {
-    public class PromptForInputsPage : ContentPage
+    public class InputGroupPage : ContentPage
     {
-        public enum Result
+        public enum NavigationResult
         {
-            NavigateBackward,
-            NavigateForward,
+            Backward,
+            Forward,
             Cancel
         }
 
-        private bool _canNavigateBack;
-        private Action<Result> _finishedCallback;
+        private bool _canNavigateBackward;
         private int _displayedInputCount;
+        private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 
         public int DisplayedInputCount
         {
@@ -43,22 +43,26 @@ namespace Sensus.UI
             }
         }
 
-        public PromptForInputsPage(InputGroup inputGroup,
-                                   int stepNumber,
-                                   int totalSteps,
-                                   bool canNavigateBack,
-                                   bool showCancelButton,
-                                   string nextButtonTextOverride,
-                                   CancellationToken? cancellationToken,
-                                   string cancelConfirmation,
-                                   string incompleteSubmissionConfirmation,
-                                   string submitConfirmation,
-                                   bool displayProgress,
-                                   Action<Result> finishedCallback)
+        public Task<NavigationResult> ResponseTask
         {
-            _canNavigateBack = canNavigateBack;
-            _finishedCallback = finishedCallback;
+            get { return _responseTaskCompletionSource.Task; }
+        }
+
+        public InputGroupPage(InputGroup inputGroup,
+                              int stepNumber,
+                              int totalSteps,
+                              bool canNavigateBackward,
+                              bool showCancelButton,
+                              string nextButtonTextOverride,
+                              CancellationToken? cancellationToken,
+                              string cancelConfirmation,
+                              string incompleteSubmissionConfirmation,
+                              string submitConfirmation,
+                              bool displayProgress)
+        {
+            _canNavigateBackward = canNavigateBackward;
             _displayedInputCount = 0;
+            _responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 
             StackLayout contentLayout = new StackLayout
             {
@@ -76,6 +80,7 @@ namespace Sensus.UI
                 }
             };
 
+            #region progress bar
             if (displayProgress)
             {
                 float progress = (stepNumber - 1) / (float)totalSteps;
@@ -93,8 +98,9 @@ namespace Sensus.UI
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 });
             }
+            #endregion
 
-            // indicate required fields
+            #region required field label
             if (inputGroup.Inputs.Any(input => input.Display && input.Required))
             {
                 contentLayout.Children.Add(new Label
@@ -105,8 +111,9 @@ namespace Sensus.UI
                     HorizontalOptions = LayoutOptions.Start
                 });
             }
+            #endregion
 
-            // add inputs to the page
+            #region inputs
             List<Input> displayedInputs = new List<Input>();
             int viewNumber = 1;
             int inputSeparatorHeight = 10;
@@ -115,6 +122,7 @@ namespace Sensus.UI
                 if (input.Display)
                 {
                     View inputView = input.GetView(viewNumber);
+
                     if (inputView != null)
                     {
                         // frame all enabled inputs that request a frame
@@ -141,10 +149,10 @@ namespace Sensus.UI
 
                         if (input.DisplayNumber)
                         {
-                            ++viewNumber;
+                            viewNumber++;
                         }
 
-                        ++_displayedInputCount;
+                        _displayedInputCount++;
                     }
                 }
             }
@@ -154,6 +162,7 @@ namespace Sensus.UI
             {
                 contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
             }
+            #endregion
 
             StackLayout navigationStack = new StackLayout
             {
@@ -169,7 +178,7 @@ namespace Sensus.UI
             };
 
             // add a prevous button if we're allowed to navigate back
-            if (_canNavigateBack)
+            if (_canNavigateBackward)
             {
                 Button previousButton = new Button
                 {
@@ -180,7 +189,7 @@ namespace Sensus.UI
 
                 previousButton.Clicked += (o, e) =>
                 {
-                    _finishedCallback(Result.NavigateBackward);
+                    _responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
                 };
 
                 previousNextStack.Children.Add(previousButton);
@@ -213,7 +222,7 @@ namespace Sensus.UI
                 {
                     string confirmationMessage = "";
 
-                    if (!string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation) && !inputGroup.Valid)
+                    if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
                     {
                         confirmationMessage += incompleteSubmissionConfirmation;
                     }
@@ -224,7 +233,7 @@ namespace Sensus.UI
 
                     if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
                     {
-                        _finishedCallback(Result.NavigateForward);
+                        _responseTaskCompletionSource.TrySetResult(NavigationResult.Forward);
                     }
                 }
             };
@@ -251,34 +260,26 @@ namespace Sensus.UI
                 {
                     if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
                     {
-                        _finishedCallback(Result.Cancel);
+                        _responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
                     }
                 };
             }
 
             contentLayout.Children.Add(navigationStack);
 
-            if (cancellationToken.HasValue)
+            // allow the cancellation token to set the result of this page
+            cancellationToken?.Register(() =>
             {
-                cancellationToken.Value.Register(() =>
-                {
-                    // it is possible for the token to be canceled from a thread other than the UI thread. the finished callback will do 
-                    // things with the UI, so ensure that the finished callback is run on the UI thread.
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Cancellation token has been cancelled.", LoggingLevel.Normal, GetType());
-                        _finishedCallback(Result.Cancel);
-                    });
-                });
-            }
+                _responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+            });
             #endregion
 
             Appearing += (o, e) =>
             {
                 // the page has appeared so mark all inputs as viewed
-                foreach (Input input in displayedInputs)
+                foreach (Input displayedInput in displayedInputs)
                 {
-                    input.Viewed = true;
+                    displayedInput.Viewed = true;
                 }
             };
 
@@ -286,6 +287,15 @@ namespace Sensus.UI
             {
                 Content = contentLayout
             };
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            // the only applies to phones with a hard/soft back button. iOS does not have this button. on 
+            // android, allow the user to cancel the page with the back button.
+            _responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+
+            return base.OnBackButtonPressed();
         }
     }
 }

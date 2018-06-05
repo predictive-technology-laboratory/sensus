@@ -180,7 +180,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbesEditPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbesViewPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\PromptForInputsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\InputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProximityTriggersPage.cs" />
