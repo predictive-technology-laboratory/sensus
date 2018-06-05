@@ -876,18 +876,48 @@ namespace Sensus
                     // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
                     // to take care of. the library does ask for permission, but if it's denied we get an exception
                     // kicked back. ask explicitly here, and bail out if permission is not granted.
-                    if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    //if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    //{
+                    //    resultWait.Set();
+                    //    return;
+                    //}
+
+                    Button cancelButton = new Button
                     {
-                        resultWait.Set();
-                        return;
-                    }
+                        Text = "Cancel",
+                        FontSize = 30
+                    };
+
+                    StackLayout scannerOverlay = new StackLayout
+                    {
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        VerticalOptions = LayoutOptions.FillAndExpand,
+                        Padding = new Thickness(30),
+                        Children = { cancelButton }
+                    };
 
                     ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
                     {
                         PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
-                    });
+                                                                                       
+                    }, scannerOverlay);
 
                     INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+
+                    Func<Task> CloseScannerPageAsync = new Func<Task>(() =>
+                    {
+                        return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {
+                            barcodeScannerPage.IsScanning = false;
+                            await navigation.PopModalAsync();
+                            resultWait.Set();
+                        });
+                    });
+
+                    cancelButton.Clicked += async (o, e) =>
+                    {
+                        await CloseScannerPageAsync();
+                    };
 
                     barcodeScannerPage.OnScanResult += async r =>
                     {
@@ -895,12 +925,7 @@ namespace Sensus
                         {
                             result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
 
-                            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                            {
-                                barcodeScannerPage.IsScanning = false;
-                                await navigation.PopModalAsync();
-                                resultWait.Set();
-                            });
+                            await CloseScannerPageAsync();
                         }
                     };
 
