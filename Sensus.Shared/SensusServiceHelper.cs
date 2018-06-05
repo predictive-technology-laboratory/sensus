@@ -876,11 +876,15 @@ namespace Sensus
                     // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
                     // to take care of. the library does ask for permission, but if it's denied we get an exception
                     // kicked back. ask explicitly here, and bail out if permission is not granted.
-                    //if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
-                    //{
-                    //    resultWait.Set();
-                    //    return;
-                    //}
+                    if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    {
+                        resultWait.Set();
+                        return;
+                    }
+
+                    // TODO:  there's a race condition bug in the scanning library:  https://github.com/Redth/ZXing.Net.Mobile/issues/717
+                    // delaying a bit seems to fix it.
+                    await Task.Delay(1000);
 
                     Button cancelButton = new Button
                     {
