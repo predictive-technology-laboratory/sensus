@@ -90,28 +90,30 @@ S3 service is a simple, non-relational storage system that is relatively cheap, 
 <li>Install the <a href="https://stedolan.github.io/jq">jq</a> command-line utility.</li>
 <li>Download and unzip our <a href="https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip">AWS configuration scripts</a>.</li>
 <li>Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where <code>NAME</code> is an informative name
-(alphanumerics only), <code>REGION</code> is the region in which your bucket will reside (e.g., <code>us-east-1</code>), and <code>ROOT_ID</code> is the 12-digit (no dashes) 
-AWS account identifier that will own your data:</li>
+(alphanumerics only) and <code>REGION</code> is the region in which your bucket will reside (e.g., <code>us-east-1</code>):</li>
 </ul>
-<pre><code>./ConfigureS3.sh NAME REGION ROOT_ID
+<pre><code>./ConfigureS3.sh NAME REGION
 </code></pre><ul>
-<li>The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
-like the following:</li>
+<li>The previous command will create a bucket as well as an IAM group and user with write-only access to the bucket. If successful, the command will 
+output something like the following:</li>
 </ul>
-<pre><code>All done. Bucket:  testing-21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+<pre><code>Done. Details:
+Sensus S3 bucket:  test-bucket-eee8ef46-5d6a-4508-b745-e6635d195a85
+Sensus S3 IAM account:  XXXX:XXXX
 </code></pre><ul>
-<li>The bucket produced on the final line should be kept confidential. Use this value as <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a>.</li>
+<li>The bucket and IAM account produced on the final line should be kept confidential. Use these values as <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a> and 
+<a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_IamAccountString">IamAccountString</a>, respectively.</li>
 </ul>
 <h1 id="downloading-data-from-amazon-s3">Downloading Data from Amazon S3</h1>
 <p>Install the <a href="http://aws.amazon.com/cli">AWS Command Line Interface</a>. Assuming you have created and populated an S3 bucket named <code>BUCKET</code> and 
 a folder named <code>FOLDER</code>, you can download all of your Sensus data in a few different ways:</p>
 <ol>
 <li>You can use the functions (e.g., <code>sensus.sync.from.aws.s3</code>) in the <a href="https://cran.r-project.org/web/packages/SensusR/index.html">SensusR</a> package.</li>
-<li>You can execute the following command to download everything to a directory named <code>data</code> on your desktop:</li>
-</ol>
+<li><p>You can execute the following command to download everything to a directory named <code>data</code> on your desktop:</p>
 <pre><code>aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
-</code></pre><ol>
-<li>You can run <a href="https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh">DownloadFromAmazonS3</a>.</li>
+</code></pre></li>
+<li><p>You can run <a href="https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh">DownloadFromAmazonS3</a>.</p>
+</li>
 <li>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</li>
 </ol>
 </div>
@@ -197,7 +199,7 @@ a folder named <code>FOLDER</code>, you can download all of your Sensus data in 
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, true, 2)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, true, 2, true)]
 public string Bucket { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -279,7 +281,7 @@ public string Bucket { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, true, 3)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, true, 3, false)]
 public string Folder { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -300,6 +302,34 @@ public string Folder { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_IamAccountString_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_IamAccountString" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString">IamAccountString</h4>
+  <div class="markdown level1 summary"><p>The IAM user&apos;s access and secret keys output by the steps described in the summary for this class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;IAM Account:&quot;, true, 4, true)]
+public string IamAccountString { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The iam account string.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedPublicKey*"></a>
   <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedPublicKey">PinnedPublicKey</h4>
   <div class="markdown level1 summary"><p>Pinned SSL public encryption key associated with <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL">PinnedServiceURL</a>. Use this to set up <a class="xref" href="../articles/ssl_pinning.html">SSL certificate pinning</a>.</p>
@@ -307,7 +337,7 @@ public string Folder { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Pinned Public Key:&quot;, true, 8)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Pinned Public Key:&quot;, true, 6, false)]
 public string PinnedPublicKey { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -335,7 +365,7 @@ public string PinnedPublicKey { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Pinned Service URL:&quot;, true, 7)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Pinned Service URL:&quot;, true, 5, false)]
 public string PinnedServiceURL { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -363,7 +393,7 @@ public string PinnedServiceURL { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;})]
+    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;}, true)]
 public string Region { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>

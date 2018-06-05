@@ -1724,12 +1724,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_PromptForInputAsync_" data-uid="Sensus.SensusServiceHelper.PromptForInputAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_Sensus_UI_Inputs_Input__" data-uid="Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{Sensus.UI.Inputs.Input})">PromptForInputAsync(String, Input, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action&lt;Input&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_" data-uid="Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)">PromptForInputAsync(String, Input, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PromptForInputAsync(string windowTitle, Input input, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action&lt;Input&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;Input&gt; PromptForInputAsync(string windowTitle, Input input, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1786,9 +1786,19 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
         <td><span class="parametername">displayProgress</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;</td>
-        <td><span class="parametername">callback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1796,12 +1806,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_PromptForInputsAsync_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Action_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup___" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action,System.Action{System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup}})">PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt;, IEnumerable&lt;InputGroup&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action, Action&lt;IEnumerable&lt;InputGroup&gt;&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action)">PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt;, IEnumerable&lt;InputGroup&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt; firstPromptTimestamp, IEnumerable&lt;InputGroup&gt; inputGroups, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action&lt;IEnumerable&lt;InputGroup&gt;&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;InputGroup&gt;&gt; PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt; firstPromptTimestamp, IEnumerable&lt;InputGroup&gt; inputGroups, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1863,9 +1873,19 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
         <td><span class="parametername">postDisplayCallback</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>&gt;&gt;</td>
-        <td><span class="parametername">callback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1873,12 +1893,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_PromptForInputsAsync_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Collections_Generic_List_Sensus_UI_Inputs_Input___" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{System.Collections.Generic.List{Sensus.UI.Inputs.Input}})">PromptForInputsAsync(String, IEnumerable&lt;Input&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action&lt;List&lt;Input&gt;&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)">PromptForInputsAsync(String, IEnumerable&lt;Input&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PromptForInputsAsync(string windowTitle, IEnumerable&lt;Input&gt; inputs, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action&lt;List&lt;Input&gt;&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;Input&gt;&gt; PromptForInputsAsync(string windowTitle, IEnumerable&lt;Input&gt; inputs, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1935,9 +1955,19 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
         <td><span class="parametername">displayProgress</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;&gt;</td>
-        <td><span class="parametername">callback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>

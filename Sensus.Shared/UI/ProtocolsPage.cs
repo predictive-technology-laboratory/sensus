@@ -40,7 +40,7 @@ namespace Sensus.UI
     {
         public static Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
-            return Task.Run<bool>(async () =>
+            return Task.Run(async () =>
             {
                 if (protocol.LockPasswordHash == "")
                 {

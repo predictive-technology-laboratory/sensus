@@ -896,7 +896,7 @@ namespace Sensus
                             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                             {
                                 barcodeScannerPage.IsScanning = false;
-                                await navigation.PopModalAsync();
+                                await navigation.PopAsync();
                             });
                         }
                     };
@@ -906,9 +906,7 @@ namespace Sensus
                         resultWait.Set();
                     };
 
-                    await navigation.PushModalAsync(barcodeScannerPage);
-
-                    barcodeScannerPage.IsScanning = true;
+                    await navigation.PushAsync(barcodeScannerPage);
                 });
 
                 resultWait.WaitOne();
@@ -919,7 +917,7 @@ namespace Sensus
 
         public Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            return Task.Run<Input>(async () =>
+            return Task.Run(async () =>
             {
                 List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
                 return inputs?.First();
@@ -928,7 +926,7 @@ namespace Sensus
 
         public Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            return Task.Run<List<Input>>(async () =>
+            return Task.Run(async () =>
             {
                 InputGroup inputGroup = new InputGroup { Name = windowTitle };
 
@@ -1017,14 +1015,14 @@ namespace Sensus
 
                                             if (!pageWasAlreadyPopped)
                                             {
-                                                // we aren't doing anything else, so the top of the modal stack should be the prompt page; however, check to be sure.
-                                                if (navigation.ModalStack.Count > 0 && navigation.ModalStack.Last() is PromptForInputsPage)
+                                                // we aren't doing anything else, so the top of the stack should be the prompt page; however, check to be sure.
+                                                if (navigation.NavigationStack.Count > 0 && navigation.NavigationStack.Last() is PromptForInputsPage)
                                                 {
                                                     _logger.Log("Popping prompt page with result:  " + result, LoggingLevel.Normal, GetType());
 
                                                     // animate pop if the user submitted or canceled
-                                                    await navigation.PopModalAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
-                                                                                   result == PromptForInputsPage.Result.Cancel);
+                                                    await navigation.PopAsync(stepNumber == inputGroups.Count() && result == PromptForInputsPage.Result.NavigateForward ||
+                                                                              result == PromptForInputsPage.Result.Cancel);
                                                 }
 
                                                 if (result == PromptForInputsPage.Result.Cancel)
@@ -1077,13 +1075,13 @@ namespace Sensus
                                     else
                                     {
                                         // display page, which will handle setting the response wait. only animate the display for the first page.
-                                        await Application.Current.MainPage.Navigation.PushModalAsync(promptForInputsPage, firstPageDisplay);
+                                        await Application.Current.MainPage.Navigation.PushAsync(promptForInputsPage, firstPageDisplay);
 
                                         // only run the post-display callback the first time a page is displayed. the caller expects the callback
                                         // to fire only once upon first display.
-                                        if (firstPageDisplay && postDisplayCallback != null)
+                                        if (firstPageDisplay)
                                         {
-                                            postDisplayCallback();
+                                            postDisplayCallback?.Invoke();
                                         }
 
                                         firstPageDisplay = false;

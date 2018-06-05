@@ -1279,6 +1279,42 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.CallbackScheduler
   fullName: Sensus.Android.Context.AndroidSensusContext.CallbackScheduler
   nameWithType: AndroidSensusContext.CallbackScheduler
+- uid: Sensus.Android.Context.AndroidSensusContext.IamAccessKey
+  name: IamAccessKey
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_IamAccessKey
+  commentId: P:Sensus.Android.Context.AndroidSensusContext.IamAccessKey
+  fullName: Sensus.Android.Context.AndroidSensusContext.IamAccessKey
+  nameWithType: AndroidSensusContext.IamAccessKey
+- uid: Sensus.Android.Context.AndroidSensusContext.IamAccessKey*
+  name: IamAccessKey
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_IamAccessKey_
+  commentId: Overload:Sensus.Android.Context.AndroidSensusContext.IamAccessKey
+  fullName: Sensus.Android.Context.AndroidSensusContext.IamAccessKey
+  nameWithType: AndroidSensusContext.IamAccessKey
+- uid: Sensus.Android.Context.AndroidSensusContext.IamAccessKeySecret
+  name: IamAccessKeySecret
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_IamAccessKeySecret
+  commentId: P:Sensus.Android.Context.AndroidSensusContext.IamAccessKeySecret
+  fullName: Sensus.Android.Context.AndroidSensusContext.IamAccessKeySecret
+  nameWithType: AndroidSensusContext.IamAccessKeySecret
+- uid: Sensus.Android.Context.AndroidSensusContext.IamAccessKeySecret*
+  name: IamAccessKeySecret
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_IamAccessKeySecret_
+  commentId: Overload:Sensus.Android.Context.AndroidSensusContext.IamAccessKeySecret
+  fullName: Sensus.Android.Context.AndroidSensusContext.IamAccessKeySecret
+  nameWithType: AndroidSensusContext.IamAccessKeySecret
+- uid: Sensus.Android.Context.AndroidSensusContext.IamRegion
+  name: IamRegion
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_IamRegion
+  commentId: P:Sensus.Android.Context.AndroidSensusContext.IamRegion
+  fullName: Sensus.Android.Context.AndroidSensusContext.IamRegion
+  nameWithType: AndroidSensusContext.IamRegion
+- uid: Sensus.Android.Context.AndroidSensusContext.IamRegion*
+  name: IamRegion
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_IamRegion_
+  commentId: Overload:Sensus.Android.Context.AndroidSensusContext.IamRegion
+  fullName: Sensus.Android.Context.AndroidSensusContext.IamRegion
+  nameWithType: AndroidSensusContext.IamRegion
 - uid: Sensus.Android.Context.AndroidSensusContext.MainThreadSynchronizer
   name: MainThreadSynchronizer
   href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_MainThreadSynchronizer
@@ -8386,6 +8422,12 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.abc_vector_test
   fullName: Sensus.Android.Resource.Drawable.abc_vector_test
   nameWithType: Resource.Drawable.abc_vector_test
+- uid: Sensus.Android.Resource.Drawable.account
+  name: account
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_account
+  commentId: F:Sensus.Android.Resource.Drawable.account
+  fullName: Sensus.Android.Resource.Drawable.account
+  nameWithType: Resource.Drawable.account
 - uid: Sensus.Android.Resource.Drawable.avd_hide_password
   name: avd_hide_password
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_avd_hide_password
@@ -20795,6 +20837,42 @@ references:
   commentId: Overload:Sensus.Context.ISensusContext.CallbackScheduler
   fullName: Sensus.Context.ISensusContext.CallbackScheduler
   nameWithType: ISensusContext.CallbackScheduler
+- uid: Sensus.Context.ISensusContext.IamAccessKey
+  name: IamAccessKey
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_IamAccessKey
+  commentId: P:Sensus.Context.ISensusContext.IamAccessKey
+  fullName: Sensus.Context.ISensusContext.IamAccessKey
+  nameWithType: ISensusContext.IamAccessKey
+- uid: Sensus.Context.ISensusContext.IamAccessKey*
+  name: IamAccessKey
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_IamAccessKey_
+  commentId: Overload:Sensus.Context.ISensusContext.IamAccessKey
+  fullName: Sensus.Context.ISensusContext.IamAccessKey
+  nameWithType: ISensusContext.IamAccessKey
+- uid: Sensus.Context.ISensusContext.IamAccessKeySecret
+  name: IamAccessKeySecret
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_IamAccessKeySecret
+  commentId: P:Sensus.Context.ISensusContext.IamAccessKeySecret
+  fullName: Sensus.Context.ISensusContext.IamAccessKeySecret
+  nameWithType: ISensusContext.IamAccessKeySecret
+- uid: Sensus.Context.ISensusContext.IamAccessKeySecret*
+  name: IamAccessKeySecret
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_IamAccessKeySecret_
+  commentId: Overload:Sensus.Context.ISensusContext.IamAccessKeySecret
+  fullName: Sensus.Context.ISensusContext.IamAccessKeySecret
+  nameWithType: ISensusContext.IamAccessKeySecret
+- uid: Sensus.Context.ISensusContext.IamRegion
+  name: IamRegion
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_IamRegion
+  commentId: P:Sensus.Context.ISensusContext.IamRegion
+  fullName: Sensus.Context.ISensusContext.IamRegion
+  nameWithType: ISensusContext.IamRegion
+- uid: Sensus.Context.ISensusContext.IamRegion*
+  name: IamRegion
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_IamRegion_
+  commentId: Overload:Sensus.Context.ISensusContext.IamRegion
+  fullName: Sensus.Context.ISensusContext.IamRegion
+  nameWithType: ISensusContext.IamRegion
 - uid: Sensus.Context.ISensusContext.MainThreadSynchronizer
   name: MainThreadSynchronizer
   href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_MainThreadSynchronizer
@@ -21557,6 +21635,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey
   nameWithType: AmazonS3RemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString
+  name: IamAccountString
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_IamAccountString
+  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString
+  nameWithType: AmazonS3RemoteDataStore.IamAccountString
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString*
+  name: IamAccountString
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_IamAccountString_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.IamAccountString
+  nameWithType: AmazonS3RemoteDataStore.IamAccountString
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedPublicKey
   name: PinnedPublicKey
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey
@@ -23753,6 +23843,42 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.CallbackScheduler
   fullName: Sensus.iOS.Context.iOSSensusContext.CallbackScheduler
   nameWithType: iOSSensusContext.CallbackScheduler
+- uid: Sensus.iOS.Context.iOSSensusContext.IamAccessKey
+  name: IamAccessKey
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_IamAccessKey
+  commentId: P:Sensus.iOS.Context.iOSSensusContext.IamAccessKey
+  fullName: Sensus.iOS.Context.iOSSensusContext.IamAccessKey
+  nameWithType: iOSSensusContext.IamAccessKey
+- uid: Sensus.iOS.Context.iOSSensusContext.IamAccessKey*
+  name: IamAccessKey
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_IamAccessKey_
+  commentId: Overload:Sensus.iOS.Context.iOSSensusContext.IamAccessKey
+  fullName: Sensus.iOS.Context.iOSSensusContext.IamAccessKey
+  nameWithType: iOSSensusContext.IamAccessKey
+- uid: Sensus.iOS.Context.iOSSensusContext.IamAccessKeySecret
+  name: IamAccessKeySecret
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_IamAccessKeySecret
+  commentId: P:Sensus.iOS.Context.iOSSensusContext.IamAccessKeySecret
+  fullName: Sensus.iOS.Context.iOSSensusContext.IamAccessKeySecret
+  nameWithType: iOSSensusContext.IamAccessKeySecret
+- uid: Sensus.iOS.Context.iOSSensusContext.IamAccessKeySecret*
+  name: IamAccessKeySecret
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_IamAccessKeySecret_
+  commentId: Overload:Sensus.iOS.Context.iOSSensusContext.IamAccessKeySecret
+  fullName: Sensus.iOS.Context.iOSSensusContext.IamAccessKeySecret
+  nameWithType: iOSSensusContext.IamAccessKeySecret
+- uid: Sensus.iOS.Context.iOSSensusContext.IamRegion
+  name: IamRegion
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_IamRegion
+  commentId: P:Sensus.iOS.Context.iOSSensusContext.IamRegion
+  fullName: Sensus.iOS.Context.iOSSensusContext.IamRegion
+  nameWithType: iOSSensusContext.IamRegion
+- uid: Sensus.iOS.Context.iOSSensusContext.IamRegion*
+  name: IamRegion
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_IamRegion_
+  commentId: Overload:Sensus.iOS.Context.iOSSensusContext.IamRegion
+  fullName: Sensus.iOS.Context.iOSSensusContext.IamRegion
+  nameWithType: iOSSensusContext.IamRegion
 - uid: Sensus.iOS.Context.iOSSensusContext.MainThreadSynchronizer
   name: MainThreadSynchronizer
   href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_MainThreadSynchronizer
@@ -29609,12 +29735,6 @@ references:
   commentId: Overload:Sensus.Probes.Location.GpsReceiver.Get
   fullName: Sensus.Probes.Location.GpsReceiver.Get
   nameWithType: GpsReceiver.Get
-- uid: Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken,System.Boolean)
-  name: GetReading(Int32, CancellationToken, Boolean)
-  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_System_Int32_System_Threading_CancellationToken_System_Boolean_
-  commentId: M:Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32,System.Threading.CancellationToken,System.Boolean)
-  fullName: Sensus.Probes.Location.GpsReceiver.GetReading(System.Int32, System.Threading.CancellationToken, System.Boolean)
-  nameWithType: GpsReceiver.GetReading(Int32, CancellationToken, Boolean)
 - uid: Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken,System.Boolean)
   name: GetReading(CancellationToken, Boolean)
   href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReading_System_Threading_CancellationToken_System_Boolean_
@@ -29627,6 +29747,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.GpsReceiver.GetReading
   fullName: Sensus.Probes.Location.GpsReceiver.GetReading
   nameWithType: GpsReceiver.GetReading
+- uid: Sensus.Probes.Location.GpsReceiver.GetReadingAsync(System.Threading.CancellationToken,System.Boolean)
+  name: GetReadingAsync(CancellationToken, Boolean)
+  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReadingAsync_System_Threading_CancellationToken_System_Boolean_
+  commentId: M:Sensus.Probes.Location.GpsReceiver.GetReadingAsync(System.Threading.CancellationToken,System.Boolean)
+  fullName: Sensus.Probes.Location.GpsReceiver.GetReadingAsync(System.Threading.CancellationToken, System.Boolean)
+  nameWithType: GpsReceiver.GetReadingAsync(CancellationToken, Boolean)
+- uid: Sensus.Probes.Location.GpsReceiver.GetReadingAsync*
+  name: GetReadingAsync
+  href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_GetReadingAsync_
+  commentId: Overload:Sensus.Probes.Location.GpsReceiver.GetReadingAsync
+  fullName: Sensus.Probes.Location.GpsReceiver.GetReadingAsync
+  nameWithType: GpsReceiver.GetReadingAsync
 - uid: Sensus.Probes.Location.GpsReceiver.Locator
   name: Locator
   href: api/Sensus.Probes.Location.GpsReceiver.html#Sensus_Probes_Location_GpsReceiver_Locator
@@ -37907,6 +38039,18 @@ references:
   commentId: Overload:Sensus.Protocol.AllowCopy
   fullName: Sensus.Protocol.AllowCopy
   nameWithType: Protocol.AllowCopy
+- uid: Sensus.Protocol.AllowParticipantIdReset
+  name: AllowParticipantIdReset
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowParticipantIdReset
+  commentId: P:Sensus.Protocol.AllowParticipantIdReset
+  fullName: Sensus.Protocol.AllowParticipantIdReset
+  nameWithType: Protocol.AllowParticipantIdReset
+- uid: Sensus.Protocol.AllowParticipantIdReset*
+  name: AllowParticipantIdReset
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowParticipantIdReset_
+  commentId: Overload:Sensus.Protocol.AllowParticipantIdReset
+  fullName: Sensus.Protocol.AllowParticipantIdReset
+  nameWithType: Protocol.AllowParticipantIdReset
 - uid: Sensus.Protocol.AllowParticipationScanning
   name: AllowParticipationScanning
   href: api/Sensus.Protocol.html#Sensus_Protocol_AllowParticipationScanning
@@ -38039,15 +38183,12 @@ references:
   commentId: Overload:Sensus.Protocol.ContinueIndefinitely
   fullName: Sensus.Protocol.ContinueIndefinitely
   nameWithType: Protocol.ContinueIndefinitely
-- uid: Sensus.Protocol.CopyAsync(System.Boolean,System.Boolean,System.Action{Sensus.Protocol})
-  name: CopyAsync(Boolean, Boolean, Action<Protocol>)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_CopyAsync_System_Boolean_System_Boolean_System_Action_Sensus_Protocol__
-  commentId: M:Sensus.Protocol.CopyAsync(System.Boolean,System.Boolean,System.Action{Sensus.Protocol})
-  name.vb: CopyAsync(Boolean, Boolean, Action(Of Protocol))
-  fullName: Sensus.Protocol.CopyAsync(System.Boolean, System.Boolean, System.Action<Sensus.Protocol>)
-  fullName.vb: Sensus.Protocol.CopyAsync(System.Boolean, System.Boolean, System.Action(Of Sensus.Protocol))
-  nameWithType: Protocol.CopyAsync(Boolean, Boolean, Action<Protocol>)
-  nameWithType.vb: Protocol.CopyAsync(Boolean, Boolean, Action(Of Protocol))
+- uid: Sensus.Protocol.CopyAsync(System.Boolean,System.Boolean)
+  name: CopyAsync(Boolean, Boolean)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_CopyAsync_System_Boolean_System_Boolean_
+  commentId: M:Sensus.Protocol.CopyAsync(System.Boolean,System.Boolean)
+  fullName: Sensus.Protocol.CopyAsync(System.Boolean, System.Boolean)
+  nameWithType: Protocol.CopyAsync(Boolean, Boolean)
 - uid: Sensus.Protocol.CopyAsync*
   name: CopyAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_CopyAsync_
@@ -38102,33 +38243,27 @@ references:
   commentId: Overload:Sensus.Protocol.Description
   fullName: Sensus.Protocol.Description
   nameWithType: Protocol.Description
-- uid: Sensus.Protocol.DeserializeAsync(System.Byte[],System.Action{Sensus.Protocol})
-  name: DeserializeAsync(Byte[], Action<Protocol>)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Byte___System_Action_Sensus_Protocol__
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.Byte[],System.Action{Sensus.Protocol})
-  name.vb: DeserializeAsync(Byte(), Action(Of Protocol))
-  fullName: Sensus.Protocol.DeserializeAsync(System.Byte[], System.Action<Sensus.Protocol>)
-  fullName.vb: Sensus.Protocol.DeserializeAsync(System.Byte(), System.Action(Of Sensus.Protocol))
-  nameWithType: Protocol.DeserializeAsync(Byte[], Action<Protocol>)
-  nameWithType.vb: Protocol.DeserializeAsync(Byte(), Action(Of Protocol))
-- uid: Sensus.Protocol.DeserializeAsync(System.String,System.Action{Sensus.Protocol})
-  name: DeserializeAsync(String, Action<Protocol>)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_String_System_Action_Sensus_Protocol__
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.String,System.Action{Sensus.Protocol})
-  name.vb: DeserializeAsync(String, Action(Of Protocol))
-  fullName: Sensus.Protocol.DeserializeAsync(System.String, System.Action<Sensus.Protocol>)
-  fullName.vb: Sensus.Protocol.DeserializeAsync(System.String, System.Action(Of Sensus.Protocol))
-  nameWithType: Protocol.DeserializeAsync(String, Action<Protocol>)
-  nameWithType.vb: Protocol.DeserializeAsync(String, Action(Of Protocol))
-- uid: Sensus.Protocol.DeserializeAsync(System.Uri,System.Action{Sensus.Protocol})
-  name: DeserializeAsync(Uri, Action<Protocol>)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Uri_System_Action_Sensus_Protocol__
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.Uri,System.Action{Sensus.Protocol})
-  name.vb: DeserializeAsync(Uri, Action(Of Protocol))
-  fullName: Sensus.Protocol.DeserializeAsync(System.Uri, System.Action<Sensus.Protocol>)
-  fullName.vb: Sensus.Protocol.DeserializeAsync(System.Uri, System.Action(Of Sensus.Protocol))
-  nameWithType: Protocol.DeserializeAsync(Uri, Action<Protocol>)
-  nameWithType.vb: Protocol.DeserializeAsync(Uri, Action(Of Protocol))
+- uid: Sensus.Protocol.DeserializeAsync(System.Byte[])
+  name: DeserializeAsync(Byte[])
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Byte___
+  commentId: M:Sensus.Protocol.DeserializeAsync(System.Byte[])
+  name.vb: DeserializeAsync(Byte())
+  fullName: Sensus.Protocol.DeserializeAsync(System.Byte[])
+  fullName.vb: Sensus.Protocol.DeserializeAsync(System.Byte())
+  nameWithType: Protocol.DeserializeAsync(Byte[])
+  nameWithType.vb: Protocol.DeserializeAsync(Byte())
+- uid: Sensus.Protocol.DeserializeAsync(System.String)
+  name: DeserializeAsync(String)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_String_
+  commentId: M:Sensus.Protocol.DeserializeAsync(System.String)
+  fullName: Sensus.Protocol.DeserializeAsync(System.String)
+  nameWithType: Protocol.DeserializeAsync(String)
+- uid: Sensus.Protocol.DeserializeAsync(System.Uri)
+  name: DeserializeAsync(Uri)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Uri_
+  commentId: M:Sensus.Protocol.DeserializeAsync(System.Uri)
+  fullName: Sensus.Protocol.DeserializeAsync(System.Uri)
+  nameWithType: Protocol.DeserializeAsync(Uri)
 - uid: Sensus.Protocol.DeserializeAsync*
   name: DeserializeAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_
@@ -38417,18 +38552,6 @@ references:
   commentId: E:Sensus.Protocol.ProtocolRunningChanged
   fullName: Sensus.Protocol.ProtocolRunningChanged
   nameWithType: Protocol.ProtocolRunningChanged
-- uid: Sensus.Protocol.ProtocolStartConfirmationMode
-  name: ProtocolStartConfirmationMode
-  href: api/Sensus.Protocol.html#Sensus_Protocol_ProtocolStartConfirmationMode
-  commentId: P:Sensus.Protocol.ProtocolStartConfirmationMode
-  fullName: Sensus.Protocol.ProtocolStartConfirmationMode
-  nameWithType: Protocol.ProtocolStartConfirmationMode
-- uid: Sensus.Protocol.ProtocolStartConfirmationMode*
-  name: ProtocolStartConfirmationMode
-  href: api/Sensus.Protocol.html#Sensus_Protocol_ProtocolStartConfirmationMode_
-  commentId: Overload:Sensus.Protocol.ProtocolStartConfirmationMode
-  fullName: Sensus.Protocol.ProtocolStartConfirmationMode
-  nameWithType: Protocol.ProtocolStartConfirmationMode
 - uid: Sensus.Protocol.RandomTimeAnchor
   name: RandomTimeAnchor
   href: api/Sensus.Protocol.html#Sensus_Protocol_RandomTimeAnchor
@@ -38477,18 +38600,18 @@ references:
   commentId: Overload:Sensus.Protocol.Running
   fullName: Sensus.Protocol.Running
   nameWithType: Protocol.Running
-- uid: Sensus.Protocol.RunUiTestingProtocol(System.IO.Stream)
-  name: RunUiTestingProtocol(Stream)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_RunUiTestingProtocol_System_IO_Stream_
-  commentId: M:Sensus.Protocol.RunUiTestingProtocol(System.IO.Stream)
-  fullName: Sensus.Protocol.RunUiTestingProtocol(System.IO.Stream)
-  nameWithType: Protocol.RunUiTestingProtocol(Stream)
-- uid: Sensus.Protocol.RunUiTestingProtocol*
-  name: RunUiTestingProtocol
-  href: api/Sensus.Protocol.html#Sensus_Protocol_RunUiTestingProtocol_
-  commentId: Overload:Sensus.Protocol.RunUiTestingProtocol
-  fullName: Sensus.Protocol.RunUiTestingProtocol
-  nameWithType: Protocol.RunUiTestingProtocol
+- uid: Sensus.Protocol.RunUiTestingProtocolAsync(System.IO.Stream)
+  name: RunUiTestingProtocolAsync(Stream)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_RunUiTestingProtocolAsync_System_IO_Stream_
+  commentId: M:Sensus.Protocol.RunUiTestingProtocolAsync(System.IO.Stream)
+  fullName: Sensus.Protocol.RunUiTestingProtocolAsync(System.IO.Stream)
+  nameWithType: Protocol.RunUiTestingProtocolAsync(Stream)
+- uid: Sensus.Protocol.RunUiTestingProtocolAsync*
+  name: RunUiTestingProtocolAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_RunUiTestingProtocolAsync_
+  commentId: Overload:Sensus.Protocol.RunUiTestingProtocolAsync
+  fullName: Sensus.Protocol.RunUiTestingProtocolAsync
+  nameWithType: Protocol.RunUiTestingProtocolAsync
 - uid: Sensus.Protocol.Save(System.String)
   name: Save(String)
   href: api/Sensus.Protocol.html#Sensus_Protocol_Save_System_String_
@@ -38585,6 +38708,18 @@ references:
   commentId: Overload:Sensus.Protocol.StartAsync
   fullName: Sensus.Protocol.StartAsync
   nameWithType: Protocol.StartAsync
+- uid: Sensus.Protocol.StartConfirmationMode
+  name: StartConfirmationMode
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StartConfirmationMode
+  commentId: P:Sensus.Protocol.StartConfirmationMode
+  fullName: Sensus.Protocol.StartConfirmationMode
+  nameWithType: Protocol.StartConfirmationMode
+- uid: Sensus.Protocol.StartConfirmationMode*
+  name: StartConfirmationMode
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StartConfirmationMode_
+  commentId: Overload:Sensus.Protocol.StartConfirmationMode
+  fullName: Sensus.Protocol.StartConfirmationMode
+  nameWithType: Protocol.StartConfirmationMode
 - uid: Sensus.Protocol.StartDate
   name: StartDate
   href: api/Sensus.Protocol.html#Sensus_Protocol_StartDate
@@ -38633,12 +38768,12 @@ references:
   commentId: Overload:Sensus.Protocol.StartTime
   fullName: Sensus.Protocol.StartTime
   nameWithType: Protocol.StartTime
-- uid: Sensus.Protocol.StartWithUserAgreementAsync(System.String,System.Action)
-  name: StartWithUserAgreementAsync(String, Action)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_System_String_System_Action_
-  commentId: M:Sensus.Protocol.StartWithUserAgreementAsync(System.String,System.Action)
-  fullName: Sensus.Protocol.StartWithUserAgreementAsync(System.String, System.Action)
-  nameWithType: Protocol.StartWithUserAgreementAsync(String, Action)
+- uid: Sensus.Protocol.StartWithUserAgreementAsync(System.String)
+  name: StartWithUserAgreementAsync(String)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_System_String_
+  commentId: M:Sensus.Protocol.StartWithUserAgreementAsync(System.String)
+  fullName: Sensus.Protocol.StartWithUserAgreementAsync(System.String)
+  nameWithType: Protocol.StartWithUserAgreementAsync(String)
 - uid: Sensus.Protocol.StartWithUserAgreementAsync*
   name: StartWithUserAgreementAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_
@@ -38765,30 +38900,30 @@ references:
   commentId: F:Sensus.ProtocolStartConfirmationMode.None
   fullName: Sensus.ProtocolStartConfirmationMode.None
   nameWithType: ProtocolStartConfirmationMode.None
+- uid: Sensus.ProtocolStartConfirmationMode.ParticipantIdDigits
+  name: ParticipantIdDigits
+  href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_ParticipantIdDigits
+  commentId: F:Sensus.ProtocolStartConfirmationMode.ParticipantIdDigits
+  fullName: Sensus.ProtocolStartConfirmationMode.ParticipantIdDigits
+  nameWithType: ProtocolStartConfirmationMode.ParticipantIdDigits
+- uid: Sensus.ProtocolStartConfirmationMode.ParticipantIdQrCode
+  name: ParticipantIdQrCode
+  href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_ParticipantIdQrCode
+  commentId: F:Sensus.ProtocolStartConfirmationMode.ParticipantIdQrCode
+  fullName: Sensus.ProtocolStartConfirmationMode.ParticipantIdQrCode
+  nameWithType: ProtocolStartConfirmationMode.ParticipantIdQrCode
+- uid: Sensus.ProtocolStartConfirmationMode.ParticipantIdText
+  name: ParticipantIdText
+  href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_ParticipantIdText
+  commentId: F:Sensus.ProtocolStartConfirmationMode.ParticipantIdText
+  fullName: Sensus.ProtocolStartConfirmationMode.ParticipantIdText
+  nameWithType: ProtocolStartConfirmationMode.ParticipantIdText
 - uid: Sensus.ProtocolStartConfirmationMode.RandomDigits
   name: RandomDigits
   href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_RandomDigits
   commentId: F:Sensus.ProtocolStartConfirmationMode.RandomDigits
   fullName: Sensus.ProtocolStartConfirmationMode.RandomDigits
   nameWithType: ProtocolStartConfirmationMode.RandomDigits
-- uid: Sensus.ProtocolStartConfirmationMode.UserIdDigits
-  name: UserIdDigits
-  href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_UserIdDigits
-  commentId: F:Sensus.ProtocolStartConfirmationMode.UserIdDigits
-  fullName: Sensus.ProtocolStartConfirmationMode.UserIdDigits
-  nameWithType: ProtocolStartConfirmationMode.UserIdDigits
-- uid: Sensus.ProtocolStartConfirmationMode.UserIdQrCode
-  name: UserIdQrCode
-  href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_UserIdQrCode
-  commentId: F:Sensus.ProtocolStartConfirmationMode.UserIdQrCode
-  fullName: Sensus.ProtocolStartConfirmationMode.UserIdQrCode
-  nameWithType: ProtocolStartConfirmationMode.UserIdQrCode
-- uid: Sensus.ProtocolStartConfirmationMode.UserIdText
-  name: UserIdText
-  href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_UserIdText
-  commentId: F:Sensus.ProtocolStartConfirmationMode.UserIdText
-  fullName: Sensus.ProtocolStartConfirmationMode.UserIdText
-  nameWithType: ProtocolStartConfirmationMode.UserIdText
 - uid: Sensus.ProtocolStartConfirmationMode.value__
   name: value__
   href: api/Sensus.ProtocolStartConfirmationMode.html#Sensus_ProtocolStartConfirmationMode_value__
@@ -38801,6 +38936,12 @@ references:
   commentId: T:Sensus.QrCodePrefix
   fullName: Sensus.QrCodePrefix
   nameWithType: QrCodePrefix
+- uid: Sensus.QrCodePrefix.IAM_CREDENTIALS
+  name: IAM_CREDENTIALS
+  href: api/Sensus.QrCodePrefix.html#Sensus_QrCodePrefix_IAM_CREDENTIALS
+  commentId: F:Sensus.QrCodePrefix.IAM_CREDENTIALS
+  fullName: Sensus.QrCodePrefix.IAM_CREDENTIALS
+  nameWithType: QrCodePrefix.IAM_CREDENTIALS
 - uid: Sensus.QrCodePrefix.SENSUS_PARTICIPANT_ID
   name: SENSUS_PARTICIPANT_ID
   href: api/Sensus.QrCodePrefix.html#Sensus_QrCodePrefix_SENSUS_PARTICIPANT_ID
@@ -39389,39 +39530,39 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync
   fullName: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync
   nameWithType: SensusServiceHelper.PromptForAndReadTextFileAsync
-- uid: Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{Sensus.UI.Inputs.Input})
-  name: PromptForInputAsync(String, Input, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action<Input>)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_Sensus_UI_Inputs_Input__
-  commentId: M:Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{Sensus.UI.Inputs.Input})
-  name.vb: PromptForInputAsync(String, Input, Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action(Of Input))
-  fullName: Sensus.SensusServiceHelper.PromptForInputAsync(System.String, Sensus.UI.Inputs.Input, System.Nullable<System.Threading.CancellationToken>, System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action<Sensus.UI.Inputs.Input>)
-  fullName.vb: Sensus.SensusServiceHelper.PromptForInputAsync(System.String, Sensus.UI.Inputs.Input, System.Nullable(Of System.Threading.CancellationToken), System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action(Of Sensus.UI.Inputs.Input))
-  nameWithType: SensusServiceHelper.PromptForInputAsync(String, Input, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action<Input>)
-  nameWithType.vb: SensusServiceHelper.PromptForInputAsync(String, Input, Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action(Of Input))
+- uid: Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)
+  name: PromptForInputAsync(String, Input, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_
+  commentId: M:Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)
+  name.vb: PromptForInputAsync(String, Input, Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean)
+  fullName: Sensus.SensusServiceHelper.PromptForInputAsync(System.String, Sensus.UI.Inputs.Input, System.Nullable<System.Threading.CancellationToken>, System.Boolean, System.String, System.String, System.String, System.String, System.Boolean)
+  fullName.vb: Sensus.SensusServiceHelper.PromptForInputAsync(System.String, Sensus.UI.Inputs.Input, System.Nullable(Of System.Threading.CancellationToken), System.Boolean, System.String, System.String, System.String, System.String, System.Boolean)
+  nameWithType: SensusServiceHelper.PromptForInputAsync(String, Input, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean)
+  nameWithType.vb: SensusServiceHelper.PromptForInputAsync(String, Input, Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean)
 - uid: Sensus.SensusServiceHelper.PromptForInputAsync*
   name: PromptForInputAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputAsync_
   commentId: Overload:Sensus.SensusServiceHelper.PromptForInputAsync
   fullName: Sensus.SensusServiceHelper.PromptForInputAsync
   nameWithType: SensusServiceHelper.PromptForInputAsync
-- uid: Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action,System.Action{System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup}})
-  name: PromptForInputsAsync(Nullable<DateTimeOffset>, IEnumerable<InputGroup>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action, Action<IEnumerable<InputGroup>>)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Action_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup___
-  commentId: M:Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action,System.Action{System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup}})
-  name.vb: PromptForInputsAsync(Nullable(Of DateTimeOffset), IEnumerable(Of InputGroup), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action, Action(Of IEnumerable(Of InputGroup)))
-  fullName: Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable<System.DateTimeOffset>, System.Collections.Generic.IEnumerable<Sensus.UI.Inputs.InputGroup>, System.Nullable<System.Threading.CancellationToken>, System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action, System.Action<System.Collections.Generic.IEnumerable<Sensus.UI.Inputs.InputGroup>>)
-  fullName.vb: Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable(Of System.DateTimeOffset), System.Collections.Generic.IEnumerable(Of Sensus.UI.Inputs.InputGroup), System.Nullable(Of System.Threading.CancellationToken), System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action, System.Action(Of System.Collections.Generic.IEnumerable(Of Sensus.UI.Inputs.InputGroup)))
-  nameWithType: SensusServiceHelper.PromptForInputsAsync(Nullable<DateTimeOffset>, IEnumerable<InputGroup>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action, Action<IEnumerable<InputGroup>>)
-  nameWithType.vb: SensusServiceHelper.PromptForInputsAsync(Nullable(Of DateTimeOffset), IEnumerable(Of InputGroup), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action, Action(Of IEnumerable(Of InputGroup)))
-- uid: Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{System.Collections.Generic.List{Sensus.UI.Inputs.Input}})
-  name: PromptForInputsAsync(String, IEnumerable<Input>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action<List<Input>>)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Collections_Generic_List_Sensus_UI_Inputs_Input___
-  commentId: M:Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{System.Collections.Generic.List{Sensus.UI.Inputs.Input}})
-  name.vb: PromptForInputsAsync(String, IEnumerable(Of Input), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action(Of List(Of Input)))
-  fullName: Sensus.SensusServiceHelper.PromptForInputsAsync(System.String, System.Collections.Generic.IEnumerable<Sensus.UI.Inputs.Input>, System.Nullable<System.Threading.CancellationToken>, System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action<System.Collections.Generic.List<Sensus.UI.Inputs.Input>>)
-  fullName.vb: Sensus.SensusServiceHelper.PromptForInputsAsync(System.String, System.Collections.Generic.IEnumerable(Of Sensus.UI.Inputs.Input), System.Nullable(Of System.Threading.CancellationToken), System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action(Of System.Collections.Generic.List(Of Sensus.UI.Inputs.Input)))
-  nameWithType: SensusServiceHelper.PromptForInputsAsync(String, IEnumerable<Input>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action<List<Input>>)
-  nameWithType.vb: SensusServiceHelper.PromptForInputsAsync(String, IEnumerable(Of Input), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action(Of List(Of Input)))
+- uid: Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action)
+  name: PromptForInputsAsync(Nullable<DateTimeOffset>, IEnumerable<InputGroup>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_
+  commentId: M:Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action)
+  name.vb: PromptForInputsAsync(Nullable(Of DateTimeOffset), IEnumerable(Of InputGroup), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action)
+  fullName: Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable<System.DateTimeOffset>, System.Collections.Generic.IEnumerable<Sensus.UI.Inputs.InputGroup>, System.Nullable<System.Threading.CancellationToken>, System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action)
+  fullName.vb: Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable(Of System.DateTimeOffset), System.Collections.Generic.IEnumerable(Of Sensus.UI.Inputs.InputGroup), System.Nullable(Of System.Threading.CancellationToken), System.Boolean, System.String, System.String, System.String, System.String, System.Boolean, System.Action)
+  nameWithType: SensusServiceHelper.PromptForInputsAsync(Nullable<DateTimeOffset>, IEnumerable<InputGroup>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean, Action)
+  nameWithType.vb: SensusServiceHelper.PromptForInputsAsync(Nullable(Of DateTimeOffset), IEnumerable(Of InputGroup), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean, Action)
+- uid: Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)
+  name: PromptForInputsAsync(String, IEnumerable<Input>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_
+  commentId: M:Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)
+  name.vb: PromptForInputsAsync(String, IEnumerable(Of Input), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean)
+  fullName: Sensus.SensusServiceHelper.PromptForInputsAsync(System.String, System.Collections.Generic.IEnumerable<Sensus.UI.Inputs.Input>, System.Nullable<System.Threading.CancellationToken>, System.Boolean, System.String, System.String, System.String, System.String, System.Boolean)
+  fullName.vb: Sensus.SensusServiceHelper.PromptForInputsAsync(System.String, System.Collections.Generic.IEnumerable(Of Sensus.UI.Inputs.Input), System.Nullable(Of System.Threading.CancellationToken), System.Boolean, System.String, System.String, System.String, System.String, System.Boolean)
+  nameWithType: SensusServiceHelper.PromptForInputsAsync(String, IEnumerable<Input>, Nullable<CancellationToken>, Boolean, String, String, String, String, Boolean)
+  nameWithType.vb: SensusServiceHelper.PromptForInputsAsync(String, IEnumerable(Of Input), Nullable(Of CancellationToken), Boolean, String, String, String, String, Boolean)
 - uid: Sensus.SensusServiceHelper.PromptForInputsAsync*
   name: PromptForInputsAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForInputsAsync_
@@ -41303,18 +41444,18 @@ references:
   commentId: M:Sensus.UI.Inputs.QrCodeInput.#ctor
   fullName: Sensus.UI.Inputs.QrCodeInput.QrCodeInput()
   nameWithType: QrCodeInput.QrCodeInput()
-- uid: Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.String)
-  name: QrCodeInput(String, String, String)
-  href: api/Sensus.UI.Inputs.QrCodeInput.html#Sensus_UI_Inputs_QrCodeInput__ctor_System_String_System_String_System_String_
-  commentId: M:Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.String)
-  fullName: Sensus.UI.Inputs.QrCodeInput.QrCodeInput(System.String, System.String, System.String)
-  nameWithType: QrCodeInput.QrCodeInput(String, String, String)
-- uid: Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.String,System.String)
-  name: QrCodeInput(String, String, String, String)
-  href: api/Sensus.UI.Inputs.QrCodeInput.html#Sensus_UI_Inputs_QrCodeInput__ctor_System_String_System_String_System_String_System_String_
-  commentId: M:Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.String,System.String)
-  fullName: Sensus.UI.Inputs.QrCodeInput.QrCodeInput(System.String, System.String, System.String, System.String)
-  nameWithType: QrCodeInput.QrCodeInput(String, String, String, String)
+- uid: Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.Boolean,System.String)
+  name: QrCodeInput(String, String, Boolean, String)
+  href: api/Sensus.UI.Inputs.QrCodeInput.html#Sensus_UI_Inputs_QrCodeInput__ctor_System_String_System_String_System_Boolean_System_String_
+  commentId: M:Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.Boolean,System.String)
+  fullName: Sensus.UI.Inputs.QrCodeInput.QrCodeInput(System.String, System.String, System.Boolean, System.String)
+  nameWithType: QrCodeInput.QrCodeInput(String, String, Boolean, String)
+- uid: Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.Boolean,System.String,System.String)
+  name: QrCodeInput(String, String, Boolean, String, String)
+  href: api/Sensus.UI.Inputs.QrCodeInput.html#Sensus_UI_Inputs_QrCodeInput__ctor_System_String_System_String_System_Boolean_System_String_System_String_
+  commentId: M:Sensus.UI.Inputs.QrCodeInput.#ctor(System.String,System.String,System.Boolean,System.String,System.String)
+  fullName: Sensus.UI.Inputs.QrCodeInput.QrCodeInput(System.String, System.String, System.Boolean, System.String, System.String)
+  nameWithType: QrCodeInput.QrCodeInput(String, String, Boolean, String, String)
 - uid: Sensus.UI.Inputs.QrCodeInput.#ctor*
   name: QrCodeInput
   href: api/Sensus.UI.Inputs.QrCodeInput.html#Sensus_UI_Inputs_QrCodeInput__ctor_
@@ -42218,18 +42359,18 @@ references:
   commentId: Overload:Sensus.UI.ProtocolsPage.#ctor
   fullName: Sensus.UI.ProtocolsPage.ProtocolsPage
   nameWithType: ProtocolsPage.ProtocolsPage
-- uid: Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication(Sensus.Protocol,System.Action,System.Action)
-  name: ExecuteActionUponProtocolAuthentication(Protocol, Action, Action)
-  href: api/Sensus.UI.ProtocolsPage.html#Sensus_UI_ProtocolsPage_ExecuteActionUponProtocolAuthentication_Sensus_Protocol_System_Action_System_Action_
-  commentId: M:Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication(Sensus.Protocol,System.Action,System.Action)
-  fullName: Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication(Sensus.Protocol, System.Action, System.Action)
-  nameWithType: ProtocolsPage.ExecuteActionUponProtocolAuthentication(Protocol, Action, Action)
-- uid: Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication*
-  name: ExecuteActionUponProtocolAuthentication
-  href: api/Sensus.UI.ProtocolsPage.html#Sensus_UI_ProtocolsPage_ExecuteActionUponProtocolAuthentication_
-  commentId: Overload:Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication
-  fullName: Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication
-  nameWithType: ProtocolsPage.ExecuteActionUponProtocolAuthentication
+- uid: Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync(Sensus.Protocol)
+  name: AuthenticateProtocolAsync(Protocol)
+  href: api/Sensus.UI.ProtocolsPage.html#Sensus_UI_ProtocolsPage_AuthenticateProtocolAsync_Sensus_Protocol_
+  commentId: M:Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync(Sensus.Protocol)
+  fullName: Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync(Sensus.Protocol)
+  nameWithType: ProtocolsPage.AuthenticateProtocolAsync(Protocol)
+- uid: Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync*
+  name: AuthenticateProtocolAsync
+  href: api/Sensus.UI.ProtocolsPage.html#Sensus_UI_ProtocolsPage_AuthenticateProtocolAsync_
+  commentId: Overload:Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync
+  fullName: Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync
+  nameWithType: ProtocolsPage.AuthenticateProtocolAsync
 - uid: Sensus.UI.ProximityTriggersPage
   name: ProximityTriggersPage
   href: api/Sensus.UI.ProximityTriggersPage.html
@@ -42398,6 +42539,18 @@ references:
   commentId: Overload:Sensus.UI.SensusDetailPageItem.#ctor
   fullName: Sensus.UI.SensusDetailPageItem.SensusDetailPageItem
   nameWithType: SensusDetailPageItem.SensusDetailPageItem
+- uid: Sensus.UI.SensusDetailPageItem.Action
+  name: Action
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_Action
+  commentId: P:Sensus.UI.SensusDetailPageItem.Action
+  fullName: Sensus.UI.SensusDetailPageItem.Action
+  nameWithType: SensusDetailPageItem.Action
+- uid: Sensus.UI.SensusDetailPageItem.Action*
+  name: Action
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_Action_
+  commentId: Overload:Sensus.UI.SensusDetailPageItem.Action
+  fullName: Sensus.UI.SensusDetailPageItem.Action
+  nameWithType: SensusDetailPageItem.Action
 - uid: Sensus.UI.SensusDetailPageItem.IconSource
   name: IconSource
   href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_IconSource
@@ -42410,6 +42563,12 @@ references:
   commentId: Overload:Sensus.UI.SensusDetailPageItem.IconSource
   fullName: Sensus.UI.SensusDetailPageItem.IconSource
   nameWithType: SensusDetailPageItem.IconSource
+- uid: Sensus.UI.SensusDetailPageItem.PropertyChanged
+  name: PropertyChanged
+  href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_PropertyChanged
+  commentId: E:Sensus.UI.SensusDetailPageItem.PropertyChanged
+  fullName: Sensus.UI.SensusDetailPageItem.PropertyChanged
+  nameWithType: SensusDetailPageItem.PropertyChanged
 - uid: Sensus.UI.SensusDetailPageItem.TargetType
   name: TargetType
   href: api/Sensus.UI.SensusDetailPageItem.html#Sensus_UI_SensusDetailPageItem_TargetType
@@ -42494,12 +42653,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.DateUiProperty
   fullName: Sensus.UI.UiProperties.DateUiProperty
   nameWithType: DateUiProperty
-- uid: Sensus.UI.UiProperties.DateUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: DateUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.DateUiProperty.html#Sensus_UI_UiProperties_DateUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.DateUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.DateUiProperty.DateUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: DateUiProperty.DateUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.DateUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: DateUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.DateUiProperty.html#Sensus_UI_UiProperties_DateUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.DateUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.DateUiProperty.DateUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: DateUiProperty.DateUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.DateUiProperty.#ctor*
   name: DateUiProperty
   href: api/Sensus.UI.UiProperties.DateUiProperty.html#Sensus_UI_UiProperties_DateUiProperty__ctor_
@@ -42677,12 +42836,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.EditableListUiProperty
   fullName: Sensus.UI.UiProperties.EditableListUiProperty
   nameWithType: EditableListUiProperty
-- uid: Sensus.UI.UiProperties.EditableListUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: EditableListUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.EditableListUiProperty.html#Sensus_UI_UiProperties_EditableListUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.EditableListUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.EditableListUiProperty.EditableListUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: EditableListUiProperty.EditableListUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.EditableListUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: EditableListUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.EditableListUiProperty.html#Sensus_UI_UiProperties_EditableListUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.EditableListUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.EditableListUiProperty.EditableListUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: EditableListUiProperty.EditableListUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.EditableListUiProperty.#ctor*
   name: EditableListUiProperty
   href: api/Sensus.UI.UiProperties.EditableListUiProperty.html#Sensus_UI_UiProperties_EditableListUiProperty__ctor_
@@ -42752,12 +42911,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.EditorUiProperty
   fullName: Sensus.UI.UiProperties.EditorUiProperty
   nameWithType: EditorUiProperty
-- uid: Sensus.UI.UiProperties.EditorUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: EditorUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.EditorUiProperty.html#Sensus_UI_UiProperties_EditorUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.EditorUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.EditorUiProperty.EditorUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: EditorUiProperty.EditorUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.EditorUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: EditorUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.EditorUiProperty.html#Sensus_UI_UiProperties_EditorUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.EditorUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.EditorUiProperty.EditorUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: EditorUiProperty.EditorUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.EditorUiProperty.#ctor*
   name: EditorUiProperty
   href: api/Sensus.UI.UiProperties.EditorUiProperty.html#Sensus_UI_UiProperties_EditorUiProperty__ctor_
@@ -42785,12 +42944,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.EntryDoubleUiProperty
   fullName: Sensus.UI.UiProperties.EntryDoubleUiProperty
   nameWithType: EntryDoubleUiProperty
-- uid: Sensus.UI.UiProperties.EntryDoubleUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: EntryDoubleUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.EntryDoubleUiProperty.html#Sensus_UI_UiProperties_EntryDoubleUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.EntryDoubleUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.EntryDoubleUiProperty.EntryDoubleUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: EntryDoubleUiProperty.EntryDoubleUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.EntryDoubleUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: EntryDoubleUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.EntryDoubleUiProperty.html#Sensus_UI_UiProperties_EntryDoubleUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.EntryDoubleUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.EntryDoubleUiProperty.EntryDoubleUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: EntryDoubleUiProperty.EntryDoubleUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.EntryDoubleUiProperty.#ctor*
   name: EntryDoubleUiProperty
   href: api/Sensus.UI.UiProperties.EntryDoubleUiProperty.html#Sensus_UI_UiProperties_EntryDoubleUiProperty__ctor_
@@ -42860,12 +43019,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.EntryFloatUiProperty
   fullName: Sensus.UI.UiProperties.EntryFloatUiProperty
   nameWithType: EntryFloatUiProperty
-- uid: Sensus.UI.UiProperties.EntryFloatUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: EntryFloatUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.EntryFloatUiProperty.html#Sensus_UI_UiProperties_EntryFloatUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.EntryFloatUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.EntryFloatUiProperty.EntryFloatUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: EntryFloatUiProperty.EntryFloatUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.EntryFloatUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: EntryFloatUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.EntryFloatUiProperty.html#Sensus_UI_UiProperties_EntryFloatUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.EntryFloatUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.EntryFloatUiProperty.EntryFloatUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: EntryFloatUiProperty.EntryFloatUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.EntryFloatUiProperty.#ctor*
   name: EntryFloatUiProperty
   href: api/Sensus.UI.UiProperties.EntryFloatUiProperty.html#Sensus_UI_UiProperties_EntryFloatUiProperty__ctor_
@@ -42935,12 +43094,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.EntryIntegerUiProperty
   fullName: Sensus.UI.UiProperties.EntryIntegerUiProperty
   nameWithType: EntryIntegerUiProperty
-- uid: Sensus.UI.UiProperties.EntryIntegerUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: EntryIntegerUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.EntryIntegerUiProperty.html#Sensus_UI_UiProperties_EntryIntegerUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.EntryIntegerUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.EntryIntegerUiProperty.EntryIntegerUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: EntryIntegerUiProperty.EntryIntegerUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.EntryIntegerUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: EntryIntegerUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.EntryIntegerUiProperty.html#Sensus_UI_UiProperties_EntryIntegerUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.EntryIntegerUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.EntryIntegerUiProperty.EntryIntegerUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: EntryIntegerUiProperty.EntryIntegerUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.EntryIntegerUiProperty.#ctor*
   name: EntryIntegerUiProperty
   href: api/Sensus.UI.UiProperties.EntryIntegerUiProperty.html#Sensus_UI_UiProperties_EntryIntegerUiProperty__ctor_
@@ -43010,12 +43169,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.EntryStringUiProperty
   fullName: Sensus.UI.UiProperties.EntryStringUiProperty
   nameWithType: EntryStringUiProperty
-- uid: Sensus.UI.UiProperties.EntryStringUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: EntryStringUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.EntryStringUiProperty.html#Sensus_UI_UiProperties_EntryStringUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.EntryStringUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.EntryStringUiProperty.EntryStringUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: EntryStringUiProperty.EntryStringUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.EntryStringUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: EntryStringUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.EntryStringUiProperty.html#Sensus_UI_UiProperties_EntryStringUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.EntryStringUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.EntryStringUiProperty.EntryStringUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: EntryStringUiProperty.EntryStringUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.EntryStringUiProperty.#ctor*
   name: EntryStringUiProperty
   href: api/Sensus.UI.UiProperties.EntryStringUiProperty.html#Sensus_UI_UiProperties_EntryStringUiProperty__ctor_
@@ -43043,15 +43202,15 @@ references:
   commentId: T:Sensus.UI.UiProperties.ListUiProperty
   fullName: Sensus.UI.UiProperties.ListUiProperty
   nameWithType: ListUiProperty
-- uid: Sensus.UI.UiProperties.ListUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Object[])
-  name: ListUiProperty(String, Boolean, Int32, Object[])
-  href: api/Sensus.UI.UiProperties.ListUiProperty.html#Sensus_UI_UiProperties_ListUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Object___
-  commentId: M:Sensus.UI.UiProperties.ListUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Object[])
-  name.vb: ListUiProperty(String, Boolean, Int32, Object())
-  fullName: Sensus.UI.UiProperties.ListUiProperty.ListUiProperty(System.String, System.Boolean, System.Int32, System.Object[])
-  fullName.vb: Sensus.UI.UiProperties.ListUiProperty.ListUiProperty(System.String, System.Boolean, System.Int32, System.Object())
-  nameWithType: ListUiProperty.ListUiProperty(String, Boolean, Int32, Object[])
-  nameWithType.vb: ListUiProperty.ListUiProperty(String, Boolean, Int32, Object())
+- uid: Sensus.UI.UiProperties.ListUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Object[],System.Boolean)
+  name: ListUiProperty(String, Boolean, Int32, Object[], Boolean)
+  href: api/Sensus.UI.UiProperties.ListUiProperty.html#Sensus_UI_UiProperties_ListUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Object___System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.ListUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Object[],System.Boolean)
+  name.vb: ListUiProperty(String, Boolean, Int32, Object(), Boolean)
+  fullName: Sensus.UI.UiProperties.ListUiProperty.ListUiProperty(System.String, System.Boolean, System.Int32, System.Object[], System.Boolean)
+  fullName.vb: Sensus.UI.UiProperties.ListUiProperty.ListUiProperty(System.String, System.Boolean, System.Int32, System.Object(), System.Boolean)
+  nameWithType: ListUiProperty.ListUiProperty(String, Boolean, Int32, Object[], Boolean)
+  nameWithType.vb: ListUiProperty.ListUiProperty(String, Boolean, Int32, Object(), Boolean)
 - uid: Sensus.UI.UiProperties.ListUiProperty.#ctor*
   name: ListUiProperty
   href: api/Sensus.UI.UiProperties.ListUiProperty.html#Sensus_UI_UiProperties_ListUiProperty__ctor_
@@ -43112,12 +43271,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.TimeUiProperty
   fullName: Sensus.UI.UiProperties.TimeUiProperty
   nameWithType: TimeUiProperty
-- uid: Sensus.UI.UiProperties.TimeUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: TimeUiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.TimeUiProperty.html#Sensus_UI_UiProperties_TimeUiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.TimeUiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.TimeUiProperty.TimeUiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: TimeUiProperty.TimeUiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.TimeUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: TimeUiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.TimeUiProperty.html#Sensus_UI_UiProperties_TimeUiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.TimeUiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.TimeUiProperty.TimeUiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: TimeUiProperty.TimeUiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.TimeUiProperty.#ctor*
   name: TimeUiProperty
   href: api/Sensus.UI.UiProperties.TimeUiProperty.html#Sensus_UI_UiProperties_TimeUiProperty__ctor_
@@ -43145,12 +43304,12 @@ references:
   commentId: T:Sensus.UI.UiProperties.UiProperty
   fullName: Sensus.UI.UiProperties.UiProperty
   nameWithType: UiProperty
-- uid: Sensus.UI.UiProperties.UiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  name: UiProperty(String, Boolean, Int32)
-  href: api/Sensus.UI.UiProperties.UiProperty.html#Sensus_UI_UiProperties_UiProperty__ctor_System_String_System_Boolean_System_Int32_
-  commentId: M:Sensus.UI.UiProperties.UiProperty.#ctor(System.String,System.Boolean,System.Int32)
-  fullName: Sensus.UI.UiProperties.UiProperty.UiProperty(System.String, System.Boolean, System.Int32)
-  nameWithType: UiProperty.UiProperty(String, Boolean, Int32)
+- uid: Sensus.UI.UiProperties.UiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  name: UiProperty(String, Boolean, Int32, Boolean)
+  href: api/Sensus.UI.UiProperties.UiProperty.html#Sensus_UI_UiProperties_UiProperty__ctor_System_String_System_Boolean_System_Int32_System_Boolean_
+  commentId: M:Sensus.UI.UiProperties.UiProperty.#ctor(System.String,System.Boolean,System.Int32,System.Boolean)
+  fullName: Sensus.UI.UiProperties.UiProperty.UiProperty(System.String, System.Boolean, System.Int32, System.Boolean)
+  nameWithType: UiProperty.UiProperty(String, Boolean, Int32, Boolean)
 - uid: Sensus.UI.UiProperties.UiProperty.#ctor*
   name: UiProperty
   href: api/Sensus.UI.UiProperties.UiProperty.html#Sensus_UI_UiProperties_UiProperty__ctor_

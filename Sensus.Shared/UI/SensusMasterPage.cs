@@ -23,12 +23,12 @@ namespace Sensus.UI
     {
         private ListView _masterPageItemsListView;
 
-        public ListView MasterPageItemsListView 
-        { 
-            get 
-            { 
+        public ListView MasterPageItemsListView
+        {
+            get
+            {
                 return _masterPageItemsListView;
-            } 
+            }
         }
 
         public SensusMasterPage()
@@ -139,7 +139,7 @@ namespace Sensus.UI
 
                     return new ViewCell { View = grid };
                 }),
-                
+
                 SeparatorVisibility = SeparatorVisibility.None
             };
 

@@ -172,7 +172,7 @@ are safely transferred off of the device before their accumulated size grows too
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Require Charging:&quot;, true, 2147483647)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Require Charging:&quot;, true, 53)]
 public bool RequireCharging { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -205,7 +205,7 @@ power source only when the battery is almost fully charged. This will minimize u
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;Required Battery Charge (Percent):&quot;, true, 2147483647)]
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;Required Battery Charge (Percent):&quot;, true, 54, false)]
 public float RequiredBatteryChargeLevelPercent { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -234,7 +234,7 @@ data will be transferred over the cellular network if WiFi is not available.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Require WiFi:&quot;, true, 2147483647)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Require WiFi:&quot;, true, 52)]
 public bool RequireWiFi { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -264,7 +264,7 @@ will open Sensus to transmit the data.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;User Notification Message:&quot;, true, 2147483647)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;User Notification Message:&quot;, true, 55, true)]
 public string UserNotificationMessage { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -292,7 +292,7 @@ public string UserNotificationMessage { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Write Delay (MS):&quot;, true, 2)]
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Write Delay (MS):&quot;, true, 50, true)]
 public int WriteDelayMS { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -320,7 +320,7 @@ public int WriteDelayMS { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Write Timeout (Mins.):&quot;, true, 3)]
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Write Timeout (Mins.):&quot;, true, 51, true)]
 public int WriteTimeoutMinutes { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>

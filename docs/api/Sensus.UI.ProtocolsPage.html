@@ -111,13 +111,13 @@
   </h3>
   
   
-  <a id="Sensus_UI_ProtocolsPage_ExecuteActionUponProtocolAuthentication_" data-uid="Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication*"></a>
-  <h4 id="Sensus_UI_ProtocolsPage_ExecuteActionUponProtocolAuthentication_Sensus_Protocol_System_Action_System_Action_" data-uid="Sensus.UI.ProtocolsPage.ExecuteActionUponProtocolAuthentication(Sensus.Protocol,System.Action,System.Action)">ExecuteActionUponProtocolAuthentication(Protocol, Action, Action)</h4>
+  <a id="Sensus_UI_ProtocolsPage_AuthenticateProtocolAsync_" data-uid="Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync*"></a>
+  <h4 id="Sensus_UI_ProtocolsPage_AuthenticateProtocolAsync_Sensus_Protocol_" data-uid="Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync(Sensus.Protocol)">AuthenticateProtocolAsync(Protocol)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static void ExecuteActionUponProtocolAuthentication(Protocol protocol, Action successAction, Action failAction = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;bool&gt; AuthenticateProtocolAsync(Protocol protocol)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -134,14 +134,19 @@
         <td><span class="parametername">protocol</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">successAction</span></td>
-        <td></td>
+        <th>Type</th>
+        <th>Description</th>
       </tr>
+    </thead>
+    <tbody>
       <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">failAction</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
