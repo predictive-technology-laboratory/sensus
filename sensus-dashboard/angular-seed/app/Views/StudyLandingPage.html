@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+	<h2 class="bodyheader">Studies</h2>
+	<table class="body" style="width:100%">
+		<tr>
+			{{message}}
+		</tr>
+		<tr>
+			<hr/>
+			<div class="body" ng-repeat="study in studies">
+			<font>{{study.name}}</font>
+    			<input text-align="right" type="submit" value="Select" data-ng-click="onSelect(study)" />
+    			<input text-align="right" type="submit" value="Delete" data-ng-click="onDelete(study)" />
+    			<hr/>
+			</div>
+		</tr>
+		</hr>
+		<tr>
+			<div class="body">
+    			<input text-align="right" type="submit" value="New Study" data-ng-click="onCreate()" />
+			</div>
+		</tr>
+	</table>
+</body>
+</html>
+
+
