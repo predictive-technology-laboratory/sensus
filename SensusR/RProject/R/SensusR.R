@@ -368,6 +368,15 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   return(data)
 }
 
+#' Gets unique device IDs within a dataset.
+#'
+#' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
+#' 
+sensus.get.unique.device.ids = function(data)
+{
+  return(unique(unlist(sapply(names(data), function(datum.type) unique(data[[datum.type]]$DeviceId)), use.names = FALSE)))
+}
+
 #' Write data to CSV files.
 #' 
 #' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
