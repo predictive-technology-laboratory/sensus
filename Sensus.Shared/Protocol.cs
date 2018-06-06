@@ -1500,15 +1500,6 @@ namespace Sensus
             });
         }
 
-        public void StartAsync(Action callback = null)
-        {
-            Task.Run(() =>
-            {
-                Start();
-                callback?.Invoke();
-            });
-        }
-
         private void StartInternal()
         {
             lock (_locker)

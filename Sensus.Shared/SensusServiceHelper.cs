@@ -655,12 +655,11 @@ namespace Sensus
 
         #endregion
 
-        public void SaveAsync(Action callback = null)
+        public Task SaveAsync()
         {
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 Save();
-                callback?.Invoke();
             });
         }
 

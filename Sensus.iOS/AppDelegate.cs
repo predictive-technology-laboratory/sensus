@@ -262,7 +262,7 @@ namespace Sensus.iOS
                 // not much we can do if we run out of time...
             });
 
-            serviceHelper.SaveAsync(() =>
+            serviceHelper.SaveAsync().ContinueWith(finishedTask =>
             {
                 uiApplication.EndBackgroundTask(saveTaskId);
             });
