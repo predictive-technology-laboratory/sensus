@@ -23,7 +23,7 @@ namespace Sensus.Probes.Movement
     /// Activity the user is engaged in, as inferred from the phone's sensors.
     /// </summary>
     public class ActivityDatum : Datum
-    {        
+    {
         /// <summary>
         /// The type of activity (see <see cref="Activities"/>).
         /// </summary>
@@ -46,10 +46,10 @@ namespace Sensus.Probes.Movement
         public ActivityState State { get; set; }
 
         /// <summary>
-        /// The confidence (0 to 1) of the estimated activity information.
+        /// The confidence level of the estimated activity information.
         /// </summary>
         /// <value>The confidence.</value>
-        public double? Confidence { get; set; }
+        public ActivityConfidence Confidence { get; set; }
 
         /// <summary>
         /// Gets the activity the user is starting to engage in. If there is such an activity, it will be one of <see cref="Activities"/>. If there
@@ -70,7 +70,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return Phase + " " + Activity + " (" + State + (Confidence.HasValue ? " " + Math.Round(Confidence.Value, 2) : "") + ")";
+                return Phase + " " + Activity + " (" + State + "-" + Confidence + ")";
             }
         }
 
@@ -93,7 +93,7 @@ namespace Sensus.Probes.Movement
         {
         }
 
-        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityPhase phase, ActivityState state, double? confidence = null)
+        public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityPhase phase, ActivityState state, ActivityConfidence confidence)
             : base(timestamp)
         {
             Activity = activity;
@@ -108,7 +108,7 @@ namespace Sensus.Probes.Movement
                    "Activity:  " + Activity + Environment.NewLine +
                    "Phase:  " + Phase + Environment.NewLine +
                    "State:  " + State + Environment.NewLine +
-                   "Confidence:  " + (Confidence.HasValue ? Confidence.Value.ToString() : "NA");
+                   "Confidence:  " + Confidence;
         }
     }
 }

@@ -18,13 +18,16 @@ if [ $? -ne 0 ]; then
     echo "Failed to remove write-only user from write-only group."
 fi
 
-# delete access key for write-only user
-echo "Deleting access key from write-only user..."
-accessKeyID=$(aws iam list-access-keys --user-name $iamWriteOnlyUserName | jq -r .AccessKeyMetadata[0].AccessKeyId)
-aws iam delete-access-key --access-key $accessKeyID --user-name $iamWriteOnlyUserName
-if [ $? -ne 0 ]; then
-    echo "Failed to delete access key."
-fi
+# delete access keys for write-only user
+echo "Deleting access keys from write-only user..."
+accessKeyIDs=$(aws iam list-access-keys --user-name $iamWriteOnlyUserName --query "AccessKeyMetadata[].AccessKeyId" --output text | tr '\t' '\n')
+for accessKeyID in $accessKeyIDs
+do
+    aws iam delete-access-key --access-key $accessKeyID --user-name $iamWriteOnlyUserName
+    if [ $? -ne 0 ]; then
+	echo "Failed to delete access key."
+    fi
+done
 
 # delete write-only user
 echo "Deleting write-only IAM user..."

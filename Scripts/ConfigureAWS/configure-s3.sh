@@ -65,9 +65,7 @@ fi
 
 # create access key for user
 echo "Creating access key for write-only IAM user..."
-createUserJSON=$(aws iam create-access-key --user-name $iamWriteOnlyUserName)
-writeOnlyAccessKey=$(echo $createUserJSON | jq -r .AccessKey.AccessKeyId)
-writeOnlySecretKey=$(echo $createUserJSON | jq -r .AccessKey.SecretAccessKey)
+writeOnlyCredentials=$(aws iam create-access-key --user-name $iamWriteOnlyUserName --query "AccessKey.[AccessKeyId,SecretAccessKey]" --output text | tr '\t' ':')
 if [ $? -ne 0 ]; then
     echo "Failed to create access key for write-only IAM user."
     exit $?
@@ -83,4 +81,4 @@ fi
 
 echo "Done. Details:"
 echo "  Sensus S3 bucket:  $bucket"
-echo "  Sensus S3 IAM account:  $writeOnlyAccessKey:$writeOnlySecretKey"
+echo "  Sensus S3 IAM account:  $writeOnlyCredentials"

@@ -31172,21 +31172,54 @@ references:
   commentId: F:Sensus.Probes.Movement.Activities.Walking
   fullName: Sensus.Probes.Movement.Activities.Walking
   nameWithType: Activities.Walking
+- uid: Sensus.Probes.Movement.ActivityConfidence
+  name: ActivityConfidence
+  href: api/Sensus.Probes.Movement.ActivityConfidence.html
+  commentId: T:Sensus.Probes.Movement.ActivityConfidence
+  fullName: Sensus.Probes.Movement.ActivityConfidence
+  nameWithType: ActivityConfidence
+- uid: Sensus.Probes.Movement.ActivityConfidence.High
+  name: High
+  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_High
+  commentId: F:Sensus.Probes.Movement.ActivityConfidence.High
+  fullName: Sensus.Probes.Movement.ActivityConfidence.High
+  nameWithType: ActivityConfidence.High
+- uid: Sensus.Probes.Movement.ActivityConfidence.Low
+  name: Low
+  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_Low
+  commentId: F:Sensus.Probes.Movement.ActivityConfidence.Low
+  fullName: Sensus.Probes.Movement.ActivityConfidence.Low
+  nameWithType: ActivityConfidence.Low
+- uid: Sensus.Probes.Movement.ActivityConfidence.Medium
+  name: Medium
+  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_Medium
+  commentId: F:Sensus.Probes.Movement.ActivityConfidence.Medium
+  fullName: Sensus.Probes.Movement.ActivityConfidence.Medium
+  nameWithType: ActivityConfidence.Medium
+- uid: Sensus.Probes.Movement.ActivityConfidence.NotAvailable
+  name: NotAvailable
+  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_NotAvailable
+  commentId: F:Sensus.Probes.Movement.ActivityConfidence.NotAvailable
+  fullName: Sensus.Probes.Movement.ActivityConfidence.NotAvailable
+  nameWithType: ActivityConfidence.NotAvailable
+- uid: Sensus.Probes.Movement.ActivityConfidence.value__
+  name: value__
+  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_value__
+  commentId: F:Sensus.Probes.Movement.ActivityConfidence.value__
+  fullName: Sensus.Probes.Movement.ActivityConfidence.value__
+  nameWithType: ActivityConfidence.value__
 - uid: Sensus.Probes.Movement.ActivityDatum
   name: ActivityDatum
   href: api/Sensus.Probes.Movement.ActivityDatum.html
   commentId: T:Sensus.Probes.Movement.ActivityDatum
   fullName: Sensus.Probes.Movement.ActivityDatum
   nameWithType: ActivityDatum
-- uid: Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,System.Nullable{System.Double})
-  name: ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, Nullable<Double>)
-  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum__ctor_System_DateTimeOffset_Sensus_Probes_Movement_Activities_Sensus_Probes_Movement_ActivityPhase_Sensus_Probes_Movement_ActivityState_System_Nullable_System_Double__
-  commentId: M:Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,System.Nullable{System.Double})
-  name.vb: ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, Nullable(Of Double))
-  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityDatum(System.DateTimeOffset, Sensus.Probes.Movement.Activities, Sensus.Probes.Movement.ActivityPhase, Sensus.Probes.Movement.ActivityState, System.Nullable<System.Double>)
-  fullName.vb: Sensus.Probes.Movement.ActivityDatum.ActivityDatum(System.DateTimeOffset, Sensus.Probes.Movement.Activities, Sensus.Probes.Movement.ActivityPhase, Sensus.Probes.Movement.ActivityState, System.Nullable(Of System.Double))
-  nameWithType: ActivityDatum.ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, Nullable<Double>)
-  nameWithType.vb: ActivityDatum.ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, Nullable(Of Double))
+- uid: Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,Sensus.Probes.Movement.ActivityConfidence)
+  name: ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, ActivityConfidence)
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum__ctor_System_DateTimeOffset_Sensus_Probes_Movement_Activities_Sensus_Probes_Movement_ActivityPhase_Sensus_Probes_Movement_ActivityState_Sensus_Probes_Movement_ActivityConfidence_
+  commentId: M:Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,Sensus.Probes.Movement.ActivityConfidence)
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityDatum(System.DateTimeOffset, Sensus.Probes.Movement.Activities, Sensus.Probes.Movement.ActivityPhase, Sensus.Probes.Movement.ActivityState, Sensus.Probes.Movement.ActivityConfidence)
+  nameWithType: ActivityDatum.ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, ActivityConfidence)
 - uid: Sensus.Probes.Movement.ActivityDatum.#ctor*
   name: ActivityDatum
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum__ctor_
@@ -38684,6 +38717,18 @@ references:
   commentId: Overload:Sensus.Protocol.Shareable
   fullName: Sensus.Protocol.Shareable
   nameWithType: Protocol.Shareable
+- uid: Sensus.Protocol.ShareAsync
+  name: ShareAsync()
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ShareAsync
+  commentId: M:Sensus.Protocol.ShareAsync
+  fullName: Sensus.Protocol.ShareAsync()
+  nameWithType: Protocol.ShareAsync()
+- uid: Sensus.Protocol.ShareAsync*
+  name: ShareAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ShareAsync_
+  commentId: Overload:Sensus.Protocol.ShareAsync
+  fullName: Sensus.Protocol.ShareAsync
+  nameWithType: Protocol.ShareAsync
 - uid: Sensus.Protocol.Start
   name: Start()
   href: api/Sensus.Protocol.html#Sensus_Protocol_Start
@@ -38696,18 +38741,6 @@ references:
   commentId: Overload:Sensus.Protocol.Start
   fullName: Sensus.Protocol.Start
   nameWithType: Protocol.Start
-- uid: Sensus.Protocol.StartAsync(System.Action)
-  name: StartAsync(Action)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StartAsync_System_Action_
-  commentId: M:Sensus.Protocol.StartAsync(System.Action)
-  fullName: Sensus.Protocol.StartAsync(System.Action)
-  nameWithType: Protocol.StartAsync(Action)
-- uid: Sensus.Protocol.StartAsync*
-  name: StartAsync
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StartAsync_
-  commentId: Overload:Sensus.Protocol.StartAsync
-  fullName: Sensus.Protocol.StartAsync
-  nameWithType: Protocol.StartAsync
 - uid: Sensus.Protocol.StartConfirmationMode
   name: StartConfirmationMode
   href: api/Sensus.Protocol.html#Sensus_Protocol_StartConfirmationMode
@@ -39713,24 +39746,24 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.Save
   fullName: Sensus.SensusServiceHelper.Save
   nameWithType: SensusServiceHelper.Save
-- uid: Sensus.SensusServiceHelper.SaveAsync(System.Action)
-  name: SaveAsync(Action)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_SaveAsync_System_Action_
-  commentId: M:Sensus.SensusServiceHelper.SaveAsync(System.Action)
-  fullName: Sensus.SensusServiceHelper.SaveAsync(System.Action)
-  nameWithType: SensusServiceHelper.SaveAsync(Action)
+- uid: Sensus.SensusServiceHelper.SaveAsync
+  name: SaveAsync()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_SaveAsync
+  commentId: M:Sensus.SensusServiceHelper.SaveAsync
+  fullName: Sensus.SensusServiceHelper.SaveAsync()
+  nameWithType: SensusServiceHelper.SaveAsync()
 - uid: Sensus.SensusServiceHelper.SaveAsync*
   name: SaveAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_SaveAsync_
   commentId: Overload:Sensus.SensusServiceHelper.SaveAsync
   fullName: Sensus.SensusServiceHelper.SaveAsync
   nameWithType: SensusServiceHelper.SaveAsync
-- uid: Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String,Xamarin.Forms.INavigation)
-  name: ScanQrCodeAsync(String, INavigation)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ScanQrCodeAsync_System_String_Xamarin_Forms_INavigation_
-  commentId: M:Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String,Xamarin.Forms.INavigation)
-  fullName: Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String, Xamarin.Forms.INavigation)
-  nameWithType: SensusServiceHelper.ScanQrCodeAsync(String, INavigation)
+- uid: Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String)
+  name: ScanQrCodeAsync(String)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ScanQrCodeAsync_System_String_
+  commentId: M:Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String)
+  fullName: Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String)
+  nameWithType: SensusServiceHelper.ScanQrCodeAsync(String)
 - uid: Sensus.SensusServiceHelper.ScanQrCodeAsync*
   name: ScanQrCodeAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ScanQrCodeAsync_
@@ -39959,6 +39992,18 @@ references:
   commentId: Overload:Sensus.UI.App.#ctor
   fullName: Sensus.UI.App.App
   nameWithType: App.App
+- uid: Sensus.UI.App.DetailPage
+  name: DetailPage
+  href: api/Sensus.UI.App.html#Sensus_UI_App_DetailPage
+  commentId: P:Sensus.UI.App.DetailPage
+  fullName: Sensus.UI.App.DetailPage
+  nameWithType: App.DetailPage
+- uid: Sensus.UI.App.DetailPage*
+  name: DetailPage
+  href: api/Sensus.UI.App.html#Sensus_UI_App_DetailPage_
+  commentId: Overload:Sensus.UI.App.DetailPage
+  fullName: Sensus.UI.App.DetailPage
+  nameWithType: App.DetailPage
 - uid: Sensus.UI.App.OnStart
   name: OnStart()
   href: api/Sensus.UI.App.html#Sensus_UI_App_OnStart
@@ -40007,6 +40052,93 @@ references:
   commentId: Overload:Sensus.UI.EstimoteBeaconProbeBeaconsPage.#ctor
   fullName: Sensus.UI.EstimoteBeaconProbeBeaconsPage.EstimoteBeaconProbeBeaconsPage
   nameWithType: EstimoteBeaconProbeBeaconsPage.EstimoteBeaconProbeBeaconsPage
+- uid: Sensus.UI.InputGroupPage
+  name: InputGroupPage
+  href: api/Sensus.UI.InputGroupPage.html
+  commentId: T:Sensus.UI.InputGroupPage
+  fullName: Sensus.UI.InputGroupPage
+  nameWithType: InputGroupPage
+- uid: Sensus.UI.InputGroupPage.#ctor(Sensus.UI.Inputs.InputGroup,System.Int32,System.Int32,System.Boolean,System.Boolean,System.String,System.Nullable{System.Threading.CancellationToken},System.String,System.String,System.String,System.Boolean)
+  name: InputGroupPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable<CancellationToken>, String, String, String, Boolean)
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage__ctor_Sensus_UI_Inputs_InputGroup_System_Int32_System_Int32_System_Boolean_System_Boolean_System_String_System_Nullable_System_Threading_CancellationToken__System_String_System_String_System_String_System_Boolean_
+  commentId: M:Sensus.UI.InputGroupPage.#ctor(Sensus.UI.Inputs.InputGroup,System.Int32,System.Int32,System.Boolean,System.Boolean,System.String,System.Nullable{System.Threading.CancellationToken},System.String,System.String,System.String,System.Boolean)
+  name.vb: InputGroupPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable(Of CancellationToken), String, String, String, Boolean)
+  fullName: Sensus.UI.InputGroupPage.InputGroupPage(Sensus.UI.Inputs.InputGroup, System.Int32, System.Int32, System.Boolean, System.Boolean, System.String, System.Nullable<System.Threading.CancellationToken>, System.String, System.String, System.String, System.Boolean)
+  fullName.vb: Sensus.UI.InputGroupPage.InputGroupPage(Sensus.UI.Inputs.InputGroup, System.Int32, System.Int32, System.Boolean, System.Boolean, System.String, System.Nullable(Of System.Threading.CancellationToken), System.String, System.String, System.String, System.Boolean)
+  nameWithType: InputGroupPage.InputGroupPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable<CancellationToken>, String, String, String, Boolean)
+  nameWithType.vb: InputGroupPage.InputGroupPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable(Of CancellationToken), String, String, String, Boolean)
+- uid: Sensus.UI.InputGroupPage.#ctor*
+  name: InputGroupPage
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage__ctor_
+  commentId: Overload:Sensus.UI.InputGroupPage.#ctor
+  fullName: Sensus.UI.InputGroupPage.InputGroupPage
+  nameWithType: InputGroupPage.InputGroupPage
+- uid: Sensus.UI.InputGroupPage.DisplayedInputCount
+  name: DisplayedInputCount
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage_DisplayedInputCount
+  commentId: P:Sensus.UI.InputGroupPage.DisplayedInputCount
+  fullName: Sensus.UI.InputGroupPage.DisplayedInputCount
+  nameWithType: InputGroupPage.DisplayedInputCount
+- uid: Sensus.UI.InputGroupPage.DisplayedInputCount*
+  name: DisplayedInputCount
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage_DisplayedInputCount_
+  commentId: Overload:Sensus.UI.InputGroupPage.DisplayedInputCount
+  fullName: Sensus.UI.InputGroupPage.DisplayedInputCount
+  nameWithType: InputGroupPage.DisplayedInputCount
+- uid: Sensus.UI.InputGroupPage.NavigationResult
+  name: InputGroupPage.NavigationResult
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html
+  commentId: T:Sensus.UI.InputGroupPage.NavigationResult
+  fullName: Sensus.UI.InputGroupPage.NavigationResult
+  nameWithType: InputGroupPage.NavigationResult
+- uid: Sensus.UI.InputGroupPage.NavigationResult.Backward
+  name: Backward
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_Backward
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Backward
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.Backward
+  nameWithType: InputGroupPage.NavigationResult.Backward
+- uid: Sensus.UI.InputGroupPage.NavigationResult.Cancel
+  name: Cancel
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_Cancel
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Cancel
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.Cancel
+  nameWithType: InputGroupPage.NavigationResult.Cancel
+- uid: Sensus.UI.InputGroupPage.NavigationResult.Forward
+  name: Forward
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_Forward
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Forward
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.Forward
+  nameWithType: InputGroupPage.NavigationResult.Forward
+- uid: Sensus.UI.InputGroupPage.NavigationResult.value__
+  name: value__
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_value__
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.value__
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.value__
+  nameWithType: InputGroupPage.NavigationResult.value__
+- uid: Sensus.UI.InputGroupPage.OnBackButtonPressed
+  name: OnBackButtonPressed()
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage_OnBackButtonPressed
+  commentId: M:Sensus.UI.InputGroupPage.OnBackButtonPressed
+  fullName: Sensus.UI.InputGroupPage.OnBackButtonPressed()
+  nameWithType: InputGroupPage.OnBackButtonPressed()
+- uid: Sensus.UI.InputGroupPage.OnBackButtonPressed*
+  name: OnBackButtonPressed
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage_OnBackButtonPressed_
+  commentId: Overload:Sensus.UI.InputGroupPage.OnBackButtonPressed
+  fullName: Sensus.UI.InputGroupPage.OnBackButtonPressed
+  nameWithType: InputGroupPage.OnBackButtonPressed
+- uid: Sensus.UI.InputGroupPage.ResponseTask
+  name: ResponseTask
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage_ResponseTask
+  commentId: P:Sensus.UI.InputGroupPage.ResponseTask
+  fullName: Sensus.UI.InputGroupPage.ResponseTask
+  nameWithType: InputGroupPage.ResponseTask
+- uid: Sensus.UI.InputGroupPage.ResponseTask*
+  name: ResponseTask
+  href: api/Sensus.UI.InputGroupPage.html#Sensus_UI_InputGroupPage_ResponseTask_
+  commentId: Overload:Sensus.UI.InputGroupPage.ResponseTask
+  fullName: Sensus.UI.InputGroupPage.ResponseTask
+  nameWithType: InputGroupPage.ResponseTask
 - uid: Sensus.UI.Inputs
   name: Sensus.UI.Inputs
   href: api/Sensus.UI.Inputs.html
@@ -42224,81 +42356,6 @@ references:
   commentId: Overload:Sensus.UI.ProbesViewPage.ProbeTapped
   fullName: Sensus.UI.ProbesViewPage.ProbeTapped
   nameWithType: ProbesViewPage.ProbeTapped
-- uid: Sensus.UI.PromptForInputsPage
-  name: PromptForInputsPage
-  href: api/Sensus.UI.PromptForInputsPage.html
-  commentId: T:Sensus.UI.PromptForInputsPage
-  fullName: Sensus.UI.PromptForInputsPage
-  nameWithType: PromptForInputsPage
-- uid: Sensus.UI.PromptForInputsPage.#ctor(Sensus.UI.Inputs.InputGroup,System.Int32,System.Int32,System.Boolean,System.Boolean,System.String,System.Nullable{System.Threading.CancellationToken},System.String,System.String,System.String,System.Boolean,System.Action{Sensus.UI.PromptForInputsPage.Result})
-  name: PromptForInputsPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable<CancellationToken>, String, String, String, Boolean, Action<PromptForInputsPage.Result>)
-  href: api/Sensus.UI.PromptForInputsPage.html#Sensus_UI_PromptForInputsPage__ctor_Sensus_UI_Inputs_InputGroup_System_Int32_System_Int32_System_Boolean_System_Boolean_System_String_System_Nullable_System_Threading_CancellationToken__System_String_System_String_System_String_System_Boolean_System_Action_Sensus_UI_PromptForInputsPage_Result__
-  commentId: M:Sensus.UI.PromptForInputsPage.#ctor(Sensus.UI.Inputs.InputGroup,System.Int32,System.Int32,System.Boolean,System.Boolean,System.String,System.Nullable{System.Threading.CancellationToken},System.String,System.String,System.String,System.Boolean,System.Action{Sensus.UI.PromptForInputsPage.Result})
-  name.vb: PromptForInputsPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable(Of CancellationToken), String, String, String, Boolean, Action(Of PromptForInputsPage.Result))
-  fullName: Sensus.UI.PromptForInputsPage.PromptForInputsPage(Sensus.UI.Inputs.InputGroup, System.Int32, System.Int32, System.Boolean, System.Boolean, System.String, System.Nullable<System.Threading.CancellationToken>, System.String, System.String, System.String, System.Boolean, System.Action<Sensus.UI.PromptForInputsPage.Result>)
-  fullName.vb: Sensus.UI.PromptForInputsPage.PromptForInputsPage(Sensus.UI.Inputs.InputGroup, System.Int32, System.Int32, System.Boolean, System.Boolean, System.String, System.Nullable(Of System.Threading.CancellationToken), System.String, System.String, System.String, System.Boolean, System.Action(Of Sensus.UI.PromptForInputsPage.Result))
-  nameWithType: PromptForInputsPage.PromptForInputsPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable<CancellationToken>, String, String, String, Boolean, Action<PromptForInputsPage.Result>)
-  nameWithType.vb: PromptForInputsPage.PromptForInputsPage(InputGroup, Int32, Int32, Boolean, Boolean, String, Nullable(Of CancellationToken), String, String, String, Boolean, Action(Of PromptForInputsPage.Result))
-- uid: Sensus.UI.PromptForInputsPage.#ctor*
-  name: PromptForInputsPage
-  href: api/Sensus.UI.PromptForInputsPage.html#Sensus_UI_PromptForInputsPage__ctor_
-  commentId: Overload:Sensus.UI.PromptForInputsPage.#ctor
-  fullName: Sensus.UI.PromptForInputsPage.PromptForInputsPage
-  nameWithType: PromptForInputsPage.PromptForInputsPage
-- uid: Sensus.UI.PromptForInputsPage.DisplayedInputCount
-  name: DisplayedInputCount
-  href: api/Sensus.UI.PromptForInputsPage.html#Sensus_UI_PromptForInputsPage_DisplayedInputCount
-  commentId: P:Sensus.UI.PromptForInputsPage.DisplayedInputCount
-  fullName: Sensus.UI.PromptForInputsPage.DisplayedInputCount
-  nameWithType: PromptForInputsPage.DisplayedInputCount
-- uid: Sensus.UI.PromptForInputsPage.DisplayedInputCount*
-  name: DisplayedInputCount
-  href: api/Sensus.UI.PromptForInputsPage.html#Sensus_UI_PromptForInputsPage_DisplayedInputCount_
-  commentId: Overload:Sensus.UI.PromptForInputsPage.DisplayedInputCount
-  fullName: Sensus.UI.PromptForInputsPage.DisplayedInputCount
-  nameWithType: PromptForInputsPage.DisplayedInputCount
-- uid: Sensus.UI.PromptForInputsPage.OnBackButtonPressed
-  name: OnBackButtonPressed()
-  href: api/Sensus.UI.PromptForInputsPage.html#Sensus_UI_PromptForInputsPage_OnBackButtonPressed
-  commentId: M:Sensus.UI.PromptForInputsPage.OnBackButtonPressed
-  fullName: Sensus.UI.PromptForInputsPage.OnBackButtonPressed()
-  nameWithType: PromptForInputsPage.OnBackButtonPressed()
-- uid: Sensus.UI.PromptForInputsPage.OnBackButtonPressed*
-  name: OnBackButtonPressed
-  href: api/Sensus.UI.PromptForInputsPage.html#Sensus_UI_PromptForInputsPage_OnBackButtonPressed_
-  commentId: Overload:Sensus.UI.PromptForInputsPage.OnBackButtonPressed
-  fullName: Sensus.UI.PromptForInputsPage.OnBackButtonPressed
-  nameWithType: PromptForInputsPage.OnBackButtonPressed
-- uid: Sensus.UI.PromptForInputsPage.Result
-  name: PromptForInputsPage.Result
-  href: api/Sensus.UI.PromptForInputsPage.Result.html
-  commentId: T:Sensus.UI.PromptForInputsPage.Result
-  fullName: Sensus.UI.PromptForInputsPage.Result
-  nameWithType: PromptForInputsPage.Result
-- uid: Sensus.UI.PromptForInputsPage.Result.Cancel
-  name: Cancel
-  href: api/Sensus.UI.PromptForInputsPage.Result.html#Sensus_UI_PromptForInputsPage_Result_Cancel
-  commentId: F:Sensus.UI.PromptForInputsPage.Result.Cancel
-  fullName: Sensus.UI.PromptForInputsPage.Result.Cancel
-  nameWithType: PromptForInputsPage.Result.Cancel
-- uid: Sensus.UI.PromptForInputsPage.Result.NavigateBackward
-  name: NavigateBackward
-  href: api/Sensus.UI.PromptForInputsPage.Result.html#Sensus_UI_PromptForInputsPage_Result_NavigateBackward
-  commentId: F:Sensus.UI.PromptForInputsPage.Result.NavigateBackward
-  fullName: Sensus.UI.PromptForInputsPage.Result.NavigateBackward
-  nameWithType: PromptForInputsPage.Result.NavigateBackward
-- uid: Sensus.UI.PromptForInputsPage.Result.NavigateForward
-  name: NavigateForward
-  href: api/Sensus.UI.PromptForInputsPage.Result.html#Sensus_UI_PromptForInputsPage_Result_NavigateForward
-  commentId: F:Sensus.UI.PromptForInputsPage.Result.NavigateForward
-  fullName: Sensus.UI.PromptForInputsPage.Result.NavigateForward
-  nameWithType: PromptForInputsPage.Result.NavigateForward
-- uid: Sensus.UI.PromptForInputsPage.Result.value__
-  name: value__
-  href: api/Sensus.UI.PromptForInputsPage.Result.html#Sensus_UI_PromptForInputsPage_Result_value__
-  commentId: F:Sensus.UI.PromptForInputsPage.Result.value__
-  fullName: Sensus.UI.PromptForInputsPage.Result.value__
-  nameWithType: PromptForInputsPage.Result.value__
 - uid: Sensus.UI.ProtocolPage
   name: ProtocolPage
   href: api/Sensus.UI.ProtocolPage.html

@@ -146,12 +146,12 @@
   
   
   <a id="Sensus_Probes_Movement_ActivityDatum__ctor_" data-uid="Sensus.Probes.Movement.ActivityDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_Movement_ActivityDatum__ctor_System_DateTimeOffset_Sensus_Probes_Movement_Activities_Sensus_Probes_Movement_ActivityPhase_Sensus_Probes_Movement_ActivityState_System_Nullable_System_Double__" data-uid="Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,System.Nullable{System.Double})">ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, Nullable&lt;Double&gt;)</h4>
+  <h4 id="Sensus_Probes_Movement_ActivityDatum__ctor_System_DateTimeOffset_Sensus_Probes_Movement_Activities_Sensus_Probes_Movement_ActivityPhase_Sensus_Probes_Movement_ActivityState_Sensus_Probes_Movement_ActivityConfidence_" data-uid="Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,Sensus.Probes.Movement.ActivityConfidence)">ActivityDatum(DateTimeOffset, Activities, ActivityPhase, ActivityState, ActivityConfidence)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityPhase phase, ActivityState state, Nullable&lt;double&gt; confidence = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public ActivityDatum(DateTimeOffset timestamp, Activities activity, ActivityPhase phase, ActivityState state, ActivityConfidence confidence)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -184,7 +184,7 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><a class="xref" href="Sensus.Probes.Movement.ActivityConfidence.html">ActivityConfidence</a></td>
         <td><span class="parametername">confidence</span></td>
         <td></td>
       </tr>
@@ -252,12 +252,12 @@ public Activities ActivityStarting { get; }</code></pre>
   
   <a id="Sensus_Probes_Movement_ActivityDatum_Confidence_" data-uid="Sensus.Probes.Movement.ActivityDatum.Confidence*"></a>
   <h4 id="Sensus_Probes_Movement_ActivityDatum_Confidence" data-uid="Sensus.Probes.Movement.ActivityDatum.Confidence">Confidence</h4>
-  <div class="markdown level1 summary"><p>The confidence (0 to 1) of the estimated activity information.</p>
+  <div class="markdown level1 summary"><p>The confidence level of the estimated activity information.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Nullable&lt;double&gt; Confidence { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ActivityConfidence Confidence { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -269,7 +269,7 @@ public Activities ActivityStarting { get; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td><a class="xref" href="Sensus.Probes.Movement.ActivityConfidence.html">ActivityConfidence</a></td>
         <td><p>The confidence.</p>
 </td>
       </tr>

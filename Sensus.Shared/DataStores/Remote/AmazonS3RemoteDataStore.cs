@@ -41,13 +41,12 @@ namespace Sensus.DataStores.Remote
     /// 
     ///   * Sign up for an account with Amazon Web Services, if you don't have one already. The [Free Tier](https://aws.amazon.com/free) is sufficient.
     ///   * Install the [AWS Command Line Interface(CLI)](https://aws.amazon.com/cli).
-    ///   * Install the [jq](https://stedolan.github.io/jq) command-line utility.
     ///   * Download and unzip our [AWS configuration scripts](https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip).
     ///   * Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where `NAME` is an informative name
-    ///     (alphanumerics only) and `REGION` is the region in which your bucket will reside (e.g., `us-east-1`):
+    ///     (alphanumerics and dashes only) and `REGION` is the region in which your bucket will reside (e.g., `us-east-1`):
     /// 
     ///     ```
-    ///     ./ConfigureS3.sh NAME REGION
+    ///     ./configure-s3.sh NAME REGION
     ///     ```
     /// 
     ///   * The previous command will create a bucket as well as an IAM group and user with write-only access to the bucket. If successful, the command will 
@@ -74,8 +73,19 @@ namespace Sensus.DataStores.Remote
     ///      aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
     ///      ```
     /// 
-    ///   1. You can run [DownloadFromAmazonS3](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh).
+    ///   1. You can run [`dowload-from-s3.sh`](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/dowload-from-s3.sh).
     ///   1. You can use a third-party application like [Bucket Explorer](http://www.bucketexplorer.com) to browse and download data from Amazon S3.
+    /// 
+    /// # Deconfiguration
+    /// 
+    /// If you are finished collecting data and you would like to prevent any future data submission, you can deconfigure the IAM group and user
+    /// with the following command, where `BUCKET` corresponds to the Sensus S3 bucket name created above:
+    /// 
+    ///   ```
+    ///   ./deconfigure-s3.sh BUCKET
+    ///   ```
+    /// 
+    /// The preceding command will not delete your bucket or data.
     /// 
     /// </summary>
     public class AmazonS3RemoteDataStore : RemoteDataStore

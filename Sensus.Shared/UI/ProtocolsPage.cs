@@ -399,14 +399,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Share")
                 {
-                    // make a deep copy of the selected protocol so we can reset it for sharing. don't reset the id of the protocol to keep
-                    // it in the same study. also do not register the copy since we're just going to send it off.
-                    Protocol selectedProtocolCopy = await selectedProtocol.CopyAsync(false, false);
-
-                    // write protocol to file and share
-                    string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
-                    selectedProtocolCopy.Save(sharePath);
-                    await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
+                    await selectedProtocol.ShareAsync();
                 }
                 else if (selectedAction == "Group")
                 {

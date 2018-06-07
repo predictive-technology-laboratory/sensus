@@ -170,25 +170,7 @@ namespace Sensus.UI
             views.Add(viewProbesButton);
             #endregion
 
-            _protocolRunningChangedAction = (o, running) =>
-            {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
-                });
-            };
-
-            StackLayout stack = new StackLayout
-            {
-                Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
-            };
-
-            foreach (View view in views)
-            {
-                stack.Children.Add(view);
-            }
-
+            #region lock
             Button lockButton = new Button
             {
                 Text = _protocol.LockPasswordHash == "" ? "Lock" : "Unlock",
@@ -226,7 +208,43 @@ namespace Sensus.UI
                 }
             };
 
-            stack.Children.Add(lockButton);
+            views.Add(lockButton);
+            #endregion
+
+            #region share -- we need this because we need to be able to hide the share button from the protocols while still allowing the protocol to be locked and shared
+            Button shareButton = new Button
+            {
+                Text = "Share",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            shareButton.Clicked += async (o, e) =>
+            {
+                await _protocol.ShareAsync();
+            };
+
+            views.Add(shareButton);
+            #endregion
+
+            _protocolRunningChangedAction = (o, running) =>
+            {
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                {
+                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
+                });
+            };
+
+            StackLayout stack = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand
+            };
+
+            foreach (View view in views)
+            {
+                stack.Children.Add(view);
+            }
 
             Content = new ScrollView
             {

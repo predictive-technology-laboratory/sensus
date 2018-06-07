@@ -14,6 +14,19 @@
 #' @name SensusR
 NULL
 
+#' Lists S3 buckets.
+#' 
+#' @param profile AWS credentials profile to use for authentication.
+#' @param aws.path Path to AWS client.
+#' 
+sensus.list.aws.s3.buckets = function(profile = "default", aws.path = "/usr/local/bin/aws")
+{
+  aws.args = paste("s3api --profile", profile, "list-buckets --query \"Buckets[].Name\"", sep = " ")
+  output = system2(aws.path, aws.args, stdout = TRUE)
+  output.json = jsonlite::fromJSON(output)
+  return(output.json)
+}
+
 #' Synchronizes data from Amazon S3 to a local path.
 #' 
 #' @param s3.path Path within S3. This can be a prefix (partial path).
@@ -371,6 +384,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
 #' Gets unique device IDs within a dataset.
 #'
 #' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
+#' @return Unique device IDs within the data
 #' 
 sensus.get.unique.device.ids = function(data)
 {

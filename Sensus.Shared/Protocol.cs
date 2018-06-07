@@ -1500,6 +1500,22 @@ namespace Sensus
             });
         }
 
+        public Task ShareAsync()
+        {
+            return Task.Run(async () =>
+            {
+                // make a deep copy of this protocol so we can reset it for sharing. don't reset the id of the 
+                // protocol to keep it in the same study. also do not register the copy since we're just going 
+                // to send it off rather than show it in the UI.
+                Protocol protocolCopy = await CopyAsync(false, false);
+
+                // write protocol to file and share
+                string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
+                protocolCopy.Save(sharePath);
+                await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + protocolCopy.Name, "application/json");
+            });
+        }
+
         private void StartInternal()
         {
             lock (_locker)
