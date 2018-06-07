@@ -52,10 +52,10 @@ namespace Sensus.Probes.Movement
         public ActivityConfidence Confidence { get; set; }
 
         /// <summary>
-        /// Gets the activity the user is starting to engage in. If there is such an activity, it will be one of <see cref="Activities"/>. If there
-        /// is not an activity starting, then the value will be <see cref="Activities.Unknown"/>.
+        /// Gets the activity the user is starting to engage in. If there is not an activity starting (e.g., if the <see cref="ActivityPhase"/> is 
+        /// not <see cref="ActivityPhase.Starting"/>), then the value will be <see cref="Activities.Unknown"/>.
         /// </summary>
-        /// <value>The current activity.</value>
+        /// <value>The activity that is starting.</value>
         [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Walking, Activities.Unknown })]
         [JsonIgnore]
         public Activities ActivityStarting
@@ -63,6 +63,21 @@ namespace Sensus.Probes.Movement
             get
             {
                 return Phase == ActivityPhase.Starting && State == ActivityState.Active ? Activity : Activities.Unknown;
+            }
+        }
+
+        /// <summary>
+        /// Gets the activity the user is stopping. If there is not an activity stopping (e.g., if the <see cref="ActivityPhase"/> is 
+        /// not <see cref="ActivityPhase.Stopping"/>), then the value will be <see cref="Activities.Unknown"/>.
+        /// </summary>
+        /// <value>The activity that is starting.</value>
+        [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Walking, Activities.Unknown })]
+        [JsonIgnore]
+        public Activities ActivityStopping
+        {
+            get
+            {
+                return Phase == ActivityPhase.Stopping && State == ActivityState.Active ? Activity : Activities.Unknown;
             }
         }
 

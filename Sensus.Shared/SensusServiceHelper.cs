@@ -912,7 +912,15 @@ namespace Sensus
                         return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             barcodeScannerPage.IsScanning = false;
-                            await navigation.PopModalAsync();
+
+                            // we've seen a strange race condition where the QR code input scanner button is 
+                            // pressed, and in the above task delay the input group page is cancelled and 
+                            // another UI button is hit before the scanner page comes up.
+                            if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
+                            {
+                                await navigation.PopModalAsync();
+                            }
+
                             resultWait.Set();
                         });
                     });
