@@ -70,7 +70,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return Phase + " " + Activity + " (" + State + "-" + Confidence + ")";
+                return Phase + " " + Activity + " (" + State + ")";
             }
         }
 
