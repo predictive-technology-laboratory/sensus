@@ -91,12 +91,13 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><span class="xref">System.IComparable</span>&lt;<a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>&gt;</div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_Scripts_Script_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Script : Object, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class Script : Object, INotifyPropertyChanged, IComparable&lt;Script&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -209,6 +210,31 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_Script_DisplayDateTime_" data-uid="Sensus.Probes.User.Scripts.Script.DisplayDateTime*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_Script_DisplayDateTime" data-uid="Sensus.Probes.User.Scripts.Script.DisplayDateTime">DisplayDateTime</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime DisplayDateTime { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTime</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -492,6 +518,48 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
   </h3>
   
   
+  <a id="Sensus_Probes_User_Scripts_Script_CompareTo_" data-uid="Sensus.Probes.User.Scripts.Script.CompareTo*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_Script_CompareTo_Sensus_Probes_User_Scripts_Script_" data-uid="Sensus.Probes.User.Scripts.Script.CompareTo(Sensus.Probes.User.Scripts.Script)">CompareTo(Script)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int CompareTo(Script script)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
+        <td><span class="parametername">script</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_Script_Copy_" data-uid="Sensus.Probes.User.Scripts.Script.Copy*"></a>
   <h4 id="Sensus_Probes_User_Scripts_Script_Copy_System_Boolean_" data-uid="Sensus.Probes.User.Scripts.Script.Copy(System.Boolean)">Copy(Boolean)</h4>
   <div class="markdown level1 summary"><p>Creates a copy of the current <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
@@ -565,6 +633,9 @@ the <a class="xref" href="Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_Inpu
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <span class="xref">System.IComparable&lt;&gt;</span>
   </div>
 </article>
           </div>

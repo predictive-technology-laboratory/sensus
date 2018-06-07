@@ -119,7 +119,13 @@ the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalData
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Protocol">DataStore.Protocol</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CaptionText">DataStore.CaptionText</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_DisplayName">DataStore.DisplayName</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_UpdatedCaptionText">DataStore.UpdatedCaptionText</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.DataStores.Local.html">Sensus.DataStores.Local</a></h6>
@@ -196,14 +202,14 @@ the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalData
   </table>
   
   
-  <a id="Sensus_DataStores_Local_LocalDataStore_WriteDatumAsync_" data-uid="Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync*"></a>
-  <h4 id="Sensus_DataStores_Local_LocalDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Local.LocalDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)">WriteDatumAsync(Datum, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Writes a single <a class="xref" href="Sensus.Datum.html">Datum</a> asynchronously to the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a>.</p>
+  <a id="Sensus_DataStores_Local_LocalDataStore_WriteDatum_" data-uid="Sensus.DataStores.Local.LocalDataStore.WriteDatum*"></a>
+  <h4 id="Sensus_DataStores_Local_LocalDataStore_WriteDatum_Sensus_Datum_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Local.LocalDataStore.WriteDatum(Sensus.Datum,System.Threading.CancellationToken)">WriteDatum(Datum, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Writes a single <a class="xref" href="Sensus.Datum.html">Datum</a> to the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task&lt;bool&gt; WriteDatumAsync(Datum datum, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract void WriteDatum(Datum datum, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -225,22 +231,6 @@ the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalData
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>Cancellation token.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p><code>true</code> if the <a class="xref" href="Sensus.Datum.html">Datum</a> was written and <code>false</code> otherwise.</p>
 </td>
       </tr>
     </tbody>

@@ -40,12 +40,11 @@ namespace Sensus.DataStores.Local
         }
 
         /// <summary>
-        /// Writes a single <see cref="Datum"/> asynchronously to the <see cref="LocalDataStore"/>.
+        /// Writes a single <see cref="Datum"/> to the <see cref="LocalDataStore"/>.
         /// </summary>
-        /// <returns><c>true</c> if the <see cref="Datum"/> was written and <c>false</c> otherwise.</returns>
         /// <param name="datum">Datum.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<bool> WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
+        public abstract void WriteDatum(Datum datum, CancellationToken cancellationToken);
 
         /// <summary>
         /// Checks whether the current <see cref="LocalDataStore"/> has grown too large, and (if it has) writes the data to the 
@@ -80,7 +79,10 @@ namespace Sensus.DataStores.Local
                             { "Write", "Size Triggered" }
                         });
 
-                        await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken);
+                        if (!await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken))
+                        {
+                            throw new Exception("Failed to write local data store to remote.");
+                        }
                     }
                     catch (Exception ex)
                     {

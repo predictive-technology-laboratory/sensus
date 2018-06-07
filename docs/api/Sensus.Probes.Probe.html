@@ -171,6 +171,31 @@ etc.). Availability and reliability of Probes will depend on the device being us
   </table>
   
   
+  <a id="Sensus_Probes_Probe_DataRateSampleSize_" data-uid="Sensus.Probes.Probe.DataRateSampleSize*"></a>
+  <h4 id="Sensus_Probes_Probe_DataRateSampleSize" data-uid="Sensus.Probes.Probe.DataRateSampleSize">DataRateSampleSize</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract long DataRateSampleSize { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Probe_DatumType_" data-uid="Sensus.Probes.Probe.DatumType*"></a>
   <h4 id="Sensus_Probes_Probe_DatumType" data-uid="Sensus.Probes.Probe.DatumType">DatumType</h4>
   <div class="markdown level1 summary"></div>
@@ -256,7 +281,7 @@ public bool Enabled { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Max Chart Data Count:&quot;, true, 50)]
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Max Chart Data Count:&quot;, true, 50, true)]
 public int MaxChartDataCount { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -272,6 +297,31 @@ public int MaxChartDataCount { get; set; }</code></pre>
         <td><span class="xref">System.Int32</span></td>
         <td><p>The maximum chart data count.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_MaxDataStoresPerSecond_" data-uid="Sensus.Probes.Probe.MaxDataStoresPerSecond*"></a>
+  <h4 id="Sensus_Probes_Probe_MaxDataStoresPerSecond" data-uid="Sensus.Probes.Probe.MaxDataStoresPerSecond">MaxDataStoresPerSecond</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract Nullable&lt;double&gt; MaxDataStoresPerSecond { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -809,14 +859,14 @@ information will have already been logged and displayed. Thus, the caller doesn&
   </div>
   
   
-  <a id="Sensus_Probes_Probe_StoreDatumAsync_" data-uid="Sensus.Probes.Probe.StoreDatumAsync*"></a>
-  <h4 id="Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.Probe.StoreDatumAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</h4>
+  <a id="Sensus_Probes_Probe_StoreDatum_" data-uid="Sensus.Probes.Probe.StoreDatum*"></a>
+  <h4 id="Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.Probe.StoreDatum(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</h4>
   <div class="markdown level1 summary"><p>Stores a <a class="xref" href="Sensus.Datum.html">Datum</a> within the <span class="xref">System.LocalDataStore</span>. Will not throw an <span class="xref">System.Exception</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task&lt;bool&gt; StoreDatumAsync(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public void StoreDatum(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -838,22 +888,6 @@ information will have already been logged and displayed. Thus, the caller doesn&
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Threading.CancellationToken</span>&gt;</td>
         <td><span class="parametername">cancellationToken</span></td>
         <td><p>Cancellation token.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>The datum async.</p>
 </td>
       </tr>
     </tbody>

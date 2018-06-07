@@ -35,7 +35,7 @@ namespace Sensus.UI.Inputs
         /// Name of the input group.
         /// </summary>
         /// <value>The name.</value>
-        [EntryStringUiProperty(null, true, 0)]
+        [EntryStringUiProperty(null, true, 0, true)]
         public string Name
         {
             get

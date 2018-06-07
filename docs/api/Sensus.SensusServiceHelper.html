@@ -388,6 +388,56 @@
   </table>
   
   
+  <a id="Sensus_SensusServiceHelper_DeviceManufacturer_" data-uid="Sensus.SensusServiceHelper.DeviceManufacturer*"></a>
+  <h4 id="Sensus_SensusServiceHelper_DeviceManufacturer" data-uid="Sensus.SensusServiceHelper.DeviceManufacturer">DeviceManufacturer</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string DeviceManufacturer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_SensusServiceHelper_DeviceModel_" data-uid="Sensus.SensusServiceHelper.DeviceModel*"></a>
+  <h4 id="Sensus_SensusServiceHelper_DeviceModel" data-uid="Sensus.SensusServiceHelper.DeviceModel">DeviceModel</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string DeviceModel { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_SensusServiceHelper_FlashNotificationsEnabled_" data-uid="Sensus.SensusServiceHelper.FlashNotificationsEnabled*"></a>
   <h4 id="Sensus_SensusServiceHelper_FlashNotificationsEnabled" data-uid="Sensus.SensusServiceHelper.FlashNotificationsEnabled">FlashNotificationsEnabled</h4>
   <div class="markdown level1 summary"></div>
@@ -767,13 +817,13 @@
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_AddScriptToRun_" data-uid="Sensus.SensusServiceHelper.AddScriptToRun*"></a>
-  <h4 id="Sensus_SensusServiceHelper_AddScriptToRun_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_" data-uid="Sensus.SensusServiceHelper.AddScriptToRun(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)">AddScriptToRun(Script, RunMode)</h4>
+  <a id="Sensus_SensusServiceHelper_AddScript_" data-uid="Sensus.SensusServiceHelper.AddScript*"></a>
+  <h4 id="Sensus_SensusServiceHelper_AddScript_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_" data-uid="Sensus.SensusServiceHelper.AddScript(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)">AddScript(Script, RunMode)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddScriptToRun(Script script, RunMode runMode)</code></pre>
+    <pre><code class="lang-csharp hljs">public void AddScript(Script script, RunMode runMode)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -858,6 +908,16 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void ClearPendingSurveysNotificationAsync()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_SensusServiceHelper_ClearScripts_" data-uid="Sensus.SensusServiceHelper.ClearScripts*"></a>
+  <h4 id="Sensus_SensusServiceHelper_ClearScripts" data-uid="Sensus.SensusServiceHelper.ClearScripts">ClearScripts()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ClearScripts()</code></pre>
   </div>
   
   
@@ -1063,13 +1123,13 @@ decide which probes to enable when enabling all probes.</p>
   
   
   <a id="Sensus_SensusServiceHelper_FlashNotificationAsync_" data-uid="Sensus.SensusServiceHelper.FlashNotificationAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_FlashNotificationAsync_System_String_System_Action_" data-uid="Sensus.SensusServiceHelper.FlashNotificationAsync(System.String,System.Action)">FlashNotificationAsync(String, Action)</h4>
+  <h4 id="Sensus_SensusServiceHelper_FlashNotificationAsync_System_String_" data-uid="Sensus.SensusServiceHelper.FlashNotificationAsync(System.String)">FlashNotificationAsync(String)</h4>
   <div class="markdown level1 summary"><p>Flashes a notification.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task FlashNotificationAsync(string message, Action callback = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task FlashNotificationAsync(string message)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1085,12 +1145,6 @@ decide which probes to enable when enabling all probes.</p>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">message</span></td>
         <td><p>Message.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">callback</span></td>
-        <td><p>Callback.</p>
 </td>
       </tr>
     </tbody>
@@ -1670,12 +1724,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_PromptForInputAsync_" data-uid="Sensus.SensusServiceHelper.PromptForInputAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_Sensus_UI_Inputs_Input__" data-uid="Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{Sensus.UI.Inputs.Input})">PromptForInputAsync(String, Input, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action&lt;Input&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForInputAsync_System_String_Sensus_UI_Inputs_Input_System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_" data-uid="Sensus.SensusServiceHelper.PromptForInputAsync(System.String,Sensus.UI.Inputs.Input,System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)">PromptForInputAsync(String, Input, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PromptForInputAsync(string windowTitle, Input input, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action&lt;Input&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;Input&gt; PromptForInputAsync(string windowTitle, Input input, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1732,9 +1786,19 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
         <td><span class="parametername">displayProgress</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;</td>
-        <td><span class="parametername">callback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1742,12 +1806,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_PromptForInputsAsync_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Action_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup___" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action,System.Action{System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup}})">PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt;, IEnumerable&lt;InputGroup&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action, Action&lt;IEnumerable&lt;InputGroup&gt;&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_Nullable_System_DateTimeOffset__System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_InputGroup__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.Nullable{System.DateTimeOffset},System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.InputGroup},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action)">PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt;, IEnumerable&lt;InputGroup&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt; firstPromptTimestamp, IEnumerable&lt;InputGroup&gt; inputGroups, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback, Action&lt;IEnumerable&lt;InputGroup&gt;&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;IEnumerable&lt;InputGroup&gt;&gt; PromptForInputsAsync(Nullable&lt;DateTimeOffset&gt; firstPromptTimestamp, IEnumerable&lt;InputGroup&gt; inputGroups, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1809,9 +1873,19 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
         <td><span class="parametername">postDisplayCallback</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>&gt;&gt;</td>
-        <td><span class="parametername">callback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1819,12 +1893,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_PromptForInputsAsync_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_System_Action_System_Collections_Generic_List_Sensus_UI_Inputs_Input___" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean,System.Action{System.Collections.Generic.List{Sensus.UI.Inputs.Input}})">PromptForInputsAsync(String, IEnumerable&lt;Input&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean, Action&lt;List&lt;Input&gt;&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForInputsAsync_System_String_System_Collections_Generic_IEnumerable_Sensus_UI_Inputs_Input__System_Nullable_System_Threading_CancellationToken__System_Boolean_System_String_System_String_System_String_System_String_System_Boolean_" data-uid="Sensus.SensusServiceHelper.PromptForInputsAsync(System.String,System.Collections.Generic.IEnumerable{Sensus.UI.Inputs.Input},System.Nullable{System.Threading.CancellationToken},System.Boolean,System.String,System.String,System.String,System.String,System.Boolean)">PromptForInputsAsync(String, IEnumerable&lt;Input&gt;, Nullable&lt;CancellationToken&gt;, Boolean, String, String, String, String, Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void PromptForInputsAsync(string windowTitle, IEnumerable&lt;Input&gt; inputs, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action&lt;List&lt;Input&gt;&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;Input&gt;&gt; PromptForInputsAsync(string windowTitle, IEnumerable&lt;Input&gt; inputs, Nullable&lt;CancellationToken&gt; cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1881,9 +1955,19 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
         <td><span class="parametername">displayProgress</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;&gt;</td>
-        <td><span class="parametername">callback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1891,12 +1975,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_ProtectedFlashNotificationAsync_" data-uid="Sensus.SensusServiceHelper.ProtectedFlashNotificationAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_ProtectedFlashNotificationAsync_System_String_System_Action_" data-uid="Sensus.SensusServiceHelper.ProtectedFlashNotificationAsync(System.String,System.Action)">ProtectedFlashNotificationAsync(String, Action)</h4>
+  <h4 id="Sensus_SensusServiceHelper_ProtectedFlashNotificationAsync_System_String_" data-uid="Sensus.SensusServiceHelper.ProtectedFlashNotificationAsync(System.String)">ProtectedFlashNotificationAsync(String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract Task ProtectedFlashNotificationAsync(string message, Action callback)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract Task ProtectedFlashNotificationAsync(string message)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1911,11 +1995,6 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">message</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">callback</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2132,13 +2211,13 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_RemoveScriptRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptRunner*"></a>
-  <h4 id="Sensus_SensusServiceHelper_RemoveScriptRunner_Sensus_Probes_User_Scripts_ScriptRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptRunner(Sensus.Probes.User.Scripts.ScriptRunner)">RemoveScriptRunner(ScriptRunner)</h4>
+  <a id="Sensus_SensusServiceHelper_RemoveScriptsForRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptsForRunner*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RemoveScriptsForRunner_Sensus_Probes_User_Scripts_ScriptRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)">RemoveScriptsForRunner(ScriptRunner)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RemoveScriptRunner(ScriptRunner runner)</code></pre>
+    <pre><code class="lang-csharp hljs">public void RemoveScriptsForRunner(ScriptRunner runner)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2217,26 +2296,24 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_SaveAsync_" data-uid="Sensus.SensusServiceHelper.SaveAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_SaveAsync_System_Action_" data-uid="Sensus.SensusServiceHelper.SaveAsync(System.Action)">SaveAsync(Action)</h4>
+  <h4 id="Sensus_SensusServiceHelper_SaveAsync" data-uid="Sensus.SensusServiceHelper.SaveAsync">SaveAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SaveAsync(Action callback = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task SaveAsync()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">callback</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2244,12 +2321,12 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_ScanQrCodeAsync_" data-uid="Sensus.SensusServiceHelper.ScanQrCodeAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_ScanQrCodeAsync_Xamarin_Forms_INavigation_" data-uid="Sensus.SensusServiceHelper.ScanQrCodeAsync(Xamarin.Forms.INavigation)">ScanQrCodeAsync(INavigation)</h4>
+  <h4 id="Sensus_SensusServiceHelper_ScanQrCodeAsync_System_String_" data-uid="Sensus.SensusServiceHelper.ScanQrCodeAsync(System.String)">ScanQrCodeAsync(String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;Result&gt; ScanQrCodeAsync(INavigation navigation)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;string&gt; ScanQrCodeAsync(string resultPrefix)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2262,8 +2339,8 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Xamarin.Forms.INavigation</span></td>
-        <td><span class="parametername">navigation</span></td>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">resultPrefix</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2278,7 +2355,7 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">ZXing.Result</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

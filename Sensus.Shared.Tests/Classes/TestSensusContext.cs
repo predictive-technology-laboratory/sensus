@@ -18,7 +18,7 @@ using Sensus.Concurrent;
 using Sensus.Context;
 using Sensus.Encryption;
 
-namespace Sensus.Test.Classes
+namespace Sensus.Tests.Classes
 {
     public class TestSensusContext : ISensusContext
     {
@@ -28,12 +28,18 @@ namespace Sensus.Test.Classes
         public INotifier Notifier { get; set; }
         public ICallbackScheduler CallbackScheduler { get; set; }
         public string ActivationId { get; set; }
+        public string IamRegion { get; set; }
+        public string IamAccessKey { get; set; }
+        public string IamAccessKeySecret { get; set; }
 
         public TestSensusContext()
         {
             Platform = Platform.Test;
             MainThreadSynchronizer = new LockConcurrent();
             SymmetricEncryption = new SymmetricEncryption("91091462A8D6FD3B4DB1D91C731070F10460D73AEE0377EDC2585C42F70A84A5");
+            Notifier = new TestSensusNotifier();
+            CallbackScheduler = new TestSensusCallbackScheduler();
+            ActivationId = "asdfadsf";
         }
     }
 }

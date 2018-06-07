@@ -42,7 +42,7 @@ namespace Sensus.UI.Inputs
         /// A short tip that explains how to pick an item from the dialog window.
         /// </summary>
         /// <value>The tip text.</value>
-        [EntryStringUiProperty("Tip Text:", true, 9)]
+        [EntryStringUiProperty("Tip Text:", true, 9, false)]
         public string TipText
         {
             get
@@ -59,7 +59,7 @@ namespace Sensus.UI.Inputs
         /// Minimum value available on the slider.
         /// </summary>
         /// <value>The minimum.</value>
-        [EntryDoubleUiProperty(null, true, 10)]
+        [EntryDoubleUiProperty(null, true, 10, true)]
         public double Minimum
         {
             get
@@ -76,7 +76,7 @@ namespace Sensus.UI.Inputs
         /// Maximum value available on the slider.
         /// </summary>
         /// <value>The maximum.</value>
-        [EntryDoubleUiProperty(null, true, 11)]
+        [EntryDoubleUiProperty(null, true, 11, true)]
         public double Maximum
         {
             get
@@ -93,7 +93,7 @@ namespace Sensus.UI.Inputs
         /// How much the slider's value should change between points.
         /// </summary>
         /// <value>The increment.</value>
-        [EntryDoubleUiProperty(null, true, 12)]
+        [EntryDoubleUiProperty(null, true, 12, true)]
         public double Increment
         {
             get
@@ -110,7 +110,7 @@ namespace Sensus.UI.Inputs
         /// Label to display at the left end of the slider range.
         /// </summary>
         /// <value>The left label.</value>
-        [EntryStringUiProperty("Left Label:", true, 13)]
+        [EntryStringUiProperty("Left Label:", true, 13, false)]
         public string LeftLabel
         {
             get
@@ -127,7 +127,7 @@ namespace Sensus.UI.Inputs
         /// Label to display at the right end of the slider range.
         /// </summary>
         /// <value>The left label.</value>
-        [EntryStringUiProperty("Right Label:", true, 14)]
+        [EntryStringUiProperty("Right Label:", true, 14, false)]
         public string RightLabel
         {
             get
@@ -181,7 +181,7 @@ namespace Sensus.UI.Inputs
         /// the value for this variable. 
         /// </summary>
         /// <value>The defined variable.</value>
-        [EntryStringUiProperty("Define Variable:", true, 2)]
+        [EntryStringUiProperty("Define Variable:", true, 2, false)]
         public string DefinedVariable
         {
             get

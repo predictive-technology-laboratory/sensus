@@ -73,6 +73,16 @@ namespace Sensus.iOS
             }
         }
 
+        public override string DeviceManufacturer
+        {
+            get { return "Apple"; }
+        }
+
+        public override string DeviceModel
+        {
+            get { return Xamarin.iOS.DeviceHardware.Version; }
+        }
+
         public override string OperatingSystem
         {
             get
@@ -100,7 +110,7 @@ namespace Sensus.iOS
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
-        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message)
         {
             return Task.Run(() =>
             {
@@ -109,7 +119,6 @@ namespace Sensus.iOS
                     TTGSnackbar snackbar = new TTGSnackbar(message);
                     snackbar.Duration = TimeSpan.FromSeconds(5);
                     snackbar.Show();
-                    callback?.Invoke();
                 });
             });
         }

@@ -23,7 +23,7 @@ namespace Sensus.UI.UiProperties
     /// </summary>
     public class DateUiProperty : UiProperty
     {
-        public DateUiProperty(string labelText, bool editable, int order, bool required = false)
+        public DateUiProperty(string labelText, bool editable, int order, bool required)
             : base(labelText, editable, order, required)
         {
         }

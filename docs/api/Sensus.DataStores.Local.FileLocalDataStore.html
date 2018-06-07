@@ -113,6 +113,12 @@ supports encryption.</p>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Protocol">DataStore.Protocol</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_CaptionText">DataStore.CaptionText</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_UpdatedCaptionText">DataStore.UpdatedCaptionText</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.DataStores.Local.html">Sensus.DataStores.Local</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
@@ -146,7 +152,7 @@ of data loss when the app is killed or crashes (as the buffer resides in RAM).</
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Buffer Size (Bytes):&quot;, true, 2)]
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Buffer Size (Bytes):&quot;, true, 2, true)]
 public int BufferSizeBytes { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -162,31 +168,6 @@ public int BufferSizeBytes { get; set; }</code></pre>
         <td><span class="xref">System.Int32</span></td>
         <td><p>The buffer size in bytes.</p>
 </td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_BytesWrittenToCurrentFile_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_BytesWrittenToCurrentFile" data-uid="Sensus.DataStores.Local.FileLocalDataStore.BytesWrittenToCurrentFile">BytesWrittenToCurrentFile</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long BytesWrittenToCurrentFile { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td></td>
       </tr>
     </tbody>
   </table>
@@ -381,6 +362,56 @@ public bool Encrypt { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_TotalDataBuffered_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TotalDataBuffered*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TotalDataBuffered" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TotalDataBuffered">TotalDataBuffered</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long TotalDataBuffered { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_TotalDataWritten_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TotalDataWritten*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TotalDataWritten" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TotalDataWritten">TotalDataWritten</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long TotalDataWritten { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   
@@ -392,6 +423,16 @@ public bool Encrypt { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_Flush_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Flush*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Flush" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Flush">Flush()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Flush()</code></pre>
   </div>
   
   
@@ -502,13 +543,13 @@ public bool Encrypt { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">DataStore.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_WriteDatumAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.WriteDatumAsync(Sensus.Datum,System.Threading.CancellationToken)">WriteDatumAsync(Datum, CancellationToken)</h4>
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_WriteDatum_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.WriteDatum*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_WriteDatum_Sensus_Datum_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.WriteDatum(Sensus.Datum,System.Threading.CancellationToken)">WriteDatum(Datum, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;bool&gt; WriteDatumAsync(Datum datum, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override void WriteDatum(Datum datum, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -532,23 +573,8 @@ public bool Encrypt { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDatumAsync_Sensus_Datum_System_Threading_CancellationToken_">LocalDataStore.WriteDatumAsync(Datum, CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteDatum_Sensus_Datum_System_Threading_CancellationToken_">LocalDataStore.WriteDatum(Datum, CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_WriteToRemoteAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.WriteToRemoteAsync*"></a>

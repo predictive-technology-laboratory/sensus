@@ -65,7 +65,7 @@ namespace Sensus.Tests
                                                     Activities.OnBicycle,
                                                     ActivityPhase.Starting,
                                                     ActivityState.Inactive,
-                                                    1);
+                                                    ActivityConfidence.Medium);
 
             Protocol protocol = new Protocol("test");
             AnonymizedJsonContractResolver anonymizer = new AnonymizedJsonContractResolver(protocol);

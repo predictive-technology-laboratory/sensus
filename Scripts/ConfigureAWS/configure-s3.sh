@@ -1,14 +1,19 @@
 #!/bin/sh
 
-if [ $# -ne 3 ]; then
-    echo "Usage:  ./configure-s3.sh [region] [root id]"
+if [ $# -ne 2 ]; then
+    echo "Usage:  ./configure-s3.sh [name] [region]"
     echo "\t[name]:  Informative name for bucket (alphanumerics and dashes)"
     echo "\t[region]:  AWS region to use (e.g., us-east-1)"
-    echo "\t[root id]:  Account ID that will own the data (12 digits, no dashes)"
+    echo ""
+    echo "Output:  The Sensus S3 IAM account that has write-only access to the bucket."
     exit 1
 fi
 
-# create random bucket in given region
+#####################
+##### S3 bucket #####
+#####################
+
+# create random bucket in given region, prefixed with the given name
 echo "Creating S3 bucket..."
 bucket="$1-$(uuidgen | tr '[:upper:]' '[:lower:]')"
 aws s3api create-bucket --bucket $bucket --region $2
@@ -17,45 +22,63 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-# enable versioning on the bucket for safety purposes
+# enable versioning on the bucket for data safety purposes (e.g., to prevent unintended deletion)
 aws s3api put-bucket-versioning --bucket $bucket --versioning-configuration Status=Enabled
 if [ $? -ne 0 ]; then
     echo "Failed to enable bucket versioning."
     exit $?
 fi
 
-# create IAM user
-echo "Creating IAM user..."
-iamUserName="${bucket}"
-iamUserARN=$(aws iam create-user --user-name $iamUserName | jq -r .User.Arn)
+###################################################################################
+##### Write-only IAM group/user:  enables the app to write data to the bucket #####
+###################################################################################
+
+# create group
+echo "Creating write-only IAM group..."
+iamWriteOnlyGroupName="${bucket}-write-only-group"
+aws iam create-group --group-name $iamWriteOnlyGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to create IAM user."
+    echo "Failed to create write-only IAM group."
     exit $?
 fi
 
-# attach read-only policy for bucket to IAM user
-cp ./iam-policy.json tmp.json
+# create/put group policy
+echo "Attaching write-only IAM group policy..."
+cp ./iam-write-only-group-policy.json tmp.json
 sed -i "" "s/bucketName/$bucket/" ./tmp.json
-aws iam put-user-policy --user-name $iamUserName --policy-name $iamUserName --policy-document file://tmp.json
+aws iam put-group-policy --group-name $iamWriteOnlyGroupName --policy-document file://tmp.json --policy-name "${iamWriteOnlyGroupName}-policy"
 if [ $? -ne 0 ]; then
     rm tmp.json
-    echo "Failed to put IAM user policy."
+    echo "Failed to put IAM write-only group policy."
     exit $?
 fi
 rm tmp.json
 
-# give the user a bit to propagate, then attach bucket policy giving access to the root user and IAM user.
-sleep 15
-cp ./bucket-policy.json tmp.json
-sed -i "" "s/bucketId/$bucket/" ./tmp.json
-sed -i "" "s/rootAccountId/$3/" ./tmp.json
-sed -i "" "s#iamUserARN#$iamUserARN#" ./tmp.json
-aws s3api put-bucket-policy --bucket $bucket --policy file://./tmp.json
+# create write-only IAM user
+echo "Creating write-only IAM user..."
+iamWriteOnlyUserName="${bucket}-write-only-user"
+aws iam create-user --user-name $iamWriteOnlyUserName
 if [ $? -ne 0 ]; then
-    rm tmp.json
-    echo "Failed to attach bucket policy."
+    echo "Failed to create write-only IAM user."
     exit $?
 fi
-rm tmp.json
 
-echo "All done. Bucket:  $bucket"
+# create access key for user
+echo "Creating access key for write-only IAM user..."
+writeOnlyCredentials=$(aws iam create-access-key --user-name $iamWriteOnlyUserName --query "AccessKey.[AccessKeyId,SecretAccessKey]" --output text | tr '\t' ':')
+if [ $? -ne 0 ]; then
+    echo "Failed to create access key for write-only IAM user."
+    exit $?
+fi
+
+# add user to group
+echo "Adding write-only IAM user to write-only IAM group..."
+aws iam add-user-to-group --user-name $iamWriteOnlyUserName --group-name $iamWriteOnlyGroupName
+if [ $? -ne 0 ]; then
+    echo "Failed to add write-only IAM user to write-only group."
+    exit $?
+fi
+
+echo "Done. Details:"
+echo "  Sensus S3 bucket:  $bucket"
+echo "  Sensus S3 IAM account:  $writeOnlyCredentials"

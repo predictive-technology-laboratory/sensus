@@ -76,7 +76,7 @@ namespace Sensus.Probes
         /// How long to sleep (become inactive) between successive polling operations.
         /// </summary>
         /// <value>The polling sleep duration in milliseconds.</value>
-        [EntryIntegerUiProperty("Sleep Duration (MS):", true, 5)]
+        [EntryIntegerUiProperty("Sleep Duration (MS):", true, 5, true)]
         public virtual int PollingSleepDurationMS
         {
             get { return _pollingSleepDurationMS; }
@@ -96,7 +96,7 @@ namespace Sensus.Probes
         /// How long the <see cref="PollingProbe"/>  has to complete a single poll operation before being cancelled.
         /// </summary>
         /// <value>The polling timeout minutes.</value>
-        [EntryIntegerUiProperty("Timeout (Mins.):", true, 6)]
+        [EntryIntegerUiProperty("Timeout (Mins.):", true, 6, true)]
         public int PollingTimeoutMinutes
         {
             get
@@ -131,6 +131,10 @@ namespace Sensus.Probes
                 }
             }
         }
+
+        protected override long DataRateSampleSize => 10;
+
+        public override double? MaxDataStoresPerSecond { get => null; set { } }
 
         public List<DateTime> PollTimes
         {
@@ -291,7 +295,7 @@ namespace Sensus.Probes
 
                 _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
-                    return Task.Run(async () =>
+                    return Task.Run(() =>
                     {
                         if (Running)
                         {
@@ -325,7 +329,7 @@ namespace Sensus.Probes
 
                                     try
                                     {
-                                        await StoreDatumAsync(datum, cancellationToken);
+                                        StoreDatum(datum, cancellationToken);
                                     }
                                     catch (Exception ex)
                                     {
@@ -415,7 +419,7 @@ namespace Sensus.Probes
                     string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
                     {
-                        { "Polling Latency", (timeElapsedSincePreviousStore.TotalMilliseconds - _pollingSleepDurationMS).Round(1000).ToString() }
+                        { "Polling Latency", (timeElapsedSincePreviousStore.TotalMilliseconds - _pollingSleepDurationMS).RoundToWhole(1000).ToString() }
                     };
 
                     Analytics.TrackEvent(eventName, properties);

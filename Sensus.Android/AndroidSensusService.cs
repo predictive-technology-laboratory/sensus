@@ -37,9 +37,13 @@ namespace Sensus.Android
     [Service(Exported = false, Label = "Runs the Sensus mobile sensing application.")]
     public class AndroidSensusService : Service
     {
-        public static Intent StartService(global::Android.Content.Context context)
+        public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
+        public const string FROM_ON_BOOT_KEY = "from-on-boot";
+
+        public static Intent StartService(global::Android.Content.Context context, bool fromOnBoot)
         {
             Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
+            serviceIntent.PutExtra(FROM_ON_BOOT_KEY, fromOnBoot);
 
             // after android 26, starting a foreground service requires the use of StartForegroundService rather than StartService.
             // in either case, the service itself will call StartForeground after it has started. more info:  
@@ -62,8 +66,6 @@ namespace Sensus.Android
 
             return serviceIntent;
         }
-
-        public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
 
         private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
         private Notification.Builder _foregroundServiceNotificationBuilder;
@@ -108,6 +110,7 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
+                #region foreground service
                 // promote this service to a foreground, for several reasons:  it's honest and transparent. it lets us work effectively with the 
                 // android 8.0 restrictions on background services (we can run forever without being killed, we receive background location 
                 // updates). it's okay to call this multiple times. doing so will simply update the notification.
@@ -124,6 +127,17 @@ namespace Sensus.Android
                 else
                 {
                     ReissueForegroundServiceNotification();
+                }
+                #endregion
+
+                // if we started from the on-boot signal and there are no running protocols, stop the app now. there is no reason for
+                // the app to be running in this situation, and the user will likely be annoyed at the presence of the foreground
+                // service notification.
+                if (intent != null && intent.GetBooleanExtra(FROM_ON_BOOT_KEY, false) && serviceHelper.RunningProtocolIds.Count == 0)
+                {
+                    serviceHelper.Logger.Log("Started from on-boot signal without running protocols. Stopping service now.", LoggingLevel.Normal, GetType());
+                    Stop();
+                    return StartCommandResult.NotSticky;
                 }
 
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
@@ -148,20 +162,11 @@ namespace Sensus.Android
                     {
                         AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
 
-                        DisplayPage displayPage;
-
                         // is this a callback intent?
                         if (callbackScheduler.IsCallback(intent))
                         {
                             // service the callback -- the matching LetDeviceSleep will be called therein
                             await callbackScheduler.ServiceCallbackAsync(intent);
-                        }
-                        // should we display a page?
-                        else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
-                        {
-                            await serviceHelper.BringToForegroundAsync();
-                            SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
-                            serviceHelper.LetDeviceSleep();
                         }
                         else
                         {
@@ -176,6 +181,9 @@ namespace Sensus.Android
             return StartCommandResult.Sticky;
         }
 
+        /// <summary>
+        /// Updates the foreground service notification builder, so that it reflects the enrollment status and participation level of the user.
+        /// </summary>
         private void UpdateForegroundServiceNotificationBuilder()
         {
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;

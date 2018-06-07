@@ -55,7 +55,7 @@ namespace Sensus.DataStores.Remote
         /// How many milliseconds to pause between each data write cycle.
         /// </summary>
         /// <value>The write delay in milliseconds.</value>
-        [EntryIntegerUiProperty("Write Delay (MS):", true, 2)]
+        [EntryIntegerUiProperty("Write Delay (MS):", true, 50, true)]
         public int WriteDelayMS
         {
             get { return _writeDelayMS; }
@@ -74,7 +74,7 @@ namespace Sensus.DataStores.Remote
         /// How many minutes the data store has to complete a write before being cancelled.
         /// </summary>
         /// <value>The write timeout in minutes.</value>
-        [EntryIntegerUiProperty("Write Timeout (Mins.):", true, 3)]
+        [EntryIntegerUiProperty("Write Timeout (Mins.):", true, 51, true)]
         public int WriteTimeoutMinutes
         {
             get
@@ -97,7 +97,7 @@ namespace Sensus.DataStores.Remote
         /// data will be transferred over the cellular network if WiFi is not available.
         /// </summary>
         /// <value><c>true</c> if WiFi is required; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Require WiFi:", true, int.MaxValue)]
+        [OnOffUiProperty("Require WiFi:", true, 52)]
         public bool RequireWiFi
         {
             get { return _requireWiFi; }
@@ -108,7 +108,7 @@ namespace Sensus.DataStores.Remote
         /// Whether to require external power when uploading data.
         /// </summary>
         /// <value><c>true</c> to require charging; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Require Charging:", true, int.MaxValue)]
+        [OnOffUiProperty("Require Charging:", true, 53)]
         public bool RequireCharging
         {
             get { return _requireCharging; }
@@ -124,7 +124,7 @@ namespace Sensus.DataStores.Remote
         /// power source only when the battery is almost fully charged. This will minimize user irritation.
         /// </summary>
         /// <value>The required battery charge level percent.</value>
-        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, int.MaxValue)]
+        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 54, false)]
         public float RequiredBatteryChargeLevelPercent
         {
             get { return _requiredBatteryChargeLevelPercent; }
@@ -145,7 +145,7 @@ namespace Sensus.DataStores.Remote
         /// will open Sensus to transmit the data.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("User Notification Message:", true, int.MaxValue)]
+        [EntryStringUiProperty("User Notification Message:", true, 55, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }
@@ -169,6 +169,8 @@ namespace Sensus.DataStores.Remote
 #else
             WriteDelayMS = 1000 * 60 * 60;  // every 60 minutes
 #endif
+
+            // instantiate ac handler here
         }
 
         public override void Start()
@@ -188,11 +190,16 @@ namespace Sensus.DataStores.Remote
 
             _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
+
+            // hook into the AC charge event signal -- add handler to AC broadcast receiver
+
         }
 
         public override void Stop()
         {
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
+
+            // remove handler
         }
 
         public override void Reset()
@@ -215,7 +222,7 @@ namespace Sensus.DataStores.Remote
                     string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
                     {
-                        { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).Round(1000).ToString() }
+                        { "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).RoundToWhole(1000).ToString() }
                     };
 
                     Analytics.TrackEvent(eventName, properties);
@@ -242,7 +249,7 @@ namespace Sensus.DataStores.Remote
             return restart;
         }
 
-        public Task WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+        public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
         {
             bool write = false;
 
@@ -273,21 +280,10 @@ namespace Sensus.DataStores.Remote
             {
                 return Task.Run(async () =>
                 {
-#if __IOS__
-                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that this is 
-                    // going to happen and might take some time. if they background the app the write will be canceled if it runs out of background
-                    // time.
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Submitting data. Please wait for success confirmation...");
-#endif
-
                     // instruct the local data store to write its data to the remote data store.
                     await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
-                    _mostRecentSuccessfulWriteTime = DateTime.Now; 
-
-#if __IOS__
-                    // on ios the user must activate the app in order to save data. give the user some feedback to let them know that the data were stored remotely.
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Submitted data to the \"" + Protocol.Name + "\" study. Thank you!");
-#endif
+                    _mostRecentSuccessfulWriteTime = DateTime.Now;
+                    return true;
                 });
             }
             else

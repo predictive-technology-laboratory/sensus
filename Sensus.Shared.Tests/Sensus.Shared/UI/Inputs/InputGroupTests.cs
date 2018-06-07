@@ -24,7 +24,7 @@ namespace Sensus.Tests.UI.Inputs
 
             Assert.IsTrue(group.Valid);
             Assert.IsTrue(group.Geotag);
-            Assert.IsEmpty(group.Inputs);
+            Assert.True(group.Inputs.Count == 0);
             Assert.AreEqual("Name", group.Name);
         }
 
@@ -60,7 +60,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreEqual(group.Id, copy.Id);
             Assert.AreEqual(group.Valid, copy.Valid);
             Assert.AreEqual(group.Geotag, copy.Geotag);
-            Assert.IsEmpty(copy.Inputs);
+            Assert.True(copy.Inputs.Count == 0);
             Assert.AreEqual(group.Name, copy.Name);
         }
 

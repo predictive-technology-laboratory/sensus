@@ -29,6 +29,16 @@ namespace Sensus.Tests.Classes
             }
         }
 
+        public override string DeviceManufacturer
+        {
+            get { return "Testing Manufacturer"; }
+        }
+
+        public override string DeviceModel
+        {
+            get { return "Testing Device"; }
+        }
+
         public override bool IsCharging
         {
             get
@@ -127,7 +137,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message)
         {
             throw new NotImplementedException();
         }

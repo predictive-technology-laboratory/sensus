@@ -156,44 +156,21 @@ namespace Sensus.Probes.Location
 
         /// <summary>
         /// Gets a GPS reading. Will block the current thread while waiting for a GPS reading. Should not
-        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
+        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock). If you need
+        /// to get a reading from the UI thread, call GetReadingAsync instead.
         /// </summary>
         /// <returns>The reading.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading.</param>
-        public Position GetReading(CancellationToken cancellationToken, bool checkAndObtainPermission)
-        {
-            return GetReading(0, cancellationToken, checkAndObtainPermission);
-        }
-
-        /// <summary>
-        /// Gets a GPS reading, reusing an old one if it isn't too old. Will block the current thread while waiting for a GPS reading. Should not
-        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock).
-        /// </summary>
-        /// <returns>The reading.</returns>
-        /// <param name="maxReadingAgeForReuseMS">Maximum age of old reading to reuse (milliseconds).</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading. Note that, on Android, this
         /// may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user's permission prior to
         /// calling this method.</param>
-        public Position GetReading(int maxReadingAgeForReuseMS, CancellationToken cancellationToken, bool checkAndObtainPermission)
+        public Position GetReading(CancellationToken cancellationToken, bool checkAndObtainPermission)
         {
             lock (_locker)
             {
                 if (checkAndObtainPermission && SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
                 {
                     return null;
-                }
-
-                // reuse existing reading if it isn't too old
-                if (_reading != null && maxReadingAgeForReuseMS > 0)
-                {
-                    double readingAgeMS = (DateTimeOffset.UtcNow - _reading.Timestamp).TotalMilliseconds;
-                    if (readingAgeMS <= maxReadingAgeForReuseMS)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Reusing previous GPS reading, which is " + readingAgeMS + "ms old (maximum = " + maxReadingAgeForReuseMS + "ms).", LoggingLevel.Verbose, GetType());
-                        return _reading;
-                    }
                 }
 
                 if (_readingIsComing)
@@ -244,6 +221,22 @@ namespace Sensus.Probes.Location
             }
 
             return _reading;
+        }
+
+        /// <summary>
+        /// Gets a GPS reading.
+        /// </summary>
+        /// <returns>The reading.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading. Note that, on Android, this
+        /// may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user's permission prior to
+        /// calling this method.</param>
+        public Task<Position> GetReadingAsync(CancellationToken cancellationToken, bool checkAndObtainPermission)
+        {
+            return Task.Run(() =>
+            {
+                return GetReading(cancellationToken, checkAndObtainPermission);
+            });
         }
     }
 }

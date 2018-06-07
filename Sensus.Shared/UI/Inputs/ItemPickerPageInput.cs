@@ -44,7 +44,7 @@ namespace Sensus.UI.Inputs
         /// These are the items that the user will have to select from.
         /// </summary>
         /// <value>The string items.</value>
-        [EditableListUiProperty("Items:", true, 10)]
+        [EditableListUiProperty("Items:", true, 10, true)]
         [JsonIgnore]
         public List<string> StringItems
         {
@@ -149,7 +149,12 @@ namespace Sensus.UI.Inputs
 
         public override View GetView(int index)
         {
-            if (base.GetView(index) == null && _items.Count > 0)
+            if(_items.Count == 0)
+            {
+                return null;
+            }
+
+            if (base.GetView(index) == null)
             {
                 _selectedItems.Clear();
                 _itemLabels.Clear();

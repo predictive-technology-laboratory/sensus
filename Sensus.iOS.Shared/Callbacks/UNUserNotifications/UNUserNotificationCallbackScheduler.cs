@@ -74,7 +74,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             }
             else
             {
-                notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage, callback.NextExecution.Value, callbackInfo, requestCreated);
+                notifier.IssueNotificationAsync(callback.Protocol?.Name ?? "Alert", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage, callback.NextExecution.Value, callbackInfo, requestCreated);
             }
         }
 

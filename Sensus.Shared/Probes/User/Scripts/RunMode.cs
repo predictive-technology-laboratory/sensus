@@ -20,17 +20,17 @@ namespace Sensus.Probes.User.Scripts
     public enum RunMode
     {
         /// <summary>
-        /// Keep the survey delivery that is oldest.
+        /// Keep the survey that is oldest.
         /// </summary>
         SingleKeepOldest,
 
         /// <summary>
-        /// Keep the survey delivery that is newest.
+        /// Keep the survey that is newest.
         /// </summary>
         SingleKeepNewest,
 
         /// <summary>
-        /// Keep all deliveries of the survey.
+        /// Keep all instances of the survey.
         /// </summary>
         Multiple
     };

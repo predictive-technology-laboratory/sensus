@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ namespace Sensus.Android.Probes.Network
 
         public AndroidListeningWlanProbe()
         {
-            _wlanConnectionChangedCallback = async (sender, wlanDatum) =>
+            _wlanConnectionChangedCallback = (sender, wlanDatum) =>
             {
-                await StoreDatumAsync(wlanDatum);
+                StoreDatum(wlanDatum);
             };
         }
 

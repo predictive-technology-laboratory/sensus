@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidLightProbe()
         {
-            _lightListener = new AndroidSensorListener(SensorType.Light, null, async e =>
+            _lightListener = new AndroidSensorListener(SensorType.Light, null, e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
@@ -34,7 +34,7 @@ namespace Sensus.Android.Probes.Context
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                await StoreDatumAsync(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
+                StoreDatum(new LightDatum(DateTimeOffset.UtcNow, e.Values[0]));
             });
         }
 

@@ -102,19 +102,19 @@ namespace Sensus.iOS.Probes.Movement
                                     DateTimeOffset timestamp = new DateTimeOffset(activity.StartDate.ToDateTime(), TimeSpan.Zero);
 
                                     #region get confidence
-                                    double confidence = 0;
+                                    ActivityConfidence confidence = ActivityConfidence.NotAvailable;
 
                                     if (activity.Confidence == CMMotionActivityConfidence.Low)
                                     {
-                                        confidence = 0.1;
+                                        confidence = ActivityConfidence.Low;
                                     }
                                     else if (activity.Confidence == CMMotionActivityConfidence.Medium)
                                     {
-                                        confidence = 0.5;
+                                        confidence = ActivityConfidence.Medium;
                                     }
                                     else if (activity.Confidence == CMMotionActivityConfidence.High)
                                     {
-                                        confidence = 1;
+                                        confidence = ActivityConfidence.High;
                                     }
                                     else
                                     {

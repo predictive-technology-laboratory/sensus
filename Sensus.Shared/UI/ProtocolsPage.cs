@@ -38,46 +38,38 @@ namespace Sensus.UI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
-        public static void ExecuteActionUponProtocolAuthentication(Protocol protocol, Action successAction, Action failAction = null)
+        public static Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
-            if (protocol.LockPasswordHash == "")
+            return Task.Run(async () =>
             {
-                successAction();
-            }
-            else
-            {
-                SensusServiceHelper.Get().PromptForInputAsync(
-                    "Authenticate \"" + protocol.Name + "\"",
-                    new SingleLineTextInput("Protocol Password:", Keyboard.Text, true),
-                    null,
-                    true,
-                    null,
-                    null,
-                    null,
-                    null,
-                    false,
-                    input =>
+                if (protocol.LockPasswordHash == "")
+                {
+                    return true;
+                }
+                else
+                {
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
+
+                    if (input == null)
                     {
-                        if (input == null)
+                        return false;
+                    }
+                    else
+                    {
+                        string password = input.Value as string;
+
+                        if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
                         {
-                            failAction?.Invoke();
+                            return true;
                         }
                         else
                         {
-                            string password = input.Value as string;
-
-                            if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
-                            {
-                                successAction();
-                            }
-                            else
-                            {
-                                SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
-                                failAction?.Invoke();
-                            }
+                            await SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
+                            return false;
                         }
-                    });
-            }
+                    }
+                }
+            });
         }
 
         private ListView _protocolsList;
@@ -89,6 +81,7 @@ namespace Sensus.UI
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
+            _protocolsList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Protocol.SubCaption));
             _protocolsList.ItemsSource = SensusServiceHelper.Get()?.RegisteredProtocols;
             _protocolsList.ItemTapped += async (o, e) =>
             {
@@ -99,34 +92,60 @@ namespace Sensus.UI
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
-                #region add actions
+                #region add protocol actions
                 List<string> actions = new List<string>();
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+
+                if (!selectedProtocol.Running && selectedProtocol.AllowParticipantIdReset)
+                {
+                    actions.Add("Reset ID");
+                }
 
                 if (!string.IsNullOrWhiteSpace(selectedProtocol.ContactEmail))
                 {
                     actions.Add("Email Study Manager for Help");
                 }
 
-                if (selectedProtocol.Running)
+                if (selectedProtocol.Running && selectedProtocol.AllowViewStatus)
                 {
                     actions.Add("Status");
                 }
 
-                actions.Add("View Data");
+                if (selectedProtocol.AllowViewData)
+                {
+                    actions.Add("View Data");
+                }
 
                 if (selectedProtocol.Running)
                 {
-                    actions.Add("Display Participation");
+                    if (selectedProtocol.AllowSubmitData)
+                    {
+                        actions.Add("Submit Data");
+                    }
+
+                    if (selectedProtocol.AllowParticipationScanning)
+                    {
+                        actions.Add("Display Participation");
+                    }
                 }
 
-                if (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)
+                if (selectedProtocol.AllowParticipationScanning && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false))
                 {
                     actions.Add("Scan Participation Barcode");
                 }
 
-                actions.AddRange(new string[] { "Edit", "Copy", "Share" });
+                actions.Add("Edit");
+
+                if (selectedProtocol.AllowCopy)
+                {
+                    actions.Add("Copy");
+                }
+
+                if (selectedProtocol.Shareable)
+                {
+                    actions.Add("Share");
+                }
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
                 if (selectedProtocol.Groupable)
@@ -150,7 +169,7 @@ namespace Sensus.UI
                 actions.Add("Delete");
                 #endregion
 
-                #region process selected action
+                #region process selected protocol action
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 // must reset the protocol selection manually
@@ -159,18 +178,9 @@ namespace Sensus.UI
                     _protocolsList.SelectedItem = null;
                 });
 
-                if (selectedAction == "Status")
+                if (selectedAction == "Start")
                 {
-                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
-                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
-                    {
-                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
-
-                    }).ToList(), null, null));
-                }
-                else if (selectedAction == "Start")
-                {
-                    selectedProtocol.StartWithUserAgreementAsync(null);
+                    await selectedProtocol.StartWithUserAgreementAsync(null);
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
@@ -186,6 +196,20 @@ namespace Sensus.UI
                         await selectedProtocol.StopAsync();
                     }
                 }
+                else if (selectedAction == "Reset ID")
+                {
+                    selectedProtocol.ParticipantId = null;
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Your ID has been reset.");
+                }
+                else if (selectedAction == "Status")
+                {
+                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
+                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
+                    {
+                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
+
+                    }).ToList(), null, null));
+                }
                 else if (selectedAction == "Email Study Manager for Help")
                 {
                     await SensusServiceHelper.Get().SendEmailAsync(selectedProtocol.ContactEmail, "Help with Sensus study:  " + selectedProtocol.Name,
@@ -199,14 +223,32 @@ namespace Sensus.UI
                 {
                     await Navigation.PushAsync(new ProbesViewPage(selectedProtocol));
                 }
+                else if (selectedAction == "Submit Data")
+                {
+                    try
+                    {
+                        if (await selectedProtocol.RemoteDataStore?.WriteLocalDataStoreAsync(CancellationToken.None))
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Data submitted.");
+                        }
+                        else
+                        {
+                            throw new Exception("Failed to submit data.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Error:  " + ex.Message);
+                    }
+                }
                 else if (selectedAction == "Display Participation")
                 {
                     CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
                     // pop up wait screen while we submit the participation reward datum
-                    SensusServiceHelper.Get().PromptForInputsAsync(
+                    IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(
                         null,
-                        new[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Submitting participation information.", false) } } },
+                        new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Submitting participation information.", false) } } },
                         cancellationTokenSource.Token,
                         false,
                         "Cancel",
@@ -218,6 +260,7 @@ namespace Sensus.UI
                         {
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
                             participationRewardDatum.ProtocolId = selectedProtocol.Id;
+                            participationRewardDatum.ParticipantId = selectedProtocol.ParticipantId;
 
                             bool writeFailed = false;
                             try
@@ -245,37 +288,35 @@ namespace Sensus.UI
                                 // only show the QR code for the reward datum if the datum was written to the remote data store and if the data store can retrieve it.
                                 await Navigation.PushAsync(new ParticipationReportPage(selectedProtocol, participationRewardDatum, !writeFailed && (selectedProtocol.RemoteDataStore?.CanRetrieveWrittenData ?? false)));
                             });
-                        },
-                        inputs =>
-                        {
-                            // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
-                            // to cancel the remote data store write. if the prompt was closed by the termination of the remote
-                            // data store write (i.e., by the canceled token), then don't cancel the token again.
-                            if (!cancellationTokenSource.IsCancellationRequested)
-                            {
-                                cancellationTokenSource.Cancel();
-                            }
                         });
+
+                    // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
+                    // to cancel the remote data store write. if the prompt was closed by the termination of the remote
+                    // data store write (i.e., by the canceled token), then don't cancel the token again.
+                    if (!cancellationTokenSource.IsCancellationRequested)
+                    {
+                        cancellationTokenSource.Cancel();
+                    }
                 }
                 else if (selectedAction == "Scan Participation Barcode")
                 {
                     try
                     {
-                        Result barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(Navigation);
+                        string barcodeResult = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PARTICIPATION);
 
                         if (barcodeResult == null)
                         {
                             return;
                         }
 
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
                             // pop up wait screen while we get the participation reward datum
-                            SensusServiceHelper.Get().PromptForInputsAsync(
+                            IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(
                                 null,
-                                new[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
+                                new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
                                 cancellationTokenSource.Token,
                                 false,
                                 "Cancel",
@@ -288,7 +329,7 @@ namespace Sensus.UI
                                     // after the page shows up, attempt to retrieve the participation reward datum.
                                     try
                                     {
-                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult.Text, cancellationTokenSource.Token);
+                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult, cancellationTokenSource.Token);
 
                                         // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
                                         if (!cancellationTokenSource.IsCancellationRequested)
@@ -322,17 +363,15 @@ namespace Sensus.UI
                                             cancellationTokenSource.Cancel();
                                         }
                                     }
-                                },
-                                inputs =>
-                                {
-                                    // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
-                                    // to cancel the datum retrieval. if the prompt was closed by the termination of the remote
-                                    // data store get (i.e., by the canceled token), then don't cancel the token again.
-                                    if (!cancellationTokenSource.IsCancellationRequested)
-                                    {
-                                        cancellationTokenSource.Cancel();
-                                    }
                                 });
+
+                            // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
+                            // to cancel the datum retrieval. if the prompt was closed by the termination of the remote
+                            // data store get (i.e., by the canceled token), then don't cancel the token again.
+                            if (!cancellationTokenSource.IsCancellationRequested)
+                            {
+                                cancellationTokenSource.Cancel();
+                            }
                         });
                     }
                     catch (Exception ex)
@@ -344,74 +383,52 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Edit")
                 {
-                    ExecuteActionUponProtocolAuthentication(selectedProtocol, () =>
+                    if (await AuthenticateProtocolAsync(selectedProtocol))
                     {
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
                             await Navigation.PushAsync(protocolPage);
                         });
-                    });
+                    }
                 }
                 else if (selectedAction == "Copy")
                 {
                     // reset the protocol id, as we're creating a new study
-                    selectedProtocol.CopyAsync(true, true);
+                    await selectedProtocol.CopyAsync(true, true);
                 }
                 else if (selectedAction == "Share")
                 {
-                    Action ShareSelectedProtocol = new Action(() =>
-                    {
-                        // make a deep copy of the selected protocol so we can reset it for sharing. don't reset the id of the protocol to keep
-                        // it in the same study. also do not register the copy since we're just going to send it off.
-                        selectedProtocol.CopyAsync(false, false, async selectedProtocolCopy =>
-                        {
-                            // write protocol to file and share
-                            string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
-                            selectedProtocolCopy.Save(sharePath);
-                            await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + selectedProtocolCopy.Name, "application/json");
-                        });
-                    });
-
-                    if (selectedProtocol.Shareable)
-                    {
-                        ShareSelectedProtocol();
-                    }
-                    else
-                    {
-                        ExecuteActionUponProtocolAuthentication(selectedProtocol, ShareSelectedProtocol);
-                    }
+                    await selectedProtocol.ShareAsync();
                 }
                 else if (selectedAction == "Group")
                 {
-                    SensusServiceHelper.Get().PromptForInputAsync("Group",
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Group",
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-                        },
-                        null, true, "Group", null, null, null, false,
-                        input =>
-                        {
-                            if (input == null)
-                            {
-                                SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
-                                return;
-                            }
+                            
+                        }, null, true, "Group", null, null, null, false);
 
-                            ItemPickerPageInput itemPickerPageInput = input as ItemPickerPageInput;
+                    if (input == null)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
+                        return;
+                    }
 
-                            List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList();
+                    ItemPickerPageInput itemPickerPageInput = input as ItemPickerPageInput;
 
-                            if (selectedProtocols.Count == 0)
-                            {
-                                SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
-                            }
-                            else
-                            {
-                                selectedProtocol.GroupedProtocols.AddRange(selectedProtocols);
-                                SensusServiceHelper.Get().FlashNotificationAsync("Grouped \"" + selectedProtocol.Name + "\" with " + selectedProtocols.Count + " other protocol" + (selectedProtocols.Count == 1 ? "" : "s") + ".");
-                            }
-                        });
+                    List<Protocol> selectedProtocols = (itemPickerPageInput.Value as List<object>).Cast<Protocol>().ToList();
+
+                    if (selectedProtocols.Count == 0)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("No protocols grouped.");
+                    }
+                    else
+                    {
+                        selectedProtocol.GroupedProtocols.AddRange(selectedProtocols);
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Grouped \"" + selectedProtocol.Name + "\" with " + selectedProtocols.Count + " other protocol" + (selectedProtocols.Count == 1 ? "" : "s") + ".");
+                    }
                 }
                 else if (selectedAction == "Ungroup")
                 {
@@ -439,32 +456,49 @@ namespace Sensus.UI
 
                 string action = await DisplayActionSheet("Add Study", "Back", null, buttons.ToArray());
 
+                Protocol protocol = null;
+
                 if (action == "From QR Code")
                 {
-                    Result result = await SensusServiceHelper.Get().ScanQrCodeAsync(Navigation);
+                    string result = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
 
                     if (result != null)
                     {
-                        Protocol.DeserializeAsync(new Uri(result.Text), Protocol.DisplayAndStartAsync);
+                        try
+                        {
+                            protocol = await Protocol.DeserializeAsync(new Uri(result));
+                        }
+                        catch (Exception ex)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from QR code:  " + ex.Message);
+                        }
                     }
                 }
                 else if (action == "From URL")
                 {
-                    SensusServiceHelper.Get().PromptForInputAsync(
-                        "Download Protocol",
-                        new SingleLineTextInput("Protocol URL:", Keyboard.Url),
-                        null, true, null, null, null, null, false, input =>
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, false);
+
+                    // input might be null (user cancelled), or the value might be null (blank input submitted)
+                    if (!string.IsNullOrEmpty(input?.Value?.ToString()))
+                    {
+                        try
                         {
-                            // input might be null (user cancelled), or the value might be null (blank input submitted)
-                            if (!string.IsNullOrEmpty(input?.Value?.ToString()))
-                            {
-                                Protocol.DeserializeAsync(new Uri(input.Value.ToString()), Protocol.DisplayAndStartAsync);
-                            }
-                        });
+                            protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
+                        }
+                        catch(Exception ex)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
+                        }
+                    }
                 }
                 else if (action == "New")
                 {
                     Protocol.Create("New Protocol");
+                }
+
+                if (protocol != null)
+                {
+                    await Protocol.DisplayAndStartAsync(protocol);
                 }
             }));
 

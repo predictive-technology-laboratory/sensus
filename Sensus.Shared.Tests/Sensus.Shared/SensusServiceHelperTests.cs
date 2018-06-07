@@ -18,6 +18,7 @@ using NUnit.Framework;
 using Sensus.Tests.Classes;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
+using System;
 
 namespace Sensus.Tests
 {
@@ -29,7 +30,7 @@ namespace Sensus.Tests
         #endregion
 
         #region SetUp
-        [OneTimeSetUp]
+        [SetUp]
         public void TestFixtureSetUp()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
@@ -185,6 +186,35 @@ namespace Sensus.Tests
 
             Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
             Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
+        }
+
+        [Test]
+        public void ScriptsDisplayDateTimeOrderTest()
+        {
+            var service1 = new TestSensusServiceHelper();
+            SensusServiceHelper.Initialize(() => service1);
+
+            ScriptRunner runner = new ScriptRunner("Test", new ScriptProbe());
+            Random random = new Random();
+            for (int i = 0; i < 50; ++i)
+            {
+                Script script = new Script(runner);
+                script.ScheduledRunTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(random.Next(-100000, 100000));
+                service1.AddScript(script, RunMode.Multiple);
+            }
+
+            Script scriptMin = new Script(runner);
+            scriptMin.ScheduledRunTime = DateTimeOffset.MinValue;
+            service1.AddScript(scriptMin, RunMode.Multiple);
+
+            Script scriptMax = new Script(runner);
+            scriptMax.ScheduledRunTime = DateTimeOffset.MaxValue;
+            service1.AddScript(scriptMax, RunMode.Multiple);
+
+            for (int i = 1; i < service1.ScriptsToRun.Count; ++i)
+            {
+                Assert.True(service1.ScriptsToRun.ElementAt(i).DisplayDateTime >= service1.ScriptsToRun.ElementAt(i - 1).DisplayDateTime);
+            }
         }
     }
 }

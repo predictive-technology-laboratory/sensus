@@ -41,24 +41,25 @@ namespace Sensus.DataStores.Remote
     /// 
     ///   * Sign up for an account with Amazon Web Services, if you don't have one already. The [Free Tier](https://aws.amazon.com/free) is sufficient.
     ///   * Install the [AWS Command Line Interface(CLI)](https://aws.amazon.com/cli).
-    ///   * Install the [jq](https://stedolan.github.io/jq) command-line utility.
     ///   * Download and unzip our [AWS configuration scripts](https://github.com/predictive-technology-laboratory/sensus/raw/develop/Scripts/ConfigureAWS.zip).
     ///   * Run the following command to configure an S3 bucket for use within a Sensus Amazon S3 Remote Data Store, where `NAME` is an informative name
-    ///     (alphanumerics only), `REGION` is the region in which your bucket will reside (e.g., `us-east-1`), and `ROOT_ID` is the 12-digit (no dashes) 
-    ///     AWS account identifier that will own your data:
+    ///     (alphanumerics and dashes only) and `REGION` is the region in which your bucket will reside (e.g., `us-east-1`):
     /// 
     ///     ```
-    ///     ./ConfigureS3.sh NAME REGION ROOT_ID
+    ///     ./configure-s3.sh NAME REGION
     ///     ```
     /// 
-    ///   * The previous command will create a bucket and an IAM user with read-only access to the data. If successful, the command will output something 
-    ///     like the following:
+    ///   * The previous command will create a bucket as well as an IAM group and user with write-only access to the bucket. If successful, the command will 
+    ///     output something like the following:
     /// 
     ///     ```
-    ///     All done. Bucket:  testing-21bfc3a9-a24f-4746-b9fb-58dc4669dd01
+    ///     Done. Details:
+    ///       Sensus S3 bucket:  test-bucket-eee8ef46-5d6a-4508-b745-e6635d195a85
+    ///       Sensus S3 IAM account:  XXXX:XXXX
     ///     ```
     /// 
-    ///   * The bucket produced on the final line should be kept confidential. Use this value as <see cref="Bucket"/>.
+    ///   * The bucket and IAM account produced on the final line should be kept confidential. Use these values as <see cref="Bucket"/> and 
+    ///     <see cref="IamAccountString"/>, respectively.
     /// 
     /// # Downloading Data from Amazon S3
     /// 
@@ -72,8 +73,19 @@ namespace Sensus.DataStores.Remote
     ///      aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
     ///      ```
     /// 
-    ///   1. You can run [DownloadFromAmazonS3](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/DownloadFromAmazonS3.sh).
+    ///   1. You can run [`dowload-from-s3.sh`](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/dowload-from-s3.sh).
     ///   1. You can use a third-party application like [Bucket Explorer](http://www.bucketexplorer.com) to browse and download data from Amazon S3.
+    /// 
+    /// # Deconfiguration
+    /// 
+    /// If you are finished collecting data and you would like to prevent any future data submission, you can deconfigure the IAM group and user
+    /// with the following command, where `BUCKET` corresponds to the Sensus S3 bucket name created above:
+    /// 
+    ///   ```
+    ///   ./deconfigure-s3.sh BUCKET
+    ///   ```
+    /// 
+    /// The preceding command will not delete your bucket or data.
     /// 
     /// </summary>
     public class AmazonS3RemoteDataStore : RemoteDataStore
@@ -81,6 +93,8 @@ namespace Sensus.DataStores.Remote
         private string _region;
         private string _bucket;
         private string _folder;
+        private string _iamAccessKey;
+        private string _iamSecretKey;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
         private int _putCount;
@@ -90,7 +104,7 @@ namespace Sensus.DataStores.Remote
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
         /// <value>The region.</value>
-        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" })]
+        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" }, true)]
         public string Region
         {
             get
@@ -107,7 +121,7 @@ namespace Sensus.DataStores.Remote
         /// The AWS S3 bucket in which data should be stored. This is the bucket identifier output by the steps described in the summary for this class.
         /// </summary>
         /// <value>The bucket.</value>
-        [EntryStringUiProperty(null, true, 2)]
+        [EntryStringUiProperty(null, true, 2, true)]
         public string Bucket
         {
             get
@@ -129,7 +143,7 @@ namespace Sensus.DataStores.Remote
         /// The folder within <see cref="Bucket"/> where data should be stored.
         /// </summary>
         /// <value>The folder.</value>
-        [EntryStringUiProperty(null, true, 3)]
+        [EntryStringUiProperty(null, true, 3, false)]
         public string Folder
         {
             get
@@ -148,10 +162,35 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
+        /// The IAM user's access and secret keys output by the steps described in the summary for this class.
+        /// </summary>
+        /// <value>The iam account string.</value>
+        [EntryStringUiProperty("IAM Account:", true, 4, true)]
+        public string IamAccountString
+        {
+            get
+            {
+                return _iamAccessKey + ":" + _iamSecretKey;
+            }
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    string[] parts = value.Split(':');
+                    if (parts.Length == 2)
+                    {
+                        _iamAccessKey = parts[0].Trim();
+                        _iamSecretKey = parts[1].Trim();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
-        [EntryStringUiProperty("Pinned Service URL:", true, 7)]
+        [EntryStringUiProperty("Pinned Service URL:", true, 5, false)]
         public string PinnedServiceURL
         {
             get
@@ -185,7 +224,7 @@ namespace Sensus.DataStores.Remote
         /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned public key.</value>
-        [EntryStringUiProperty("Pinned Public Key:", true, 8)]
+        [EntryStringUiProperty("Pinned Public Key:", true, 6, false)]
         public string PinnedPublicKey
         {
             get
@@ -240,6 +279,11 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
+            if (string.IsNullOrWhiteSpace(_iamAccessKey) || string.IsNullOrWhiteSpace(_iamSecretKey))
+            {
+                throw new Exception("Must specify an IAM account within the S3 remote data store.");
+            }
+
             // start base last so we're set up for any callbacks that get scheduled
             base.Start();
         }
@@ -276,7 +320,7 @@ namespace Sensus.DataStores.Remote
                 clientConfig.ServiceURL = _pinnedServiceURL;
             }
 
-            return new AmazonS3Client(null, clientConfig);
+            return new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig);
         }
 
         public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
@@ -289,7 +333,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    await Put(s3, stream, (_folder + "/" + name).Trim('/'), contentType, cancellationToken);
+                    await Put(s3, stream, (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
                 }
                 finally
                 {
@@ -371,7 +415,7 @@ namespace Sensus.DataStores.Remote
 
         public override string GetDatumKey(Datum datum)
         {
-            return (_folder + "/" + datum.GetType().Name + "/" + datum.Id + ".json").Trim('/');
+            return (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
         }
 
         public override async Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)
@@ -438,7 +482,7 @@ namespace Sensus.DataStores.Remote
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Put Success", Convert.ToString(_successfulPutCount.RoundedPercentageOf(_putCount, 5)) }
+                { "Put Success", Convert.ToString(_successfulPutCount.RoundToWholePercentageOf(_putCount, 5)) }
             };
 
             Analytics.TrackEvent(eventName, properties);

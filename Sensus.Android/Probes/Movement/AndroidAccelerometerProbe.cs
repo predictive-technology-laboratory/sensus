@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ namespace Sensus.Android.Probes.Movement
 
         public AndroidAccelerometerProbe()
         {
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, e =>
             {
                 // should get x, y, and z values
                 if (e.Values.Count != 3 || Stabilizing)
@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes.Movement
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, e.Values[0] / GRAVITY, e.Values[1] / GRAVITY, e.Values[2] / GRAVITY));
+                StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, e.Values[0] / GRAVITY, e.Values[1] / GRAVITY, e.Values[2] / GRAVITY));
             });
         }
 

@@ -32,7 +32,7 @@ namespace Sensus.UI.Inputs
         /// Message to generate speech for when displaying this input.
         /// </summary>
         /// <value>The output message.</value>
-        [EntryStringUiProperty("Output Message:", true, 11)]
+        [EntryStringUiProperty("Output Message:", true, 11, true)]
         public string OutputMessage
         {
             get { return _outputMessage; }
@@ -46,7 +46,7 @@ namespace Sensus.UI.Inputs
         /// the value for this variable. 
         /// </summary>
         /// <value>The defined variable.</value>
-        [EntryStringUiProperty("Define Variable:", true, 2)]
+        [EntryStringUiProperty("Define Variable:", true, 2, false)]
         public string DefinedVariable
         {
             get

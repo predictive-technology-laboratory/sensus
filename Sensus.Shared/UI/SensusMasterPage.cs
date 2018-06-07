@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using Sensus.Context;
+using Sensus.UI.Inputs;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -21,12 +23,12 @@ namespace Sensus.UI
     {
         private ListView _masterPageItemsListView;
 
-        public ListView MasterPageItemsListView 
-        { 
-            get 
-            { 
+        public ListView MasterPageItemsListView
+        {
+            get
+            {
                 return _masterPageItemsListView;
-            } 
+            }
         }
 
         public SensusMasterPage()
@@ -54,6 +56,69 @@ namespace Sensus.UI
                 TargetType = typeof(PrivacyPolicyPage)
             });
 
+            SensusDetailPageItem accountItem = new SensusDetailPageItem
+            {
+                Title = "Log In",
+                IconSource = "account.png"
+            };
+
+            accountItem.Action = () =>
+            {
+                if (accountItem.Title == "Log Out")
+                {
+                    SensusContext.Current.IamRegion = null;
+                    SensusContext.Current.IamAccessKey = null;
+                    SensusContext.Current.IamAccessKeySecret = null;
+                    accountItem.Title = "Log In";
+                }
+                else
+                {
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Log In", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
+
+                        if (input == null)
+                        {
+                            return;
+                        }
+
+                        string error = null;
+
+                        string credentials = input.Value?.ToString();
+                        if (string.IsNullOrWhiteSpace(credentials))
+                        {
+                            error = "Empty credentials barcode.";
+                        }
+                        else
+                        {
+                            string[] parts = credentials.Split(':');
+                            if (parts.Length == 3)
+                            {
+                                SensusContext.Current.IamRegion = parts[0];
+                                SensusContext.Current.IamAccessKey = parts[1];
+                                SensusContext.Current.IamAccessKeySecret = parts[2];
+                            }
+                            else
+                            {
+                                error = "Invalid credentials barcode.";
+                            }
+                        }
+
+                        if (error == null)
+                        {
+                            accountItem.Title = "Log Out";
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Logged in.");
+                        }
+                        else
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync(error);
+                        }
+                    });
+                }
+            };
+
+            detailPageItems.Add(accountItem);
+
             _masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)
             {
                 ItemsSource = detailPageItems,
@@ -64,22 +129,23 @@ namespace Sensus.UI
                     grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
                     Image image = new Image();
-                    image.SetBinding(Image.SourceProperty, "IconSource");
+                    image.SetBinding(Image.SourceProperty, nameof(SensusDetailPageItem.IconSource));
 
                     Label label = new Label { VerticalOptions = LayoutOptions.FillAndExpand };
-                    label.SetBinding(Label.TextProperty, "Title");
+                    label.SetBinding(Label.TextProperty, nameof(SensusDetailPageItem.Title));
 
                     grid.Children.Add(image);
                     grid.Children.Add(label, 1, 0);
 
                     return new ViewCell { View = grid };
                 }),
-                
+
                 SeparatorVisibility = SeparatorVisibility.None
             };
 
             Icon = "hamburger.png";
             Title = "Sensus";
+
             Content = new StackLayout
             {
                 Children = { _masterPageItemsListView }

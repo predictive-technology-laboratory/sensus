@@ -38,7 +38,7 @@ namespace Sensus.Android.Probes.Movement
         /// How far in meters the device must travel before issuing a location-changed event.
         /// </summary>
         /// <value>The location change radius, in meters.</value>
-        [EntryIntegerUiProperty("Location Change Radius (Meters):", true, 30)]
+        [EntryIntegerUiProperty("Location Change Radius (Meters):", true, 30, true)]
         public int LocationChangeRadiusMeters
         {
             get
@@ -121,7 +121,7 @@ namespace Sensus.Android.Probes.Movement
                     ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(AwarenessApiClient);
                     global::Android.Locations.Location location = locationResult.Location;
                     DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
-                    await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
+                    StoreDatum(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
 
                     // replace the previous location fence with one around the current location. additions and removals are handled
                     // in the order specified below.

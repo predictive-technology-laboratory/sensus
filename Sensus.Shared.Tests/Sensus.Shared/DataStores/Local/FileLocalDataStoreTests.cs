@@ -25,6 +25,7 @@ using Sensus.Probes.Device;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
+using System.Linq;
 
 namespace Sensus.Tests.DataStores.Local
 {
@@ -41,7 +42,7 @@ namespace Sensus.Tests.DataStores.Local
             byte[] uncompressedBytes1 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
             byte[] uncompressedBytes2 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
 
-            CollectionAssert.AreEqual(uncompressedBytes1, uncompressedBytes2);
+            Assert.True(uncompressedBytes1.SequenceEqual(uncompressedBytes2));
         }
 
         [Test]
@@ -55,7 +56,7 @@ namespace Sensus.Tests.DataStores.Local
             Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
             byte[] decompressedBytes = compressor.Decompress(GetLocalDataStoreBytes(data, CompressionLevel.Fastest));
 
-            CollectionAssert.AreEqual(uncompressedBytes, decompressedBytes);
+            Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
 
         [Test]
@@ -69,7 +70,7 @@ namespace Sensus.Tests.DataStores.Local
             Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
             byte[] decompressedBytes = compressor.Decompress(GetLocalDataStoreBytes(data, CompressionLevel.Optimal));
 
-            CollectionAssert.AreEqual(uncompressedBytes, decompressedBytes);
+            Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
         #endregion
 
@@ -84,12 +85,13 @@ namespace Sensus.Tests.DataStores.Local
 
             string path = WriteLocalDataStore(data, CompressionLevel.NoCompression, fileLocalDataStore =>
             {
+                fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
-                Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
+                Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
 
-            Assert.Greater(currentSizeMB, 0);
+            Assert.True(currentSizeMB > 0);
         }
 
         [Test]
@@ -102,12 +104,13 @@ namespace Sensus.Tests.DataStores.Local
 
             string path = WriteLocalDataStore(data, CompressionLevel.Fastest, fileLocalDataStore =>
             {
+                fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
-                Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
+                Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
 
-            Assert.Greater(currentSizeMB, 0);
+            Assert.True(currentSizeMB > 0);
         }
 
         [Test]
@@ -120,18 +123,19 @@ namespace Sensus.Tests.DataStores.Local
 
             string path = WriteLocalDataStore(data, CompressionLevel.Optimal, fileLocalDataStore =>
             {
+                fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
-                Assert.GreaterOrEqual(newSizeMB, currentSizeMB);
+                Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
 
-            Assert.Greater(currentSizeMB, 0);
+            Assert.True(currentSizeMB > 0);
         }
         #endregion
 
         #region compression should reduce file size
         [Test]
-        public void UncompressedBytesGreaterThanFastestCompressedBytes()
+        public void UncompressedBytesGreaterThanFastestCompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -139,11 +143,11 @@ namespace Sensus.Tests.DataStores.Local
             byte[] bytes1 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
             byte[] bytes2 = GetLocalDataStoreBytes(data, CompressionLevel.Fastest).ToArray();
 
-            Assert.Greater(bytes1.Length, bytes2.Length);
+            Assert.True(bytes1.Length > bytes2.Length);
         }
 
         [Test]
-        public void FastestCompressedBytesGreaterOrEqualOptimalCompressedBytes()
+        public void FastestCompressedBytesGreaterOrEqualOptimalCompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -151,13 +155,13 @@ namespace Sensus.Tests.DataStores.Local
             byte[] bytes1 = GetLocalDataStoreBytes(data, CompressionLevel.Fastest).ToArray();
             byte[] bytes2 = GetLocalDataStoreBytes(data, CompressionLevel.Optimal).ToArray();
 
-            Assert.GreaterOrEqual(bytes1.Length, bytes2.Length);
+            Assert.True(bytes1.Length >= bytes2.Length);
         }
         #endregion
 
         #region data store should create/promote files
         [Test]
-        public void UncompressedRemoteWriteClearsFiles()
+        public void UncompressedRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -177,7 +181,7 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void FastestCompressionRemoteWriteClearsFiles()
+        public void FastestCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -197,7 +201,7 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void OptimalCompressionRemoteWriteClearsFiles()
+        public void OptimalCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
@@ -266,6 +270,9 @@ namespace Sensus.Tests.DataStores.Local
             WriteData(data, localDataStore, postWriteAction);
             string path = localDataStore.Path;
             localDataStore.Stop();
+
+            Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
+
             return path;
         }
 
@@ -293,9 +300,9 @@ namespace Sensus.Tests.DataStores.Local
 
         private void WriteData(List<Datum> data, FileLocalDataStore localDataStore, Action<FileLocalDataStore> postWriteAction = null)
         {
-            for (int i = 0; i < data.Count; ++i)
+            foreach (Datum datum in data)
             {
-                localDataStore.WriteDatumAsync(data[i], CancellationToken.None).Wait();
+                localDataStore.WriteDatum(datum, CancellationToken.None);
                 postWriteAction?.Invoke(localDataStore);
             }
         }

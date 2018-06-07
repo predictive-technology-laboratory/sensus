@@ -14,6 +14,19 @@
 #' @name SensusR
 NULL
 
+#' Lists S3 buckets.
+#' 
+#' @param profile AWS credentials profile to use for authentication.
+#' @param aws.path Path to AWS client.
+#' 
+sensus.list.aws.s3.buckets = function(profile = "default", aws.path = "/usr/local/bin/aws")
+{
+  aws.args = paste("s3api --profile", profile, "list-buckets --query \"Buckets[].Name\"", sep = " ")
+  output = system2(aws.path, aws.args, stdout = TRUE)
+  output.json = jsonlite::fromJSON(output)
+  return(output.json)
+}
+
 #' Synchronizes data from Amazon S3 to a local path.
 #' 
 #' @param s3.path Path within S3. This can be a prefix (partial path).
@@ -174,9 +187,9 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     print(paste("Parsing JSON file ", file.num, " of ", num.files, ":  ", path, sep = ""))
 
-    # skip zero-length files
+    # skip zero-length files as well as participation reward files.
     file.size = file.info(path)$size
-    if(file.size == 0)
+    if(file.size == 0 || length(grep('ParticipationRewardDatum', path)) > 0)
     {
       next
     }
@@ -192,7 +205,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     }
     
     # file.json is a list with one entry per column (e.g., for the X coordinates of accelerometer readings). sub-list
-    # the file.json list to include only those columns that are not themselves lists.
+    # the file.json list to include only those columns that are not themselves lists. we column lists in cases like
+    # the survey data, which are currently excluded from this R package.
     file.json = file.json[sapply(file.json, typeof) != "list"]
     
     # add to expected total count of data, which is the length of the Id list entry
@@ -365,6 +379,16 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   }
   
   return(data)
+}
+
+#' Gets unique device IDs within a dataset.
+#'
+#' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
+#' @return Unique device IDs within the data
+#' 
+sensus.get.unique.device.ids = function(data)
+{
+  return(unique(unlist(sapply(names(data), function(datum.type) unique(data[[datum.type]]$DeviceId)), use.names = FALSE)))
 }
 
 #' Write data to CSV files.

@@ -28,19 +28,14 @@ namespace Sensus.Android.Concurrent
     {
         private readonly int? _waitTime;
 
-        #region Fields
         private readonly Handler _handler;
-        #endregion
 
-        #region Constructor
         public MainConcurrent(int? waitTime = null)
         {
             _waitTime = waitTime;
             _handler = new Handler(Looper.MainLooper);
         }
-        #endregion
 
-        #region Public Methods
         public void ExecuteThreadSafe(Action action)
         {
             if (action == null)
@@ -129,7 +124,5 @@ namespace Sensus.Android.Concurrent
 
             base.Dispose(disposing);
         }
-
-        #endregion
     }
 }

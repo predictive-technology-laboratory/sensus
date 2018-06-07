@@ -180,7 +180,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbesEditPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProbesViewPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\PromptForInputsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\InputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProximityTriggersPage.cs" />
@@ -234,6 +234,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\NumericExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TrackedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallbackState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolStartConfirmationMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\QrCodeInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />

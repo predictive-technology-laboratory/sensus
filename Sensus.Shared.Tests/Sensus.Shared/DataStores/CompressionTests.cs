@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using NUnit.Framework;
 using Sensus.DataStores;
+using System.Linq;
 
 namespace Sensus.Tests.DataStores
 {
@@ -38,7 +39,7 @@ namespace Sensus.Tests.DataStores
 
                 byte[] decompressedBytes = compressor.Decompress(compressedStream);
 
-                CollectionAssert.AreEqual(bytes, decompressedBytes);
+                Assert.True(bytes.SequenceEqual(decompressedBytes));
             }
         }
     }

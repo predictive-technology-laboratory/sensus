@@ -75,15 +75,15 @@ namespace Sensus.Android.Probes.Movement
 
                     if (fenceState.CurrentState == FenceState.True)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Active));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Active, ActivityConfidence.NotAvailable));
                     }
                     else if (fenceState.CurrentState == FenceState.False)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Inactive));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Inactive, ActivityConfidence.NotAvailable));
                     }
                     else if (fenceState.CurrentState == FenceState.Unknown)
                     {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Unknown));
+                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Unknown, ActivityConfidence.NotAvailable));
                     }
                     else
                     {

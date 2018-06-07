@@ -34,7 +34,7 @@ namespace Sensus.UI.Inputs
         /// A short tip that explains how to pick an item from the dialog window.
         /// </summary>
         /// <value>The tip text.</value>
-        [EntryStringUiProperty("Tip Text:", true, 10)]
+        [EntryStringUiProperty("Tip Text:", true, 10, false)]
         public string TipText
         {
             get
@@ -51,7 +51,7 @@ namespace Sensus.UI.Inputs
         /// These are the items that the user will have to select from.
         /// </summary>
         /// <value>The items.</value>
-        [EditableListUiProperty(null, true, 11)]
+        [EditableListUiProperty(null, true, 11, true)]
         public List<string> Items
         {
             get
@@ -89,7 +89,7 @@ namespace Sensus.UI.Inputs
         /// the value for this variable. 
         /// </summary>
         /// <value>The defined variable.</value>
-        [EntryStringUiProperty("Define Variable:", true, 13)]
+        [EntryStringUiProperty("Define Variable:", true, 13, false)]
         public string DefinedVariable
         {
             get
@@ -158,7 +158,12 @@ namespace Sensus.UI.Inputs
 
         public override View GetView(int index)
         {
-            if (base.GetView(index) == null && _items.Count > 0)
+            if (_items.Count == 0)
+            {
+                return null;
+            }
+
+            if (base.GetView(index) == null)
             {
                 _picker = new Picker
                 {

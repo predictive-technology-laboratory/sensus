@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ namespace Sensus.Android.Probes.Location
 
         public AndroidAltitudeProbe()
         {
-            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, async e =>
+            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, e =>
             {
                 // http://www.srh.noaa.gov/images/epz/wxcalc/pressureAltitude.pdf
                 double hPa = e.Values[0];
@@ -39,7 +39,7 @@ namespace Sensus.Android.Probes.Location
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
+                StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
             });
         }
 

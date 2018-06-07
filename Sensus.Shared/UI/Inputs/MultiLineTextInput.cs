@@ -30,7 +30,7 @@ namespace Sensus.UI.Inputs
         /// Height in pixels of the multi-line text input.
         /// </summary>
         /// <value>The height.</value>
-        [EntryIntegerUiProperty(null, true, 5)]
+        [EntryIntegerUiProperty(null, true, 5, true)]
         public int Height
         {
             get

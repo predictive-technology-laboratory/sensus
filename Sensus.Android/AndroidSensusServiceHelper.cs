@@ -26,20 +26,17 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using Newtonsoft.Json;
-using Sensus;
-using Xamarin;
 using Sensus.Probes.Location;
 using Sensus.Probes;
 using Sensus.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
-using Android.Media;
 using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
-using Sensus.Android;
 using System.Threading.Tasks;
+using Sensus.Context;
 
 namespace Sensus.Android
 {
@@ -57,6 +54,16 @@ namespace Sensus.Android
         public override string DeviceId
         {
             get { return _deviceId; }
+        }
+
+        public override string DeviceManufacturer
+        {
+            get { return Build.Manufacturer; }
+        }
+
+        public override string DeviceModel
+        {
+            get { return Build.Device; }
         }
 
         public override bool WiFiConnected
@@ -139,10 +146,14 @@ namespace Sensus.Android
                 // we should always have a service. if we do not, assume the worst -- that we're on the main thread. this will hopefully
                 // produce an error report back at xamarin insights.
                 if (_service == null)
+                {
                     return true;
+                }
                 // if we have a service, compare the current thread's looper to the main thread's looper
                 else
+                {
                     return Looper.MyLooper() == _service.MainLooper;
+                }
             }
         }
 
@@ -503,19 +514,14 @@ namespace Sensus.Android
 
         #endregion
 
-        protected override Task ProtectedFlashNotificationAsync(string message, Action callback)
+        protected override Task ProtectedFlashNotificationAsync(string message)
         {
-            return Task.Run(async () =>
+            return Task.Run(() =>
             {
-                await RunActionUsingMainActivityAsync(mainActivity =>
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    mainActivity.RunOnUiThread(() =>
-                    {
-                        Toast.MakeText(mainActivity, message, ToastLength.Long).Show();
-                        callback?.Invoke();
-                    });
-
-                }, false, false);
+                    Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
+                });
             });
         }
 

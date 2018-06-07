@@ -62,8 +62,8 @@ namespace Sensus.Tests
             var t1 = new Window("10:22-12:22");
             var t2 = new Window("10:23-12:23");
 
-            Assert.LessOrEqual(t1.CompareTo(t2), 0);
-            Assert.GreaterOrEqual(t2.CompareTo(t1), 0);
+            Assert.True(t1.CompareTo(t2) <= 0);
+            Assert.True(t2.CompareTo(t1) >= 0);
         }
 
         [Test]
@@ -117,8 +117,8 @@ namespace Sensus.Tests
             var t1 = new Window("Th-10:22-12:22");
             var t2 = new Window("Fr-10:22-12:22");
 
-            Assert.LessOrEqual(t1.CompareTo(t2), 0);
-            Assert.GreaterOrEqual(t2.CompareTo(t1), 0);
+            Assert.True(t1.CompareTo(t2) <= 0);
+            Assert.True(t2.CompareTo(t1) >= 0);
         }
 
         [Test]
