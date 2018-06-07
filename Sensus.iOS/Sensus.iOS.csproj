@@ -140,75 +140,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="TTGSnackbar">
       <HintPath>..\packages\TTGSnackbar.1.3.5\lib\Xamarin.iOS10\TTGSnackbar.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Swift4.ARKit">
-      <HintPath>..\packages\Xamarin.Swift4.ARKit.4.1.0\lib\xamarinios10\Xamarin.Swift4.ARKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.AVFoundation">
-      <HintPath>..\packages\Xamarin.Swift4.AVFoundation.4.1.0\lib\xamarinios10\Xamarin.Swift4.AVFoundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Core">
-      <HintPath>..\packages\Xamarin.Swift4.Core.4.1.0\lib\xamarinios10\Xamarin.Swift4.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreAudio">
-      <HintPath>..\packages\Xamarin.Swift4.CoreAudio.4.1.0\lib\xamarinios10\Xamarin.Swift4.CoreAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreFoundation">
-      <HintPath>..\packages\Xamarin.Swift4.CoreFoundation.4.1.0\lib\xamarinios10\Xamarin.Swift4.CoreFoundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreGraphics">
-      <HintPath>..\packages\Xamarin.Swift4.CoreGraphics.4.1.0\lib\xamarinios10\Xamarin.Swift4.CoreGraphics.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreImage">
-      <HintPath>..\packages\Xamarin.Swift4.CoreImage.4.1.0\lib\xamarinios10\Xamarin.Swift4.CoreImage.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreLocation">
-      <HintPath>..\packages\Xamarin.Swift4.CoreLocation.4.1.0\lib\xamarinios10\Xamarin.Swift4.CoreLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreMedia">
-      <HintPath>..\packages\Xamarin.Swift4.CoreMedia.4.1.0\lib\xamarinios10\Xamarin.Swift4.CoreMedia.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Darwin">
-      <HintPath>..\packages\Xamarin.Swift4.Darwin.4.1.0\lib\xamarinios10\Xamarin.Swift4.Darwin.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Dispatch">
-      <HintPath>..\packages\Xamarin.Swift4.Dispatch.4.1.0\lib\xamarinios10\Xamarin.Swift4.Dispatch.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Foundation">
-      <HintPath>..\packages\Xamarin.Swift4.Foundation.4.1.0\lib\xamarinios10\Xamarin.Swift4.Foundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.GLKit">
-      <HintPath>..\packages\Xamarin.Swift4.GLKit.4.1.0\lib\xamarinios10\Xamarin.Swift4.GLKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Metal">
-      <HintPath>..\packages\Xamarin.Swift4.Metal.4.1.0\lib\xamarinios10\Xamarin.Swift4.Metal.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.ModelIO">
-      <HintPath>..\packages\Xamarin.Swift4.ModelIO.4.1.0\lib\xamarinios10\Xamarin.Swift4.ModelIO.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.ObjectiveC">
-      <HintPath>..\packages\Xamarin.Swift4.ObjectiveC.4.1.0\lib\xamarinios10\Xamarin.Swift4.ObjectiveC.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.OS">
-      <HintPath>..\packages\Xamarin.Swift4.OS.4.1.0\lib\xamarinios10\Xamarin.Swift4.OS.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.QuartzCore">
-      <HintPath>..\packages\Xamarin.Swift4.QuartzCore.4.1.0\lib\xamarinios10\Xamarin.Swift4.QuartzCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SceneKit">
-      <HintPath>..\packages\Xamarin.Swift4.SceneKit.4.1.0\lib\xamarinios10\Xamarin.Swift4.SceneKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SIMD">
-      <HintPath>..\packages\Xamarin.Swift4.SIMD.4.1.0\lib\xamarinios10\Xamarin.Swift4.SIMD.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SpriteKit">
-      <HintPath>..\packages\Xamarin.Swift4.SpriteKit.4.1.0\lib\xamarinios10\Xamarin.Swift4.SpriteKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SwiftOnoneSupport">
-      <HintPath>..\packages\Xamarin.Swift4.SwiftOnoneSupport.4.1.0\lib\xamarinios10\Xamarin.Swift4.SwiftOnoneSupport.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.UIKit">
-      <HintPath>..\packages\Xamarin.Swift4.UIKit.4.1.0\lib\xamarinios10\Xamarin.Swift4.UIKit.dll</HintPath>
-    </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\BouncyCastle.1.8.2\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
@@ -298,6 +229,75 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Plugin.Geolocator">
       <HintPath>..\packages\Xam.Plugin.Geolocator.4.5.0.6\lib\xamarinios10\Plugin.Geolocator.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.ARKit">
+      <HintPath>..\packages\Xamarin.Swift4.ARKit.4.1.2\lib\xamarinios10\Xamarin.Swift4.ARKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.AVFoundation">
+      <HintPath>..\packages\Xamarin.Swift4.AVFoundation.4.1.2\lib\xamarinios10\Xamarin.Swift4.AVFoundation.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.Core">
+      <HintPath>..\packages\Xamarin.Swift4.Core.4.1.2\lib\xamarinios10\Xamarin.Swift4.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.CoreAudio">
+      <HintPath>..\packages\Xamarin.Swift4.CoreAudio.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.CoreFoundation">
+      <HintPath>..\packages\Xamarin.Swift4.CoreFoundation.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreFoundation.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.CoreGraphics">
+      <HintPath>..\packages\Xamarin.Swift4.CoreGraphics.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreGraphics.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.CoreLocation">
+      <HintPath>..\packages\Xamarin.Swift4.CoreLocation.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.CoreMedia">
+      <HintPath>..\packages\Xamarin.Swift4.CoreMedia.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreMedia.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.Darwin">
+      <HintPath>..\packages\Xamarin.Swift4.Darwin.4.1.2\lib\xamarinios10\Xamarin.Swift4.Darwin.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.Dispatch">
+      <HintPath>..\packages\Xamarin.Swift4.Dispatch.4.1.2\lib\xamarinios10\Xamarin.Swift4.Dispatch.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.Foundation">
+      <HintPath>..\packages\Xamarin.Swift4.Foundation.4.1.2\lib\xamarinios10\Xamarin.Swift4.Foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.GLKit">
+      <HintPath>..\packages\Xamarin.Swift4.GLKit.4.1.2\lib\xamarinios10\Xamarin.Swift4.GLKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.Metal">
+      <HintPath>..\packages\Xamarin.Swift4.Metal.4.1.2\lib\xamarinios10\Xamarin.Swift4.Metal.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.ModelIO">
+      <HintPath>..\packages\Xamarin.Swift4.ModelIO.4.1.2\lib\xamarinios10\Xamarin.Swift4.ModelIO.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.ObjectiveC">
+      <HintPath>..\packages\Xamarin.Swift4.ObjectiveC.4.1.2\lib\xamarinios10\Xamarin.Swift4.ObjectiveC.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.OS">
+      <HintPath>..\packages\Xamarin.Swift4.OS.4.1.2\lib\xamarinios10\Xamarin.Swift4.OS.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.QuartzCore">
+      <HintPath>..\packages\Xamarin.Swift4.QuartzCore.4.1.2\lib\xamarinios10\Xamarin.Swift4.QuartzCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.SceneKit">
+      <HintPath>..\packages\Xamarin.Swift4.SceneKit.4.1.2\lib\xamarinios10\Xamarin.Swift4.SceneKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.SIMD">
+      <HintPath>..\packages\Xamarin.Swift4.SIMD.4.1.2\lib\xamarinios10\Xamarin.Swift4.SIMD.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.SpriteKit">
+      <HintPath>..\packages\Xamarin.Swift4.SpriteKit.4.1.2\lib\xamarinios10\Xamarin.Swift4.SpriteKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.SwiftOnoneSupport">
+      <HintPath>..\packages\Xamarin.Swift4.SwiftOnoneSupport.4.1.2\lib\xamarinios10\Xamarin.Swift4.SwiftOnoneSupport.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.UIKit">
+      <HintPath>..\packages\Xamarin.Swift4.UIKit.4.1.2\lib\xamarinios10\Xamarin.Swift4.UIKit.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Swift4.CoreImage">
+      <HintPath>..\packages\Xamarin.Swift4.CoreImage.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreImage.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
