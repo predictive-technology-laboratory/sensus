@@ -169,6 +169,8 @@ namespace Sensus.DataStores.Remote
 #else
             WriteDelayMS = 1000 * 60 * 60;  // every 60 minutes
 #endif
+
+            // instantiate ac handler here
         }
 
         public override void Start()
@@ -188,11 +190,16 @@ namespace Sensus.DataStores.Remote
 
             _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
+
+            // hook into the AC charge event signal -- add handler to AC broadcast receiver
+
         }
 
         public override void Stop()
         {
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
+
+            // remove handler
         }
 
         public override void Reset()
