@@ -31250,6 +31250,18 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityStarting
   fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
   nameWithType: ActivityDatum.ActivityStarting
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  name: ActivityStopping
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStopping
+  commentId: P:Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  nameWithType: ActivityDatum.ActivityStopping
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityStopping*
+  name: ActivityStopping
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStopping_
+  commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  nameWithType: ActivityDatum.ActivityStopping
 - uid: Sensus.Probes.Movement.ActivityDatum.Confidence
   name: Confidence
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_Confidence

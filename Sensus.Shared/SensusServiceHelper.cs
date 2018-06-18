@@ -44,7 +44,7 @@ using ZXing.Mobile;
 namespace Sensus
 {
     /// <summary>
-    /// Provides platform-independent service functionality.
+    /// Provides platform-independent functionality.
     /// </summary>
     public abstract class SensusServiceHelper
     {

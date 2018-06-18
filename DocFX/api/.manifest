@@ -4098,6 +4098,7 @@
   "Sensus.Probes.Movement.ActivityDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Movement.Activities,Sensus.Probes.Movement.ActivityPhase,Sensus.Probes.Movement.ActivityState,Sensus.Probes.Movement.ActivityConfidence)": "Sensus.Probes.Movement.ActivityDatum.yml",
   "Sensus.Probes.Movement.ActivityDatum.Activity": "Sensus.Probes.Movement.ActivityDatum.yml",
   "Sensus.Probes.Movement.ActivityDatum.ActivityStarting": "Sensus.Probes.Movement.ActivityDatum.yml",
+  "Sensus.Probes.Movement.ActivityDatum.ActivityStopping": "Sensus.Probes.Movement.ActivityDatum.yml",
   "Sensus.Probes.Movement.ActivityDatum.Confidence": "Sensus.Probes.Movement.ActivityDatum.yml",
   "Sensus.Probes.Movement.ActivityDatum.DisplayDetail": "Sensus.Probes.Movement.ActivityDatum.yml",
   "Sensus.Probes.Movement.ActivityDatum.Phase": "Sensus.Probes.Movement.ActivityDatum.yml",
