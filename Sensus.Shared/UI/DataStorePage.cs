@@ -91,9 +91,12 @@ namespace Sensus.UI
                 FontSize = 20
             };
 
-            shareButton.Clicked += sync (o, e) =>
+            shareButton.Clicked += async (o, e) =>
             {
-                ;
+                //await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + protocolCopy.Name, "application/json");
+
+
+
             };
 
             buttonStack.Children.Add(shareButton);
