@@ -103,6 +103,17 @@ namespace Sensus.DataStores.Local
         private readonly object _locker = new object();
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <value>Paths for data upload to S3 bucket.</value>
+        private string[] PromotedPaths{
+            get {
+                string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+                return Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+            }
+        }
+
+        /// <summary>
         /// Gets the path.
         /// </summary>
         /// <value>The path.</value>
