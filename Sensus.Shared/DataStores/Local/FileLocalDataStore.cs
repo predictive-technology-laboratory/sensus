@@ -90,6 +90,7 @@ namespace Sensus.DataStores.Local
         private CompressionLevel _compressionLevel;
         private int _bufferSizeBytes;
         private bool _encrypt;
+        private bool _writeToRemote;
         private Task _writeToRemoteTask;
         private long _totalDataBuffered;
         private long _totalDataWritten;
@@ -168,6 +169,24 @@ namespace Sensus.DataStores.Local
             set
             {
                 _encrypt = value;
+            }
+        }
+       
+        /// <summary>
+        /// Whether or not the application should attempt to broadcast recorded data. Manual mechanism to enforce local data storage. 
+        /// Intended for use in customer demonstration in offline setting (email will be emailed, circumventing the standard data flow)
+        /// </summary>
+        /// <value><c>true</c> to write remote; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Write to remote (true to broadcast data, false to store locally):", true, 7)]
+        public bool WriteToRemote
+        {
+            get
+            {
+                return _writeToRemote;
+            }
+            set
+            {
+                _writeToRemote = value;
             }
         }
 
