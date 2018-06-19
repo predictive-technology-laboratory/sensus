@@ -84,6 +84,20 @@ namespace Sensus.UI
                 buttonStack.Children.Add(clearButton);
             }
 
+            Button shareButton = new Button
+            {
+                Text = "Share Data",
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                FontSize = 20
+            };
+
+            shareButton.Clicked += sync (o, e) =>
+            {
+                ;
+            };
+
+            buttonStack.Children.Add(shareButton);
+
             Button okayButton = new Button
             {
                 Text = "OK",

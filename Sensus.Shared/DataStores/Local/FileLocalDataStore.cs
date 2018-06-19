@@ -536,7 +536,7 @@ namespace Sensus.DataStores.Local
 
         public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
         {
-            // block writes to remote if 
+            // block writes to remote if the boolean is flipped off
             if (!_writeToRemote)
             {
                 return Task.CompletedTask;
