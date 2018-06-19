@@ -536,6 +536,12 @@ namespace Sensus.DataStores.Local
 
         public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
         {
+            // block writes to remote if 
+            if (!_writeToRemote)
+            {
+                return Task.CompletedTask;
+            }
+
             lock (_locker)
             {
                 // it's possible to stop the datastore before entering this lock.
