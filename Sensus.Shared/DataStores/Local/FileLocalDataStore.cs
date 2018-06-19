@@ -90,7 +90,7 @@ namespace Sensus.DataStores.Local
         private CompressionLevel _compressionLevel;
         private int _bufferSizeBytes;
         private bool _encrypt;
-        private bool _writeToRemote;
+        private bool _writeToRemote = true;
         private Task _writeToRemoteTask;
         private long _totalDataBuffered;
         private long _totalDataWritten;
@@ -187,6 +187,8 @@ namespace Sensus.DataStores.Local
             set
             {
                 _writeToRemote = value;
+                Console.WriteLine(_writeToRemote);
+
             }
         }
 
