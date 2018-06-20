@@ -84,24 +84,27 @@ namespace Sensus.UI
                 buttonStack.Children.Add(clearButton);
             }
 
-            Button shareButton = new Button
+            if (local)
             {
-                Text = "Share Data",
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                FontSize = 20
-            };
+                Button shareButton = new Button
+                {
+                    Text = "Share Data",
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20
+                };
 
-            shareButton.Clicked += async (o, e) =>
-            {
-                
-                //TODO make this genuinely async rather than a blocking call followed by an async call
-                //TODO handle the condition of no available data (null reference crashes at the moment)
-                //LocalDataStore.Get();
-                protocol.LocalDataStore.CreateTarFromLocalData();
-                await SensusServiceHelper.Get().ShareFileAsync(SensusServiceHelper.Get().GetSharePath(".tar"), "Sensus data share", "application/octet-stream");
-            };
+                shareButton.Clicked += async (o, e) =>
+                {
 
-            buttonStack.Children.Add(shareButton);
+                    //TODO make this genuinely async rather than a blocking call followed by an async call
+                    //TODO handle the condition of no available data (null reference crashes at the moment)
+                    //LocalDataStore.Get();
+                    protocol.LocalDataStore.CreateTarFromLocalData();
+                    await SensusServiceHelper.Get().ShareFileAsync(SensusServiceHelper.Get().GetSharePath(".tar"), "Sensus data share", "application/octet-stream");
+                };
+
+                buttonStack.Children.Add(shareButton);
+            }
 
             Button okayButton = new Button
             {
