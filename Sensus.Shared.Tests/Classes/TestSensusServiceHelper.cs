@@ -15,6 +15,7 @@
 using System;
 using System.Threading.Tasks;
 using Sensus.Probes;
+using Sensus.Probes.Device;
 using Xamarin.Forms;
 
 namespace Sensus.Tests.Classes
@@ -78,6 +79,8 @@ namespace Sensus.Tests.Classes
                 return new Random().NextDouble() > 0.5;
             }
         }
+
+        public override PowerConnectionChange AcPowerChangeClass => throw new NotImplementedException();
 
         protected override bool IsOnMainThread
         {
