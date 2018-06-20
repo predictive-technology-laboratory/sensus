@@ -562,7 +562,8 @@ namespace Sensus.DataStores.Local
 
                 foreach (string filename in promotedPaths)
                 {
-                    
+
+                    Console.WriteLine(filename);
                     using (Stream inputStream = File.OpenRead(filename))
                     {
 
@@ -589,8 +590,20 @@ namespace Sensus.DataStores.Local
                     }
 
                     tarOutputStream.CloseEntry();
-
                 }
+
+                tarOutputStream.Flush();
+                tarOutputStream.Close();
+
+                // outStream.Flush();
+                // outStream.Close();
+
+                Console.WriteLine(SensusServiceHelper.Get().GetSharePath(".tar"));
+                Console.WriteLine(SensusServiceHelper.Get().GetSharePath(".tar"));
+                Console.WriteLine(SensusServiceHelper.Get().GetSharePath(".tar"));
+
+                Console.WriteLine(File.Exists(SensusServiceHelper.Get().GetSharePath(".tar")));
+
             }
         }
 

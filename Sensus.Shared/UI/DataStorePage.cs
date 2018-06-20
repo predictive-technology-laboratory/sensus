@@ -93,14 +93,12 @@ namespace Sensus.UI
 
             shareButton.Clicked += async (o, e) =>
             {
-
+                
                 //TODO make this genuinely async rather than a blocking call followed by an async call
                 //TODO handle the condition of no available data (null reference crashes at the moment)
                 //LocalDataStore.Get();
                 protocol.LocalDataStore.CreateTarFromLocalData();
-                //await SensusServiceHelper.Get().ShareFileAsync(SensuGetSharePath(".tar"), "Sensus Protocol:  " + protocolCopy.Name, "application/json");
-
-
+                await SensusServiceHelper.Get().ShareFileAsync(SensusServiceHelper.Get().GetSharePath(".tar"), "Sensus data share", "application/octet-stream");
             };
 
             buttonStack.Children.Add(shareButton);
