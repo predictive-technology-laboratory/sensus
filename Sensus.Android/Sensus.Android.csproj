@@ -309,6 +309,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
     <Compile Include="Probes\Context\AndroidLightProbe.cs" />
     <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
+    <Compile Include="Probes\Device\AndroidPowerConnectionChange.cs" />
+    <Compile Include="Probes\Device\AndroidPowerConnectionChangeBroadcastReceiver.cs" />
     <Compile Include="Probes\Device\AndroidScreenProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
@@ -372,7 +374,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup>
+    <ItemGroup>
     <Folder Include="Callbacks\" />
   </ItemGroup>
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />

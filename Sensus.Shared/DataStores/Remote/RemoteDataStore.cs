@@ -50,6 +50,8 @@ namespace Sensus.DataStores.Remote
         private bool _requireCharging;
         private float _requiredBatteryChargeLevelPercent;
         private string _userNotificationMessage;
+        private EventHandler<bool> _powerConnectionChanged;
+        private CancellationTokenSource _cancellationToken;
 
         /// <summary>
         /// How many milliseconds to pause between each data write cycle.
@@ -170,7 +172,18 @@ namespace Sensus.DataStores.Remote
             WriteDelayMS = 1000 * 60 * 60;  // every 60 minutes
 #endif
 
-            // instantiate ac handler here
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                if (connected == true)
+                {
+                    _cancellationToken = new CancellationTokenSource();
+                     await WriteLocalDataStoreAsync(_cancellationToken.Token);
+                }
+                else
+                {
+                    _cancellationToken?.Cancel();//we must be disconnected so we need to use the cancellation token to cancel the request
+                }
+            };
         }
 
         public override void Start()
@@ -193,13 +206,14 @@ namespace Sensus.DataStores.Remote
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
 
+            SensusServiceHelper.Get().AcPowerChangeClass.POWER_CONNECTION_CHANGE += _powerConnectionChanged; //register the event
+
         }
 
         public override void Stop()
         {
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
-
-            // remove handler
+            SensusServiceHelper.Get().AcPowerChangeClass.POWER_CONNECTION_CHANGE -= _powerConnectionChanged; //unregister the event
         }
 
         public override void Reset()
@@ -249,7 +263,7 @@ namespace Sensus.DataStores.Remote
             return restart;
         }
 
-        public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+         public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
         {
             bool write = false;
 
@@ -282,7 +296,7 @@ namespace Sensus.DataStores.Remote
                 {
                     // instruct the local data store to write its data to the remote data store.
                     await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
-                    _mostRecentSuccessfulWriteTime = DateTime.Now;
+                    _mostRecentSuccessfulWriteTime = DateTime.Now; 
                     return true;
                 });
             }

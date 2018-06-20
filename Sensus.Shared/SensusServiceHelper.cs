@@ -57,7 +57,7 @@ namespace Sensus
         /// App Center key for Android app.
         /// </summary>
         public const string APP_CENTER_KEY_ANDROID = "";
-                                                      
+
         /// <summary>
         /// App Center key for iOS app.
         /// </summary>
@@ -315,7 +315,7 @@ namespace Sensus
             {
                 _flashNotificationsEnabled = value;
             }
-        }
+        }      
 
         public ConcurrentObservableCollection<Script> ScriptsToRun
         {
@@ -359,6 +359,8 @@ namespace Sensus
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
+        [JsonIgnore]
+        public abstract Probes.Device.PowerConnectionChange AcPowerChangeClass { get; } //set this with the concrete android implementation
 
         [JsonIgnore]
         public abstract float BatteryChargePercent { get; }
@@ -750,7 +752,7 @@ namespace Sensus
                 {
                     List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
                     scriptsFromSameRunner.Add(script);
-
+                    
                     Script scriptToKeep = null;
                     List<Script> scriptsToRemove = null;
 
@@ -1164,7 +1166,7 @@ namespace Sensus
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                    await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
+                     await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
                 }
             });
         }
