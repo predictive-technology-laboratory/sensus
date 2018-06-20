@@ -109,8 +109,15 @@ namespace Sensus.DataStores.Local
         /// <value>Paths for data upload to S3 bucket.</value>
         private string[] PromotedPaths{
             get {
+                // might be a slightly over loaded get, feel free to move the file calls
+                CloseFile();
+                PromoteFiles();
+                OpenFile();
+
+                // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
                 string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
-                return Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                return promotedPaths;
             }
         }
 
@@ -538,88 +545,52 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        // TODO ammend to match application
-        public void TarCreateFromStream()
+
+        // TODO remove arguments
+        public override void CreateTarFromLocalData()
         {
+            // reusing same lock, I assume there is a possibility of conflict between function behaviors
 
-            // Create an output stream. Does not have to be disk, could be MemoryStream etc.
-            string tarOutFn = @"c:\temp\test.tar";
-            Stream outStream = File.Create(tarOutFn);
-
-            // If you wish to create a .Tar.GZ (.tgz):
-            // - set the filename above to a ".tar.gz",
-            // - create a GZipOutputStream here
-            // - change "new TarOutputStream(outStream)" to "new TarOutputStream(gzoStream)"
-            // Stream gzoStream = new GZipOutputStream(outStream);
-            // gzoStream.SetLevel(3); // 1 - 9, 1 is best speed, 9 is best compression
-
-            TarOutputStream tarOutputStream = new TarOutputStream(outStream);
-
-            CreateTarManually(tarOutputStream, @"c:\temp\debug");
-
-            // Closing the archive also closes the underlying stream.
-            // If you don't want this (e.g. writing to memorystream), set tarOutputStream.IsStreamOwner = false
-            tarOutputStream.Close();
-        }
-
-        // TODO ammend to match application
-        private void CreateTarManually(TarOutputStream tarOutputStream, string sourceDirectory)
-        {
-
-            // Optionally, write an entry for the directory itself.
-            //
-            TarEntry tarEntry = TarEntry.CreateEntryFromFile(sourceDirectory);
-            tarOutputStream.PutNextEntry(tarEntry);
-
-            // Write each file to the tar.
-            //
-            string[] filenames = Directory.GetFiles(sourceDirectory);
-
-            foreach (string filename in filenames)
+            lock (_locker)
             {
+                string[] promotedPaths = PromotedPaths; // TODO clean up these assignments
 
-                // You might replace these 3 lines with your own stream code
+                string tarOutFn = SensusServiceHelper.Get().GetSharePath(".tar");
+                Stream outStream = File.Create(tarOutFn);
 
-                using (Stream inputStream = File.OpenRead(filename))
+                TarOutputStream tarOutputStream = new TarOutputStream(outStream);
+
+                foreach (string filename in promotedPaths)
                 {
-
-                    string tarName = filename.Substring(3); // strip off "C:\"
-
-                    long fileSize = inputStream.Length;
-
-                    // Create a tar entry named as appropriate. You can set the name to anything,
-                    // but avoid names starting with drive or UNC.
-
-                    TarEntry entry = TarEntry.CreateTarEntry(tarName);
-
-                    // Must set size, otherwise TarOutputStream will fail when output exceeds.
-                    entry.Size = fileSize;
-
-                    // Add the entry to the tar stream, before writing the data.
-                    tarOutputStream.PutNextEntry(entry);
-
-                    // this is copied from TarArchive.WriteEntryCore
-                    byte[] localBuffer = new byte[32 * 1024];
-                    while (true)
+                    
+                    using (Stream inputStream = File.OpenRead(filename))
                     {
-                        int numRead = inputStream.Read(localBuffer, 0, localBuffer.Length);
-                        if (numRead <= 0)
+
+                        long fileSize = inputStream.Length;
+                        TarEntry entry = TarEntry.CreateTarEntry(filename);
+
+                        // Must set size, otherwise TarOutputStream will fail when output exceeds.
+                        entry.Size = fileSize;
+
+                        // Add the entry to the tar stream, before writing the data.
+                        tarOutputStream.PutNextEntry(entry);
+
+                        // this is copied from TarArchive.WriteEntryCore
+                        byte[] localBuffer = new byte[32 * 1024];
+                        while (true)
                         {
-                            break;
+                            int numRead = inputStream.Read(localBuffer, 0, localBuffer.Length);
+                            if (numRead <= 0)
+                            {
+                                break;
+                            }
+                            tarOutputStream.Write(localBuffer, 0, numRead);
                         }
-                        tarOutputStream.Write(localBuffer, 0, numRead);
                     }
+
+                    tarOutputStream.CloseEntry();
+
                 }
-                tarOutputStream.CloseEntry();
-            }
-
-
-            // Recurse. Delete this if unwanted.
-
-            string[] directories = Directory.GetDirectories(sourceDirectory);
-            foreach (string directory in directories)
-            {
-                CreateTarManually(tarOutputStream, directory);
             }
         }
 
@@ -647,13 +618,7 @@ namespace Sensus.DataStores.Local
                     return Task.CompletedTask;
                 }
 
-                CloseFile();
-                PromoteFiles();
-                OpenFile();
-
-                // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
-                string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
-                string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                string[] promotedPaths = PromotedPaths;
 
                 // if no paths were promoted, then we have nothing to do.
                 if (promotedPaths.Length == 0)
