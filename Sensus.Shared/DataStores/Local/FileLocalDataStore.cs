@@ -547,7 +547,7 @@ namespace Sensus.DataStores.Local
 
 
         // TODO remove arguments
-        public override void CreateTarFromLocalData()
+        public override string CreateTarFromLocalData()
         {
             // reusing same lock, I assume there is a possibility of conflict between function behaviors
 
@@ -593,6 +593,11 @@ namespace Sensus.DataStores.Local
 
                 tarOutputStream.Flush();
                 tarOutputStream.Close();
+
+                // returns the path it wrote to
+                return tarOutFn;
+
+                // maybe add some logic if there are no files to work with
 
             }
         }
