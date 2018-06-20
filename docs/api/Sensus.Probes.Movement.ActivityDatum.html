@@ -221,6 +221,35 @@
   </table>
   
   
+  <a id="Sensus_Probes_Movement_ActivityDatum_ActivityContinuing_" data-uid="Sensus.Probes.Movement.ActivityDatum.ActivityContinuing*"></a>
+  <h4 id="Sensus_Probes_Movement_ActivityDatum_ActivityContinuing" data-uid="Sensus.Probes.Movement.ActivityDatum.ActivityContinuing">ActivityContinuing</h4>
+  <div class="markdown level1 summary"><p>Gets the activity the user is continuing to engage in. If there is not an activity continuing (e.g., if the <a class="xref" href="Sensus.Probes.Movement.ActivityPhase.html">ActivityPhase</a> is 
+not <a class="xref" href="Sensus.Probes.Movement.ActivityPhase.html#Sensus_Probes_Movement_ActivityPhase_During">During</a>), then the value will be <a class="xref" href="Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Unknown">Unknown</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListProbeTriggerProperty]
+public Activities ActivityContinuing { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a></td>
+        <td><p>The activity that is continuing.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Movement_ActivityDatum_ActivityStarting_" data-uid="Sensus.Probes.Movement.ActivityDatum.ActivityStarting*"></a>
   <h4 id="Sensus_Probes_Movement_ActivityDatum_ActivityStarting" data-uid="Sensus.Probes.Movement.ActivityDatum.ActivityStarting">ActivityStarting</h4>
   <div class="markdown level1 summary"><p>Gets the activity the user is starting to engage in. If there is not an activity starting (e.g., if the <a class="xref" href="Sensus.Probes.Movement.ActivityPhase.html">ActivityPhase</a> is 
@@ -272,7 +301,7 @@ public Activities ActivityStopping { get; }</code></pre>
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a></td>
-        <td><p>The activity that is starting.</p>
+        <td><p>The activity that is stopping.</p>
 </td>
       </tr>
     </tbody>
@@ -389,7 +418,9 @@ public Activities ActivityStopping { get; }</code></pre>
   
   <a id="Sensus_Probes_Movement_ActivityDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Movement.ActivityDatum.StringPlaceholderValue*"></a>
   <h4 id="Sensus_Probes_Movement_ActivityDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Movement.ActivityDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
-  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting">ActivityStarting</a>.</p>
+  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting">ActivityStarting</a>, <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityContinuing">ActivityContinuing</a>, or 
+<a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStopping">ActivityStopping</a>, whichever of these has a value that is not <a class="xref" href="Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Unknown">Unknown</a>. It
+should not be the case that all of these have values of <a class="xref" href="Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Unknown">Unknown</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

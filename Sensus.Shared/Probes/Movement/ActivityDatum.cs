@@ -67,10 +67,25 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
+        /// Gets the activity the user is continuing to engage in. If there is not an activity continuing (e.g., if the <see cref="ActivityPhase"/> is 
+        /// not <see cref="ActivityPhase.During"/>), then the value will be <see cref="Activities.Unknown"/>.
+        /// </summary>
+        /// <value>The activity that is continuing.</value>
+        [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Walking, Activities.Unknown })]
+        [JsonIgnore]
+        public Activities ActivityContinuing
+        {
+            get
+            {
+                return Phase == ActivityPhase.During && State == ActivityState.Active ? Activity : Activities.Unknown;
+            }
+        }
+
+        /// <summary>
         /// Gets the activity the user is stopping. If there is not an activity stopping (e.g., if the <see cref="ActivityPhase"/> is 
         /// not <see cref="ActivityPhase.Stopping"/>), then the value will be <see cref="Activities.Unknown"/>.
         /// </summary>
-        /// <value>The activity that is starting.</value>
+        /// <value>The activity that is stopping.</value>
         [ListProbeTriggerProperty(new object[] { Activities.InVehicle, Activities.OnBicycle, Activities.OnFoot, Activities.Running, Activities.Still, Activities.Tilting, Activities.Walking, Activities.Unknown })]
         [JsonIgnore]
         public Activities ActivityStopping
@@ -90,14 +105,26 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is <see cref="ActivityStarting"/>.
+        /// Gets the string placeholder value, which is <see cref="ActivityStarting"/>, <see cref="ActivityContinuing"/>, or 
+        /// <see cref="ActivityStopping"/>, whichever of these has a value that is not <see cref="Activities.Unknown"/>. It
+        /// should not be the case that all of these have values of <see cref="Activities.Unknown"/>.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return ActivityStarting;
+                if (ActivityStarting != Activities.Unknown)
+                {
+                    return ActivityStarting;
+                }
+
+                if (ActivityContinuing != Activities.Unknown)
+                {
+                    return ActivityContinuing;
+                }
+
+                return ActivityStopping;
             }
         }
 

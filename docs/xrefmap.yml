@@ -31238,6 +31238,18 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.Activity
   fullName: Sensus.Probes.Movement.ActivityDatum.Activity
   nameWithType: ActivityDatum.Activity
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  name: ActivityContinuing
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityContinuing
+  commentId: P:Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  nameWithType: ActivityDatum.ActivityContinuing
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing*
+  name: ActivityContinuing
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityContinuing_
+  commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  nameWithType: ActivityDatum.ActivityContinuing
 - uid: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
   name: ActivityStarting
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting
