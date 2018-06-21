@@ -1293,14 +1293,23 @@ namespace Sensus
         /// Whether or not to allow the user to share the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Share:", true, 43)]
+        [OnOffUiProperty("Allow Protocol Share:", true, 43)]
         public bool Shareable { get; set; } = false;
+
+
+        /// <summary>
+        /// Whether or not to allow the user to share local data collected on the device/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Local Data Share:", true, 44)]
+        public bool ShareLocalData { get; set; } = false;
+
 
         /// <summary>
         /// Whether or not to allow the user to reset their participant ID. See <see cref="Protocol.ParticipantId"/> and <see cref="Protocol.StartConfirmationMode"/> for more information.
         /// </summary>
         /// <value><c>true</c> if allow participant identifier reset; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow ID Reset:", true, 44)]
+        [OnOffUiProperty("Allow ID Reset:", true, 45)]
         public bool AllowParticipantIdReset { get; set; } = false;
 
         /// <summary>
@@ -1308,7 +1317,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 45, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 46, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get

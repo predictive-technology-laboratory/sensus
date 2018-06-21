@@ -36,6 +36,8 @@ namespace Sensus.DataStores.Local
         [JsonIgnore]
         public abstract string SizeDescription { get; }
 
+        public abstract bool HasDataToShare { get; }
+
         /// <summary>
         /// Whether or not to transfer data from the local data store to the remote data store. If disabled, data
         /// will accumulate indefinitely on local storage media. When the protocol is stopped, the user may then (if
@@ -54,6 +56,7 @@ namespace Sensus.DataStores.Local
                 _writeToRemote = value;
             }
         }
+
 
         protected LocalDataStore()
         {

@@ -95,6 +95,18 @@ namespace Sensus.UI
                     FontSize = 20
                 };
 
+                if (protocol.LocalDataStore != null)
+                {
+                    Console.WriteLine(protocol.LocalDataStore.HasDataToShare);
+                }
+
+                // hide the share button if there are zero files
+                if (!protocol.LocalDataStore?.HasDataToShare ?? false)
+                {
+                    shareButton.IsEnabled = false;
+                }
+
+
                 shareButton.Clicked += async (o, e) =>
                 {
                     try
