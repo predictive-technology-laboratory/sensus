@@ -276,6 +276,9 @@ Sensus.iOS.Tests.AppCenter for more on running these tests in the AppCenter clou
     <Reference Include="Calabash">
       <HintPath>..\packages\Xamarin.TestCloud.Agent.0.21.5\lib\Xamarin.iOS\Calabash.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\11\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />

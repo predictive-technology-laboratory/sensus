@@ -249,6 +249,9 @@ Sensus.Android.Tests.AppCenter for more on running these tests in the AppCenter 
     <Reference Include="PInvoke.NCrypt">
       <HintPath>..\packages\PInvoke.NCrypt.0.5.152\lib\portable-net45+win8+wpa81\PInvoke.NCrypt.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\11\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

@@ -18,6 +18,7 @@ using Sensus.UI.UiProperties;
 using Sensus.DataStores.Local;
 using Sensus.DataStores.Remote;
 using Xamarin.Forms;
+using System;
 
 namespace Sensus.UI
 {
@@ -40,17 +41,17 @@ namespace Sensus.UI
             List<View> views = new List<View>();
 
             views.Add(new ContentView
+            {
+                Content = new Label
                 {
-                    Content = new Label
-                    { 
-                        Text = dataStore.DisplayName,
-                        FontSize = 20, 
-                        FontAttributes = FontAttributes.Italic,
-                        TextColor = Color.Accent,
-                        HorizontalOptions = LayoutOptions.Center
-                    },
-                    Padding = new Thickness(0, 10, 0, 10)
-                });
+                    Text = dataStore.DisplayName,
+                    FontSize = 20,
+                    FontAttributes = FontAttributes.Italic,
+                    TextColor = Color.Accent,
+                    HorizontalOptions = LayoutOptions.Center
+                },
+                Padding = new Thickness(0, 10, 0, 10)
+            });
 
             // property stacks all come from the data store passed in (i.e., a copy of the original on the protocol, if there is one)
             views.AddRange(UiProperty.GetPropertyStacks(dataStore));
@@ -84,6 +85,7 @@ namespace Sensus.UI
                 buttonStack.Children.Add(clearButton);
             }
 
+            // sharing only applies to local data stores
             if (local)
             {
                 Button shareButton = new Button
@@ -95,8 +97,16 @@ namespace Sensus.UI
 
                 shareButton.Clicked += async (o, e) =>
                 {
-                    string tar_path = protocol.LocalDataStore.CreateTarFromLocalData();
-                    await SensusServiceHelper.Get().ShareFileAsync(tar_path, "Sensus data share", "application/octet-stream");
+                    try
+                    {
+                        string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
+                        protocol.LocalDataStore.CreateTarFromLocalData(tarSharePath);
+                        await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, protocol.Name + ":  Local Data", "application/octet-stream");
+                    }
+                    catch (Exception ex)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
+                    }
                 };
 
                 buttonStack.Children.Add(shareButton);

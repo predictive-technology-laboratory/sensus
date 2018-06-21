@@ -26,6 +26,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
 using System.Linq;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace Sensus.Tests.DataStores.Local
 {
@@ -89,7 +90,7 @@ namespace Sensus.Tests.DataStores.Local
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            });
+            }, 1)[0];
 
             Assert.True(currentSizeMB > 0);
         }
@@ -108,7 +109,7 @@ namespace Sensus.Tests.DataStores.Local
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            });
+            }, 1)[0];
 
             Assert.True(currentSizeMB > 0);
         }
@@ -127,7 +128,7 @@ namespace Sensus.Tests.DataStores.Local
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            });
+            }, 1)[0];
 
             Assert.True(currentSizeMB > 0);
         }
@@ -221,6 +222,58 @@ namespace Sensus.Tests.DataStores.Local
         }
         #endregion
 
+        #region tar
+        [Test]
+        public void TarZeroFilesTest()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Test]
+        public void TarMultipleFilesTest()
+        {
+            InitServiceHelper();
+            List<Datum> data = GenerateData();
+
+            // write the data store multiple times
+            FileLocalDataStore localDataStore = null;
+            const int NUM_FILES = 5;
+            string[] paths = WriteLocalDataStore(data, CompressionLevel.Optimal, (obj) =>
+            {
+                localDataStore = obj;
+
+            }, NUM_FILES);
+
+            Assert.AreEqual(NUM_FILES, paths.Length);
+
+            // write the tar file
+            string tarPath = Path.Combine(localDataStore.Protocol.StorageDirectory, Guid.NewGuid().ToString());
+            localDataStore.CreateTarFromLocalData(tarPath);
+
+            // untar
+            FileStream tarFile = new FileStream(tarPath, FileMode.Open, FileAccess.Read);
+            TarArchive tarArchive = TarArchive.CreateInputTarArchive(tarFile);
+            string untarDirectory = Path.Combine(localDataStore.Protocol.StorageDirectory, Guid.NewGuid().ToString());
+            tarArchive.ExtractContents(untarDirectory);
+            tarArchive.Close();
+            tarFile.Close();
+
+            // check that the same number of files were created
+            Assert.AreEqual(NUM_FILES, Directory.GetFiles(untarDirectory));
+
+            // check that the files' contents are byte-equal
+            foreach (string path in paths)
+            {
+                byte[] originalBytes = File.ReadAllBytes(path);
+                byte[] untarredBytes = File.ReadAllBytes(Path.Combine(untarDirectory, Path.GetFileName(path)));
+                Assert.IsTrue(originalBytes.SequenceEqual(untarredBytes));
+            }
+
+            Directory.Delete(untarDirectory, true);
+            File.Delete(tarPath);
+        }
+        #endregion
+
         #region helper functions
         private void InitServiceHelper()
         {
@@ -258,22 +311,28 @@ namespace Sensus.Tests.DataStores.Local
 
         private MemoryStream GetLocalDataStoreBytes(List<Datum> data, CompressionLevel compressionLevel)
         {
-            byte[] bytes = File.ReadAllBytes(WriteLocalDataStore(data, compressionLevel));
+            byte[] bytes = File.ReadAllBytes(WriteLocalDataStore(data, compressionLevel, numTimes: 1)[0]);
             return new MemoryStream(bytes);
         }
 
-        private string WriteLocalDataStore(List<Datum> data, CompressionLevel compressionLevel, Action<FileLocalDataStore> postWriteAction = null)
+        private string[] WriteLocalDataStore(List<Datum> data, CompressionLevel compressionLevel, Action<FileLocalDataStore> postWriteAction = null, int numTimes = 1)
         {
             Protocol protocol = CreateProtocol(compressionLevel);
             FileLocalDataStore localDataStore = protocol.LocalDataStore as FileLocalDataStore;
-            protocol.LocalDataStore.Start();
-            WriteData(data, localDataStore, postWriteAction);
-            string path = localDataStore.Path;
-            localDataStore.Stop();
+
+            List<string> paths = new List<string>();
+
+            for (int i = 0; i < numTimes; ++i)
+            {
+                protocol.LocalDataStore.Start();
+                WriteData(data, localDataStore, postWriteAction);
+                paths.Add(localDataStore.Path);
+                localDataStore.Stop();
+            }
 
             Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
 
-            return path;
+            return paths.ToArray();
         }
 
         private Protocol CreateProtocol(CompressionLevel compressionLevel)
