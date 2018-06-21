@@ -101,7 +101,7 @@ namespace Sensus.UI
                     {
                         string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
                         protocol.LocalDataStore.CreateTarFromLocalData(tarSharePath);
-                        await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, protocol.Name + ":  Local Data", "application/octet-stream");
+                        await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + protocol.Name, "application/octet-stream");
                     }
                     catch (Exception ex)
                     {

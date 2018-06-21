@@ -542,6 +542,8 @@ namespace Sensus.DataStores.Local
                                 TarEntry tarEntry = TarEntry.CreateEntryFromFile(promotedPath);
                                 tarEntry.Name = "data/" + System.IO.Path.GetFileName(promotedPath);
                                 tarArchive.WriteEntry(tarEntry, false);
+
+                                promotedFile.Close();
                             }
                         }
 

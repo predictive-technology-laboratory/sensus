@@ -90,7 +90,7 @@ namespace Sensus.Tests.DataStores.Local
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            }, 1)[0];
+            }, 1).Single();
 
             Assert.True(currentSizeMB > 0);
         }
@@ -109,7 +109,7 @@ namespace Sensus.Tests.DataStores.Local
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            }, 1)[0];
+            }, 1).Single();
 
             Assert.True(currentSizeMB > 0);
         }
@@ -128,7 +128,7 @@ namespace Sensus.Tests.DataStores.Local
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            }, 1)[0];
+            }, 1).Single();
 
             Assert.True(currentSizeMB > 0);
         }
@@ -313,7 +313,7 @@ namespace Sensus.Tests.DataStores.Local
 
         private MemoryStream GetLocalDataStoreBytes(List<Datum> data, CompressionLevel compressionLevel)
         {
-            byte[] bytes = File.ReadAllBytes(WriteLocalDataStore(data, compressionLevel, numTimes: 1)[0]);
+            byte[] bytes = File.ReadAllBytes(WriteLocalDataStore(data, compressionLevel, numTimes: 1).Single());
             return new MemoryStream(bytes);
         }
 
@@ -333,6 +333,8 @@ namespace Sensus.Tests.DataStores.Local
 
                 Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
             }
+
+            Assert.AreEqual(numTimes, paths.Count);
 
             return paths.ToArray();
         }
