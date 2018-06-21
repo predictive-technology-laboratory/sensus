@@ -581,9 +581,7 @@ namespace Sensus.DataStores.Local
                     return Task.CompletedTask;
                 }
 
-                CloseFile();
                 PromoteFiles();
-                OpenFile();
 
                 string[] promotedPaths = PromotedPaths;
 
@@ -698,6 +696,12 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
+                // close the current file, as we're about to delete/move all files in the storage directory
+                // that do not have a file extension. the file currently being written is one such file, and 
+                // we'll get an exception if we don't close it before moving it.
+                CloseFile();
+
+                // process each file in the storage directory
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                 {
                     try
@@ -733,6 +737,9 @@ namespace Sensus.DataStores.Local
                         SensusException.Report("Failed to promote file.", ex);
                     }
                 }
+
+                // open a new file for writing
+                OpenFile();
             }
         }
 
