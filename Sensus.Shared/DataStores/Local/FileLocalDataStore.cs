@@ -531,35 +531,25 @@ namespace Sensus.DataStores.Local
 
                 string[] promotedPaths = PromotedPaths;
 
-                FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write);
-                TarOutputStream tarOutputStream = new TarOutputStream(outputFile);
-
-                foreach (string promotedPath in promotedPaths)
+                using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
                 {
-                    using (FileStream promotedStream = File.OpenRead(promotedPath))
+                    using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
                     {
-                        // create entry. must set size, otherwise TarOutputStream will fail.
-                        TarEntry entry = TarEntry.CreateTarEntry(promotedPath);
-                        entry.Size = promotedStream.Length;
-
-                        // Add the entry to the tar stream, before writing the data.
-                        tarOutputStream.PutNextEntry(entry);
-
-                        // write the entry
-                        byte[] localBuffer = new byte[32 * 1024];
-                        int bytesRead;
-                        while ((bytesRead = promotedStream.Read(localBuffer, 0, localBuffer.Length)) > 0)
+                        foreach (string promotedPath in promotedPaths)
                         {
-                            tarOutputStream.Write(localBuffer, 0, bytesRead);
+                            using (FileStream promotedFile = File.OpenRead(promotedPath))
+                            {
+                                TarEntry tarEntry = TarEntry.CreateEntryFromFile(promotedPath);
+                                tarEntry.Name = "data/" + System.IO.Path.GetFileName(promotedPath);
+                                tarArchive.WriteEntry(tarEntry, false);
+                            }
                         }
+
+                        tarArchive.Close();
                     }
 
-                    tarOutputStream.CloseEntry();
+                    outputFile.Close();
                 }
-
-                tarOutputStream.Flush();
-                tarOutputStream.Close();
-                outputFile.Close();
             }
         }
 

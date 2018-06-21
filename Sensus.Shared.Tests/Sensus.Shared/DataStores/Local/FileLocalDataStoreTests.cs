@@ -224,27 +224,28 @@ namespace Sensus.Tests.DataStores.Local
 
         #region tar
         [Test]
-        public void TarZeroFilesTest()
+        public void TarFilesTest()
         {
-            throw new NotImplementedException();
+            TarTest(1);
+            TarTest(2);
+            TarTest(5);
+            TarTest(10);
         }
 
-        [Test]
-        public void TarMultipleFilesTest()
+        private void TarTest(int numFiles)
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             // write the data store multiple times
             FileLocalDataStore localDataStore = null;
-            const int NUM_FILES = 5;
             string[] paths = WriteLocalDataStore(data, CompressionLevel.Optimal, (obj) =>
             {
                 localDataStore = obj;
 
-            }, NUM_FILES);
+            }, numFiles);
 
-            Assert.AreEqual(NUM_FILES, paths.Length);
+            Assert.AreEqual(numFiles, paths.Length);
 
             // write the tar file
             string tarPath = Path.Combine(localDataStore.Protocol.StorageDirectory, Guid.NewGuid().ToString());
@@ -259,13 +260,14 @@ namespace Sensus.Tests.DataStores.Local
             tarFile.Close();
 
             // check that the same number of files were created
-            Assert.AreEqual(NUM_FILES, Directory.GetFiles(untarDirectory));
+            Assert.AreEqual(numFiles, Directory.GetFiles(untarDirectory, "*.gz", SearchOption.AllDirectories).Length);
 
             // check that the files' contents are byte-equal
             foreach (string path in paths)
             {
-                byte[] originalBytes = File.ReadAllBytes(path);
-                byte[] untarredBytes = File.ReadAllBytes(Path.Combine(untarDirectory, Path.GetFileName(path)));
+                byte[] originalBytes = File.ReadAllBytes(path + ".json.gz");
+                string untarredPath = Directory.GetFiles(untarDirectory, Path.GetFileName(path) + ".json.gz", SearchOption.AllDirectories).Single();
+                byte[] untarredBytes = File.ReadAllBytes(untarredPath);
                 Assert.IsTrue(originalBytes.SequenceEqual(untarredBytes));
             }
 
@@ -328,9 +330,9 @@ namespace Sensus.Tests.DataStores.Local
                 WriteData(data, localDataStore, postWriteAction);
                 paths.Add(localDataStore.Path);
                 localDataStore.Stop();
-            }
 
-            Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
+                Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
+            }
 
             return paths.ToArray();
         }
