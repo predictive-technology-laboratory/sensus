@@ -214,7 +214,7 @@ namespace Sensus.UI
             #region share -- we need this because we need to be able to hide the share button from the protocols while still allowing the protocol to be locked and shared
             Button shareButton = new Button
             {
-                Text = "Share",
+                Text = "Share Protocol",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };

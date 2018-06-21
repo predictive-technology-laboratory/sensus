@@ -34,6 +34,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchFastDev>false</MtouchFastDev>
+    <CodesignProvision>iOS Team Provisioning Profile: com.sensus.temp</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -298,6 +299,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Xamarin.Swift4.CoreImage">
       <HintPath>..\packages\Xamarin.Swift4.CoreImage.4.1.2\lib\xamarinios10\Xamarin.Swift4.CoreImage.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\11\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

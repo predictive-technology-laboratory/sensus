@@ -25,6 +25,7 @@ using System.Linq;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace Sensus.DataStores.Local
 {
@@ -90,6 +91,7 @@ namespace Sensus.DataStores.Local
         private CompressionLevel _compressionLevel;
         private int _bufferSizeBytes;
         private bool _encrypt;
+        private bool _writeToRemote = true;
         private Task _writeToRemoteTask;
         private long _totalDataBuffered;
         private long _totalDataWritten;
@@ -100,6 +102,24 @@ namespace Sensus.DataStores.Local
         private int _filesWrittenToRemote;
 
         private readonly object _locker = new object();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <value>Paths for data upload to S3 bucket.</value>
+        private string[] PromotedPaths{
+            get {
+                // might be a slightly over loaded get, feel free to move the file calls
+                CloseFile();
+                PromoteFiles();
+                OpenFile();
+
+                // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
+                string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+                string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                return promotedPaths;
+            }
+        }
 
         /// <summary>
         /// Gets the path.
@@ -168,6 +188,26 @@ namespace Sensus.DataStores.Local
             set
             {
                 _encrypt = value;
+            }
+        }
+       
+        /// <summary>
+        /// Whether or not the application should attempt to broadcast recorded data. Manual mechanism to enforce local data storage. 
+        /// Intended for use in customer demonstration in offline setting (email will be emailed, circumventing the standard data flow)
+        /// </summary>
+        /// <value><c>true</c> to write remote; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Write to remote (true to broadcast data, false to store locally):", true, 7)]
+        public bool WriteToRemote
+        {
+            get
+            {
+                return _writeToRemote;
+            }
+            set
+            {
+                _writeToRemote = value;
+                Console.WriteLine(_writeToRemote);
+
             }
         }
 
@@ -505,6 +545,63 @@ namespace Sensus.DataStores.Local
             }
         }
 
+
+        // TODO remove arguments
+        public override string CreateTarFromLocalData()
+        {
+            // reusing same lock, I assume there is a possibility of conflict between function behaviors
+
+            lock (_locker)
+            {
+                string[] promotedPaths = PromotedPaths; // TODO clean up these assignments
+
+                string tarOutFn = SensusServiceHelper.Get().GetSharePath(".tar");
+                Stream outStream = File.Create(tarOutFn);
+
+                TarOutputStream tarOutputStream = new TarOutputStream(outStream);
+
+                foreach (string filename in promotedPaths)
+                {
+
+                    using (Stream inputStream = File.OpenRead(filename))
+                    {
+
+                        long fileSize = inputStream.Length;
+                        TarEntry entry = TarEntry.CreateTarEntry(filename);
+
+                        // Must set size, otherwise TarOutputStream will fail when output exceeds.
+                        entry.Size = fileSize;
+
+                        // Add the entry to the tar stream, before writing the data.
+                        tarOutputStream.PutNextEntry(entry);
+
+                        // this is copied from TarArchive.WriteEntryCore
+                        byte[] localBuffer = new byte[32 * 1024];
+                        while (true)
+                        {
+                            int numRead = inputStream.Read(localBuffer, 0, localBuffer.Length);
+                            if (numRead <= 0)
+                            {
+                                break;
+                            }
+                            tarOutputStream.Write(localBuffer, 0, numRead);
+                        }
+                    }
+
+                    tarOutputStream.CloseEntry();
+                }
+
+                tarOutputStream.Flush();
+                tarOutputStream.Close();
+
+                // returns the path it wrote to
+                return tarOutFn;
+
+                // maybe add some logic if there are no files to work with
+
+            }
+        }
+
         protected override bool IsTooLarge()
         {
             lock (_locker)
@@ -515,6 +612,12 @@ namespace Sensus.DataStores.Local
 
         public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
         {
+            // block writes to remote if the boolean is flipped off
+            if (!_writeToRemote)
+            {
+                return Task.CompletedTask;
+            }
+
             lock (_locker)
             {
                 // it's possible to stop the datastore before entering this lock.
@@ -523,13 +626,7 @@ namespace Sensus.DataStores.Local
                     return Task.CompletedTask;
                 }
 
-                CloseFile();
-                PromoteFiles();
-                OpenFile();
-
-                // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
-                string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
-                string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                string[] promotedPaths = PromotedPaths;
 
                 // if no paths were promoted, then we have nothing to do.
                 if (promotedPaths.Length == 0)
