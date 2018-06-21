@@ -92,33 +92,13 @@ namespace Sensus.UI
                 {
                     Text = "Share Data",
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    FontSize = 20
+                    FontSize = 20,
+                    IsEnabled = protocol.LocalDataStore?.HasDataToShare ?? false  // hide the share button if there is no data to share
                 };
-
-                if (protocol.LocalDataStore != null)
-                {
-                    Console.WriteLine(protocol.LocalDataStore.HasDataToShare);
-                }
-
-                // hide the share button if there are zero files
-                if (!protocol.LocalDataStore?.HasDataToShare ?? false)
-                {
-                    shareButton.IsEnabled = false;
-                }
-
 
                 shareButton.Clicked += async (o, e) =>
                 {
-                    try
-                    {
-                        string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
-                        protocol.LocalDataStore.CreateTarFromLocalData(tarSharePath);
-                        await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + protocol.Name, "application/octet-stream");
-                    }
-                    catch (Exception ex)
-                    {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
-                    }
+                    await protocol.LocalDataStore?.ShareLocalDataAsync();
                 };
 
                 buttonStack.Children.Add(shareButton);

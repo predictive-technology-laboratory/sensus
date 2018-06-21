@@ -112,10 +112,6 @@ namespace Sensus.DataStores.Local
             {
                 lock (_locker)
                 {
-                    CloseFile();
-                    PromoteFiles();
-                    OpenFile();
-
                     // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
                     string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
                     return Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
@@ -123,8 +119,9 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        public override bool HasDataToShare {
-            get 
+        public override bool HasDataToShare
+        {
+            get
             {
                 return PromotedPaths.Length > 0;
             }
@@ -538,6 +535,7 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
+                PromoteFiles();
 
                 string[] promotedPaths = PromotedPaths;
 
@@ -582,6 +580,10 @@ namespace Sensus.DataStores.Local
                 {
                     return Task.CompletedTask;
                 }
+
+                CloseFile();
+                PromoteFiles();
+                OpenFile();
 
                 string[] promotedPaths = PromotedPaths;
 

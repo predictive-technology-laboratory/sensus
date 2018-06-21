@@ -144,11 +144,12 @@ namespace Sensus.UI
 
                 if (selectedProtocol.Shareable)
                 {
-                    actions.Add("Share protocol");
+                    actions.Add("Share Protocol");
                 }
 
-                if (selectedProtocol.ShareLocalData && (selectedProtocol.LocalDataStore?.HasDataToShare ?? false)){
-                    actions.Add("Share local data");
+                if (selectedProtocol.AllowLocalDataShare && (selectedProtocol.LocalDataStore?.HasDataToShare ?? false))
+                {
+                    actions.Add("Share Local Data");
                 }
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
@@ -401,22 +402,13 @@ namespace Sensus.UI
                     // reset the protocol id, as we're creating a new study
                     await selectedProtocol.CopyAsync(true, true);
                 }
-                else if (selectedAction == "Share protocol")
+                else if (selectedAction == "Share Protocol")
                 {
                     await selectedProtocol.ShareAsync();
                 }
-                else if (selectedAction == "Share local data")
+                else if (selectedAction == "Share Local Data")
                 {
-                    try
-                    {
-                        string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
-                        selectedProtocol.LocalDataStore.CreateTarFromLocalData(tarSharePath);
-                        await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + selectedProtocol.Name, "application/octet-stream");
-                    }
-                    catch (Exception ex)
-                    {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
-                    }
+                    await selectedProtocol.LocalDataStore?.ShareLocalDataAsync();
                 }
                 else if (selectedAction == "Group")
                 {

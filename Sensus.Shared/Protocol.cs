@@ -1298,12 +1298,11 @@ namespace Sensus
 
 
         /// <summary>
-        /// Whether or not to allow the user to share local data collected on the device/>.
+        /// Whether or not to allow the user to share local data collected on the device.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Allow Local Data Share:", true, 44)]
-        public bool ShareLocalData { get; set; } = false;
-
+        public bool AllowLocalDataShare { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to reset their participant ID. See <see cref="Protocol.ParticipantId"/> and <see cref="Protocol.StartConfirmationMode"/> for more information.

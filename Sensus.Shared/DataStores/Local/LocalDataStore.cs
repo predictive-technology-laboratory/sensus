@@ -36,6 +36,7 @@ namespace Sensus.DataStores.Local
         [JsonIgnore]
         public abstract string SizeDescription { get; }
 
+        [JsonIgnore]
         public abstract bool HasDataToShare { get; }
 
         /// <summary>
@@ -125,6 +126,23 @@ namespace Sensus.DataStores.Local
 
         public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
 
-        public abstract void CreateTarFromLocalData(string outputPath); 
+        public abstract void CreateTarFromLocalData(string outputPath);
+
+        public Task ShareLocalDataAsync()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
+                    CreateTarFromLocalData(tarSharePath);
+                    await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + Protocol.Name, "application/octet-stream");
+                }
+                catch (Exception ex)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
+                }
+            });
+        }
     }
 }
