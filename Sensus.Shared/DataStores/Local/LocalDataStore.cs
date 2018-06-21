@@ -122,12 +122,6 @@ namespace Sensus.DataStores.Local
             });
         }
 
-        protected abstract bool IsTooLarge();
-
-        public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
-
-        public abstract void CreateTarFromLocalData(string outputPath);
-
         public Task ShareLocalDataAsync()
         {
             return Task.Run(async () =>
@@ -144,5 +138,11 @@ namespace Sensus.DataStores.Local
                 }
             });
         }
+
+        protected abstract bool IsTooLarge();
+
+        public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
+
+        public abstract void CreateTarFromLocalData(string outputPath);
     }
 }
