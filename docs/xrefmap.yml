@@ -21263,6 +21263,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
   fullName: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
   nameWithType: FileLocalDataStore.CompressionLevel
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
+  name: CreateTarFromLocalData(String)
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_System_String_
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
+  nameWithType: FileLocalDataStore.CreateTarFromLocalData(String)
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData*
+  name: CreateTarFromLocalData
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData
+  nameWithType: FileLocalDataStore.CreateTarFromLocalData
 - uid: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
   name: DataWrittenToCurrentFile
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile
@@ -21476,6 +21488,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.#ctor
   fullName: Sensus.DataStores.Local.LocalDataStore.LocalDataStore
   nameWithType: LocalDataStore.LocalDataStore
+- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
+  name: CreateTarFromLocalData(String)
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_System_String_
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
+  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
+  nameWithType: LocalDataStore.CreateTarFromLocalData(String)
+- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData*
+  name: CreateTarFromLocalData
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
+  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
+  nameWithType: LocalDataStore.CreateTarFromLocalData
 - uid: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   name: IsTooLarge()
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_IsTooLarge
@@ -21512,6 +21536,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteDatum
   fullName: Sensus.DataStores.Local.LocalDataStore.WriteDatum
   nameWithType: LocalDataStore.WriteDatum
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  name: WriteToRemote
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote
+  commentId: P:Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  nameWithType: LocalDataStore.WriteToRemote
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemote*
+  name: WriteToRemote
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  nameWithType: LocalDataStore.WriteToRemote
 - uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
   name: WriteToRemoteAsync(CancellationToken)
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteAsync_System_Threading_CancellationToken_
