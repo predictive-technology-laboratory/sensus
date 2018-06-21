@@ -21323,6 +21323,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Flush
   fullName: Sensus.DataStores.Local.FileLocalDataStore.Flush
   nameWithType: FileLocalDataStore.Flush
+- uid: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_HasDataToShare
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  nameWithType: FileLocalDataStore.HasDataToShare
+- uid: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare*
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_HasDataToShare_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  nameWithType: FileLocalDataStore.HasDataToShare
 - uid: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
   name: IsTooLarge()
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_IsTooLarge
@@ -21500,6 +21512,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
   fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
   nameWithType: LocalDataStore.CreateTarFromLocalData
+- uid: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare
+  commentId: P:Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  nameWithType: LocalDataStore.HasDataToShare
+- uid: Sensus.DataStores.Local.LocalDataStore.HasDataToShare*
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  nameWithType: LocalDataStore.HasDataToShare
 - uid: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   name: IsTooLarge()
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_IsTooLarge
@@ -21512,6 +21536,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   fullName: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   nameWithType: LocalDataStore.IsTooLarge
+- uid: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  name: ShareLocalDataAsync()
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync()
+  nameWithType: LocalDataStore.ShareLocalDataAsync()
+- uid: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync*
+  name: ShareLocalDataAsync
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  nameWithType: LocalDataStore.ShareLocalDataAsync
 - uid: Sensus.DataStores.Local.LocalDataStore.SizeDescription
   name: SizeDescription
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_SizeDescription
@@ -38132,6 +38168,18 @@ references:
   commentId: Overload:Sensus.Protocol.AllowCopy
   fullName: Sensus.Protocol.AllowCopy
   nameWithType: Protocol.AllowCopy
+- uid: Sensus.Protocol.AllowLocalDataShare
+  name: AllowLocalDataShare
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare
+  commentId: P:Sensus.Protocol.AllowLocalDataShare
+  fullName: Sensus.Protocol.AllowLocalDataShare
+  nameWithType: Protocol.AllowLocalDataShare
+- uid: Sensus.Protocol.AllowLocalDataShare*
+  name: AllowLocalDataShare
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare_
+  commentId: Overload:Sensus.Protocol.AllowLocalDataShare
+  fullName: Sensus.Protocol.AllowLocalDataShare
+  nameWithType: Protocol.AllowLocalDataShare
 - uid: Sensus.Protocol.AllowParticipantIdReset
   name: AllowParticipantIdReset
   href: api/Sensus.Protocol.html#Sensus_Protocol_AllowParticipantIdReset
