@@ -539,6 +539,11 @@ namespace Sensus.DataStores.Local
 
                 string[] promotedPaths = PromotedPaths;
 
+                if (promotedPaths.Length == 0)
+                {
+                    throw new Exception("No data available.");
+                }
+
                 using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
                 {
                     using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
@@ -698,7 +703,8 @@ namespace Sensus.DataStores.Local
             {
                 // close the current file, as we're about to delete/move all files in the storage directory
                 // that do not have a file extension. the file currently being written is one such file, and 
-                // we'll get an exception if we don't close it before moving it.
+                // we'll get an exception if we don't close it before moving it. if there is no current file
+                // this will have no effect.
                 CloseFile();
 
                 // process each file in the storage directory
@@ -738,8 +744,12 @@ namespace Sensus.DataStores.Local
                     }
                 }
 
-                // open a new file for writing
-                OpenFile();
+                // open a new file for writing if the data store is currently running. if it is not
+                // running, then we shouldn't open a new file as it will likely never be closed.
+                if (Running)
+                {
+                    OpenFile();
+                }
             }
         }
 
@@ -770,7 +780,11 @@ namespace Sensus.DataStores.Local
 
             lock (_locker)
             {
-                CloseFile();
+                // promote any existing files. this will encrypt any files if needed and ready them
+                // for local sharing. a new file will not be opened because the data store has already
+                // been stopped above.
+                PromoteFiles();
+
                 _dataWrittenToCurrentFile = 0;
             }
         }
