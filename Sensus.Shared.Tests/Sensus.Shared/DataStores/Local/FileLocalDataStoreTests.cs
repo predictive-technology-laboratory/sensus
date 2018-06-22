@@ -84,13 +84,13 @@ namespace Sensus.Tests.DataStores.Local
 
             double currentSizeMB = 0;
 
-            string path = WriteLocalDataStore(data, CompressionLevel.NoCompression, fileLocalDataStore =>
+            WriteLocalDataStore(data, CompressionLevel.NoCompression, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            }, 1).Single();
+            });
 
             Assert.True(currentSizeMB > 0);
         }
@@ -103,13 +103,13 @@ namespace Sensus.Tests.DataStores.Local
 
             double currentSizeMB = 0;
 
-            string path = WriteLocalDataStore(data, CompressionLevel.Fastest, fileLocalDataStore =>
+            WriteLocalDataStore(data, CompressionLevel.Fastest, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            }, 1).Single();
+            });
 
             Assert.True(currentSizeMB > 0);
         }
@@ -122,13 +122,13 @@ namespace Sensus.Tests.DataStores.Local
 
             double currentSizeMB = 0;
 
-            string path = WriteLocalDataStore(data, CompressionLevel.Optimal, fileLocalDataStore =>
+            WriteLocalDataStore(data, CompressionLevel.Optimal, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
-            }, 1).Single();
+            });
 
             Assert.True(currentSizeMB > 0);
         }
@@ -260,13 +260,13 @@ namespace Sensus.Tests.DataStores.Local
             tarFile.Close();
 
             // check that the same number of files were created
-            Assert.AreEqual(numFiles, Directory.GetFiles(untarDirectory, "*.gz", SearchOption.AllDirectories).Length);
+            Assert.AreEqual(numFiles, Directory.GetFiles(untarDirectory, "*.json.gz", SearchOption.AllDirectories).Length);
 
             // check that the files' contents are byte-equal
             foreach (string path in paths)
             {
-                byte[] originalBytes = File.ReadAllBytes(path + ".json.gz");
-                string untarredPath = Directory.GetFiles(untarDirectory, Path.GetFileName(path) + ".json.gz", SearchOption.AllDirectories).Single();
+                byte[] originalBytes = File.ReadAllBytes(path);
+                string untarredPath = Directory.GetFiles(untarDirectory, Path.GetFileName(path), SearchOption.AllDirectories).Single();
                 byte[] untarredBytes = File.ReadAllBytes(untarredPath);
                 Assert.IsTrue(originalBytes.SequenceEqual(untarredBytes));
             }
@@ -328,9 +328,10 @@ namespace Sensus.Tests.DataStores.Local
             {
                 protocol.LocalDataStore.Start();
                 WriteData(data, localDataStore, postWriteAction);
-                paths.Add(localDataStore.Path);
+                string path = localDataStore.Path + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
+                paths.Add(path);
                 localDataStore.Stop();
-
+                Assert.True(File.Exists(path));
                 Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
             }
 
