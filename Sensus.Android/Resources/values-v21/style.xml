@@ -1,6 +1,5 @@
 ﻿<resources>
-  <style name="MyTheme" parent="MyTheme.Base">
-    <!--If you are using MasterDetailPage you will want to set these, else you can leave them out-->
+  <style name="SensusTheme" parent="SensusTheme.Base">
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
   </style>

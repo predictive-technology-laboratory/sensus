@@ -313,9 +313,6 @@ Sensus.Android.Tests.AppCenter for more on running these tests in the AppCenter 
     <AndroidResource Include="..\Sensus.Android\Resources\layout\Toolbar.axml">
       <Link>Resources\layout\Toolbar.axml</Link>
     </AndroidResource>
-    <AndroidResource Include="..\Sensus.Android\Resources\values\colors.xml">
-      <Link>Resources\values\colors.xml</Link>
-    </AndroidResource>
     <AndroidResource Include="..\Sensus.Android\Resources\values\style.xml">
       <Link>Resources\values\style.xml</Link>
     </AndroidResource>

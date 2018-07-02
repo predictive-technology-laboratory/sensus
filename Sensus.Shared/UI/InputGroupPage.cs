@@ -133,8 +133,9 @@ namespace Sensus.UI
                             {
                                 Content = inputView,
                                 BorderColor = Color.Accent,
+                                BackgroundColor = Color.Transparent,
                                 VerticalOptions = LayoutOptions.Start,
-                                HasShadow = true,
+                                HasShadow = false,
                                 Padding = new Thickness(10)
                             };
                         }
