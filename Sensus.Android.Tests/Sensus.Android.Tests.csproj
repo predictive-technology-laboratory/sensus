@@ -307,6 +307,21 @@ Sensus.Android.Tests.AppCenter for more on running these tests in the AppCenter 
     <AndroidResource Include="..\Sensus.Android\Resources\drawable-hdpi\ic_launcher.png">
       <Link>Resources\drawable-hdpi\ic_launcher.png</Link>
     </AndroidResource>
+    <AndroidResource Include="..\Sensus.Android\Resources\layout\Tabbar.axml">
+      <Link>Resources\layout\Tabbar.axml</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\Sensus.Android\Resources\layout\Toolbar.axml">
+      <Link>Resources\layout\Toolbar.axml</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\Sensus.Android\Resources\values\colors.xml">
+      <Link>Resources\values\colors.xml</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\Sensus.Android\Resources\values\style.xml">
+      <Link>Resources\values\style.xml</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\Sensus.Android\Resources\values-v21\style.xml">
+      <Link>Resources\values-v21\style.xml</Link>
+    </AndroidResource>
   </ItemGroup>
   <Import Project="..\Sensus.Shared.Tests\Sensus.Shared.Tests.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared.Tests\Sensus.Shared.Tests.projitems')" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared\Sensus.Shared.projitems')" />
