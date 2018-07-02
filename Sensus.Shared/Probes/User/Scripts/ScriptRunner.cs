@@ -306,7 +306,7 @@ namespace Sensus.Probes.User.Scripts
             RunOnStart = false;
             DisplayProgress = true;
             RunMode = RunMode.SingleKeepNewest;
-            IncompleteSubmissionConfirmation = "You have not completed all required fields. Do you want to continue?";
+            IncompleteSubmissionConfirmation = "You have not completed all required fields on the current page. Do you want to continue?";
             ShuffleInputGroups = false;
 
             Triggers.CollectionChanged += (o, e) =>

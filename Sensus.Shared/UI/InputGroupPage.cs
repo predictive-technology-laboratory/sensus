@@ -28,6 +28,7 @@ namespace Sensus.UI
         {
             Backward,
             Forward,
+            Submit,
             Cancel
         }
 
@@ -221,19 +222,35 @@ namespace Sensus.UI
                 else
                 {
                     string confirmationMessage = "";
+                    NavigationResult navigationResult = NavigationResult.Forward;
 
+                    // warn about incomplete inputs if a message is provided
                     if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
                     {
                         confirmationMessage += incompleteSubmissionConfirmation;
                     }
-                    else if (nextButton.Text == "Submit" && !string.IsNullOrWhiteSpace(submitConfirmation))
+
+                    if (nextButton.Text == "Submit")
                     {
-                        confirmationMessage += submitConfirmation;
+                        // confirm submission if a message is provided
+                        if (!string.IsNullOrWhiteSpace(submitConfirmation))
+                        {
+                            // if we already warned about incomplete fields, make the submit confirmation sound natural.
+                            if (!string.IsNullOrWhiteSpace(confirmationMessage))
+                            {
+                                confirmationMessage += " Also, this is the final page. ";
+                            }
+
+                            // confirm submission
+                            confirmationMessage += submitConfirmation;
+                        }
+
+                        navigationResult = NavigationResult.Submit;
                     }
 
                     if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
                     {
-                        _responseTaskCompletionSource.TrySetResult(NavigationResult.Forward);
+                        _responseTaskCompletionSource.TrySetResult(navigationResult);
                     }
                 }
             };

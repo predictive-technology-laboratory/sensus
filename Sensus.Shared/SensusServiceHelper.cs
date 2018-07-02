@@ -1064,8 +1064,12 @@ namespace Sensus
 
                                 _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
 
-                                // animate pop if the user submitted or canceled
-                                await navigation.PopModalAsync((stepNumber == inputGroups.Count() && navigationResult == InputGroupPage.NavigationResult.Forward) || navigationResult == InputGroupPage.NavigationResult.Cancel);
+                                // animate pop if the user submitted or canceled. when doing this, reference the navigation context
+                                // on the page rather than the local 'navigation' variable. this is necessary because the navigation
+                                // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+                                // notification.
+                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
+                                                                              navigationResult == InputGroupPage.NavigationResult.Cancel);
 
                                 if (navigationResult == InputGroupPage.NavigationResult.Backward)
                                 {
@@ -1074,13 +1078,16 @@ namespace Sensus
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Forward)
                                 {
-                                    // keep the group in the back stack and move to the next group
+                                    // keep the group in the back stack.
                                     inputGroupNumBackStack.Push(inputGroupNum);
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
                                 {
                                     inputGroups = null;
                                 }
+
+                                // there's nothing to do if the navigation result is submit, since we've finished the final
+                                // group and we are about to return.
                             }
                         });
                     }
