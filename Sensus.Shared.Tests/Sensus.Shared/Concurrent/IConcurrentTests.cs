@@ -271,5 +271,36 @@ namespace Sensus.Tests.Concurrent
             //we check test because in the case of a deadlock I'm not sure what output will be returned...
             Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the func didn't finish adding items");
         }
+
+        [Test]
+        public void ExecuteThreadSafeActionCatchesExceptionFromSameThread()
+        {
+            Assert.Throws(typeof(Exception), new TestDelegate(() =>
+            {
+                _concurrent.ExecuteThreadSafe(() =>
+                {
+                    _concurrent.ExecuteThreadSafe(() =>
+                    {
+                        throw new Exception();
+                    });
+                });
+            }));
+        }
+
+        [Test]
+        public void ExecuteThreadSafeFuncCatchesExceptionFromSameThread()
+        {
+            Assert.Throws(typeof(Exception), new TestDelegate(() =>
+            {
+                _concurrent.ExecuteThreadSafe(() =>
+                {
+                    int x = _concurrent.ExecuteThreadSafe(() =>
+                    {
+                        throw new Exception();
+                        return 1;
+                    });
+                });
+            }));
+        }
     }
 }

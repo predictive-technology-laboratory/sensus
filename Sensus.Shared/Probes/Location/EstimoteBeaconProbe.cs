@@ -130,6 +130,11 @@ namespace Sensus.Probes.Location
                 throw new Exception("Must provide Estimote Cloud application ID and token.");
             }
 
+            if (_beacons.Count == 0)
+            {
+                throw new Exception("Must add beacons.");
+            }
+
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
@@ -193,6 +198,7 @@ namespace Sensus.Probes.Location
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Failed to get Estimote beacons from Cloud:  " + ex, LoggingLevel.Normal, GetType());
+                throw ex;
             }
 
             return sensusBeaconNames;

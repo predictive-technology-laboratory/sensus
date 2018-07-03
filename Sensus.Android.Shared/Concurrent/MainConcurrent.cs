@@ -27,7 +27,6 @@ namespace Sensus.Android.Concurrent
     public class MainConcurrent : Disposable, IConcurrent
     {
         private readonly int? _waitTime;
-
         private readonly Handler _handler;
 
         public MainConcurrent(int? waitTime = null)
@@ -49,7 +48,8 @@ namespace Sensus.Android.Concurrent
             }
             else
             {
-                var runWait = new ManualResetEvent(false);
+                ManualResetEvent actionWait = new ManualResetEvent(false);
+                Exception actionException = null;
 
                 _handler.Post(() =>
                 {
@@ -57,19 +57,28 @@ namespace Sensus.Android.Concurrent
                     {
                         action();
                     }
+                    catch (Exception ex)
+                    {
+                        actionException = ex;
+                    }
                     finally
                     {
-                        runWait.Set();
+                        actionWait.Set();
                     }
                 });
 
                 if (_waitTime == null)
                 {
-                    runWait.WaitOne();
+                    actionWait.WaitOne();
                 }
                 else
                 {
-                    runWait.WaitOne(_waitTime.Value);
+                    actionWait.WaitOne(_waitTime.Value);
+                }
+
+                if (actionException != null)
+                {
+                    throw actionException;
                 }
             }
         }
@@ -87,31 +96,41 @@ namespace Sensus.Android.Concurrent
             }
             else
             {
-                var runWait = new ManualResetEvent(false);
-                var result = default(T);
+                T funcResult = default(T);
+                ManualResetEvent funcWait = new ManualResetEvent(false);
+                Exception funcException = null;
 
                 _handler.Post(() =>
                 {
                     try
                     {
-                        result = func();
+                        funcResult = func();
+                    }
+                    catch (Exception ex)
+                    {
+                        funcException = ex;
                     }
                     finally
                     {
-                        runWait.Set();
+                        funcWait.Set();
                     }
                 });
 
                 if (_waitTime == null)
                 {
-                    runWait.WaitOne();
+                    funcWait.WaitOne();
                 }
                 else
                 {
-                    runWait.WaitOne(_waitTime.Value);
+                    funcWait.WaitOne(_waitTime.Value);
                 }
 
-                return result;
+                if (funcException != null)
+                {
+                    throw funcException;
+                }
+
+                return funcResult;
             }
         }
 
