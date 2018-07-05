@@ -82,7 +82,9 @@ namespace Sensus.UI
 
             contentLayout.Children.Add(triggerDefinitionLayout);
 
+            bool allowChangeCalculation = false;
             Switch changeSwitch = new Switch();
+            bool allowRegularExpression = false;
             Switch regexSwitch = new Switch();
             Switch fireRepeatedlySwitch = new Switch();
             TimePicker startTimePicker = new TimePicker { HorizontalOptions = LayoutOptions.FillAndExpand };
@@ -97,14 +99,18 @@ namespace Sensus.UI
                 triggerDefinitionLayout.Children.Clear();
 
                 if (probePicker.SelectedIndex < 0)
+                {
                     return;
+                }
 
                 _selectedProbe = enabledProbes[probePicker.SelectedIndex];
 
                 PropertyInfo[] datumProperties = _selectedProbe.DatumType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.GetCustomAttributes<ProbeTriggerProperty>().Any()).ToArray();
 
                 if (datumProperties.Length == 0)
+                {
                     return;
+                }
 
                 #region datum property picker
                 Label datumPropertyLabel = new Label
@@ -186,8 +192,6 @@ namespace Sensus.UI
                     ProbeTriggerProperty datumTriggerAttribute = _selectedDatumProperty.GetCustomAttribute<ProbeTriggerProperty>();
 
                     View conditionValueStackView = null;
-                    bool allowChangeCalculation = false;
-                    bool allowRegularExpression = false;
 
                     if (datumTriggerAttribute is ListProbeTriggerProperty)
                     {
@@ -316,7 +320,7 @@ namespace Sensus.UI
                     FontSize = 20
                 };
 
-                fireRepeatedlySwitch.IsToggled = false;
+                fireRepeatedlySwitch.IsToggled = true;
 
                 triggerDefinitionLayout.Children.Add(new StackLayout
                 {
@@ -372,7 +376,7 @@ namespace Sensus.UI
             {
                 try
                 {
-                    _scriptRunner.Triggers.Add(new Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
+                    _scriptRunner.Triggers.Add(new Probes.User.Scripts.Trigger(_selectedProbe, _selectedDatumProperty, _selectedCondition, _conditionValue, allowChangeCalculation && changeSwitch.IsToggled, fireRepeatedlySwitch.IsToggled, allowRegularExpression && regexSwitch.IsToggled, startTimePicker.Time, endTimePicker.Time));
                     await Navigation.PopAsync();
                 }
                 catch (Exception ex)

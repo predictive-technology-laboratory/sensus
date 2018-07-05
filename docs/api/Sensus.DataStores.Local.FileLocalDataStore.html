@@ -102,6 +102,12 @@ supports encryption.</p>
       <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteIfTooLargeAsync_System_Threading_CancellationToken_">LocalDataStore.WriteToRemoteIfTooLargeAsync(CancellationToken)</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync">LocalDataStore.ShareLocalDataAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote">LocalDataStore.WriteToRemote</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Restart">DataStore.Restart()</a>
     </div>
     <div>
@@ -285,6 +291,33 @@ public bool Encrypt { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_HasDataToShare_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_HasDataToShare" data-uid="Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare">HasDataToShare</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool HasDataToShare { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare">LocalDataStore.HasDataToShare</a></div>
+  
+  
   <a id="Sensus_DataStores_Local_FileLocalDataStore_Path_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Path*"></a>
   <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Path" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Path">Path</h4>
   <div class="markdown level1 summary"><p>Gets the path.</p>
@@ -424,6 +457,35 @@ public bool Encrypt { get; set; }</code></pre>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
   </div>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_System_String_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)">CreateTarFromLocalData(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void CreateTarFromLocalData(string outputPath)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">outputPath</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_System_String_">LocalDataStore.CreateTarFromLocalData(String)</a></div>
   
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_Flush_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Flush*"></a>

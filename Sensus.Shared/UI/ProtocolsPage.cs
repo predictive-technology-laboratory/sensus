@@ -144,7 +144,12 @@ namespace Sensus.UI
 
                 if (selectedProtocol.Shareable)
                 {
-                    actions.Add("Share");
+                    actions.Add("Share Protocol");
+                }
+
+                if (selectedProtocol.AllowLocalDataShare && (selectedProtocol.LocalDataStore?.HasDataToShare ?? false))
+                {
+                    actions.Add("Share Local Data");
                 }
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
@@ -397,9 +402,13 @@ namespace Sensus.UI
                     // reset the protocol id, as we're creating a new study
                     await selectedProtocol.CopyAsync(true, true);
                 }
-                else if (selectedAction == "Share")
+                else if (selectedAction == "Share Protocol")
                 {
                     await selectedProtocol.ShareAsync();
+                }
+                else if (selectedAction == "Share Local Data")
+                {
+                    await selectedProtocol.LocalDataStore?.ShareLocalDataAsync();
                 }
                 else if (selectedAction == "Group")
                 {
