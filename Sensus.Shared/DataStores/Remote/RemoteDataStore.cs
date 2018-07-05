@@ -47,6 +47,7 @@ namespace Sensus.DataStores.Remote
         private DateTime? _mostRecentSuccessfulWriteTime;
         private ScheduledCallback _writeCallback;
         private bool _requireWiFi;
+        private bool _writeToRemoteOnACPower;
         private bool _requireCharging;
         private float _requiredBatteryChargeLevelPercent;
         private string _userNotificationMessage;
@@ -118,6 +119,18 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
+        /// Whether to start writing to remote when AC Power is connected. 
+        /// This will still respect the other write to remote settings (ie: Require WiFi).
+        /// </summary>
+        /// <value><c>true</c> to start writing when we get the AC Power connected event, otherwise <c>false</c>.</value>
+        [OnOffUiProperty("Write to Remote on AC Power:", true, 54)]
+        public bool WriteToRemoteOnACPower
+        {
+            get { return _writeToRemoteOnACPower; }
+            set { _writeToRemoteOnACPower = value; }
+        }
+
+        /// <summary>
         /// The battery charge percent required to write data to the <see cref="RemoteDataStore"/>. This value is 
         /// only considered when <see cref="RequireCharging"/> is <c>false</c>. Since remote data storage relies on wireless
         /// data transmission, significant battery consumption may result. This value provides flexibility when combined with 
@@ -126,7 +139,7 @@ namespace Sensus.DataStores.Remote
         /// power source only when the battery is almost fully charged. This will minimize user irritation.
         /// </summary>
         /// <value>The required battery charge level percent.</value>
-        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 54, false)]
+        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 55, false)]
         public float RequiredBatteryChargeLevelPercent
         {
             get { return _requiredBatteryChargeLevelPercent; }
@@ -147,12 +160,15 @@ namespace Sensus.DataStores.Remote
         /// will open Sensus to transmit the data.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("User Notification Message:", true, 55, true)]
+        [EntryStringUiProperty("User Notification Message:", true, 56, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }
             set { _userNotificationMessage = value; }
         }
+
+
+
 
         [JsonIgnore]
         public abstract bool CanRetrieveWrittenData { get; }
@@ -162,6 +178,7 @@ namespace Sensus.DataStores.Remote
             _writeTimeoutMinutes = 5;
             _mostRecentSuccessfulWriteTime = null;
             _requireWiFi = true;
+            _writeToRemoteOnACPower = true;
             _requireCharging = true;
             _requiredBatteryChargeLevelPercent = 20;
             _userNotificationMessage = "Please open this notification to submit your data.";
@@ -174,14 +191,17 @@ namespace Sensus.DataStores.Remote
 
             _powerConnectionChanged = async (sender, connected) =>
             {
-                if (connected == true)
+                if (_writeToRemoteOnACPower == true)
                 {
-                    _cancellationToken = new CancellationTokenSource();
-                     await WriteLocalDataStoreAsync(_cancellationToken.Token);
-                }
-                else
-                {
-                    _cancellationToken?.Cancel();//we must be disconnected so we need to use the cancellation token to cancel the request
+                    if (connected == true)
+                    {
+                        _cancellationToken = new CancellationTokenSource();
+                        await WriteLocalDataStoreAsync(_cancellationToken.Token);
+                    }
+                    else
+                    {
+                        _cancellationToken?.Cancel();//we must be disconnected so we need to use the cancellation token to cancel the request
+                    }
                 }
             };
         }
