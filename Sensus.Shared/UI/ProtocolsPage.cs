@@ -213,7 +213,7 @@ namespace Sensus.UI
                     {
                         return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
 
-                    }).ToList(), null, null));
+                    }).ToList()));
                 }
                 else if (selectedAction == "Email Study Manager for Help")
                 {
@@ -519,28 +519,7 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
             {
-                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
-
-                    async () =>
-                    {
-                        string sharePath = null;
-                        try
-                        {
-                            sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
-                            SensusServiceHelper.Get().Logger.CopyTo(sharePath);
-                        }
-                        catch (Exception)
-                        {
-                            sharePath = null;
-                        }
-
-                        if (sharePath != null)
-                        {
-                            await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
-                        }
-                    },
-
-                    () => SensusServiceHelper.Get().Logger.Clear()));
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
 
             }, ToolbarItemOrder.Secondary));
 
