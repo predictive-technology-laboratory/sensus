@@ -13,19 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Sensus.Context;
 using Sensus.UI.Inputs;
-using Sensus.Exceptions;
-using ZXing.Mobile;
-using ZXing.Net.Mobile.Forms;
-using ZXing;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 
 #if __ANDROID__
 using Sensus.Android;
