@@ -430,6 +430,17 @@ sensus.write.rdata.files = function(data, directory, file.name.prefix = "")
   }
 }
 
+#' Lists activities in a given phase and state.
+#' 
+#' @param data Data, as returned by \code{\link{sensus.read.json.files}}.
+#' @param phase Phase of activity (Starting, During, Stopping)
+#' @param state State of phase (Active, Inactive, Unknown)
+#' 
+sensus.list.activities = function(data, phase = "Starting", state = "Active")
+{
+  data$ActivityDatum[data$ActivityDatum$Phase == phase & data$ActivityDatum$State == state, ]
+}
+
 #' Plot accelerometer data.
 #' 
 #' @method plot AccelerometerDatum

@@ -150,6 +150,31 @@ the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalData
   </h3>
   
   
+  <a id="Sensus_DataStores_Local_LocalDataStore_HasDataToShare_" data-uid="Sensus.DataStores.Local.LocalDataStore.HasDataToShare*"></a>
+  <h4 id="Sensus_DataStores_Local_LocalDataStore_HasDataToShare" data-uid="Sensus.DataStores.Local.LocalDataStore.HasDataToShare">HasDataToShare</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract bool HasDataToShare { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_DataStores_Local_LocalDataStore_SizeDescription_" data-uid="Sensus.DataStores.Local.LocalDataStore.SizeDescription*"></a>
   <h4 id="Sensus_DataStores_Local_LocalDataStore_SizeDescription" data-uid="Sensus.DataStores.Local.LocalDataStore.SizeDescription">SizeDescription</h4>
   <div class="markdown level1 summary"></div>
@@ -173,8 +198,65 @@ the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalData
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_DataStores_Local_LocalDataStore_WriteToRemote_" data-uid="Sensus.DataStores.Local.LocalDataStore.WriteToRemote*"></a>
+  <h4 id="Sensus_DataStores_Local_LocalDataStore_WriteToRemote" data-uid="Sensus.DataStores.Local.LocalDataStore.WriteToRemote">WriteToRemote</h4>
+  <div class="markdown level1 summary"><p>Whether or not to transfer data from the local data store to the remote data store. If disabled, data
+will accumulate indefinitely on local storage media. When the protocol is stopped, the user may then (if
+able to access the protocol settings) offload the data from the phone (e.g., via email attachment).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Write To Remote:&quot;, true, 1)]
+public bool WriteToRemote { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to write remote; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
+  
+  
+  <a id="Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_" data-uid="Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData*"></a>
+  <h4 id="Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_System_String_" data-uid="Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)">CreateTarFromLocalData(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract void CreateTarFromLocalData(string outputPath)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">outputPath</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_DataStores_Local_LocalDataStore_IsTooLarge_" data-uid="Sensus.DataStores.Local.LocalDataStore.IsTooLarge*"></a>
@@ -196,6 +278,31 @@ the <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html">LocalData
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync_" data-uid="Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync*"></a>
+  <h4 id="Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync" data-uid="Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync">ShareLocalDataAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ShareLocalDataAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

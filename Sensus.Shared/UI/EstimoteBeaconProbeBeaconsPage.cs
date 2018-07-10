@@ -65,14 +65,14 @@ namespace Sensus.UI
                     {
                         beacons = estimoteBeaconProbe.GetSensusBeaconNamesFromCloud();
 
-                        if (beacons == null)
+                        if (beacons.Count == 0)
                         {
-                            throw new Exception("No beacons");
+                            throw new Exception("No beacons present within Estimote Cloud.");
                         }
                     }
                     catch (Exception ex)
                     {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve Estimote beacons from Cloud:  " + ex);
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Cannot add beacon:  " + ex);
                         return;
                     }
 
