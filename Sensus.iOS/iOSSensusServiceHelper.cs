@@ -28,8 +28,6 @@ using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
 using TTGSnackBar;
-using Sensus.Probes.Device;
-using Sensus.iOS.Probes.Context;
 
 namespace Sensus.iOS
 {
@@ -41,7 +39,6 @@ namespace Sensus.iOS
 
         private DateTime _nextToastTime;
         private readonly object _toastLocker = new object();
-        private PowerConnectionChangeListener _PowerConnectionChange;
 
         public override bool IsCharging
         {

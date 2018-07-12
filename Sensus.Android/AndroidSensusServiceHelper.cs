@@ -26,21 +26,16 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using Newtonsoft.Json;
-using Sensus;
-using Xamarin;
 using Sensus.Probes.Location;
 using Sensus.Probes;
 using Sensus.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
-using Android.Media;
 using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
-using Sensus.Android;
 using System.Threading.Tasks;
-using Sensus.Probes.Device;
 using Sensus.Context;
 
 namespace Sensus.Android
@@ -55,7 +50,6 @@ namespace Sensus.Android
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private bool _userDeniedBluetoothEnable;
-        private PowerConnectionChangeListener _acPowerChangeClass;
 
         public override string DeviceId
         {
