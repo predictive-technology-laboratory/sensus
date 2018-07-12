@@ -80,8 +80,6 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override PowerConnectionChange AcPowerChangeClass => throw new NotImplementedException();
-
         protected override bool IsOnMainThread
         {
             get

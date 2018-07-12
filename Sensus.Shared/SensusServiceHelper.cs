@@ -359,8 +359,6 @@ namespace Sensus
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
-        [JsonIgnore]
-        public abstract Probes.Device.PowerConnectionChange AcPowerChangeClass { get; } //set this with the concrete android implementation
 
         [JsonIgnore]
         public abstract float BatteryChargePercent { get; }

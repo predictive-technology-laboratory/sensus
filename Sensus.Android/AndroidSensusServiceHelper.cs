@@ -55,7 +55,7 @@ namespace Sensus.Android
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private bool _userDeniedBluetoothEnable;
-        private PowerConnectionChange _acPowerChangeClass;
+        private PowerConnectionChangeListener _acPowerChangeClass;
 
         public override string DeviceId
         {
@@ -160,18 +160,6 @@ namespace Sensus.Android
                 {
                     return Looper.MyLooper() == _service.MainLooper;
                 }
-            }
-        }
-
-        public override PowerConnectionChange AcPowerChangeClass
-        {
-            get
-            {
-                if(_acPowerChangeClass == null)
-                {
-                    _acPowerChangeClass = new Probes.Device.AndroidPowerConnectionChange();
-                }
-                return _acPowerChangeClass;
             }
         }
 

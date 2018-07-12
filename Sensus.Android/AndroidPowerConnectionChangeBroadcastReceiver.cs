@@ -14,12 +14,10 @@
 
 using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Telephony;
-using Sensus.Probes.Communication;
+using Sensus.Exceptions;
 using System;
 
-namespace Sensus.Android.Probes.Device
+namespace Sensus.Android
 {
     /// <summary>
     /// https://developer.android.com/reference/android/content/Intent#ACTION_POWER_CONNECTED
@@ -34,23 +32,22 @@ namespace Sensus.Android.Probes.Device
     [IntentFilter(new string[] { Intent.ActionPowerConnected, Intent.ActionPowerDisconnected }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidPowerConnectionChangeBroadcastReceiver : BroadcastReceiver
     {
-        public static event EventHandler<bool> POWER_CONNECTION_CHANGE;
+        public static event EventHandler<bool> POWER_CONNECTION_CHANGED;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            
             try
             {
-                if (POWER_CONNECTION_CHANGE != null && intent != null &&
-                     (intent.Action == Intent.ActionPowerConnected || intent.Action == Intent.ActionPowerDisconnected)
-                   )
+                if (POWER_CONNECTION_CHANGED != null &&
+                    intent != null &&
+                    (intent.Action == Intent.ActionPowerConnected || intent.Action == Intent.ActionPowerDisconnected))
                 {
-                    var connected = intent.Action == Intent.ActionPowerConnected;
-                    POWER_CONNECTION_CHANGE(this, connected);
+                    POWER_CONNECTION_CHANGED(this, intent.Action == Intent.ActionPowerConnected);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SensusException.Report("Failed to process power connection change intent.", ex);
             }
         }
     }
