@@ -46,10 +46,13 @@ namespace Sensus.DataStores.Remote
         private int _writeTimeoutMinutes;
         private DateTime? _mostRecentSuccessfulWriteTime;
         private ScheduledCallback _writeCallback;
+        private bool _writeOnAcPowerConnect;
         private bool _requireWiFi;
         private bool _requireCharging;
         private float _requiredBatteryChargeLevelPercent;
         private string _userNotificationMessage;
+        private EventHandler<bool> _powerConnectionChanged;
+        private CancellationTokenSource _acPowerConnectWriteCancellationToken;
 
         /// <summary>
         /// How many milliseconds to pause between each data write cycle.
@@ -93,11 +96,22 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
+        /// Whether to start writing to remote when the phone is plugged into AC power. This will still respect the other settings (e.g., <see cref="RequireWiFi"/>).
+        /// </summary>
+        /// <value><c>true</c> to start writing when the phone is plugged into AC power, otherwise <c>false</c>.</value>
+        [OnOffUiProperty("Write on AC Power Connect:", true, 52)]
+        public bool WriteOnAcPowerConnect
+        {
+            get { return _writeOnAcPowerConnect; }
+            set { _writeOnAcPowerConnect = value; }
+        }
+
+        /// <summary>
         /// Whether to require a WiFi connection when uploading data. If this is turned off, substantial data charges might result since 
         /// data will be transferred over the cellular network if WiFi is not available.
         /// </summary>
         /// <value><c>true</c> if WiFi is required; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Require WiFi:", true, 52)]
+        [OnOffUiProperty("Require WiFi:", true, 53)]
         public bool RequireWiFi
         {
             get { return _requireWiFi; }
@@ -108,7 +122,7 @@ namespace Sensus.DataStores.Remote
         /// Whether to require external power when uploading data.
         /// </summary>
         /// <value><c>true</c> to require charging; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Require Charging:", true, 53)]
+        [OnOffUiProperty("Require Charging:", true, 54)]
         public bool RequireCharging
         {
             get { return _requireCharging; }
@@ -124,7 +138,7 @@ namespace Sensus.DataStores.Remote
         /// power source only when the battery is almost fully charged. This will minimize user irritation.
         /// </summary>
         /// <value>The required battery charge level percent.</value>
-        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 54, false)]
+        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 55, false)]
         public float RequiredBatteryChargeLevelPercent
         {
             get { return _requiredBatteryChargeLevelPercent; }
@@ -145,7 +159,7 @@ namespace Sensus.DataStores.Remote
         /// will open Sensus to transmit the data.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("User Notification Message:", true, 55, true)]
+        [EntryStringUiProperty("User Notification Message:", true, 56, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }
@@ -159,6 +173,7 @@ namespace Sensus.DataStores.Remote
         {
             _writeTimeoutMinutes = 5;
             _mostRecentSuccessfulWriteTime = null;
+            _writeOnAcPowerConnect = true;
             _requireWiFi = true;
             _requireCharging = true;
             _requiredBatteryChargeLevelPercent = 20;
@@ -170,7 +185,22 @@ namespace Sensus.DataStores.Remote
             WriteDelayMS = 1000 * 60 * 60;  // every 60 minutes
 #endif
 
-            // instantiate ac handler here
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                if (connected == true)
+                {
+                    if (_writeOnAcPowerConnect)
+                    {
+                        _acPowerConnectWriteCancellationToken = new CancellationTokenSource();
+                        await WriteLocalDataStoreAsync(_acPowerConnectWriteCancellationToken.Token);
+                    }
+                }
+                else
+                {
+                    // cancel any prior write attempts resulting from AC power connection
+                    _acPowerConnectWriteCancellationToken?.Cancel();
+                }
+            };
         }
 
         public override void Start()
@@ -192,14 +222,15 @@ namespace Sensus.DataStores.Remote
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
-
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
         public override void Stop()
         {
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
 
-            // remove handler
+            // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
         public override void Reset()
