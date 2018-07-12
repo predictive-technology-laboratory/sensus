@@ -315,7 +315,7 @@ namespace Sensus
             {
                 _flashNotificationsEnabled = value;
             }
-        }      
+        }
 
         public ConcurrentObservableCollection<Script> ScriptsToRun
         {
@@ -750,7 +750,7 @@ namespace Sensus
                 {
                     List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
                     scriptsFromSameRunner.Add(script);
-                    
+
                     Script scriptToKeep = null;
                     List<Script> scriptsToRemove = null;
 
@@ -1164,7 +1164,7 @@ namespace Sensus
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                     await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
+                    await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
                 }
             });
         }

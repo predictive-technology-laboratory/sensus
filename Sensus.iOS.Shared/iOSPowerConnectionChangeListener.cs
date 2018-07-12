@@ -28,7 +28,7 @@ namespace Sensus.iOS
                 {
                     UIDeviceBatteryState batteryState = UIDevice.CurrentDevice.BatteryState;
                     bool connected = batteryState == UIDeviceBatteryState.Charging || batteryState == UIDeviceBatteryState.Full;
-                    POWER_CONNECTION_CHANGED?.Invoke(this, connected);
+                    PowerConnectionChanged?.Invoke(this, connected);
                 }
                 catch (Exception ex)
                 {

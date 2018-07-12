@@ -15,7 +15,6 @@
 using System;
 using System.Threading.Tasks;
 using Sensus.Probes;
-using Sensus.Probes.Device;
 using Xamarin.Forms;
 
 namespace Sensus.Tests.Classes

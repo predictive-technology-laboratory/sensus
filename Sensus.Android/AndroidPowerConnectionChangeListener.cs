@@ -20,7 +20,7 @@ namespace Sensus.Android
         {
             AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED += (sender, connected) =>
             {
-                POWER_CONNECTION_CHANGED?.Invoke(sender, connected);
+                PowerConnectionChanged?.Invoke(sender, connected);
             };
         }
     }

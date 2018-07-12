@@ -18,6 +18,6 @@ namespace Sensus
 {
     public abstract class PowerConnectionChangeListener
     {
-        public EventHandler<bool> POWER_CONNECTION_CHANGED;
+        public EventHandler<bool> PowerConnectionChanged;
     }
 }

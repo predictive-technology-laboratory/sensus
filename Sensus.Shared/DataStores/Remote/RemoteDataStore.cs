@@ -173,8 +173,8 @@ namespace Sensus.DataStores.Remote
         {
             _writeTimeoutMinutes = 5;
             _mostRecentSuccessfulWriteTime = null;
-            _requireWiFi = true;
             _writeOnAcPowerConnect = true;
+            _requireWiFi = true;
             _requireCharging = true;
             _requiredBatteryChargeLevelPercent = 20;
             _userNotificationMessage = "Please open this notification to submit your data.";
@@ -222,7 +222,7 @@ namespace Sensus.DataStores.Remote
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
-            SensusContext.Current.PowerConnectionChangeListener.POWER_CONNECTION_CHANGED += _powerConnectionChanged;
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
         public override void Stop()
@@ -230,7 +230,7 @@ namespace Sensus.DataStores.Remote
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
-            SensusContext.Current.PowerConnectionChangeListener.POWER_CONNECTION_CHANGED += _powerConnectionChanged;
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
         public override void Reset()
@@ -280,7 +280,7 @@ namespace Sensus.DataStores.Remote
             return restart;
         }
 
-         public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+        public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
         {
             bool write = false;
 
@@ -313,7 +313,7 @@ namespace Sensus.DataStores.Remote
                 {
                     // instruct the local data store to write its data to the remote data store.
                     await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
-                    _mostRecentSuccessfulWriteTime = DateTime.Now; 
+                    _mostRecentSuccessfulWriteTime = DateTime.Now;
                     return true;
                 });
             }
