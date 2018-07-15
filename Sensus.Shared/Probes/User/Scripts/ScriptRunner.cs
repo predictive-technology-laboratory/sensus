@@ -222,6 +222,12 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        [JsonIgnore]
+        public IReadOnlyList<ScheduledCallback> ScriptRunCallbacks
+        {
+            get { return _scriptRunCallbacks.AsReadOnly(); }
+        }
+
         public List<DateTime> RunTimes { get; set; }
 
         public List<DateTime> CompletionTimes { get; set; }
@@ -306,7 +312,7 @@ namespace Sensus.Probes.User.Scripts
             RunOnStart = false;
             DisplayProgress = true;
             RunMode = RunMode.SingleKeepNewest;
-            IncompleteSubmissionConfirmation = "You have not completed all required fields. Do you want to continue?";
+            IncompleteSubmissionConfirmation = "You have not completed all required fields on the current page. Do you want to continue?";
             ShuffleInputGroups = false;
 
             Triggers.CollectionChanged += (o, e) =>
@@ -480,9 +486,12 @@ namespace Sensus.Probes.User.Scripts
 
                 // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
                 // is a member of the current instance and not global within the script probe. beyond this single scheduled script,
-                // only allow a maximum of 32 script-run callbacks to be scheduled. android's limit is 500, and ios 9 has a limit of 64. 
-                // not sure about ios 10+. as long as we have just a few script runners, each one will be able to schedule a few future
-                // script runs. this will help mitigate the problem of users ignoring surveys and losing touch with the study.
+                // only allow a maximum of 32 script-run callbacks to be scheduled to allow room for other callbacks within sensus (e.g., 
+                // the storage and polling systems). android's app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
+                // as long as we have just a few script runners, each one will be able to schedule a few future script runs. this will 
+                // help mitigate the problem of users ignoring surveys and losing touch with the study. note that even if there are more 
+                // than 32 script runners, each will be allowed to schedule a callback as callback count will be zero, which is not greater 
+                // than the zero resulting from integer truncation below.
                 lock (_scriptRunCallbacks)
                 {
                     if (_scriptRunCallbacks.Count > 32 / Probe.ScriptRunners.Count)
@@ -560,8 +569,7 @@ namespace Sensus.Probes.User.Scripts
 
                 }, cancellationToken);
 
-                // Be careful to use Script.Id rather than script.Id for the callback domain. Using the former means that callbacks are tied to the script runner and not the script copies (the latter) that we will be running. The latter would always be unique.
-            }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + ((long)(triggerTime.Trigger - DateTime.MinValue).TotalDays) + "-" + triggerTime.Window, Script.Id, Probe.Protocol);
+            }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol);  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 

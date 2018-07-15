@@ -13,19 +13,13 @@
 // limitations under the License.
 
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 using Xamarin.Forms;
 using Sensus.Context;
 using Sensus.UI.Inputs;
-using Sensus.Exceptions;
-using ZXing.Mobile;
-using ZXing.Net.Mobile.Forms;
-using ZXing;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -144,7 +138,12 @@ namespace Sensus.UI
 
                 if (selectedProtocol.Shareable)
                 {
-                    actions.Add("Share");
+                    actions.Add("Share Protocol");
+                }
+
+                if (selectedProtocol.AllowLocalDataShare && (selectedProtocol.LocalDataStore?.HasDataToShare ?? false))
+                {
+                    actions.Add("Share Local Data");
                 }
 
                 List<Protocol> groupableProtocols = SensusServiceHelper.Get().RegisteredProtocols.Where(registeredProtocol => registeredProtocol != selectedProtocol && registeredProtocol.Groupable && registeredProtocol.GroupedProtocols.Count == 0).ToList();
@@ -208,7 +207,7 @@ namespace Sensus.UI
                     {
                         return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
 
-                    }).ToList(), null, null));
+                    }).ToList()));
                 }
                 else if (selectedAction == "Email Study Manager for Help")
                 {
@@ -397,9 +396,13 @@ namespace Sensus.UI
                     // reset the protocol id, as we're creating a new study
                     await selectedProtocol.CopyAsync(true, true);
                 }
-                else if (selectedAction == "Share")
+                else if (selectedAction == "Share Protocol")
                 {
                     await selectedProtocol.ShareAsync();
+                }
+                else if (selectedAction == "Share Local Data")
+                {
+                    await selectedProtocol.LocalDataStore?.ShareLocalDataAsync();
                 }
                 else if (selectedAction == "Group")
                 {
@@ -510,28 +513,7 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
             {
-                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true),
-
-                    async () =>
-                    {
-                        string sharePath = null;
-                        try
-                        {
-                            sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
-                            SensusServiceHelper.Get().Logger.CopyTo(sharePath);
-                        }
-                        catch (Exception)
-                        {
-                            sharePath = null;
-                        }
-
-                        if (sharePath != null)
-                        {
-                            await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Log:  " + Path.GetFileName(sharePath), "text/plain");
-                        }
-                    },
-
-                    () => SensusServiceHelper.Get().Logger.Clear()));
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
 
             }, ToolbarItemOrder.Secondary));
 

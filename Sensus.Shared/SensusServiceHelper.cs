@@ -44,7 +44,7 @@ using ZXing.Mobile;
 namespace Sensus
 {
     /// <summary>
-    /// Provides platform-independent service functionality.
+    /// Provides platform-independent functionality.
     /// </summary>
     public abstract class SensusServiceHelper
     {
@@ -315,7 +315,7 @@ namespace Sensus
             {
                 _flashNotificationsEnabled = value;
             }
-        }      
+        }
 
         public ConcurrentObservableCollection<Script> ScriptsToRun
         {
@@ -359,8 +359,6 @@ namespace Sensus
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
-        [JsonIgnore]
-        public abstract Probes.Device.PowerConnectionChange AcPowerChangeClass { get; } //set this with the concrete android implementation
 
         [JsonIgnore]
         public abstract float BatteryChargePercent { get; }
@@ -752,7 +750,7 @@ namespace Sensus
                 {
                     List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
                     scriptsFromSameRunner.Add(script);
-                    
+
                     Script scriptToKeep = null;
                     List<Script> scriptsToRemove = null;
 
@@ -914,7 +912,15 @@ namespace Sensus
                         return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             barcodeScannerPage.IsScanning = false;
-                            await navigation.PopModalAsync();
+
+                            // we've seen a strange race condition where the QR code input scanner button is 
+                            // pressed, and in the above task delay the input group page is cancelled and 
+                            // another UI button is hit before the scanner page comes up.
+                            if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
+                            {
+                                await navigation.PopModalAsync();
+                            }
+
                             resultWait.Set();
                         });
                     });
@@ -1058,8 +1064,12 @@ namespace Sensus
 
                                 _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
 
-                                // animate pop if the user submitted or canceled
-                                await navigation.PopModalAsync((stepNumber == inputGroups.Count() && navigationResult == InputGroupPage.NavigationResult.Forward) || navigationResult == InputGroupPage.NavigationResult.Cancel);
+                                // animate pop if the user submitted or canceled. when doing this, reference the navigation context
+                                // on the page rather than the local 'navigation' variable. this is necessary because the navigation
+                                // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+                                // notification.
+                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
+                                                                              navigationResult == InputGroupPage.NavigationResult.Cancel);
 
                                 if (navigationResult == InputGroupPage.NavigationResult.Backward)
                                 {
@@ -1068,13 +1078,16 @@ namespace Sensus
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Forward)
                                 {
-                                    // keep the group in the back stack and move to the next group
+                                    // keep the group in the back stack.
                                     inputGroupNumBackStack.Push(inputGroupNum);
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
                                 {
                                     inputGroups = null;
                                 }
+
+                                // there's nothing to do if the navigation result is submit, since we've finished the final
+                                // group and we are about to return.
                             }
                         });
                     }
@@ -1166,7 +1179,7 @@ namespace Sensus
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                     await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
+                    await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
                 }
             });
         }

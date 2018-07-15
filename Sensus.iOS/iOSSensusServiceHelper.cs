@@ -28,8 +28,6 @@ using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
 using TTGSnackBar;
-using Sensus.Probes.Device;
-using Sensus.iOS.Probes.Context;
 
 namespace Sensus.iOS
 {
@@ -41,7 +39,6 @@ namespace Sensus.iOS
 
         private DateTime _nextToastTime;
         private readonly object _toastLocker = new object();
-        private PowerConnectionChange _PowerConnectionChange;
 
         public override bool IsCharging
         {
@@ -55,7 +52,6 @@ namespace Sensus.iOS
         {
             get
             {
-                UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
                 return UIDevice.CurrentDevice.BatteryLevel * 100f;
             }
         }
@@ -107,22 +103,9 @@ namespace Sensus.iOS
             }
         }
 
-        public override PowerConnectionChange AcPowerChangeClass
-        {
-            get
-            {
-                if(_PowerConnectionChange == null)
-                {
-                    _PowerConnectionChange = new iOSPowerConnectionChange(UIDevice.CurrentDevice);
-                }
-                return _PowerConnectionChange;
-            }
-        }
-
         public iOSSensusServiceHelper()
         {
             _nextToastTime = DateTime.Now;
-            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)

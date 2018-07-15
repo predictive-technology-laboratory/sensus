@@ -31,6 +31,7 @@ namespace Sensus.Tests.Classes
         public string IamRegion { get; set; }
         public string IamAccessKey { get; set; }
         public string IamAccessKeySecret { get; set; }
+        public PowerConnectionChangeListener PowerConnectionChangeListener { get; set; }
 
         public TestSensusContext()
         {

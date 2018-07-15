@@ -80,7 +80,8 @@ namespace Sensus.Android
                 MainThreadSynchronizer = new MainConcurrent(),
                 SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY),
                 CallbackScheduler = new AndroidCallbackScheduler(this),
-                Notifier = new AndroidNotifier(this)
+                Notifier = new AndroidNotifier(this),
+                PowerConnectionChangeListener = new AndroidPowerConnectionChangeListener()
             };
 
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());

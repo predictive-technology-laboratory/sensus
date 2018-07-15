@@ -119,24 +119,24 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action</param>
-        /// <param name="delay">Delay</param>
-        /// <param name="id">Identifier for callback</param>
-        /// <param name="domain">Domain of scheduled callback</param>
-        /// <param name="protocol">Protocol of scheduled callback</param>
-        /// <param name="callbackTimeout">Callback Timeout</param>
-        /// <param name="userNotificationMessage">User notification message</param>
-        public ScheduledCallback(ActionDelegate action, 
+        /// <param name="action">Action to execute when callback time arrives.</param>
+        /// <param name="delay">How long to delay callback execution.</param>
+        /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
+        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
+        /// <param name="protocol">Protocol associated with scheduled callback</param>
+        /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
+        /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
+        public ScheduledCallback(ActionDelegate action,
                                  TimeSpan delay,
-                                 string id, 
-                                 string domain, 
-                                 Protocol protocol, 
-                                 TimeSpan? callbackTimeout = null, 
+                                 string id,
+                                 string domain,
+                                 Protocol protocol,
+                                 TimeSpan? callbackTimeout = null,
                                  string userNotificationMessage = null)
         {
             Action = action;
             Delay = delay;
-            Id = (domain ?? "SENSUS") + "." + id;
+            Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
@@ -148,15 +148,15 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action</param>
-        /// <param name="initialDelay">Delay</param>
-        /// <param name="repeatDelay">Repeat delay</param>
-        /// <param name="allowRepeatLag">Whethe or not to allow lag</param>
-        /// <param name="id">Identifier for callback</param>
-        /// <param name="domain">Domain of scheduled callback</param>
-        /// <param name="protocol">Protocol ID of scheduled callback</param>
-        /// <param name="callbackTimeout">Callback Timeout</param>
-        /// <param name="userNotificationMessage">User notification message</param>
+        /// <param name="action">Action to execute when callback time arrives.</param>
+        /// <param name="initialDelay">How long to delay callback execution.</param>
+        /// <param name="repeatDelay">How long to delay repeating callback executions following the first callback.</param>
+        /// <param name="allowRepeatLag">Whether or not to allow lags in repeating callbacks.</param>
+        /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
+        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
+        /// <param name="protocol">Protocol associated with scheduled callback</param>
+        /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
+        /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         public ScheduledCallback(ActionDelegate action,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
