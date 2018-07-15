@@ -297,7 +297,7 @@ namespace Sensus.Tests.Concurrent
                     int x = _concurrent.ExecuteThreadSafe(() =>
                     {
                         throw new Exception();
-                        return 1;
+                        return 1;  // required to make this a function rather than an action
                     });
                 });
             }));
