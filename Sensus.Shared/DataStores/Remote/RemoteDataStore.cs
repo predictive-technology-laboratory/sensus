@@ -187,7 +187,7 @@ namespace Sensus.DataStores.Remote
 
             _powerConnectionChanged = async (sender, connected) =>
             {
-                if (connected == true)
+                if (connected)
                 {
                     if (_writeOnAcPowerConnect)
                     {
