@@ -37,6 +37,7 @@ using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using System.Threading.Tasks;
 using Sensus.Context;
+using Firebase.Iid;
 
 namespace Sensus.Android
 {
@@ -181,6 +182,36 @@ namespace Sensus.Android
             set
             {
                 _userDeniedBluetoothEnable = value;
+            }
+        }
+
+        public override string PushNotificationToken
+        { 
+            get
+            {
+                // use the most current token, if one has been received via the registration service.
+                if (FirebaseRegistrationService.TOKEN != null && FirebaseRegistrationService.TOKEN != base.PushNotificationToken)
+                {
+                    // set token and save to disk
+                    base.PushNotificationToken = FirebaseRegistrationService.TOKEN;
+                    Save();
+                }
+
+                // if the token hasn't been set previously and serialized, and we haven't received one via the registration 
+                // service, then delete the instance ID, which will auto-init the token.
+                if (base.PushNotificationToken == null)
+                {
+                    FirebaseInstanceId.Instance.DeleteInstanceId();
+                    return null;
+                }
+                else
+                {
+                    return base.PushNotificationToken;
+                }
+            }
+            set
+            {
+                base.PushNotificationToken = value;
             }
         }
 

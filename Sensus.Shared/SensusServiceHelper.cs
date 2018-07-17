@@ -40,6 +40,7 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
+using WindowsAzure.Messaging;
 
 namespace Sensus
 {
@@ -272,6 +273,7 @@ namespace Sensus
         private bool _flashNotificationsEnabled;
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
+        private string _pushNotificationToken;
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
 
@@ -322,6 +324,18 @@ namespace Sensus
             get
             {
                 return _scriptsToRun;
+            }
+        }
+
+        public virtual string PushNotificationToken
+        {
+            get
+            {
+                return _pushNotificationToken;
+            }
+            set
+            {
+                _pushNotificationToken = value;
             }
         }
 
@@ -1425,6 +1439,50 @@ namespace Sensus
             if (IsOnMainThread)
             {
                 throw SensusException.Report("Attempted to execute on main thread:  " + actionDescription);
+            }
+        }
+
+        public void RegisterForPushNotifications()
+        {
+            try
+            {
+                string token = PushNotificationToken;
+
+                if (token == null)
+                {
+                    throw new Exception("Push notification token has not been set.");
+                }
+
+#if __ANDROID__
+                Dictionary<Tuple<string, string>, List<string>> hubSasProtocolIDs = new Dictionary<Tuple<string, string>, List<string>>();
+                foreach (Tuple<string, string, string> hubSasProtocolID in GetRunningProtocols().Select(protocol => new Tuple<string, string, string>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol.Id)))
+                {
+                    Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocolID.Item1, hubSasProtocolID.Item2);
+
+                    if (!hubSasProtocolIDs.ContainsKey(hubSas))
+                    {
+                        hubSasProtocolIDs.Add(hubSas, new List<string>());
+                    }
+
+                    hubSasProtocolIDs[hubSas].Add(hubSasProtocolID.Item3);
+                }
+
+                foreach (Tuple<string, string> hubSas in hubSasProtocolIDs.Keys)
+                {
+                    NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
+                    notificationHub.UnregisterAll(token);
+
+                    string[] tags = hubSasProtocolIDs[hubSas].Distinct().ToArray();
+                    notificationHub.Register(token, tags);
+                }
+#elif __IOS__
+#error "Not implemented"
+#endif
+
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failure while registering for push notifications:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 

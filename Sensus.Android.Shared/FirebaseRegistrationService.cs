@@ -21,19 +21,22 @@ namespace Sensus.Android
     [IntentFilter(new[] { "com.google.firebase.INSTANCE_ID_EVENT" })]
     public class FirebaseRegistrationService : FirebaseInstanceIdService
     {
-        public static string Token { get; private set; }
+        public static string TOKEN { get; private set; }
 
         public override void OnTokenRefresh()
         {
-            Token = FirebaseInstanceId.Instance.Token;
+            // hang on to the token for later
+            TOKEN = FirebaseInstanceId.Instance.Token;
 
-            // re-register for push notifications for any protocols that are currently running
-            if (SensusServiceHelper.Get() != null)
+            // update the token on the service helper. as this is a service, the service helper 
+            // might not be immediately available.
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+            if (serviceHelper != null)
             {
-                foreach (Protocol runningProtocol in SensusServiceHelper.Get().GetRunningProtocols())
-                {
-                    runningProtocol.RegisterForPushNotifications();
-                }
+                // set token, save to disk, and register for push notifications
+                serviceHelper.PushNotificationToken = TOKEN;
+                serviceHelper.Save();
+                serviceHelper.RegisterForPushNotifications();
             }
         }
     }

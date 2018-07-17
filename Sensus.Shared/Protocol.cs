@@ -26,7 +26,6 @@ using Xamarin.Forms;
 using Sensus.Anonymization;
 using System.Linq;
 using System.Reflection;
-using Sensus.UI;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
 using Sensus.Probes.Apps;
@@ -46,7 +45,6 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
-using WindowsAzure.Messaging;
 
 #if __IOS__
 using HealthKit;
@@ -1333,26 +1331,26 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
-        /// can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal.
-        /// </summary>
-        /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature", true, 1, false)]
-        public string PushNotificationsSharedAccessSignature
-        {
-            get { return _pushNotificationsSharedAccessSignature; }
-            set { _pushNotificationsSharedAccessSignature = value; }
-        }
-
-        /// <summary>
         /// The push notification hub to listen to. This can be created within the Azure Portal.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub", true, 2, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
             set { _pushNotificationsHub = value; }
+        }
+
+        /// <summary>
+        /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
+        /// can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal.
+        /// </summary>
+        /// <value>The push notifications shared access signature.</value>
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]
+        public string PushNotificationsSharedAccessSignature
+        {
+            get { return _pushNotificationsSharedAccessSignature; }
+            set { _pushNotificationsSharedAccessSignature = value; }
         }
 
         [JsonIgnore]
@@ -1702,8 +1700,8 @@ namespace Sensus
                 // register for push notfiications
                 if (startException == null)
                 {
-                    // don't stop the protocol if we get an exception while starting probes. we might recover.
-                    RegisterForPushNotifications();
+                    // don't stop the protocol if we get an exception while registering for push notifications. we might recover.
+                    SensusServiceHelper.Get().RegisterForPushNotifications();
                 }
 
                 if (startException == null)
@@ -1714,30 +1712,6 @@ namespace Sensus
                 {
                     Stop();
                 }
-            }
-        }
-
-        public void RegisterForPushNotifications()
-        {
-            try
-            {
-
-#if __ANDROID__
-                if (Sensus.Android.FirebaseRegistrationService.Token == null)
-                {
-                    throw new Exception("Firebase Cloud Messaging token has not been set.");
-                }
-
-                NotificationHub notificationHub = new NotificationHub(_pushNotificationsHub, _pushNotificationsSharedAccessSignature, global::Android.App.Application.Context);
-                notificationHub.Register(Sensus.Android.FirebaseRegistrationService.Token, new string[0]);
-#endif
-
-            }
-            catch (Exception pushNotificationException)
-            {
-                string message = "Failure while registering for push notifications:  " + pushNotificationException.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync(message);
             }
         }
 
