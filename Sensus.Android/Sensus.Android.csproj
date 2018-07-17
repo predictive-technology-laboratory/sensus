@@ -52,7 +52,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86</AndroidSupportedAbis>
-    <DebugType></DebugType>
+    <DebugType>
+    </DebugType>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
@@ -334,6 +335,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Context\AndroidLightProbe.cs" />
     <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
     <Compile Include="Probes\Device\AndroidScreenProbe.cs" />
+    <Compile Include="Probes\Location\AndroidProximityProbe.cs" />
     <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
     <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
     <Compile Include="Probes\Movement\AndroidAccelerometerProbe.cs" />
@@ -400,11 +402,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Callbacks\" />
-    <Folder Include="Resources\values-v21\" />
-    <Folder Include="Resources\layout\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

@@ -37,6 +37,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ListeningProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsProbe.cs" />
