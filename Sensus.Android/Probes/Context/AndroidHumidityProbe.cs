@@ -27,11 +27,11 @@ namespace Sensus.Android.Probes.Context
             _humidityListener = new AndroidSensorListener(SensorType.RelativeHumidity, null, e =>
             {
 
-                if(e?.Values == null || e.Values.Count > 0)
+                if(e?.Values == null || e.Values.Count == 0)
                 {
                     return; //if we don't have a value then don't return anything
                 }
-                double? tempurature = null;
+
                 double relativeHumidity = e.Values[0];
 
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
@@ -42,7 +42,7 @@ namespace Sensus.Android.Probes.Context
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                StoreDatum(new HumidityDatum(DateTimeOffset.UtcNow, relativeHumidity, tempurature));
+                StoreDatum(new HumidityDatum(DateTimeOffset.UtcNow, relativeHumidity));
             });
         }
 

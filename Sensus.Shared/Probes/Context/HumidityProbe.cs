@@ -51,7 +51,7 @@ namespace Sensus.Probes.Context
         {
             get
             {
-                return typeof(AmbientTemperatureDatum);
+                return typeof(HumidityDatum);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Sensus.Probes.Context
             {
                 Title = new ChartAxisTitle
                 {
-                    Text = "Relative Humidity (Celsius)"
+                    Text = "Relative Humidity"
                 }
             };
         }

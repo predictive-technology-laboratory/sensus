@@ -21,9 +21,7 @@ namespace Sensus.Probes.Context
 {
     public class HumidityDatum : Datum
     {
-        private double _relativeHumidity;
-        private double? _tempurature; //this can be used later to calculate absolute humidity and dew point
-        
+        private double _relativeHumidity;        
 
         [Anonymizable("Relative Humidity", new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
         [DoubleProbeTriggerProperty("Relative Humidity")]
@@ -66,11 +64,10 @@ namespace Sensus.Probes.Context
         {
         } 
 
-        public HumidityDatum(DateTimeOffset timestamp, double relativeHumidity, double? tempurature)
+        public HumidityDatum(DateTimeOffset timestamp, double relativeHumidity)
             : base(timestamp)
         {
             _relativeHumidity = relativeHumidity;
-            _tempurature = tempurature;
         }
 
         public override string ToString()
@@ -78,10 +75,5 @@ namespace Sensus.Probes.Context
             return base.ToString() + Environment.NewLine +
             "Relative Humidity:  " + _relativeHumidity;
         }
-
-        //private double GetAbsoluteHumidity(double relativeHumidity, double tempurature)
-        //{
-        //    var rVal = (())
-        //}
     }
 }
