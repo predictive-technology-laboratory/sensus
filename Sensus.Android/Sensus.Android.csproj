@@ -329,6 +329,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
+    <Compile Include="Probes\Context\AndroidHumidityProbe.cs" />
     <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
     <Compile Include="Probes\Context\AndroidLightProbe.cs" />
@@ -400,7 +401,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup>
+    <ItemGroup>
     <Folder Include="Callbacks\" />
     <Folder Include="Resources\values-v21\" />
     <Folder Include="Resources\layout\" />
