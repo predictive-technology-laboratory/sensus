@@ -27,9 +27,11 @@ namespace Sensus.Probes.Location
     public class ProximityDatum : Datum
     {
         private double _distance;
+        private double _maxDistance;
 
         /// <summary>
-        /// Most proximity sensors return the absolute distance, in cm, but some return only near and far values.
+        /// Most proximity sensors return the absolute distance, in cm, 
+        /// but some return only near and far values.
         /// </summary>
         [DoubleProbeTriggerProperty("Distance")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
@@ -38,21 +40,31 @@ namespace Sensus.Probes.Location
             get { return _distance; }
             set { _distance = value; }
         }
+        [DoubleProbeTriggerProperty("Max Distance")]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        public double MaxDistance
+        {
+            get { return _maxDistance; }
+            set { _maxDistance = value; }
+        }
 
         public override string DisplayDetail
         {
-            get { return Math.Round(_distance, 2) + " (distance)"; }
+            get { return Math.Round(_distance, 2) + " (distance)" + Math.Round(_maxDistance)+" (max distance)"; }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the distance the phone is from an object format.
+        /// Gets the string placeholder value, which is the distance the phone is from an object 
+        /// and the maximum distance that the phone reports.  If the distance equals the
+        /// maximum distance then that is a sign that the phone only reports near and far and
+        /// doesn't report an accurate distance.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return "[" + Math.Round(_distance, 2) + "]";
+                return "[" + Math.Round(_distance, 2) + ", "+Math.Round(_maxDistance, 2)+"]";
             }
         }
 
@@ -61,17 +73,19 @@ namespace Sensus.Probes.Location
         /// </summary>
         private ProximityDatum() { }
 
-        public ProximityDatum(DateTimeOffset timestamp, double distance)
+        public ProximityDatum(DateTimeOffset timestamp, double distance, double maxDistance)
             : base(timestamp)
         {
             _distance = distance;
+            _maxDistance = maxDistance;
 
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Distance:  " + _distance;
+                   "Distance:  " + _distance + Environment.NewLine +
+                   "Max Distance: " + _maxDistance;
         }
     }
 }
