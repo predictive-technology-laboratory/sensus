@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using Sensus.Context;
 using Sensus.Android.Context;
-using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
 using Sensus.Android.Concurrent;
 using Sensus.Encryption;
