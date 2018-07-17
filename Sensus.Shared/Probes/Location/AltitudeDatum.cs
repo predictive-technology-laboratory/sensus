@@ -60,6 +60,14 @@ namespace Sensus.Probes.Location
             _altitude = altitude;
         }
 
+        public AltitudeDatum(DateTimeOffset timestamp, double hPa)
+        { 
+            double stdPressure = 1013.25;
+            double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
+
+            _altitude = altitude;
+        }
+
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
