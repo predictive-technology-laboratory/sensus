@@ -63,14 +63,17 @@ namespace Sensus.Probes.Location
         {
             get { return typeof(LocationDatum); }
         }
-
+        private Position _lastPosition;
         public ListeningLocationProbe()
         {
             _positionChangedHandler = (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                StoreDatum(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
+                StoreDatum(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, 
+                                             e.Position.Latitude, e.Position.Longitude, 
+                                             _lastPosition?.Latitude, _lastPosition?.Longitude));
+                _lastPosition = e.Position;
             };
         }
 

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Plugin.Geolocator.Abstractions;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
@@ -31,6 +32,8 @@ namespace Sensus.Probes.Location
     {
         private double _latitude;
         private double _longitude;
+        private double? _distanceTraveled;
+
 
         /// <summary>
         /// Latitude coordinate, measured in decimal degrees north and south of the equator per the WGS 1984 datum. 
@@ -54,6 +57,19 @@ namespace Sensus.Probes.Location
         {
             get { return _longitude; }
             set { _longitude = value; }
+        }
+
+
+        /// <summary>
+        /// Distance Traveled in kilometers between the last location reading and this one. 
+        /// </summary>
+        /// <value>Distance traveled between the last location reading at this one.</value>
+        [DoubleProbeTriggerProperty]
+        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
+        public double? DistanceTraveled
+        {
+            get { return _distanceTraveled; }
+            set { _distanceTraveled = value; }
         }
 
         public override string DisplayDetail
@@ -84,6 +100,19 @@ namespace Sensus.Probes.Location
             _latitude = latitude;
             _longitude = longitude;
         }
+
+        public LocationDatum(DateTimeOffset timestamp, double accuracy, double latitude, double longitude, double? lastLatitude, double? lastLongitude)
+                : base(timestamp, accuracy)
+        {
+            _latitude = latitude;
+            _longitude = longitude;
+            //TODO:  We might want to refactor this so it isn't calling the into the speed datum
+            if (lastLatitude.HasValue && lastLongitude.HasValue)
+            {
+                _distanceTraveled = Movement.SpeedDatum.CalculateDistanceKM(new Position(lastLatitude.Value, lastLongitude.Value),
+                                                                            new Position(latitude, longitude));
+            }
+       }
 
         public override string ToString()
         {

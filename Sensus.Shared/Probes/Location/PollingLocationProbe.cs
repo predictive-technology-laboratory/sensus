@@ -57,7 +57,7 @@ namespace Sensus.Probes.Location
                 throw new Exception(error);
             }
         }
-
+        private Position _lastPosition = null;
         protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
@@ -68,7 +68,11 @@ namespace Sensus.Probes.Location
             }
             else
             {
-                return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) };
+                var toReturn = new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, 
+                                                               currentPosition.Latitude, currentPosition.Longitude, 
+                                                               _lastPosition?.Latitude, _lastPosition?.Longitude) };
+                _lastPosition = currentPosition;
+                return toReturn;
             }
         }
 

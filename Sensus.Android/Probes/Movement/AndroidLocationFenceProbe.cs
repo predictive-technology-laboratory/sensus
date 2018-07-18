@@ -110,7 +110,7 @@ namespace Sensus.Android.Probes.Movement
             // request a location to start location fencing
             RequestLocationSnapshotAsync();
         }
-
+        private global::Android.Locations.Location _lastPosition; 
         private void RequestLocationSnapshotAsync()
         {
             Task.Run(async () =>
@@ -121,8 +121,10 @@ namespace Sensus.Android.Probes.Movement
                     ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(AwarenessApiClient);
                     global::Android.Locations.Location location = locationResult.Location;
                     DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
-                    StoreDatum(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
-
+                    StoreDatum(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, 
+                                                 location.Latitude, location.Longitude, 
+                                                 _lastPosition?.Latitude, _lastPosition?.Longitude));
+                    _lastPosition = location;
                     // replace the previous location fence with one around the current location. additions and removals are handled
                     // in the order specified below.
                     FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
