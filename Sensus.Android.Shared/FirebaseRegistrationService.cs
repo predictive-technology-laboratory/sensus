@@ -33,7 +33,7 @@ namespace Sensus.Android
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
             if (serviceHelper != null)
             {
-                // set token, save to disk, and register for push notifications
+                // set token, save to disk, and (re)register for push notifications
                 serviceHelper.PushNotificationToken = TOKEN;
                 serviceHelper.Save();
                 serviceHelper.RegisterForPushNotifications();

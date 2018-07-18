@@ -14,7 +14,6 @@
 
 using Android.App;
 using Android.Content;
-using Android.Util;
 using Firebase.Messaging;
 
 namespace Sensus.Android
@@ -27,15 +26,12 @@ namespace Sensus.Android
 
         public override void OnMessageReceived(RemoteMessage message)
         {
-            Log.Debug(TAG, "From: " + message.From);
-
             string messageBody = message.Data["message"];
+
             if (string.IsNullOrWhiteSpace(messageBody))
             {
                 return;
             }
-
-            Log.Debug(TAG, "Notification message body: " + messageBody);
         }
     }
 }

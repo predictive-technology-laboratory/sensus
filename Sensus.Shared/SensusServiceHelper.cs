@@ -1454,25 +1454,27 @@ namespace Sensus
                 }
 
 #if __ANDROID__
-                Dictionary<Tuple<string, string>, List<string>> hubSasProtocolIDs = new Dictionary<Tuple<string, string>, List<string>>();
-                foreach (Tuple<string, string, string> hubSasProtocolID in GetRunningProtocols().Select(protocol => new Tuple<string, string, string>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol.Id)))
+                Dictionary<Tuple<string, string>, List<string>> hubSasProtocolIds = new Dictionary<Tuple<string, string>, List<string>>();
+                foreach (Tuple<string, string, string> hubSasProtocolId in GetRunningProtocols().Select(protocol => new Tuple<string, string, string>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol.Id)))
                 {
-                    Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocolID.Item1, hubSasProtocolID.Item2);
-
-                    if (!hubSasProtocolIDs.ContainsKey(hubSas))
+                    if (!string.IsNullOrWhiteSpace(hubSasProtocolId.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocolId.Item2))
                     {
-                        hubSasProtocolIDs.Add(hubSas, new List<string>());
-                    }
+                        Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocolId.Item1, hubSasProtocolId.Item2);
 
-                    hubSasProtocolIDs[hubSas].Add(hubSasProtocolID.Item3);
+                        if (!hubSasProtocolIds.ContainsKey(hubSas))
+                        {
+                            hubSasProtocolIds.Add(hubSas, new List<string>());
+                        }
+
+                        hubSasProtocolIds[hubSas].Add(hubSasProtocolId.Item3);
+                    }
                 }
 
-                foreach (Tuple<string, string> hubSas in hubSasProtocolIDs.Keys)
+                foreach (Tuple<string, string> hubSas in hubSasProtocolIds.Keys)
                 {
                     NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
                     notificationHub.UnregisterAll(token);
-
-                    string[] tags = hubSasProtocolIDs[hubSas].Distinct().ToArray();
+                    string[] tags = hubSasProtocolIds[hubSas].Distinct().ToArray();
                     notificationHub.Register(token, tags);
                 }
 #elif __IOS__
@@ -1482,7 +1484,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Failure while registering for push notifications:  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusException.Report("Failure while registering for push notifications:  " + ex.Message, ex);
             }
         }
 

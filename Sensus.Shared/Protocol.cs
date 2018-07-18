@@ -1700,7 +1700,6 @@ namespace Sensus
                 // register for push notfiications
                 if (startException == null)
                 {
-                    // don't stop the protocol if we get an exception while registering for push notifications. we might recover.
                     SensusServiceHelper.Get().RegisterForPushNotifications();
                 }
 
@@ -2151,6 +2150,9 @@ namespace Sensus
                         SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
+
+                // reregister for push notifications
+                SensusServiceHelper.Get().RegisterForPushNotifications();
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
