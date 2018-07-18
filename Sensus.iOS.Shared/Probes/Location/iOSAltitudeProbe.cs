@@ -42,7 +42,7 @@ namespace Sensus.iOS.Probes.Location
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
+                string error = "This device does not contain an altimeter, or the user has denied access to it. Cannot start altitude probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
