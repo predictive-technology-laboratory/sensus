@@ -26,12 +26,7 @@ namespace Sensus.Android
 
         public override void OnMessageReceived(RemoteMessage message)
         {
-            string messageBody = message.Data["message"];
-
-            if (string.IsNullOrWhiteSpace(messageBody))
-            {
-                return;
-            }
+            System.Console.Out.WriteLine("Received.");
         }
     }
 }
