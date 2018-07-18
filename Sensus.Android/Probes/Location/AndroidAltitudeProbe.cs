@@ -28,9 +28,7 @@ namespace Sensus.Android.Probes.Location
             {
                 // http://www.srh.noaa.gov/images/epz/wxcalc/pressureAltitude.pdf
                 double hPa = e.Values[0];
-                double stdPressure = 1013.25;
-                double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
-
+              
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
                 // compare data across sensors, phones, and android versions. using DateTimeOffset.UtcNow will cause imprecision due to

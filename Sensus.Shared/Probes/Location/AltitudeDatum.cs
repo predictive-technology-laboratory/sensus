@@ -61,7 +61,9 @@ namespace Sensus.Probes.Location
         }
 
         public AltitudeDatum(DateTimeOffset timestamp, double hPa)
-        { 
+            : base(timestamp, -1) //-1 indicates normal accuracy
+        {
+            //hPa is a pressure reading not an altitude reading, the formula below converts it into an altitude
             double stdPressure = 1013.25;
             double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
 
