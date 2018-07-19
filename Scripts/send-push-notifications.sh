@@ -16,7 +16,7 @@ aws s3 sync $1 $notifications_dir --delete
 # get shared access signature
 sas=$(node get-sas.js)
     
-for n in $(ls $notifications_dir/*.json
+for n in $(ls $notifications_dir/*.json)
 do
 	
     token=$(jq -r '.token' $n)
@@ -36,6 +36,7 @@ do
             echo "Notification sent."
             rm "$n"
         fi
+    fi
 done
 
 # re-sync with remote S3 notifs (mirror image of initial sync)
