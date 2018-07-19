@@ -186,22 +186,10 @@ namespace Sensus.Android
         }
 
         public override string PushNotificationToken
-        { 
+        {
             get
             {
-                // use the most current token, if one has been received via the registration service.
-                if (FirebaseRegistrationService.TOKEN != null && FirebaseRegistrationService.TOKEN != base.PushNotificationToken)
-                {
-                    // set token and save to disk
-                    base.PushNotificationToken = FirebaseRegistrationService.TOKEN;
-                    Save();
-                }
-
-                return base.PushNotificationToken;
-            }
-            set
-            {
-                base.PushNotificationToken = value;
+                return FirebaseInstanceId.Instance.Token;
             }
         }
 

@@ -277,7 +277,6 @@ namespace Sensus
         private bool _flashNotificationsEnabled;
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
-        private string _pushNotificationToken;
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
 
@@ -331,17 +330,8 @@ namespace Sensus
             }
         }
 
-        public virtual string PushNotificationToken
-        {
-            get
-            {
-                return _pushNotificationToken;
-            }
-            set
-            {
-                _pushNotificationToken = value;
-            }
-        }
+        [JsonIgnore]
+        public abstract string PushNotificationToken { get; }
 
         [JsonIgnore]
         public float GpsDesiredAccuracyMeters
@@ -1491,8 +1481,16 @@ namespace Sensus
                 SensusException.Report("Failure while registering for push notifications:  " + ex.Message, ex);
 
 #if __ANDROID__
-                // if anything goes wrong, delete the instance ID and auto-init will request a new token.
-                FirebaseInstanceId.Instance.DeleteInstanceId();
+                try
+                {
+                    // if anything goes wrong, delete the instance ID to get new token.
+                    FirebaseInstanceId.Instance.DeleteInstanceId();
+                    string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
+                }
+                catch (Exception newTokenException)
+                {
+                    SensusException.Report("Failure while obtaining a new token:  " + newTokenException.Message, ex);
+                }
 #endif
 
             }
