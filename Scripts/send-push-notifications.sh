@@ -1,63 +1,45 @@
-# sync the notifications directory with the AWS bucket (deletes any local that don't exist in S3)
-aws s3 sync s3://sensus-push-notifications-public /home/ec2-user/sensus-notifications/notifications --delete
+#!/bin/sh
 
-# count number of new notifications in dir, subtract dot/dotdot
-nncount=$(ls -f /home/ec2-user/sensus-notifications/notifications/ | wc -l)
-nncount=$(expr $nncount - 2)
-
-# if there are new notifications
-if [ "$nncount" -gt 0 ]
-then
-    echo "SNS detected $nncount new notifications."
-    
-    NOTIFS=/home/ec2-user/sensus-notifications/notifications/*
-    
-    sas=$(node get-sas.js)
-    
-    for n in $NOTIFS
-    do
-	
-        participant=$(jq -r '.participant' $n)
-	
-	protocol=$(jq -r '.protocol' $n)
-	
-        message=$(jq -r '.message' $n)
-	
-        format=$(jq -r '.format' $n)
-	
-        sendtime=$(jq -r '.time' $n)
-	
-        snskey=$(jq -r '.key' $n)
-	
-        echo -e "attempting to send notification..\n\nparticipant : $participant \nformat : $format \nmessage : $message \n\n"
-	
-        if [<snskey is valid>]
-        then
-            # detect if the time is in a valid send window
-            # (any time before ten seconds from now and after expiry (tbd))
-            timesecs=$(date +%s%3N)
-            timewindow=$(expr $timesecs + 10000)
-	    
-            if [ $sendtime -le $timewindow ]
-            then
-                response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $participant" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data '{"data":{"body":"'"$message"'"}}' -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
-		
-                if [[ "$response" -eq "201"  ]]
-                then
-                    echo "201- notification created in Hub."
-                    rm "$n"
-                else
-                    echo "Error creating notification, retrying on next cycle..."
-                fi
-            fi
-        else
-            echo "SNS Error: invalid SNS key."
-        fi
-    done
-
-    # re-sync with remote S3 notifs (mirror image of initial sync)
-    aws s3 sync /home/ec2-user/sensus-notifications/notifications s3://sensus-push-notifications-public --delete
-
-else
-    echo "no new notifications detected"
+if [ $# -ne 1 ]; then
+    echo "Usage:  ./send-push-notifications.sh [s3 bucket]"
+    echo "\t[s3 bucket]:  S3 bucket holding push notification requests (e.g.:  s3://some-bucket)"
+    echo ""
+    exit 1
 fi
+
+# store notifications in new temp directory
+notifications_dir=$(mktemp -d)
+
+# sync the notifications directory with the AWS bucket (deletes any local that don't exist in S3)
+aws s3 sync $1 $notifications_dir --delete
+
+# get shared access signature
+sas=$(node get-sas.js)
+    
+for n in $(ls $notifications_dir/*.json
+do
+	
+    token=$(jq -r '.token' $n)
+    protocol=$(jq -r '.protocol' $n)
+    message=$(jq -r '.message' $n)
+    format=$(jq -r '.format' $n)
+    time=$(jq -r '.time' $n)
+	
+    # if the requested time has passed, send now.
+    if [ "$time" -le "$(date +%s)" ]
+    then
+
+        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data '{"data":{"body":"'"$message"'"}}' -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
+		
+        if [[ "$response" -eq "201"  ]]
+        then
+            echo "Notification sent."
+            rm "$n"
+        fi
+done
+
+# re-sync with remote S3 notifs (mirror image of initial sync)
+aws s3 sync $notifications_dir $1 --delete
+
+# remove temp directory
+rm -rf $notifications_dir

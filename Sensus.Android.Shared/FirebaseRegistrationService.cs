@@ -37,6 +37,8 @@ namespace Sensus.Android
                 serviceHelper.PushNotificationToken = TOKEN;
                 serviceHelper.Save();
                 serviceHelper.RegisterForPushNotifications();
+
+                // TODO:  will need to update any existing push notifications within S3 to use the new token
             }
         }
     }

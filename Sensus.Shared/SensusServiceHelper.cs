@@ -42,6 +42,10 @@ using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
 using WindowsAzure.Messaging;
 
+#if __ANDROID__
+using Firebase.Iid;
+#endif
+
 namespace Sensus
 {
     /// <summary>
@@ -1485,6 +1489,12 @@ namespace Sensus
             catch (Exception ex)
             {
                 SensusException.Report("Failure while registering for push notifications:  " + ex.Message, ex);
+
+#if __ANDROID__
+                // if anything goes wrong, delete the instance ID and auto-init will request a new token.
+                FirebaseInstanceId.Instance.DeleteInstanceId();
+#endif
+
             }
         }
 

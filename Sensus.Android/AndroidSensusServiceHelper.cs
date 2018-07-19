@@ -197,17 +197,7 @@ namespace Sensus.Android
                     Save();
                 }
 
-                // if the token hasn't been set previously and serialized, and we haven't received one via the registration 
-                // service, then delete the instance ID, which will auto-init the token.
-                if (base.PushNotificationToken == null)
-                {
-                    FirebaseInstanceId.Instance.DeleteInstanceId();
-                    return null;
-                }
-                else
-                {
-                    return base.PushNotificationToken;
-                }
+                return base.PushNotificationToken;
             }
             set
             {
