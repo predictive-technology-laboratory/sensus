@@ -63,6 +63,9 @@ namespace Sensus.Probes
         private bool _isPolling;
         private List<DateTime> _pollTimes;
         private ScheduledCallback _pollCallback;
+        private bool _acPowerConnectPoll;
+        private bool _acPowerConnectPollOverridesSchedulePolls;
+        private EventHandler<bool> _powerConnectionChanged;
 
 #if __IOS__
         private bool _significantChangePoll;
@@ -141,6 +144,30 @@ namespace Sensus.Probes
             get { return _pollTimes; }
         }
 
+        /// <summary>
+        /// Whether to poll on when the device is plugged into AC Power
+        /// </summary>
+        /// <value><c>true</c> if we should poll on power connect; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Poll On AC Power Connection:", true, 7)]
+        public bool ACPowerConnectPoll
+        {
+            get { return _acPowerConnectPoll; }
+            set { _acPowerConnectPoll = value; }
+        }
+
+        /// <summary>
+        /// Has no effect if ac power connect polling is disabled. If ac power connect polling is enabled:  (1) If this 
+        /// is on, polling will only occur on ac power connect. (2) If this is off, polling will occur based on <see cref="PollingSleepDurationMS"/> and 
+        /// on ac power connect.
+        /// </summary>
+        /// <value><c>true</c> if ac power connect poll overrides scheduled polls; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("AC Power Connection Poll Overrides Scheduled Polls:", true, 8)]
+        public bool ACPowerConnectPollOverridesSchedulePolls
+        {
+            get { return _acPowerConnectPollOverridesSchedulePolls; }
+            set { _acPowerConnectPollOverridesSchedulePolls = value; }
+        }
+
 #if __IOS__
         /// <summary>
         /// Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
@@ -148,7 +175,7 @@ namespace Sensus.Probes
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll:", true, 7)]
+        [OnOffUiProperty("Significant Change Poll:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -161,7 +188,7 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 8)]
+        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
@@ -173,7 +200,7 @@ namespace Sensus.Probes
         {
             get
             {
-
+                string acPowerConnectDescription = null;
 #if __IOS__
                 string significantChangeDescription = null;
                 if (_significantChangePoll)
@@ -186,6 +213,16 @@ namespace Sensus.Probes
                     }
                 }
 #endif
+
+                if(_acPowerConnectPoll)
+                {
+                    acPowerConnectDescription = "On AC power connection";
+                    if(_acPowerConnectPollOverridesSchedulePolls)
+                    {
+                        return DisplayName + ": " + acPowerConnectDescription + ".";
+                    }
+                }
+
 
                 TimeSpan interval = new TimeSpan(0, 0, 0, 0, _pollingSleepDurationMS);
 
@@ -234,7 +271,10 @@ namespace Sensus.Probes
                     intervalStr = significantChangeDescription + "; and " + intervalStr.ToLower();
                 }
 #endif
-
+                if(_acPowerConnectPoll)
+                {
+                    intervalStr = acPowerConnectDescription + "; and " + intervalStr.ToLower();
+                }
                 return DisplayName + ":  " + intervalStr;
             }
         }
@@ -245,6 +285,9 @@ namespace Sensus.Probes
             _pollingTimeoutMinutes = 5;
             _isPolling = false;
             _pollTimes = new List<DateTime>();
+            _acPowerConnectPoll = false;
+            _acPowerConnectPollOverridesSchedulePolls = false;
+
 
 #if __IOS__
             _significantChangePoll = false;
@@ -273,6 +316,27 @@ namespace Sensus.Probes
                 });
             };
 #endif
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                try
+                {
+                    CancellationTokenSource powerConnectionCanceller = new CancellationTokenSource();
+                    if (connected == true)
+                    {
+                        // if the callback specified a timeout, request cancellation at the specified time.
+                        if (_pollCallback.CallbackTimeout.HasValue)
+                        {
+                            powerConnectionCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        }
+                            await _pollCallback.Action(_pollCallback.Id, powerConnectionCanceller.Token, () => { });
+                    }
+                }
+                catch(Exception ex)
+                {
+                    SensusException.Report("Failed ac power connected poll.", ex);
+                }
+
+            };
 
         }
 
@@ -344,6 +408,10 @@ namespace Sensus.Probes
 
                 }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
+                if(_acPowerConnectPoll)
+                {
+                    SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;  //attach to the power connection changed 
+                }
 #if __IOS__
 
                 if (_significantChangePoll)
@@ -363,14 +431,19 @@ namespace Sensus.Probes
                     }
                 }
 
-                // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
-                if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
+                // schedule the callback if we're not doing overriding the scheduled polling.
+                if ((!_significantChangePoll || !_significantChangePollOverridesScheduledPolls) &&
+                    (!_acPowerConnectPoll || !_acPowerConnectPollOverridesSchedulePolls))
                 {
                     SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
                 }
 
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
+                // schedule the callback if we're not doing overriding the scheduled polling.
+                if(!_acPowerConnectPoll || !_acPowerConnectPollOverridesSchedulePolls)
+                {
+                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
+                }
 #endif
             }
         }
@@ -389,7 +462,10 @@ namespace Sensus.Probes
                     _locationManager.StopMonitoringSignificantLocationChanges();
                 }
 #endif
-
+                if(_acPowerConnectPoll)
+                {
+                    SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
+                }
                 SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback);
                 _pollCallback = null;
             }
@@ -401,7 +477,11 @@ namespace Sensus.Probes
 
             if (Running)
             {
-
+                //don't check for polling delays if the scheduled polls are overridden.
+                if(_acPowerConnectPoll && _acPowerConnectPollOverridesSchedulePolls)
+                {
+                    return restart;
+                }
 #if __IOS__
                 // on ios we do significant-change polling, which can override scheduled polls. don't check for polling delays if the scheduled polls are overridden.
                 if (_significantChangePoll && _significantChangePollOverridesScheduledPolls)
