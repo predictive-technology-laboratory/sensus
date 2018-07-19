@@ -22,8 +22,6 @@ namespace Sensus.Android
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseNotificationService : FirebaseMessagingService
     {
-        const string TAG = "FirebaseNotificationService";
-
         public override void OnMessageReceived(RemoteMessage message)
         {
             System.Console.Out.WriteLine("Received.");
