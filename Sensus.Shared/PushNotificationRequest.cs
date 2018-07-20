@@ -31,7 +31,7 @@ namespace Sensus
             }
             else
             {
-                SensusException.Report("Unrecognized push notification request format:  " + PushNotificationRequestFormat);
+                SensusException.Report("Unrecognized push notification request format:  " + format);
                 return "";
             }
         }

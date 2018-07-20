@@ -1697,10 +1697,9 @@ namespace Sensus
                     }
                 }
 
-                // register for push notfiications
                 if (startException == null)
                 {
-                    SensusServiceHelper.Get().RegisterForPushNotifications();
+                    SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync();
                 }
 
                 if (startException == null)
@@ -2151,8 +2150,7 @@ namespace Sensus
                     }
                 }
 
-                // reregister for push notifications
-                SensusServiceHelper.Get().RegisterForPushNotifications();
+                SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync();
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");

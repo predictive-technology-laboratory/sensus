@@ -12,25 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using Firebase.Iid;
-using System.Threading.Tasks;
 using System;
-using Sensus.Exceptions;
-using System.Threading;
 
-namespace Sensus.Android
+namespace Sensus.Exceptions
 {
-    [Service]
-    [IntentFilter(new[] { "com.google.firebase.INSTANCE_ID_EVENT" })]
-    public class FirebaseRegistrationService : FirebaseInstanceIdService
+    public class UnsetPushNotificationTokenException : Exception
     {
-        public override void OnTokenRefresh()
+        public UnsetPushNotificationTokenException()
         {
-            // update push notification registrations using the new token. as this 
-            // is a service, we're not exactly sure when it will be started. so 
-            // the service helper might not be immediately available.
-            SensusServiceHelper.Get()?.UpdatePushNotificationRegistrationsAsync();
         }
     }
 }

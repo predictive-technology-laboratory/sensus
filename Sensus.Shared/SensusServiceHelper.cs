@@ -42,10 +42,6 @@ using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
 using WindowsAzure.Messaging;
 
-#if __ANDROID__
-using Firebase.Iid;
-#endif
-
 namespace Sensus
 {
     /// <summary>
@@ -1436,64 +1432,93 @@ namespace Sensus
             }
         }
 
-        public void RegisterForPushNotifications()
+        public virtual Task UpdatePushNotificationRegistrationsAsync()
         {
-            try
+            return Task.Run(async () =>
             {
-                string token = PushNotificationToken;
-
-                if (token == null)
-                {
-                    throw new Exception("Push notification token has not been set.");
-                }
-
-#if __ANDROID__
-                // reregister for push notifications for each protocol
-                Dictionary<Tuple<string, string>, List<string>> hubSasProtocolIds = new Dictionary<Tuple<string, string>, List<string>>();
-                foreach (Tuple<string, string, string> hubSasProtocolId in GetRunningProtocols().Select(protocol => new Tuple<string, string, string>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol.Id)))
-                {
-                    if (!string.IsNullOrWhiteSpace(hubSasProtocolId.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocolId.Item2))
-                    {
-                        Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocolId.Item1, hubSasProtocolId.Item2);
-
-                        if (!hubSasProtocolIds.ContainsKey(hubSas))
-                        {
-                            hubSasProtocolIds.Add(hubSas, new List<string>());
-                        }
-
-                        hubSasProtocolIds[hubSas].Add(hubSasProtocolId.Item3);
-                    }
-                }
-
-                foreach (Tuple<string, string> hubSas in hubSasProtocolIds.Keys)
-                {
-                    NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
-                    notificationHub.UnregisterAll(token);
-                    string[] tags = hubSasProtocolIds[hubSas].Distinct().ToArray();
-                    notificationHub.Register(token, tags);
-                }
-#elif __IOS__
-#error "Not implemented"
-#endif
-            }
-            catch (Exception ex)
-            {
-                SensusException.Report("Failure while registering for push notifications:  " + ex.Message, ex);
-
-#if __ANDROID__
                 try
                 {
-                    // if anything goes wrong, delete the instance ID to get new token.
-                    FirebaseInstanceId.Instance.DeleteInstanceId();
-                    string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
-                }
-                catch (Exception newTokenException)
-                {
-                    SensusException.Report("Failure while obtaining a new token:  " + newTokenException.Message, ex);
-                }
-#endif
+                    if (PushNotificationToken == null)
+                    {
+                        throw new UnsetPushNotificationTokenException();
+                    }
 
-            }
+                    // associate each notification hub with its protocols
+                    Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
+                    foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol)))
+                    {
+                        if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
+                        {
+                            Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
+
+                            if (!hubSasProtocols.ContainsKey(hubSas))
+                            {
+                                hubSasProtocols.Add(hubSas, new List<Protocol>());
+                            }
+
+                            hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
+                        }
+                    }
+
+                    // update each notification hubs registration
+                    foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+                    {
+                        // unregister everything from hub
+                        NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
+                        notificationHub.UnregisterAll(PushNotificationToken);
+
+                        // register for push notifications associated with running protocols
+                        Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
+                        if (runningProtocols.Length > 0)
+                        {
+                            notificationHub.Register(PushNotificationToken, runningProtocols.Select(protocol => protocol.Id).ToArray());
+
+                            // each protocol may have its own remote data store being monitored for push notification
+                            // requests. tokens are per device, so send the new token to each protocol's remote
+                            // data store so that the backend will know where to send push notifications
+                            foreach (Protocol runningProtocol in runningProtocols)
+                            {
+                                try
+                                {
+                                    if (runningProtocol.RemoteDataStore != null)
+                                    {
+                                        await runningProtocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, default(CancellationToken));
+                                    }
+                                }
+                                catch (Exception sendTokenException)
+                                {
+                                    SensusException.Report("Failed to send push notification token:  " + sendTokenException.Message, sendTokenException);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (UnsetPushNotificationTokenException ex)
+                {
+                    try
+                    {
+                        SensusException.Report("Push notification token was not set.");
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    // rethrow exception to give parent class an opportunity to fix the problem
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        SensusException.Report("Exception while updating push notification registrations:  " + ex.Message, ex);
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    // don't rethrow
+                }
+            });
         }
 
         public void StopProtocols()

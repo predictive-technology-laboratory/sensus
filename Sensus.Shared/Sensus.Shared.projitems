@@ -240,6 +240,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequestFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
