@@ -14,6 +14,7 @@
 
 using System;
 using Sensus.Exceptions;
+using Newtonsoft.Json;
 
 namespace Sensus
 {
@@ -48,9 +49,9 @@ namespace Sensus
                 return "{" +
                            "\"device\":\"" + SensusServiceHelper.Get().DeviceId + "\"," +
                            "\"protocol\":\"" + _protocol.Id + "\"," +
-                           "\"message\":\"" + _message + "\"," +
+                           "\"message\":" + JsonConvert.ToString(_message) + "," +
                            "\"format\":\"" + GetFormatString(_format) + "\"," +
-                           "\"time\":\"" + _time.ToUnixTimeSeconds() + "\"" +
+                           "\"time\":" + _time.ToUnixTimeSeconds() +
                        "}";
             }
         }

@@ -21,7 +21,7 @@ for n in $(ls $notifications_dir/*.json)
 do
     device=$(jq -r '.device' $n)
     protocol=$(jq -r '.protocol' $n)
-    message=$(jq -r '.message' $n)
+    message=$(jq '.message' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)
 	
@@ -32,7 +32,7 @@ do
 	token=$(cat "$notifications_dir/$device")
 
 	# send notification.
-        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data '{"data":{"body":"'"$message"'"}}' -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
+        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "{\"data\":{\"body\":$message}}" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
 	
 	# check status.
         if [[ "$response" -eq "201"  ]]
