@@ -1,16 +1,17 @@
 #!/bin/sh
 
 if [ $# -ne 1 ]; then
-    echo "Usage:  ./send-push-notifications.sh [s3 path]"
-    echo "\t[s3 path]:  S3 path holding push notification requests and device tokens (e.g.:  s3://some-bucket/push-notifications)"
+    echo "Usage:  ./send-push-notifications.sh [s3 bucket]"
+    echo "\t[s3 bucket]:  S3 bucket for remote data store (e.g.:  s3://some-bucket)"
     echo ""
     exit 1
 fi
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
+s3_path="$1/push-notifications"
 notifications_dir="push-notifications"
 mkdir -p $notifications_dir
-aws s3 sync --delete $1 $notifications_dir
+aws s3 sync --delete $s3_path $notifications_dir
 
 # get shared access signature.
 sas=$(node get-sas.js)
@@ -42,4 +43,4 @@ do
 done
 
 # sync notifications from local to s3, deleting any in s3 that we completed.
-aws s3 sync --delete $notifications_dir $1
+aws s3 sync --delete $notifications_dir $s3_path
