@@ -1438,6 +1438,8 @@ namespace Sensus
             {
                 try
                 {
+                    // we should always have a token. if we do not, throw an exception and let the
+                    // parent class override attempt to resolve the issue by getting a new token.
                     if (PushNotificationToken == null)
                     {
                         throw new UnsetPushNotificationTokenException();
@@ -1460,7 +1462,7 @@ namespace Sensus
                         }
                     }
 
-                    // update each notification hubs registration
+                    // update each notification hub's registration, using the protocols as tags to listen to.
                     foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
                     {
                         // unregister everything from hub
@@ -1503,7 +1505,7 @@ namespace Sensus
                     {
                     }
 
-                    // rethrow exception to give parent class an opportunity to fix the problem
+                    // rethrow exception to give parent class an opportunity to fix the problem (e.g., by requesting a new token)
                     throw ex;
                 }
                 catch (Exception ex)
@@ -1516,7 +1518,9 @@ namespace Sensus
                     {
                     }
 
-                    // don't rethrow
+                    // don't rethrow. it's not clear that a new token would fix the problem, and it could be the case that
+                    // requesting a new token sets up an infinite loop of request-fail (e.g., due to a network problem or
+                    // other issues in the messaging API). we have just reported the issue to the app center crash api, so hop
                 }
             });
         }

@@ -1331,7 +1331,8 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The push notification hub to listen to. This can be created within the Azure Portal.
+        /// The push notification hub to listen to. This can be created within the Azure Portal. The
+        /// value to use here is the name of the hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
         [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
@@ -1343,7 +1344,8 @@ namespace Sensus
 
         /// <summary>
         /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
-        /// can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal.
+        /// value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
+        /// the value directly to this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
         [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]

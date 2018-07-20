@@ -406,7 +406,7 @@ namespace Sensus.DataStores.Remote
                     dataStream.Write(tokenBytes, 0, tokenBytes.Length);
                     dataStream.Position = 0;
 
-                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, "application/json", cancellationToken);
+                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, "text/plain", cancellationToken);
                 }
                 finally
                 {
