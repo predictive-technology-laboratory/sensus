@@ -1,5 +1,5 @@
 {
-  "token":"xxxx",
+  "device":"xxxx",
   "protocol":"xxxx",
   "message":"test",
   "format":"gcm",

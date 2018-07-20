@@ -90,6 +90,9 @@ namespace Sensus.DataStores.Remote
     /// </summary>
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
+        private const string DATA_DIRECTORY = "data";
+        private const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
+
         private string _region;
         private string _bucket;
         private string _folder;
@@ -333,7 +336,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    await Put(s3, stream, (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
+                    await Put(s3, stream, DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
                 }
                 finally
                 {
@@ -358,6 +361,52 @@ namespace Sensus.DataStores.Remote
                     dataStream.Position = 0;
 
                     await Put(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    s3 = InitializeS3();
+                    byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
+                    MemoryStream dataStream = new MemoryStream();
+                    dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
+                    dataStream.Position = 0;
+
+                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + Guid.NewGuid() + ".json", "application/json", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    s3 = InitializeS3();
+                    byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
+                    MemoryStream dataStream = new MemoryStream();
+                    dataStream.Write(tokenBytes, 0, tokenBytes.Length);
+                    dataStream.Position = 0;
+
+                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, "application/json", cancellationToken);
                 }
                 finally
                 {
@@ -415,7 +464,7 @@ namespace Sensus.DataStores.Remote
 
         public override string GetDatumKey(Datum datum)
         {
-            return (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
+            return DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
         }
 
         public override async Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)

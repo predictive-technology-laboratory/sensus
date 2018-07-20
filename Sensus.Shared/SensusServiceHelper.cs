@@ -1448,6 +1448,7 @@ namespace Sensus
                 }
 
 #if __ANDROID__
+                // reregister for push notifications for each protocol
                 Dictionary<Tuple<string, string>, List<string>> hubSasProtocolIds = new Dictionary<Tuple<string, string>, List<string>>();
                 foreach (Tuple<string, string, string> hubSasProtocolId in GetRunningProtocols().Select(protocol => new Tuple<string, string, string>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol.Id)))
                 {
@@ -1474,7 +1475,6 @@ namespace Sensus
 #elif __IOS__
 #error "Not implemented"
 #endif
-
             }
             catch (Exception ex)
             {

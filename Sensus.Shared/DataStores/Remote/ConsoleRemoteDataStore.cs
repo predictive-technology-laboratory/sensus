@@ -50,7 +50,17 @@ namespace Sensus.DataStores.Remote
 
         public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
+        }
+
+        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
 
         public override string GetDatumKey(Datum datum)

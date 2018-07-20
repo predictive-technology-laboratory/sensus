@@ -14,6 +14,10 @@
 
 using Android.App;
 using Firebase.Iid;
+using System.Threading.Tasks;
+using System;
+using Sensus.Exceptions;
+using System.Threading;
 
 namespace Sensus.Android
 {
@@ -23,14 +27,33 @@ namespace Sensus.Android
     {
         public override void OnTokenRefresh()
         {
-            // update the token on the service helper. as this is a service, the service helper 
-            // might not be immediately available.
+            // as this is a service, the service helper might not be immediately available.
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
             if (serviceHelper != null)
             {
+                // reregister for push notifications using the new token
                 serviceHelper.RegisterForPushNotifications();
 
-                // TODO:  will need to update any existing push notifications within S3 to use the new token.
+                // each protocol may have its own remote data store being monitored for push notification
+                // requests. tokens are per device, so send the new token to each protocol's remote
+                // data store.
+                Task.Run(async () =>
+                {
+                    foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
+                    {
+                        try
+                        {
+                            if (protocol.RemoteDataStore != null)
+                            {
+                                await protocol.RemoteDataStore.SendPushNotificationTokenAsync(FirebaseInstanceId.Instance.Token, default(CancellationToken));
+                            }
+                        }
+                        catch (Exception sendTokenException)
+                        {
+                            SensusException.Report("Failed to send push notification token:  " + sendTokenException.Message, sendTokenException);
+                        }
+                    }
+                });
             }
         }
     }

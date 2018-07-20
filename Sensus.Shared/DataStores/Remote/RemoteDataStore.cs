@@ -304,6 +304,22 @@ namespace Sensus.DataStores.Remote
         public abstract Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Sends the push notification request.
+        /// </summary>
+        /// <returns>The push notification request.</returns>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Sends the push notification token.
+        /// </summary>
+        /// <returns>The push notification token.</returns>
+        /// <param name="token">Token.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the key (identifier) value for a <see cref="Datum"/>. Used within <see cref="WriteDatumAsync"/> and <see cref="GetDatumAsync"/>.
         /// </summary>
         /// <returns>The datum key.</returns>
