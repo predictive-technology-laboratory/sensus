@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class InputGroupPage.NavigationResult
+    <title>Class FirebaseNotificationService
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class InputGroupPage.NavigationResult
+    <meta name="title" content="Class FirebaseNotificationService
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,142 +76,61 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.UI.InputGroupPage.NavigationResult">
+            <article class="content wrap" id="_content" data-uid="Sensus.Android.FirebaseNotificationService">
   
   
-  <h1 id="Sensus_UI_InputGroupPage_NavigationResult" data-uid="Sensus.UI.InputGroupPage.NavigationResult" class="text-break">Class InputGroupPage.NavigationResult
+  <h1 id="Sensus_Android_FirebaseNotificationService" data-uid="Sensus.Android.FirebaseNotificationService" class="text-break">Class FirebaseNotificationService
   </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Enum</span></div>
-    <div class="level1"><span class="xref">InputGroupPage.NavigationResult</span></div>
+    <div class="level0"><span class="xref">Firebase.Messaging.FirebaseMessagingService</span></div>
+    <div class="level1"><span class="xref">FirebaseNotificationService</span></div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.html">Sensus.UI</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Android.html">Sensus.Android</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_UI_InputGroupPage_NavigationResult_syntax">Syntax</h5>
+  <h5 id="Sensus_Android_FirebaseNotificationService_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class NavigationResult : Enum</code></pre>
+    <pre><code class="lang-csharp hljs">public class FirebaseNotificationService : FirebaseMessagingService</code></pre>
   </div>
-  <h3 id="fields">Fields
+  <h3 id="constructors">Constructors
   </h3>
   
   
-  <h4 id="Sensus_UI_InputGroupPage_NavigationResult_Backward" data-uid="Sensus.UI.InputGroupPage.NavigationResult.Backward">Backward</h4>
+  <a id="Sensus_Android_FirebaseNotificationService__ctor_" data-uid="Sensus.Android.FirebaseNotificationService.#ctor*"></a>
+  <h4 id="Sensus_Android_FirebaseNotificationService__ctor" data-uid="Sensus.Android.FirebaseNotificationService.#ctor">FirebaseNotificationService()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const InputGroupPage.NavigationResult Backward</code></pre>
+    <pre><code class="lang-csharp hljs">public FirebaseNotificationService()</code></pre>
   </div>
-  <h5 class="fieldValue">Field Value</h5>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Android_FirebaseNotificationService_OnMessageReceived_" data-uid="Sensus.Android.FirebaseNotificationService.OnMessageReceived*"></a>
+  <h4 id="Sensus_Android_FirebaseNotificationService_OnMessageReceived_Firebase_Messaging_RemoteMessage_" data-uid="Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)">OnMessageReceived(RemoteMessage)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnMessageReceived(RemoteMessage message)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
+        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.UI.InputGroupPage.NavigationResult.html">InputGroupPage.NavigationResult</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_UI_InputGroupPage_NavigationResult_Cancel" data-uid="Sensus.UI.InputGroupPage.NavigationResult.Cancel">Cancel</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const InputGroupPage.NavigationResult Cancel</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.UI.InputGroupPage.NavigationResult.html">InputGroupPage.NavigationResult</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_UI_InputGroupPage_NavigationResult_Forward" data-uid="Sensus.UI.InputGroupPage.NavigationResult.Forward">Forward</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const InputGroupPage.NavigationResult Forward</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.UI.InputGroupPage.NavigationResult.html">InputGroupPage.NavigationResult</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_UI_InputGroupPage_NavigationResult_Submit" data-uid="Sensus.UI.InputGroupPage.NavigationResult.Submit">Submit</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const InputGroupPage.NavigationResult Submit</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.UI.InputGroupPage.NavigationResult.html">InputGroupPage.NavigationResult</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_UI_InputGroupPage_NavigationResult_value__" data-uid="Sensus.UI.InputGroupPage.NavigationResult.value__">value__</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int value__</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><span class="xref">Firebase.Messaging.RemoteMessage</span></td>
+        <td><span class="parametername">message</span></td>
         <td></td>
       </tr>
     </tbody>

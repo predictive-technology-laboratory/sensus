@@ -1,5 +1,5 @@
 ---
-uid:push_notifications
+uid: push_notifications
 ---
 
 # Push Notifications

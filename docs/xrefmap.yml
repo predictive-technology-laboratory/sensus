@@ -37,6 +37,9 @@ references:
 - uid: protocol_distribution
   name: Protocol Distribution
   href: articles/protocol_distribution.html
+- uid: push_notifications
+  name: Push Notifications
+  href: articles/push_notifications.html
 - uid: Sensus
   name: Sensus
   href: api/Sensus.html
@@ -247,6 +250,60 @@ references:
   commentId: Overload:Sensus.Android.AndroidMainActivity.OnWindowFocusChanged
   fullName: Sensus.Android.AndroidMainActivity.OnWindowFocusChanged
   nameWithType: AndroidMainActivity.OnWindowFocusChanged
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  name: AndroidPowerConnectionChangeBroadcastReceiver
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html
+  commentId: T:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  name: AndroidPowerConnectionChangeBroadcastReceiver()
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver__ctor
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver()
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver()
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor*
+  name: AndroidPowerConnectionChangeBroadcastReceiver
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver__ctor_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  name: OnReceive(Context, Intent)
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Context, Intent)
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive*
+  name: OnReceive
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_OnReceive_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  name: POWER_CONNECTION_CHANGED
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_POWER_CONNECTION_CHANGED
+  commentId: E:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener
+  name: AndroidPowerConnectionChangeListener
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html
+  commentId: T:Sensus.Android.AndroidPowerConnectionChangeListener
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener
+  nameWithType: AndroidPowerConnectionChangeListener
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  name: AndroidPowerConnectionChangeListener()
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html#Sensus_Android_AndroidPowerConnectionChangeListener__ctor
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener()
+  nameWithType: AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener()
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener.#ctor*
+  name: AndroidPowerConnectionChangeListener
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html#Sensus_Android_AndroidPowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener
+  nameWithType: AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener
 - uid: Sensus.Android.AndroidSensusService
   name: AndroidSensusService
   href: api/Sensus.Android.AndroidSensusService.html
@@ -718,6 +775,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync
   fullName: Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync
   nameWithType: AndroidSensusServiceHelper.ProtectedFlashNotificationAsync
+- uid: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  name: PushNotificationToken
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_PushNotificationToken
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  fullName: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  nameWithType: AndroidSensusServiceHelper.PushNotificationToken
+- uid: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken*
+  name: PushNotificationToken
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_PushNotificationToken_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  fullName: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  nameWithType: AndroidSensusServiceHelper.PushNotificationToken
 - uid: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
   name: ReissueForegroundServiceNotification()
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification
@@ -829,6 +898,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync
   fullName: Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync
   nameWithType: AndroidSensusServiceHelper.TextToSpeechAsync
+- uid: Sensus.Android.AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  name: UpdatePushNotificationRegistrationsAsync()
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_UpdatePushNotificationRegistrationsAsync
+  commentId: M:Sensus.Android.AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  fullName: Sensus.Android.AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync()
+  nameWithType: AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync()
+- uid: Sensus.Android.AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync*
+  name: UpdatePushNotificationRegistrationsAsync
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_UpdatePushNotificationRegistrationsAsync_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  fullName: Sensus.Android.AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  nameWithType: AndroidSensusServiceHelper.UpdatePushNotificationRegistrationsAsync
 - uid: Sensus.Android.AndroidSensusServiceHelper.UserDeniedBluetoothEnable
   name: UserDeniedBluetoothEnable
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_UserDeniedBluetoothEnable
@@ -1363,6 +1444,66 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   fullName: Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   nameWithType: AndroidSensusContext.SymmetricEncryption
+- uid: Sensus.Android.FirebaseNotificationService
+  name: FirebaseNotificationService
+  href: api/Sensus.Android.FirebaseNotificationService.html
+  commentId: T:Sensus.Android.FirebaseNotificationService
+  fullName: Sensus.Android.FirebaseNotificationService
+  nameWithType: FirebaseNotificationService
+- uid: Sensus.Android.FirebaseNotificationService.#ctor
+  name: FirebaseNotificationService()
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService__ctor
+  commentId: M:Sensus.Android.FirebaseNotificationService.#ctor
+  fullName: Sensus.Android.FirebaseNotificationService.FirebaseNotificationService()
+  nameWithType: FirebaseNotificationService.FirebaseNotificationService()
+- uid: Sensus.Android.FirebaseNotificationService.#ctor*
+  name: FirebaseNotificationService
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService__ctor_
+  commentId: Overload:Sensus.Android.FirebaseNotificationService.#ctor
+  fullName: Sensus.Android.FirebaseNotificationService.FirebaseNotificationService
+  nameWithType: FirebaseNotificationService.FirebaseNotificationService
+- uid: Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)
+  name: OnMessageReceived(RemoteMessage)
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService_OnMessageReceived_Firebase_Messaging_RemoteMessage_
+  commentId: M:Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)
+  fullName: Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)
+  nameWithType: FirebaseNotificationService.OnMessageReceived(RemoteMessage)
+- uid: Sensus.Android.FirebaseNotificationService.OnMessageReceived*
+  name: OnMessageReceived
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService_OnMessageReceived_
+  commentId: Overload:Sensus.Android.FirebaseNotificationService.OnMessageReceived
+  fullName: Sensus.Android.FirebaseNotificationService.OnMessageReceived
+  nameWithType: FirebaseNotificationService.OnMessageReceived
+- uid: Sensus.Android.FirebaseRegistrationService
+  name: FirebaseRegistrationService
+  href: api/Sensus.Android.FirebaseRegistrationService.html
+  commentId: T:Sensus.Android.FirebaseRegistrationService
+  fullName: Sensus.Android.FirebaseRegistrationService
+  nameWithType: FirebaseRegistrationService
+- uid: Sensus.Android.FirebaseRegistrationService.#ctor
+  name: FirebaseRegistrationService()
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService__ctor
+  commentId: M:Sensus.Android.FirebaseRegistrationService.#ctor
+  fullName: Sensus.Android.FirebaseRegistrationService.FirebaseRegistrationService()
+  nameWithType: FirebaseRegistrationService.FirebaseRegistrationService()
+- uid: Sensus.Android.FirebaseRegistrationService.#ctor*
+  name: FirebaseRegistrationService
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService__ctor_
+  commentId: Overload:Sensus.Android.FirebaseRegistrationService.#ctor
+  fullName: Sensus.Android.FirebaseRegistrationService.FirebaseRegistrationService
+  nameWithType: FirebaseRegistrationService.FirebaseRegistrationService
+- uid: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  name: OnTokenRefresh()
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService_OnTokenRefresh
+  commentId: M:Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  fullName: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh()
+  nameWithType: FirebaseRegistrationService.OnTokenRefresh()
+- uid: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh*
+  name: OnTokenRefresh
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService_OnTokenRefresh_
+  commentId: Overload:Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  fullName: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  nameWithType: FirebaseRegistrationService.OnTokenRefresh
 - uid: Sensus.Android.Probes
   name: Sensus.Android.Probes
   href: api/Sensus.Android.Probes.html
@@ -6274,12 +6415,6 @@ references:
   commentId: F:Sensus.Android.Resource.Color.com_facebook_send_button_text_color
   fullName: Sensus.Android.Resource.Color.com_facebook_send_button_text_color
   nameWithType: Resource.Color.com_facebook_send_button_text_color
-- uid: Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  name: com_facebook_share_button_text_color
-  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_facebook_share_button_text_color
-  commentId: F:Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  fullName: Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  nameWithType: Resource.Color.com_facebook_share_button_text_color
 - uid: Sensus.Android.Resource.Color.com_smart_login_code
   name: com_smart_login_code
   href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_smart_login_code
@@ -7294,48 +7429,6 @@ references:
   commentId: F:Sensus.Android.Resource.Dimension.com_facebook_profilepictureview_preset_size_small
   fullName: Sensus.Android.Resource.Dimension.com_facebook_profilepictureview_preset_size_small
   nameWithType: Resource.Dimension.com_facebook_profilepictureview_preset_size_small
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  name: com_facebook_share_button_compound_drawable_padding
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_compound_drawable_padding
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  nameWithType: Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  name: com_facebook_share_button_padding_bottom
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_bottom
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_bottom
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  name: com_facebook_share_button_padding_left
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_left
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_left
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  name: com_facebook_share_button_padding_right
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_right
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_right
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  name: com_facebook_share_button_padding_top
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_top
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_top
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  name: com_facebook_share_button_text_size
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_text_size
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  nameWithType: Resource.Dimension.com_facebook_share_button_text_size
-- uid: Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  name: com_facebook_tooltip_horizontal_padding
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_tooltip_horizontal_padding
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  nameWithType: Resource.Dimension.com_facebook_tooltip_horizontal_padding
 - uid: Sensus.Android.Resource.Dimension.compat_button_inset_horizontal_material
   name: compat_button_inset_horizontal_material
   href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_compat_button_inset_horizontal_material
@@ -10534,12 +10627,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.com_facebook_fragment_container
   fullName: Sensus.Android.Resource.Id.com_facebook_fragment_container
   nameWithType: Resource.Id.com_facebook_fragment_container
-- uid: Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  name: com_facebook_login_activity_progress_bar
-  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_login_activity_progress_bar
-  commentId: F:Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  fullName: Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  nameWithType: Resource.Id.com_facebook_login_activity_progress_bar
+- uid: Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  name: com_facebook_login_fragment_progress_bar
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_login_fragment_progress_bar
+  commentId: F:Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  fullName: Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  nameWithType: Resource.Id.com_facebook_login_fragment_progress_bar
 - uid: Sensus.Android.Resource.Id.com_facebook_smart_instructions_0
   name: com_facebook_smart_instructions_0
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_smart_instructions_0
@@ -11488,6 +11581,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.showTitle
   fullName: Sensus.Android.Resource.Id.showTitle
   nameWithType: Resource.Id.showTitle
+- uid: Sensus.Android.Resource.Id.sliding_tabs
+  name: sliding_tabs
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_sliding_tabs
+  commentId: F:Sensus.Android.Resource.Id.sliding_tabs
+  fullName: Sensus.Android.Resource.Id.sliding_tabs
+  nameWithType: Resource.Id.sliding_tabs
 - uid: Sensus.Android.Resource.Id.small
   name: small
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_small
@@ -11686,6 +11785,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.titleDividerNoCustom
   fullName: Sensus.Android.Resource.Id.titleDividerNoCustom
   nameWithType: Resource.Id.titleDividerNoCustom
+- uid: Sensus.Android.Resource.Id.toolbar
+  name: toolbar
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_toolbar
+  commentId: F:Sensus.Android.Resource.Id.toolbar
+  fullName: Sensus.Android.Resource.Id.toolbar
+  nameWithType: Resource.Id.toolbar
 - uid: Sensus.Android.Resource.Id.top
   name: top
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_top
@@ -12418,6 +12523,18 @@ references:
   commentId: F:Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item
   fullName: Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item
   nameWithType: Resource.Layout.support_simple_spinner_dropdown_item
+- uid: Sensus.Android.Resource.Layout.Tabbar
+  name: Tabbar
+  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_Tabbar
+  commentId: F:Sensus.Android.Resource.Layout.Tabbar
+  fullName: Sensus.Android.Resource.Layout.Tabbar
+  nameWithType: Resource.Layout.Tabbar
+- uid: Sensus.Android.Resource.Layout.Toolbar
+  name: Toolbar
+  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_Toolbar
+  commentId: F:Sensus.Android.Resource.Layout.Toolbar
+  fullName: Sensus.Android.Resource.Layout.Toolbar
+  nameWithType: Resource.Layout.Toolbar
 - uid: Sensus.Android.Resource.Layout.tooltip
   name: tooltip
   href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_tooltip
@@ -12892,6 +13009,54 @@ references:
   commentId: F:Sensus.Android.Resource.String.common_signin_button_text_long
   fullName: Sensus.Android.Resource.String.common_signin_button_text_long
   nameWithType: Resource.String.common_signin_button_text_long
+- uid: Sensus.Android.Resource.String.default_web_client_id
+  name: default_web_client_id
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_default_web_client_id
+  commentId: F:Sensus.Android.Resource.String.default_web_client_id
+  fullName: Sensus.Android.Resource.String.default_web_client_id
+  nameWithType: Resource.String.default_web_client_id
+- uid: Sensus.Android.Resource.String.fcm_fallback_notification_channel_label
+  name: fcm_fallback_notification_channel_label
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_fcm_fallback_notification_channel_label
+  commentId: F:Sensus.Android.Resource.String.fcm_fallback_notification_channel_label
+  fullName: Sensus.Android.Resource.String.fcm_fallback_notification_channel_label
+  nameWithType: Resource.String.fcm_fallback_notification_channel_label
+- uid: Sensus.Android.Resource.String.firebase_database_url
+  name: firebase_database_url
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_firebase_database_url
+  commentId: F:Sensus.Android.Resource.String.firebase_database_url
+  fullName: Sensus.Android.Resource.String.firebase_database_url
+  nameWithType: Resource.String.firebase_database_url
+- uid: Sensus.Android.Resource.String.gcm_defaultSenderId
+  name: gcm_defaultSenderId
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_gcm_defaultSenderId
+  commentId: F:Sensus.Android.Resource.String.gcm_defaultSenderId
+  fullName: Sensus.Android.Resource.String.gcm_defaultSenderId
+  nameWithType: Resource.String.gcm_defaultSenderId
+- uid: Sensus.Android.Resource.String.google_api_key
+  name: google_api_key
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_api_key
+  commentId: F:Sensus.Android.Resource.String.google_api_key
+  fullName: Sensus.Android.Resource.String.google_api_key
+  nameWithType: Resource.String.google_api_key
+- uid: Sensus.Android.Resource.String.google_app_id
+  name: google_app_id
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_app_id
+  commentId: F:Sensus.Android.Resource.String.google_app_id
+  fullName: Sensus.Android.Resource.String.google_app_id
+  nameWithType: Resource.String.google_app_id
+- uid: Sensus.Android.Resource.String.google_crash_reporting_api_key
+  name: google_crash_reporting_api_key
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_crash_reporting_api_key
+  commentId: F:Sensus.Android.Resource.String.google_crash_reporting_api_key
+  fullName: Sensus.Android.Resource.String.google_crash_reporting_api_key
+  nameWithType: Resource.String.google_crash_reporting_api_key
+- uid: Sensus.Android.Resource.String.google_storage_bucket
+  name: google_storage_bucket
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_storage_bucket
+  commentId: F:Sensus.Android.Resource.String.google_storage_bucket
+  fullName: Sensus.Android.Resource.String.google_storage_bucket
+  nameWithType: Resource.String.google_storage_bucket
 - uid: Sensus.Android.Resource.String.Hello
   name: Hello
   href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_Hello
@@ -14464,6 +14629,18 @@ references:
   commentId: F:Sensus.Android.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
   fullName: Sensus.Android.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
   nameWithType: Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
+- uid: Sensus.Android.Resource.Style.SensusTheme
+  name: SensusTheme
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_SensusTheme
+  commentId: F:Sensus.Android.Resource.Style.SensusTheme
+  fullName: Sensus.Android.Resource.Style.SensusTheme
+  nameWithType: Resource.Style.SensusTheme
+- uid: Sensus.Android.Resource.Style.SensusTheme_Base
+  name: SensusTheme_Base
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_SensusTheme_Base
+  commentId: F:Sensus.Android.Resource.Style.SensusTheme_Base
+  fullName: Sensus.Android.Resource.Style.SensusTheme_Base
+  nameWithType: Resource.Style.SensusTheme_Base
 - uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat
   name: TextAppearance_AppCompat
   href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat
@@ -21755,6 +21932,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   nameWithType: AmazonS3RemoteDataStore.Region
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationRequestAsync_Sensus_PushNotificationRequest_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync*
+  name: SendPushNotificationRequestAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationRequestAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationRequestAsync
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  name: SendPushNotificationTokenAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationTokenAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync*
+  name: SendPushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Start
   name: Start()
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Start
@@ -21887,6 +22088,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   nameWithType: ConsoleRemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationRequestAsync_Sensus_PushNotificationRequest_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync*
+  name: SendPushNotificationRequestAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationRequestAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationRequestAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  name: SendPushNotificationTokenAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationTokenAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationTokenAsync(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync*
+  name: SendPushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
   name: WriteDataStreamAsync(Stream, String, String, CancellationToken)
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_
@@ -22016,6 +22241,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Reset
   fullName: Sensus.DataStores.Remote.RemoteDataStore.Reset
   nameWithType: RemoteDataStore.Reset
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationRequestAsync_Sensus_PushNotificationRequest_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync*
+  name: SendPushNotificationRequestAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationRequestAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync
+  nameWithType: RemoteDataStore.SendPushNotificationRequestAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  name: SendPushNotificationTokenAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationTokenAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.SendPushNotificationTokenAsync(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync*
+  name: SendPushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync
+  nameWithType: RemoteDataStore.SendPushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.RemoteDataStore.Start
   name: Start()
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Start
@@ -22676,6 +22925,24 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
+  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  name: UnsetPushNotificationTokenException()
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
+  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
+  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -23987,6 +24254,18 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.Platform
   fullName: Sensus.iOS.Context.iOSSensusContext.Platform
   nameWithType: iOSSensusContext.Platform
+- uid: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  nameWithType: iOSSensusContext.PowerConnectionChangeListener
+- uid: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  nameWithType: iOSSensusContext.PowerConnectionChangeListener
 - uid: Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_SymmetricEncryption
@@ -23999,6 +24278,24 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   fullName: Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   nameWithType: iOSSensusContext.SymmetricEncryption
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener
+  name: iOSPowerConnectionChangeListener
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html
+  commentId: T:Sensus.iOS.iOSPowerConnectionChangeListener
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener
+  nameWithType: iOSPowerConnectionChangeListener
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  name: iOSPowerConnectionChangeListener()
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html#Sensus_iOS_iOSPowerConnectionChangeListener__ctor
+  commentId: M:Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener()
+  nameWithType: iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener()
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener.#ctor*
+  name: iOSPowerConnectionChangeListener
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html#Sensus_iOS_iOSPowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener
+  nameWithType: iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener
 - uid: Sensus.iOS.iOSSensusServiceHelper
   name: iOSSensusServiceHelper
   href: api/Sensus.iOS.iOSSensusServiceHelper.html
@@ -26108,6 +26405,30 @@ references:
   commentId: Overload:Sensus.ParticipationRewardDatum.ToString
   fullName: Sensus.ParticipationRewardDatum.ToString
   nameWithType: ParticipationRewardDatum.ToString
+- uid: Sensus.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.PowerConnectionChangeListener.html
+  commentId: T:Sensus.PowerConnectionChangeListener
+  fullName: Sensus.PowerConnectionChangeListener
+  nameWithType: PowerConnectionChangeListener
+- uid: Sensus.PowerConnectionChangeListener.#ctor
+  name: PowerConnectionChangeListener()
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener__ctor
+  commentId: M:Sensus.PowerConnectionChangeListener.#ctor
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChangeListener()
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChangeListener()
+- uid: Sensus.PowerConnectionChangeListener.#ctor*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.PowerConnectionChangeListener.#ctor
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChangeListener
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChangeListener
+- uid: Sensus.PowerConnectionChangeListener.POWER_CONNECTION_CHANGED
+  name: POWER_CONNECTION_CHANGED
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener_POWER_CONNECTION_CHANGED
+  commentId: F:Sensus.PowerConnectionChangeListener.POWER_CONNECTION_CHANGED
+  fullName: Sensus.PowerConnectionChangeListener.POWER_CONNECTION_CHANGED
+  nameWithType: PowerConnectionChangeListener.POWER_CONNECTION_CHANGED
 - uid: Sensus.Probes
   name: Sensus.Probes
   href: api/Sensus.Probes.html
@@ -37646,6 +37967,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Script
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.Script
   nameWithType: ScriptRunner.Script
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  name: ScriptRunCallbacks
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  nameWithType: ScriptRunner.ScriptRunCallbacks
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks*
+  name: ScriptRunCallbacks
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  nameWithType: ScriptRunner.ScriptRunCallbacks
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups
   name: ShuffleInputGroups
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups
@@ -38693,6 +39026,30 @@ references:
   commentId: E:Sensus.Protocol.ProtocolRunningChanged
   fullName: Sensus.Protocol.ProtocolRunningChanged
   nameWithType: Protocol.ProtocolRunningChanged
+- uid: Sensus.Protocol.PushNotificationsHub
+  name: PushNotificationsHub
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub
+  commentId: P:Sensus.Protocol.PushNotificationsHub
+  fullName: Sensus.Protocol.PushNotificationsHub
+  nameWithType: Protocol.PushNotificationsHub
+- uid: Sensus.Protocol.PushNotificationsHub*
+  name: PushNotificationsHub
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub_
+  commentId: Overload:Sensus.Protocol.PushNotificationsHub
+  fullName: Sensus.Protocol.PushNotificationsHub
+  nameWithType: Protocol.PushNotificationsHub
+- uid: Sensus.Protocol.PushNotificationsSharedAccessSignature
+  name: PushNotificationsSharedAccessSignature
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature
+  commentId: P:Sensus.Protocol.PushNotificationsSharedAccessSignature
+  fullName: Sensus.Protocol.PushNotificationsSharedAccessSignature
+  nameWithType: Protocol.PushNotificationsSharedAccessSignature
+- uid: Sensus.Protocol.PushNotificationsSharedAccessSignature*
+  name: PushNotificationsSharedAccessSignature
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature_
+  commentId: Overload:Sensus.Protocol.PushNotificationsSharedAccessSignature
+  fullName: Sensus.Protocol.PushNotificationsSharedAccessSignature
+  nameWithType: Protocol.PushNotificationsSharedAccessSignature
 - uid: Sensus.Protocol.RandomTimeAnchor
   name: RandomTimeAnchor
   href: api/Sensus.Protocol.html#Sensus_Protocol_RandomTimeAnchor
@@ -39071,6 +39428,72 @@ references:
   commentId: F:Sensus.ProtocolStartConfirmationMode.value__
   fullName: Sensus.ProtocolStartConfirmationMode.value__
   nameWithType: ProtocolStartConfirmationMode.value__
+- uid: Sensus.PushNotificationRequest
+  name: PushNotificationRequest
+  href: api/Sensus.PushNotificationRequest.html
+  commentId: T:Sensus.PushNotificationRequest
+  fullName: Sensus.PushNotificationRequest
+  nameWithType: PushNotificationRequest
+- uid: Sensus.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,Sensus.PushNotificationRequestFormat,System.DateTimeOffset)
+  name: PushNotificationRequest(Protocol, String, PushNotificationRequestFormat, DateTimeOffset)
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest__ctor_Sensus_Protocol_System_String_Sensus_PushNotificationRequestFormat_System_DateTimeOffset_
+  commentId: M:Sensus.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,Sensus.PushNotificationRequestFormat,System.DateTimeOffset)
+  fullName: Sensus.PushNotificationRequest.PushNotificationRequest(Sensus.Protocol, System.String, Sensus.PushNotificationRequestFormat, System.DateTimeOffset)
+  nameWithType: PushNotificationRequest.PushNotificationRequest(Protocol, String, PushNotificationRequestFormat, DateTimeOffset)
+- uid: Sensus.PushNotificationRequest.#ctor*
+  name: PushNotificationRequest
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest__ctor_
+  commentId: Overload:Sensus.PushNotificationRequest.#ctor
+  fullName: Sensus.PushNotificationRequest.PushNotificationRequest
+  nameWithType: PushNotificationRequest.PushNotificationRequest
+- uid: Sensus.PushNotificationRequest.GetFormatString(Sensus.PushNotificationRequestFormat)
+  name: GetFormatString(PushNotificationRequestFormat)
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_GetFormatString_Sensus_PushNotificationRequestFormat_
+  commentId: M:Sensus.PushNotificationRequest.GetFormatString(Sensus.PushNotificationRequestFormat)
+  fullName: Sensus.PushNotificationRequest.GetFormatString(Sensus.PushNotificationRequestFormat)
+  nameWithType: PushNotificationRequest.GetFormatString(PushNotificationRequestFormat)
+- uid: Sensus.PushNotificationRequest.GetFormatString*
+  name: GetFormatString
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_GetFormatString_
+  commentId: Overload:Sensus.PushNotificationRequest.GetFormatString
+  fullName: Sensus.PushNotificationRequest.GetFormatString
+  nameWithType: PushNotificationRequest.GetFormatString
+- uid: Sensus.PushNotificationRequest.JSON
+  name: JSON
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_JSON
+  commentId: P:Sensus.PushNotificationRequest.JSON
+  fullName: Sensus.PushNotificationRequest.JSON
+  nameWithType: PushNotificationRequest.JSON
+- uid: Sensus.PushNotificationRequest.JSON*
+  name: JSON
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_JSON_
+  commentId: Overload:Sensus.PushNotificationRequest.JSON
+  fullName: Sensus.PushNotificationRequest.JSON
+  nameWithType: PushNotificationRequest.JSON
+- uid: Sensus.PushNotificationRequestFormat
+  name: PushNotificationRequestFormat
+  href: api/Sensus.PushNotificationRequestFormat.html
+  commentId: T:Sensus.PushNotificationRequestFormat
+  fullName: Sensus.PushNotificationRequestFormat
+  nameWithType: PushNotificationRequestFormat
+- uid: Sensus.PushNotificationRequestFormat.ApplePushNotificationService
+  name: ApplePushNotificationService
+  href: api/Sensus.PushNotificationRequestFormat.html#Sensus_PushNotificationRequestFormat_ApplePushNotificationService
+  commentId: F:Sensus.PushNotificationRequestFormat.ApplePushNotificationService
+  fullName: Sensus.PushNotificationRequestFormat.ApplePushNotificationService
+  nameWithType: PushNotificationRequestFormat.ApplePushNotificationService
+- uid: Sensus.PushNotificationRequestFormat.FirebaseCloudMessaging
+  name: FirebaseCloudMessaging
+  href: api/Sensus.PushNotificationRequestFormat.html#Sensus_PushNotificationRequestFormat_FirebaseCloudMessaging
+  commentId: F:Sensus.PushNotificationRequestFormat.FirebaseCloudMessaging
+  fullName: Sensus.PushNotificationRequestFormat.FirebaseCloudMessaging
+  nameWithType: PushNotificationRequestFormat.FirebaseCloudMessaging
+- uid: Sensus.PushNotificationRequestFormat.value__
+  name: value__
+  href: api/Sensus.PushNotificationRequestFormat.html#Sensus_PushNotificationRequestFormat_value__
+  commentId: F:Sensus.PushNotificationRequestFormat.value__
+  fullName: Sensus.PushNotificationRequestFormat.value__
+  nameWithType: PushNotificationRequestFormat.value__
 - uid: Sensus.QrCodePrefix
   name: QrCodePrefix
   href: api/Sensus.QrCodePrefix.html
@@ -39734,6 +40157,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.ProtocolShouldBeRunning
   fullName: Sensus.SensusServiceHelper.ProtocolShouldBeRunning
   nameWithType: SensusServiceHelper.ProtocolShouldBeRunning
+- uid: Sensus.SensusServiceHelper.PushNotificationToken
+  name: PushNotificationToken
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken
+  commentId: P:Sensus.SensusServiceHelper.PushNotificationToken
+  fullName: Sensus.SensusServiceHelper.PushNotificationToken
+  nameWithType: SensusServiceHelper.PushNotificationToken
+- uid: Sensus.SensusServiceHelper.PushNotificationToken*
+  name: PushNotificationToken
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken_
+  commentId: Overload:Sensus.SensusServiceHelper.PushNotificationToken
+  fullName: Sensus.SensusServiceHelper.PushNotificationToken
+  nameWithType: SensusServiceHelper.PushNotificationToken
 - uid: Sensus.SensusServiceHelper.ReadAllBytes(System.String)
   name: ReadAllBytes(String)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ReadAllBytes_System_String_
@@ -39980,6 +40415,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.UnregisterProtocol
   fullName: Sensus.SensusServiceHelper.UnregisterProtocol
   nameWithType: SensusServiceHelper.UnregisterProtocol
+- uid: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  name: UpdatePushNotificationRegistrationsAsync()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync
+  commentId: M:Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  fullName: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync()
+  nameWithType: SensusServiceHelper.UpdatePushNotificationRegistrationsAsync()
+- uid: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync*
+  name: UpdatePushNotificationRegistrationsAsync
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_
+  commentId: Overload:Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  fullName: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  nameWithType: SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
 - uid: Sensus.SensusServiceHelper.Version
   name: Version
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Version
@@ -40217,6 +40664,12 @@ references:
   commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Forward
   fullName: Sensus.UI.InputGroupPage.NavigationResult.Forward
   nameWithType: InputGroupPage.NavigationResult.Forward
+- uid: Sensus.UI.InputGroupPage.NavigationResult.Submit
+  name: Submit
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_Submit
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Submit
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.Submit
+  nameWithType: InputGroupPage.NavigationResult.Submit
 - uid: Sensus.UI.InputGroupPage.NavigationResult.value__
   name: value__
   href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_value__
@@ -43556,15 +44009,15 @@ references:
   commentId: T:Sensus.UI.ViewTextLinesPage
   fullName: Sensus.UI.ViewTextLinesPage
   nameWithType: ViewTextLinesPage
-- uid: Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)
-  name: ViewTextLinesPage(String, List<String>, Action, Action)
-  href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_System_Action_
-  commentId: M:Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)
-  name.vb: ViewTextLinesPage(String, List(Of String), Action, Action)
-  fullName: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List<System.String>, System.Action, System.Action)
-  fullName.vb: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List(Of System.String), System.Action, System.Action)
-  nameWithType: ViewTextLinesPage.ViewTextLinesPage(String, List<String>, Action, Action)
-  nameWithType.vb: ViewTextLinesPage.ViewTextLinesPage(String, List(Of String), Action, Action)
+- uid: Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)
+  name: ViewTextLinesPage(String, List<String>, Action)
+  href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_
+  commentId: M:Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)
+  name.vb: ViewTextLinesPage(String, List(Of String), Action)
+  fullName: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List<System.String>, System.Action)
+  fullName.vb: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List(Of System.String), System.Action)
+  nameWithType: ViewTextLinesPage.ViewTextLinesPage(String, List<String>, Action)
+  nameWithType.vb: ViewTextLinesPage.ViewTextLinesPage(String, List(Of String), Action)
 - uid: Sensus.UI.ViewTextLinesPage.#ctor*
   name: ViewTextLinesPage
   href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_

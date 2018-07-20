@@ -21,7 +21,31 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.AndroidMainActivity.html",
-          "hash": "g1mtQhssvaI4rE4epz83yQ=="
+          "hash": "YknLCpPtZcCcgE1SkCGeOg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html",
+          "hash": "sZ6i6rmk0hs70T2XnN3SIg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.Android.AndroidPowerConnectionChangeListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.Android.AndroidPowerConnectionChangeListener.html",
+          "hash": "SXFIrXARjDj38twP5ol33Q=="
         }
       },
       "is_incremental": true,
@@ -81,7 +105,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.AndroidSensusServiceHelper.html",
-          "hash": "ESXyIi5HuVWdoVU1/7cxJQ=="
+          "hash": "8xHbWAJR23zEWOaS5eKFkw=="
         }
       },
       "is_incremental": true,
@@ -202,6 +226,30 @@
         ".html": {
           "relative_path": "api/Sensus.Android.Context.html",
           "hash": "xxuxdHPKAhVfZWUMxaYWAw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.Android.FirebaseNotificationService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.Android.FirebaseNotificationService.html",
+          "hash": "PnBZWnnqaxk0Y4/Q/B9JjA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.Android.FirebaseRegistrationService.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.Android.FirebaseRegistrationService.html",
+          "hash": "4ayIPO7TkHY1BhJ8QSRc7A=="
         }
       },
       "is_incremental": true,
@@ -705,7 +753,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.Attribute.html",
-          "hash": "Tw/kPzRnXGVDNiDTZKWQgg=="
+          "hash": "5Jkl3jWn0zZx90PwTLG+aQ=="
         }
       },
       "is_incremental": true,
@@ -729,7 +777,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.Color.html",
-          "hash": "iF7uUhdcJdWerJqXM7CWKA=="
+          "hash": "5e45Hr3HucrRPM18iAN5CA=="
         }
       },
       "is_incremental": true,
@@ -741,7 +789,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.Dimension.html",
-          "hash": "zuKsgW+mWVppCkrmN32pVg=="
+          "hash": "U4xXds69O/7QrPW3m/HcZg=="
         }
       },
       "is_incremental": true,
@@ -765,7 +813,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.Id.html",
-          "hash": "Eu+y6ZVTb1vWqY9KEn6C1g=="
+          "hash": "o7CO5yu/ociLZZmPgRd2jg=="
         }
       },
       "is_incremental": true,
@@ -801,7 +849,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.Layout.html",
-          "hash": "hTkT5Lc0zi77+rhf/Hnydw=="
+          "hash": "RYf7tuE38WyFCgsFuFH78A=="
         }
       },
       "is_incremental": true,
@@ -813,7 +861,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.String.html",
-          "hash": "wgQTMDR6/L5G0YaBn7fang=="
+          "hash": "PtgUXY2aVv4DHPK27IWPrw=="
         }
       },
       "is_incremental": true,
@@ -825,7 +873,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Resource.Style.html",
-          "hash": "ov+Ql3zUaRpNk0i50wzfjg=="
+          "hash": "xJEyLbzcYJWpSaUHUy4NUw=="
         }
       },
       "is_incremental": true,
@@ -909,7 +957,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.html",
-          "hash": "h2BNfYBmqdIeB76hotjogA=="
+          "hash": "lEKGGSz0ortXdTwOocT3Qg=="
         }
       },
       "is_incremental": true,
@@ -1173,7 +1221,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Callbacks.ScheduledCallback.html",
-          "hash": "vuzx5RmhE/y9mj4G2g1iDw=="
+          "hash": "iI9k5rvHY4lfwFhAKCUlqA=="
         }
       },
       "is_incremental": true,
@@ -1389,7 +1437,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html",
-          "hash": "61RsLt5ge8C16VxuO5iMig=="
+          "hash": "mANyqgJvfRhCKxqGO4K3qA=="
         }
       },
       "is_incremental": true,
@@ -1401,7 +1449,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html",
-          "hash": "/3egw1guluZKNYd0URmNwA=="
+          "hash": "vw3lBn5eFnjp1VcfCqY2VA=="
         }
       },
       "is_incremental": true,
@@ -1413,7 +1461,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.RemoteDataStore.html",
-          "hash": "6Fr9gC3zikbJsBB+RYTLBg=="
+          "hash": "fexMj2poYISRhTmcTNA3OQ=="
         }
       },
       "is_incremental": true,
@@ -1541,11 +1589,23 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.Exceptions.UnsetPushNotificationTokenException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.Exceptions.UnsetPushNotificationTokenException.html",
+          "hash": "vMmduOgdE7s3ZXERiP/QlQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.Exceptions.yml",
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Exceptions.html",
-          "hash": "d+Qn1snnjLmPU9ZLq7W7Ow=="
+          "hash": "5DXg0LjHWEhW37vFkLaGdw=="
         }
       },
       "is_incremental": true,
@@ -1666,6 +1726,18 @@
         ".html": {
           "relative_path": "api/Sensus.ParticipationRewardDatum.html",
           "hash": "t0BfT5ULM9Dx46lHXjfeNQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.PowerConnectionChangeListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.PowerConnectionChangeListener.html",
+          "hash": "mIF/aoQ8jM3tzAe/+kUYcw=="
         }
       },
       "is_incremental": true,
@@ -3117,7 +3189,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.Scripts.ScriptRunner.html",
-          "hash": "PFK9oULVNA4grJqK2F1ERg=="
+          "hash": "1HiHT5vITSCKeIta5djKhg=="
         }
       },
       "is_incremental": true,
@@ -3201,7 +3273,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "ljzS4IS9QP4jwtZddaHchA=="
+          "hash": "Dj0lAGZv+Cer59JaZyfXrA=="
         }
       },
       "is_incremental": true,
@@ -3214,6 +3286,30 @@
         ".html": {
           "relative_path": "api/Sensus.ProtocolStartConfirmationMode.html",
           "hash": "G8ttTKr1/PCkLI++Pb+K8w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.PushNotificationRequest.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.PushNotificationRequest.html",
+          "hash": "m3vFgtQAToKGia7VS366ow=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.PushNotificationRequestFormat.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.PushNotificationRequestFormat.html",
+          "hash": "G8NhWXYtLwEVDjY6abD8PA=="
         }
       },
       "is_incremental": true,
@@ -3237,7 +3333,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.SensusServiceHelper.html",
-          "hash": "cLJW9H5Y6bBZrNW52caa8g=="
+          "hash": "azaSHN+RId3wnj7X/r7V7Q=="
         }
       },
       "is_incremental": true,
@@ -3321,7 +3417,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.UI.InputGroupPage.NavigationResult.html",
-          "hash": "PivJ05hRTvt7yQ6RmH2HSQ=="
+          "hash": "cGgUJMleExis4I1GBbHuwA=="
         }
       },
       "is_incremental": true,
@@ -4077,7 +4173,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.UI.ViewTextLinesPage.html",
-          "hash": "q0hDCWw+ipJRtlGUYkuD8Q=="
+          "hash": "VbcC/479O2TmH37cV9gLTw=="
         }
       },
       "is_incremental": true,
@@ -4317,7 +4413,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Context.iOSSensusContext.html",
-          "hash": "nuigXmeM1hoYMO7SmP9t7Q=="
+          "hash": "hDvcAnOQTdZ5hE410/ctEQ=="
         }
       },
       "is_incremental": true,
@@ -4649,6 +4745,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.iOS.iOSPowerConnectionChangeListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.iOS.iOSPowerConnectionChangeListener.html",
+          "hash": "SgajvSFiHo4W4On25CZACg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.iOS.iOSSensusServiceHelper.yml",
       "output": {
         ".html": {
@@ -4665,7 +4773,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.html",
-          "hash": "Nd0+yNowRkpF13HKk6WXOw=="
+          "hash": "ZuJWfVFNkUubGHfEPY6CwQ=="
         }
       },
       "is_incremental": true,
@@ -4677,7 +4785,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.html",
-          "hash": "HASLJ4EjnS39K7iEq1razQ=="
+          "hash": "6w75eJ20fw/J2rUVAAXFWg=="
         }
       },
       "is_incremental": true,
@@ -4701,7 +4809,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "goR1Ck/H92LOm3andw975Q=="
+          "hash": "VI500xXNN3WQVchvHk8Utg=="
         }
       },
       "is_incremental": false,
@@ -4853,6 +4961,18 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/push_notifications.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/push_notifications.html",
+          "hash": "vRY3JtOX7+MDikuJ/2cPsA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/sensus_r.md",
       "output": {
         ".html": {
@@ -4893,7 +5013,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "3EUUaioa1m5jFRbLJ/Hmcg=="
+          "hash": "kZJJ/mBhRvUdfK1yGcBsjg=="
         }
       },
       "is_incremental": false,
