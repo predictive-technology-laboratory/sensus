@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
+using Sensus.UI.UiProperties;
 
 namespace Sensus.DataStores.Local
 {
@@ -28,15 +29,40 @@ namespace Sensus.DataStores.Local
     public abstract class LocalDataStore : DataStore
     {
         private bool _sizeTriggeredRemoteWriteRunning;
+        private bool _writeToRemote;
 
         private readonly object _sizeTriggeredRemoteWriteLocker = new object();
 
         [JsonIgnore]
         public abstract string SizeDescription { get; }
 
+        [JsonIgnore]
+        public abstract bool HasDataToShare { get; }
+
+        /// <summary>
+        /// Whether or not to transfer data from the local data store to the remote data store. If disabled, data
+        /// will accumulate indefinitely on local storage media. When the protocol is stopped, the user may then (if
+        /// able to access the protocol settings) offload the data from the phone (e.g., via email attachment).
+        /// </summary>
+        /// <value><c>true</c> to write remote; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Write To Remote:", true, 1)]
+        public bool WriteToRemote
+        {
+            get
+            {
+                return _writeToRemote;
+            }
+            set
+            {
+                _writeToRemote = value;
+            }
+        }
+
+
         protected LocalDataStore()
         {
             _sizeTriggeredRemoteWriteRunning = false;
+            _writeToRemote = true;
         }
 
         /// <summary>
@@ -96,8 +122,27 @@ namespace Sensus.DataStores.Local
             });
         }
 
+        public Task ShareLocalDataAsync()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
+                    CreateTarFromLocalData(tarSharePath);
+                    await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + Protocol.Name, "application/octet-stream");
+                }
+                catch (Exception ex)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
+                }
+            });
+        }
+
         protected abstract bool IsTooLarge();
 
         public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
+
+        public abstract void CreateTarFromLocalData(string outputPath);
     }
 }

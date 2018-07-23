@@ -15,6 +15,7 @@
 using Xamarin.Forms;
 using Sensus.UI.UiProperties;
 using Sensus.Probes.User.Scripts;
+using System.Linq;
 
 namespace Sensus.UI
 {
@@ -38,7 +39,9 @@ namespace Sensus.UI
             };
 
             foreach (StackLayout stack in UiProperty.GetPropertyStacks(scriptRunner))
+            {
                 contentLayout.Children.Add(stack);
+            }
 
             Button editInputGroupsButton = new Button
             {
@@ -67,6 +70,24 @@ namespace Sensus.UI
             };
 
             contentLayout.Children.Add(editTriggersButton);
+
+            Button viewScheduledTriggersButton = new Button
+            {
+                Text = "View Scheduled Triggers",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            viewScheduledTriggersButton.Clicked += async (o, e) =>
+            {
+                await Navigation.PushAsync(new ViewTextLinesPage("Scheduled Triggers", scriptRunner.ScriptRunCallbacks.Select(scheduledCallback =>
+                {
+                    return scheduledCallback.Id + " (" + scheduledCallback.State + "):  " + (scheduledCallback.NextExecution == null ? "Next execution date and time have not been set." : scheduledCallback.NextExecution.ToString());
+
+                }).ToList()));
+            };
+
+            contentLayout.Children.Add(viewScheduledTriggersButton);
 
             Content = new ScrollView
             {

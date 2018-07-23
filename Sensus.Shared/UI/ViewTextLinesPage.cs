@@ -15,6 +15,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using Sensus.Exceptions;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -29,9 +31,8 @@ namespace Sensus.UI
         /// </summary>
         /// <param name="title">Title of page.</param>
         /// <param name="lines">Lines to display.</param>
-        /// <param name="shareCallback">Called when the user clicks the Share button.</param>
         /// <param name="clearCallback">Called when the user clicks the Clear button.</param>
-        public ViewTextLinesPage(string title, List<string> lines, Action shareCallback, Action clearCallback)
+        public ViewTextLinesPage(string title, List<string> lines, Action clearCallback = null)
         {
             Title = title;
 
@@ -46,22 +47,29 @@ namespace Sensus.UI
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
 
-            if (shareCallback != null)
+            Button shareButton = new Button
             {
-                Button shareButton = new Button
-                {
-                    Text = "Share",
-                    FontSize = 20,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
+                Text = "Share",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
 
-                shareButton.Clicked += (o, e) =>
+            shareButton.Clicked += async (o, e) =>
+            {
+                try
                 {
-                    shareCallback();
-                };
+                    string sharePath = SensusServiceHelper.Get().GetSharePath(".txt");
+                    File.WriteAllLines(sharePath, lines);
+                    await SensusServiceHelper.Get().ShareFileAsync(sharePath, Path.GetFileName(sharePath), "text/plain");
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed to share text lines.", ex);
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Failed to share:  " + ex.Message);
+                }
+            };
 
-                buttonStack.Children.Add(shareButton);
-            }
+            buttonStack.Children.Add(shareButton);
 
             if (clearCallback != null)
             {

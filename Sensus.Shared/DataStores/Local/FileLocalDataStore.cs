@@ -25,6 +25,7 @@ using System.Linq;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace Sensus.DataStores.Local
 {
@@ -100,6 +101,31 @@ namespace Sensus.DataStores.Local
         private int _filesWrittenToRemote;
 
         private readonly object _locker = new object();
+
+        /// <summary>
+        /// Gets a list of paths that have been promoted and are ready for tranfer to S3.
+        /// </summary>
+        /// <value>Paths</value>
+        private string[] PromotedPaths
+        {
+            get
+            {
+                lock (_locker)
+                {
+                    // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
+                    string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+                    return Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                }
+            }
+        }
+
+        public override bool HasDataToShare
+        {
+            get
+            {
+                return PromotedPaths.Length > 0;
+            }
+        }
 
         /// <summary>
         /// Gets the path.
@@ -505,6 +531,43 @@ namespace Sensus.DataStores.Local
             }
         }
 
+        public override void CreateTarFromLocalData(string outputPath)
+        {
+            lock (_locker)
+            {
+                PromoteFiles();
+
+                string[] promotedPaths = PromotedPaths;
+
+                if (promotedPaths.Length == 0)
+                {
+                    throw new Exception("No data available.");
+                }
+
+                using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+                {
+                    using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
+                    {
+                        foreach (string promotedPath in promotedPaths)
+                        {
+                            using (FileStream promotedFile = File.OpenRead(promotedPath))
+                            {
+                                TarEntry tarEntry = TarEntry.CreateEntryFromFile(promotedPath);
+                                tarEntry.Name = "data/" + System.IO.Path.GetFileName(promotedPath);
+                                tarArchive.WriteEntry(tarEntry, false);
+
+                                promotedFile.Close();
+                            }
+                        }
+
+                        tarArchive.Close();
+                    }
+
+                    outputFile.Close();
+                }
+            }
+        }
+
         protected override bool IsTooLarge()
         {
             lock (_locker)
@@ -518,18 +581,14 @@ namespace Sensus.DataStores.Local
             lock (_locker)
             {
                 // it's possible to stop the datastore before entering this lock.
-                if (!Running)
+                if (!Running || !WriteToRemote)
                 {
                     return Task.CompletedTask;
                 }
 
-                CloseFile();
                 PromoteFiles();
-                OpenFile();
 
-                // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
-                string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
-                string[] promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
+                string[] promotedPaths = PromotedPaths;
 
                 // if no paths were promoted, then we have nothing to do.
                 if (promotedPaths.Length == 0)
@@ -642,6 +701,13 @@ namespace Sensus.DataStores.Local
         {
             lock (_locker)
             {
+                // close the current file, as we're about to delete/move all files in the storage directory
+                // that do not have a file extension. the file currently being written is one such file, and 
+                // we'll get an exception if we don't close it before moving it. if there is no current file
+                // this will have no effect.
+                CloseFile();
+
+                // process each file in the storage directory
                 foreach (string path in Directory.GetFiles(StorageDirectory))
                 {
                     try
@@ -677,6 +743,13 @@ namespace Sensus.DataStores.Local
                         SensusException.Report("Failed to promote file.", ex);
                     }
                 }
+
+                // open a new file for writing if the data store is currently running. if it is not
+                // running, then we shouldn't open a new file as it will likely never be closed.
+                if (Running)
+                {
+                    OpenFile();
+                }
             }
         }
 
@@ -707,7 +780,11 @@ namespace Sensus.DataStores.Local
 
             lock (_locker)
             {
-                CloseFile();
+                // promote any existing files. this will encrypt any files if needed and ready them
+                // for local sharing. a new file will not be opened because the data store has already
+                // been stopped above.
+                PromoteFiles();
+
                 _dataWrittenToCurrentFile = 0;
             }
         }

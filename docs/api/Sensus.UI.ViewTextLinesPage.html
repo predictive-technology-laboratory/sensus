@@ -100,13 +100,13 @@
   
   
   <a id="Sensus_UI_ViewTextLinesPage__ctor_" data-uid="Sensus.UI.ViewTextLinesPage.#ctor*"></a>
-  <h4 id="Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_System_Action_" data-uid="Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)">ViewTextLinesPage(String, List&lt;String&gt;, Action, Action)</h4>
+  <h4 id="Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_" data-uid="Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)">ViewTextLinesPage(String, List&lt;String&gt;, Action)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.UI.ViewTextLinesPage.html">ViewTextLinesPage</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ViewTextLinesPage(string title, List&lt;string&gt; lines, Action shareCallback, Action clearCallback)</code></pre>
+    <pre><code class="lang-csharp hljs">public ViewTextLinesPage(string title, List&lt;string&gt; lines, Action clearCallback = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -128,12 +128,6 @@
         <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">lines</span></td>
         <td><p>Lines to display.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">shareCallback</span></td>
-        <td><p>Called when the user clicks the Share button.</p>
 </td>
       </tr>
       <tr>

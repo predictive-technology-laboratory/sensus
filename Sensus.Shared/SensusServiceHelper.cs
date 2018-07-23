@@ -40,11 +40,12 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
+using WindowsAzure.Messaging;
 
 namespace Sensus
 {
     /// <summary>
-    /// Provides platform-independent service functionality.
+    /// Provides platform-independent functionality.
     /// </summary>
     public abstract class SensusServiceHelper
     {
@@ -324,6 +325,9 @@ namespace Sensus
                 return _scriptsToRun;
             }
         }
+
+        [JsonIgnore]
+        public abstract string PushNotificationToken { get; }
 
         [JsonIgnore]
         public float GpsDesiredAccuracyMeters
@@ -912,7 +916,15 @@ namespace Sensus
                         return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             barcodeScannerPage.IsScanning = false;
-                            await navigation.PopModalAsync();
+
+                            // we've seen a strange race condition where the QR code input scanner button is 
+                            // pressed, and in the above task delay the input group page is cancelled and 
+                            // another UI button is hit before the scanner page comes up.
+                            if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
+                            {
+                                await navigation.PopModalAsync();
+                            }
+
                             resultWait.Set();
                         });
                     });
@@ -1056,8 +1068,12 @@ namespace Sensus
 
                                 _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
 
-                                // animate pop if the user submitted or canceled
-                                await navigation.PopModalAsync((stepNumber == inputGroups.Count() && navigationResult == InputGroupPage.NavigationResult.Forward) || navigationResult == InputGroupPage.NavigationResult.Cancel);
+                                // animate pop if the user submitted or canceled. when doing this, reference the navigation context
+                                // on the page rather than the local 'navigation' variable. this is necessary because the navigation
+                                // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+                                // notification.
+                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
+                                                                              navigationResult == InputGroupPage.NavigationResult.Cancel);
 
                                 if (navigationResult == InputGroupPage.NavigationResult.Backward)
                                 {
@@ -1066,13 +1082,16 @@ namespace Sensus
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Forward)
                                 {
-                                    // keep the group in the back stack and move to the next group
+                                    // keep the group in the back stack.
                                     inputGroupNumBackStack.Push(inputGroupNum);
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
                                 {
                                     inputGroups = null;
                                 }
+
+                                // there's nothing to do if the navigation result is submit, since we've finished the final
+                                // group and we are about to return.
                             }
                         });
                     }
@@ -1411,6 +1430,99 @@ namespace Sensus
             {
                 throw SensusException.Report("Attempted to execute on main thread:  " + actionDescription);
             }
+        }
+
+        public virtual Task UpdatePushNotificationRegistrationsAsync()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    // we should always have a token. if we do not, throw an exception and let the
+                    // parent class override attempt to resolve the issue by getting a new token.
+                    if (PushNotificationToken == null)
+                    {
+                        throw new UnsetPushNotificationTokenException();
+                    }
+
+                    // associate each notification hub with its protocols
+                    Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
+                    foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol)))
+                    {
+                        if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
+                        {
+                            Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
+
+                            if (!hubSasProtocols.ContainsKey(hubSas))
+                            {
+                                hubSasProtocols.Add(hubSas, new List<Protocol>());
+                            }
+
+                            hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
+                        }
+                    }
+
+                    // update each notification hub's registration, using the protocols as tags to listen to.
+                    foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+                    {
+                        // unregister everything from hub
+                        NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
+                        notificationHub.UnregisterAll(PushNotificationToken);
+
+                        // register for push notifications associated with running protocols
+                        Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
+                        if (runningProtocols.Length > 0)
+                        {
+                            notificationHub.Register(PushNotificationToken, runningProtocols.Select(protocol => protocol.Id).ToArray());
+
+                            // each protocol may have its own remote data store being monitored for push notification
+                            // requests. tokens are per device, so send the new token to each protocol's remote
+                            // data store so that the backend will know where to send push notifications
+                            foreach (Protocol runningProtocol in runningProtocols)
+                            {
+                                try
+                                {
+                                    if (runningProtocol.RemoteDataStore != null)
+                                    {
+                                        await runningProtocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, default(CancellationToken));
+                                    }
+                                }
+                                catch (Exception sendTokenException)
+                                {
+                                    SensusException.Report("Failed to send push notification token:  " + sendTokenException.Message, sendTokenException);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (UnsetPushNotificationTokenException ex)
+                {
+                    try
+                    {
+                        SensusException.Report("Push notification token was not set.");
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    // rethrow exception to give parent class an opportunity to fix the problem (e.g., by requesting a new token)
+                    throw ex;
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        SensusException.Report("Exception while updating push notification registrations:  " + ex.Message, ex);
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    // don't rethrow. it's not clear that a new token would fix the problem, and it could be the case that
+                    // requesting a new token sets up an infinite loop of request-fail (e.g., due to a network problem or
+                    // other issues in the messaging API). we have just reported the issue to the app center crash api, so hop
+                }
+            });
         }
 
         public void StopProtocols()

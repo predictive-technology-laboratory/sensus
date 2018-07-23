@@ -37,6 +37,8 @@ using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using System.Threading.Tasks;
 using Sensus.Context;
+using Firebase.Iid;
+using Sensus.Exceptions;
 
 namespace Sensus.Android
 {
@@ -181,6 +183,14 @@ namespace Sensus.Android
             set
             {
                 _userDeniedBluetoothEnable = value;
+            }
+        }
+
+        public override string PushNotificationToken
+        {
+            get
+            {
+                return FirebaseInstanceId.Instance.Token;
             }
         }
 
@@ -745,6 +755,30 @@ namespace Sensus.Android
         public void ReissueForegroundServiceNotification()
         {
             _service.ReissueForegroundServiceNotification();
+        }
+
+        public override Task UpdatePushNotificationRegistrationsAsync()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    await base.UpdatePushNotificationRegistrationsAsync();
+                }
+                catch (UnsetPushNotificationTokenException)
+                {
+                    try
+                    {
+                        // delete the instance ID and get a new token.
+                        FirebaseInstanceId.Instance.DeleteInstanceId();
+                        string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
+                    }
+                    catch (Exception newTokenException)
+                    {
+                        SensusException.Report("Exception while obtaining a new token:  " + newTokenException.Message, newTokenException);
+                    }
+                }
+            });
         }
 
         public void StopAndroidSensusService()

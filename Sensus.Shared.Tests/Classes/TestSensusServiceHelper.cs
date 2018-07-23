@@ -79,6 +79,8 @@ namespace Sensus.Tests.Classes
             }
         }
 
+        public override string PushNotificationToken => throw new NotImplementedException();
+
         protected override bool IsOnMainThread
         {
             get

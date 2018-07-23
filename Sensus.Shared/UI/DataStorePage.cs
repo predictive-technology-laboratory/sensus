@@ -18,6 +18,7 @@ using Sensus.UI.UiProperties;
 using Sensus.DataStores.Local;
 using Sensus.DataStores.Remote;
 using Xamarin.Forms;
+using System;
 
 namespace Sensus.UI
 {
@@ -40,17 +41,17 @@ namespace Sensus.UI
             List<View> views = new List<View>();
 
             views.Add(new ContentView
+            {
+                Content = new Label
                 {
-                    Content = new Label
-                    { 
-                        Text = dataStore.DisplayName,
-                        FontSize = 20, 
-                        FontAttributes = FontAttributes.Italic,
-                        TextColor = Color.Accent,
-                        HorizontalOptions = LayoutOptions.Center
-                    },
-                    Padding = new Thickness(0, 10, 0, 10)
-                });
+                    Text = dataStore.DisplayName,
+                    FontSize = 20,
+                    FontAttributes = FontAttributes.Italic,
+                    TextColor = Color.Accent,
+                    HorizontalOptions = LayoutOptions.Center
+                },
+                Padding = new Thickness(0, 10, 0, 10)
+            });
 
             // property stacks all come from the data store passed in (i.e., a copy of the original on the protocol, if there is one)
             views.AddRange(UiProperty.GetPropertyStacks(dataStore));
@@ -82,6 +83,25 @@ namespace Sensus.UI
                 };
 
                 buttonStack.Children.Add(clearButton);
+            }
+
+            // sharing only applies to local data stores
+            if (local)
+            {
+                Button shareButton = new Button
+                {
+                    Text = "Share Data",
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    FontSize = 20,
+                    IsEnabled = protocol.LocalDataStore?.HasDataToShare ?? false  // hide the share button if there is no data to share
+                };
+
+                shareButton.Clicked += async (o, e) =>
+                {
+                    await protocol.LocalDataStore?.ShareLocalDataAsync();
+                };
+
+                buttonStack.Children.Add(shareButton);
             }
 
             Button okayButton = new Button
