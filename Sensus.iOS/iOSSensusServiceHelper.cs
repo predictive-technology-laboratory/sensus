@@ -28,6 +28,10 @@ using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
 using TTGSnackBar;
+using System.Collections.Generic;
+using WindowsAzure.Messaging;
+using Sensus.Exceptions;
+using System.Linq;
 
 namespace Sensus.iOS
 {
@@ -103,6 +107,8 @@ namespace Sensus.iOS
                 return NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
             }
         }
+
+        public override string PushNotificationToken { get; set; }
 
         public iOSSensusServiceHelper()
         {
@@ -315,6 +321,61 @@ namespace Sensus.iOS
             return enabled;
         }
 
+        public override async Task UpdatePushNotification(Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols)
+        {
+            foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+            {
+                if (PushNotificationToken == null)
+                {
+                    throw new UnsetPushNotificationTokenException();
+                }
+
+                // unregister everything from hub
+                SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item1, hubSas.Item2);
+                notificationHub.UnregisterAllAsync(PushNotificationToken, (error) =>
+                {
+                    if (error != null)
+                    {
+                        Logger.Log($"There was an error unregistering the push notification from {hubSas.Item2}.  Error:{error.ToString()}", LoggingLevel.Normal, GetType());
+                        throw new Exception(error.ToString());
+                    }
+                });
+
+                // register for push notifications associated with running protocols
+                Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
+                if (runningProtocols.Length > 0)
+                {
+                    NSSet tags = null; //we don't need any tags at this time.
+                    notificationHub.RegisterNativeAsync(PushNotificationToken, tags, (error) =>
+                    {
+                        if (error != null)
+                        {
+                            Logger.Log($"There was an error unregistering the push notification from {hubSas.Item2}.  Error:{error.ToString()}", LoggingLevel.Normal, GetType());
+                            throw new Exception(error.ToString());
+                        }
+                    });
+
+                    // each protocol may have its own remote data store being monitored for push notification
+                    // requests. tokens are per device, so send the new token to each protocol's remote
+                    // data store so that the backend will know where to send push notifications
+                    foreach (Protocol runningProtocol in runningProtocols)
+                    {
+                        try
+                        {
+                            if (runningProtocol.RemoteDataStore != null)
+                            {
+                                await runningProtocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, default(CancellationToken));
+                            }
+                        }
+                        catch (Exception sendTokenException)
+                        {
+                            SensusException.Report("Failed to send push notification token:  " + sendTokenException.Message, sendTokenException);
+                        }
+                    }
+                }
+            }
+        }
+
         #region methods not implemented in ios
 
         public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
@@ -337,6 +398,8 @@ namespace Sensus.iOS
         {
             return Task.CompletedTask;
         }
+
+
 
         #endregion
     }

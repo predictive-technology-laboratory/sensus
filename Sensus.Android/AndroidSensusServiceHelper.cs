@@ -192,6 +192,7 @@ namespace Sensus.Android
             {
                 return FirebaseInstanceId.Instance.Token;
             }
+            set => throw new NotImplementedException();
         }
 
         public AndroidSensusServiceHelper()
@@ -789,6 +790,46 @@ namespace Sensus.Android
         public SensorManager GetSensorManager()
         {
             return _service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
+        }
+
+        public override async Task UpdatePushNotification(Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols)
+        {
+            if (PushNotificationToken == null)
+            {
+                throw new UnsetPushNotificationTokenException();
+            }
+
+            foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+            {
+                // unregister everything from hub
+                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context); //TODO:  The documentation says that this is called notificationhub but it doesn't compile for me. 
+                notificationHub.UnregisterAll(PushNotificationToken);
+
+                // register for push notifications associated with running protocols
+                Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
+                if (runningProtocols.Length > 0)
+                {
+                    notificationHub.Register(PushNotificationToken, runningProtocols.Select(protocol => protocol.Id).ToArray());
+
+                    // each protocol may have its own remote data store being monitored for push notification
+                    // requests. tokens are per device, so send the new token to each protocol's remote
+                    // data store so that the backend will know where to send push notifications
+                    foreach (Protocol runningProtocol in runningProtocols)
+                    {
+                        try
+                        {
+                            if (runningProtocol.RemoteDataStore != null)
+                            {
+                                await runningProtocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, default(CancellationToken));
+                            }
+                        }
+                        catch (Exception sendTokenException)
+                        {
+                            SensusException.Report("Failed to send push notification token:  " + sendTokenException.Message, sendTokenException);
+                        }
+                    }
+                }
+            }
         }
     }
 }
