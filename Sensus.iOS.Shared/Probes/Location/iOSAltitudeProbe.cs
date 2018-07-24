@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using CoreMotion;
 using Foundation;
 using Plugin.Permissions.Abstractions;
@@ -52,22 +51,19 @@ namespace Sensus.iOS.Probes.Location
         {
             _altitudeChangeListener?.StartRelativeAltitudeUpdates(new NSOperationQueue(), (data, error) =>
             {
-                if (data != null && error == null)
+                if (data?.Pressure != null && error == null)
                 {
-                    //iOS reports kilopascals, in order to share Altitude constructor with 
-                    //Android, convert kPa to hPa (kPa * 10) 
-                    //https://www.unitjuggler.com/convert-pressure-from-hPa-to-kPa.html?val=10
-
-                    double hPa = data.Pressure.DoubleValue * 10;
-
-                    StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, hPa));
+                    // iOS reports kilopascals, in order to share Altitude constructor with 
+                    // Android, convert kPa to hPa (kPa * 10) 
+                    // https://www.unitjuggler.com/convert-pressure-from-hPa-to-kPa.html?val=10
+                    StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
                 }
             });
         }
 
         protected override void StopListening()
         {
-            _altitudeChangeListener.StopRelativeAltitudeUpdates();
+            _altitudeChangeListener?.StopRelativeAltitudeUpdates();
         }
     }
 }
