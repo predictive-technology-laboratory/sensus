@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
@@ -20,9 +21,10 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 namespace Sensus.Probes.Location
 {
     /// <summary>
-    /// 
-    /// The proximity sensor is usually used to determine how far away a person's head is from the face of a handset device (for example, when a user is making or receiving a phone call). Most proximity sensors return the absolute distance, in cm, but some return only near and far values. 
-    /// 
+    /// The proximity sensor is usually used to determine how far away a person's head is 
+    /// from the face of a handset device (for example, when a user is making or receiving 
+    /// a phone call). Most proximity sensors return the absolute distance, in cm, but 
+    /// some return only near and far values. 
     /// </summary>
     public class ProximityDatum : Datum
     {
@@ -33,14 +35,15 @@ namespace Sensus.Probes.Location
         /// Most proximity sensors return the absolute distance, in cm, 
         /// but some return only near and far values.
         /// </summary>
-        [DoubleProbeTriggerProperty("Distance")]
+        [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Distance
         {
             get { return _distance; }
             set { _distance = value; }
         }
-        [DoubleProbeTriggerProperty("Max Distance")]
+
+        [DoubleProbeTriggerProperty("Max. Distance")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double MaxDistance
         {
@@ -48,9 +51,10 @@ namespace Sensus.Probes.Location
             set { _maxDistance = value; }
         }
 
+        [JsonIgnore]
         public override string DisplayDetail
         {
-            get { return Math.Round(_distance, 2) + " (distance)" + Math.Round(_maxDistance)+" (max distance)"; }
+            get { return Math.Round(_distance, 1) + " (max. distance: " + Math.Round(_maxDistance) + ")"; }
         }
 
         /// <summary>
@@ -64,7 +68,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return "[" + Math.Round(_distance, 2) + ", "+Math.Round(_maxDistance, 2)+"]";
+                return Math.Round(_distance, 1);
             }
         }
 
@@ -85,7 +89,7 @@ namespace Sensus.Probes.Location
         {
             return base.ToString() + Environment.NewLine +
                    "Distance:  " + _distance + Environment.NewLine +
-                   "Max Distance: " + _maxDistance;
+                   "Max. Distance: " + _maxDistance;
         }
     }
 }

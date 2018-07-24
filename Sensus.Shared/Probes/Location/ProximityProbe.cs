@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
@@ -25,13 +23,6 @@ namespace Sensus.Probes.Location
     /// </summary>
     public abstract class ProximityProbe : ListeningProbe
     {
-        //private bool _stabilizing;
-
-        //protected bool Stabilizing
-        //{
-        //    get { return _stabilizing; }
-        //}
-
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
@@ -68,35 +59,6 @@ namespace Sensus.Probes.Location
         {
             get { return typeof(ProximityDatum); }
         }
-
-        //protected override void Initialize()
-        //{
-        //    base.Initialize();
-
-        //    //_stabilizing = true;
-        //}
-
-        //protected override void StartListening()
-        //{
-        //    //I do not believe we need to stablize the proximity probe
-        //    //// allow the accelerometer to stabilize...the first few readings can be extremely erratic
-        //    //Task.Run(() =>
-        //    //{
-        //    //    Thread.Sleep(2000);
-        //    //    _stabilizing = false;
-
-        //    //    // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
-        //    //    if (SensusServiceHelper.Get() != null)
-        //    //        SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
-        //    //});
-        //}
-
-        //public override void Reset()
-        //{
-        //    base.Reset();
-
-        //    //_stabilizing = false;
-        //}
 
         protected override ChartSeries GetChartSeries()
         {

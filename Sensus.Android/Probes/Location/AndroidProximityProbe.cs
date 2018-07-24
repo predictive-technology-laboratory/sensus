@@ -20,14 +20,16 @@ namespace Sensus.Android.Probes.Location
 {
     public class AndroidProximityProbe : ProximityProbe
     {
-        private AndroidSensorListener _accelerometerListener;
-        private double _maxDistance;
+        private AndroidSensorListener _proximityListener;
+        private double _maximumRange;
+
         public AndroidProximityProbe()
         {
-            var sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
-            var proxSensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
-            _maxDistance = proxSensor.MaximumRange;
-            _accelerometerListener = new AndroidSensorListener(SensorType.Proximity, null, e =>
+            SensorManager sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
+            Sensor proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
+            _maximumRange = proximitySensor.MaximumRange;
+
+            _proximityListener = new AndroidSensorListener(SensorType.Proximity, null, e =>
             {
                 // should get distance value
                 if (e?.Values?.Count == null || e.Values.Count == 0)
@@ -44,13 +46,12 @@ namespace Sensus.Android.Probes.Location
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
 
-                //from https://developer.android.com/guide/topics/sensors/sensors_position
-                //Note: Some proximity sensors return binary values that represent "near" or "far." In this case, the sensor usually reports
-                //its maximum range value in the far state and a lesser value in the near state. Typically, the far value is a value > 5 cm, 
-                //but this can vary from sensor to sensor. You can determine a sensor's maximum range by using the getMaximumRange() method.
-              
+                // from https://developer.android.com/guide/topics/sensors/sensors_position
+                // Note: Some proximity sensors return binary values that represent "near" or "far." In this case, the sensor usually reports
+                // its maximum range value in the far state and a lesser value in the near state. Typically, the far value is a value > 5 cm, 
+                // but this can vary from sensor to sensor. You can determine a sensor's maximum range by using the getMaximumRange() method.
 
-                StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, e.Values[0], _maxDistance));
+                StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, e.Values[0], _maximumRange));
             });
         }
 
@@ -58,18 +59,17 @@ namespace Sensus.Android.Probes.Location
         {
             base.Initialize();
 
-            _accelerometerListener.Initialize(MinDataStoreDelay);
+            _proximityListener.Initialize(MinDataStoreDelay);
         }
 
         protected override void StartListening()
         {
-
-            _accelerometerListener.Start();
+            _proximityListener.Start();
         }
 
         protected override void StopListening()
         {
-            _accelerometerListener.Stop();
+            _proximityListener.Stop();
         }
     }
 }
