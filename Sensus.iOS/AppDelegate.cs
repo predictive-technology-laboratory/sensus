@@ -50,7 +50,8 @@ namespace Sensus.iOS
             {
                 Platform = Sensus.Context.Platform.iOS,
                 MainThreadSynchronizer = new MainConcurrent(),
-                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY)
+                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY),
+                PowerConnectionChangeListener = new iOSPowerConnectionChangeListener()
             };
 
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications
@@ -73,6 +74,7 @@ namespace Sensus.iOS
             #endregion
 
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
+            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
 
             // facebook settings
             Settings.AppID = "873948892650954";

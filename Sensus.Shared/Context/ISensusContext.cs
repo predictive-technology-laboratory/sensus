@@ -31,5 +31,6 @@ namespace Sensus.Context
         string IamRegion { get; set; }
         string IamAccessKey { get; set; }
         string IamAccessKeySecret { get; set; }
+        PowerConnectionChangeListener PowerConnectionChangeListener { get; set; }
     }
 }
