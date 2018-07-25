@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 using Sensus.Context;
 using Firebase.Iid;
 using Sensus.Exceptions;
+using WindowsAzure.Messaging;
 
 namespace Sensus.Android
 {
@@ -802,7 +803,7 @@ namespace Sensus.Android
             foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
             {
                 // unregister everything from hub
-                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context); //TODO:  The documentation says that this is called notificationhub but it doesn't compile for me. 
+                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context); //TODO:  The documentation says that this is called notificationhub but it doesn't compile for me. 
                 notificationHub.UnregisterAll(PushNotificationToken);
 
                 // register for push notifications associated with running protocols
