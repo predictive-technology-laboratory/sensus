@@ -57,7 +57,7 @@ namespace Sensus
         /// App Center key for Android app.
         /// </summary>
         public const string APP_CENTER_KEY_ANDROID = "";
-                                                      
+
         /// <summary>
         /// App Center key for iOS app.
         /// </summary>
