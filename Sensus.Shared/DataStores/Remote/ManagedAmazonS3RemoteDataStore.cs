@@ -162,7 +162,7 @@ namespace Sensus.DataStores.Remote
         /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
-        [EntryStringUiProperty("Pinned Service URL:", true, 5, false)]
+        [EntryStringUiProperty("Pinned S3 Service URL:", true, 5, false)]
         public string PinnedServiceURL
         {
             get
@@ -196,7 +196,7 @@ namespace Sensus.DataStores.Remote
         /// Pinned SSL public encryption key associated with <see cref="PinnedServiceURL"/>. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned public key.</value>
-        [EntryStringUiProperty("Pinned Public Key:", true, 6, false)]
+        [EntryStringUiProperty("Pinned S3 Public Key:", true, 6, false)]
         public string PinnedPublicKey
         {
             get
@@ -219,7 +219,7 @@ namespace Sensus.DataStores.Remote
         public string AccountServiceURL
         {
             get { return _accountServiceURL; }
-            set { _accountServiceURL = value; }
+            set { _accountServiceURL = value?.Trim(); }
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Sensus.DataStores.Remote
         public string CredentialsServiceURL
         {
             get { return _credentialsServiceURL; }
-            set { _credentialsServiceURL = value; }
+            set { _credentialsServiceURL = value?.Trim(); }
         }
 
         [JsonIgnore]
@@ -261,6 +261,11 @@ namespace Sensus.DataStores.Remote
             _pinnedPublicKey = null;
             _putCount = _successfulPutCount = 0;
         }
+        public override void Start()
+        {
+            ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+            base.Start();
+        }
         public override AmazonS3Client InitializeS3()
         {
             ConfirmCredentials(); //make sure we valid credentials before we initializeS3
@@ -269,7 +274,11 @@ namespace Sensus.DataStores.Remote
         private async Task RefreshAccount()
         {
             var deviceId = SensusServiceHelper.Get().DeviceId;
-            var url = string.Join(_accountServiceURL, deviceId, Protocol.ParticipantId);
+            if(string.IsNullOrWhiteSpace(Protocol.ParticipantId))
+            {
+                Protocol.ParticipantId = Guid.NewGuid().ToString("n");
+            }
+            var url = string.Format(_accountServiceURL, deviceId, Protocol.ParticipantId);
             var account = await GetJsonObjectFromUrl<Account>(url);
             if(Protocol.ParticipantId != account.participantId)
             {
@@ -285,9 +294,9 @@ namespace Sensus.DataStores.Remote
                         {
                             await RefreshAccount();
                         }
-                        if ((_accountCredentials?.IsExpired).GetValueOrDefault())
+                        if (_accountCredentials == null || _accountCredentials.IsExpired)
                         {
-                            var url = string.Join(Protocol.ParticipantId, _participantPassword);
+                            var url = string.Format(_credentialsServiceURL, Protocol.ParticipantId, _participantPassword);
                             _accountCredentials = await GetJsonObjectFromUrl<AccountCredentials>(url);
                             _iamAccessKey = _accountCredentials.accessKeyId;
                             _iamSecretKey = _accountCredentials.secretAccessKey;

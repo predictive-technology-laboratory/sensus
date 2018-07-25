@@ -18,15 +18,15 @@ namespace Sensus.DataStores.Remote
 {
     public abstract class AmazonS3DataStore : RemoteDataStore
     {
-        internal string _region;
-        internal string _bucket;
-        internal string _folder;
-        internal string _iamAccessKey;
-        internal string _iamSecretKey;
-        internal string _pinnedServiceURL;
-        internal string _pinnedPublicKey;
-        internal int _putCount;
-        internal int _successfulPutCount;
+        protected string _region;
+        protected string _bucket;
+        protected string _folder;
+        protected string _iamAccessKey;
+        protected string _iamSecretKey;
+        protected string _pinnedServiceURL;
+        protected string _pinnedPublicKey;
+        protected int _putCount;
+        protected int _successfulPutCount;
 
         public override void Start()
         {
