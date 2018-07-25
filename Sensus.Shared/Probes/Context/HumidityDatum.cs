@@ -53,7 +53,7 @@ namespace Sensus.Probes.Context
         {
             get
             {
-                return Math.Round(_relativeHumidity, 0);
+                return Math.Round(_relativeHumidity, 1);
             }
         }
 
