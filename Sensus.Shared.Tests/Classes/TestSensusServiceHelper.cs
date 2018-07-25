@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sensus.Probes;
 using Xamarin.Forms;
@@ -79,7 +80,8 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override string PushNotificationToken => throw new NotImplementedException();
+
+        public override string PushNotificationToken { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         protected override bool IsOnMainThread
         {
@@ -135,6 +137,11 @@ namespace Sensus.Tests.Classes
         }
 
         public override Task TextToSpeechAsync(string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task UpdatePushNotification(Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols)
         {
             throw new NotImplementedException();
         }

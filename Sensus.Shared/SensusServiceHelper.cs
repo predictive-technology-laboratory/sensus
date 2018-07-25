@@ -327,7 +327,7 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public abstract string PushNotificationToken { get; }
+        public abstract string PushNotificationToken { get; set; }
 
         [JsonIgnore]
         public float GpsDesiredAccuracyMeters
@@ -1462,38 +1462,9 @@ namespace Sensus
                         }
                     }
 
+
                     // update each notification hub's registration, using the protocols as tags to listen to.
-                    foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
-                    {
-                        // unregister everything from hub
-                        NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
-                        notificationHub.UnregisterAll(PushNotificationToken);
-
-                        // register for push notifications associated with running protocols
-                        Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
-                        if (runningProtocols.Length > 0)
-                        {
-                            notificationHub.Register(PushNotificationToken, runningProtocols.Select(protocol => protocol.Id).ToArray());
-
-                            // each protocol may have its own remote data store being monitored for push notification
-                            // requests. tokens are per device, so send the new token to each protocol's remote
-                            // data store so that the backend will know where to send push notifications
-                            foreach (Protocol runningProtocol in runningProtocols)
-                            {
-                                try
-                                {
-                                    if (runningProtocol.RemoteDataStore != null)
-                                    {
-                                        await runningProtocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, default(CancellationToken));
-                                    }
-                                }
-                                catch (Exception sendTokenException)
-                                {
-                                    SensusException.Report("Failed to send push notification token:  " + sendTokenException.Message, sendTokenException);
-                                }
-                            }
-                        }
-                    }
+                    await UpdatePushNotification(hubSasProtocols);
                 }
                 catch (UnsetPushNotificationTokenException ex)
                 {
@@ -1525,6 +1496,7 @@ namespace Sensus
             });
         }
 
+        public abstract Task UpdatePushNotification(Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols);
         public void StopProtocols()
         {
             _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());

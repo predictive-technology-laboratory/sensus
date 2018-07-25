@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Xamarin.Forms.3.1.0.583944\build\netstandard2.0\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.3.1.0.583944\build\netstandard2.0\Xamarin.Forms.props')" />
   <PropertyGroup>
@@ -85,6 +85,9 @@ Sensus.iOS.Tests.AppCenter for more on running these tests in the AppCenter clou
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
+    <Reference Include="Xamarin.Azure.NotificationHubs.iOS, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Azure.NotificationHubs.iOS.1.2.5.2\lib\Xamarin.iOS10\Xamarin.Azure.NotificationHubs.iOS.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.iOS" />
     <Reference Include="MonoTouch.NUnitLite" />
     <Reference Include="PCLStorage.Abstractions">
@@ -289,6 +292,7 @@ Sensus.iOS.Tests.AppCenter for more on running these tests in the AppCenter clou
     <None Include="..\Sensus.iOS\Info.plist">
       <Link>Info.plist</Link>
     </None>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Entitlements.plist" />
   </ItemGroup>
