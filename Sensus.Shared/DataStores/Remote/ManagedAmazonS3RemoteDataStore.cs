@@ -29,6 +29,8 @@ using System.Text;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using Sensus.Models;
+using System.Net.Http;
 
 namespace Sensus.DataStores.Remote
 {
@@ -88,8 +90,12 @@ namespace Sensus.DataStores.Remote
     /// The preceding command will not delete your bucket or data.
     /// 
     /// </summary>
-    public class AmazonS3RemoteDataStore : AmazonS3DataStore
+    public class ManagedAmazonS3RemoteDataStore : AmazonS3DataStore
     {
+        private string _accountServiceURL;
+        private string _credentialsServiceURL;
+        private string _participantPassword;
+        private AccountCredentials _accountCredentials;
 
         /// <summary>
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
@@ -153,31 +159,6 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// The IAM user's access and secret keys output by the steps described in the summary for this class.
-        /// </summary>
-        /// <value>The iam account string.</value>
-        [EntryStringUiProperty("IAM Account:", true, 4, true)]
-        public string IamAccountString
-        {
-            get
-            {
-                return _iamAccessKey + ":" + _iamSecretKey;
-            }
-            set
-            {
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    string[] parts = value.Split(':');
-                    if (parts.Length == 2)
-                    {
-                        _iamAccessKey = parts[0].Trim();
-                        _iamSecretKey = parts[1].Trim();
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// Alternative URL to use for S3, instead of the default. Use this to set up [SSL certificate pinning](xref:ssl_pinning).
         /// </summary>
         /// <value>The pinned service URL.</value>
@@ -228,6 +209,33 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        /// <summary>
+        /// Service end point URL that is called to set up the account to be used with the <see cref="CredentialsServiceURL"/>.  
+        /// It will fill {0} with the device id and {1} with the participant id.  
+        /// For instance https://www.service.url/account?deviceId={0}&participantId={1}.
+        /// </summary>
+        /// <value>The account service URL.</value>
+        [EntryStringUiProperty("Account Service URL:", true, 7, false)]
+        public string AccountServiceURL
+        {
+            get { return _accountServiceURL; }
+            set { _accountServiceURL = value; }
+        }
+
+        /// <summary>
+        /// Service end point URL that is called to set up the credentials that are used with the Amazon S3.
+        /// This uses the account id and password that comes from the <see cref="AccountServiceURL"/>.  
+        /// It will fill {0} with the participant id and {1} with the password.  
+        /// For instance https://www.service.url/credentials?participantId={0}&password={1}.
+        /// </summary>
+        /// <value>The account service URL.</value>
+        [EntryStringUiProperty("Credentials Service URL:", true, 7, false)]
+        public string CredentialsServiceURL
+        {
+            get { return _credentialsServiceURL; }
+            set { _credentialsServiceURL = value; }
+        }
+
         [JsonIgnore]
         public override bool CanRetrieveWrittenData
         {
@@ -242,16 +250,77 @@ namespace Sensus.DataStores.Remote
         {
             get
             {
-                return "Amazon S3";
+                return "Managed Amazon S3";
             }
         }
 
-        public AmazonS3RemoteDataStore()
+        public ManagedAmazonS3RemoteDataStore()
         {
             _region = _bucket = _folder = null;
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
             _putCount = _successfulPutCount = 0;
+        }
+        public override AmazonS3Client InitializeS3()
+        {
+            ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+            return base.InitializeS3();
+        }  
+        private async Task RefreshAccount()
+        {
+            var deviceId = SensusServiceHelper.Get().DeviceId;
+            var url = string.Join(_accountServiceURL, deviceId, Protocol.ParticipantId);
+            var account = await GetJsonObjectFromUrl<Account>(url);
+            if(Protocol.ParticipantId != account.participantId)
+            {
+                Protocol.ParticipantId = account.participantId;
+            }
+            _participantPassword = account.password;
+        }
+        private void ConfirmCredentials()
+        {
+            var t = Task.Run(async () =>
+                    {
+                        if (string.IsNullOrWhiteSpace(Protocol.ParticipantId) || string.IsNullOrWhiteSpace(_participantPassword))
+                        {
+                            await RefreshAccount();
+                        }
+                        if ((_accountCredentials?.IsExpired).GetValueOrDefault())
+                        {
+                            var url = string.Join(Protocol.ParticipantId, _participantPassword);
+                            _accountCredentials = await GetJsonObjectFromUrl<AccountCredentials>(url);
+                            _iamAccessKey = _accountCredentials.accessKeyId;
+                            _iamSecretKey = _accountCredentials.secretAccessKey;
+                        }
+                    });
+            t.Wait();
+        }
+        private async Task<T> GetJsonObjectFromUrl<T>(string url)
+        {
+            T rVal = default(T);
+            string response;
+            HttpClient httpClient = new HttpClient();
+            try
+            {
+                response = await httpClient.GetStringAsync(url);
+                if (string.IsNullOrWhiteSpace(response))
+                {
+                    throw new Exception("Response was empty");
+                }
+                rVal = JsonConvert.DeserializeObject<T>(response);
+
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log($"Error getting json object {typeof(T).Name} from {url}:  {ex.Message}", LoggingLevel.Normal, GetType());
+                throw;
+            }
+            finally
+            {
+                httpClient.Dispose();
+                httpClient = null;
+            }
+            return rVal;
         }
     }
 }
