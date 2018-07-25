@@ -23,25 +23,19 @@ namespace Sensus.Probes.Context
     {
         private double _relativeHumidity;        
 
-        [Anonymizable("Relative Humidity", new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Relative Humidity", typeof(DoubleRoundingTensAnonymizer), false)]
         [DoubleProbeTriggerProperty("Relative Humidity")]
         public double RelativeHumidity
         {
-            get
-            {
-                return _relativeHumidity;
-            }
-            set
-            {
-                _relativeHumidity = value;
-            }
+            get { return _relativeHumidity; }
+            set { _relativeHumidity = value; }
         }
 
         public override string DisplayDetail
         {
             get
             {
-                return "Relative Humidity:  " + Math.Round(_relativeHumidity, 1);
+                return "Relative Humidity:  " + Math.Round(_relativeHumidity);
             }
         }
 
@@ -53,7 +47,7 @@ namespace Sensus.Probes.Context
         {
             get
             {
-                return Math.Round(_relativeHumidity, 1);
+                return Math.Round(_relativeHumidity);
             }
         }
 
@@ -62,7 +56,7 @@ namespace Sensus.Probes.Context
         /// </summary>
         private HumidityDatum() 
         {
-        } 
+        }
 
         public HumidityDatum(DateTimeOffset timestamp, double relativeHumidity)
             : base(timestamp)
