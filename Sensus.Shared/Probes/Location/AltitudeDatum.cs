@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 using Sensus.Anonymization;
@@ -20,7 +19,7 @@ using Sensus.Anonymization.Anonymizers;
 
 namespace Sensus.Probes.Location
 {
-    public class AltitudeDatum : ImpreciseDatum
+    public class AltitudeDatum : Datum
     {
         private double _altitude;
 
@@ -54,10 +53,11 @@ namespace Sensus.Probes.Location
         /// </summary>
         private AltitudeDatum() { }
 
-        public AltitudeDatum(DateTimeOffset timestamp, double accuracy, double altitude)
-            : base(timestamp, accuracy)
+        public AltitudeDatum(DateTimeOffset timestamp, double hPa)
+            : base(timestamp)
         {
-            _altitude = altitude;
+            // convert hPa to altitude:  https://www.weather.gov/media/epz/wxcalc/pressureAltitude.pdf
+            _altitude = (1 - Math.Pow((hPa / 1013.25), 0.190284)) * 145366.45;
         }
 
         public override string ToString()
