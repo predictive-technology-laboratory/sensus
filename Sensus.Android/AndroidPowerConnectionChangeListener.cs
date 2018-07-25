@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Sensus.Exceptions;
+
 namespace Sensus.Android
 {
     public class AndroidPowerConnectionChangeListener : PowerConnectionChangeListener
@@ -20,7 +23,14 @@ namespace Sensus.Android
         {
             AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED += (sender, connected) =>
             {
-                PowerConnectionChanged?.Invoke(sender, connected);
+                try
+                {
+                    PowerConnectionChanged?.Invoke(sender, connected);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed to process power connection change.", ex);
+                }
             };
         }
     }

@@ -12,37 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
 using Android.Content;
 using Sensus.Exceptions;
 using System;
 
 namespace Sensus.Android
 {
-    /// <summary>
-    /// https://developer.android.com/reference/android/content/Intent#ACTION_POWER_CONNECTED
-    /// that wish to register specifically to this notification. Unlike ACTION_BATTERY_CHANGED, 
-    /// applications will be woken for this and so do not have to stay active to receive this notification. 
-    /// This action can be used to implement actions that wait until power is available to trigger.
-    /// added in API level 4
-    /// 
-    /// We use the same receiver for both the connected and disconnected intents.
-    /// </summary>
-    [BroadcastReceiver]
-    [IntentFilter(new string[] { Intent.ActionPowerConnected, Intent.ActionPowerDisconnected }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidPowerConnectionChangeBroadcastReceiver : BroadcastReceiver
     {
+        /// <summary>
+        /// Occurs when the phone is either plugged into (true) or removed from (false) an external power source.
+        /// </summary>
         public static event EventHandler<bool> POWER_CONNECTION_CHANGED;
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
             try
             {
-                if (POWER_CONNECTION_CHANGED != null &&
-                    intent != null &&
-                    (intent.Action == Intent.ActionPowerConnected || intent.Action == Intent.ActionPowerDisconnected))
+                if (intent == null)
                 {
-                    POWER_CONNECTION_CHANGED(this, intent.Action == Intent.ActionPowerConnected);
+                    throw new ArgumentNullException(nameof(intent));
+                }
+
+                if (intent.Action == Intent.ActionPowerConnected || intent.Action == Intent.ActionPowerDisconnected)
+                {
+                    POWER_CONNECTION_CHANGED?.Invoke(this, intent.Action == Intent.ActionPowerConnected);
                 }
             }
             catch (Exception ex)

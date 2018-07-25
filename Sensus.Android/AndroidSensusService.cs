@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using Sensus.Context;
 using Sensus.Android.Context;
-using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
 using Sensus.Android.Concurrent;
 using Sensus.Encryption;
@@ -69,6 +68,7 @@ namespace Sensus.Android
 
         private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
         private Notification.Builder _foregroundServiceNotificationBuilder;
+        private AndroidPowerConnectionChangeBroadcastReceiver _powerBroadcastReceiver;
 
         public override void OnCreate()
         {
@@ -83,6 +83,19 @@ namespace Sensus.Android
                 Notifier = new AndroidNotifier(this),
                 PowerConnectionChangeListener = new AndroidPowerConnectionChangeListener()
             };
+
+            // https://developer.android.com/reference/android/content/Intent#ACTION_POWER_CONNECTED
+            // This is intended for applications that wish to register specifically to this notification. Unlike ACTION_BATTERY_CHANGED, 
+            // applications will be woken for this and so do not have to stay active to receive this notification. This action can be 
+            // used to implement actions that wait until power is available to trigger.
+            // 
+            // We use the same receiver for both the connected and disconnected intents.
+            _powerBroadcastReceiver = new AndroidPowerConnectionChangeBroadcastReceiver();
+            IntentFilter powerConnectFilter = new IntentFilter();
+            powerConnectFilter.AddAction(Intent.ActionPowerConnected);
+            powerConnectFilter.AddAction(Intent.ActionPowerDisconnected);
+            powerConnectFilter.AddCategory(Intent.CategoryDefault);
+            RegisterReceiver(_powerBroadcastReceiver, powerConnectFilter);
 
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
@@ -273,6 +286,8 @@ namespace Sensus.Android
                 serviceHelper.StopProtocols();
                 serviceHelper.SetService(null);
             }
+
+            UnregisterReceiver(_powerBroadcastReceiver);
 
             // do this last so that we don't dispose the service and its system services too early.
             base.OnDestroy();
