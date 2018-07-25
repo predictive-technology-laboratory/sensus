@@ -11,6 +11,7 @@
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <Description>Endpoint for running Sensus unit tests within the AppCenter cloud. This must be built in debug
 to run on the AppCenter cloud.</Description>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

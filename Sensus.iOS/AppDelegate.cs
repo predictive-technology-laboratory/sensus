@@ -51,7 +51,8 @@ namespace Sensus.iOS
             {
                 Platform = Sensus.Context.Platform.iOS,
                 MainThreadSynchronizer = new MainConcurrent(),
-                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY)
+                SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY),
+                PowerConnectionChangeListener = new iOSPowerConnectionChangeListener()
             };
 
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper()); //do this before we register for the notifications so we have the token
@@ -85,6 +86,9 @@ namespace Sensus.iOS
             #endregion
 
             SensusServiceHelper.Get()?.UpdatePushNotificationRegistrationsAsync();  //TODO:  we should have the PushNotificationToken token at this point
+
+            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
+
             // facebook settings
             Settings.AppID = "873948892650954";
             Settings.DisplayName = "Sensus";

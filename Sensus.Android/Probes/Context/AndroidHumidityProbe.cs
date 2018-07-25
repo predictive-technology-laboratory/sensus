@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.Hardware;
-using Sensus.Probes.Location;
 using System;
+using Android.Hardware;
+using Sensus.Probes.Context;
 
-namespace Sensus.Android.Probes.Location
+namespace Sensus.Android.Probes.Context
 {
-    public class AndroidAltitudeProbe : AltitudeProbe
+    public class AndroidHumidityProbe : HumidityProbe
     {
-        private AndroidSensorListener _altitudeListener;
+        private AndroidSensorListener _humidityListener;
 
-        public AndroidAltitudeProbe()
+        public AndroidHumidityProbe()
         {
-            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, e =>
+            _humidityListener = new AndroidSensorListener(SensorType.RelativeHumidity, null, e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
@@ -34,7 +34,7 @@ namespace Sensus.Android.Probes.Location
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, e.Values[0]));
+                StoreDatum(new HumidityDatum(DateTimeOffset.UtcNow, e.Values[0]));
             });
         }
 
@@ -42,17 +42,17 @@ namespace Sensus.Android.Probes.Location
         {
             base.Initialize();
 
-            _altitudeListener.Initialize(MinDataStoreDelay);
+            _humidityListener.Initialize(MinDataStoreDelay);
         }
 
         protected override void StartListening()
         {
-            _altitudeListener.Start();
+            _humidityListener.Start();
         }
 
         protected override void StopListening()
         {
-            _altitudeListener.Stop();
+            _humidityListener.Stop();
         }
     }
 }

@@ -56,7 +56,6 @@ namespace Sensus.iOS
         {
             get
             {
-                UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
                 return UIDevice.CurrentDevice.BatteryLevel * 100f;
             }
         }
@@ -113,7 +112,6 @@ namespace Sensus.iOS
         public iOSSensusServiceHelper()
         {
             _nextToastTime = DateTime.Now;
-            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)
