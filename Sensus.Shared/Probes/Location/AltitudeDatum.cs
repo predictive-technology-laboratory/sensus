@@ -56,7 +56,7 @@ namespace Sensus.Probes.Location
         public AltitudeDatum(DateTimeOffset timestamp, double hPa)
             : base(timestamp)
         {
-            // convert hPa to altitude:  http://www.srh.noaa.gov/images/epz/wxcalc/pressureAltitude.pdf
+            // convert hPa to altitude:  https://www.weather.gov/media/epz/wxcalc/pressureAltitude.pdf
             _altitude = (1 - Math.Pow((hPa / 1013.25), 0.190284)) * 145366.45;
         }
 
