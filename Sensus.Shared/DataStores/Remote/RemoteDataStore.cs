@@ -232,7 +232,7 @@ namespace Sensus.DataStores.Remote
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
-            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
         }
 
         public override void Reset()
