@@ -32,8 +32,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothDeviceProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
