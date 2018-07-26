@@ -29,6 +29,9 @@ namespace Sensus.Probes.Location
         private double _distance;
         private double _maxDistance;
 
+
+
+
         /// <summary>
         /// Most proximity sensors return the absolute distance, in cm, 
         /// but some return only near and far values.
@@ -48,9 +51,17 @@ namespace Sensus.Probes.Location
             set { _maxDistance = value; }
         }
 
+        public string Near
+        {
+            get { return _near; }
+            set { _near = value; }
+        }
+
+
+
         public override string DisplayDetail
         {
-            get { return Math.Round(_distance, 2) + " (distance)" + Math.Round(_maxDistance)+" (max distance)"; }
+            get { return Math.Round(_distance, 2) + " (distance)" + Math.Round(_maxDistance) + " (max distance)"; }
         }
 
         /// <summary>
@@ -64,7 +75,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return "[" + Math.Round(_distance, 2) + ", "+Math.Round(_maxDistance, 2)+"]";
+                return "[" + Math.Round(_distance, 2) + ", " + Math.Round(_maxDistance, 2) + "]";
             }
         }
 
@@ -80,6 +91,7 @@ namespace Sensus.Probes.Location
             _maxDistance = maxDistance;
 
         }
+
 
         public override string ToString()
         {
