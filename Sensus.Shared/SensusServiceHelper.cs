@@ -40,7 +40,6 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
-using WindowsAzure.Messaging;
 
 namespace Sensus
 {
@@ -548,6 +547,10 @@ namespace Sensus
         public abstract bool EnableProbeWhenEnablingAll(Probe probe);
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
+
+        protected abstract void UnregisterFromNotificationHub(Tuple<string, string> hubSas);
+
+        protected abstract void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags);
 
         public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
         {
@@ -1465,15 +1468,13 @@ namespace Sensus
                     // update each notification hub's registration, using the protocols as tags to listen to.
                     foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
                     {
-                        // unregister everything from hub
-                        NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, global::Android.App.Application.Context);
-                        notificationHub.UnregisterAll(PushNotificationToken);
+                        UnregisterFromNotificationHub(hubSas);
 
                         // register for push notifications associated with running protocols
                         Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
                         if (runningProtocols.Length > 0)
                         {
-                            notificationHub.Register(PushNotificationToken, runningProtocols.Select(protocol => protocol.Id).ToArray());
+                            RegisterWithNotificationHub(hubSas, runningProtocols.Select(protocol => protocol.Id).ToArray());
 
                             // each protocol may have its own remote data store being monitored for push notification
                             // requests. tokens are per device, so send the new token to each protocol's remote

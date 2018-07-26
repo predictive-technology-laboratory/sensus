@@ -148,6 +148,7 @@
 		<string>location</string>
 		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
+		<string>remote-notification</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Sensus</string>

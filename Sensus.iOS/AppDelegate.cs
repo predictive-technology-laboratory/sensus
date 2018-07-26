@@ -34,6 +34,7 @@ using Sensus.iOS.Callbacks.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
 using Microsoft.AppCenter.Crashes;
+using ObjCRuntime;
 
 namespace Sensus.iOS
 {
@@ -45,7 +46,8 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
-            #region configure context
+            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
+
             SensusContext.Current = new iOSSensusContext
             {
                 Platform = Sensus.Context.Platform.iOS,
@@ -54,27 +56,51 @@ namespace Sensus.iOS
                 PowerConnectionChangeListener = new iOSPowerConnectionChangeListener()
             };
 
+            // must come after context initialization
+            SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
+
             // iOS introduced a new notification center in 10.0 based on UNUserNotifications
             if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
             {
-                UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
-                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-                UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
-                UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
-                SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
-                SensusContext.Current.Notifier = new UNUserNotificationNotifier();
+                UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert, (granted, error) =>
+                {
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        if (granted)
+                        {
+                            // register for push notifications. it makes sense to do this here because
+                            // callback scheduling (set up below) depends on it.
+                            UIApplication.SharedApplication.RegisterForRemoteNotifications();
+
+                            // clear notifications and set up scheduler / notifier
+                            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+                            UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
+                            UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
+                            SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
+                            SensusContext.Current.Notifier = new UNUserNotificationNotifier();
+                        }
+                        else
+                        {
+                            new UIAlertView("Warning", "Sensus may not operate properly with notifications disabled.", default(IUIAlertViewDelegate), "OK").Show();
+                        }
+                    });
+                });
             }
-            // use the pre-10.0 approach based on UILocalNotifications
+            // use the pre-10.0 approach based on UILocalNotifications. we require ios 9 or later, so we don't have to worry about 
+            // pre-8 ios as done here:  https://docs.microsoft.com/en-us/azure/notification-hubs/xamarin-notification-hubs-ios-push-notification-apns-get-started
             else
             {
-                UIApplication.SharedApplication.RegisterUserNotificationSettings(UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet()));
+                UIUserNotificationSettings notificationSettings = UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet());
+                UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationSettings);
+
+                // register for push notifications. it makes sense to do this here because
+                // callback scheduling (set up below) depends on it.
+                UIApplication.SharedApplication.RegisterForRemoteNotifications();
+
+                // set up scheduler / notifier
                 SensusContext.Current.CallbackScheduler = new UILocalNotificationCallbackScheduler();
                 SensusContext.Current.Notifier = new UILocalNotificationNotifier();
             }
-            #endregion
-
-            SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
-            UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
 
             // facebook settings
             Settings.AppID = "873948892650954";
@@ -99,6 +125,60 @@ namespace Sensus.iOS
 #endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
+        }
+
+        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+            serviceHelper.PushNotificationTokenData = deviceToken;
+            serviceHelper.UpdatePushNotificationRegistrationsAsync();
+        }
+
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
+            SensusException.Report("Failed to register for remote notifications.", error == null ? null : new Exception(error.ToString()));
+        }
+
+        /*public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            if (userInfo?.ContainsKey(new NSString("aps")) ?? false)
+            {
+                NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
+
+                //Extract the alert text
+                // NOTE: If you're using the simple alert by just specifying
+                // "  aps:{alert:"alert msg here"}  ", this will work fine.
+                // But if you're using a complex alert with Localization keys, etc.,
+                // your "alert" object from the aps dictionary will be another NSDictionary.
+                // Basically the JSON gets dumped right into a NSDictionary,
+                // so keep that in mind.
+                if (aps.ContainsKey(new NSString("alert")))
+                {
+                    string alert = (aps[new NSString("alert")] as NSString).ToString();
+                    Console.Out.WriteLine("Received:  " + alert);
+                }
+            }
+        }*/
+
+        public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
+        {
+            if (userInfo?.ContainsKey(new NSString("aps")) ?? false)
+            {
+                NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
+
+                //Extract the alert text
+                // NOTE: If you're using the simple alert by just specifying
+                // "  aps:{alert:"alert msg here"}  ", this will work fine.
+                // But if you're using a complex alert with Localization keys, etc.,
+                // your "alert" object from the aps dictionary will be another NSDictionary.
+                // Basically the JSON gets dumped right into a NSDictionary,
+                // so keep that in mind.
+                if (aps.ContainsKey(new NSString("alert")))
+                {
+                    string alert = (aps[new NSString("alert")] as NSString).ToString();
+                    Console.Out.WriteLine("Received:  " + alert);
+                }
+            }
         }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)

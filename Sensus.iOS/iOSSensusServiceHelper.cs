@@ -28,6 +28,10 @@ using CoreBluetooth;
 using CoreFoundation;
 using System.Threading.Tasks;
 using TTGSnackBar;
+using WindowsAzure.Messaging;
+using Newtonsoft.Json;
+using Sensus.Exceptions;
+using UserNotifications;
 
 namespace Sensus.iOS
 {
@@ -39,6 +43,7 @@ namespace Sensus.iOS
 
         private DateTime _nextToastTime;
         private readonly object _toastLocker = new object();
+        private NSData _pushNotificationTokenData;
 
         public override bool IsCharging
         {
@@ -100,6 +105,27 @@ namespace Sensus.iOS
             get
             {
                 return NSBundle.MainBundle.InfoDictionary["CFBundleShortVersionString"].ToString();
+            }
+        }
+
+        public override string PushNotificationToken
+        {
+            get
+            {
+                return _pushNotificationTokenData == null ? null : BitConverter.ToString(_pushNotificationTokenData.ToArray()).Replace("-", "").ToUpperInvariant();
+            }
+        }
+
+        [JsonIgnore]
+        public NSData PushNotificationTokenData
+        {
+            get
+            {
+                return _pushNotificationTokenData;
+            }
+            set
+            {
+                _pushNotificationTokenData = value;
             }
         }
 
@@ -261,6 +287,57 @@ namespace Sensus.iOS
                 ms.Seek(0, SeekOrigin.Begin);
                 return ms;
             });
+        }
+
+        public override Task UpdatePushNotificationRegistrationsAsync()
+        {
+            return Task.Run(async () =>
+            {
+                try
+                {
+                    await base.UpdatePushNotificationRegistrationsAsync();
+                }
+                catch (UnsetPushNotificationTokenException)
+                {
+                    try
+                    {
+                        // reregister for remote notifications to get a new token
+                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                        {
+                            UIApplication.SharedApplication.UnregisterForRemoteNotifications();
+                            UIApplication.SharedApplication.RegisterForRemoteNotifications();
+                        });
+                    }
+                    catch (Exception newTokenException)
+                    {
+                        SensusException.Report("Exception while obtaining a new token:  " + newTokenException.Message, newTokenException);
+                    }
+                }
+            });
+        }
+
+        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        {
+            SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
+
+            bool unregistered = notificationHub.UnregisterAll(_pushNotificationTokenData, out NSError error);
+
+            if (error != null)
+            {
+                SensusException.Report("Exception while unregistering from notification hub.", new Exception(error.ToString()));
+            }
+        }
+
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags)
+        {
+            SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
+
+            bool registered = notificationHub.RegisterNative(_pushNotificationTokenData, new NSSet(tags), out NSError error);
+
+            if (error != null)
+            {
+                SensusException.Report("Exception while registering from notification hub.", new Exception(error.ToString()));
+            }
         }
 
         /// <summary>

@@ -97,6 +97,7 @@ namespace Sensus.Android
             powerConnectFilter.AddCategory(Intent.CategoryDefault);
             RegisterReceiver(_powerBroadcastReceiver, powerConnectFilter);
 
+            // must come after context initialization
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;

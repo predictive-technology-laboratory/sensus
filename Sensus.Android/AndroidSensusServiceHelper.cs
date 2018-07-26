@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 using Sensus.Context;
 using Firebase.Iid;
 using Sensus.Exceptions;
+using WindowsAzure.Messaging;
 
 namespace Sensus.Android
 {
@@ -553,6 +554,18 @@ namespace Sensus.Android
                 ms.Seek(0, SeekOrigin.Begin);
                 return ms;
             });
+        }
+
+        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.UnregisterAll(PushNotificationToken);
+        }
+
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.Register(PushNotificationToken, tags);
         }
 
         /// <summary>
