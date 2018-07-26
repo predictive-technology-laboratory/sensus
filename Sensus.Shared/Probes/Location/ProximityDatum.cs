@@ -51,12 +51,7 @@ namespace Sensus.Probes.Location
             set { _maxDistance = value; }
         }
 
-        public string Near
-        {
-            get { return _near; }
-            set { _near = value; }
-        }
-
+  
 
 
         public override string DisplayDetail
