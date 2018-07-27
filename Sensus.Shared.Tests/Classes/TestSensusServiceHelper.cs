@@ -144,7 +144,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags)
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }

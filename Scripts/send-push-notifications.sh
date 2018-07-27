@@ -20,11 +20,11 @@ sas=$(node get-sas.js)
 for n in $(ls $notifications_dir/*.json)
 do
     device=$(jq -r '.device' $n)
-    protocol=$(jq -r '.protocol' $n)  # we need raw for the curl command, so we'll need to double-quote this below in the JSON.
-    title=$(jq '.title' $n)      # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    body=$(jq '.body' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    sound=$(jq '.sound' $n)      # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    command=$(jq '.command' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    protocol=$(jq '.protocol' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    title=$(jq '.title' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)
 	
@@ -47,7 +47,7 @@ do
 "\"data\":"\
 "{"\
 "\"command\":$command,"\
-"\"protocol\":\"$protocol\","\
+"\"protocol\":$protocol,"\
 "\"title\":$title,"\
 "\"body\":$body,"\
 "\"sound\":$sound"\
@@ -70,13 +70,13 @@ do
 "\"sound\":$sound"\
 "},"\
 "\"command\":$command,"\
-"\"protocol\":\"$protocol\""\
+"\"protocol\":$protocol"\
 "}"
 
         fi
 
 	# send notification.
-        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
+        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
 	
 	# check status.
         if [[ "$response" = "201"  ]]

@@ -556,16 +556,16 @@ namespace Sensus.Android
             });
         }
 
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.Register(PushNotificationToken);
+        }
+
         protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
         {
             NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
             notificationHub.UnregisterAll(PushNotificationToken);
-        }
-
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags)
-        {
-            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
-            notificationHub.Register(PushNotificationToken, tags);
         }
 
         /// <summary>

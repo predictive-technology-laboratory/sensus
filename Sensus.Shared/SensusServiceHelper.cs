@@ -548,9 +548,9 @@ namespace Sensus
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
-        protected abstract void UnregisterFromNotificationHub(Tuple<string, string> hubSas);
+        protected abstract void RegisterWithNotificationHub(Tuple<string, string> hubSas);
 
-        protected abstract void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags);
+        protected abstract void UnregisterFromNotificationHub(Tuple<string, string> hubSas);
 
         public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
         {
@@ -1465,16 +1465,16 @@ namespace Sensus
                         }
                     }
 
-                    // update each notification hub's registration, using the protocols as tags to listen to.
+                    // update each notification hub's registration
                     foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
                     {
                         UnregisterFromNotificationHub(hubSas);
 
-                        // register for push notifications associated with running protocols
+                        // register with the hub if any of its associated protocols are running
                         Protocol[] runningProtocols = hubSasProtocols[hubSas].Where(protocol => protocol.Running).ToArray();
                         if (runningProtocols.Length > 0)
                         {
-                            RegisterWithNotificationHub(hubSas, runningProtocols.Select(protocol => protocol.Id).ToArray());
+                            RegisterWithNotificationHub(hubSas);
 
                             // each protocol may have its own remote data store being monitored for push notification
                             // requests. tokens are per device, so send the new token to each protocol's remote

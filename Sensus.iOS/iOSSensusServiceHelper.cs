@@ -316,6 +316,18 @@ namespace Sensus.iOS
             });
         }
 
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        {
+            SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
+
+            bool registered = notificationHub.RegisterNative(_pushNotificationTokenData, new NSSet(), out NSError error);
+
+            if (error != null)
+            {
+                SensusException.Report("Exception while registering from notification hub.", new Exception(error.ToString()));
+            }
+        }
+
         protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
@@ -325,18 +337,6 @@ namespace Sensus.iOS
             if (error != null)
             {
                 SensusException.Report("Exception while unregistering from notification hub.", new Exception(error.ToString()));
-            }
-        }
-
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas, string[] tags)
-        {
-            SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-
-            bool registered = notificationHub.RegisterNative(_pushNotificationTokenData, new NSSet(tags), out NSError error);
-
-            if (error != null)
-            {
-                SensusException.Report("Exception while registering from notification hub.", new Exception(error.ToString()));
             }
         }
 

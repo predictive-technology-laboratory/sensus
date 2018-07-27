@@ -49,7 +49,7 @@ namespace Sensus.Android
                     string body = message.Data["body"];
                     string sound = message.Data["sound"];
 
-                    SensusContext.Current.Notifier.IssueNotificationAsync(title, body, null, protocol, !string.IsNullOrWhiteSpace(sound), Sensus.Callbacks.DisplayPage.None);
+                    SensusContext.Current.Notifier.IssueNotificationAsync(title, body, Guid.NewGuid().ToString(), protocol, !string.IsNullOrWhiteSpace(sound), Sensus.Callbacks.DisplayPage.None);
                 }
                 catch (Exception ex)
                 {
