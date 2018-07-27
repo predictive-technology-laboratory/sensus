@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Firebase.Messaging;
+using Sensus.Context;
+using System.Linq;
+using Sensus.Exceptions;
 
 namespace Sensus.Android
 {
@@ -24,7 +29,42 @@ namespace Sensus.Android
     {
         public override void OnMessageReceived(RemoteMessage message)
         {
-            System.Console.Out.WriteLine("Received.");
+            Task.Run(() =>
+            {
+                Protocol protocol = null;
+
+                try
+                {
+                    string protocolId = message.Data["protocol"];
+                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Where(p => p.Id == protocolId).SingleOrDefault();
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
+                }
+
+                try
+                {
+                    string title = message.Data["title"];
+                    string body = message.Data["body"];
+                    string sound = message.Data["sound"];
+
+                    SensusContext.Current.Notifier.IssueNotificationAsync(title, body, null, protocol, !string.IsNullOrWhiteSpace(sound), Sensus.Callbacks.DisplayPage.None);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
+                }
+
+                try
+                {
+                    string command = message.Data["command"];
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while running command from push notification:  " + ex.Message, ex);
+                }
+            });
         }
     }
 }

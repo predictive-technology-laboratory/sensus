@@ -33,8 +33,6 @@ using UserNotifications;
 using Sensus.iOS.Callbacks.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
-using Microsoft.AppCenter.Crashes;
-using ObjCRuntime;
 
 namespace Sensus.iOS
 {
@@ -139,45 +137,23 @@ namespace Sensus.iOS
             SensusException.Report("Failed to register for remote notifications.", error == null ? null : new Exception(error.ToString()));
         }
 
-        /*public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
-            if (userInfo?.ContainsKey(new NSString("aps")) ?? false)
-            {
-                NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
-
-                //Extract the alert text
-                // NOTE: If you're using the simple alert by just specifying
-                // "  aps:{alert:"alert msg here"}  ", this will work fine.
-                // But if you're using a complex alert with Localization keys, etc.,
-                // your "alert" object from the aps dictionary will be another NSDictionary.
-                // Basically the JSON gets dumped right into a NSDictionary,
-                // so keep that in mind.
-                if (aps.ContainsKey(new NSString("alert")))
-                {
-                    string alert = (aps[new NSString("alert")] as NSString).ToString();
-                    Console.Out.WriteLine("Received:  " + alert);
-                }
-            }
-        }*/
+            ProcessRemoteNotification(userInfo);
+        }
 
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-            if (userInfo?.ContainsKey(new NSString("aps")) ?? false)
-            {
-                NSDictionary aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
+            ProcessRemoteNotification(userInfo);
+            completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
+        }
 
-                //Extract the alert text
-                // NOTE: If you're using the simple alert by just specifying
-                // "  aps:{alert:"alert msg here"}  ", this will work fine.
-                // But if you're using a complex alert with Localization keys, etc.,
-                // your "alert" object from the aps dictionary will be another NSDictionary.
-                // Basically the JSON gets dumped right into a NSDictionary,
-                // so keep that in mind.
-                if (aps.ContainsKey(new NSString("alert")))
-                {
-                    string alert = (aps[new NSString("alert")] as NSString).ToString();
-                    Console.Out.WriteLine("Received:  " + alert);
-                }
+        private void ProcessRemoteNotification(NSDictionary userInfo)
+        {
+            if (userInfo.ContainsKey(new NSString("command")))
+            {
+                string command = (userInfo[new NSString("command")] as NSString).ToString();
+                SensusServiceHelper.Get().Logger.Log("Received push notification command:  " + command, LoggingLevel.Normal, GetType());
             }
         }
 

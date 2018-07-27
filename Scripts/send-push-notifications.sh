@@ -20,24 +20,68 @@ sas=$(node get-sas.js)
 for n in $(ls $notifications_dir/*.json)
 do
     device=$(jq -r '.device' $n)
-    protocol=$(jq -r '.protocol' $n)
-    message=$(jq '.message' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    protocol=$(jq -r '.protocol' $n)  # we need raw for the curl command, so we'll need to double-quote this below in the JSON.
+    title=$(jq '.title' $n)      # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    body=$(jq '.body' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    sound=$(jq '.sound' $n)      # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    command=$(jq '.command' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)
 	
     # if the requested time has passed, send now.
     if [ "$time" -le "$(date +%s)" ]
     then
-	# get the token for the device, which is stored in a file named as the device.
+
+	# get the token for the device, which is stored in a file named the same as the device.
 	token=$(cat "$notifications_dir/$device")
 
+	# get data payload depending on platform
+	# 
+	# android:  https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
+	# ios:  https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1
+	if [[ "$format" = "gcm" ]]
+        then
+
+            data=\
+"{"\
+"\"data\":"\
+"{"\
+"\"command\":$command,"\
+"\"protocol\":\"$protocol\","\
+"\"title\":$title,"\
+"\"body\":$body,"\
+"\"sound\":$sound"\
+"}"\
+"}"
+
+        elif [[ "$format" = "apple" ]]
+        then
+
+            data=\
+"{"\
+"\"aps\":"\
+"{"\
+"\"content-available\":1,"\
+"\"alert\":"\
+"{"\
+"\"title\":$title,"\
+"\"body\":$body"\
+"},"\
+"\"sound\":$sound"\
+"},"\
+"\"command\":$command,"\
+"\"protocol\":\"$protocol\""\
+"}"
+
+        fi
+
 	# send notification.
-        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "{\"data\":{\"body\":$message}}" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
+        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "ServiceBusNotification-Tags:  $protocol" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
 	
 	# check status.
-        if [[ "$response" -eq "201"  ]]
+        if [[ "$response" = "201"  ]]
         then
-            echo "Notification sent."
+            echo "Notification sent. Removing file."
             rm "$n"
         fi
     fi

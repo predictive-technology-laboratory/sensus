@@ -1,7 +1,10 @@
 {
-  "device":"xxxx",
-  "protocol":"xxxx",
-  "message":"test",
+  "device":"XXXX",
+  "protocol":"XXXX",
+  "title":"Hello!",
+  "body":"This is another test.",
+  "sound":"default",
+  "command":"test-command",
   "format":"gcm",
   "time":0
 }
