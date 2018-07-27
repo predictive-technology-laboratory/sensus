@@ -37,7 +37,7 @@ namespace Sensus.Probes.Location
         /// </summary>
         /// <value>The latitude.</value>
         [DoubleProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(GPSUserLatitudeAnonymizer), typeof(GPSProtocolLatitudeAnonymizer), typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double Latitude
         {
             get { return _latitude; }
@@ -49,7 +49,7 @@ namespace Sensus.Probes.Location
         /// </summary>
         /// <value>The longitude.</value>
         [DoubleProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
+        [Anonymizable(null, new Type[] { typeof(GPSUserLongitudeAnonymizer), typeof(GPSProtocolLongitudeAnonymizer), typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double Longitude
         {
             get { return _longitude; }

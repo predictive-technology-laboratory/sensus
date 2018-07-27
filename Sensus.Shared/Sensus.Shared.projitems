@@ -9,6 +9,11 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSProtocolLatitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSProtocolLongitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSUserLatitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSUserLongitudeAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -27,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\GpsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
@@ -241,8 +247,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />

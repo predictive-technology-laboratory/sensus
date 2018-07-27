@@ -46,6 +46,7 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
+using Sensus.Extensions;
 
 #if __IOS__
 using HealthKit;
@@ -503,7 +504,7 @@ namespace Sensus
             });
         }
 
-#endregion
+        #endregion
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -536,6 +537,10 @@ namespace Sensus
         private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
+        private string _gpsProtocolAnonymizerZeroLocation;
+        private (float? latitude, float? longitude) _gpsProtocolAnonymizerZeroLocationCoordinates;
+        private string _gpsUserAnonymizerZeroLocation;
+        private (float? latitude, float? longitude) _gpsUserAnonymizerZeroLocationCoordinates;
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
@@ -1002,7 +1007,7 @@ namespace Sensus
         /// The minimum distance in meters to wait between deliveries of GPS readings.
         /// </summary>
         /// <value>The GPS minimum distance delay, in meters.</value>
-        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29, true)]
+        [EntryStringUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29, true)]
         public float GpsMinDistanceDelayMeters
         {
             get
@@ -1019,7 +1024,6 @@ namespace Sensus
                 _gpsMinDistanceDelayMeters = value;
             }
         }
-
         public Dictionary<string, string> VariableValue
         {
             get
@@ -1104,7 +1108,7 @@ namespace Sensus
             }
         }
 
-#region iOS-specific protocol properties
+        #region iOS-specific protocol properties
 
 #if __IOS__
         [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
@@ -1252,7 +1256,7 @@ namespace Sensus
             }
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Whether or not to allow the user to view data being collected by the <see cref="Protocol"/>.
@@ -1321,6 +1325,50 @@ namespace Sensus
             }
         }
 
+        [EntryStringUiProperty("GPS - Protocol Anonymizer Zero Location (lat,long) :", true, 46, false)]
+        public string GpsProtocolAnonymizerZeroLocation
+        {
+            get
+            {
+                return _gpsProtocolAnonymizerZeroLocation;
+            }
+            set
+            {
+                _gpsProtocolAnonymizerZeroLocation = value?.Trim("() ".ToArray());
+                var vals = _gpsProtocolAnonymizerZeroLocation.ToLatLong();
+                _gpsProtocolAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
+            }
+        }
+
+        public (float? latitude, float? longitude) GpsProtocolAnonymizerZeroLocationCoordinates
+        {
+            get
+            {
+                return _gpsProtocolAnonymizerZeroLocationCoordinates;
+            }
+        }
+
+        [EntryStringUiProperty("GPS - User Anonymizer Zero Location (lat,long) :", true, 47, false)]
+        public string GpsUserAnonymizerZeroLocation
+        {
+            get
+            {
+                return _gpsUserAnonymizerZeroLocation;
+            }
+            set
+            {
+                _gpsUserAnonymizerZeroLocation = value?.Trim("() ".ToArray());
+                var vals = _gpsUserAnonymizerZeroLocation.ToLatLong();
+                _gpsUserAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
+            }
+        }
+        public (float? latitude, float? longitude) GpsUserAnonymizerZeroLocationCoordinates
+        {
+            get
+            {
+                return _gpsUserAnonymizerZeroLocationCoordinates;
+            }
+        }
         [JsonIgnore]
         public bool StartIsScheduled
         {
