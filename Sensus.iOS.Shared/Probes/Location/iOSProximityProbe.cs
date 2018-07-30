@@ -24,7 +24,7 @@ namespace Sensus.iOS.Probes.Location
 {
     public class iOSProximityProbe : ProximityProbe
     {
-        private UIDevice _proximityListener;
+       
         private NSObject _notification;
 
         protected override void Initialize()
@@ -34,10 +34,7 @@ namespace Sensus.iOS.Probes.Location
             if (SensusServiceHelper.Get().ObtainPermission(Plugin.Permissions.Abstractions.Permission.Sensors) == PermissionStatus.Granted)
             {
                 //Enable the proximity Monitoring, is set to false by default, if the device cannot monitor proximity, it will remain false
-                _proximityListener = new UIDevice
-                {
-                    ProximityMonitoringEnabled = true
-                };
+                UIDevice.CurrentDevice.ProximityMonitoringEnabled = true;
             }
             else
             {
@@ -53,14 +50,14 @@ namespace Sensus.iOS.Probes.Location
         protected override void StartListening()
         {
             //Check to see if Proximity enabled is true, this would mean that the device can monitor proximity
-            if (_proximityListener.ProximityMonitoringEnabled)
+            if (UIDevice.CurrentDevice.ProximityMonitoringEnabled)
             {
                 //Hook the sensor event 
                 //https://developer.xamarin.com/api/member/MonoTouch.UIKit.UIDevice+Notifications.ObserveProximityStateDidChange/p/System.EventHandler%7BMonoTouch.Foundation.NSNotificationEventArgs%7D/
                 _notification = UIDevice.Notifications.ObserveProximityStateDidChange((o, e) =>
                 {
                     //apple has a proximitystate bool that returns 1 if device is close to user and 0 if it is not
-                    StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, (_proximityListener.ProximityState ? 0d : 1d), 1d));
+                    StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0d : 1d), 1d));
                 });
             }
 
