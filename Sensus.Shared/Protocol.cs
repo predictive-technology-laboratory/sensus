@@ -1428,6 +1428,7 @@ namespace Sensus
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
+            _gpsUserAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}"; //initialize this with a random gps location
         }
 
         /// <summary>
