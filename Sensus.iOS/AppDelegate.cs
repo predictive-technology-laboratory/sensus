@@ -33,6 +33,7 @@ using UserNotifications;
 using Sensus.iOS.Callbacks.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
+using System.Threading;
 
 namespace Sensus.iOS
 {
@@ -129,7 +130,19 @@ namespace Sensus.iOS
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
             serviceHelper.PushNotificationTokenData = deviceToken;
-            serviceHelper.UpdatePushNotificationRegistrationsAsync();
+
+            // update push notification registrations. this depends on internet connectivity to S3
+            // so it might hang if connectivity is poor. ensure we don't violate execution limits.
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            nint updateTaskId = application.BeginBackgroundTask(() =>
+            {
+                cancellationTokenSource.Cancel();
+            });
+
+            serviceHelper.UpdatePushNotificationRegistrationsAsync(cancellationTokenSource.Token).ContinueWith(finishedTask =>
+            {
+                application.EndBackgroundTask(updateTaskId);
+            });
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)

@@ -400,19 +400,46 @@ namespace Sensus.DataStores.Remote
 
                 try
                 {
+                    // send the token
                     s3 = InitializeS3();
                     byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
                     MemoryStream dataStream = new MemoryStream();
                     dataStream.Write(tokenBytes, 0, tokenBytes.Length);
                     dataStream.Position = 0;
 
-                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, "text/plain", cancellationToken);
+                    await Put(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
                 }
                 finally
                 {
                     DisposeS3(s3);
                 }
             });
+        }
+
+        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    // send an empty data stream to clear the token. we don't have delete access.
+                    s3 = InitializeS3();
+
+                    await Put(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        private string GetPushNotificationTokenKey()
+        {
+            // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
         }
 
         private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)

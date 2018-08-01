@@ -36,11 +36,16 @@ namespace Sensus.Android
                 try
                 {
                     string protocolId = message.Data["protocol"];
-                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Where(p => p.Id == protocolId).SingleOrDefault();
+                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Where(p => p.Id == protocolId).Single();
                 }
                 catch (Exception ex)
                 {
                     SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
+                }
+
+                if (!protocol.Running)
+                {
+                    return;
                 }
 
                 try

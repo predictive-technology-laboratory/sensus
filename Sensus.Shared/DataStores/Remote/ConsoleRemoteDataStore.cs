@@ -63,6 +63,11 @@ namespace Sensus.DataStores.Remote
             return Task.CompletedTask;
         }
 
+        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
         public override string GetDatumKey(Datum datum)
         {
             throw new NotImplementedException();

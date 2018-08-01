@@ -1701,7 +1701,7 @@ namespace Sensus
 
                 if (startException == null)
                 {
-                    SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync();
+                    SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
                 }
 
                 if (startException == null)
@@ -2152,7 +2152,7 @@ namespace Sensus
                     }
                 }
 
-                SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync();
+                SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");

@@ -149,6 +149,11 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
+        protected override void RequestNewPushNotificationToken()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();

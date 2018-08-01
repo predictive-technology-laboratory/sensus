@@ -38,7 +38,10 @@ namespace Sensus
         }
 
         private Protocol _protocol;
-        private string _message;
+        private string _title;
+        private string _body;
+        private string _sound;
+        private string _command;
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _time;
 
@@ -47,19 +50,25 @@ namespace Sensus
             get
             {
                 return "{" +
-                           "\"device\":\"" + SensusServiceHelper.Get().DeviceId + "\"," +
-                           "\"protocol\":\"" + _protocol.Id + "\"," +
-                           "\"message\":" + JsonConvert.ToString(_message) + "," +
-                           "\"format\":\"" + GetFormatString(_format) + "\"," +
+                           "\"device\":" + JsonConvert.ToString(SensusServiceHelper.Get().DeviceId) + "," +
+                           "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
+                           "\"title\":" + JsonConvert.ToString(_title) + "," +
+                           "\"body\":" + JsonConvert.ToString(_body) + "," +
+                           "\"sound\":" + JsonConvert.ToString(_sound) + "," +
+                           "\"command\":" + JsonConvert.ToString(_command) + "," +
+                           "\"format\":" + JsonConvert.ToString(GetFormatString(_format)) + "," +
                            "\"time\":" + _time.ToUnixTimeSeconds() +
                        "}";
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string message, PushNotificationRequestFormat format, DateTimeOffset time)
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, PushNotificationRequestFormat format, DateTimeOffset time)
         {
             _protocol = protocol;
-            _message = message;
+            _title = title;
+            _body = body;
+            _sound = sound;
+            _command = command;
             _format = format;
             _time = time;
         }

@@ -289,33 +289,6 @@ namespace Sensus.iOS
             });
         }
 
-        public override Task UpdatePushNotificationRegistrationsAsync()
-        {
-            return Task.Run(async () =>
-            {
-                try
-                {
-                    await base.UpdatePushNotificationRegistrationsAsync();
-                }
-                catch (UnsetPushNotificationTokenException)
-                {
-                    try
-                    {
-                        // reregister for remote notifications to get a new token
-                        SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                        {
-                            UIApplication.SharedApplication.UnregisterForRemoteNotifications();
-                            UIApplication.SharedApplication.RegisterForRemoteNotifications();
-                        });
-                    }
-                    catch (Exception newTokenException)
-                    {
-                        SensusException.Report("Exception while obtaining a new token:  " + newTokenException.Message, newTokenException);
-                    }
-                }
-            });
-        }
-
         protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
@@ -338,6 +311,16 @@ namespace Sensus.iOS
             {
                 SensusException.Report("Exception while unregistering from notification hub.", new Exception(error.ToString()));
             }
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            // reregister for remote notifications to get a new token
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                UIApplication.SharedApplication.UnregisterForRemoteNotifications();
+                UIApplication.SharedApplication.RegisterForRemoteNotifications();
+            });
         }
 
         /// <summary>

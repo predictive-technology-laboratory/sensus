@@ -568,6 +568,13 @@ namespace Sensus.Android
             notificationHub.UnregisterAll(PushNotificationToken);
         }
 
+        protected override void RequestNewPushNotificationToken()
+        {
+            // delete the instance ID and get a new token.
+            FirebaseInstanceId.Instance.DeleteInstanceId();
+            string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
+        }
+
         /// <summary>
         /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
         /// </summary>
@@ -768,30 +775,6 @@ namespace Sensus.Android
         public void ReissueForegroundServiceNotification()
         {
             _service.ReissueForegroundServiceNotification();
-        }
-
-        public override Task UpdatePushNotificationRegistrationsAsync()
-        {
-            return Task.Run(async () =>
-            {
-                try
-                {
-                    await base.UpdatePushNotificationRegistrationsAsync();
-                }
-                catch (UnsetPushNotificationTokenException)
-                {
-                    try
-                    {
-                        // delete the instance ID and get a new token.
-                        FirebaseInstanceId.Instance.DeleteInstanceId();
-                        string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
-                    }
-                    catch (Exception newTokenException)
-                    {
-                        SensusException.Report("Exception while obtaining a new token:  " + newTokenException.Message, newTokenException);
-                    }
-                }
-            });
         }
 
         public void StopAndroidSensusService()

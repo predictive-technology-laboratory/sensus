@@ -33,7 +33,14 @@ do
     then
 
 	# get the token for the device, which is stored in a file named the same as the device.
-	token=$(cat "$notifications_dir/$device")
+	token=$(cat "$notifications_dir/${device}:${protocol}")
+
+	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
+	if [[ "$token" = "" ]]
+	then
+	    echo "No token found."
+	    continue
+	fi
 
 	# get data payload depending on platform
 	# 
