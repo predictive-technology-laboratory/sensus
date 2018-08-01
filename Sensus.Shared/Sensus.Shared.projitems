@@ -207,6 +207,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryFloatUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryStringUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ButtonUiProperty - Copy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryStringWithButtonUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ListUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\OnOffUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\TimeUiProperty.cs" />

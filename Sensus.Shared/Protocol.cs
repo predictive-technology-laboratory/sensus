@@ -508,7 +508,7 @@ namespace Sensus
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
-
+        
         private string _id;
         private string _name;
         private List<Probe> _probes;
@@ -1325,7 +1325,7 @@ namespace Sensus
             }
         }
 
-        [EntryStringUiProperty("GPS - Protocol Anonymizer Zero Location (lat,long) :", true, 46, false)]
+        [ButtonUiProperty("GPS - Protocol Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomProtocolGPS), typeof(Protocol), true, 46, false)]
         public string GpsProtocolAnonymizerZeroLocation
         {
             get
@@ -1348,7 +1348,7 @@ namespace Sensus
             }
         }
 
-        [EntryStringUiProperty("GPS - User Anonymizer Zero Location (lat,long) :", true, 47, false)]
+        [EntryStringWithButtonUiProperty("GPS - User Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomUserGPS), typeof(Protocol), true, 47, false)]
         public string GpsUserAnonymizerZeroLocation
         {
             get
@@ -2207,6 +2207,23 @@ namespace Sensus
         private void SubCaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
+        }
+
+        public void GenerateRandomProtocolGPS(object o, EventArgs e)
+        {
+            GpsProtocolAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}";
+            if (o is Button)
+            {
+                (o as Button).Text = GpsProtocolAnonymizerZeroLocation;
+            }
+        }
+        public void GenerateRandomUserGPS(object o, EventArgs e)
+        {
+            GpsUserAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}";
+            if (o is Button)
+            {
+                (o as Button).Text = GpsUserAnonymizerZeroLocation;
+            }
         }
     }
 }

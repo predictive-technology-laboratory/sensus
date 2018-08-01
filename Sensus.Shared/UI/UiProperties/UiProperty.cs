@@ -120,8 +120,9 @@ namespace Sensus.UI.UiProperties
 
                 if (targetProperty != null)
                 {
-                    propertyView.BindingContext = o;
-                    propertyView.SetBinding(targetProperty, new Binding(property.Name, converter: converter));
+                    View toBind = uiElement.BindableOverride ?? propertyView;
+                    toBind.BindingContext = o;
+                    toBind.SetBinding(targetProperty, new Binding(property.Name, converter: converter)); //this binds the property to to the target.  The problem 
                 }
 
                 propertyStacks.Add(new StackLayout
@@ -139,6 +140,7 @@ namespace Sensus.UI.UiProperties
         private bool _editable;
         private int _order;
         private bool _required;
+        private View _bindableOverride;
 
         public string LabelText
         {
@@ -151,7 +153,11 @@ namespace Sensus.UI.UiProperties
             get { return _editable; }
             set { _editable = value; }
         }
-
+        public View BindableOverride
+        {
+            get { return _bindableOverride; }
+            set { _bindableOverride = value; }
+        }
         protected UiProperty(string labelText, bool editable, int order, bool required)
         {
             _labelText = string.IsNullOrWhiteSpace(labelText) ? null : labelText + (required ? REQUIRED_MARK : "");
