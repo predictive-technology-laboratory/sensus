@@ -32,13 +32,16 @@ do
     if [ "$time" -le "$(date +%s)" ]
     then
 
-	# get the token for the device, which is stored in a file named the same as the device.
-	token=$(cat "$notifications_dir/${device}:${protocol}")
+	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the leading/trailing quotes from the protocol)
+	protocol_id=${protocol%\"}
+	protocol_id=${protocol_id#\"}
+	token=$(cat "$notifications_dir/${device}:${protocol_id}")
 
 	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
 	if [[ "$token" = "" ]]
 	then
-	    echo "No token found."
+	    echo "No token found. Assuming the PNR is stale and should be deleted."
+	    rm $n
 	    continue
 	fi
 
@@ -89,7 +92,7 @@ do
         if [[ "$response" = "201"  ]]
         then
             echo "Notification sent. Removing file."
-            rm "$n"
+            rm $n
         fi
     fi
 done

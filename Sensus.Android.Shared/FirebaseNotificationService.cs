@@ -43,6 +43,9 @@ namespace Sensus.Android
                     SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
                 }
 
+                // ignore the push notification if it targets a protocol that is not running. we explicitly 
+                // attempt to prevent such notifications from coming through by unregistering from hubs
+                // that lack running protocols and clearing the token from the backend.
                 if (!protocol.Running)
                 {
                     return;

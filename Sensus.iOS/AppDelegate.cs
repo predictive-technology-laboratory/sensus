@@ -117,7 +117,9 @@ namespace Sensus.iOS
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                {
                     e.NativeView.AccessibilityIdentifier = e.View.StyleId;
+                }
             };
 
             Calabash.Start();

@@ -14,9 +14,6 @@
 
 using Android.App;
 using Firebase.Iid;
-using System.Threading.Tasks;
-using System;
-using Sensus.Exceptions;
 using System.Threading;
 
 namespace Sensus.Android

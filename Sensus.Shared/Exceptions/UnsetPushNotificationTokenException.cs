@@ -16,10 +16,10 @@ using System;
 
 namespace Sensus.Exceptions
 {
+    /// <summary>
+    /// Used to indicate the absence of a push notification token.
+    /// </summary>
     public class UnsetPushNotificationTokenException : Exception
     {
-        public UnsetPushNotificationTokenException()
-        {
-        }
     }
 }

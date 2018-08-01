@@ -1545,7 +1545,7 @@ namespace Sensus
                             {
                                 SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
 
-                                // we absolutely must get the token to the remote data store
+                                // we absolutely must update the token at the remote data store
                                 _updatePushNotificationRegistrationsOnNextHealthTest = true;
                             }
                         }
