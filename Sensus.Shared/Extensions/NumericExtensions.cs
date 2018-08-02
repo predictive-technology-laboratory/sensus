@@ -65,9 +65,8 @@ namespace Sensus.Extensions
         }
         public static double GetRandom(this (double min, double max) vals, int decimals = 4)
         {
-            var location = new Random().NextDouble() * (vals.max - vals.min);
-            var rVal = Math.Round(vals.min + location, decimals);
-            return rVal;
+            double location = new Random().NextDouble() * (vals.max - vals.min);
+            return Math.Round(vals.min + location, decimals);
         }
     }
 }

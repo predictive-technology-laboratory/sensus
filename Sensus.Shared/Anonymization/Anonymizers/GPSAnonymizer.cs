@@ -25,11 +25,11 @@ namespace Sensus.Anonymization.Anonymizers
 
         public override object Apply(object value, Protocol protocol)
         {
-            var realGps = (double)value;
-            var baseGps = _useUserBase ? protocol.GpsUserAnonymizerZeroLocationCoordinates : protocol.GpsProtocolAnonymizerZeroLocationCoordinates;
-            var basePart = _useLatitude ? baseGps.latitude : baseGps.longitude;
-            var min = _useLatitude ? -180  : - 90;
-            var max = _useLatitude ? 180 : 90;
+            double realGps = (double)value;
+            (float? latitude, float? longitude) baseGps = _useUserBase ? protocol.GpsUserAnonymizerZeroLocationCoordinates : protocol.GpsProtocolAnonymizerZeroLocationCoordinates;
+            float? basePart = _useLatitude ? baseGps.latitude : baseGps.longitude;
+            double min = _useLatitude ? -180  : - 90;
+            double max = _useLatitude ? 180 : 90;
             return FixRange(realGps + basePart, min, max);
         }
 

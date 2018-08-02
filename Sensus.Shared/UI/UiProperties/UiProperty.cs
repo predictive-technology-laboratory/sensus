@@ -111,7 +111,8 @@ namespace Sensus.UI.UiProperties
                 BindableProperty targetProperty = null;
                 IValueConverter converter = null;
                 View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
-                propertyView.IsEnabled = uiElement.Editable;
+                View toBind = uiElement.BindableOverride ?? propertyView;
+                toBind.IsEnabled = uiElement.Editable;
 
 #if UI_TESTING
                 // set style id so we can get the property value when UI testing
@@ -120,7 +121,6 @@ namespace Sensus.UI.UiProperties
 
                 if (targetProperty != null)
                 {
-                    View toBind = uiElement.BindableOverride ?? propertyView;
                     toBind.BindingContext = o;
                     toBind.SetBinding(targetProperty, new Binding(property.Name, converter: converter)); //this binds the property to to the target.  The problem 
                 }

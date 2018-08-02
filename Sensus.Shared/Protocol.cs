@@ -1325,7 +1325,7 @@ namespace Sensus
             }
         }
 
-        [ButtonUiProperty("GPS - Protocol Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomProtocolGPS), typeof(Protocol), true, 46, false)]
+        [EntryStringWithButtonUiProperty("GPS - Protocol Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomProtocolGPS), typeof(Protocol), false, 46, false)]
         public string GpsProtocolAnonymizerZeroLocation
         {
             get
@@ -1334,9 +1334,14 @@ namespace Sensus
             }
             set
             {
-                _gpsProtocolAnonymizerZeroLocation = value?.Trim("() ".ToArray());
-                var vals = _gpsProtocolAnonymizerZeroLocation.ToLatLong();
-                _gpsProtocolAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
+                string trimmedVal = value?.Trim("() ".ToArray());
+                if (_gpsProtocolAnonymizerZeroLocation != trimmedVal)
+                {
+                    _gpsProtocolAnonymizerZeroLocation = trimmedVal;
+                    (float? latitude, float? longitude) vals = _gpsProtocolAnonymizerZeroLocation.ToLatLong();
+                    _gpsProtocolAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpsProtocolAnonymizerZeroLocation)));  //TODO: we might consider changing this to an OnPropertyChanged method that gets the CallerMemberName automatically to help prevent typos 
+                }
             }
         }
 
@@ -1348,7 +1353,7 @@ namespace Sensus
             }
         }
 
-        [EntryStringWithButtonUiProperty("GPS - User Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomUserGPS), typeof(Protocol), true, 47, false)]
+        [EntryStringWithButtonUiProperty("GPS - User Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomUserGPS), typeof(Protocol), false, 47, false)]
         public string GpsUserAnonymizerZeroLocation
         {
             get
@@ -1357,9 +1362,14 @@ namespace Sensus
             }
             set
             {
-                _gpsUserAnonymizerZeroLocation = value?.Trim("() ".ToArray());
-                var vals = _gpsUserAnonymizerZeroLocation.ToLatLong();
-                _gpsUserAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
+                string trimmedVal = value?.Trim("() ".ToArray());
+                if (_gpsUserAnonymizerZeroLocation != trimmedVal)
+                {
+                    _gpsUserAnonymizerZeroLocation = trimmedVal;
+                    (float? latitude, float? longitude) vals = _gpsUserAnonymizerZeroLocation.ToLatLong();
+                    _gpsUserAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpsUserAnonymizerZeroLocation)));
+                }
             }
         }
         public (float? latitude, float? longitude) GpsUserAnonymizerZeroLocationCoordinates
@@ -2212,18 +2222,18 @@ namespace Sensus
         public void GenerateRandomProtocolGPS(object o, EventArgs e)
         {
             GpsProtocolAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}";
-            if (o is Button)
-            {
-                (o as Button).Text = GpsProtocolAnonymizerZeroLocation;
-            }
+            //if (o is Button)
+            //{
+            //    (o as Button).Text = GpsProtocolAnonymizerZeroLocation;
+            //}
         }
         public void GenerateRandomUserGPS(object o, EventArgs e)
         {
             GpsUserAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}";
-            if (o is Button)
-            {
-                (o as Button).Text = GpsUserAnonymizerZeroLocation;
-            }
+            //if (o is Button)
+            //{
+            //    (o as Button).Text = GpsUserAnonymizerZeroLocation;
+            //}
         }
     }
 }

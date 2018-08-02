@@ -42,8 +42,6 @@ namespace Sensus.UI.UiProperties
             {
                 _objectType.GetMethod(_delegateName).Invoke(o, new[] {s, e });
             };
-            //EventHandler _eventHandler = Delegate.CreateDelegate(_objectType, _objectType.GetMethod(_delegateName)) as EventHandler;
-            //_eventHandler = Expression.Lambda<EventHandler>(Expression.Call(Expression.Constant(o), _objectType.GetMethod(_delegateName))).Compile();
             Entry entry =  new Entry
             {
                 Keyboard = Keyboard.Default,
