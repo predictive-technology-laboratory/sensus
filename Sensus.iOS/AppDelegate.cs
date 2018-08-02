@@ -167,7 +167,7 @@ namespace Sensus.iOS
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         // temporarily disable the master page to prevent the user from tapping around before notifications are set up.
-                        (App.Current as App).MasterPage.IsEnabled = false;
+                        (Xamarin.Forms.Application.Current as App).MasterPage.IsEnabled = false;
 
                         bool notificationsAuthorizedAndConfigured = false;
 
@@ -251,7 +251,7 @@ namespace Sensus.iOS
                             await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
                             // reenable the master page to let the user proceed
-                            (App.Current as App).MasterPage.IsEnabled = true;
+                            (Xamarin.Forms.Application.Current as App).MasterPage.IsEnabled = true;
 
 #if UI_TESTING
                             // load and run the UI testing protocol
