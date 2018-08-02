@@ -147,7 +147,9 @@ namespace Sensus.iOS
         {
             base.OnActivated(uiApplication);
 
-            // use a gatekeeper for singleton access to the notification authorization/configuration
+            // use a gatekeeper for singleton access to the notification authorization/configuration. this is required
+            // as the notification authorization prompt deactivates the app when shown and reactivates the app when
+            // disappearing. the latter calls back into this method, setting up concurrent executions.
             lock (_onActivatedLocker)
             {
                 if (_authorizingAndConfiguringNotifications)
@@ -166,8 +168,9 @@ namespace Sensus.iOS
                 {
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        // temporarily disable the master page to prevent the user from tapping around before notifications are set up.
-                        (Xamarin.Forms.Application.Current as App).MasterPage.IsEnabled = false;
+                        // temporarily disable the UI to prevent the user from tapping around before notifications are set up.
+                        (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
+                        (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
                         bool notificationsAuthorizedAndConfigured = false;
 
@@ -213,6 +216,7 @@ namespace Sensus.iOS
                         {
                             // if notifications were previously authorized and configured, there's nothing more to do.
                             UIUserNotificationSettings settings = uiApplication.CurrentUserNotificationSettings;
+
                             if (settings.Types == (UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert) &&
                                 SensusContext.Current.CallbackScheduler != null &&
                                 SensusContext.Current.Notifier != null)
@@ -242,6 +246,8 @@ namespace Sensus.iOS
                             }
                         }
 
+                        // if notifications have been authorized and configured, start up sensus. it is okay
+                        // to call the following code multiple times, as repeats have no effect.
                         if (notificationsAuthorizedAndConfigured)
                         {
                             // ensure service helper is running
@@ -250,8 +256,9 @@ namespace Sensus.iOS
                             // update/run all callbacks
                             await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
 
-                            // reenable the master page to let the user proceed
-                            (Xamarin.Forms.Application.Current as App).MasterPage.IsEnabled = true;
+                            // reenable the UI to let the user proceed
+                            (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
+                            (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
 
 #if UI_TESTING
                             // load and run the UI testing protocol
@@ -264,7 +271,8 @@ namespace Sensus.iOS
                         }
                         else
                         {
-                            UIAlertView warning = new UIAlertView("Warning", "Sensus will not run with notifications disabled. Please enable notifications.", default(IUIAlertViewDelegate), "Close", "Open Settings");
+                            // warn the user and help them to enable notifications
+                            UIAlertView warning = new UIAlertView("Warning", "Sensus will not run with notifications disabled. Please enable notifications.", default(IUIAlertViewDelegate), "Close", "Open Notification Settings");
 
                             warning.Dismissed += (sender, e) =>
                             {
