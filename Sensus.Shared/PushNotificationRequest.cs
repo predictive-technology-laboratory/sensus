@@ -37,6 +37,7 @@ namespace Sensus
             }
         }
 
+        private string _deviceId;
         private Protocol _protocol;
         private string _title;
         private string _body;
@@ -50,7 +51,7 @@ namespace Sensus
             get
             {
                 return "{" +
-                           "\"device\":" + JsonConvert.ToString(SensusServiceHelper.Get().DeviceId) + "," +
+                           "\"device\":" + JsonConvert.ToString(_deviceId) + "," +
                            "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
                            "\"title\":" + JsonConvert.ToString(_title) + "," +
                            "\"body\":" + JsonConvert.ToString(_body) + "," +
@@ -62,8 +63,9 @@ namespace Sensus
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, PushNotificationRequestFormat format, DateTimeOffset time)
+        public PushNotificationRequest(string deviceId, Protocol protocol, string title, string body, string sound, string command, PushNotificationRequestFormat format, DateTimeOffset time)
         {
+            _deviceId = deviceId;
             _protocol = protocol;
             _title = title;
             _body = body;
@@ -71,6 +73,11 @@ namespace Sensus
             _command = command;
             _format = format;
             _time = time;
+        }
+
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, PushNotificationRequestFormat format, DateTimeOffset time)
+            : this(SensusServiceHelper.Get().DeviceId, protocol, title, body, sound, command, format, time)
+        {
         }
     }
 }
