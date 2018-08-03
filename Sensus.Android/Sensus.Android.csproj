@@ -314,6 +314,18 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Xamarin.Facebook.Android">
       <HintPath>..\packages\Xamarin.Facebook.Android.4.33.0\lib\monoandroid81\Xamarin.Facebook.Android.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Firebase.Common">
+      <HintPath>..\packages\Xamarin.Firebase.Common.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Firebase.Iid">
+      <HintPath>..\packages\Xamarin.Firebase.Iid.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Iid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Firebase.Messaging">
+      <HintPath>..\packages\Xamarin.Firebase.Messaging.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Messaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Azure.NotificationHubs.Android">
+      <HintPath>..\packages\Xamarin.Azure.NotificationHubs.Android.0.4.0\lib\MonoAndroid403\Xamarin.Azure.NotificationHubs.Android.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidActivityResultRequestCode.cs" />
@@ -408,6 +420,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Folder Include="Resources\values-v21\" />
     <Folder Include="Resources\layout\" />
   </ItemGroup>
+  <ItemGroup>
+    <GoogleServicesJson Include="google-services.json" />
+  </ItemGroup>
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
@@ -440,4 +455,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <Import Project="..\packages\Xamarin.Android.Support.v7.AppCompat.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.v7.AppCompat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.AppCompat.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.v7.AppCompat.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.Design.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.Design.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Design.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.Design.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.v7.MediaRouter.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.v7.MediaRouter.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.MediaRouter.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.v7.MediaRouter.targets')" />
+  <Import Project="..\packages\Xamarin.Firebase.Common.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Common.targets" Condition="Exists('..\packages\Xamarin.Firebase.Common.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Common.targets')" />
+  <Import Project="..\packages\Xamarin.Firebase.Iid.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Iid.targets" Condition="Exists('..\packages\Xamarin.Firebase.Iid.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Iid.targets')" />
+  <Import Project="..\packages\Xamarin.Firebase.Messaging.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Messaging.targets" Condition="Exists('..\packages\Xamarin.Firebase.Messaging.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Messaging.targets')" />
 </Project>
