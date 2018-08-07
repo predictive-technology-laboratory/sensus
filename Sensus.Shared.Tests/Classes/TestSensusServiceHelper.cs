@@ -79,6 +79,8 @@ namespace Sensus.Tests.Classes
             }
         }
 
+        public override string PushNotificationToken => throw new NotImplementedException();
+
         protected override bool IsOnMainThread
         {
             get
@@ -138,6 +140,21 @@ namespace Sensus.Tests.Classes
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }

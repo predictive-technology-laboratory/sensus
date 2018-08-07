@@ -302,6 +302,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Xamarin.Forms.Maps.iOS">
       <HintPath>..\packages\Xamarin.Forms.Maps.3.1.0.583944\lib\Xamarin.iOS10\Xamarin.Forms.Maps.iOS.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Azure.NotificationHubs.iOS">
+      <HintPath>..\packages\Xamarin.Azure.NotificationHubs.iOS.1.2.5.2\lib\Xamarin.iOS10\Xamarin.Azure.NotificationHubs.iOS.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />

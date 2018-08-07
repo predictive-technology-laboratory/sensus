@@ -37,6 +37,9 @@ using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using System.Threading.Tasks;
 using Sensus.Context;
+using Firebase.Iid;
+using Sensus.Exceptions;
+using WindowsAzure.Messaging;
 
 namespace Sensus.Android
 {
@@ -181,6 +184,14 @@ namespace Sensus.Android
             set
             {
                 _userDeniedBluetoothEnable = value;
+            }
+        }
+
+        public override string PushNotificationToken
+        {
+            get
+            {
+                return FirebaseInstanceId.Instance.Token;
             }
         }
 
@@ -543,6 +554,25 @@ namespace Sensus.Android
                 ms.Seek(0, SeekOrigin.Begin);
                 return ms;
             });
+        }
+
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.Register(PushNotificationToken);
+        }
+
+        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.UnregisterAll(PushNotificationToken);
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            // delete the instance ID and get a new token.
+            FirebaseInstanceId.Instance.DeleteInstanceId();
+            string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
         }
 
         /// <summary>

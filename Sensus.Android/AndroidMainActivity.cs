@@ -148,8 +148,9 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
-            // temporarily disable UI while we bind to service
-            Window.AddFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+            // temporarily hide UI while we bind to service
+            (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
+            (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
             // make sure that the service is running and bound any time the activity is resumed. the service is both started
             // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
@@ -173,7 +174,8 @@ namespace Sensus.Android
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        Window.ClearFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+                        (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
+                        (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
                     });
                 }
                 catch (Exception)
