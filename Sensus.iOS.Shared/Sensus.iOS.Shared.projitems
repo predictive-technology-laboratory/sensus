@@ -13,7 +13,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSSoundProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSAltitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSCompassProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
@@ -38,9 +40,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbeCentralManagerDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSEstimoteBeaconProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)iOSPowerConnectionChangeListener.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\" />

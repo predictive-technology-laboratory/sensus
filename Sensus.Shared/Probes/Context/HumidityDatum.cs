@@ -12,58 +12,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
-namespace Sensus.Probes.Location
+namespace Sensus.Probes.Context
 {
-    public class AltitudeDatum : Datum
+    public class HumidityDatum : Datum
     {
-        private double _altitude;
+        private double _relativeHumidity;        
 
-        [DoubleProbeTriggerProperty]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer), typeof(DoubleRoundingHundredsAnonymizer) }, -1)]
-        public double Altitude
+        [Anonymizable("Relative Humidity", typeof(DoubleRoundingTensAnonymizer), false)]
+        [DoubleProbeTriggerProperty("Relative Humidity")]
+        public double RelativeHumidity
         {
-            get { return _altitude; }
-            set { _altitude = value; }
+            get { return _relativeHumidity; }
+            set { _relativeHumidity = value; }
         }
 
         public override string DisplayDetail
         {
-            get { return Math.Round(_altitude, 0) + " feet"; }
+            get
+            {
+                return "Relative Humidity:  " + Math.Round(_relativeHumidity);
+            }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the altitude.
+        /// Gets the string placeholder value, which is the relative Humidity.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return Math.Round(_altitude, 0);
+                return Math.Round(_relativeHumidity);
             }
         }
 
         /// <summary>
         /// For JSON deserialization.
         /// </summary>
-        private AltitudeDatum() { }
+        private HumidityDatum() 
+        {
+        }
 
-        public AltitudeDatum(DateTimeOffset timestamp, double hPa)
+        public HumidityDatum(DateTimeOffset timestamp, double relativeHumidity)
             : base(timestamp)
         {
-            // convert hPa to altitude:  https://www.weather.gov/media/epz/wxcalc/pressureAltitude.pdf
-            _altitude = (1 - Math.Pow((hPa / 1013.25), 0.190284)) * 145366.45;
+            _relativeHumidity = relativeHumidity;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Altitude:  " + _altitude + " feet";
+            "Relative Humidity:  " + _relativeHumidity;
         }
     }
 }

@@ -121,43 +121,43 @@
       <tr>
         <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionDelegate.html">ScheduledCallback.ActionDelegate</a></td>
         <td><span class="parametername">action</span></td>
-        <td><p>Action</p>
+        <td><p>Action to execute when callback time arrives.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">delay</span></td>
-        <td><p>Delay</p>
+        <td><p>How long to delay callback execution.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">id</span></td>
-        <td><p>Identifier for callback</p>
+        <td><p>Identifier for callback. Must be unique within the callback domain.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">domain</span></td>
-        <td><p>Domain of scheduled callback</p>
+        <td><p>Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</p>
 </td>
       </tr>
       <tr>
         <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
         <td><span class="parametername">protocol</span></td>
-        <td><p>Protocol of scheduled callback</p>
+        <td><p>Protocol associated with scheduled callback</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">callbackTimeout</span></td>
-        <td><p>Callback Timeout</p>
+        <td><p>How long to allow callback to execute before cancelling it.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">userNotificationMessage</span></td>
-        <td><p>User notification message</p>
+        <td><p>Message to display to the user when executing the callback.</p>
 </td>
       </tr>
     </tbody>
@@ -186,55 +186,55 @@
       <tr>
         <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionDelegate.html">ScheduledCallback.ActionDelegate</a></td>
         <td><span class="parametername">action</span></td>
-        <td><p>Action</p>
+        <td><p>Action to execute when callback time arrives.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">initialDelay</span></td>
-        <td><p>Delay</p>
+        <td><p>How long to delay callback execution.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">repeatDelay</span></td>
-        <td><p>Repeat delay</p>
+        <td><p>How long to delay repeating callback executions following the first callback.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">allowRepeatLag</span></td>
-        <td><p>Whethe or not to allow lag</p>
+        <td><p>Whether or not to allow lags in repeating callbacks.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">id</span></td>
-        <td><p>Identifier for callback</p>
+        <td><p>Identifier for callback. Must be unique within the callback domain.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">domain</span></td>
-        <td><p>Domain of scheduled callback</p>
+        <td><p>Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</p>
 </td>
       </tr>
       <tr>
         <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
         <td><span class="parametername">protocol</span></td>
-        <td><p>Protocol ID of scheduled callback</p>
+        <td><p>Protocol associated with scheduled callback</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">callbackTimeout</span></td>
-        <td><p>Callback Timeout</p>
+        <td><p>How long to allow callback to execute before cancelling it.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">userNotificationMessage</span></td>
-        <td><p>User notification message</p>
+        <td><p>Message to display to the user when executing the callback.</p>
 </td>
       </tr>
     </tbody>

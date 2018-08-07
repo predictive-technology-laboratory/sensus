@@ -330,6 +330,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
+    <Compile Include="Probes\Context\AndroidHumidityProbe.cs" />
     <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
     <Compile Include="Probes\Context\AndroidLightProbe.cs" />
@@ -362,6 +363,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="TextCellDisposedFix.cs" />
     <Compile Include="Probes\Movement\AndroidLocationFenceProbe.cs" />
     <Compile Include="Probes\Movement\AndroidAwarenessProbe.cs" />
+    <Compile Include="AndroidPowerConnectionChangeListener.cs" />
+    <Compile Include="AndroidPowerConnectionChangeBroadcastReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -402,7 +405,11 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Callbacks\" />
+    <Folder Include="Resources\values-v21\" />
+    <Folder Include="Resources\layout\" />
+  </ItemGroup>
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
