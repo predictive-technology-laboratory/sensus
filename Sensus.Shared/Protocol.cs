@@ -507,7 +507,7 @@ namespace Sensus
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         private string _id;
         private string _name;
         private List<Probe> _probes;
@@ -1598,7 +1598,7 @@ namespace Sensus
 
                 // seed the user-level GPS origin based on participant or device ID, preferring the former.
                 Random random;
-                if(!string.IsNullOrWhiteSpace(_participantId))
+                if (!string.IsNullOrWhiteSpace(_participantId))
                 {
                     random = new Random(_participantId.GetHashCode());
                 }
@@ -1639,7 +1639,7 @@ namespace Sensus
 
                 // start remote data store
                 if (startException == null)
-                {                    
+                {
                     try
                     {
                         if (_remoteDataStore == null)
@@ -1660,7 +1660,7 @@ namespace Sensus
 
                 // start probes
                 if (startException == null)
-                {                    
+                {
                     try
                     {
                         // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
