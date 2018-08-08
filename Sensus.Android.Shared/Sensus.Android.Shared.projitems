@@ -13,6 +13,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IAndroidSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FirebaseNotificationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FirebaseRegistrationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />

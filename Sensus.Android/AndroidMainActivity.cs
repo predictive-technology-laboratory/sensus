@@ -44,7 +44,7 @@ namespace Sensus.Android
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.json")]  // protocols downloaded from an http web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.json")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
-    public class AndroidMainActivity : FormsApplicationActivity
+    public class AndroidMainActivity : FormsAppCompatActivity
     {
         private AndroidSensusServiceConnection _serviceConnection;
         private ManualResetEvent _activityResultWait;
@@ -63,6 +63,10 @@ namespace Sensus.Android
         protected override void OnCreate(Bundle savedInstanceState)
         {
             Console.Error.WriteLine("--------------------------- Creating activity ---------------------------");
+
+            // set the layout resources first
+            FormsAppCompatActivity.ToolbarResource = Resource.Layout.Toolbar;
+            FormsAppCompatActivity.TabLayoutResource = Resource.Layout.Tabbar;
 
             base.OnCreate(savedInstanceState);
 
@@ -144,8 +148,9 @@ namespace Sensus.Android
 
             CrossCurrentActivity.Current.Activity = this;
 
-            // temporarily disable UI while we bind to service
-            Window.AddFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+            // temporarily hide UI while we bind to service
+            (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
+            (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
             // make sure that the service is running and bound any time the activity is resumed. the service is both started
             // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
@@ -169,7 +174,8 @@ namespace Sensus.Android
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        Window.ClearFlags(global::Android.Views.WindowManagerFlags.NotTouchable);
+                        (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
+                        (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
                     });
                 }
                 catch (Exception)

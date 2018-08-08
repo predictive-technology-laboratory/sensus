@@ -1,1 +1,1 @@
-Please see the [Wiki](https://github.com/MatthewGerber/sensus/wiki) for more information.
+Please see the [documentation](https://predictive-technology-laboratory.github.io/sensus) for more information.

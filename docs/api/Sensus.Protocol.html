@@ -269,6 +269,34 @@ public bool AllowCopy { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowLocalDataShare_" data-uid="Sensus.Protocol.AllowLocalDataShare*"></a>
+  <h4 id="Sensus_Protocol_AllowLocalDataShare" data-uid="Sensus.Protocol.AllowLocalDataShare">AllowLocalDataShare</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to share local data collected on the device.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Local Data Share:&quot;, true, 44)]
+public bool AllowLocalDataShare { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AllowParticipantIdReset_" data-uid="Sensus.Protocol.AllowParticipantIdReset*"></a>
   <h4 id="Sensus_Protocol_AllowParticipantIdReset" data-uid="Sensus.Protocol.AllowParticipantIdReset">AllowParticipantIdReset</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to reset their participant ID. See <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipantId">ParticipantId</a> and <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_StartConfirmationMode">StartConfirmationMode</a> for more information.</p>
@@ -276,7 +304,7 @@ public bool AllowCopy { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow ID Reset:&quot;, true, 44)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow ID Reset:&quot;, true, 45)]
 public bool AllowParticipantIdReset { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1075,6 +1103,65 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_PushNotificationsHub_" data-uid="Sensus.Protocol.PushNotificationsHub*"></a>
+  <h4 id="Sensus_Protocol_PushNotificationsHub" data-uid="Sensus.Protocol.PushNotificationsHub">PushNotificationsHub</h4>
+  <div class="markdown level1 summary"><p>The push notification hub to listen to. This can be created within the Azure Portal. The
+value to use here is the name of the hub.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 47, false)]
+public string PushNotificationsHub { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The push notifications hub.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_PushNotificationsSharedAccessSignature_" data-uid="Sensus.Protocol.PushNotificationsSharedAccessSignature*"></a>
+  <h4 id="Sensus_Protocol_PushNotificationsSharedAccessSignature" data-uid="Sensus.Protocol.PushNotificationsSharedAccessSignature">PushNotificationsSharedAccessSignature</h4>
+  <div class="markdown level1 summary"><p>The shared access signature for listening for push notifications at the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">PushNotificationsHub</a>. This
+value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
+the value directly to this field.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 48, false)]
+public string PushNotificationsSharedAccessSignature { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The push notifications shared access signature.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_RandomTimeAnchor_" data-uid="Sensus.Protocol.RandomTimeAnchor*"></a>
   <h4 id="Sensus_Protocol_RandomTimeAnchor" data-uid="Sensus.Protocol.RandomTimeAnchor">RandomTimeAnchor</h4>
   <div class="markdown level1 summary"></div>
@@ -1235,7 +1322,7 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Share:&quot;, true, 43)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Protocol Share:&quot;, true, 43)]
 public bool Shareable { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>

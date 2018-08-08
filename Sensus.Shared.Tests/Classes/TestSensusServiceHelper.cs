@@ -15,7 +15,6 @@
 using System;
 using System.Threading.Tasks;
 using Sensus.Probes;
-using Sensus.Probes.Device;
 using Xamarin.Forms;
 
 namespace Sensus.Tests.Classes
@@ -80,7 +79,7 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override PowerConnectionChange AcPowerChangeClass => throw new NotImplementedException();
+        public override string PushNotificationToken => throw new NotImplementedException();
 
         protected override bool IsOnMainThread
         {
@@ -141,6 +140,21 @@ namespace Sensus.Tests.Classes
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }

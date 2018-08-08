@@ -163,7 +163,26 @@ namespace Sensus.Android.Callbacks
 
         private bool GetChannelSilent(SensusNotificationChannel channel)
         {
-            return channel != SensusNotificationChannel.Survey;
+            if (channel == SensusNotificationChannel.Default)
+            {
+                return false;
+            }
+            else if (channel == SensusNotificationChannel.ForegroundService)
+            {
+                return true;
+            }
+            else if (channel == SensusNotificationChannel.Silent)
+            {
+                return true;
+            }
+            else if (channel == SensusNotificationChannel.Survey)
+            {
+                return false;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>

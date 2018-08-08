@@ -247,6 +247,60 @@ references:
   commentId: Overload:Sensus.Android.AndroidMainActivity.OnWindowFocusChanged
   fullName: Sensus.Android.AndroidMainActivity.OnWindowFocusChanged
   nameWithType: AndroidMainActivity.OnWindowFocusChanged
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  name: AndroidPowerConnectionChangeBroadcastReceiver
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html
+  commentId: T:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  name: AndroidPowerConnectionChangeBroadcastReceiver()
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver__ctor
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver()
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver()
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor*
+  name: AndroidPowerConnectionChangeBroadcastReceiver
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver__ctor_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  name: OnReceive(Context, Intent)
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Context, Intent)
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive*
+  name: OnReceive
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_OnReceive_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  name: POWER_CONNECTION_CHANGED
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_POWER_CONNECTION_CHANGED
+  commentId: E:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener
+  name: AndroidPowerConnectionChangeListener
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html
+  commentId: T:Sensus.Android.AndroidPowerConnectionChangeListener
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener
+  nameWithType: AndroidPowerConnectionChangeListener
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  name: AndroidPowerConnectionChangeListener()
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html#Sensus_Android_AndroidPowerConnectionChangeListener__ctor
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener()
+  nameWithType: AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener()
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener.#ctor*
+  name: AndroidPowerConnectionChangeListener
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html#Sensus_Android_AndroidPowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener
+  nameWithType: AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener
 - uid: Sensus.Android.AndroidSensusService
   name: AndroidSensusService
   href: api/Sensus.Android.AndroidSensusService.html
@@ -1351,6 +1405,18 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.Platform
   fullName: Sensus.Android.Context.AndroidSensusContext.Platform
   nameWithType: AndroidSensusContext.Platform
+- uid: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  nameWithType: AndroidSensusContext.PowerConnectionChangeListener
+- uid: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  nameWithType: AndroidSensusContext.PowerConnectionChangeListener
 - uid: Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_SymmetricEncryption
@@ -6274,12 +6340,6 @@ references:
   commentId: F:Sensus.Android.Resource.Color.com_facebook_send_button_text_color
   fullName: Sensus.Android.Resource.Color.com_facebook_send_button_text_color
   nameWithType: Resource.Color.com_facebook_send_button_text_color
-- uid: Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  name: com_facebook_share_button_text_color
-  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_facebook_share_button_text_color
-  commentId: F:Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  fullName: Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  nameWithType: Resource.Color.com_facebook_share_button_text_color
 - uid: Sensus.Android.Resource.Color.com_smart_login_code
   name: com_smart_login_code
   href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_smart_login_code
@@ -7294,48 +7354,6 @@ references:
   commentId: F:Sensus.Android.Resource.Dimension.com_facebook_profilepictureview_preset_size_small
   fullName: Sensus.Android.Resource.Dimension.com_facebook_profilepictureview_preset_size_small
   nameWithType: Resource.Dimension.com_facebook_profilepictureview_preset_size_small
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  name: com_facebook_share_button_compound_drawable_padding
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_compound_drawable_padding
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  nameWithType: Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  name: com_facebook_share_button_padding_bottom
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_bottom
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_bottom
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  name: com_facebook_share_button_padding_left
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_left
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_left
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  name: com_facebook_share_button_padding_right
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_right
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_right
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  name: com_facebook_share_button_padding_top
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_top
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_top
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  name: com_facebook_share_button_text_size
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_text_size
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  nameWithType: Resource.Dimension.com_facebook_share_button_text_size
-- uid: Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  name: com_facebook_tooltip_horizontal_padding
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_tooltip_horizontal_padding
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  nameWithType: Resource.Dimension.com_facebook_tooltip_horizontal_padding
 - uid: Sensus.Android.Resource.Dimension.compat_button_inset_horizontal_material
   name: compat_button_inset_horizontal_material
   href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_compat_button_inset_horizontal_material
@@ -10534,12 +10552,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.com_facebook_fragment_container
   fullName: Sensus.Android.Resource.Id.com_facebook_fragment_container
   nameWithType: Resource.Id.com_facebook_fragment_container
-- uid: Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  name: com_facebook_login_activity_progress_bar
-  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_login_activity_progress_bar
-  commentId: F:Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  fullName: Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  nameWithType: Resource.Id.com_facebook_login_activity_progress_bar
+- uid: Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  name: com_facebook_login_fragment_progress_bar
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_login_fragment_progress_bar
+  commentId: F:Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  fullName: Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  nameWithType: Resource.Id.com_facebook_login_fragment_progress_bar
 - uid: Sensus.Android.Resource.Id.com_facebook_smart_instructions_0
   name: com_facebook_smart_instructions_0
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_smart_instructions_0
@@ -11488,6 +11506,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.showTitle
   fullName: Sensus.Android.Resource.Id.showTitle
   nameWithType: Resource.Id.showTitle
+- uid: Sensus.Android.Resource.Id.sliding_tabs
+  name: sliding_tabs
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_sliding_tabs
+  commentId: F:Sensus.Android.Resource.Id.sliding_tabs
+  fullName: Sensus.Android.Resource.Id.sliding_tabs
+  nameWithType: Resource.Id.sliding_tabs
 - uid: Sensus.Android.Resource.Id.small
   name: small
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_small
@@ -11686,6 +11710,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.titleDividerNoCustom
   fullName: Sensus.Android.Resource.Id.titleDividerNoCustom
   nameWithType: Resource.Id.titleDividerNoCustom
+- uid: Sensus.Android.Resource.Id.toolbar
+  name: toolbar
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_toolbar
+  commentId: F:Sensus.Android.Resource.Id.toolbar
+  fullName: Sensus.Android.Resource.Id.toolbar
+  nameWithType: Resource.Id.toolbar
 - uid: Sensus.Android.Resource.Id.top
   name: top
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_top
@@ -12418,6 +12448,18 @@ references:
   commentId: F:Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item
   fullName: Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item
   nameWithType: Resource.Layout.support_simple_spinner_dropdown_item
+- uid: Sensus.Android.Resource.Layout.Tabbar
+  name: Tabbar
+  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_Tabbar
+  commentId: F:Sensus.Android.Resource.Layout.Tabbar
+  fullName: Sensus.Android.Resource.Layout.Tabbar
+  nameWithType: Resource.Layout.Tabbar
+- uid: Sensus.Android.Resource.Layout.Toolbar
+  name: Toolbar
+  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_Toolbar
+  commentId: F:Sensus.Android.Resource.Layout.Toolbar
+  fullName: Sensus.Android.Resource.Layout.Toolbar
+  nameWithType: Resource.Layout.Toolbar
 - uid: Sensus.Android.Resource.Layout.tooltip
   name: tooltip
   href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_tooltip
@@ -14464,6 +14506,18 @@ references:
   commentId: F:Sensus.Android.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
   fullName: Sensus.Android.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
   nameWithType: Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
+- uid: Sensus.Android.Resource.Style.SensusTheme
+  name: SensusTheme
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_SensusTheme
+  commentId: F:Sensus.Android.Resource.Style.SensusTheme
+  fullName: Sensus.Android.Resource.Style.SensusTheme
+  nameWithType: Resource.Style.SensusTheme
+- uid: Sensus.Android.Resource.Style.SensusTheme_Base
+  name: SensusTheme_Base
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_SensusTheme_Base
+  commentId: F:Sensus.Android.Resource.Style.SensusTheme_Base
+  fullName: Sensus.Android.Resource.Style.SensusTheme_Base
+  nameWithType: Resource.Style.SensusTheme_Base
 - uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat
   name: TextAppearance_AppCompat
   href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat
@@ -20909,6 +20963,18 @@ references:
   commentId: Overload:Sensus.Context.ISensusContext.Platform
   fullName: Sensus.Context.ISensusContext.Platform
   nameWithType: ISensusContext.Platform
+- uid: Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  nameWithType: ISensusContext.PowerConnectionChangeListener
+- uid: Sensus.Context.ISensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  nameWithType: ISensusContext.PowerConnectionChangeListener
 - uid: Sensus.Context.ISensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_SymmetricEncryption
@@ -21263,6 +21329,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
   fullName: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
   nameWithType: FileLocalDataStore.CompressionLevel
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
+  name: CreateTarFromLocalData(String)
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_System_String_
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
+  nameWithType: FileLocalDataStore.CreateTarFromLocalData(String)
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData*
+  name: CreateTarFromLocalData
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData
+  nameWithType: FileLocalDataStore.CreateTarFromLocalData
 - uid: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
   name: DataWrittenToCurrentFile
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile
@@ -21311,6 +21389,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Flush
   fullName: Sensus.DataStores.Local.FileLocalDataStore.Flush
   nameWithType: FileLocalDataStore.Flush
+- uid: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_HasDataToShare
+  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  nameWithType: FileLocalDataStore.HasDataToShare
+- uid: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare*
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_HasDataToShare_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.HasDataToShare
+  nameWithType: FileLocalDataStore.HasDataToShare
 - uid: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
   name: IsTooLarge()
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_IsTooLarge
@@ -21476,6 +21566,30 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.#ctor
   fullName: Sensus.DataStores.Local.LocalDataStore.LocalDataStore
   nameWithType: LocalDataStore.LocalDataStore
+- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
+  name: CreateTarFromLocalData(String)
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_System_String_
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
+  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
+  nameWithType: LocalDataStore.CreateTarFromLocalData(String)
+- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData*
+  name: CreateTarFromLocalData
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
+  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
+  nameWithType: LocalDataStore.CreateTarFromLocalData
+- uid: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare
+  commentId: P:Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  nameWithType: LocalDataStore.HasDataToShare
+- uid: Sensus.DataStores.Local.LocalDataStore.HasDataToShare*
+  name: HasDataToShare
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  fullName: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
+  nameWithType: LocalDataStore.HasDataToShare
 - uid: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   name: IsTooLarge()
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_IsTooLarge
@@ -21488,6 +21602,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   fullName: Sensus.DataStores.Local.LocalDataStore.IsTooLarge
   nameWithType: LocalDataStore.IsTooLarge
+- uid: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  name: ShareLocalDataAsync()
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync()
+  nameWithType: LocalDataStore.ShareLocalDataAsync()
+- uid: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync*
+  name: ShareLocalDataAsync
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_ShareLocalDataAsync_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.ShareLocalDataAsync
+  nameWithType: LocalDataStore.ShareLocalDataAsync
 - uid: Sensus.DataStores.Local.LocalDataStore.SizeDescription
   name: SizeDescription
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_SizeDescription
@@ -21512,6 +21638,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteDatum
   fullName: Sensus.DataStores.Local.LocalDataStore.WriteDatum
   nameWithType: LocalDataStore.WriteDatum
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  name: WriteToRemote
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote
+  commentId: P:Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  nameWithType: LocalDataStore.WriteToRemote
+- uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemote*
+  name: WriteToRemote
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  fullName: Sensus.DataStores.Local.LocalDataStore.WriteToRemote
+  nameWithType: LocalDataStore.WriteToRemote
 - uid: Sensus.DataStores.Local.LocalDataStore.WriteToRemoteAsync(System.Threading.CancellationToken)
   name: WriteToRemoteAsync(CancellationToken)
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemoteAsync_System_Threading_CancellationToken_
@@ -22043,6 +22181,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync
   fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync
   nameWithType: RemoteDataStore.WriteLocalDataStoreAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteOnAcPowerConnect
+  name: WriteOnAcPowerConnect
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteOnAcPowerConnect
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.WriteOnAcPowerConnect
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteOnAcPowerConnect
+  nameWithType: RemoteDataStore.WriteOnAcPowerConnect
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteOnAcPowerConnect*
+  name: WriteOnAcPowerConnect
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteOnAcPowerConnect_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteOnAcPowerConnect
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteOnAcPowerConnect
+  nameWithType: RemoteDataStore.WriteOnAcPowerConnect
 - uid: Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
   name: WriteTimeoutMinutes
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteTimeoutMinutes
@@ -23915,6 +24065,18 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.Platform
   fullName: Sensus.iOS.Context.iOSSensusContext.Platform
   nameWithType: iOSSensusContext.Platform
+- uid: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  nameWithType: iOSSensusContext.PowerConnectionChangeListener
+- uid: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  nameWithType: iOSSensusContext.PowerConnectionChangeListener
 - uid: Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_SymmetricEncryption
@@ -23927,6 +24089,24 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   fullName: Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   nameWithType: iOSSensusContext.SymmetricEncryption
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener
+  name: iOSPowerConnectionChangeListener
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html
+  commentId: T:Sensus.iOS.iOSPowerConnectionChangeListener
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener
+  nameWithType: iOSPowerConnectionChangeListener
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  name: iOSPowerConnectionChangeListener()
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html#Sensus_iOS_iOSPowerConnectionChangeListener__ctor
+  commentId: M:Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener()
+  nameWithType: iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener()
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener.#ctor*
+  name: iOSPowerConnectionChangeListener
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html#Sensus_iOS_iOSPowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener
+  nameWithType: iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener
 - uid: Sensus.iOS.iOSSensusServiceHelper
   name: iOSSensusServiceHelper
   href: api/Sensus.iOS.iOSSensusServiceHelper.html
@@ -26036,6 +26216,30 @@ references:
   commentId: Overload:Sensus.ParticipationRewardDatum.ToString
   fullName: Sensus.ParticipationRewardDatum.ToString
   nameWithType: ParticipationRewardDatum.ToString
+- uid: Sensus.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.PowerConnectionChangeListener.html
+  commentId: T:Sensus.PowerConnectionChangeListener
+  fullName: Sensus.PowerConnectionChangeListener
+  nameWithType: PowerConnectionChangeListener
+- uid: Sensus.PowerConnectionChangeListener.#ctor
+  name: PowerConnectionChangeListener()
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener__ctor
+  commentId: M:Sensus.PowerConnectionChangeListener.#ctor
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChangeListener()
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChangeListener()
+- uid: Sensus.PowerConnectionChangeListener.#ctor*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.PowerConnectionChangeListener.#ctor
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChangeListener
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChangeListener
+- uid: Sensus.PowerConnectionChangeListener.PowerConnectionChanged
+  name: PowerConnectionChanged
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener_PowerConnectionChanged
+  commentId: F:Sensus.PowerConnectionChangeListener.PowerConnectionChanged
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChanged
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChanged
 - uid: Sensus.Probes
   name: Sensus.Probes
   href: api/Sensus.Probes.html
@@ -31238,6 +31442,18 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.Activity
   fullName: Sensus.Probes.Movement.ActivityDatum.Activity
   nameWithType: ActivityDatum.Activity
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  name: ActivityContinuing
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityContinuing
+  commentId: P:Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  nameWithType: ActivityDatum.ActivityContinuing
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing*
+  name: ActivityContinuing
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityContinuing_
+  commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityContinuing
+  nameWithType: ActivityDatum.ActivityContinuing
 - uid: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
   name: ActivityStarting
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStarting
@@ -31250,6 +31466,18 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityStarting
   fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStarting
   nameWithType: ActivityDatum.ActivityStarting
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  name: ActivityStopping
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStopping
+  commentId: P:Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  nameWithType: ActivityDatum.ActivityStopping
+- uid: Sensus.Probes.Movement.ActivityDatum.ActivityStopping*
+  name: ActivityStopping
+  href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_ActivityStopping_
+  commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  fullName: Sensus.Probes.Movement.ActivityDatum.ActivityStopping
+  nameWithType: ActivityDatum.ActivityStopping
 - uid: Sensus.Probes.Movement.ActivityDatum.Confidence
   name: Confidence
   href: api/Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_Confidence
@@ -37550,6 +37778,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Script
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.Script
   nameWithType: ScriptRunner.Script
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  name: ScriptRunCallbacks
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  nameWithType: ScriptRunner.ScriptRunCallbacks
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks*
+  name: ScriptRunCallbacks
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  nameWithType: ScriptRunner.ScriptRunCallbacks
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups
   name: ShuffleInputGroups
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups
@@ -38072,6 +38312,18 @@ references:
   commentId: Overload:Sensus.Protocol.AllowCopy
   fullName: Sensus.Protocol.AllowCopy
   nameWithType: Protocol.AllowCopy
+- uid: Sensus.Protocol.AllowLocalDataShare
+  name: AllowLocalDataShare
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare
+  commentId: P:Sensus.Protocol.AllowLocalDataShare
+  fullName: Sensus.Protocol.AllowLocalDataShare
+  nameWithType: Protocol.AllowLocalDataShare
+- uid: Sensus.Protocol.AllowLocalDataShare*
+  name: AllowLocalDataShare
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare_
+  commentId: Overload:Sensus.Protocol.AllowLocalDataShare
+  fullName: Sensus.Protocol.AllowLocalDataShare
+  nameWithType: Protocol.AllowLocalDataShare
 - uid: Sensus.Protocol.AllowParticipantIdReset
   name: AllowParticipantIdReset
   href: api/Sensus.Protocol.html#Sensus_Protocol_AllowParticipantIdReset
@@ -40109,6 +40361,12 @@ references:
   commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Forward
   fullName: Sensus.UI.InputGroupPage.NavigationResult.Forward
   nameWithType: InputGroupPage.NavigationResult.Forward
+- uid: Sensus.UI.InputGroupPage.NavigationResult.Submit
+  name: Submit
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_Submit
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Submit
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.Submit
+  nameWithType: InputGroupPage.NavigationResult.Submit
 - uid: Sensus.UI.InputGroupPage.NavigationResult.value__
   name: value__
   href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_value__
@@ -43448,15 +43706,15 @@ references:
   commentId: T:Sensus.UI.ViewTextLinesPage
   fullName: Sensus.UI.ViewTextLinesPage
   nameWithType: ViewTextLinesPage
-- uid: Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)
-  name: ViewTextLinesPage(String, List<String>, Action, Action)
-  href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_System_Action_
-  commentId: M:Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)
-  name.vb: ViewTextLinesPage(String, List(Of String), Action, Action)
-  fullName: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List<System.String>, System.Action, System.Action)
-  fullName.vb: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List(Of System.String), System.Action, System.Action)
-  nameWithType: ViewTextLinesPage.ViewTextLinesPage(String, List<String>, Action, Action)
-  nameWithType.vb: ViewTextLinesPage.ViewTextLinesPage(String, List(Of String), Action, Action)
+- uid: Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)
+  name: ViewTextLinesPage(String, List<String>, Action)
+  href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_
+  commentId: M:Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)
+  name.vb: ViewTextLinesPage(String, List(Of String), Action)
+  fullName: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List<System.String>, System.Action)
+  fullName.vb: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List(Of System.String), System.Action)
+  nameWithType: ViewTextLinesPage.ViewTextLinesPage(String, List<String>, Action)
+  nameWithType.vb: ViewTextLinesPage.ViewTextLinesPage(String, List(Of String), Action)
 - uid: Sensus.UI.ViewTextLinesPage.#ctor*
   name: ViewTextLinesPage
   href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_

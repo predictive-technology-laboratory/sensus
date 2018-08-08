@@ -44,7 +44,7 @@ using ZXing.Mobile;
 namespace Sensus
 {
     /// <summary>
-    /// Provides platform-independent service functionality.
+    /// Provides platform-independent functionality.
     /// </summary>
     public abstract class SensusServiceHelper
     {
@@ -272,8 +272,11 @@ namespace Sensus
         private bool _flashNotificationsEnabled;
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
+        private bool _updatingPushNotificationToken;
+        private bool _updatePushNotificationRegistrationsOnNextHealthTest;
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
+        private readonly object _updatePushNotificationTokenLocker = new object();
 
         [JsonIgnore]
         public Logger Logger
@@ -315,7 +318,7 @@ namespace Sensus
             {
                 _flashNotificationsEnabled = value;
             }
-        }      
+        }
 
         public ConcurrentObservableCollection<Script> ScriptsToRun
         {
@@ -324,6 +327,9 @@ namespace Sensus
                 return _scriptsToRun;
             }
         }
+
+        [JsonIgnore]
+        public abstract string PushNotificationToken { get; }
 
         [JsonIgnore]
         public float GpsDesiredAccuracyMeters
@@ -359,8 +365,6 @@ namespace Sensus
 
         [JsonIgnore]
         public abstract bool IsCharging { get; }
-        [JsonIgnore]
-        public abstract Probes.Device.PowerConnectionChange AcPowerChangeClass { get; } //set this with the concrete android implementation
 
         [JsonIgnore]
         public abstract float BatteryChargePercent { get; }
@@ -547,6 +551,12 @@ namespace Sensus
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
+        protected abstract void RegisterWithNotificationHub(Tuple<string, string> hubSas);
+
+        protected abstract void UnregisterFromNotificationHub(Tuple<string, string> hubSas);
+
+        protected abstract void RequestNewPushNotificationToken();
+
         public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
         {
             try
@@ -619,6 +629,12 @@ namespace Sensus
 
                         // test the callback scheduler itself
                         SensusContext.Current.CallbackScheduler.TestHealth();
+
+                        // update push notification registrations
+                        if(_updatePushNotificationRegistrationsOnNextHealthTest)
+                        {
+                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                        }
 
                     }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
@@ -752,7 +768,7 @@ namespace Sensus
                 {
                     List<Script> scriptsFromSameRunner = _scriptsToRun.Where(scriptToRun => scriptToRun.Runner.Script.Id == script.Runner.Script.Id).ToList();
                     scriptsFromSameRunner.Add(script);
-                    
+
                     Script scriptToKeep = null;
                     List<Script> scriptsToRemove = null;
 
@@ -914,7 +930,15 @@ namespace Sensus
                         return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             barcodeScannerPage.IsScanning = false;
-                            await navigation.PopModalAsync();
+
+                            // we've seen a strange race condition where the QR code input scanner button is 
+                            // pressed, and in the above task delay the input group page is cancelled and 
+                            // another UI button is hit before the scanner page comes up.
+                            if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
+                            {
+                                await navigation.PopModalAsync();
+                            }
+
                             resultWait.Set();
                         });
                     });
@@ -1058,8 +1082,12 @@ namespace Sensus
 
                                 _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
 
-                                // animate pop if the user submitted or canceled
-                                await navigation.PopModalAsync((stepNumber == inputGroups.Count() && navigationResult == InputGroupPage.NavigationResult.Forward) || navigationResult == InputGroupPage.NavigationResult.Cancel);
+                                // animate pop if the user submitted or canceled. when doing this, reference the navigation context
+                                // on the page rather than the local 'navigation' variable. this is necessary because the navigation
+                                // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+                                // notification.
+                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
+                                                                              navigationResult == InputGroupPage.NavigationResult.Cancel);
 
                                 if (navigationResult == InputGroupPage.NavigationResult.Backward)
                                 {
@@ -1068,13 +1096,16 @@ namespace Sensus
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Forward)
                                 {
-                                    // keep the group in the back stack and move to the next group
+                                    // keep the group in the back stack.
                                     inputGroupNumBackStack.Push(inputGroupNum);
                                 }
                                 else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
                                 {
                                     inputGroups = null;
                                 }
+
+                                // there's nothing to do if the navigation result is submit, since we've finished the final
+                                // group and we are about to return.
                             }
                         });
                     }
@@ -1166,7 +1197,7 @@ namespace Sensus
                         callback(mapPage.Pins.Select(pin => pin.Position).ToList());
                     };
 
-                     await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
+                    await (Application.Current as App).DetailPage.Navigation.PushModalAsync(mapPage);
                 }
             });
         }
@@ -1413,6 +1444,170 @@ namespace Sensus
             {
                 throw SensusException.Report("Attempted to execute on main thread:  " + actionDescription);
             }
+        }
+
+        public Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                // the code we need exclusive access to below has an await statement in it, so we
+                // can't lock the entire function. use a gatekeeper to gain exclusive access
+                // and be sure to release the keeper below in the finally clause.
+                lock (_updatePushNotificationTokenLocker)
+                {
+                    if (_updatingPushNotificationToken)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        _updatingPushNotificationToken = true;
+                    }
+                }
+
+                try
+                {
+                    // assume everything is going to be fine and that we won't need to request 
+                    // an update on next health test. if the push notification token is not set
+                    // we'll throw an exception below and request a new token. when this new token 
+                    // arrives, we'll be right back here and we'll proceed with the registration update.
+                    _updatePushNotificationRegistrationsOnNextHealthTest = false;
+
+                    // we should always have a token. if we do not, throw an exception and request a new token.
+                    if (PushNotificationToken == null)
+                    {
+                        throw new UnsetPushNotificationTokenException();
+                    }
+
+                    // it is conceivable that a single hub could be used for multiple protocols. because 
+                    // there is only ever a single registration with each hub, we therefore need to 
+                    // build a mapping from each hub to its protocols so we can determine whether we
+                    // actually need to register with the hub.
+                    Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
+                    foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol)))
+                    {
+                        if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
+                        {
+                            Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
+
+                            if (!hubSasProtocols.ContainsKey(hubSas))
+                            {
+                                hubSasProtocols.Add(hubSas, new List<Protocol>());
+                            }
+
+                            hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
+                        }
+                    }
+
+                    // process each hub
+                    foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+                    {
+                        // unregister from the hub, catching any exceptions.
+                        try
+                        {
+                            UnregisterFromNotificationHub(hubSas);
+                        }
+                        catch (Exception unregisterEx)
+                        {
+                            // no need to request an update on the next health test, as it was just 
+                            // the unregister that failed. as long as the registration below works, 
+                            // we should be fine.
+                            SensusException.Report("Exception while unregistering from hub:  " + unregisterEx.Message, unregisterEx);
+                        }
+
+                        // each protocol may have its own remote data store being monitored for push notification
+                        // requests. tokens are per device, so update the token in each protocol's remote store.
+                        bool atLeastOneProtocolRunning = false;
+                        foreach (Protocol protocol in hubSasProtocols[hubSas])
+                        {
+                            // this only applies to protocols with a remote data store (some might simply be 
+                            // incompletely configured, and those can be skipped).
+                            if (protocol.RemoteDataStore == null)
+                            {
+                                continue;
+                            }
+
+                            // catch any exceptions, as we might just be lacking an internet connection.
+                            try
+                            {
+                                if (protocol.Running)
+                                {
+                                    atLeastOneProtocolRunning = true;
+
+                                    await protocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, cancellationToken);
+                                }
+                                else
+                                {
+                                    await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(cancellationToken);
+                                }
+                            }
+                            catch (Exception updateTokenException)
+                            {
+                                SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
+
+                                // we absolutely must update the token at the remote data store
+                                _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                            }
+                        }
+
+                        // register with the hub if any of its associated protocols are running
+                        if (atLeastOneProtocolRunning)
+                        {
+                            // catch any exceptions from registering
+                            try
+                            {
+                                RegisterWithNotificationHub(hubSas);
+                            }
+                            catch (Exception registerEx)
+                            {
+                                SensusException.Report("Exception while registering with hub:  " + registerEx.Message, registerEx);
+
+                                // we absolutely must register with the hub
+                                _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                            }
+                        }
+                    }
+                }
+                catch (UnsetPushNotificationTokenException)
+                {
+                    try
+                    {
+                        SensusException.Report("Push notification token was not set.");
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    try
+                    {
+                        RequestNewPushNotificationToken();
+                    }
+                    catch (Exception newTokenException)
+                    {
+                        SensusException.Report("Exception while requesting a new token:  " + newTokenException.Message, newTokenException);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        SensusException.Report("Exception while updating push notification registrations:  " + ex.Message, ex);
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                    // we have just reported the issue to the app center crash api, so hopefully we'll 
+                    // see the problem there. one thing we can do is try to update the push notification 
+                    // registrations again on the next health test...so...
+                    _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                }
+                finally
+                {
+                    // we're done...let the next update proceed.
+                    _updatingPushNotificationToken = false;
+                }
+            });
         }
 
         public void StopProtocols()

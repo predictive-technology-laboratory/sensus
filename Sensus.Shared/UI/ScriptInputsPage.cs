@@ -141,7 +141,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "View Display Conditions")
                 {
-                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), null, () =>
+                    await Navigation.PushAsync(new ViewTextLinesPage("Display Conditions", selectedInput.DisplayConditions.Select(displayCondition => displayCondition.ToString()).ToList(), () =>
                     {
                         selectedInput.DisplayConditions.Clear();
                     }));

@@ -90,6 +90,9 @@ namespace Sensus.DataStores.Remote
     /// </summary>
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
+        private const string DATA_DIRECTORY = "data";
+        private const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
+
         private string _region;
         private string _bucket;
         private string _folder;
@@ -333,7 +336,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    await Put(s3, stream, (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
+                    await Put(s3, stream, DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
                 }
                 finally
                 {
@@ -364,6 +367,79 @@ namespace Sensus.DataStores.Remote
                     DisposeS3(s3);
                 }
             });
+        }
+
+        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    s3 = InitializeS3();
+                    byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
+                    MemoryStream dataStream = new MemoryStream();
+                    dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
+                    dataStream.Position = 0;
+
+                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + Guid.NewGuid() + ".json", "application/json", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    // send the token
+                    s3 = InitializeS3();
+                    byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
+                    MemoryStream dataStream = new MemoryStream();
+                    dataStream.Write(tokenBytes, 0, tokenBytes.Length);
+                    dataStream.Position = 0;
+
+                    await Put(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    // send an empty data stream to clear the token. we don't have delete access.
+                    s3 = InitializeS3();
+
+                    await Put(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        private string GetPushNotificationTokenKey()
+        {
+            // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
         }
 
         private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
@@ -415,7 +491,7 @@ namespace Sensus.DataStores.Remote
 
         public override string GetDatumKey(Datum datum)
         {
-            return (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
+            return DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
         }
 
         public override async Task<T> GetDatumAsync<T>(string datumKey, CancellationToken cancellationToken)

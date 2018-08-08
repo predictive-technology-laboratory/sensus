@@ -26,22 +26,20 @@ using Android.Speech;
 using Android.Support.V4.Content;
 using Android.Widget;
 using Newtonsoft.Json;
-using Sensus;
-using Xamarin;
 using Sensus.Probes.Location;
 using Sensus.Probes;
 using Sensus.Probes.Movement;
 using System.Linq;
 using ZXing.Mobile;
 using Android.Graphics;
-using Android.Media;
 using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
-using Sensus.Android;
 using System.Threading.Tasks;
-using Sensus.Probes.Device;
 using Sensus.Context;
+using Firebase.Iid;
+using Sensus.Exceptions;
+using WindowsAzure.Messaging;
 
 namespace Sensus.Android
 {
@@ -55,7 +53,6 @@ namespace Sensus.Android
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private bool _userDeniedBluetoothEnable;
-        private PowerConnectionChange _acPowerChangeClass;
 
         public override string DeviceId
         {
@@ -163,18 +160,6 @@ namespace Sensus.Android
             }
         }
 
-        public override PowerConnectionChange AcPowerChangeClass
-        {
-            get
-            {
-                if(_acPowerChangeClass == null)
-                {
-                    _acPowerChangeClass = new Probes.Device.AndroidPowerConnectionChange();
-                }
-                return _acPowerChangeClass;
-            }
-        }
-
         public override string Version
         {
             get
@@ -199,6 +184,14 @@ namespace Sensus.Android
             set
             {
                 _userDeniedBluetoothEnable = value;
+            }
+        }
+
+        public override string PushNotificationToken
+        {
+            get
+            {
+                return FirebaseInstanceId.Instance.Token;
             }
         }
 
@@ -561,6 +554,25 @@ namespace Sensus.Android
                 ms.Seek(0, SeekOrigin.Begin);
                 return ms;
             });
+        }
+
+        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.Register(PushNotificationToken);
+        }
+
+        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        {
+            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+            notificationHub.UnregisterAll(PushNotificationToken);
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            // delete the instance ID and get a new token.
+            FirebaseInstanceId.Instance.DeleteInstanceId();
+            string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
         }
 
         /// <summary>
