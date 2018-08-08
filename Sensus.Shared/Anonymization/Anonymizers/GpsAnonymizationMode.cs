@@ -16,20 +16,9 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    public class GPSUserLatitudeAnonymizer : GPSAnonymizer
+    public enum GpsAnonymizationMode
     {
-
-        public override string DisplayText
-        {
-            get
-            {
-                return "Gps User Anonymizer";
-            }
-        }
-
-        public GPSUserLatitudeAnonymizer()
-            : base(true, true)
-        {
-        }
+        User,
+        Study
     }
 }

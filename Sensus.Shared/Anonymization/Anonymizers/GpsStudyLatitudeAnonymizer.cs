@@ -13,22 +13,23 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    public class GPSUserLongitudeAnonymizer : GPSAnonymizer
+    public class GpsStudyLatitudeAnonymizer : GpAnonymizer
     {
-
         public override string DisplayText
         {
             get
             {
-                return "Gps User Anonymizer";
+                return "Study Latitude";
             }
         }
 
-        public GPSUserLongitudeAnonymizer()
-            : base(true, false)
+        public GpsStudyLatitudeAnonymizer()
+            : base(false, true)
         {
         }
     }

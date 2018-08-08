@@ -536,12 +536,10 @@ namespace Sensus
         private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
-        private string _gpsProtocolAnonymizerZeroLocation;
-        private (float? latitude, float? longitude) _gpsProtocolAnonymizerZeroLocationCoordinates;
-        private string _gpsUserAnonymizerZeroLocation;
-        private (float? latitude, float? longitude) _gpsUserAnonymizerZeroLocationCoordinates;
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
+        private Tuple<double, double> _gpsAnonymizationProtocolOrigin;
+        private Tuple<double, double> _gpsAnonymizationUserOrigin;
         private string _participantId;
         private string _pushNotificationsSharedAccessSignature;
         private string _pushNotificationsHub;
@@ -1334,58 +1332,27 @@ namespace Sensus
             }
         }
 
-        [EntryStringWithButtonUiProperty("GPS - Protocol Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomProtocolGPS), typeof(Protocol), false, 47, false)]
-        public string GpsProtocolAnonymizerZeroLocation
+        public Tuple<double, double> GpsAnonymizationProtocolOrigin
         {
             get
             {
-                return _gpsProtocolAnonymizerZeroLocation;
+                return _gpsAnonymizationProtocolOrigin;
             }
             set
             {
-                string trimmedVal = value?.Trim("() ".ToArray());
-                if (_gpsProtocolAnonymizerZeroLocation != trimmedVal)
-                {
-                    _gpsProtocolAnonymizerZeroLocation = trimmedVal;
-                    (float? latitude, float? longitude) vals = _gpsProtocolAnonymizerZeroLocation.ToLatLong();
-                    _gpsProtocolAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpsProtocolAnonymizerZeroLocation)));  //TODO: we might consider changing this to an OnPropertyChanged method that gets the CallerMemberName automatically to help prevent typos 
-                }
+                _gpsAnonymizationProtocolOrigin = value;
             }
         }
 
-        public (float? latitude, float? longitude) GpsProtocolAnonymizerZeroLocationCoordinates
+        public Tuple<double, double> GpsAnonymizationUserOrigin
         {
             get
             {
-                return _gpsProtocolAnonymizerZeroLocationCoordinates;
-            }
-        }
-
-        [EntryStringWithButtonUiProperty("GPS - User Anonymizer Zero Location (lat,long) :", "Generate", nameof(Protocol.GenerateRandomUserGPS), typeof(Protocol), false, 48, false)]
-        public string GpsUserAnonymizerZeroLocation
-        {
-            get
-            {
-                return _gpsUserAnonymizerZeroLocation;
+                return _gpsAnonymizationUserOrigin;
             }
             set
             {
-                string trimmedVal = value?.Trim("() ".ToArray());
-                if (_gpsUserAnonymizerZeroLocation != trimmedVal)
-                {
-                    _gpsUserAnonymizerZeroLocation = trimmedVal;
-                    (float? latitude, float? longitude) vals = _gpsUserAnonymizerZeroLocation.ToLatLong();
-                    _gpsUserAnonymizerZeroLocationCoordinates = (vals.latitude, vals.longitude ?? vals.latitude);
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpsUserAnonymizerZeroLocation)));
-                }
-            }
-        }
-        public (float? latitude, float? longitude) GpsUserAnonymizerZeroLocationCoordinates
-        {
-            get
-            {
-                return _gpsUserAnonymizerZeroLocationCoordinates;
+                _gpsAnonymizationUserOrigin = value;
             }
         }
 
@@ -1473,7 +1440,6 @@ namespace Sensus
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
-            _gpsUserAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}"; //initialize this with a random gps location
         }
 
         /// <summary>
@@ -1505,10 +1471,15 @@ namespace Sensus
 
         private void Reset(bool resetId)
         {
+            Random random = new Random();
+
             // reset id and storage directory (directory might exist if deserializing the same protocol multiple times)
             if (resetId)
             {
                 _id = Guid.NewGuid().ToString();
+
+                // if this is a new study, randomly initialize GPS origin
+                _gpsAnonymizationProtocolOrigin = new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
             }
 
             // nobody else should receive the participant ID
@@ -1518,10 +1489,11 @@ namespace Sensus
             ResetStorageDirectory();
 
             // pick a random time anchor within the first 1000 years AD. we got a strange exception in insights about the resulting datetime having a year
-            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same.
+            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same. we do this regardless of whether we're 
+            // resetting the protocol ID, as everyone should have a different anchor. in the future, perhaps we'll do something similar to what we do for GPS.
             try
             {
-                _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+                _randomTimeAnchor = new DateTimeOffset((long)(random.NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
             }
             catch (Exception) { }
 
@@ -1622,6 +1594,20 @@ namespace Sensus
                 {
                     _running = true;
                 }
+
+
+                // seed the user-level GPS origin based on participant or device ID, preferring the former.
+                Random random;
+                if(!string.IsNullOrWhiteSpace(_participantId))
+                {
+                    random = new Random(_participantId.GetHashCode());
+                }
+                else
+                {
+                    random = new Random(SensusServiceHelper.Get().DeviceId.GetHashCode());
+                }
+
+                _gpsAnonymizationUserOrigin = new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
 
                 _scheduledStartCallback = null;
 
@@ -2265,23 +2251,6 @@ namespace Sensus
         private void SubCaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
-        }
-
-        public void GenerateRandomProtocolGPS(object o, EventArgs e)
-        {
-            GpsProtocolAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}";
-            //if (o is Button)
-            //{
-            //    (o as Button).Text = GpsProtocolAnonymizerZeroLocation;
-            //}
-        }
-        public void GenerateRandomUserGPS(object o, EventArgs e)
-        {
-            GpsUserAnonymizerZeroLocation = $"{(-90D, 90D).GetRandom(6)} {(-180D, 180D).GetRandom(6)}";
-            //if (o is Button)
-            //{
-            //    (o as Button).Text = GpsUserAnonymizerZeroLocation;
-            //}
         }
     }
 }

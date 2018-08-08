@@ -9,11 +9,11 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSProtocolLatitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSProtocolLongitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSUserLatitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GPSUserLongitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsStudyLatitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsStudyLongitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsUseLatitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsUseLongitudeAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -32,7 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\GpsExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
@@ -210,7 +209,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryFloatUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryIntegerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryStringUiProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ButtonUiProperty - Copy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\EntryStringWithButtonUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ListUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\OnOffUiProperty.cs" />
@@ -254,6 +252,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsAnonymizationMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsAnonymizationField.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

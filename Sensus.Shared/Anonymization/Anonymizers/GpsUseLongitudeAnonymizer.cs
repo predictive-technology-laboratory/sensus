@@ -11,25 +11,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    public class GPSProtocolLongitudeAnonymizer : GPSAnonymizer
+    public class GpsUseLongitudeAnonymizer : GpAnonymizer
     {
 
         public override string DisplayText
         {
             get
             {
-                return "Gps Protocol Anonymizer";
+                return "User Longitude";
             }
         }
 
-        public GPSProtocolLongitudeAnonymizer()
-            : base(false, false)
+        public GpsUseLongitudeAnonymizer()
+            : base(true, false)
         {
         }
     }
