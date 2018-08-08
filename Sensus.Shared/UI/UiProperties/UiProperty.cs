@@ -111,8 +111,7 @@ namespace Sensus.UI.UiProperties
                 BindableProperty targetProperty = null;
                 IValueConverter converter = null;
                 View propertyView = uiElement.GetView(property, o, out targetProperty, out converter);
-                View toBind = uiElement.BindableOverride ?? propertyView;
-                toBind.IsEnabled = uiElement.Editable;
+                propertyView.IsEnabled = uiElement.Editable;
 
 #if UI_TESTING
                 // set style id so we can get the property value when UI testing
@@ -121,8 +120,8 @@ namespace Sensus.UI.UiProperties
 
                 if (targetProperty != null)
                 {
-                    toBind.BindingContext = o;
-                    toBind.SetBinding(targetProperty, new Binding(property.Name, converter: converter)); //this binds the property to to the target.  The problem 
+                    propertyView.BindingContext = o;
+                    propertyView.SetBinding(targetProperty, new Binding(property.Name, converter: converter));
                 }
 
                 propertyStacks.Add(new StackLayout
@@ -140,7 +139,6 @@ namespace Sensus.UI.UiProperties
         private bool _editable;
         private int _order;
         private bool _required;
-        private View _bindableOverride;
 
         public string LabelText
         {
@@ -153,11 +151,7 @@ namespace Sensus.UI.UiProperties
             get { return _editable; }
             set { _editable = value; }
         }
-        public View BindableOverride
-        {
-            get { return _bindableOverride; }
-            set { _bindableOverride = value; }
-        }
+
         protected UiProperty(string labelText, bool editable, int order, bool required)
         {
             _labelText = string.IsNullOrWhiteSpace(labelText) ? null : labelText + (required ? REQUIRED_MARK : "");
