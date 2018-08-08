@@ -14,21 +14,19 @@
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    /// <summary>
-    /// Anonymization modes for GPS data.
-    /// </summary>
-    public enum GpsAnonymizationMode
+    public class RebasingGpsParticipantLatitudeAnonymizer : RebasingGpsLatitudeAnonymizer
     {
-        /// <summary>
-        /// Values will have no absolute meaning; however, their relative values
-        /// within a participant's data will be meaningful.
-        /// </summary>
-        Participant,
+        public override string DisplayText
+        {
+            get
+            {
+                return "Participant Level";
+            }
+        }
 
-        /// <summary>
-        /// Values will have no absolute meaning; however, their relative values
-        /// within a study will be meaningful.
-        /// </summary>
-        Study
+        public override double GetOrigin(Protocol protocol)
+        {
+            return protocol.GpsAnonymizationUserOrigin.Item1;
+        }
     }
 }

@@ -14,9 +14,19 @@
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    public enum GpsAnonymizationField
+    public class RebasingGpsParticipantLongitudeAnonymizer : RebasingGpsLongitudeAnonymizer
     {
-        Latitude,
-        Longitude
+        public override string DisplayText
+        {
+            get
+            {
+                return "Participant Level";
+            }
+        }
+
+        public override double GetOrigin(Protocol protocol)
+        {
+            return protocol.GpsAnonymizationUserOrigin.Item2;
+        }
     }
 }

@@ -12,21 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Sensus.Anonymization.Anonymizers
 {
-    public class GpsParticipantLongitudeAnonymizer : GpsAnonymizer
+    public abstract class RebasingGpsLongitudeAnonymizer : RebasingGpsAnonymizer
     {
-        public override string DisplayText
-        {
-            get
-            {
-                return "Participant Level";
-            }
-        }
+        private const double MIN = -180;
+        private const double MAX = 180;
 
-        public GpsParticipantLongitudeAnonymizer()
-            : base(GpsAnonymizationMode.Participant, GpsAnonymizationField.Longitude)
+        public override object Apply(object value, Protocol protocol)
         {
+            double actualValue = (double)value;
+
+            double rebasedValue = actualValue - GetOrigin(protocol);
+
+            if (rebasedValue < MIN)
+            {
+                rebasedValue = MAX - Math.Abs(rebasedValue - MIN);
+            }
+            else if (rebasedValue > MAX)
+            {
+                rebasedValue = MIN + Math.Abs(rebasedValue - MAX);
+            }
+
+            return rebasedValue;
         }
     }
 }

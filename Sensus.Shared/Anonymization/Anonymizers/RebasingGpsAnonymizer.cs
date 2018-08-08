@@ -14,19 +14,8 @@
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    public class GpsStudyLatitudeAnonymizer : GpsAnonymizer
+    public abstract class RebasingGpsAnonymizer : Anonymizer
     {
-        public override string DisplayText
-        {
-            get
-            {
-                return "Study Level";
-            }
-        }
-
-        public GpsStudyLatitudeAnonymizer()
-            : base(GpsAnonymizationMode.Study, GpsAnonymizationField.Latitude)
-        {
-        }
+        public abstract double GetOrigin(Protocol protocol);
     }
 }
