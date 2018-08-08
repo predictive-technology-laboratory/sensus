@@ -14,6 +14,7 @@
 
 using Foundation;
 using Plugin.Permissions.Abstractions;
+using Sensus.Exceptions;
 using Sensus.Probes.Location;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,12 @@ using UIKit;
 
 namespace Sensus.iOS.Probes.Location
 {
+    /// <summary>
+    /// iOS proximity probe. Will report distance from phone to a nearby object. Readings from this sensor
+    /// will not be reported when the app is in the background.
+    /// </summary>
     public class iOSProximityProbe : ProximityProbe
-    {
-       
+    {       
         private NSObject _notification;
 
         protected override void Initialize()
@@ -40,33 +44,40 @@ namespace Sensus.iOS.Probes.Location
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "This device cannot use proximity sensor, or the user has denied access to it. Cannot start proximity probe.";
+                string error = "This device does not have a proximity sensor, or the user has denied access to it. Cannot start proximity probe.";
                 SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-
         }
 
         protected override void StartListening()
         {
-            //Check to see if Proximity enabled is true, this would mean that the device can monitor proximity
+            // Check to see if Proximity enabled is true, this would mean that the device can monitor proximity
             if (UIDevice.CurrentDevice.ProximityMonitoringEnabled)
             {
-                //Hook the sensor event 
-                //https://developer.xamarin.com/api/member/MonoTouch.UIKit.UIDevice+Notifications.ObserveProximityStateDidChange/p/System.EventHandler%7BMonoTouch.Foundation.NSNotificationEventArgs%7D/
+                // Hook the sensor event 
+                // https://developer.xamarin.com/api/member/MonoTouch.UIKit.UIDevice+Notifications.ObserveProximityStateDidChange/p/System.EventHandler%7BMonoTouch.Foundation.NSNotificationEventArgs%7D/
                 _notification = UIDevice.Notifications.ObserveProximityStateDidChange((o, e) =>
                 {
-                    //apple has a proximitystate bool that returns 1 if device is close to user and 0 if it is not
-                    StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0d : 1d), 1d));
+                    try
+                    {
+                        // apple has a proximitystate bool that returns 1 if device is close to user and 0 if it is not
+                        StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0 : 1), 1));
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusException.Report("Exception while storing datum:  " + ex.Message, ex);
+                    }
                 });
             }
-
         }
 
         protected override void StopListening()
         {
+            // disable proximity monitoring, as it might be slightly irritating to the user for the screen to go blank.
+            UIDevice.CurrentDevice.ProximityMonitoringEnabled = false;
+
             _notification.Dispose();
         }
-
     }
 }

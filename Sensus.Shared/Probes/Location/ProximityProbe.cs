@@ -19,7 +19,7 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Location
 {
     /// <summary>
-    /// Provides reading from Proximity sensor in distance as <see cref="ProximityDatum"/> readings.
+    /// Provides readings from proximity sensor in distance as <see cref="ProximityDatum"/> readings.
     /// </summary>
     public abstract class ProximityProbe : ListeningProbe
     {
@@ -28,7 +28,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -37,7 +37,8 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
+                // the proximity probe is a wake-up probe, so keeping the device awake adds no benefit.
+                return "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
             }
         }
 
@@ -46,7 +47,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
+                return null;
             }
         }
 
@@ -62,12 +63,12 @@ namespace Sensus.Probes.Location
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

@@ -18,6 +18,10 @@ using System;
 
 namespace Sensus.Android.Probes.Location
 {
+    /// <summary>
+    /// Android proximity probe. Will report distance from phone to a nearby object. Readings from this sensor
+    /// will wake up the phone's processor and be delivered regardless of the phone's awake/standby status.
+    /// </summary>
     public class AndroidProximityProbe : ProximityProbe
     {
         private AndroidSensorListener _proximityListener;
@@ -31,12 +35,6 @@ namespace Sensus.Android.Probes.Location
 
             _proximityListener = new AndroidSensorListener(SensorType.Proximity, null, e =>
             {
-                // should get distance value
-                if (e?.Values?.Count == null || e.Values.Count == 0)
-                {
-                    return;
-                }
-
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
                 // compare data across sensors, phones, and android versions. using DateTimeOffset.UtcNow will cause imprecision due to

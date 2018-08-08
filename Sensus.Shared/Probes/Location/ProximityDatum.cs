@@ -24,15 +24,13 @@ namespace Sensus.Probes.Location
     /// The proximity sensor is usually used to determine how far away a person's head is 
     /// from the face of a handset device (for example, when a user is making or receiving 
     /// a phone call). Most proximity sensors return the absolute distance, in cm, but 
-    /// some return only near and far values. 
+    /// some return only near and far values. The behavior of this probe differs on Android
+    /// and iOS, so be sure to read the relevant documentation for those probes.
     /// </summary>
     public class ProximityDatum : Datum
     {
         private double _distance;
         private double _maxDistance;
-
-
-
 
         /// <summary>
         /// Most proximity sensors return the absolute distance, in cm, 
@@ -47,7 +45,7 @@ namespace Sensus.Probes.Location
         }
 
         [DoubleProbeTriggerProperty("Max. Distance")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Max. Distance", new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double MaxDistance
         {
             get { return _maxDistance; }
@@ -85,7 +83,6 @@ namespace Sensus.Probes.Location
         {
             _distance = distance;
             _maxDistance = maxDistance;
-
         }
 
 
