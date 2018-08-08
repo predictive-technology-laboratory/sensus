@@ -1006,7 +1006,7 @@ namespace Sensus
         /// The minimum distance in meters to wait between deliveries of GPS readings.
         /// </summary>
         /// <value>The GPS minimum distance delay, in meters.</value>
-        [EntryStringUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29, true)]
+        [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29, true)]
         public float GpsMinDistanceDelayMeters
         {
             get
@@ -1023,6 +1023,7 @@ namespace Sensus
                 _gpsMinDistanceDelayMeters = value;
             }
         }
+
         public Dictionary<string, string> VariableValue
         {
             get
