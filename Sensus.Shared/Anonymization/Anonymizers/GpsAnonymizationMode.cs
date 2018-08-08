@@ -12,13 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Anonymization modes for GPS data.
+    /// </summary>
     public enum GpsAnonymizationMode
     {
-        User,
+        /// <summary>
+        /// Values will have no absolute meaning; however, their relative values
+        /// within a participant's data will be meaningful.
+        /// </summary>
+        Participant,
+
+        /// <summary>
+        /// Values will have no absolute meaning; however, their relative values
+        /// within a study will be meaningful.
+        /// </summary>
         Study
     }
 }

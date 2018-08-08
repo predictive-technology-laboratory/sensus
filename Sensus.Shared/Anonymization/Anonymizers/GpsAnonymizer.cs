@@ -16,28 +16,26 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
-    public abstract class GpAnonymizer : Anonymizer
+    public abstract class GpsAnonymizer : Anonymizer
     {
-        private static double? FixRange(double? item, double min, double max)
+        private static double? FixRange(double value, double min, double max)
         {
-            if (item.HasValue)
+            if (value < min)
             {
-                if (item.Value < min)
-                {
-                    item = max - Math.Abs(item.Value - min);
-                }
-                else if (item.Value > max)
-                {
-                    item = min + Math.Abs(item.Value - max);
-                }
+                value = max - Math.Abs(value - min);
             }
-            return item;
+            else if (value > max)
+            {
+                value = min + Math.Abs(value - max);
+            }
+
+            return value;
         }
 
         private GpsAnonymizationMode _anonymizationMode;
         private GpsAnonymizationField _anonymizationField;
 
-        public GpAnonymizer(GpsAnonymizationMode anonymizationMode, GpsAnonymizationField anonymizationField)
+        public GpsAnonymizer(GpsAnonymizationMode anonymizationMode, GpsAnonymizationField anonymizationField)
         {
             _anonymizationMode = anonymizationMode;
             _anonymizationField = anonymizationField;
@@ -47,11 +45,22 @@ namespace Sensus.Anonymization.Anonymizers
         {
             double actualValue = (double)value;
 
-            Tuple<double, double> origin = _anonymizationMode == GpsAnonymizationMode.User ? protocol.GpsAnonymizationUserOrigin : protocol.GpsAnonymizationProtocolOrigin;
-            double basePart = _anonymizationField == GpsAnonymizationField.Latitude ? origin.Item1 : origin.Item2;
-            double min = _anonymizationField == GpsAnonymizationField.Latitude ? -90 : -180;
-            double max = _anonymizationField == GpsAnonymizationField.Latitude ? 90 : 180;
-            return FixRange(actualValue + basePart, min, max);
+            double originValue, min, max;
+            Tuple<double, double> origin = _anonymizationMode == GpsAnonymizationMode.Participant ? protocol.GpsAnonymizationUserOrigin : protocol.GpsAnonymizationProtocolOrigin;
+            if (_anonymizationField == GpsAnonymizationField.Latitude)
+            {
+                originValue = origin.Item1;
+                min = -90;
+                max = 90;
+            }
+            else
+            {
+                originValue = origin.Item2;
+                min = -180;
+                max = 180;
+            }
+
+            return FixRange(actualValue - originValue, min, max);
         }
     }
 }

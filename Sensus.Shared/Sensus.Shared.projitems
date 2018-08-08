@@ -9,11 +9,11 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsStudyLatitudeAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsStudyLongitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsUseLatitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsUseLongitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsParticipantLatitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\GpsParticipantLongitudeAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
