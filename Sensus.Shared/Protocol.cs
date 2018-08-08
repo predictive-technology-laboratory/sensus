@@ -538,11 +538,11 @@ namespace Sensus
         private float _gpsMinDistanceDelayMeters;
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
-        private Tuple<double, double> _gpsAnonymizationProtocolOrigin;
-        private Tuple<double, double> _gpsAnonymizationUserOrigin;
         private string _participantId;
         private string _pushNotificationsSharedAccessSignature;
         private string _pushNotificationsHub;
+        private Tuple<double, double> _gpsAnonymizationProtocolOrigin;
+        private Tuple<double, double> _gpsAnonymizationUserOrigin;
 
         private readonly object _locker = new object();
 
@@ -1332,6 +1332,31 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The push notification hub to listen to. This can be created within the Azure Portal. The
+        /// value to use here is the name of the hub.
+        /// </summary>
+        /// <value>The push notifications hub.</value>
+        [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
+        public string PushNotificationsHub
+        {
+            get { return _pushNotificationsHub; }
+            set { _pushNotificationsHub = value; }
+        }
+
+        /// <summary>
+        /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
+        /// value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
+        /// the value directly to this field.
+        /// </summary>
+        /// <value>The push notifications shared access signature.</value>
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]
+        public string PushNotificationsSharedAccessSignature
+        {
+            get { return _pushNotificationsSharedAccessSignature; }
+            set { _pushNotificationsSharedAccessSignature = value; }
+        }
+
         public Tuple<double, double> GpsAnonymizationProtocolOrigin
         {
             get
@@ -1354,31 +1379,6 @@ namespace Sensus
             {
                 _gpsAnonymizationUserOrigin = value;
             }
-        }
-
-        /// <summary>
-        /// The push notification hub to listen to. This can be created within the Azure Portal. The
-        /// value to use here is the name of the hub.
-        /// </summary>
-        /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 49, false)]
-        public string PushNotificationsHub
-        {
-            get { return _pushNotificationsHub; }
-            set { _pushNotificationsHub = value; }
-        }
-
-        /// <summary>
-        /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
-        /// value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
-        /// the value directly to this field.
-        /// </summary>
-        /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 50, false)]
-        public string PushNotificationsSharedAccessSignature
-        {
-            get { return _pushNotificationsSharedAccessSignature; }
-            set { _pushNotificationsSharedAccessSignature = value; }
         }
 
         [JsonIgnore]
@@ -1478,7 +1478,7 @@ namespace Sensus
             {
                 _id = Guid.NewGuid().ToString();
 
-                // if this is a new study, randomly initialize GPS origin
+                // if this is a new study (indicated by resetting the ID), randomly initialize GPS origin.
                 _gpsAnonymizationProtocolOrigin = new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
             }
 
