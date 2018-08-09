@@ -1508,8 +1508,9 @@ namespace Sensus
                 _gpsLongitudeAnonymizationStudyOffset = LongitudeOffsetGpsAnonymizer.GetOffset(random);
             }
 
-            // nobody else should receive the participant ID
+            // nobody else should receive the participant ID or participant anonymization offset
             _participantId = null;
+            _gpsLongitudeAnonymizationParticipantOffset = 0;
 
             // reset local storage
             ResetStorageDirectory();
