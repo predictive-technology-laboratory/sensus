@@ -1359,6 +1359,13 @@ namespace Sensus
             set { _pushNotificationsSharedAccessSignature = value; }
         }
 
+        /// <summary>
+        /// We regenerate the offset every time a protocol starts, so there's 
+        /// no need to serialize it. Furthermore, we never want the offset
+        /// to be shared.
+        /// </summary>
+        /// <value>The gps longitude anonymization participant offset.</value>
+        [JsonIgnore]
         public double GpsLongitudeAnonymizationParticipantOffset
         {
             get
