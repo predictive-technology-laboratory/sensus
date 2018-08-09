@@ -14,6 +14,13 @@
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Anonymizer that operates by changing the base (origin) of the longitude 
+    /// of a GPS coordinate pair. The base is chosen to be study-specific.
+    /// Thus, the resulting coordinates are only meaningful relative to other 
+    /// coordinates within a single study. They have no meaning in absolute 
+    /// terms, and they have no meaning relative to data from other studies.
+    /// </summary>
     public class RebasingGpsStudyLongitudeAnonymizer : RebasingGpsLongitudeAnonymizer
     {
         public override string DisplayText

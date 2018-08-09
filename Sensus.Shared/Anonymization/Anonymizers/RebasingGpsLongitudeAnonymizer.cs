@@ -16,6 +16,10 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Base class for anonymizers that operate by changing the base (origin)
+    /// of the longitude of a GPS coordinate pair.
+    /// </summary>
     public abstract class RebasingGpsLongitudeAnonymizer : RebasingGpsAnonymizer
     {
         private const double MIN = -180;
@@ -25,12 +29,15 @@ namespace Sensus.Anonymization.Anonymizers
         {
             double actualValue = (double)value;
 
+            // get degree distance from actual to origin
             double rebasedValue = actualValue - GetOrigin(protocol);
 
+            // if distance is less than the minimum, subtract the difference from the maximum.
             if (rebasedValue < MIN)
             {
                 rebasedValue = MAX - Math.Abs(rebasedValue - MIN);
             }
+            // if distance is greater than the maximum, add the difference to the minimum.
             else if (rebasedValue > MAX)
             {
                 rebasedValue = MIN + Math.Abs(rebasedValue - MAX);

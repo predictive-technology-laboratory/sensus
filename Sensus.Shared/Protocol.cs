@@ -46,6 +46,7 @@ using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
 using Sensus.Extensions;
+using Sensus.Anonymization.Anonymizers;
 
 #if __IOS__
 using HealthKit;
@@ -1400,6 +1401,26 @@ namespace Sensus
         }
 
         [JsonIgnore]
+        public Random RebasingGpsAnonymizerRandom
+        {
+            get
+            {
+                // seed the user-level GPS origin based on participant or device ID, preferring the former.
+                Random random;
+                if (!string.IsNullOrWhiteSpace(_participantId))
+                {
+                    random = new Random(_participantId.GetHashCode());
+                }
+                else
+                {
+                    random = new Random(SensusServiceHelper.Get().DeviceId.GetHashCode());
+                }
+
+                return random;
+            }
+        }
+
+        [JsonIgnore]
         public string Caption
         {
             get
@@ -1480,7 +1501,7 @@ namespace Sensus
                 _id = Guid.NewGuid().ToString();
 
                 // if this is a new study (indicated by resetting the ID), randomly initialize GPS origin.
-                _gpsAnonymizationProtocolOrigin = new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
+                _gpsAnonymizationProtocolOrigin = RebasingGpsAnonymizer.GetOrigin(random);
             }
 
             // nobody else should receive the participant ID
@@ -1596,19 +1617,7 @@ namespace Sensus
                     _running = true;
                 }
 
-
-                // seed the user-level GPS origin based on participant or device ID, preferring the former.
-                Random random;
-                if (!string.IsNullOrWhiteSpace(_participantId))
-                {
-                    random = new Random(_participantId.GetHashCode());
-                }
-                else
-                {
-                    random = new Random(SensusServiceHelper.Get().DeviceId.GetHashCode());
-                }
-
-                _gpsAnonymizationUserOrigin = new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
+                _gpsAnonymizationUserOrigin = RebasingGpsAnonymizer.GetOrigin(RebasingGpsAnonymizerRandom);
 
                 _scheduledStartCallback = null;
 

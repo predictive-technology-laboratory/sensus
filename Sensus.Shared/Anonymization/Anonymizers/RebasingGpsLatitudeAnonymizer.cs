@@ -16,24 +16,31 @@ using System;
 
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Base class for anonymizers that operate by changing the base (origin)
+    /// of the latitude of a GPS coordinate pair.
+    /// </summary>
     public abstract class RebasingGpsLatitudeAnonymizer : RebasingGpsAnonymizer
     {
-        private const double MIN = -90;
-        private const double MAX = 90;
+        private const double MIN_LATITUDE_DEGREE = -90;
+        private const double MAX_LATITUDE_DEGREE = 90;
 
         public override object Apply(object value, Protocol protocol)
         {
             double actualValue = (double)value;
 
+            // get degree distance from actual to origin
             double rebasedValue = actualValue - GetOrigin(protocol);
 
-            if (rebasedValue < MIN)
+            // if distance is less than the minimum, add the difference to the minimum.
+            if (rebasedValue < MIN_LATITUDE_DEGREE)
             {
-                rebasedValue = MIN + Math.Abs(rebasedValue - MIN);
+                rebasedValue = MIN_LATITUDE_DEGREE + Math.Abs(rebasedValue - MIN_LATITUDE_DEGREE);
             }
-            else if (rebasedValue > MAX)
+            // if distance is greater than the maximum, subtract the difference from the maximum.
+            else if (rebasedValue > MAX_LATITUDE_DEGREE)
             {
-                rebasedValue = MAX - Math.Abs(rebasedValue - MAX);
+                rebasedValue = MAX_LATITUDE_DEGREE - Math.Abs(rebasedValue - MAX_LATITUDE_DEGREE);
             }
 
             return rebasedValue;

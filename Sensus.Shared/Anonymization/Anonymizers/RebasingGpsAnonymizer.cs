@@ -12,10 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using Sensus.Extensions;
+
 namespace Sensus.Anonymization.Anonymizers
 {
+    /// <summary>
+    /// Base class for anonymizers that operate by changing the base (origin)
+    /// of the sensed GPS coordinates.
+    /// </summary>
     public abstract class RebasingGpsAnonymizer : Anonymizer
     {
+        public static Tuple<double, double> GetOrigin(Random random)
+        {
+            return new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
+        }
+
+        /// <summary>
+        /// Gets the origin.
+        /// </summary>
+        /// <returns>The origin.</returns>
+        /// <param name="protocol">Protocol.</param>
         public abstract double GetOrigin(Protocol protocol);
     }
 }
