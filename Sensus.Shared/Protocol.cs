@@ -45,6 +45,8 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
+using Sensus.Extensions;
+using Sensus.Anonymization.Anonymizers;
 
 #if __IOS__
 using HealthKit;
@@ -502,7 +504,7 @@ namespace Sensus
             });
         }
 
-#endregion
+        #endregion
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -540,6 +542,8 @@ namespace Sensus
         private string _participantId;
         private string _pushNotificationsSharedAccessSignature;
         private string _pushNotificationsHub;
+        private double _gpsLongitudeAnonymizationParticipantOffset;
+        private double _gpsLongitudeAnonymizationStudyOffset;
 
         private readonly object _locker = new object();
 
@@ -1105,7 +1109,7 @@ namespace Sensus
             }
         }
 
-#region iOS-specific protocol properties
+        #region iOS-specific protocol properties
 
 #if __IOS__
         [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
@@ -1253,7 +1257,7 @@ namespace Sensus
             }
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Whether or not to allow the user to view data being collected by the <see cref="Protocol"/>.
@@ -1355,6 +1359,37 @@ namespace Sensus
             set { _pushNotificationsSharedAccessSignature = value; }
         }
 
+        /// <summary>
+        /// We regenerate the offset every time a protocol starts, so there's 
+        /// no need to serialize it. Furthermore, we never want the offset
+        /// to be shared.
+        /// </summary>
+        /// <value>The gps longitude anonymization participant offset.</value>
+        [JsonIgnore]
+        public double GpsLongitudeAnonymizationParticipantOffset
+        {
+            get
+            {
+                return _gpsLongitudeAnonymizationParticipantOffset;
+            }
+            set
+            {
+                _gpsLongitudeAnonymizationParticipantOffset = value;
+            }
+        }
+
+        public double GpsLongitudeAnonymizationStudyOffset
+        {
+            get
+            {
+                return _gpsLongitudeAnonymizationStudyOffset;
+            }
+            set
+            {
+                _gpsLongitudeAnonymizationStudyOffset = value;
+            }
+        }
+
         [JsonIgnore]
         public bool StartIsScheduled
         {
@@ -1369,6 +1404,30 @@ namespace Sensus
                 }
 
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="Random"/> that is seeded specifically to the participant.
+        /// </summary>
+        /// <value>The seeded <see cref="Random"/>.</value>
+        [JsonIgnore]
+        public Random LongitudeOffsetParticipantSeededRandom
+        {
+            get
+            {
+                // seed the user-level GPS origin based on participant or device ID, preferring the former.
+                Random random;
+                if (!string.IsNullOrWhiteSpace(_participantId))
+                {
+                    random = new Random(_participantId.GetHashCode());
+                }
+                else
+                {
+                    random = new Random(SensusServiceHelper.Get().DeviceId.GetHashCode());
+                }
+
+                return random;
             }
         }
 
@@ -1445,23 +1504,30 @@ namespace Sensus
 
         private void Reset(bool resetId)
         {
+            Random random = new Random();
+
             // reset id and storage directory (directory might exist if deserializing the same protocol multiple times)
             if (resetId)
             {
                 _id = Guid.NewGuid().ToString();
+
+                // if this is a new study (indicated by resetting the ID), randomly initialize GPS longitude offset.
+                _gpsLongitudeAnonymizationStudyOffset = LongitudeOffsetGpsAnonymizer.GetOffset(random);
             }
 
-            // nobody else should receive the participant ID
+            // nobody else should receive the participant ID or participant anonymization offset
             _participantId = null;
+            _gpsLongitudeAnonymizationParticipantOffset = 0;
 
             // reset local storage
             ResetStorageDirectory();
 
             // pick a random time anchor within the first 1000 years AD. we got a strange exception in insights about the resulting datetime having a year
-            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same.
+            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same. we do this regardless of whether we're 
+            // resetting the protocol ID, as everyone should have a different anchor. in the future, perhaps we'll do something similar to what we do for GPS.
             try
             {
-                _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+                _randomTimeAnchor = new DateTimeOffset((long)(random.NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
             }
             catch (Exception) { }
 
@@ -1563,6 +1629,9 @@ namespace Sensus
                     _running = true;
                 }
 
+                // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
+                _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
+
                 _scheduledStartCallback = null;
 
                 CaptionChanged();
@@ -1593,7 +1662,7 @@ namespace Sensus
 
                 // start remote data store
                 if (startException == null)
-                {                    
+                {
                     try
                     {
                         if (_remoteDataStore == null)
@@ -1614,7 +1683,7 @@ namespace Sensus
 
                 // start probes
                 if (startException == null)
-                {                    
+                {
                     try
                     {
                         // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch

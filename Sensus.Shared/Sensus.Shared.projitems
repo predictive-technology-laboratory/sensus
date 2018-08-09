@@ -9,6 +9,8 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeStudyOffsetGpsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeParticipantOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -246,10 +248,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Anonymization\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
