@@ -28,7 +28,7 @@ namespace Sensus.Anonymization.Anonymizers
         {
             get
             {
-                return "Within Participant";
+                return "Offset Within Participant";
             }
         }
 
