@@ -734,7 +734,7 @@ sensus.get.timestamp.lags = function(datum)
 #' @examples 
 #' data.path = system.file("extdata", "example_data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
-#' sensus.plot.data.frequency.by.day(data$AccelerometerDatum)
+#' #sensus.plot.data.frequency.by.day(data$AccelerometerDatum)
 sensus.plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "Data Frequency", main = "Data Frequency")
 {
   datum.split.by.day = split(datum, as.factor(datum$DayOfYear))
