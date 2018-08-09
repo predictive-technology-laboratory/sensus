@@ -2155,6 +2155,33 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
+  <a id="Sensus_SensusServiceHelper_RegisterWithNotificationHub_" data-uid="Sensus.SensusServiceHelper.RegisterWithNotificationHub*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.SensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})">RegisterWithNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void RegisterWithNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">hubSas</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_SensusServiceHelper_RemoveExpiredScripts_" data-uid="Sensus.SensusServiceHelper.RemoveExpiredScripts*"></a>
   <h4 id="Sensus_SensusServiceHelper_RemoveExpiredScripts_System_Boolean_" data-uid="Sensus.SensusServiceHelper.RemoveExpiredScripts(System.Boolean)">RemoveExpiredScripts(Boolean)</h4>
   <div class="markdown level1 summary"></div>
@@ -2261,6 +2288,16 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_SensusServiceHelper_RequestNewPushNotificationToken_" data-uid="Sensus.SensusServiceHelper.RequestNewPushNotificationToken*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RequestNewPushNotificationToken" data-uid="Sensus.SensusServiceHelper.RequestNewPushNotificationToken">RequestNewPushNotificationToken()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void RequestNewPushNotificationToken()</code></pre>
+  </div>
   
   
   <a id="Sensus_SensusServiceHelper_RunVoicePromptAsync_" data-uid="Sensus.SensusServiceHelper.RunVoicePromptAsync*"></a>
@@ -2579,6 +2616,33 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
+  <a id="Sensus_SensusServiceHelper_UnregisterFromNotificationHub_" data-uid="Sensus.SensusServiceHelper.UnregisterFromNotificationHub*"></a>
+  <h4 id="Sensus_SensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.SensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})">UnregisterFromNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void UnregisterFromNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">hubSas</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_SensusServiceHelper_UnregisterProtocol_" data-uid="Sensus.SensusServiceHelper.UnregisterProtocol*"></a>
   <h4 id="Sensus_SensusServiceHelper_UnregisterProtocol_Sensus_Protocol_" data-uid="Sensus.SensusServiceHelper.UnregisterProtocol(Sensus.Protocol)">UnregisterProtocol(Protocol)</h4>
   <div class="markdown level1 summary"></div>
@@ -2607,13 +2671,30 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   
   
   <a id="Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_" data-uid="Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync" data-uid="Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync">UpdatePushNotificationRegistrationsAsync()</h4>
+  <h4 id="Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_System_Threading_CancellationToken_" data-uid="Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(System.Threading.CancellationToken)">UpdatePushNotificationRegistrationsAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task UpdatePushNotificationRegistrationsAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>

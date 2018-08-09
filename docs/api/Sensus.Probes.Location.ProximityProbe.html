@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class AltitudeProbe
+    <title>Class ProximityProbe
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class AltitudeProbe
+    <meta name="title" content="Class ProximityProbe
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,21 +76,22 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.AltitudeProbe">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.ProximityProbe">
   
   
-  <h1 id="Sensus_Probes_Location_AltitudeProbe" data-uid="Sensus.Probes.Location.AltitudeProbe" class="text-break">Class AltitudeProbe
+  <h1 id="Sensus_Probes_Location_ProximityProbe" data-uid="Sensus.Probes.Location.ProximityProbe" class="text-break">Class ProximityProbe
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Provides readings from proximity sensor in distance as <a class="xref" href="Sensus.Probes.Location.ProximityDatum.html">ProximityDatum</a> readings.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Probes.Probe.html">Probe</a></div>
     <div class="level2"><a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a></div>
-    <div class="level3"><span class="xref">AltitudeProbe</span></div>
-      <div class="level4"><a class="xref" href="Sensus.Android.Probes.Location.AndroidAltitudeProbe.html">AndroidAltitudeProbe</a></div>
-      <div class="level4"><a class="xref" href="Sensus.iOS.Probes.Location.iOSAltitudeProbe.html">iOSAltitudeProbe</a></div>
+    <div class="level3"><span class="xref">ProximityProbe</span></div>
+      <div class="level4"><a class="xref" href="Sensus.Android.Probes.Location.AndroidProximityProbe.html">AndroidProximityProbe</a></div>
+      <div class="level4"><a class="xref" href="Sensus.iOS.Probes.Location.iOSProximityProbe.html">iOSProximityProbe</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -203,28 +204,28 @@
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Location.html">Sensus.Probes.Location</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Probes_Location_AltitudeProbe_syntax">Syntax</h5>
+  <h5 id="Sensus_Probes_Location_ProximityProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class AltitudeProbe : ListeningProbe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class ProximityProbe : ListeningProbe, INotifyPropertyChanged</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe__ctor_" data-uid="Sensus.Probes.Location.AltitudeProbe.#ctor*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe__ctor" data-uid="Sensus.Probes.Location.AltitudeProbe.#ctor">AltitudeProbe()</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe__ctor_" data-uid="Sensus.Probes.Location.ProximityProbe.#ctor*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe__ctor" data-uid="Sensus.Probes.Location.ProximityProbe.#ctor">ProximityProbe()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected AltitudeProbe()</code></pre>
+    <pre><code class="lang-csharp hljs">protected ProximityProbe()</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_DatumType_" data-uid="Sensus.Probes.Location.AltitudeProbe.DatumType*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_DatumType" data-uid="Sensus.Probes.Location.AltitudeProbe.DatumType">DatumType</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_DatumType_" data-uid="Sensus.Probes.Location.ProximityProbe.DatumType*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_DatumType" data-uid="Sensus.Probes.Location.ProximityProbe.DatumType">DatumType</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -250,8 +251,8 @@
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DatumType">Probe.DatumType</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_DefaultKeepDeviceAwake_" data-uid="Sensus.Probes.Location.AltitudeProbe.DefaultKeepDeviceAwake*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_DefaultKeepDeviceAwake" data-uid="Sensus.Probes.Location.AltitudeProbe.DefaultKeepDeviceAwake">DefaultKeepDeviceAwake</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_DefaultKeepDeviceAwake_" data-uid="Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_DefaultKeepDeviceAwake" data-uid="Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake">DefaultKeepDeviceAwake</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -277,8 +278,8 @@
   <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_DefaultKeepDeviceAwake">ListeningProbe.DefaultKeepDeviceAwake</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_DeviceAsleepWarning_" data-uid="Sensus.Probes.Location.AltitudeProbe.DeviceAsleepWarning*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_DeviceAsleepWarning" data-uid="Sensus.Probes.Location.AltitudeProbe.DeviceAsleepWarning">DeviceAsleepWarning</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_DeviceAsleepWarning_" data-uid="Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_DeviceAsleepWarning" data-uid="Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning">DeviceAsleepWarning</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -304,8 +305,8 @@
   <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_DeviceAsleepWarning">ListeningProbe.DeviceAsleepWarning</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_DeviceAwakeWarning_" data-uid="Sensus.Probes.Location.AltitudeProbe.DeviceAwakeWarning*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_DeviceAwakeWarning" data-uid="Sensus.Probes.Location.AltitudeProbe.DeviceAwakeWarning">DeviceAwakeWarning</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_DeviceAwakeWarning_" data-uid="Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_DeviceAwakeWarning" data-uid="Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning">DeviceAwakeWarning</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -331,8 +332,8 @@
   <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_DeviceAwakeWarning">ListeningProbe.DeviceAwakeWarning</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_DisplayName_" data-uid="Sensus.Probes.Location.AltitudeProbe.DisplayName*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_DisplayName" data-uid="Sensus.Probes.Location.AltitudeProbe.DisplayName">DisplayName</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_DisplayName_" data-uid="Sensus.Probes.Location.ProximityProbe.DisplayName*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_DisplayName" data-uid="Sensus.Probes.Location.ProximityProbe.DisplayName">DisplayName</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -360,8 +361,8 @@
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_GetChartDataPointFromDatum_" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartDataPointFromDatum*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_GetChartDataPointFromDatum_Sensus_Datum_" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartDataPointFromDatum(Sensus.Datum)">GetChartDataPointFromDatum(Datum)</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_GetChartDataPointFromDatum_" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_GetChartDataPointFromDatum_Sensus_Datum_" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum(Sensus.Datum)">GetChartDataPointFromDatum(Datum)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -404,8 +405,8 @@
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartDataPointFromDatum_Sensus_Datum_">Probe.GetChartDataPointFromDatum(Datum)</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_GetChartPrimaryAxis_" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartPrimaryAxis*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_GetChartPrimaryAxis" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartPrimaryAxis">GetChartPrimaryAxis()</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_GetChartPrimaryAxis_" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_GetChartPrimaryAxis" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis">GetChartPrimaryAxis()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -431,8 +432,8 @@
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartPrimaryAxis">Probe.GetChartPrimaryAxis()</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_GetChartSecondaryAxis_" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartSecondaryAxis*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_GetChartSecondaryAxis" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartSecondaryAxis">GetChartSecondaryAxis()</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_GetChartSecondaryAxis_" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_GetChartSecondaryAxis" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis">GetChartSecondaryAxis()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -458,8 +459,8 @@
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSecondaryAxis">Probe.GetChartSecondaryAxis()</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeProbe_GetChartSeries_" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartSeries*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeProbe_GetChartSeries" data-uid="Sensus.Probes.Location.AltitudeProbe.GetChartSeries">GetChartSeries()</h4>
+  <a id="Sensus_Probes_Location_ProximityProbe_GetChartSeries_" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartSeries*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityProbe_GetChartSeries" data-uid="Sensus.Probes.Location.ProximityProbe.GetChartSeries">GetChartSeries()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

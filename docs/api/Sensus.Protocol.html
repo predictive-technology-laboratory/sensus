@@ -707,6 +707,60 @@ public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset_" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset*"></a>
+  <h4 id="Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset">GpsLongitudeAnonymizationParticipantOffset</h4>
+  <div class="markdown level1 summary"><p>We regenerate the offset every time a protocol starts, so there&apos;s 
+no need to serialize it. Furthermore, we never want the offset
+to be shared.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GpsLongitudeAnonymizationParticipantOffset { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><p>The gps longitude anonymization participant offset.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsLongitudeAnonymizationStudyOffset_" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset*"></a>
+  <h4 id="Sensus_Protocol_GpsLongitudeAnonymizationStudyOffset" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset">GpsLongitudeAnonymizationStudyOffset</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GpsLongitudeAnonymizationStudyOffset { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_GpsMinDistanceDelayMeters_" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters*"></a>
   <h4 id="Sensus_Protocol_GpsMinDistanceDelayMeters" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters">GpsMinDistanceDelayMeters</h4>
   <div class="markdown level1 summary"><p>The minimum distance in meters to wait between deliveries of GPS readings.</p>
@@ -912,6 +966,33 @@ public bool Groupable { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_LongitudeOffsetParticipantSeededRandom_" data-uid="Sensus.Protocol.LongitudeOffsetParticipantSeededRandom*"></a>
+  <h4 id="Sensus_Protocol_LongitudeOffsetParticipantSeededRandom" data-uid="Sensus.Protocol.LongitudeOffsetParticipantSeededRandom">LongitudeOffsetParticipantSeededRandom</h4>
+  <div class="markdown level1 summary"><p>Gets a <span class="xref">System.Random</span> that is seeded specifically to the participant.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Random LongitudeOffsetParticipantSeededRandom { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Random</span></td>
+        <td><p>The seeded <span class="xref">System.Random</span>.</p>
+</td>
       </tr>
     </tbody>
   </table>

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class AltitudeDatum
+    <title>Class HumidityDatum
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class AltitudeDatum
+    <meta name="title" content="Class HumidityDatum
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,10 +76,10 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.AltitudeDatum">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Context.HumidityDatum">
   
   
-  <h1 id="Sensus_Probes_Location_AltitudeDatum" data-uid="Sensus.Probes.Location.AltitudeDatum" class="text-break">Class AltitudeDatum
+  <h1 id="Sensus_Probes_Context_HumidityDatum" data-uid="Sensus.Probes.Context.HumidityDatum" class="text-break">Class HumidityDatum
   </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
@@ -87,7 +87,7 @@
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
-    <div class="level2"><span class="xref">AltitudeDatum</span></div>
+    <div class="level2"><span class="xref">HumidityDatum</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -134,23 +134,23 @@
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_OperatingSystem">Datum.OperatingSystem</a>
     </div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Location.html">Sensus.Probes.Location</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Context.html">Sensus.Probes.Context</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Probes_Location_AltitudeDatum_syntax">Syntax</h5>
+  <h5 id="Sensus_Probes_Context_HumidityDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AltitudeDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class HumidityDatum : Datum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum__ctor_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double)">AltitudeDatum(DateTimeOffset, Double)</h4>
+  <a id="Sensus_Probes_Context_HumidityDatum__ctor_" data-uid="Sensus.Probes.Context.HumidityDatum.#ctor*"></a>
+  <h4 id="Sensus_Probes_Context_HumidityDatum__ctor_System_DateTimeOffset_System_Double_" data-uid="Sensus.Probes.Context.HumidityDatum.#ctor(System.DateTimeOffset,System.Double)">HumidityDatum(DateTimeOffset, Double)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AltitudeDatum(DateTimeOffset timestamp, double hPa)</code></pre>
+    <pre><code class="lang-csharp hljs">public HumidityDatum(DateTimeOffset timestamp, double relativeHumidity)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -169,7 +169,7 @@
       </tr>
       <tr>
         <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">hPa</span></td>
+        <td><span class="parametername">relativeHumidity</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -178,35 +178,8 @@
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum_Altitude_" data-uid="Sensus.Probes.Location.AltitudeDatum.Altitude*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_Altitude" data-uid="Sensus.Probes.Location.AltitudeDatum.Altitude">Altitude</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty]
-[Anonymizable]
-public double Altitude { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Location_AltitudeDatum_DisplayDetail_" data-uid="Sensus.Probes.Location.AltitudeDatum.DisplayDetail*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_DisplayDetail" data-uid="Sensus.Probes.Location.AltitudeDatum.DisplayDetail">DisplayDetail</h4>
+  <a id="Sensus_Probes_Context_HumidityDatum_DisplayDetail_" data-uid="Sensus.Probes.Context.HumidityDatum.DisplayDetail*"></a>
+  <h4 id="Sensus_Probes_Context_HumidityDatum_DisplayDetail" data-uid="Sensus.Probes.Context.HumidityDatum.DisplayDetail">DisplayDetail</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -232,9 +205,36 @@ public double Altitude { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_DisplayDetail">Datum.DisplayDetail</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Location.AltitudeDatum.StringPlaceholderValue*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Location.AltitudeDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
-  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the altitude.</p>
+  <a id="Sensus_Probes_Context_HumidityDatum_RelativeHumidity_" data-uid="Sensus.Probes.Context.HumidityDatum.RelativeHumidity*"></a>
+  <h4 id="Sensus_Probes_Context_HumidityDatum_RelativeHumidity" data-uid="Sensus.Probes.Context.HumidityDatum.RelativeHumidity">RelativeHumidity</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Anonymizable]
+[DoubleProbeTriggerProperty(&quot;Relative Humidity&quot;)]
+public double RelativeHumidity { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Context_HumidityDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue*"></a>
+  <h4 id="Sensus_Probes_Context_HumidityDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
+  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the relative Humidity.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -263,8 +263,8 @@ public double Altitude { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum_ToString_" data-uid="Sensus.Probes.Location.AltitudeDatum.ToString*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_ToString" data-uid="Sensus.Probes.Location.AltitudeDatum.ToString">ToString()</h4>
+  <a id="Sensus_Probes_Context_HumidityDatum_ToString_" data-uid="Sensus.Probes.Context.HumidityDatum.ToString*"></a>
+  <h4 id="Sensus_Probes_Context_HumidityDatum_ToString" data-uid="Sensus.Probes.Context.HumidityDatum.ToString">ToString()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

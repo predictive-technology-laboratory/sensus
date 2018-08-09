@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class Anonymizer
+    <title>Class LongitudeStudyOffsetGpsAnonymizer
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class Anonymizer
+    <meta name="title" content="Class LongitudeStudyOffsetGpsAnonymizer
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,55 +76,69 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer">
+            <article class="content wrap" id="_content" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer">
   
   
-  <h1 id="Sensus_Anonymization_Anonymizers_Anonymizer" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer" class="text-break">Class Anonymizer
+  <h1 id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer" class="text-break">Class LongitudeStudyOffsetGpsAnonymizer
   </h1>
-  <div class="markdown level0 summary"><p>In-app anonymization is provided by applying various transformations to facets of the data
-that are generated. For example, numeric values can be rounded and textual data can be 
-passed through one-way hash functions.</p>
+  <div class="markdown level0 summary"><p>Anonymizer that operates by adding a random offset to the longitude 
+of a GPS coordinate pair. The offset is chosen to be study-specific. 
+Thus, the resulting coordinates are only meaningful relative to other 
+coordinates within a single study. They have no meaning in absolute 
+terms, and they have no meaning relative to data from other studies.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">Anonymizer</span></div>
-      <div class="level2"><a class="xref" href="Sensus.Anonymization.Anonymizers.DateTimeOffsetTimelineAnonymizer.html">DateTimeOffsetTimelineAnonymizer</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Anonymization.Anonymizers.DoubleRoundingAnonymizer.html">DoubleRoundingAnonymizer</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html">LongitudeOffsetGpsAnonymizer</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Anonymization.Anonymizers.StringHashAnonymizer.html">StringHashAnonymizer</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Anonymization.Anonymizers.ValueOmittingAnonymizer.html">ValueOmittingAnonymizer</a></div>
+    <div class="level1"><a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a></div>
+    <div class="level2"><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html">LongitudeOffsetGpsAnonymizer</a></div>
+    <div class="level3"><span class="xref">LongitudeStudyOffsetGpsAnonymizer</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_System_Random_">LongitudeOffsetGpsAnonymizer.GetOffset(Random)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_Apply_System_Object_Sensus_Protocol_">LongitudeOffsetGpsAnonymizer.Apply(Object, Protocol)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_Equals_System_Object_">Anonymizer.Equals(Object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_GetHashCode">Anonymizer.GetHashCode()</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Anonymization.Anonymizers.html">Sensus.Anonymization.Anonymizers</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Anonymization_Anonymizers_Anonymizer_syntax">Syntax</h5>
+  <h5 id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class Anonymizer : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public class LongitudeStudyOffsetGpsAnonymizer : LongitudeOffsetGpsAnonymizer</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_Anonymization_Anonymizers_Anonymizer__ctor_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.#ctor*"></a>
-  <h4 id="Sensus_Anonymization_Anonymizers_Anonymizer__ctor" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.#ctor">Anonymizer()</h4>
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer__ctor_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.#ctor*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer__ctor" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.#ctor">LongitudeStudyOffsetGpsAnonymizer()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected Anonymizer()</code></pre>
+    <pre><code class="lang-csharp hljs">public LongitudeStudyOffsetGpsAnonymizer()</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
   
   
-  <a id="Sensus_Anonymization_Anonymizers_Anonymizer_DisplayText_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.DisplayText*"></a>
-  <h4 id="Sensus_Anonymization_Anonymizers_Anonymizer_DisplayText" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.DisplayText">DisplayText</h4>
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_DisplayText_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_DisplayText" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText">DisplayText</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract string DisplayText { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public override string DisplayText { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -141,18 +155,19 @@ passed through one-way hash functions.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_DisplayText">Anonymizer.DisplayText</a></div>
   <h3 id="methods">Methods
   </h3>
   
   
-  <a id="Sensus_Anonymization_Anonymizers_Anonymizer_Apply_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.Apply*"></a>
-  <h4 id="Sensus_Anonymization_Anonymizers_Anonymizer_Apply_System_Object_Sensus_Protocol_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.Apply(System.Object,Sensus.Protocol)">Apply(Object, Protocol)</h4>
-  <div class="markdown level1 summary"><p>Applies this anonymizer the value of a datum property. It is important to always return the same datatype as is passed in.</p>
-</div>
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_GetOffset_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_GetOffset_Sensus_Protocol_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)">GetOffset(Protocol)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract object Apply(object value, Protocol protocol)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override double GetOffset(Protocol protocol)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -164,58 +179,9 @@ passed through one-way hash functions.</p>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td><span class="parametername">value</span></td>
-        <td><p>Datum property value to anonymize.</p>
-</td>
-      </tr>
       <tr>
         <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
         <td><span class="parametername">protocol</span></td>
-        <td><p>Protocol that owns the datum being anonymized.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Anonymization_Anonymizers_Anonymizer_Equals_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.Equals*"></a>
-  <h4 id="Sensus_Anonymization_Anonymizers_Anonymizer_Equals_System_Object_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.Equals(System.Object)">Equals(Object)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td><span class="parametername">obj</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -230,36 +196,13 @@ passed through one-way hash functions.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Double</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Sensus_Anonymization_Anonymizers_Anonymizer_GetHashCode_" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.GetHashCode*"></a>
-  <h4 id="Sensus_Anonymization_Anonymizers_Anonymizer_GetHashCode" data-uid="Sensus.Anonymization.Anonymizers.Anonymizer.GetHashCode">GetHashCode()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_Sensus_Protocol_">LongitudeOffsetGpsAnonymizer.GetOffset(Protocol)</a></div>
 </article>
           </div>
           

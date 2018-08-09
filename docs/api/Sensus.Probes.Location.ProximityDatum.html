@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class AltitudeDatum
+    <title>Class ProximityDatum
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class AltitudeDatum
+    <meta name="title" content="Class ProximityDatum
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,18 +76,23 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.AltitudeDatum">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.ProximityDatum">
   
   
-  <h1 id="Sensus_Probes_Location_AltitudeDatum" data-uid="Sensus.Probes.Location.AltitudeDatum" class="text-break">Class AltitudeDatum
+  <h1 id="Sensus_Probes_Location_ProximityDatum" data-uid="Sensus.Probes.Location.ProximityDatum" class="text-break">Class ProximityDatum
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>The proximity sensor is usually used to determine how far away a person&apos;s head is 
+from the face of a handset device (for example, when a user is making or receiving 
+a phone call). Most proximity sensors return the absolute distance, in cm, but 
+some return only near and far values. The behavior of this probe differs on Android
+and iOS, so be sure to read the relevant documentation for those probes.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
-    <div class="level2"><span class="xref">AltitudeDatum</span></div>
+    <div class="level2"><span class="xref">ProximityDatum</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -136,21 +141,21 @@
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Location.html">Sensus.Probes.Location</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Probes_Location_AltitudeDatum_syntax">Syntax</h5>
+  <h5 id="Sensus_Probes_Location_ProximityDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AltitudeDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class ProximityDatum : Datum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum__ctor_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double)">AltitudeDatum(DateTimeOffset, Double)</h4>
+  <a id="Sensus_Probes_Location_ProximityDatum__ctor_" data-uid="Sensus.Probes.Location.ProximityDatum.#ctor*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityDatum__ctor_System_DateTimeOffset_System_Double_System_Double_" data-uid="Sensus.Probes.Location.ProximityDatum.#ctor(System.DateTimeOffset,System.Double,System.Double)">ProximityDatum(DateTimeOffset, Double, Double)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AltitudeDatum(DateTimeOffset timestamp, double hPa)</code></pre>
+    <pre><code class="lang-csharp hljs">public ProximityDatum(DateTimeOffset timestamp, double distance, double maxDistance)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -169,7 +174,12 @@
       </tr>
       <tr>
         <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">hPa</span></td>
+        <td><span class="parametername">distance</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">maxDistance</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -178,35 +188,8 @@
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum_Altitude_" data-uid="Sensus.Probes.Location.AltitudeDatum.Altitude*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_Altitude" data-uid="Sensus.Probes.Location.AltitudeDatum.Altitude">Altitude</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty]
-[Anonymizable]
-public double Altitude { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Location_AltitudeDatum_DisplayDetail_" data-uid="Sensus.Probes.Location.AltitudeDatum.DisplayDetail*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_DisplayDetail" data-uid="Sensus.Probes.Location.AltitudeDatum.DisplayDetail">DisplayDetail</h4>
+  <a id="Sensus_Probes_Location_ProximityDatum_DisplayDetail_" data-uid="Sensus.Probes.Location.ProximityDatum.DisplayDetail*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityDatum_DisplayDetail" data-uid="Sensus.Probes.Location.ProximityDatum.DisplayDetail">DisplayDetail</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -232,9 +215,68 @@ public double Altitude { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_DisplayDetail">Datum.DisplayDetail</a></div>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Location.AltitudeDatum.StringPlaceholderValue*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Location.AltitudeDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
-  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the altitude.</p>
+  <a id="Sensus_Probes_Location_ProximityDatum_Distance_" data-uid="Sensus.Probes.Location.ProximityDatum.Distance*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityDatum_Distance" data-uid="Sensus.Probes.Location.ProximityDatum.Distance">Distance</h4>
+  <div class="markdown level1 summary"><p>Most proximity sensors return the absolute distance, in cm, 
+but some return only near and far values.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty]
+[Anonymizable]
+public double Distance { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_ProximityDatum_MaxDistance_" data-uid="Sensus.Probes.Location.ProximityDatum.MaxDistance*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityDatum_MaxDistance" data-uid="Sensus.Probes.Location.ProximityDatum.MaxDistance">MaxDistance</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty(&quot;Max. Distance&quot;)]
+[Anonymizable]
+public double MaxDistance { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_ProximityDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
+  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the distance the phone is from an object 
+and the maximum distance that the phone reports.  If the distance equals the
+maximum distance then that is a sign that the phone only reports near and far and
+doesn&apos;t report an accurate distance.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -263,8 +305,8 @@ public double Altitude { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum_ToString_" data-uid="Sensus.Probes.Location.AltitudeDatum.ToString*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_ToString" data-uid="Sensus.Probes.Location.AltitudeDatum.ToString">ToString()</h4>
+  <a id="Sensus_Probes_Location_ProximityDatum_ToString_" data-uid="Sensus.Probes.Location.ProximityDatum.ToString*"></a>
+  <h4 id="Sensus_Probes_Location_ProximityDatum_ToString" data-uid="Sensus.Probes.Location.ProximityDatum.ToString">ToString()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

@@ -118,6 +118,27 @@ will have no meaningful interpretation.</p>
       <h4><a class="xref" href="Sensus.Anonymization.Anonymizers.DoubleRoundingThousandthsAnonymizer.html">DoubleRoundingThousandthsAnonymizer</a></h4>
       <section><p>Rounds numeric values to the hundreds place (e.g., 123.1235 becomes 123.124).</p>
 </section>
+      <h4><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html">LongitudeOffsetGpsAnonymizer</a></h4>
+      <section><p>Base class for anonymizers that operate by adding a random offset
+to the longitude of a GPS coordinate pair. Adding an offset to 
+latitude is a generally bad idea because the distance between degrees
+of longitude vary tremendously across the latitudes.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html">LongitudeParticipantOffsetGpsAnonymizer</a></h4>
+      <section><p>Anonymizer that operates by adding a random offset to the longitude 
+of a GPS coordinate pair. The offset is chosen to be participant-
+specific. Thus, the resulting coordinates are only meaningful relative 
+to other coordinates within a single participant&apos;s data set. They have 
+no meaning in absolute terms, and they have no meaning relative to other 
+participants&apos; data.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html">LongitudeStudyOffsetGpsAnonymizer</a></h4>
+      <section><p>Anonymizer that operates by adding a random offset to the longitude 
+of a GPS coordinate pair. The offset is chosen to be study-specific. 
+Thus, the resulting coordinates are only meaningful relative to other 
+coordinates within a single study. They have no meaning in absolute 
+terms, and they have no meaning relative to data from other studies.</p>
+</section>
       <h4><a class="xref" href="Sensus.Anonymization.Anonymizers.StringHashAnonymizer.html">StringHashAnonymizer</a></h4>
       <section><p>Computes a cryptographic, one-way has of a textual string.</p>
 </section>

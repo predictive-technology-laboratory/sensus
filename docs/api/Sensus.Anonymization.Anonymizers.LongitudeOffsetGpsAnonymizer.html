@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class AltitudeDatum
+    <title>Class LongitudeOffsetGpsAnonymizer
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class AltitudeDatum
+    <meta name="title" content="Class LongitudeOffsetGpsAnonymizer
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.31.0.0">
     
@@ -76,81 +76,66 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.AltitudeDatum">
+            <article class="content wrap" id="_content" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer">
   
   
-  <h1 id="Sensus_Probes_Location_AltitudeDatum" data-uid="Sensus.Probes.Location.AltitudeDatum" class="text-break">Class AltitudeDatum
+  <h1 id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer" class="text-break">Class LongitudeOffsetGpsAnonymizer
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Base class for anonymizers that operate by adding a random offset
+to the longitude of a GPS coordinate pair. Adding an offset to 
+latitude is a generally bad idea because the distance between degrees
+of longitude vary tremendously across the latitudes.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
-    <div class="level2"><span class="xref">AltitudeDatum</span></div>
+    <div class="level1"><a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a></div>
+    <div class="level2"><span class="xref">LongitudeOffsetGpsAnonymizer</span></div>
+      <div class="level3"><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html">LongitudeParticipantOffsetGpsAnonymizer</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html">LongitudeStudyOffsetGpsAnonymizer</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_FromJSON_System_String_">Datum.FromJSON(String)</a>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_Equals_System_Object_">Anonymizer.Equals(Object)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_GetJSON_Sensus_Anonymization_AnonymizedJsonContractResolver_System_Boolean_">Datum.GetJSON(AnonymizedJsonContractResolver, Boolean)</a>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_GetHashCode">Anonymizer.GetHashCode()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_GetHashCode">Datum.GetHashCode()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Equals_System_Object_">Datum.Equals(Object)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Datum.Id</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_DeviceId">Datum.DeviceId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Datum.Timestamp</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_ProtocolId">Datum.ProtocolId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Anonymized">Datum.Anonymized</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_BuildId">Datum.BuildId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_ParticipantId">Datum.ParticipantId</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_DeviceManufacturer">Datum.DeviceManufacturer</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_DeviceModel">Datum.DeviceModel</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_OperatingSystem">Datum.OperatingSystem</a>
+      <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_DisplayText">Anonymizer.DisplayText</a>
     </div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Location.html">Sensus.Probes.Location</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Anonymization.Anonymizers.html">Sensus.Anonymization.Anonymizers</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Probes_Location_AltitudeDatum_syntax">Syntax</h5>
+  <h5 id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AltitudeDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class LongitudeOffsetGpsAnonymizer : Anonymizer</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_Probes_Location_AltitudeDatum__ctor_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double)">AltitudeDatum(DateTimeOffset, Double)</h4>
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer__ctor_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.#ctor*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer__ctor" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.#ctor">LongitudeOffsetGpsAnonymizer()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AltitudeDatum(DateTimeOffset timestamp, double hPa)</code></pre>
+    <pre><code class="lang-csharp hljs">protected LongitudeOffsetGpsAnonymizer()</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_Apply_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_Apply_System_Object_Sensus_Protocol_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply(System.Object,Sensus.Protocol)">Apply(Object, Protocol)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override object Apply(object value, Protocol protocol)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -163,114 +148,17 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.DateTimeOffset</span></td>
-        <td><span class="parametername">timestamp</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">hPa</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="properties">Properties
-  </h3>
-  
-  
-  <a id="Sensus_Probes_Location_AltitudeDatum_Altitude_" data-uid="Sensus.Probes.Location.AltitudeDatum.Altitude*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_Altitude" data-uid="Sensus.Probes.Location.AltitudeDatum.Altitude">Altitude</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty]
-[Anonymizable]
-public double Altitude { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Location_AltitudeDatum_DisplayDetail_" data-uid="Sensus.Probes.Location.AltitudeDatum.DisplayDetail*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_DisplayDetail" data-uid="Sensus.Probes.Location.AltitudeDatum.DisplayDetail">DisplayDetail</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string DisplayDetail { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_DisplayDetail">Datum.DisplayDetail</a></div>
-  
-  
-  <a id="Sensus_Probes_Location_AltitudeDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Location.AltitudeDatum.StringPlaceholderValue*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Location.AltitudeDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
-  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the altitude.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override object StringPlaceholderValue { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
         <td><span class="xref">System.Object</span></td>
-        <td><p>The string placeholder value.</p>
-</td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_StringPlaceholderValue">Datum.StringPlaceholderValue</a></div>
-  <h3 id="methods">Methods
-  </h3>
-  
-  
-  <a id="Sensus_Probes_Location_AltitudeDatum_ToString_" data-uid="Sensus.Probes.Location.AltitudeDatum.ToString*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum_ToString" data-uid="Sensus.Probes.Location.AltitudeDatum.ToString">ToString()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
-  </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -281,13 +169,97 @@ public double Altitude { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Object</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
+  <div><a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html#Sensus_Anonymization_Anonymizers_Anonymizer_Apply_System_Object_Sensus_Protocol_">Anonymizer.Apply(Object, Protocol)</a></div>
+  
+  
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_Sensus_Protocol_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)">GetOffset(Protocol)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract double GetOffset(Protocol protocol)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset*"></a>
+  <h4 id="Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_System_Random_" data-uid="Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(System.Random)">GetOffset(Random)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double GetOffset(Random random)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Random</span></td>
+        <td><span class="parametername">random</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           
