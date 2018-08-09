@@ -187,46 +187,7 @@ namespace Sensus.Probes
                 }
 #endif
 
-                TimeSpan interval = new TimeSpan(0, 0, 0, 0, _pollingSleepDurationMS);
-
-                double value = -1;
-                string unit;
-                int decimalPlaces = 0;
-
-                if (interval.TotalSeconds <= 60)
-                {
-                    value = interval.TotalSeconds;
-                    unit = "second";
-                    decimalPlaces = 1;
-                }
-                else if (interval.TotalMinutes <= 60)
-                {
-                    value = interval.TotalMinutes;
-                    unit = "minute";
-                }
-                else if (interval.TotalHours <= 24)
-                {
-                    value = interval.TotalHours;
-                    unit = "hour";
-                }
-                else
-                {
-                    value = interval.TotalDays;
-                    unit = "day";
-                }
-
-                value = Math.Round(value, decimalPlaces);
-
-                string intervalStr;
-
-                if (value == 1)
-                {
-                    intervalStr = "Once per " + unit + ".";
-                }
-                else
-                {
-                    intervalStr = "Every " + value + " " + unit + "s.";
-                }
+                string intervalStr = TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
 
 #if __IOS__
                 if (_significantChangePoll)

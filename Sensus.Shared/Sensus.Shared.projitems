@@ -249,6 +249,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

@@ -258,6 +258,11 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        public override string StorageDescription
+        {
+            get { return "Data will be transferred " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower(); }
+        }
+
         public AmazonS3RemoteDataStore()
         {
             _region = _bucket = _folder = null;

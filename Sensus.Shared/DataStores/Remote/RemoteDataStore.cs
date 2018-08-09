@@ -170,6 +170,9 @@ namespace Sensus.DataStores.Remote
         [JsonIgnore]
         public abstract bool CanRetrieveWrittenData { get; }
 
+        [JsonIgnore]
+        public abstract string StorageDescription { get; }
+
         protected RemoteDataStore()
         {
             _writeTimeoutMinutes = 5;

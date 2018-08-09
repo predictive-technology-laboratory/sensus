@@ -18,6 +18,7 @@ using System.Threading;
 using System;
 using System.Threading.Tasks;
 using System.IO;
+using Sensus.Extensions;
 
 namespace Sensus.DataStores.Remote
 {
@@ -41,6 +42,11 @@ namespace Sensus.DataStores.Remote
             {
                 return false;
             }
+        }
+
+        public override string StorageDescription
+        {
+            get { return "Data will be discarded " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower(); }
         }
 
         public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
