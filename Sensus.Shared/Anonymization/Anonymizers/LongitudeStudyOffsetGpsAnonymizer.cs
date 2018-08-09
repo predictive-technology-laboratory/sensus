@@ -12,28 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using Sensus.Extensions;
-
 namespace Sensus.Anonymization.Anonymizers
 {
     /// <summary>
-    /// Base class for anonymizers that operate by changing the base (origin)
-    /// of the sensed GPS coordinates.
+    /// Anonymizer that operates by adding a random offset to the longitude 
+    /// of a GPS coordinate pair. The offset is chosen to be study-specific. 
+    /// Thus, the resulting coordinates are only meaningful relative to other 
+    /// coordinates within a single study. They have no meaning in absolute 
+    /// terms, and they have no meaning relative to data from other studies.
     /// </summary>
-    public abstract class RebasingGpsAnonymizer : Anonymizer
+    public class LongitudeStudyOffsetGpsAnonymizer : LongitudeOffsetGpsAnonymizer
     {
-        public static Tuple<double, double> GetOrigin(Random random)
+        public override string DisplayText
         {
-            return new Tuple<double, double>(random.NextDouble(-90, 90), random.NextDouble(-180, 180));
+            get
+            {
+                return "Within Study";
+            }
         }
 
-        /// <summary>
-        /// Gets the origin.
-        /// </summary>
-        /// <returns>The origin.</returns>
-        /// <param name="protocol">Protocol.</param>
-        public abstract double GetOrigin(Protocol protocol);
+        protected override double GetOffset(Protocol protocol)
+        {
+            return protocol.GpsLongitudeAnonymizationStudyOffset;
+        }
     }
 }

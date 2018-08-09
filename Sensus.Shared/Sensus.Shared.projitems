@@ -9,11 +9,8 @@
     <Import_RootNamespace>Sensus</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsStudyLatitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsStudyLongitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsParticipantLatitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsParticipantLongitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeStudyOffsetGpsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeParticipantOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -251,8 +248,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsLatitudeAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RebasingGpsLongitudeAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

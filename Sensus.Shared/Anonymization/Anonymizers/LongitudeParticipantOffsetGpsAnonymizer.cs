@@ -15,25 +15,26 @@
 namespace Sensus.Anonymization.Anonymizers
 {
     /// <summary>
-    /// Anonymizer that operates by changing the base (origin) of the longitude 
-    /// of a GPS coordinate pair. The base is chosen to be study-specific.
-    /// Thus, the resulting coordinates are only meaningful relative to other 
-    /// coordinates within a single study. They have no meaning in absolute 
-    /// terms, and they have no meaning relative to data from other studies.
+    /// Anonymizer that operates by adding a random offset to the longitude 
+    /// of a GPS coordinate pair. The offset is chosen to be participant-
+    /// specific. Thus, the resulting coordinates are only meaningful relative 
+    /// to other coordinates within a single participant's data set. They have 
+    /// no meaning in absolute terms, and they have no meaning relative to other 
+    /// participants' data.
     /// </summary>
-    public class RebasingGpsStudyLongitudeAnonymizer : RebasingGpsLongitudeAnonymizer
+    public class LongitudeParticipantOffsetGpsAnonymizer : LongitudeOffsetGpsAnonymizer
     {
         public override string DisplayText
         {
             get
             {
-                return "Study Level";
+                return "Within Participant";
             }
         }
 
-        public override double GetOrigin(Protocol protocol)
+        protected override double GetOffset(Protocol protocol)
         {
-            return protocol.GpsAnonymizationProtocolOrigin.Item2;
+            return protocol.GpsLongitudeAnonymizationParticipantOffset;
         }
     }
 }

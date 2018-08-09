@@ -542,8 +542,8 @@ namespace Sensus
         private string _participantId;
         private string _pushNotificationsSharedAccessSignature;
         private string _pushNotificationsHub;
-        private Tuple<double, double> _gpsAnonymizationProtocolOrigin;
-        private Tuple<double, double> _gpsAnonymizationUserOrigin;
+        private double _gpsLongitudeAnonymizationParticipantOffset;
+        private double _gpsLongitudeAnonymizationStudyOffset;
 
         private readonly object _locker = new object();
 
@@ -1359,27 +1359,27 @@ namespace Sensus
             set { _pushNotificationsSharedAccessSignature = value; }
         }
 
-        public Tuple<double, double> GpsAnonymizationProtocolOrigin
+        public double GpsLongitudeAnonymizationParticipantOffset
         {
             get
             {
-                return _gpsAnonymizationProtocolOrigin;
+                return _gpsLongitudeAnonymizationParticipantOffset;
             }
             set
             {
-                _gpsAnonymizationProtocolOrigin = value;
+                _gpsLongitudeAnonymizationParticipantOffset = value;
             }
         }
 
-        public Tuple<double, double> GpsAnonymizationUserOrigin
+        public double GpsLongitudeAnonymizationStudyOffset
         {
             get
             {
-                return _gpsAnonymizationUserOrigin;
+                return _gpsLongitudeAnonymizationStudyOffset;
             }
             set
             {
-                _gpsAnonymizationUserOrigin = value;
+                _gpsLongitudeAnonymizationStudyOffset = value;
             }
         }
 
@@ -1400,8 +1400,12 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Gets a <see cref="Random"/> that is seeded specifically to the participant.
+        /// </summary>
+        /// <value>The seeded <see cref="Random"/>.</value>
         [JsonIgnore]
-        public Random RebasingGpsAnonymizerRandom
+        public Random LongitudeOffsetParticipantSeededRandom
         {
             get
             {
@@ -1500,8 +1504,8 @@ namespace Sensus
             {
                 _id = Guid.NewGuid().ToString();
 
-                // if this is a new study (indicated by resetting the ID), randomly initialize GPS origin.
-                _gpsAnonymizationProtocolOrigin = RebasingGpsAnonymizer.GetOrigin(random);
+                // if this is a new study (indicated by resetting the ID), randomly initialize GPS longitude offset.
+                _gpsLongitudeAnonymizationStudyOffset = LongitudeOffsetGpsAnonymizer.GetOffset(random);
             }
 
             // nobody else should receive the participant ID
@@ -1617,7 +1621,8 @@ namespace Sensus
                     _running = true;
                 }
 
-                _gpsAnonymizationUserOrigin = RebasingGpsAnonymizer.GetOrigin(RebasingGpsAnonymizerRandom);
+                // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
+                _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
 
                 _scheduledStartCallback = null;
 
