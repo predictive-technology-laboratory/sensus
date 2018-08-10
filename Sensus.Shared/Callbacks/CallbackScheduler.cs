@@ -30,6 +30,7 @@ namespace Sensus.Callbacks
     public abstract class CallbackScheduler : ICallbackScheduler
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
+        public const string SENSUS_CALLBACK_INVOCATION_ID_KEY = "SENSUS-CALLBACK-INVOCATION-ID";
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
@@ -50,6 +51,7 @@ namespace Sensus.Callbacks
             }
             else if (_idCallback.TryAdd(callback.Id, callback))
             {
+                callback.InvocationId = Guid.NewGuid().ToString();
                 callback.NextExecution = DateTime.Now + callback.Delay;
                 callback.State = ScheduledCallbackState.Scheduled;
 
@@ -95,10 +97,11 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <returns>Async task</returns>
         /// <param name="callback">Callback to raise.</param>
+        /// <param name="invocationId">Identifier of invocation.</param>
         /// <param name="notifyUser">If set to <c>true</c>, then notify user that the callback is being raised.</param>
         /// <param name="scheduleRepeatCallback">Platform-specific action to execute to schedule the next execution of the callback.</param>
         /// <param name="letDeviceSleepCallback">Action to execute when the system should be allowed to sleep.</param>
-        public virtual Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -109,20 +112,29 @@ namespace Sensus.Callbacks
                         throw new NullReferenceException("Attemped to raise null callback.");
                     }
 
-                    // the same callback cannot be run multiple times concurrently, so drop the current callback if it's already running. multiple
+                    // the same callback must not be run multiple times concurrently, so drop the current callback if it's already running. multiple
                     // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until the
                     // the callback has finished executing.
-                    bool runCallbackNow = false;
+                    string initiationError = null;
                     lock (callback)
                     {
-                        if (callback.State == ScheduledCallbackState.Scheduled)
+                        if (callback.State != ScheduledCallbackState.Scheduled)
                         {
-                            runCallbackNow = true;
+                            initiationError += "Callback " + callback.Id + " is not scheduled. Current state:  " + callback.State;
+                        }
+
+                        if (invocationId != callback.InvocationId)
+                        {
+                            initiationError += "Invocation ID provided for callback " + callback.Id + " does not match the one on record.";
+                        }
+
+                        if (initiationError == null)
+                        {
                             callback.State = ScheduledCallbackState.Running;
                         }
                     }
 
-                    if (runCallbackNow)
+                    if (initiationError == null)
                     {
                         try
                         {
@@ -201,6 +213,7 @@ namespace Sensus.Callbacks
                                         }
                                     }
 
+                                    callback.InvocationId = Guid.NewGuid().ToString();  // set this before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
                                     callback.State = ScheduledCallbackState.Scheduled;
 
                                     scheduleRepeatCallback();
@@ -214,7 +227,7 @@ namespace Sensus.Callbacks
                     }
                     else
                     {
-                        throw new Exception("Callback " + callback.Id + " was already running. Not running again.");
+                        SensusServiceHelper.Get().Logger.Log("Initiation error for callback " + callback.Id + ":  " + initiationError, LoggingLevel.Normal, GetType());
                     }
                 }
                 catch (Exception ex)

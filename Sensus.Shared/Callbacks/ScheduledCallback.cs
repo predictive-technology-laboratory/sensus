@@ -45,6 +45,12 @@ namespace Sensus.Callbacks
         public string Id { get; set; }
 
         /// <summary>
+        /// Gets or sets the invocation identifier.
+        /// </summary>
+        /// <value>The invocation identifier.</value>
+        public string InvocationId { get; set; }
+
+        /// <summary>
         /// Gets or sets the callback's protocol.
         /// </summary>
         /// <value>The protocol identifier.</value>

@@ -46,6 +46,7 @@ namespace Sensus.Android.Callbacks
             callbackIntent.SetAction(callback.Id);
             callbackIntent.PutExtra(Notifier.DISPLAY_PAGE_KEY, callback.DisplayPage.ToString());
             callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
             return callbackIntent;
         }
 
@@ -106,7 +107,7 @@ namespace Sensus.Android.Callbacks
 
         public bool IsCallback(Intent intent)
         {
-            return intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false);
+            return intent.GetBooleanExtra(SENSUS_CALLBACK_KEY, false);
         }
 
         public Task ServiceCallbackAsync(Intent intent)
@@ -132,12 +133,15 @@ namespace Sensus.Android.Callbacks
                 {                    
                     bool wakeLockReleased = false;
 
+                    string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
+
                     // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                    await RaiseCallbackAsync(callback, true,
+                    await RaiseCallbackAsync(callback, invocationId, true,
 
                         // schedule a new alarm for the same callback at the desired time.
                         () =>
                         {
+                            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
                             ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
                         },
 
