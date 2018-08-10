@@ -282,7 +282,7 @@ namespace Sensus.UI.Inputs
 
                 _slider.Minimum = _minimum;
                 _slider.Maximum = _maximum;
-                _slider.Value = _minimum;  // set to minimum so that the slider does not indicate a value
+                _slider.Value = _minimum;  // set to minimum so that the slider does not indicate an initial value (e.g., in the case of ranges with a negative minimum)
                 _slider.ValueChanged += (sender, e) =>
                 {
                     double newIncrementalValue = GetIncrementalValue(e.NewValue);
