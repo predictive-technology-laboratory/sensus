@@ -22286,6 +22286,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop
   nameWithType: AmazonS3RemoteDataStore.Stop
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StorageDescription
+  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  nameWithType: AmazonS3RemoteDataStore.StorageDescription
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription*
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StorageDescription_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  nameWithType: AmazonS3RemoteDataStore.StorageDescription
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)
   name: TestHealth(ref List<Tuple<String, Dictionary<String, String>>>)
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____
@@ -22430,6 +22442,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync
   nameWithType: ConsoleRemoteDataStore.SendPushNotificationTokenAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_StorageDescription
+  commentId: P:Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  nameWithType: ConsoleRemoteDataStore.StorageDescription
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription*
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_StorageDescription_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  nameWithType: ConsoleRemoteDataStore.StorageDescription
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
   name: WriteDataStreamAsync(Stream, String, String, CancellationToken)
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_
@@ -22619,6 +22643,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Stop
   fullName: Sensus.DataStores.Remote.RemoteDataStore.Stop
   nameWithType: RemoteDataStore.Stop
+- uid: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_StorageDescription
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  nameWithType: RemoteDataStore.StorageDescription
+- uid: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription*
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_StorageDescription_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  nameWithType: RemoteDataStore.StorageDescription
 - uid: Sensus.DataStores.Remote.RemoteDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)
   name: TestHealth(ref List<Tuple<String, Dictionary<String, String>>>)
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____
@@ -23513,6 +23549,24 @@ references:
   commentId: Overload:Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf
   fullName: Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf
   nameWithType: NumericExtensions.RoundToWholePercentageOf
+- uid: Sensus.Extensions.TimeSpanExtensions
+  name: TimeSpanExtensions
+  href: api/Sensus.Extensions.TimeSpanExtensions.html
+  commentId: T:Sensus.Extensions.TimeSpanExtensions
+  fullName: Sensus.Extensions.TimeSpanExtensions
+  nameWithType: TimeSpanExtensions
+- uid: Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
+  name: GetIntervalString(TimeSpan)
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetIntervalString_System_TimeSpan_
+  commentId: M:Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
+  nameWithType: TimeSpanExtensions.GetIntervalString(TimeSpan)
+- uid: Sensus.Extensions.TimeSpanExtensions.GetIntervalString*
+  name: GetIntervalString
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetIntervalString_
+  commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetIntervalString
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString
+  nameWithType: TimeSpanExtensions.GetIntervalString
 - uid: Sensus.ImpreciseDatum
   name: ImpreciseDatum
   href: api/Sensus.ImpreciseDatum.html
@@ -43004,18 +43058,6 @@ references:
   commentId: Overload:Sensus.UI.Inputs.LabelOnlyInput.GetView
   fullName: Sensus.UI.Inputs.LabelOnlyInput.GetView
   nameWithType: LabelOnlyInput.GetView
-- uid: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  name: StoreCompletionRecords
-  href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_StoreCompletionRecords
-  commentId: P:Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  fullName: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  nameWithType: LabelOnlyInput.StoreCompletionRecords
-- uid: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords*
-  name: StoreCompletionRecords
-  href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_StoreCompletionRecords_
-  commentId: Overload:Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  fullName: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  nameWithType: LabelOnlyInput.StoreCompletionRecords
 - uid: Sensus.UI.Inputs.LabelOnlyInput.Value
   name: Value
   href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_Value
