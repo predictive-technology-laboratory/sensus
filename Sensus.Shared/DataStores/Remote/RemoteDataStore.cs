@@ -171,7 +171,20 @@ namespace Sensus.DataStores.Remote
         public abstract bool CanRetrieveWrittenData { get; }
 
         [JsonIgnore]
-        public abstract string StorageDescription { get; }
+        public virtual string StorageDescription
+        {
+            get
+            {
+                if (!Protocol?.LocalDataStore?.WriteToRemote ?? false)
+                {
+                    return "All data will remain on this device. No data will be transmitted.";
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         protected RemoteDataStore()
         {

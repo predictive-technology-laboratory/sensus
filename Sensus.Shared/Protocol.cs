@@ -1912,11 +1912,6 @@ namespace Sensus
                     }
                 }
 
-                if (_remoteDataStore != null)
-                {
-                    collectionDescription.Append(Environment.NewLine + Environment.NewLine + (_remoteDataStore as RemoteDataStore).StorageDescription);
-                }
-
                 LabelOnlyInput collectionDescriptionLabel = null;
                 int collectionDescriptionFontSize = 15;
                 if (collectionDescription.Length == 0)
@@ -1930,6 +1925,12 @@ namespace Sensus
 
                 collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
                 inputs.Add(collectionDescriptionLabel);
+
+                // describe remote data storage
+                if (_remoteDataStore != null)
+                {
+                    inputs.Add(new LabelOnlyInput((_remoteDataStore as RemoteDataStore).StorageDescription, collectionDescriptionFontSize));
+                }
 
                 // don't repeatedly prompt the participant for their ID
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))

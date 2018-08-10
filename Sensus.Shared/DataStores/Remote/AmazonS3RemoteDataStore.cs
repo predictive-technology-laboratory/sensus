@@ -260,7 +260,10 @@ namespace Sensus.DataStores.Remote
 
         public override string StorageDescription
         {
-            get { return "Data will be transferred " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower(); }
+            get
+            {
+                return base.StorageDescription ?? "Data will be transmitted " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower();
+            }
         }
 
         public AmazonS3RemoteDataStore()

@@ -46,7 +46,10 @@ namespace Sensus.DataStores.Remote
 
         public override string StorageDescription
         {
-            get { return "Data will be discarded " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower(); }
+            get
+            {
+                return base.StorageDescription ?? "Data will be discarded " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower();
+            }
         }
 
         public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
