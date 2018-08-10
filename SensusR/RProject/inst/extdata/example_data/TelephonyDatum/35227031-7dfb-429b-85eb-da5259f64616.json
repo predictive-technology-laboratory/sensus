@@ -1,3 +1,0 @@
-[
-{"$type":"SensusService.Probes.Communication.TelephonyDatum, SensusAndroid","CallDurationSeconds":null,"State":0,"PhoneNumber":"","Id":"b34ebaae-c9ce-4d08-b311-60ba9d2258be","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T03:23:00.384143+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
-]

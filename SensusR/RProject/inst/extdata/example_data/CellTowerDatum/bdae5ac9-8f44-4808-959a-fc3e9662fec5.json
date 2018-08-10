@@ -1,4 +1,0 @@
-[
-{"$type":"SensusService.Probes.Network.CellTowerDatum, SensusAndroid","CellTower":"[675,2147483647,2147483647,502,4]","Id":"ad200ce4-6c0c-4f36-8081-c451c08361f4","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T12:42:14.651068+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
-{"$type":"SensusService.Probes.Network.CellTowerDatum, SensusAndroid","CellTower":"[931,2147483647,2147483647,502,4]","Id":"c3b9a08a-c9d9-47dc-a9b9-aca850bf3252","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T12:42:17.19983+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
-]

@@ -725,22 +725,6 @@ sensus.get.timestamp.lags = function(datum)
   return(lags)
 }
 
-#' Plot data frequency by day.
-#' 
-#' @param datum Data frame for a single datum.
-#' @param xlab Label for x-axis.
-#' @param ylab Label for y-axis.
-#' @param main Label for plot.
-#' @examples 
-#' data.path = system.file("extdata", "example_data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' #sensus.plot.data.frequency.by.day(data$AccelerometerDatum)
-sensus.plot.data.frequency.by.day = function(datum, xlab = "Study Day", ylab = "Data Frequency", main = "Data Frequency")
-{
-  datum.split.by.day = split(datum, as.factor(datum$DayOfYear))
-  plot(sapply(datum.split.by.day, nrow), xlab = xlab, ylab = ylab, main = main, type = "l", cex.lab = 1.5, cex.axis = 1.5, cex.main = 2)
-}
-
 #' Plot the CDF of inter-reading time lags.
 #' 
 #' @param datum Data frame for a single datum.

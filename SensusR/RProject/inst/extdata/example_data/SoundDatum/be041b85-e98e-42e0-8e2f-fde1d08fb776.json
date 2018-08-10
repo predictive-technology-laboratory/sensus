@@ -1,5 +1,0 @@
-[
-{"$type":"SensusService.Probes.Context.SoundDatum, SensusAndroid","Decibels":90.308733622833984,"Id":"a4038063-9213-4a11-b378-e4d3af077615","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T11:27:40.280671+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
-{"$type":"SensusService.Probes.Context.SoundDatum, SensusAndroid","Decibels":90.308733622833984,"Id":"38320fa0-c15c-4668-bda5-5271433cddbb","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T11:37:41.713163+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true},
-{"$type":"SensusService.Probes.Context.SoundDatum, SensusAndroid","Decibels":64.890490231401671,"Id":"5359fcf2-290d-4b1f-a601-3bf591dbb3e3","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T11:47:42.423079+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
-]

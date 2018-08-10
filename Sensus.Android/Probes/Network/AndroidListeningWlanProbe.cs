@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Android.App;
+using Android.Content;
+using Android.Net;
 using Sensus.Probes.Network;
 using System;
 
@@ -19,10 +22,13 @@ namespace Sensus.Android.Probes.Network
 {
     public class AndroidListeningWlanProbe : ListeningWlanProbe
     {
+        private AndroidWlanBroadcastReceiver _wlanBroadcastReceiver;
         private EventHandler<WlanDatum> _wlanConnectionChangedCallback;
 
         public AndroidListeningWlanProbe()
         {
+            _wlanBroadcastReceiver = new AndroidWlanBroadcastReceiver();
+
             _wlanConnectionChangedCallback = (sender, wlanDatum) =>
             {
                 StoreDatum(wlanDatum);
@@ -31,11 +37,17 @@ namespace Sensus.Android.Probes.Network
 
         protected override void StartListening()
         {
+            // register receiver for all WLAN intent actions
+            Application.Context.RegisterReceiver(_wlanBroadcastReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
         }
 
         protected override void StopListening()
         {
+            // stop broadcast receiver
+            Application.Context.UnregisterReceiver(_wlanBroadcastReceiver);
+
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED -= _wlanConnectionChangedCallback;
         }
     }
