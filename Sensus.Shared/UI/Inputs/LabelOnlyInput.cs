@@ -47,20 +47,6 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="LabelOnlyInput"/> stores completion records. Always
-        /// returns false, since label-only inputs are complete by definition and repeated deserialization will accumulate
-        /// completion records that don't have meaning:  https://github.com/predictive-technology-laboratory/sensus/issues/126
-        /// </summary>
-        /// <value><c>false</c></value>
-        public override bool StoreCompletionRecords
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public LabelOnlyInput()
         {
             Construct(true);
@@ -92,6 +78,11 @@ namespace Sensus.UI.Inputs
 
         private void Construct(bool complete)
         {
+            // don't store completion records. label-only inputs are complete by definition and repeated deserialization will accumulate
+            // completion records that don't have meaning:  https://github.com/predictive-technology-laboratory/sensus/issues/126
+            // set this before anything else, particularly Complete as that triggers a record storage.
+            StoreCompletionRecords = false;
+
             Complete = complete;
             Required = false;
             DisplayNumber = false;

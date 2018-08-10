@@ -356,12 +356,14 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        public virtual bool StoreCompletionRecords
+        /// <summary>
+        /// Whether or not to record a trace of all input values from the first to the final.
+        /// </summary>
+        /// <value><c>true</c> if store completion records; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Store Completion Records:", true, 6)]
+        public bool StoreCompletionRecords
         {
-            get
-            {
-                return true;
-            }
+            get; set;
         }
 
         [JsonIgnore]
@@ -432,6 +434,8 @@ namespace Sensus.UI.Inputs
             _frame = true;
             _completionRecords = new List<InputCompletionRecord>();
             _submissionTimestamp = null;
+
+            StoreCompletionRecords = true;
         }
 
         public Input(string labelText)
