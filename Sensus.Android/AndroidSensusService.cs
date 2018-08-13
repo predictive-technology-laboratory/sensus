@@ -24,6 +24,7 @@ using Sensus.Android.Concurrent;
 using Sensus.Encryption;
 using System.Linq;
 using System.Threading.Tasks;
+using Sensus.Android.Notifications;
 
 namespace Sensus.Android
 {

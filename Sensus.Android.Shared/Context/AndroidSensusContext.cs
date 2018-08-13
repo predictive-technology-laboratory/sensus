@@ -16,6 +16,7 @@ using Sensus.Encryption;
 using Sensus.Concurrent;
 using Sensus.Context;
 using Sensus.Callbacks;
+using Sensus.Notifications;
 
 namespace Sensus.Android.Context
 {

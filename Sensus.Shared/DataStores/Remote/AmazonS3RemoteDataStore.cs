@@ -29,6 +29,7 @@ using System.Text;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.DataStores.Remote
 {
@@ -377,29 +378,6 @@ namespace Sensus.DataStores.Remote
             });
         }
 
-        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            return Task.Run(async () =>
-            {
-                AmazonS3Client s3 = null;
-
-                try
-                {
-                    s3 = InitializeS3();
-                    byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
-                    MemoryStream dataStream = new MemoryStream();
-                    dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
-                    dataStream.Position = 0;
-
-                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + Guid.NewGuid() + ".json", "application/json", cancellationToken);
-                }
-                finally
-                {
-                    DisposeS3(s3);
-                }
-            });
-        }
-
         public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
@@ -444,10 +422,58 @@ namespace Sensus.DataStores.Remote
             });
         }
 
+        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    s3 = InitializeS3();
+                    byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
+                    MemoryStream dataStream = new MemoryStream();
+                    dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
+                    dataStream.Position = 0;
+
+                    await Put(s3, dataStream, GetPushNotificationRequestKey(request), "application/json", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
+        public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                AmazonS3Client s3 = null;
+
+                try
+                {
+                    // send an empty data stream to clear the request. we don't have delete access.
+                    s3 = InitializeS3();
+
+                    await Put(s3, new MemoryStream(), GetPushNotificationRequestKey(request), "text/plain", cancellationToken);
+                }
+                finally
+                {
+                    DisposeS3(s3);
+                }
+            });
+        }
+
         private string GetPushNotificationTokenKey()
         {
             // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
             return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
+        }
+
+        private string GetPushNotificationRequestKey(PushNotificationRequest request)
+        {
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + request.Id + ".json";
         }
 
         private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)

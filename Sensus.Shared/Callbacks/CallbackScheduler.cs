@@ -21,6 +21,7 @@ using Microsoft.AppCenter.Analytics;
 using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.Callbacks
 {
@@ -55,7 +56,11 @@ namespace Sensus.Callbacks
                 callback.NextExecution = DateTime.Now + callback.Delay;
                 callback.State = ScheduledCallbackState.Scheduled;
 
+                // schedule callback locally
                 ScheduleCallbackPlatformSpecific(callback);
+
+                // request a push notification for the callback (adds redundancy) 
+                RequestPushNotificationAsync(callback);
             }
             else
             {
@@ -114,7 +119,9 @@ namespace Sensus.Callbacks
 
                     // the same callback must not be run multiple times concurrently, so drop the current callback if it's already running. multiple
                     // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until the
-                    // the callback has finished executing.
+                    // the callback has finished executing. furthermore, the callback must not run multiple times in sequence (e.g., if the callback
+                    // is raised by the local scheduling system and then later by a remote push notification). this is handled by tracking invocation
+                    // identifiers, which are only runnable once.
                     string initiationError = null;
                     lock (callback)
                     {
@@ -125,7 +132,7 @@ namespace Sensus.Callbacks
 
                         if (invocationId != callback.InvocationId)
                         {
-                            initiationError += "Invocation ID provided for callback " + callback.Id + " does not match the one on record.";
+                            initiationError += (initiationError == null ? "" : ". ") + "Invocation ID provided for callback " + callback.Id + " does not match the one on record.";
                         }
 
                         if (initiationError == null)
@@ -213,10 +220,14 @@ namespace Sensus.Callbacks
                                         }
                                     }
 
-                                    callback.InvocationId = Guid.NewGuid().ToString();  // set this before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
+                                    callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
                                     callback.State = ScheduledCallbackState.Scheduled;
 
+                                    // schedule callback locally
                                     scheduleRepeatCallback();
+
+                                    // request a push notification for the callback (adds redundancy) 
+                                    await RequestPushNotificationAsync(callback);
                                 }
                                 else
                                 {
@@ -234,6 +245,14 @@ namespace Sensus.Callbacks
                 {
                     SensusException.Report("Failed to raise callback:  " + ex.Message, ex);
                 }
+            });
+        }
+
+        private Task RequestPushNotificationAsync(ScheduledCallback callback)
+        {
+            return Task.Run(async () =>
+            {
+                await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
             });
         }
 
@@ -317,7 +336,25 @@ namespace Sensus.Callbacks
                 // tell the current platform cancel its hook into the system's callback system
                 UnscheduleCallbackPlatformSpecific(callback);
 
+                // delete the push notification
+                SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+            }
+        }
+
+        private PushNotificationRequest GetPushNotificationRequest(ScheduledCallback callback)
+        {
+            if (callback.NextExecution.HasValue)
+            {
+                // the PNR ID is used as the S3 object key. we're using the format SENSUS-CALLBACk.ID, where ID is the callback ID. this helps
+                // to ensure that each callback only has a single PNR in the backend, regardless of the existence of multiple invocation IDs
+                // over time.
+                return new PushNotificationRequest(SENSUS_CALLBACK_KEY + "." + callback.Id, callback.Protocol, "", "", "", callback.InvocationId, callback.NextExecution.Value);
+            }
+            else
+            {
+                return null;
             }
         }
     }

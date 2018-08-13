@@ -25,11 +25,19 @@ do
     body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
-    time=$(jq -r '.time' $n)
+    time=$(jq -r '.time' $n)       # the value indicates unix time in seconds
 	
-    # if the requested time has passed, send now.
-    if [ "$time" -le "$(date +%s)" ]
+    # the cron scheduler runs once per minute. we're going to be proactive and ensure that push notifications arrive
+    # at the device no later than the desired time. thus, if the desired time precedes the current time OR if the
+    # desired time precedes the next cron run time, go ahead and send the push notification. in addition, there will
+    # be some amount of latency from the time of requesting the push notification to actual delivery. allow a minute
+    # of latency plus a minute for the cron scheduler, for a total of two minutes.
+    curr_time_seconds=$(date +%s)
+    two_minutes=$((2 * 60))
+    time_horizon=$(($curr_time_seconds + $two_minutes))
+    if [ "$time" -le "$time_horizon" ]
     then
 
 	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the leading/trailing quotes from the protocol)
@@ -57,6 +65,7 @@ do
 "\"data\":"\
 "{"\
 "\"command\":$command,"\
+"\"id\":$id,"\
 "\"protocol\":$protocol,"\
 "\"title\":$title,"\
 "\"body\":$body,"\
@@ -80,6 +89,7 @@ do
 "\"sound\":$sound"\
 "},"\
 "\"command\":$command,"\
+"\"id\":$id,"\
 "\"protocol\":$protocol"\
 "}"
 

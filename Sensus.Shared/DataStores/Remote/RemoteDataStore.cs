@@ -23,6 +23,7 @@ using System.IO;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.DataStores.Remote
 {
@@ -360,14 +361,6 @@ namespace Sensus.DataStores.Remote
         public abstract Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Sends the push notification request.
-        /// </summary>
-        /// <returns>The push notification request.</returns>
-        /// <param name="request">Request.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
-
-        /// <summary>
         /// Sends the push notification token.
         /// </summary>
         /// <returns>The push notification token.</returns>
@@ -381,6 +374,22 @@ namespace Sensus.DataStores.Remote
         /// <returns>The push notification token.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Sends the push notification request.
+        /// </summary>
+        /// <returns>The push notification request.</returns>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deletes the push notification request.
+        /// </summary>
+        /// <returns>The push notification request.</returns>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the key (identifier) value for a <see cref="Datum"/>. Used within <see cref="WriteDatumAsync"/> and <see cref="GetDatumAsync"/>.

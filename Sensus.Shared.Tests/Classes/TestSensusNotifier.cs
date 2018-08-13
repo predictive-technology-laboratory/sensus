@@ -13,7 +13,10 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Sensus.Callbacks;
+using Sensus.Notifications;
 
 namespace Sensus.Tests.Classes
 {
@@ -23,12 +26,27 @@ namespace Sensus.Tests.Classes
         {
         }
 
+        public Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage type)
         {
         }
 
         public void OpenDisplayPage(DisplayPage displayPage)
         {
+        }
+
+        public Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task TestHealthAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
     }
 }

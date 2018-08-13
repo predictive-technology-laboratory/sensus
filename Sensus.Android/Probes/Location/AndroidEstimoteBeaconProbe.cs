@@ -19,6 +19,7 @@ using Sensus.Context;
 using System.Collections.Generic;
 using Sensus.Probes.Location;
 using Sensus.Android.Callbacks;
+using Sensus.Android.Notifications;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -55,10 +56,6 @@ namespace Sensus.Android.Probes.Location
 
         IProximityObserver _proximityObserver;
         IProximityObserverHandler _proximityObservationHandler;
-
-        public AndroidEstimoteBeaconProbe()
-        {
-        }
 
         protected override void StartListening()
         {

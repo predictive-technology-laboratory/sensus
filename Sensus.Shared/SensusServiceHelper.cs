@@ -32,6 +32,7 @@ using Sensus.Concurrent;
 using Sensus.Exceptions;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
+using Sensus.Notifications;
 
 using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
@@ -627,7 +628,7 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                        // test the callback scheduler itself
+                        // test the callback scheduler
                         SensusContext.Current.CallbackScheduler.TestHealth();
 
                         // update push notification registrations
@@ -635,6 +636,9 @@ namespace Sensus
                         {
                             await UpdatePushNotificationRegistrationsAsync(cancellationToken);
                         }
+
+                        // test the notifier, which checks the push notification requests
+                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
                     }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 

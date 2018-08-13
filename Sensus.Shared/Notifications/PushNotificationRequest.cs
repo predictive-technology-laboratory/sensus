@@ -16,10 +16,21 @@ using System;
 using Sensus.Exceptions;
 using Newtonsoft.Json;
 
-namespace Sensus
+namespace Sensus.Notifications
 {
     public class PushNotificationRequest
     {
+        private static PushNotificationRequestFormat GetLocalFormat()
+        {
+#if __ANDROID__
+            return PushNotificationRequestFormat.FirebaseCloudMessaging;
+#elif __IOS__
+            return PushNotificationRequestFormat.ApplePushNotificationService;
+#else
+#error "Unrecognized platform."
+#endif
+        }
+
         public static string GetFormatString(PushNotificationRequestFormat format)
         {
             if (format == PushNotificationRequestFormat.FirebaseCloudMessaging)
@@ -37,6 +48,7 @@ namespace Sensus
             }
         }
 
+        private string _id;
         private string _deviceId;
         private Protocol _protocol;
         private string _title;
@@ -46,11 +58,22 @@ namespace Sensus
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _time;
 
+        public string Id
+        {
+            get { return _id; }
+        }
+
+        public Protocol Protocol
+        {
+            get { return _protocol; }
+        }
+
         public string JSON
         {
             get
             {
                 return "{" +
+                           "\"id\":" + JsonConvert.ToString(_id) + "," +
                            "\"device\":" + JsonConvert.ToString(_deviceId) + "," +
                            "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
                            "\"title\":" + JsonConvert.ToString(_title) + "," +
@@ -63,21 +86,41 @@ namespace Sensus
             }
         }
 
-        public PushNotificationRequest(string deviceId, Protocol protocol, string title, string body, string sound, string command, PushNotificationRequestFormat format, DateTimeOffset time)
+        public PushNotificationRequest(string id, Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
         {
-            _deviceId = deviceId;
+            _id = id;
             _protocol = protocol;
             _title = title;
             _body = body;
             _sound = sound;
             _command = command;
-            _format = format;
             _time = time;
+            _format = format;
+            _deviceId = deviceId;
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, PushNotificationRequestFormat format, DateTimeOffset time)
-            : this(SensusServiceHelper.Get().DeviceId, protocol, title, body, sound, command, format, time)
+        public PushNotificationRequest(string id, Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
+            : this(id, protocol, title, body, sound, command, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
         {
+        }
+
+        public override bool Equals(object obj)
+        {
+            PushNotificationRequest other = obj as PushNotificationRequest;
+
+            if (other == null)
+            {
+                return false;
+            }
+            else
+            {
+                return _id == other.Id;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return _id.GetHashCode();
         }
     }
 }

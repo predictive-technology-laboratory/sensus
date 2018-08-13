@@ -12,14 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Callbacks
+namespace Sensus.Notifications
 {
-    public interface INotifier
+    /// <summary>
+    /// Page to display when a callback notification is tapped by the user.
+    /// </summary>
+    public enum DisplayPage
     {
-        void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage type);
+        /// <summary>
+        /// Display no page.
+        /// </summary>
+        None,
 
-        void CancelNotification(string id);
-
-        void OpenDisplayPage(DisplayPage displayPage);
-    }
+        /// <summary>
+        /// Display the <see cref="UI.PendingScriptsPage"/>.
+        /// </summary>
+        PendingSurveys
+    };
 }

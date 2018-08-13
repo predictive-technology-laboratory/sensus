@@ -363,7 +363,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="AndroidSensusServiceConnection.cs" />
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
-    <Compile Include="Callbacks\AndroidNotifier.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothAdvertisingCallback.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothScannerCallback.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
@@ -377,6 +376,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Probes\Movement\AndroidAwarenessProbe.cs" />
     <Compile Include="AndroidPowerConnectionChangeListener.cs" />
     <Compile Include="AndroidPowerConnectionChangeBroadcastReceiver.cs" />
+    <Compile Include="Notifications\AndroidNotifier.cs" />
+    <Compile Include="Notifications\FirebaseNotificationService.cs" />
+    <Compile Include="Notifications\FirebaseRegistrationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -421,6 +423,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Folder Include="Callbacks\" />
     <Folder Include="Resources\values-v21\" />
     <Folder Include="Resources\layout\" />
+    <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />

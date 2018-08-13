@@ -15,6 +15,7 @@
 using Sensus.Callbacks;
 using Sensus.Concurrent;
 using Sensus.Encryption;
+using Sensus.Notifications;
 
 namespace Sensus.Context
 {

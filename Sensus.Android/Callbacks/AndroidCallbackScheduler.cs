@@ -17,9 +17,8 @@ using Android.Content;
 using Android.OS;
 using Sensus.Callbacks;
 using System.Threading.Tasks;
-using Sensus.Exceptions;
-using System;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.Android.Callbacks
 {
@@ -141,7 +140,7 @@ namespace Sensus.Android.Callbacks
                         // schedule a new alarm for the same callback at the desired time.
                         () =>
                         {
-                            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
+                            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);  // be sure to use the new invocation ID.
                             ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
                         },
 
@@ -167,6 +166,19 @@ namespace Sensus.Android.Callbacks
                     serviceHelper.LetDeviceSleep();
                 }
             });
+        }
+
+        public void ServiceCallbackFromPushNotification(string callbackId, string invocationId)
+        {
+            ScheduledCallback callback = TryGetCallback(callbackId);
+
+            if (callback != null)
+            {
+                callback.InvocationId = invocationId;
+                Intent intent = CreateCallbackIntent(callback);
+                PendingIntent pendingIntent = CreateCallbackPendingIntent(intent);
+                pendingIntent.Send();
+            }
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)

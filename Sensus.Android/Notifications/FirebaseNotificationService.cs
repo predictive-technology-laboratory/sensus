@@ -20,8 +20,11 @@ using Firebase.Messaging;
 using Sensus.Context;
 using System.Linq;
 using Sensus.Exceptions;
+using Sensus.Notifications;
+using Sensus.Callbacks;
+using Sensus.Android.Callbacks;
 
-namespace Sensus.Android
+namespace Sensus.Android.Notifications
 {
     [Service]
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
@@ -45,32 +48,67 @@ namespace Sensus.Android
 
                 // ignore the push notification if it targets a protocol that is not running. we explicitly 
                 // attempt to prevent such notifications from coming through by unregistering from hubs
-                // that lack running protocols and clearing the token from the backend.
+                // that lack running protocols and clearing the token from the backend; however, there may 
+                // be race conditions that allow a push notification to be delivered to us nonetheless.
                 if (!protocol.Running)
                 {
                     return;
                 }
 
+                // every PN should have an ID
+                string id = null;
+                try
+                {
+                    id = message.Data["id"];
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while getting push notification id:  " + ex.Message, ex);
+                    return;
+                }
+
+                // if there is user-targeted information, display the notification.
                 try
                 {
                     string title = message.Data["title"];
                     string body = message.Data["body"];
                     string sound = message.Data["sound"];
 
-                    SensusContext.Current.Notifier.IssueNotificationAsync(title, body, Guid.NewGuid().ToString(), protocol, !string.IsNullOrWhiteSpace(sound), Sensus.Callbacks.DisplayPage.None);
+                    SensusContext.Current.Notifier.IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
                 }
                 catch (Exception ex)
                 {
                     SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
                 }
 
+                // process push notification commands
                 try
                 {
-                    string command = message.Data["command"];
+                    int dotIndex = id.IndexOf('.');
+
+                    if (dotIndex < 0)
+                    {
+                        throw new Exception("Missing dot separating id prefix and suffix.");
+                    }
+
+                    string idPrefix = id.Substring(0, dotIndex);
+                    string idSuffix = id.Substring(dotIndex + 1);
+
+                    if (idPrefix == CallbackScheduler.SENSUS_CALLBACK_KEY)
+                    {
+                        string callbackId = idSuffix;
+                        string invocationId = message.Data["command"];
+
+                        (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotification(callbackId, invocationId);
+                    }
+                    else
+                    {
+                        throw new Exception("Unrecognized push notification ID prefix:  " + idPrefix);
+                    }
                 }
-                catch (Exception ex)
+                catch (Exception pushNotificationCommandException)
                 {
-                    SensusException.Report("Exception while running command from push notification:  " + ex.Message, ex);
+                    SensusException.Report("Exception while running push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
                 }
             });
         }
