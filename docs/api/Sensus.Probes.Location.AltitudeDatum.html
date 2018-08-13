@@ -87,14 +87,10 @@
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
-    <div class="level2"><a class="xref" href="Sensus.ImpreciseDatum.html">ImpreciseDatum</a></div>
-    <div class="level3"><span class="xref">AltitudeDatum</span></div>
+    <div class="level2"><span class="xref">AltitudeDatum</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Sensus.ImpreciseDatum.html#Sensus_ImpreciseDatum_Accuracy">ImpreciseDatum.Accuracy</a>
-    </div>
     <div>
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_FromJSON_System_String_">Datum.FromJSON(String)</a>
     </div>
@@ -142,19 +138,19 @@
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Location_AltitudeDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AltitudeDatum : ImpreciseDatum</code></pre>
+    <pre><code class="lang-csharp hljs">public class AltitudeDatum : Datum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
   <a id="Sensus_Probes_Location_AltitudeDatum__ctor_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_System_Double_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double,System.Double)">AltitudeDatum(DateTimeOffset, Double, Double)</h4>
+  <h4 id="Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_" data-uid="Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double)">AltitudeDatum(DateTimeOffset, Double)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AltitudeDatum(DateTimeOffset timestamp, double accuracy, double altitude)</code></pre>
+    <pre><code class="lang-csharp hljs">public AltitudeDatum(DateTimeOffset timestamp, double hPa)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -173,12 +169,7 @@
       </tr>
       <tr>
         <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">accuracy</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">altitude</span></td>
+        <td><span class="parametername">hPa</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -296,7 +287,7 @@ public double Altitude { get; set; }</code></pre>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.ImpreciseDatum.html#Sensus_ImpreciseDatum_ToString">ImpreciseDatum.ToString()</a></div>
+  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
 </article>
           </div>
           

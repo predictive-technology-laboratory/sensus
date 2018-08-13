@@ -4,10 +4,17 @@
 \alias{sensus.decompress.gz.files}
 \title{Decompresses JSON files downloaded from AWS S3.}
 \usage{
-sensus.decompress.gz.files(local.path)
+sensus.decompress.gz.files(local.path, skip = TRUE, overwrite = FALSE,
+  remove = FALSE)
 }
 \arguments{
 \item{local.path}{Path to location on local machine.}
+
+\item{skip}{If TRUE and the output file already exists, the output file is returned as is.}
+
+\item{overwrite}{If TRUE and the output file already exists, the file is silently overwritten; otherwise an exception is thrown (unless skip is TRUE).}
+
+\item{remove}{If TRUE, the input file is removed afterward, otherwise not.}
 }
 \value{
 None

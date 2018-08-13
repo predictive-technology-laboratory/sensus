@@ -17,5 +17,5 @@ Plot location data.
 \examples{
 data.path = system.file("extdata", "example_data", package="SensusR")
 data = sensus.read.json.files(data.path)
-plot(data$LocationDatum)
+#plot(data$LocationDatum)
 }

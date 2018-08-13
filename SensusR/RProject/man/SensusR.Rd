@@ -10,7 +10,7 @@ Provides access and analytic functions for Sensus data. More information can be 
 following URL:
 }
 \details{
-https://github.com/predictive-technology-laboratory/sensus/wiki
+https://predictive-technology-laboratory.github.io/sensus
 }
 \section{SensusR functions}{
 

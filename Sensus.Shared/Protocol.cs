@@ -26,7 +26,6 @@ using Xamarin.Forms;
 using Sensus.Anonymization;
 using System.Linq;
 using System.Reflection;
-using Sensus.UI;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
 using Sensus.Probes.Apps;
@@ -46,6 +45,8 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
+using Sensus.Extensions;
+using Sensus.Anonymization.Anonymizers;
 
 #if __IOS__
 using HealthKit;
@@ -503,7 +504,7 @@ namespace Sensus
             });
         }
 
-#endregion
+        #endregion
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -539,6 +540,10 @@ namespace Sensus
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
+        private string _pushNotificationsSharedAccessSignature;
+        private string _pushNotificationsHub;
+        private double _gpsLongitudeAnonymizationParticipantOffset;
+        private double _gpsLongitudeAnonymizationStudyOffset;
 
         private readonly object _locker = new object();
 
@@ -1104,7 +1109,7 @@ namespace Sensus
             }
         }
 
-#region iOS-specific protocol properties
+        #region iOS-specific protocol properties
 
 #if __IOS__
         [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
@@ -1252,7 +1257,7 @@ namespace Sensus
             }
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Whether or not to allow the user to view data being collected by the <see cref="Protocol"/>.
@@ -1329,6 +1334,62 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// The push notification hub to listen to. This can be created within the Azure Portal. The
+        /// value to use here is the name of the hub.
+        /// </summary>
+        /// <value>The push notifications hub.</value>
+        [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
+        public string PushNotificationsHub
+        {
+            get { return _pushNotificationsHub; }
+            set { _pushNotificationsHub = value; }
+        }
+
+        /// <summary>
+        /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
+        /// value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
+        /// the value directly to this field.
+        /// </summary>
+        /// <value>The push notifications shared access signature.</value>
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]
+        public string PushNotificationsSharedAccessSignature
+        {
+            get { return _pushNotificationsSharedAccessSignature; }
+            set { _pushNotificationsSharedAccessSignature = value; }
+        }
+
+        /// <summary>
+        /// We regenerate the offset every time a protocol starts, so there's 
+        /// no need to serialize it. Furthermore, we never want the offset
+        /// to be shared.
+        /// </summary>
+        /// <value>The gps longitude anonymization participant offset.</value>
+        [JsonIgnore]
+        public double GpsLongitudeAnonymizationParticipantOffset
+        {
+            get
+            {
+                return _gpsLongitudeAnonymizationParticipantOffset;
+            }
+            set
+            {
+                _gpsLongitudeAnonymizationParticipantOffset = value;
+            }
+        }
+
+        public double GpsLongitudeAnonymizationStudyOffset
+        {
+            get
+            {
+                return _gpsLongitudeAnonymizationStudyOffset;
+            }
+            set
+            {
+                _gpsLongitudeAnonymizationStudyOffset = value;
+            }
+        }
+
         [JsonIgnore]
         public bool StartIsScheduled
         {
@@ -1343,6 +1404,30 @@ namespace Sensus
                 }
 
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="Random"/> that is seeded specifically to the participant.
+        /// </summary>
+        /// <value>The seeded <see cref="Random"/>.</value>
+        [JsonIgnore]
+        public Random LongitudeOffsetParticipantSeededRandom
+        {
+            get
+            {
+                // seed the user-level GPS origin based on participant or device ID, preferring the former.
+                Random random;
+                if (!string.IsNullOrWhiteSpace(_participantId))
+                {
+                    random = new Random(_participantId.GetHashCode());
+                }
+                else
+                {
+                    random = new Random(SensusServiceHelper.Get().DeviceId.GetHashCode());
+                }
+
+                return random;
             }
         }
 
@@ -1419,23 +1504,30 @@ namespace Sensus
 
         private void Reset(bool resetId)
         {
+            Random random = new Random();
+
             // reset id and storage directory (directory might exist if deserializing the same protocol multiple times)
             if (resetId)
             {
                 _id = Guid.NewGuid().ToString();
+
+                // if this is a new study (indicated by resetting the ID), randomly initialize GPS longitude offset.
+                _gpsLongitudeAnonymizationStudyOffset = LongitudeOffsetGpsAnonymizer.GetOffset(random);
             }
 
-            // nobody else should receive the participant ID
+            // nobody else should receive the participant ID or participant anonymization offset
             _participantId = null;
+            _gpsLongitudeAnonymizationParticipantOffset = 0;
 
             // reset local storage
             ResetStorageDirectory();
 
             // pick a random time anchor within the first 1000 years AD. we got a strange exception in insights about the resulting datetime having a year
-            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same.
+            // outside of [0,10000]. no clue how this could happen, but we'll guard against it all the same. we do this regardless of whether we're 
+            // resetting the protocol ID, as everyone should have a different anchor. in the future, perhaps we'll do something similar to what we do for GPS.
             try
             {
-                _randomTimeAnchor = new DateTimeOffset((long)(new Random().NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
+                _randomTimeAnchor = new DateTimeOffset((long)(random.NextDouble() * new DateTimeOffset(1000, 1, 1, 0, 0, 0, new TimeSpan()).Ticks), new TimeSpan());
             }
             catch (Exception) { }
 
@@ -1537,6 +1629,9 @@ namespace Sensus
                     _running = true;
                 }
 
+                // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
+                _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
+
                 _scheduledStartCallback = null;
 
                 CaptionChanged();
@@ -1545,7 +1640,7 @@ namespace Sensus
 
                 SensusServiceHelper.Get().AddRunningProtocolId(_id);
 
-                bool stopProtocol = false;
+                Exception startException = null;
 
                 // start local data store
                 try
@@ -1556,8 +1651,18 @@ namespace Sensus
                     }
 
                     _localDataStore.Start();
+                }
+                catch (Exception localDataStoreException)
+                {
+                    string message = "Local data store failed to start:  " + localDataStoreException.Message;
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().FlashNotificationAsync(message);
+                    startException = localDataStoreException;
+                }
 
-                    // start remote data store
+                // start remote data store
+                if (startException == null)
+                {
                     try
                     {
                         if (_remoteDataStore == null)
@@ -1566,11 +1671,22 @@ namespace Sensus
                         }
 
                         _remoteDataStore.Start();
+                    }
+                    catch (Exception remoteDataStoreException)
+                    {
+                        string message = "Remote data store failed to start:  " + remoteDataStoreException.Message;
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        startException = remoteDataStoreException;
+                    }
+                }
 
-                        // start probes
-                        try
-                        {
-                            // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
+                // start probes
+                if (startException == null)
+                {
+                    try
+                    {
+                        // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
 #if __IOS__
                             if (HKHealthStore.IsHealthDataAvailable)
                             {
@@ -1603,75 +1719,65 @@ namespace Sensus
                             }
 #endif
 
-                            SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
-                            int probesEnabled = 0;
-                            bool startMicrosoftBandProbes = true;
-                            foreach (Probe probe in _probes)
+                        SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
+                        int probesEnabled = 0;
+                        bool startMicrosoftBandProbes = true;
+                        foreach (Probe probe in _probes)
+                        {
+                            if (probe.Enabled)
                             {
+                                if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
+                                {
+                                    continue;
+                                }
+
+                                try
+                                {
+                                    probe.Start();
+                                }
+                                catch (MicrosoftBandClientConnectException)
+                                {
+                                    // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
+                                    // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
+                                    // succeeds, all band probes will then be started.
+                                    startMicrosoftBandProbes = false;
+                                }
+                                catch (Exception)
+                                {
+                                }
+
+                                // probe might become disabled during Start due to a NotSupportedException
                                 if (probe.Enabled)
                                 {
-                                    if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
-                                    {
-                                        continue;
-                                    }
-
-                                    try
-                                    {
-                                        probe.Start();
-                                    }
-                                    catch (MicrosoftBandClientConnectException)
-                                    {
-                                        // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
-                                        // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
-                                        // succeeds, all band probes will then be started.
-                                        startMicrosoftBandProbes = false;
-                                    }
-                                    catch (Exception)
-                                    {
-                                    }
-
-                                    // probe might become disabled during Start due to a NotSupportedException
-                                    if (probe.Enabled)
-                                    {
-                                        ++probesEnabled;
-                                    }
+                                    ++probesEnabled;
                                 }
                             }
-
-                            if (probesEnabled == 0)
-                            {
-                                throw new Exception("No probes were enabled.");
-                            }
-                            else
-                            {
-                                SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
-                            }
                         }
-                        catch (Exception ex)
+
+                        if (probesEnabled == 0)
                         {
-                            string message = "Failure while starting probes:  " + ex.Message;
-                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                            SensusServiceHelper.Get().FlashNotificationAsync(message);
-                            stopProtocol = true;
+                            throw new Exception("No probes were enabled.");
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception probeException)
                     {
-                        string message = "Remote data store failed to start:  " + ex.Message;
+                        // don't stop the protocol if we get an exception while starting probes. we might recover.
+                        string message = "Failure while starting probes:  " + probeException.Message;
                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                         SensusServiceHelper.Get().FlashNotificationAsync(message);
-                        stopProtocol = true;
                     }
                 }
-                catch (Exception ex)
+
+                if (startException == null)
                 {
-                    string message = "Local data store failed to start:  " + ex.Message;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    SensusServiceHelper.Get().FlashNotificationAsync(message);
-                    stopProtocol = true;
+                    SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
                 }
 
-                if (stopProtocol)
+                if (startException == null)
+                {
+                    SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
+                }
+                else
                 {
                     Stop();
                 }
@@ -1819,6 +1925,12 @@ namespace Sensus
 
                 collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
                 inputs.Add(collectionDescriptionLabel);
+
+                // describe remote data storage
+                if (_remoteDataStore != null)
+                {
+                    inputs.Add(new LabelOnlyInput((_remoteDataStore as RemoteDataStore).StorageDescription, collectionDescriptionFontSize));
+                }
 
                 // don't repeatedly prompt the participant for their ID
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
@@ -2114,6 +2226,8 @@ namespace Sensus
                         SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
+
+                SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
                 SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
                 SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");

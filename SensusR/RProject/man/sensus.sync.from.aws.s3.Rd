@@ -5,8 +5,8 @@
 \title{Synchronizes data from Amazon S3 to a local path.}
 \usage{
 sensus.sync.from.aws.s3(s3.path, profile = "default",
-  local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = TRUE,
-  decompress = TRUE)
+  local.path = tempfile(), aws.path = "/usr/local/bin/aws",
+  delete = FALSE, decompress = FALSE)
 }
 \arguments{
 \item{s3.path}{Path within S3. This can be a prefix (partial path).}

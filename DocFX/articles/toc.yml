@@ -26,6 +26,9 @@
     - name: SSL Certificate Pinning
       href: ssl_pinning.md
 
+- name: Push Notifications
+  href: push_notifications.md
+
 - name: Developing Sensus
   items:
 

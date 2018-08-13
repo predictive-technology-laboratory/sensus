@@ -110,6 +110,10 @@ namespace Sensus.Android.Probes.Movement
                 {
                     message += " Please update your phone's Google Play Services app using the App Store. Then restart your study.";
                 }
+                else if (GoogleApiAvailability.Instance.IsUserResolvableError(googlePlayServicesAvailability))
+                {
+                    message += " Please fix the following error and then restart your study:  " + GoogleApiAvailability.Instance.GetErrorString(googlePlayServicesAvailability);
+                }
 
                 message += " Email the study organizers and tell them you received the following error code:  " + googlePlayServicesAvailability;
 

@@ -37,6 +37,9 @@ references:
 - uid: protocol_distribution
   name: Protocol Distribution
   href: articles/protocol_distribution.html
+- uid: push_notifications
+  name: Push Notifications
+  href: articles/push_notifications.html
 - uid: Sensus
   name: Sensus
   href: api/Sensus.html
@@ -247,6 +250,60 @@ references:
   commentId: Overload:Sensus.Android.AndroidMainActivity.OnWindowFocusChanged
   fullName: Sensus.Android.AndroidMainActivity.OnWindowFocusChanged
   nameWithType: AndroidMainActivity.OnWindowFocusChanged
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  name: AndroidPowerConnectionChangeBroadcastReceiver
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html
+  commentId: T:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  name: AndroidPowerConnectionChangeBroadcastReceiver()
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver__ctor
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver()
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver()
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor*
+  name: AndroidPowerConnectionChangeBroadcastReceiver
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver__ctor_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.AndroidPowerConnectionChangeBroadcastReceiver
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  name: OnReceive(Context, Intent)
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.OnReceive(Context, Intent)
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive*
+  name: OnReceive
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_OnReceive_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.OnReceive
+- uid: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  name: POWER_CONNECTION_CHANGED
+  href: api/Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.html#Sensus_Android_AndroidPowerConnectionChangeBroadcastReceiver_POWER_CONNECTION_CHANGED
+  commentId: E:Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  fullName: Sensus.Android.AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+  nameWithType: AndroidPowerConnectionChangeBroadcastReceiver.POWER_CONNECTION_CHANGED
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener
+  name: AndroidPowerConnectionChangeListener
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html
+  commentId: T:Sensus.Android.AndroidPowerConnectionChangeListener
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener
+  nameWithType: AndroidPowerConnectionChangeListener
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  name: AndroidPowerConnectionChangeListener()
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html#Sensus_Android_AndroidPowerConnectionChangeListener__ctor
+  commentId: M:Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener()
+  nameWithType: AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener()
+- uid: Sensus.Android.AndroidPowerConnectionChangeListener.#ctor*
+  name: AndroidPowerConnectionChangeListener
+  href: api/Sensus.Android.AndroidPowerConnectionChangeListener.html#Sensus_Android_AndroidPowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.Android.AndroidPowerConnectionChangeListener.#ctor
+  fullName: Sensus.Android.AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener
+  nameWithType: AndroidPowerConnectionChangeListener.AndroidPowerConnectionChangeListener
 - uid: Sensus.Android.AndroidSensusService
   name: AndroidSensusService
   href: api/Sensus.Android.AndroidSensusService.html
@@ -718,6 +775,33 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync
   fullName: Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync
   nameWithType: AndroidSensusServiceHelper.ProtectedFlashNotificationAsync
+- uid: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  name: PushNotificationToken
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_PushNotificationToken
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  fullName: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  nameWithType: AndroidSensusServiceHelper.PushNotificationToken
+- uid: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken*
+  name: PushNotificationToken
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_PushNotificationToken_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  fullName: Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken
+  nameWithType: AndroidSensusServiceHelper.PushNotificationToken
+- uid: Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})
+  name: RegisterWithNotificationHub(Tuple<String, String>)
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__
+  commentId: M:Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})
+  name.vb: RegisterWithNotificationHub(Tuple(Of String, String))
+  fullName: Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub(System.Tuple<System.String, System.String>)
+  fullName.vb: Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub(System.Tuple(Of System.String, System.String))
+  nameWithType: AndroidSensusServiceHelper.RegisterWithNotificationHub(Tuple<String, String>)
+  nameWithType.vb: AndroidSensusServiceHelper.RegisterWithNotificationHub(Tuple(Of String, String))
+- uid: Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub*
+  name: RegisterWithNotificationHub
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_RegisterWithNotificationHub_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub
+  fullName: Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub
+  nameWithType: AndroidSensusServiceHelper.RegisterWithNotificationHub
 - uid: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
   name: ReissueForegroundServiceNotification()
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification
@@ -730,6 +814,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
   fullName: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
   nameWithType: AndroidSensusServiceHelper.ReissueForegroundServiceNotification
+- uid: Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken
+  name: RequestNewPushNotificationToken()
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_RequestNewPushNotificationToken
+  commentId: M:Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken
+  fullName: Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken()
+  nameWithType: AndroidSensusServiceHelper.RequestNewPushNotificationToken()
+- uid: Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken*
+  name: RequestNewPushNotificationToken
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_RequestNewPushNotificationToken_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken
+  fullName: Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken
+  nameWithType: AndroidSensusServiceHelper.RequestNewPushNotificationToken
 - uid: Sensus.Android.AndroidSensusServiceHelper.RunActionUsingMainActivityAsync(System.Action{Sensus.Android.AndroidMainActivity},System.Boolean,System.Boolean)
   name: RunActionUsingMainActivityAsync(Action<AndroidMainActivity>, Boolean, Boolean)
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_RunActionUsingMainActivityAsync_System_Action_Sensus_Android_AndroidMainActivity__System_Boolean_System_Boolean_
@@ -829,6 +925,21 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync
   fullName: Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync
   nameWithType: AndroidSensusServiceHelper.TextToSpeechAsync
+- uid: Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})
+  name: UnregisterFromNotificationHub(Tuple<String, String>)
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__
+  commentId: M:Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})
+  name.vb: UnregisterFromNotificationHub(Tuple(Of String, String))
+  fullName: Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple<System.String, System.String>)
+  fullName.vb: Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple(Of System.String, System.String))
+  nameWithType: AndroidSensusServiceHelper.UnregisterFromNotificationHub(Tuple<String, String>)
+  nameWithType.vb: AndroidSensusServiceHelper.UnregisterFromNotificationHub(Tuple(Of String, String))
+- uid: Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub*
+  name: UnregisterFromNotificationHub
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_UnregisterFromNotificationHub_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub
+  fullName: Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub
+  nameWithType: AndroidSensusServiceHelper.UnregisterFromNotificationHub
 - uid: Sensus.Android.AndroidSensusServiceHelper.UserDeniedBluetoothEnable
   name: UserDeniedBluetoothEnable
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_UserDeniedBluetoothEnable
@@ -1351,6 +1462,18 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.Platform
   fullName: Sensus.Android.Context.AndroidSensusContext.Platform
   nameWithType: AndroidSensusContext.Platform
+- uid: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  nameWithType: AndroidSensusContext.PowerConnectionChangeListener
+- uid: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Android.Context.AndroidSensusContext.PowerConnectionChangeListener
+  nameWithType: AndroidSensusContext.PowerConnectionChangeListener
 - uid: Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.Android.Context.AndroidSensusContext.html#Sensus_Android_Context_AndroidSensusContext_SymmetricEncryption
@@ -1363,6 +1486,66 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   fullName: Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   nameWithType: AndroidSensusContext.SymmetricEncryption
+- uid: Sensus.Android.FirebaseNotificationService
+  name: FirebaseNotificationService
+  href: api/Sensus.Android.FirebaseNotificationService.html
+  commentId: T:Sensus.Android.FirebaseNotificationService
+  fullName: Sensus.Android.FirebaseNotificationService
+  nameWithType: FirebaseNotificationService
+- uid: Sensus.Android.FirebaseNotificationService.#ctor
+  name: FirebaseNotificationService()
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService__ctor
+  commentId: M:Sensus.Android.FirebaseNotificationService.#ctor
+  fullName: Sensus.Android.FirebaseNotificationService.FirebaseNotificationService()
+  nameWithType: FirebaseNotificationService.FirebaseNotificationService()
+- uid: Sensus.Android.FirebaseNotificationService.#ctor*
+  name: FirebaseNotificationService
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService__ctor_
+  commentId: Overload:Sensus.Android.FirebaseNotificationService.#ctor
+  fullName: Sensus.Android.FirebaseNotificationService.FirebaseNotificationService
+  nameWithType: FirebaseNotificationService.FirebaseNotificationService
+- uid: Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)
+  name: OnMessageReceived(RemoteMessage)
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService_OnMessageReceived_Firebase_Messaging_RemoteMessage_
+  commentId: M:Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)
+  fullName: Sensus.Android.FirebaseNotificationService.OnMessageReceived(Firebase.Messaging.RemoteMessage)
+  nameWithType: FirebaseNotificationService.OnMessageReceived(RemoteMessage)
+- uid: Sensus.Android.FirebaseNotificationService.OnMessageReceived*
+  name: OnMessageReceived
+  href: api/Sensus.Android.FirebaseNotificationService.html#Sensus_Android_FirebaseNotificationService_OnMessageReceived_
+  commentId: Overload:Sensus.Android.FirebaseNotificationService.OnMessageReceived
+  fullName: Sensus.Android.FirebaseNotificationService.OnMessageReceived
+  nameWithType: FirebaseNotificationService.OnMessageReceived
+- uid: Sensus.Android.FirebaseRegistrationService
+  name: FirebaseRegistrationService
+  href: api/Sensus.Android.FirebaseRegistrationService.html
+  commentId: T:Sensus.Android.FirebaseRegistrationService
+  fullName: Sensus.Android.FirebaseRegistrationService
+  nameWithType: FirebaseRegistrationService
+- uid: Sensus.Android.FirebaseRegistrationService.#ctor
+  name: FirebaseRegistrationService()
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService__ctor
+  commentId: M:Sensus.Android.FirebaseRegistrationService.#ctor
+  fullName: Sensus.Android.FirebaseRegistrationService.FirebaseRegistrationService()
+  nameWithType: FirebaseRegistrationService.FirebaseRegistrationService()
+- uid: Sensus.Android.FirebaseRegistrationService.#ctor*
+  name: FirebaseRegistrationService
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService__ctor_
+  commentId: Overload:Sensus.Android.FirebaseRegistrationService.#ctor
+  fullName: Sensus.Android.FirebaseRegistrationService.FirebaseRegistrationService
+  nameWithType: FirebaseRegistrationService.FirebaseRegistrationService
+- uid: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  name: OnTokenRefresh()
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService_OnTokenRefresh
+  commentId: M:Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  fullName: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh()
+  nameWithType: FirebaseRegistrationService.OnTokenRefresh()
+- uid: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh*
+  name: OnTokenRefresh
+  href: api/Sensus.Android.FirebaseRegistrationService.html#Sensus_Android_FirebaseRegistrationService_OnTokenRefresh_
+  commentId: Overload:Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  fullName: Sensus.Android.FirebaseRegistrationService.OnTokenRefresh
+  nameWithType: FirebaseRegistrationService.OnTokenRefresh
 - uid: Sensus.Android.Probes
   name: Sensus.Android.Probes
   href: api/Sensus.Android.Probes.html
@@ -2245,6 +2428,60 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothScannerCallback.OnScanResult
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothScannerCallback.OnScanResult
   nameWithType: AndroidBluetoothScannerCallback.OnScanResult
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe
+  name: AndroidHumidityProbe
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html
+  commentId: T:Sensus.Android.Probes.Context.AndroidHumidityProbe
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe
+  nameWithType: AndroidHumidityProbe
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.#ctor
+  name: AndroidHumidityProbe()
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe__ctor
+  commentId: M:Sensus.Android.Probes.Context.AndroidHumidityProbe.#ctor
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.AndroidHumidityProbe()
+  nameWithType: AndroidHumidityProbe.AndroidHumidityProbe()
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.#ctor*
+  name: AndroidHumidityProbe
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe__ctor_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidHumidityProbe.#ctor
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.AndroidHumidityProbe
+  nameWithType: AndroidHumidityProbe.AndroidHumidityProbe
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe_Initialize
+  commentId: M:Sensus.Android.Probes.Context.AndroidHumidityProbe.Initialize
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.Initialize()
+  nameWithType: AndroidHumidityProbe.Initialize()
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe_Initialize_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidHumidityProbe.Initialize
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.Initialize
+  nameWithType: AndroidHumidityProbe.Initialize
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.StartListening
+  name: StartListening()
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe_StartListening
+  commentId: M:Sensus.Android.Probes.Context.AndroidHumidityProbe.StartListening
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.StartListening()
+  nameWithType: AndroidHumidityProbe.StartListening()
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.StartListening*
+  name: StartListening
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe_StartListening_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidHumidityProbe.StartListening
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.StartListening
+  nameWithType: AndroidHumidityProbe.StartListening
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.StopListening
+  name: StopListening()
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe_StopListening
+  commentId: M:Sensus.Android.Probes.Context.AndroidHumidityProbe.StopListening
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.StopListening()
+  nameWithType: AndroidHumidityProbe.StopListening()
+- uid: Sensus.Android.Probes.Context.AndroidHumidityProbe.StopListening*
+  name: StopListening
+  href: api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html#Sensus_Android_Probes_Context_AndroidHumidityProbe_StopListening_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidHumidityProbe.StopListening
+  fullName: Sensus.Android.Probes.Context.AndroidHumidityProbe.StopListening
+  nameWithType: AndroidHumidityProbe.StopListening
 - uid: Sensus.Android.Probes.Context.AndroidLightProbe
   name: AndroidLightProbe
   href: api/Sensus.Android.Probes.Context.AndroidLightProbe.html
@@ -2569,6 +2806,60 @@ references:
   commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteBeaconProbe.StopListening
   fullName: Sensus.Android.Probes.Location.AndroidEstimoteBeaconProbe.StopListening
   nameWithType: AndroidEstimoteBeaconProbe.StopListening
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe
+  name: AndroidProximityProbe
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html
+  commentId: T:Sensus.Android.Probes.Location.AndroidProximityProbe
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe
+  nameWithType: AndroidProximityProbe
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.#ctor
+  name: AndroidProximityProbe()
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe__ctor
+  commentId: M:Sensus.Android.Probes.Location.AndroidProximityProbe.#ctor
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.AndroidProximityProbe()
+  nameWithType: AndroidProximityProbe.AndroidProximityProbe()
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.#ctor*
+  name: AndroidProximityProbe
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe__ctor_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidProximityProbe.#ctor
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.AndroidProximityProbe
+  nameWithType: AndroidProximityProbe.AndroidProximityProbe
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe_Initialize
+  commentId: M:Sensus.Android.Probes.Location.AndroidProximityProbe.Initialize
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.Initialize()
+  nameWithType: AndroidProximityProbe.Initialize()
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe_Initialize_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidProximityProbe.Initialize
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.Initialize
+  nameWithType: AndroidProximityProbe.Initialize
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.StartListening
+  name: StartListening()
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe_StartListening
+  commentId: M:Sensus.Android.Probes.Location.AndroidProximityProbe.StartListening
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.StartListening()
+  nameWithType: AndroidProximityProbe.StartListening()
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.StartListening*
+  name: StartListening
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe_StartListening_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidProximityProbe.StartListening
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.StartListening
+  nameWithType: AndroidProximityProbe.StartListening
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.StopListening
+  name: StopListening()
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe_StopListening
+  commentId: M:Sensus.Android.Probes.Location.AndroidProximityProbe.StopListening
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.StopListening()
+  nameWithType: AndroidProximityProbe.StopListening()
+- uid: Sensus.Android.Probes.Location.AndroidProximityProbe.StopListening*
+  name: StopListening
+  href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html#Sensus_Android_Probes_Location_AndroidProximityProbe_StopListening_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidProximityProbe.StopListening
+  fullName: Sensus.Android.Probes.Location.AndroidProximityProbe.StopListening
+  nameWithType: AndroidProximityProbe.StopListening
 - uid: Sensus.Android.Probes.Movement
   name: Sensus.Android.Probes.Movement
   href: api/Sensus.Android.Probes.Movement.html
@@ -6274,12 +6565,6 @@ references:
   commentId: F:Sensus.Android.Resource.Color.com_facebook_send_button_text_color
   fullName: Sensus.Android.Resource.Color.com_facebook_send_button_text_color
   nameWithType: Resource.Color.com_facebook_send_button_text_color
-- uid: Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  name: com_facebook_share_button_text_color
-  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_facebook_share_button_text_color
-  commentId: F:Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  fullName: Sensus.Android.Resource.Color.com_facebook_share_button_text_color
-  nameWithType: Resource.Color.com_facebook_share_button_text_color
 - uid: Sensus.Android.Resource.Color.com_smart_login_code
   name: com_smart_login_code
   href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_smart_login_code
@@ -7294,48 +7579,6 @@ references:
   commentId: F:Sensus.Android.Resource.Dimension.com_facebook_profilepictureview_preset_size_small
   fullName: Sensus.Android.Resource.Dimension.com_facebook_profilepictureview_preset_size_small
   nameWithType: Resource.Dimension.com_facebook_profilepictureview_preset_size_small
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  name: com_facebook_share_button_compound_drawable_padding
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_compound_drawable_padding
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-  nameWithType: Resource.Dimension.com_facebook_share_button_compound_drawable_padding
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  name: com_facebook_share_button_padding_bottom
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_bottom
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_bottom
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_bottom
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  name: com_facebook_share_button_padding_left
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_left
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_left
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_left
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  name: com_facebook_share_button_padding_right
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_right
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_right
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_right
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  name: com_facebook_share_button_padding_top
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_padding_top
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_padding_top
-  nameWithType: Resource.Dimension.com_facebook_share_button_padding_top
-- uid: Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  name: com_facebook_share_button_text_size
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_share_button_text_size
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_share_button_text_size
-  nameWithType: Resource.Dimension.com_facebook_share_button_text_size
-- uid: Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  name: com_facebook_tooltip_horizontal_padding
-  href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_com_facebook_tooltip_horizontal_padding
-  commentId: F:Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  fullName: Sensus.Android.Resource.Dimension.com_facebook_tooltip_horizontal_padding
-  nameWithType: Resource.Dimension.com_facebook_tooltip_horizontal_padding
 - uid: Sensus.Android.Resource.Dimension.compat_button_inset_horizontal_material
   name: compat_button_inset_horizontal_material
   href: api/Sensus.Android.Resource.Dimension.html#Sensus_Android_Resource_Dimension_compat_button_inset_horizontal_material
@@ -10534,12 +10777,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.com_facebook_fragment_container
   fullName: Sensus.Android.Resource.Id.com_facebook_fragment_container
   nameWithType: Resource.Id.com_facebook_fragment_container
-- uid: Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  name: com_facebook_login_activity_progress_bar
-  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_login_activity_progress_bar
-  commentId: F:Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  fullName: Sensus.Android.Resource.Id.com_facebook_login_activity_progress_bar
-  nameWithType: Resource.Id.com_facebook_login_activity_progress_bar
+- uid: Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  name: com_facebook_login_fragment_progress_bar
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_login_fragment_progress_bar
+  commentId: F:Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  fullName: Sensus.Android.Resource.Id.com_facebook_login_fragment_progress_bar
+  nameWithType: Resource.Id.com_facebook_login_fragment_progress_bar
 - uid: Sensus.Android.Resource.Id.com_facebook_smart_instructions_0
   name: com_facebook_smart_instructions_0
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_com_facebook_smart_instructions_0
@@ -11488,6 +11731,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.showTitle
   fullName: Sensus.Android.Resource.Id.showTitle
   nameWithType: Resource.Id.showTitle
+- uid: Sensus.Android.Resource.Id.sliding_tabs
+  name: sliding_tabs
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_sliding_tabs
+  commentId: F:Sensus.Android.Resource.Id.sliding_tabs
+  fullName: Sensus.Android.Resource.Id.sliding_tabs
+  nameWithType: Resource.Id.sliding_tabs
 - uid: Sensus.Android.Resource.Id.small
   name: small
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_small
@@ -11686,6 +11935,12 @@ references:
   commentId: F:Sensus.Android.Resource.Id.titleDividerNoCustom
   fullName: Sensus.Android.Resource.Id.titleDividerNoCustom
   nameWithType: Resource.Id.titleDividerNoCustom
+- uid: Sensus.Android.Resource.Id.toolbar
+  name: toolbar
+  href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_toolbar
+  commentId: F:Sensus.Android.Resource.Id.toolbar
+  fullName: Sensus.Android.Resource.Id.toolbar
+  nameWithType: Resource.Id.toolbar
 - uid: Sensus.Android.Resource.Id.top
   name: top
   href: api/Sensus.Android.Resource.Id.html#Sensus_Android_Resource_Id_top
@@ -12418,6 +12673,18 @@ references:
   commentId: F:Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item
   fullName: Sensus.Android.Resource.Layout.support_simple_spinner_dropdown_item
   nameWithType: Resource.Layout.support_simple_spinner_dropdown_item
+- uid: Sensus.Android.Resource.Layout.Tabbar
+  name: Tabbar
+  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_Tabbar
+  commentId: F:Sensus.Android.Resource.Layout.Tabbar
+  fullName: Sensus.Android.Resource.Layout.Tabbar
+  nameWithType: Resource.Layout.Tabbar
+- uid: Sensus.Android.Resource.Layout.Toolbar
+  name: Toolbar
+  href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_Toolbar
+  commentId: F:Sensus.Android.Resource.Layout.Toolbar
+  fullName: Sensus.Android.Resource.Layout.Toolbar
+  nameWithType: Resource.Layout.Toolbar
 - uid: Sensus.Android.Resource.Layout.tooltip
   name: tooltip
   href: api/Sensus.Android.Resource.Layout.html#Sensus_Android_Resource_Layout_tooltip
@@ -12892,6 +13159,54 @@ references:
   commentId: F:Sensus.Android.Resource.String.common_signin_button_text_long
   fullName: Sensus.Android.Resource.String.common_signin_button_text_long
   nameWithType: Resource.String.common_signin_button_text_long
+- uid: Sensus.Android.Resource.String.default_web_client_id
+  name: default_web_client_id
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_default_web_client_id
+  commentId: F:Sensus.Android.Resource.String.default_web_client_id
+  fullName: Sensus.Android.Resource.String.default_web_client_id
+  nameWithType: Resource.String.default_web_client_id
+- uid: Sensus.Android.Resource.String.fcm_fallback_notification_channel_label
+  name: fcm_fallback_notification_channel_label
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_fcm_fallback_notification_channel_label
+  commentId: F:Sensus.Android.Resource.String.fcm_fallback_notification_channel_label
+  fullName: Sensus.Android.Resource.String.fcm_fallback_notification_channel_label
+  nameWithType: Resource.String.fcm_fallback_notification_channel_label
+- uid: Sensus.Android.Resource.String.firebase_database_url
+  name: firebase_database_url
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_firebase_database_url
+  commentId: F:Sensus.Android.Resource.String.firebase_database_url
+  fullName: Sensus.Android.Resource.String.firebase_database_url
+  nameWithType: Resource.String.firebase_database_url
+- uid: Sensus.Android.Resource.String.gcm_defaultSenderId
+  name: gcm_defaultSenderId
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_gcm_defaultSenderId
+  commentId: F:Sensus.Android.Resource.String.gcm_defaultSenderId
+  fullName: Sensus.Android.Resource.String.gcm_defaultSenderId
+  nameWithType: Resource.String.gcm_defaultSenderId
+- uid: Sensus.Android.Resource.String.google_api_key
+  name: google_api_key
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_api_key
+  commentId: F:Sensus.Android.Resource.String.google_api_key
+  fullName: Sensus.Android.Resource.String.google_api_key
+  nameWithType: Resource.String.google_api_key
+- uid: Sensus.Android.Resource.String.google_app_id
+  name: google_app_id
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_app_id
+  commentId: F:Sensus.Android.Resource.String.google_app_id
+  fullName: Sensus.Android.Resource.String.google_app_id
+  nameWithType: Resource.String.google_app_id
+- uid: Sensus.Android.Resource.String.google_crash_reporting_api_key
+  name: google_crash_reporting_api_key
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_crash_reporting_api_key
+  commentId: F:Sensus.Android.Resource.String.google_crash_reporting_api_key
+  fullName: Sensus.Android.Resource.String.google_crash_reporting_api_key
+  nameWithType: Resource.String.google_crash_reporting_api_key
+- uid: Sensus.Android.Resource.String.google_storage_bucket
+  name: google_storage_bucket
+  href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_google_storage_bucket
+  commentId: F:Sensus.Android.Resource.String.google_storage_bucket
+  fullName: Sensus.Android.Resource.String.google_storage_bucket
+  nameWithType: Resource.String.google_storage_bucket
 - uid: Sensus.Android.Resource.String.Hello
   name: Hello
   href: api/Sensus.Android.Resource.String.html#Sensus_Android_Resource_String_Hello
@@ -14464,6 +14779,18 @@ references:
   commentId: F:Sensus.Android.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
   fullName: Sensus.Android.Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
   nameWithType: Resource.Style.RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
+- uid: Sensus.Android.Resource.Style.SensusTheme
+  name: SensusTheme
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_SensusTheme
+  commentId: F:Sensus.Android.Resource.Style.SensusTheme
+  fullName: Sensus.Android.Resource.Style.SensusTheme
+  nameWithType: Resource.Style.SensusTheme
+- uid: Sensus.Android.Resource.Style.SensusTheme_Base
+  name: SensusTheme_Base
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_SensusTheme_Base
+  commentId: F:Sensus.Android.Resource.Style.SensusTheme_Base
+  fullName: Sensus.Android.Resource.Style.SensusTheme_Base
+  nameWithType: Resource.Style.SensusTheme_Base
 - uid: Sensus.Android.Resource.Style.TextAppearance_AppCompat
   name: TextAppearance_AppCompat
   href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_TextAppearance_AppCompat
@@ -19891,6 +20218,138 @@ references:
   commentId: Overload:Sensus.Anonymization.Anonymizers.DoubleRoundingThousandthsAnonymizer.DisplayText
   fullName: Sensus.Anonymization.Anonymizers.DoubleRoundingThousandthsAnonymizer.DisplayText
   nameWithType: DoubleRoundingThousandthsAnonymizer.DisplayText
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer
+  name: LongitudeOffsetGpsAnonymizer
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html
+  commentId: T:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer
+  nameWithType: LongitudeOffsetGpsAnonymizer
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.#ctor
+  name: LongitudeOffsetGpsAnonymizer()
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer__ctor
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.#ctor
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.LongitudeOffsetGpsAnonymizer()
+  nameWithType: LongitudeOffsetGpsAnonymizer.LongitudeOffsetGpsAnonymizer()
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.#ctor*
+  name: LongitudeOffsetGpsAnonymizer
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer__ctor_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.#ctor
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.LongitudeOffsetGpsAnonymizer
+  nameWithType: LongitudeOffsetGpsAnonymizer.LongitudeOffsetGpsAnonymizer
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply(System.Object,Sensus.Protocol)
+  name: Apply(Object, Protocol)
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_Apply_System_Object_Sensus_Protocol_
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply(System.Object,Sensus.Protocol)
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply(System.Object, Sensus.Protocol)
+  nameWithType: LongitudeOffsetGpsAnonymizer.Apply(Object, Protocol)
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply*
+  name: Apply
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_Apply_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.Apply
+  nameWithType: LongitudeOffsetGpsAnonymizer.Apply
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  name: GetOffset(Protocol)
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_Sensus_Protocol_
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  nameWithType: LongitudeOffsetGpsAnonymizer.GetOffset(Protocol)
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(System.Random)
+  name: GetOffset(Random)
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_System_Random_
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(System.Random)
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset(System.Random)
+  nameWithType: LongitudeOffsetGpsAnonymizer.GetOffset(Random)
+- uid: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset*
+  name: GetOffset
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeOffsetGpsAnonymizer_GetOffset_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeOffsetGpsAnonymizer.GetOffset
+  nameWithType: LongitudeOffsetGpsAnonymizer.GetOffset
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer
+  name: LongitudeParticipantOffsetGpsAnonymizer
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html
+  commentId: T:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.#ctor
+  name: LongitudeParticipantOffsetGpsAnonymizer()
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeParticipantOffsetGpsAnonymizer__ctor
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.#ctor
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.LongitudeParticipantOffsetGpsAnonymizer()
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer.LongitudeParticipantOffsetGpsAnonymizer()
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.#ctor*
+  name: LongitudeParticipantOffsetGpsAnonymizer
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeParticipantOffsetGpsAnonymizer__ctor_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.#ctor
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.LongitudeParticipantOffsetGpsAnonymizer
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer.LongitudeParticipantOffsetGpsAnonymizer
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+  name: DisplayText
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeParticipantOffsetGpsAnonymizer_DisplayText
+  commentId: P:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.DisplayText*
+  name: DisplayText
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeParticipantOffsetGpsAnonymizer_DisplayText_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer.DisplayText
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  name: GetOffset(Protocol)
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeParticipantOffsetGpsAnonymizer_GetOffset_Sensus_Protocol_
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer.GetOffset(Protocol)
+- uid: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.GetOffset*
+  name: GetOffset
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeParticipantOffsetGpsAnonymizer_GetOffset_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.GetOffset
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeParticipantOffsetGpsAnonymizer.GetOffset
+  nameWithType: LongitudeParticipantOffsetGpsAnonymizer.GetOffset
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer
+  name: LongitudeStudyOffsetGpsAnonymizer
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html
+  commentId: T:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.#ctor
+  name: LongitudeStudyOffsetGpsAnonymizer()
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer__ctor
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.#ctor
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.LongitudeStudyOffsetGpsAnonymizer()
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer.LongitudeStudyOffsetGpsAnonymizer()
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.#ctor*
+  name: LongitudeStudyOffsetGpsAnonymizer
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer__ctor_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.#ctor
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.LongitudeStudyOffsetGpsAnonymizer
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer.LongitudeStudyOffsetGpsAnonymizer
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText
+  name: DisplayText
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_DisplayText
+  commentId: P:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer.DisplayText
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText*
+  name: DisplayText
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_DisplayText_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.DisplayText
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer.DisplayText
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  name: GetOffset(Protocol)
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_GetOffset_Sensus_Protocol_
+  commentId: M:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset(Sensus.Protocol)
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer.GetOffset(Protocol)
+- uid: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset*
+  name: GetOffset
+  href: api/Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.html#Sensus_Anonymization_Anonymizers_LongitudeStudyOffsetGpsAnonymizer_GetOffset_
+  commentId: Overload:Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset
+  fullName: Sensus.Anonymization.Anonymizers.LongitudeStudyOffsetGpsAnonymizer.GetOffset
+  nameWithType: LongitudeStudyOffsetGpsAnonymizer.GetOffset
 - uid: Sensus.Anonymization.Anonymizers.StringHashAnonymizer
   name: StringHashAnonymizer
   href: api/Sensus.Anonymization.Anonymizers.StringHashAnonymizer.html
@@ -20909,6 +21368,18 @@ references:
   commentId: Overload:Sensus.Context.ISensusContext.Platform
   fullName: Sensus.Context.ISensusContext.Platform
   nameWithType: ISensusContext.Platform
+- uid: Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  nameWithType: ISensusContext.PowerConnectionChangeListener
+- uid: Sensus.Context.ISensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  fullName: Sensus.Context.ISensusContext.PowerConnectionChangeListener
+  nameWithType: ISensusContext.PowerConnectionChangeListener
 - uid: Sensus.Context.ISensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.Context.ISensusContext.html#Sensus_Context_ISensusContext_SymmetricEncryption
@@ -21656,6 +22127,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
   nameWithType: AmazonS3RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  name: DeletePushNotificationTokenAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationTokenAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync*
+  name: DeletePushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync
+  nameWithType: AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DisplayName
   name: DisplayName
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DisplayName
@@ -21755,6 +22238,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   nameWithType: AmazonS3RemoteDataStore.Region
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationRequestAsync_Sensus_PushNotificationRequest_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync*
+  name: SendPushNotificationRequestAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationRequestAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationRequestAsync
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  name: SendPushNotificationTokenAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationTokenAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationTokenAsync(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync*
+  name: SendPushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationTokenAsync
+  nameWithType: AmazonS3RemoteDataStore.SendPushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Start
   name: Start()
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Start
@@ -21779,6 +22286,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Stop
   nameWithType: AmazonS3RemoteDataStore.Stop
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StorageDescription
+  commentId: P:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  nameWithType: AmazonS3RemoteDataStore.StorageDescription
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription*
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StorageDescription_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
+  nameWithType: AmazonS3RemoteDataStore.StorageDescription
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)
   name: TestHealth(ref List<Tuple<String, Dictionary<String, String>>>)
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____
@@ -21848,6 +22367,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.CanRetrieveWrittenData
   nameWithType: ConsoleRemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  name: DeletePushNotificationTokenAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationTokenAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.DeletePushNotificationTokenAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync*
+  name: DeletePushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync
+  nameWithType: ConsoleRemoteDataStore.DeletePushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DisplayName
   name: DisplayName
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_DisplayName
@@ -21887,6 +22418,42 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   nameWithType: ConsoleRemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationRequestAsync_Sensus_PushNotificationRequest_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync*
+  name: SendPushNotificationRequestAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationRequestAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationRequestAsync
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationRequestAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  name: SendPushNotificationTokenAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationTokenAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationTokenAsync(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync*
+  name: SendPushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_SendPushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.SendPushNotificationTokenAsync
+  nameWithType: ConsoleRemoteDataStore.SendPushNotificationTokenAsync
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_StorageDescription
+  commentId: P:Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  nameWithType: ConsoleRemoteDataStore.StorageDescription
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription*
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_StorageDescription_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.StorageDescription
+  nameWithType: ConsoleRemoteDataStore.StorageDescription
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.WriteDataStreamAsync(System.IO.Stream,System.String,System.String,System.Threading.CancellationToken)
   name: WriteDataStreamAsync(Stream, String, String, CancellationToken)
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_WriteDataStreamAsync_System_IO_Stream_System_String_System_String_System_Threading_CancellationToken_
@@ -21941,6 +22508,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
   fullName: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
   nameWithType: RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  name: DeletePushNotificationTokenAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationTokenAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationTokenAsync(System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.DeletePushNotificationTokenAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationTokenAsync*
+  name: DeletePushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationTokenAsync
+  nameWithType: RemoteDataStore.DeletePushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.RemoteDataStore.GetDatumAsync*
   name: GetDatumAsync
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumAsync_
@@ -22016,6 +22595,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Reset
   fullName: Sensus.DataStores.Remote.RemoteDataStore.Reset
   nameWithType: RemoteDataStore.Reset
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationRequestAsync_Sensus_PushNotificationRequest_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync(Sensus.PushNotificationRequest, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync*
+  name: SendPushNotificationRequestAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationRequestAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationRequestAsync
+  nameWithType: RemoteDataStore.SendPushNotificationRequestAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  name: SendPushNotificationTokenAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationTokenAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.SendPushNotificationTokenAsync(String, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync*
+  name: SendPushNotificationTokenAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_SendPushNotificationTokenAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.SendPushNotificationTokenAsync
+  nameWithType: RemoteDataStore.SendPushNotificationTokenAsync
 - uid: Sensus.DataStores.Remote.RemoteDataStore.Start
   name: Start()
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_Start
@@ -22040,6 +22643,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.Stop
   fullName: Sensus.DataStores.Remote.RemoteDataStore.Stop
   nameWithType: RemoteDataStore.Stop
+- uid: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_StorageDescription
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  nameWithType: RemoteDataStore.StorageDescription
+- uid: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription*
+  name: StorageDescription
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_StorageDescription_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.StorageDescription
+  nameWithType: RemoteDataStore.StorageDescription
 - uid: Sensus.DataStores.Remote.RemoteDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)
   name: TestHealth(ref List<Tuple<String, Dictionary<String, String>>>)
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____
@@ -22115,6 +22730,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync
   fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteLocalDataStoreAsync
   nameWithType: RemoteDataStore.WriteLocalDataStoreAsync
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteOnPowerConnect
+  name: WriteOnPowerConnect
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteOnPowerConnect
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.WriteOnPowerConnect
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteOnPowerConnect
+  nameWithType: RemoteDataStore.WriteOnPowerConnect
+- uid: Sensus.DataStores.Remote.RemoteDataStore.WriteOnPowerConnect*
+  name: WriteOnPowerConnect
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteOnPowerConnect_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.WriteOnPowerConnect
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.WriteOnPowerConnect
+  nameWithType: RemoteDataStore.WriteOnPowerConnect
 - uid: Sensus.DataStores.Remote.RemoteDataStore.WriteTimeoutMinutes
   name: WriteTimeoutMinutes
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteTimeoutMinutes
@@ -22676,6 +23303,24 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
+  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  name: UnsetPushNotificationTokenException()
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
+  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
+  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -22850,6 +23495,18 @@ references:
   commentId: T:Sensus.Extensions.NumericExtensions
   fullName: Sensus.Extensions.NumericExtensions
   nameWithType: NumericExtensions
+- uid: Sensus.Extensions.NumericExtensions.NextDouble(System.Random,System.Double,System.Double)
+  name: NextDouble(Random, Double, Double)
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_NextDouble_System_Random_System_Double_System_Double_
+  commentId: M:Sensus.Extensions.NumericExtensions.NextDouble(System.Random,System.Double,System.Double)
+  fullName: Sensus.Extensions.NumericExtensions.NextDouble(System.Random, System.Double, System.Double)
+  nameWithType: NumericExtensions.NextDouble(Random, Double, Double)
+- uid: Sensus.Extensions.NumericExtensions.NextDouble*
+  name: NextDouble
+  href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_NextDouble_
+  commentId: Overload:Sensus.Extensions.NumericExtensions.NextDouble
+  fullName: Sensus.Extensions.NumericExtensions.NextDouble
+  nameWithType: NumericExtensions.NextDouble
 - uid: Sensus.Extensions.NumericExtensions.RoundToWhole(System.Double,System.Int32)
   name: RoundToWhole(Double, Int32)
   href: api/Sensus.Extensions.NumericExtensions.html#Sensus_Extensions_NumericExtensions_RoundToWhole_System_Double_System_Int32_
@@ -22892,6 +23549,24 @@ references:
   commentId: Overload:Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf
   fullName: Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf
   nameWithType: NumericExtensions.RoundToWholePercentageOf
+- uid: Sensus.Extensions.TimeSpanExtensions
+  name: TimeSpanExtensions
+  href: api/Sensus.Extensions.TimeSpanExtensions.html
+  commentId: T:Sensus.Extensions.TimeSpanExtensions
+  fullName: Sensus.Extensions.TimeSpanExtensions
+  nameWithType: TimeSpanExtensions
+- uid: Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
+  name: GetIntervalString(TimeSpan)
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetIntervalString_System_TimeSpan_
+  commentId: M:Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
+  nameWithType: TimeSpanExtensions.GetIntervalString(TimeSpan)
+- uid: Sensus.Extensions.TimeSpanExtensions.GetIntervalString*
+  name: GetIntervalString
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetIntervalString_
+  commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetIntervalString
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString
+  nameWithType: TimeSpanExtensions.GetIntervalString
 - uid: Sensus.ImpreciseDatum
   name: ImpreciseDatum
   href: api/Sensus.ImpreciseDatum.html
@@ -22976,6 +23651,45 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.DidEnterBackground
   fullName: Sensus.iOS.AppDelegate.DidEnterBackground
   nameWithType: AppDelegate.DidEnterBackground
+- uid: Sensus.iOS.AppDelegate.DidReceiveRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary,System.Action{UIKit.UIBackgroundFetchResult})
+  name: DidReceiveRemoteNotification(UIApplication, NSDictionary, Action<UIBackgroundFetchResult>)
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_DidReceiveRemoteNotification_UIKit_UIApplication_Foundation_NSDictionary_System_Action_UIKit_UIBackgroundFetchResult__
+  commentId: M:Sensus.iOS.AppDelegate.DidReceiveRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary,System.Action{UIKit.UIBackgroundFetchResult})
+  name.vb: DidReceiveRemoteNotification(UIApplication, NSDictionary, Action(Of UIBackgroundFetchResult))
+  fullName: Sensus.iOS.AppDelegate.DidReceiveRemoteNotification(UIKit.UIApplication, Foundation.NSDictionary, System.Action<UIKit.UIBackgroundFetchResult>)
+  fullName.vb: Sensus.iOS.AppDelegate.DidReceiveRemoteNotification(UIKit.UIApplication, Foundation.NSDictionary, System.Action(Of UIKit.UIBackgroundFetchResult))
+  nameWithType: AppDelegate.DidReceiveRemoteNotification(UIApplication, NSDictionary, Action<UIBackgroundFetchResult>)
+  nameWithType.vb: AppDelegate.DidReceiveRemoteNotification(UIApplication, NSDictionary, Action(Of UIBackgroundFetchResult))
+- uid: Sensus.iOS.AppDelegate.DidReceiveRemoteNotification*
+  name: DidReceiveRemoteNotification
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_DidReceiveRemoteNotification_
+  commentId: Overload:Sensus.iOS.AppDelegate.DidReceiveRemoteNotification
+  fullName: Sensus.iOS.AppDelegate.DidReceiveRemoteNotification
+  nameWithType: AppDelegate.DidReceiveRemoteNotification
+- uid: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication,UIKit.UIUserNotificationSettings)
+  name: DidRegisterUserNotificationSettings(UIApplication, UIUserNotificationSettings)
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_DidRegisterUserNotificationSettings_UIKit_UIApplication_UIKit_UIUserNotificationSettings_
+  commentId: M:Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication,UIKit.UIUserNotificationSettings)
+  fullName: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication, UIKit.UIUserNotificationSettings)
+  nameWithType: AppDelegate.DidRegisterUserNotificationSettings(UIApplication, UIUserNotificationSettings)
+- uid: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings*
+  name: DidRegisterUserNotificationSettings
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_DidRegisterUserNotificationSettings_
+  commentId: Overload:Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings
+  fullName: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings
+  nameWithType: AppDelegate.DidRegisterUserNotificationSettings
+- uid: Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications(UIKit.UIApplication,Foundation.NSError)
+  name: FailedToRegisterForRemoteNotifications(UIApplication, NSError)
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_FailedToRegisterForRemoteNotifications_UIKit_UIApplication_Foundation_NSError_
+  commentId: M:Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications(UIKit.UIApplication,Foundation.NSError)
+  fullName: Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications(UIKit.UIApplication, Foundation.NSError)
+  nameWithType: AppDelegate.FailedToRegisterForRemoteNotifications(UIApplication, NSError)
+- uid: Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications*
+  name: FailedToRegisterForRemoteNotifications
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_FailedToRegisterForRemoteNotifications_
+  commentId: Overload:Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications
+  fullName: Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications
+  nameWithType: AppDelegate.FailedToRegisterForRemoteNotifications
 - uid: Sensus.iOS.AppDelegate.FinishedLaunching(UIKit.UIApplication,Foundation.NSDictionary)
   name: FinishedLaunching(UIApplication, NSDictionary)
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_FinishedLaunching_UIKit_UIApplication_Foundation_NSDictionary_
@@ -23024,6 +23738,30 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.ReceivedLocalNotification
   fullName: Sensus.iOS.AppDelegate.ReceivedLocalNotification
   nameWithType: AppDelegate.ReceivedLocalNotification
+- uid: Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary)
+  name: ReceivedRemoteNotification(UIApplication, NSDictionary)
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedRemoteNotification_UIKit_UIApplication_Foundation_NSDictionary_
+  commentId: M:Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary)
+  fullName: Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication, Foundation.NSDictionary)
+  nameWithType: AppDelegate.ReceivedRemoteNotification(UIApplication, NSDictionary)
+- uid: Sensus.iOS.AppDelegate.ReceivedRemoteNotification*
+  name: ReceivedRemoteNotification
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedRemoteNotification_
+  commentId: Overload:Sensus.iOS.AppDelegate.ReceivedRemoteNotification
+  fullName: Sensus.iOS.AppDelegate.ReceivedRemoteNotification
+  nameWithType: AppDelegate.ReceivedRemoteNotification
+- uid: Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications(UIKit.UIApplication,Foundation.NSData)
+  name: RegisteredForRemoteNotifications(UIApplication, NSData)
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_RegisteredForRemoteNotifications_UIKit_UIApplication_Foundation_NSData_
+  commentId: M:Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications(UIKit.UIApplication,Foundation.NSData)
+  fullName: Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications(UIKit.UIApplication, Foundation.NSData)
+  nameWithType: AppDelegate.RegisteredForRemoteNotifications(UIApplication, NSData)
+- uid: Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications*
+  name: RegisteredForRemoteNotifications
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_RegisteredForRemoteNotifications_
+  commentId: Overload:Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications
+  fullName: Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications
+  nameWithType: AppDelegate.RegisteredForRemoteNotifications
 - uid: Sensus.iOS.AppDelegate.WillEnterForeground(UIKit.UIApplication)
   name: WillEnterForeground(UIApplication)
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_WillEnterForeground_UIKit_UIApplication_
@@ -23987,6 +24725,18 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.Platform
   fullName: Sensus.iOS.Context.iOSSensusContext.Platform
   nameWithType: iOSSensusContext.Platform
+- uid: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_PowerConnectionChangeListener
+  commentId: P:Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  nameWithType: iOSSensusContext.PowerConnectionChangeListener
+- uid: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_PowerConnectionChangeListener_
+  commentId: Overload:Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  fullName: Sensus.iOS.Context.iOSSensusContext.PowerConnectionChangeListener
+  nameWithType: iOSSensusContext.PowerConnectionChangeListener
 - uid: Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.iOS.Context.iOSSensusContext.html#Sensus_iOS_Context_iOSSensusContext_SymmetricEncryption
@@ -23999,6 +24749,24 @@ references:
   commentId: Overload:Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   fullName: Sensus.iOS.Context.iOSSensusContext.SymmetricEncryption
   nameWithType: iOSSensusContext.SymmetricEncryption
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener
+  name: iOSPowerConnectionChangeListener
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html
+  commentId: T:Sensus.iOS.iOSPowerConnectionChangeListener
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener
+  nameWithType: iOSPowerConnectionChangeListener
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  name: iOSPowerConnectionChangeListener()
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html#Sensus_iOS_iOSPowerConnectionChangeListener__ctor
+  commentId: M:Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener()
+  nameWithType: iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener()
+- uid: Sensus.iOS.iOSPowerConnectionChangeListener.#ctor*
+  name: iOSPowerConnectionChangeListener
+  href: api/Sensus.iOS.iOSPowerConnectionChangeListener.html#Sensus_iOS_iOSPowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.iOS.iOSPowerConnectionChangeListener.#ctor
+  fullName: Sensus.iOS.iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener
+  nameWithType: iOSPowerConnectionChangeListener.iOSPowerConnectionChangeListener
 - uid: Sensus.iOS.iOSSensusServiceHelper
   name: iOSSensusServiceHelper
   href: api/Sensus.iOS.iOSSensusServiceHelper.html
@@ -24200,6 +24968,57 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.ProtectedFlashNotificationAsync
   fullName: Sensus.iOS.iOSSensusServiceHelper.ProtectedFlashNotificationAsync
   nameWithType: iOSSensusServiceHelper.ProtectedFlashNotificationAsync
+- uid: Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken
+  name: PushNotificationToken
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_PushNotificationToken
+  commentId: P:Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken
+  fullName: Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken
+  nameWithType: iOSSensusServiceHelper.PushNotificationToken
+- uid: Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken*
+  name: PushNotificationToken
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_PushNotificationToken_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken
+  fullName: Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken
+  nameWithType: iOSSensusServiceHelper.PushNotificationToken
+- uid: Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData
+  name: PushNotificationTokenData
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_PushNotificationTokenData
+  commentId: P:Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData
+  fullName: Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData
+  nameWithType: iOSSensusServiceHelper.PushNotificationTokenData
+- uid: Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData*
+  name: PushNotificationTokenData
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_PushNotificationTokenData_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData
+  fullName: Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData
+  nameWithType: iOSSensusServiceHelper.PushNotificationTokenData
+- uid: Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})
+  name: RegisterWithNotificationHub(Tuple<String, String>)
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__
+  commentId: M:Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})
+  name.vb: RegisterWithNotificationHub(Tuple(Of String, String))
+  fullName: Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub(System.Tuple<System.String, System.String>)
+  fullName.vb: Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub(System.Tuple(Of System.String, System.String))
+  nameWithType: iOSSensusServiceHelper.RegisterWithNotificationHub(Tuple<String, String>)
+  nameWithType.vb: iOSSensusServiceHelper.RegisterWithNotificationHub(Tuple(Of String, String))
+- uid: Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub*
+  name: RegisterWithNotificationHub
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_RegisterWithNotificationHub_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub
+  fullName: Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub
+  nameWithType: iOSSensusServiceHelper.RegisterWithNotificationHub
+- uid: Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken
+  name: RequestNewPushNotificationToken()
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_RequestNewPushNotificationToken
+  commentId: M:Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken
+  fullName: Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken()
+  nameWithType: iOSSensusServiceHelper.RequestNewPushNotificationToken()
+- uid: Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken*
+  name: RequestNewPushNotificationToken
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_RequestNewPushNotificationToken_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken
+  fullName: Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken
+  nameWithType: iOSSensusServiceHelper.RequestNewPushNotificationToken
 - uid: Sensus.iOS.iOSSensusServiceHelper.RunVoicePromptAsync(System.String,System.Action)
   name: RunVoicePromptAsync(String, Action)
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_RunVoicePromptAsync_System_String_System_Action_
@@ -24248,6 +25067,21 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.TextToSpeechAsync
   fullName: Sensus.iOS.iOSSensusServiceHelper.TextToSpeechAsync
   nameWithType: iOSSensusServiceHelper.TextToSpeechAsync
+- uid: Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})
+  name: UnregisterFromNotificationHub(Tuple<String, String>)
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__
+  commentId: M:Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})
+  name.vb: UnregisterFromNotificationHub(Tuple(Of String, String))
+  fullName: Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple<System.String, System.String>)
+  fullName.vb: Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple(Of System.String, System.String))
+  nameWithType: iOSSensusServiceHelper.UnregisterFromNotificationHub(Tuple<String, String>)
+  nameWithType.vb: iOSSensusServiceHelper.UnregisterFromNotificationHub(Tuple(Of String, String))
+- uid: Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub*
+  name: UnregisterFromNotificationHub
+  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_UnregisterFromNotificationHub_
+  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub
+  fullName: Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub
+  nameWithType: iOSSensusServiceHelper.UnregisterFromNotificationHub
 - uid: Sensus.iOS.iOSSensusServiceHelper.Version
   name: Version
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_Version
@@ -24899,6 +25733,60 @@ references:
   commentId: N:Sensus.iOS.Probes.Location
   fullName: Sensus.iOS.Probes.Location
   nameWithType: Sensus.iOS.Probes.Location
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe
+  name: iOSAltitudeProbe
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html
+  commentId: T:Sensus.iOS.Probes.Location.iOSAltitudeProbe
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe
+  nameWithType: iOSAltitudeProbe
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.#ctor
+  name: iOSAltitudeProbe()
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe__ctor
+  commentId: M:Sensus.iOS.Probes.Location.iOSAltitudeProbe.#ctor
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.iOSAltitudeProbe()
+  nameWithType: iOSAltitudeProbe.iOSAltitudeProbe()
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.#ctor*
+  name: iOSAltitudeProbe
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe__ctor_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSAltitudeProbe.#ctor
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.iOSAltitudeProbe
+  nameWithType: iOSAltitudeProbe.iOSAltitudeProbe
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe_Initialize
+  commentId: M:Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize()
+  nameWithType: iOSAltitudeProbe.Initialize()
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe_Initialize_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize
+  nameWithType: iOSAltitudeProbe.Initialize
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening
+  name: StartListening()
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe_StartListening
+  commentId: M:Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening()
+  nameWithType: iOSAltitudeProbe.StartListening()
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening*
+  name: StartListening
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe_StartListening_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening
+  nameWithType: iOSAltitudeProbe.StartListening
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening
+  name: StopListening()
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe_StopListening
+  commentId: M:Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening()
+  nameWithType: iOSAltitudeProbe.StopListening()
+- uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening*
+  name: StopListening
+  href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html#Sensus_iOS_Probes_Location_iOSAltitudeProbe_StopListening_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening
+  fullName: Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening
+  nameWithType: iOSAltitudeProbe.StopListening
 - uid: Sensus.iOS.Probes.Location.iOSCompassProbe
   name: iOSCompassProbe
   href: api/Sensus.iOS.Probes.Location.iOSCompassProbe.html
@@ -25043,6 +25931,60 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.StopListening
   fullName: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.StopListening
   nameWithType: iOSEstimoteBeaconProbe.StopListening
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe
+  name: iOSProximityProbe
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html
+  commentId: T:Sensus.iOS.Probes.Location.iOSProximityProbe
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe
+  nameWithType: iOSProximityProbe
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.#ctor
+  name: iOSProximityProbe()
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe__ctor
+  commentId: M:Sensus.iOS.Probes.Location.iOSProximityProbe.#ctor
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.iOSProximityProbe()
+  nameWithType: iOSProximityProbe.iOSProximityProbe()
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.#ctor*
+  name: iOSProximityProbe
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe__ctor_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSProximityProbe.#ctor
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.iOSProximityProbe
+  nameWithType: iOSProximityProbe.iOSProximityProbe
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.Initialize
+  name: Initialize()
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe_Initialize
+  commentId: M:Sensus.iOS.Probes.Location.iOSProximityProbe.Initialize
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.Initialize()
+  nameWithType: iOSProximityProbe.Initialize()
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.Initialize*
+  name: Initialize
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe_Initialize_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSProximityProbe.Initialize
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.Initialize
+  nameWithType: iOSProximityProbe.Initialize
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.StartListening
+  name: StartListening()
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe_StartListening
+  commentId: M:Sensus.iOS.Probes.Location.iOSProximityProbe.StartListening
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.StartListening()
+  nameWithType: iOSProximityProbe.StartListening()
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.StartListening*
+  name: StartListening
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe_StartListening_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSProximityProbe.StartListening
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.StartListening
+  nameWithType: iOSProximityProbe.StartListening
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.StopListening
+  name: StopListening()
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe_StopListening
+  commentId: M:Sensus.iOS.Probes.Location.iOSProximityProbe.StopListening
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.StopListening()
+  nameWithType: iOSProximityProbe.StopListening()
+- uid: Sensus.iOS.Probes.Location.iOSProximityProbe.StopListening*
+  name: StopListening
+  href: api/Sensus.iOS.Probes.Location.iOSProximityProbe.html#Sensus_iOS_Probes_Location_iOSProximityProbe_StopListening_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSProximityProbe.StopListening
+  fullName: Sensus.iOS.Probes.Location.iOSProximityProbe.StopListening
+  nameWithType: iOSProximityProbe.StopListening
 - uid: Sensus.iOS.Probes.Movement
   name: Sensus.iOS.Probes.Movement
   href: api/Sensus.iOS.Probes.Movement.html
@@ -26108,6 +27050,30 @@ references:
   commentId: Overload:Sensus.ParticipationRewardDatum.ToString
   fullName: Sensus.ParticipationRewardDatum.ToString
   nameWithType: ParticipationRewardDatum.ToString
+- uid: Sensus.PowerConnectionChangeListener
+  name: PowerConnectionChangeListener
+  href: api/Sensus.PowerConnectionChangeListener.html
+  commentId: T:Sensus.PowerConnectionChangeListener
+  fullName: Sensus.PowerConnectionChangeListener
+  nameWithType: PowerConnectionChangeListener
+- uid: Sensus.PowerConnectionChangeListener.#ctor
+  name: PowerConnectionChangeListener()
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener__ctor
+  commentId: M:Sensus.PowerConnectionChangeListener.#ctor
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChangeListener()
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChangeListener()
+- uid: Sensus.PowerConnectionChangeListener.#ctor*
+  name: PowerConnectionChangeListener
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener__ctor_
+  commentId: Overload:Sensus.PowerConnectionChangeListener.#ctor
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChangeListener
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChangeListener
+- uid: Sensus.PowerConnectionChangeListener.PowerConnectionChanged
+  name: PowerConnectionChanged
+  href: api/Sensus.PowerConnectionChangeListener.html#Sensus_PowerConnectionChangeListener_PowerConnectionChanged
+  commentId: F:Sensus.PowerConnectionChangeListener.PowerConnectionChanged
+  fullName: Sensus.PowerConnectionChangeListener.PowerConnectionChanged
+  nameWithType: PowerConnectionChangeListener.PowerConnectionChanged
 - uid: Sensus.Probes
   name: Sensus.Probes
   href: api/Sensus.Probes.html
@@ -27866,6 +28832,198 @@ references:
   commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan
   fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan
   nameWithType: BluetoothDeviceProximityProbe.StopScan
+- uid: Sensus.Probes.Context.HumidityDatum
+  name: HumidityDatum
+  href: api/Sensus.Probes.Context.HumidityDatum.html
+  commentId: T:Sensus.Probes.Context.HumidityDatum
+  fullName: Sensus.Probes.Context.HumidityDatum
+  nameWithType: HumidityDatum
+- uid: Sensus.Probes.Context.HumidityDatum.#ctor(System.DateTimeOffset,System.Double)
+  name: HumidityDatum(DateTimeOffset, Double)
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum__ctor_System_DateTimeOffset_System_Double_
+  commentId: M:Sensus.Probes.Context.HumidityDatum.#ctor(System.DateTimeOffset,System.Double)
+  fullName: Sensus.Probes.Context.HumidityDatum.HumidityDatum(System.DateTimeOffset, System.Double)
+  nameWithType: HumidityDatum.HumidityDatum(DateTimeOffset, Double)
+- uid: Sensus.Probes.Context.HumidityDatum.#ctor*
+  name: HumidityDatum
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum__ctor_
+  commentId: Overload:Sensus.Probes.Context.HumidityDatum.#ctor
+  fullName: Sensus.Probes.Context.HumidityDatum.HumidityDatum
+  nameWithType: HumidityDatum.HumidityDatum
+- uid: Sensus.Probes.Context.HumidityDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_DisplayDetail
+  commentId: P:Sensus.Probes.Context.HumidityDatum.DisplayDetail
+  fullName: Sensus.Probes.Context.HumidityDatum.DisplayDetail
+  nameWithType: HumidityDatum.DisplayDetail
+- uid: Sensus.Probes.Context.HumidityDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_DisplayDetail_
+  commentId: Overload:Sensus.Probes.Context.HumidityDatum.DisplayDetail
+  fullName: Sensus.Probes.Context.HumidityDatum.DisplayDetail
+  nameWithType: HumidityDatum.DisplayDetail
+- uid: Sensus.Probes.Context.HumidityDatum.RelativeHumidity
+  name: RelativeHumidity
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_RelativeHumidity
+  commentId: P:Sensus.Probes.Context.HumidityDatum.RelativeHumidity
+  fullName: Sensus.Probes.Context.HumidityDatum.RelativeHumidity
+  nameWithType: HumidityDatum.RelativeHumidity
+- uid: Sensus.Probes.Context.HumidityDatum.RelativeHumidity*
+  name: RelativeHumidity
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_RelativeHumidity_
+  commentId: Overload:Sensus.Probes.Context.HumidityDatum.RelativeHumidity
+  fullName: Sensus.Probes.Context.HumidityDatum.RelativeHumidity
+  nameWithType: HumidityDatum.RelativeHumidity
+- uid: Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_StringPlaceholderValue
+  commentId: P:Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue
+  nameWithType: HumidityDatum.StringPlaceholderValue
+- uid: Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue*
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_StringPlaceholderValue_
+  commentId: Overload:Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.Context.HumidityDatum.StringPlaceholderValue
+  nameWithType: HumidityDatum.StringPlaceholderValue
+- uid: Sensus.Probes.Context.HumidityDatum.ToString
+  name: ToString()
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_ToString
+  commentId: M:Sensus.Probes.Context.HumidityDatum.ToString
+  fullName: Sensus.Probes.Context.HumidityDatum.ToString()
+  nameWithType: HumidityDatum.ToString()
+- uid: Sensus.Probes.Context.HumidityDatum.ToString*
+  name: ToString
+  href: api/Sensus.Probes.Context.HumidityDatum.html#Sensus_Probes_Context_HumidityDatum_ToString_
+  commentId: Overload:Sensus.Probes.Context.HumidityDatum.ToString
+  fullName: Sensus.Probes.Context.HumidityDatum.ToString
+  nameWithType: HumidityDatum.ToString
+- uid: Sensus.Probes.Context.HumidityProbe
+  name: HumidityProbe
+  href: api/Sensus.Probes.Context.HumidityProbe.html
+  commentId: T:Sensus.Probes.Context.HumidityProbe
+  fullName: Sensus.Probes.Context.HumidityProbe
+  nameWithType: HumidityProbe
+- uid: Sensus.Probes.Context.HumidityProbe.#ctor
+  name: HumidityProbe()
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe__ctor
+  commentId: M:Sensus.Probes.Context.HumidityProbe.#ctor
+  fullName: Sensus.Probes.Context.HumidityProbe.HumidityProbe()
+  nameWithType: HumidityProbe.HumidityProbe()
+- uid: Sensus.Probes.Context.HumidityProbe.#ctor*
+  name: HumidityProbe
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe__ctor_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.#ctor
+  fullName: Sensus.Probes.Context.HumidityProbe.HumidityProbe
+  nameWithType: HumidityProbe.HumidityProbe
+- uid: Sensus.Probes.Context.HumidityProbe.DatumType
+  name: DatumType
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DatumType
+  commentId: P:Sensus.Probes.Context.HumidityProbe.DatumType
+  fullName: Sensus.Probes.Context.HumidityProbe.DatumType
+  nameWithType: HumidityProbe.DatumType
+- uid: Sensus.Probes.Context.HumidityProbe.DatumType*
+  name: DatumType
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DatumType_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.DatumType
+  fullName: Sensus.Probes.Context.HumidityProbe.DatumType
+  nameWithType: HumidityProbe.DatumType
+- uid: Sensus.Probes.Context.HumidityProbe.DefaultKeepDeviceAwake
+  name: DefaultKeepDeviceAwake
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DefaultKeepDeviceAwake
+  commentId: P:Sensus.Probes.Context.HumidityProbe.DefaultKeepDeviceAwake
+  fullName: Sensus.Probes.Context.HumidityProbe.DefaultKeepDeviceAwake
+  nameWithType: HumidityProbe.DefaultKeepDeviceAwake
+- uid: Sensus.Probes.Context.HumidityProbe.DefaultKeepDeviceAwake*
+  name: DefaultKeepDeviceAwake
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DefaultKeepDeviceAwake_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.DefaultKeepDeviceAwake
+  fullName: Sensus.Probes.Context.HumidityProbe.DefaultKeepDeviceAwake
+  nameWithType: HumidityProbe.DefaultKeepDeviceAwake
+- uid: Sensus.Probes.Context.HumidityProbe.DeviceAsleepWarning
+  name: DeviceAsleepWarning
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DeviceAsleepWarning
+  commentId: P:Sensus.Probes.Context.HumidityProbe.DeviceAsleepWarning
+  fullName: Sensus.Probes.Context.HumidityProbe.DeviceAsleepWarning
+  nameWithType: HumidityProbe.DeviceAsleepWarning
+- uid: Sensus.Probes.Context.HumidityProbe.DeviceAsleepWarning*
+  name: DeviceAsleepWarning
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DeviceAsleepWarning_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.DeviceAsleepWarning
+  fullName: Sensus.Probes.Context.HumidityProbe.DeviceAsleepWarning
+  nameWithType: HumidityProbe.DeviceAsleepWarning
+- uid: Sensus.Probes.Context.HumidityProbe.DeviceAwakeWarning
+  name: DeviceAwakeWarning
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DeviceAwakeWarning
+  commentId: P:Sensus.Probes.Context.HumidityProbe.DeviceAwakeWarning
+  fullName: Sensus.Probes.Context.HumidityProbe.DeviceAwakeWarning
+  nameWithType: HumidityProbe.DeviceAwakeWarning
+- uid: Sensus.Probes.Context.HumidityProbe.DeviceAwakeWarning*
+  name: DeviceAwakeWarning
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DeviceAwakeWarning_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.DeviceAwakeWarning
+  fullName: Sensus.Probes.Context.HumidityProbe.DeviceAwakeWarning
+  nameWithType: HumidityProbe.DeviceAwakeWarning
+- uid: Sensus.Probes.Context.HumidityProbe.DisplayName
+  name: DisplayName
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DisplayName
+  commentId: P:Sensus.Probes.Context.HumidityProbe.DisplayName
+  fullName: Sensus.Probes.Context.HumidityProbe.DisplayName
+  nameWithType: HumidityProbe.DisplayName
+- uid: Sensus.Probes.Context.HumidityProbe.DisplayName*
+  name: DisplayName
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_DisplayName_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.DisplayName
+  fullName: Sensus.Probes.Context.HumidityProbe.DisplayName
+  nameWithType: HumidityProbe.DisplayName
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  name: GetChartDataPointFromDatum(Datum)
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartDataPointFromDatum_Sensus_Datum_
+  commentId: M:Sensus.Probes.Context.HumidityProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  nameWithType: HumidityProbe.GetChartDataPointFromDatum(Datum)
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartDataPointFromDatum*
+  name: GetChartDataPointFromDatum
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartDataPointFromDatum_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.GetChartDataPointFromDatum
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartDataPointFromDatum
+  nameWithType: HumidityProbe.GetChartDataPointFromDatum
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartPrimaryAxis
+  name: GetChartPrimaryAxis()
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartPrimaryAxis
+  commentId: M:Sensus.Probes.Context.HumidityProbe.GetChartPrimaryAxis
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartPrimaryAxis()
+  nameWithType: HumidityProbe.GetChartPrimaryAxis()
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartPrimaryAxis*
+  name: GetChartPrimaryAxis
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartPrimaryAxis_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.GetChartPrimaryAxis
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartPrimaryAxis
+  nameWithType: HumidityProbe.GetChartPrimaryAxis
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartSecondaryAxis
+  name: GetChartSecondaryAxis()
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartSecondaryAxis
+  commentId: M:Sensus.Probes.Context.HumidityProbe.GetChartSecondaryAxis
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartSecondaryAxis()
+  nameWithType: HumidityProbe.GetChartSecondaryAxis()
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartSecondaryAxis*
+  name: GetChartSecondaryAxis
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartSecondaryAxis_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.GetChartSecondaryAxis
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartSecondaryAxis
+  nameWithType: HumidityProbe.GetChartSecondaryAxis
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartSeries
+  name: GetChartSeries()
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartSeries
+  commentId: M:Sensus.Probes.Context.HumidityProbe.GetChartSeries
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartSeries()
+  nameWithType: HumidityProbe.GetChartSeries()
+- uid: Sensus.Probes.Context.HumidityProbe.GetChartSeries*
+  name: GetChartSeries
+  href: api/Sensus.Probes.Context.HumidityProbe.html#Sensus_Probes_Context_HumidityProbe_GetChartSeries_
+  commentId: Overload:Sensus.Probes.Context.HumidityProbe.GetChartSeries
+  fullName: Sensus.Probes.Context.HumidityProbe.GetChartSeries
+  nameWithType: HumidityProbe.GetChartSeries
 - uid: Sensus.Probes.Context.LightDatum
   name: LightDatum
   href: api/Sensus.Probes.Context.LightDatum.html
@@ -29030,12 +30188,12 @@ references:
   commentId: T:Sensus.Probes.Location.AltitudeDatum
   fullName: Sensus.Probes.Location.AltitudeDatum
   nameWithType: AltitudeDatum
-- uid: Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double,System.Double)
-  name: AltitudeDatum(DateTimeOffset, Double, Double)
-  href: api/Sensus.Probes.Location.AltitudeDatum.html#Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_System_Double_
-  commentId: M:Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double,System.Double)
-  fullName: Sensus.Probes.Location.AltitudeDatum.AltitudeDatum(System.DateTimeOffset, System.Double, System.Double)
-  nameWithType: AltitudeDatum.AltitudeDatum(DateTimeOffset, Double, Double)
+- uid: Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double)
+  name: AltitudeDatum(DateTimeOffset, Double)
+  href: api/Sensus.Probes.Location.AltitudeDatum.html#Sensus_Probes_Location_AltitudeDatum__ctor_System_DateTimeOffset_System_Double_
+  commentId: M:Sensus.Probes.Location.AltitudeDatum.#ctor(System.DateTimeOffset,System.Double)
+  fullName: Sensus.Probes.Location.AltitudeDatum.AltitudeDatum(System.DateTimeOffset, System.Double)
+  nameWithType: AltitudeDatum.AltitudeDatum(DateTimeOffset, Double)
 - uid: Sensus.Probes.Location.AltitudeDatum.#ctor*
   name: AltitudeDatum
   href: api/Sensus.Probes.Location.AltitudeDatum.html#Sensus_Probes_Location_AltitudeDatum__ctor_
@@ -30890,6 +32048,210 @@ references:
   commentId: Overload:Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Triggers
   fullName: Sensus.Probes.Location.PollingPointsOfInterestProximityProbe.Triggers
   nameWithType: PollingPointsOfInterestProximityProbe.Triggers
+- uid: Sensus.Probes.Location.ProximityDatum
+  name: ProximityDatum
+  href: api/Sensus.Probes.Location.ProximityDatum.html
+  commentId: T:Sensus.Probes.Location.ProximityDatum
+  fullName: Sensus.Probes.Location.ProximityDatum
+  nameWithType: ProximityDatum
+- uid: Sensus.Probes.Location.ProximityDatum.#ctor(System.DateTimeOffset,System.Double,System.Double)
+  name: ProximityDatum(DateTimeOffset, Double, Double)
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum__ctor_System_DateTimeOffset_System_Double_System_Double_
+  commentId: M:Sensus.Probes.Location.ProximityDatum.#ctor(System.DateTimeOffset,System.Double,System.Double)
+  fullName: Sensus.Probes.Location.ProximityDatum.ProximityDatum(System.DateTimeOffset, System.Double, System.Double)
+  nameWithType: ProximityDatum.ProximityDatum(DateTimeOffset, Double, Double)
+- uid: Sensus.Probes.Location.ProximityDatum.#ctor*
+  name: ProximityDatum
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum__ctor_
+  commentId: Overload:Sensus.Probes.Location.ProximityDatum.#ctor
+  fullName: Sensus.Probes.Location.ProximityDatum.ProximityDatum
+  nameWithType: ProximityDatum.ProximityDatum
+- uid: Sensus.Probes.Location.ProximityDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_DisplayDetail
+  commentId: P:Sensus.Probes.Location.ProximityDatum.DisplayDetail
+  fullName: Sensus.Probes.Location.ProximityDatum.DisplayDetail
+  nameWithType: ProximityDatum.DisplayDetail
+- uid: Sensus.Probes.Location.ProximityDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_DisplayDetail_
+  commentId: Overload:Sensus.Probes.Location.ProximityDatum.DisplayDetail
+  fullName: Sensus.Probes.Location.ProximityDatum.DisplayDetail
+  nameWithType: ProximityDatum.DisplayDetail
+- uid: Sensus.Probes.Location.ProximityDatum.Distance
+  name: Distance
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_Distance
+  commentId: P:Sensus.Probes.Location.ProximityDatum.Distance
+  fullName: Sensus.Probes.Location.ProximityDatum.Distance
+  nameWithType: ProximityDatum.Distance
+- uid: Sensus.Probes.Location.ProximityDatum.Distance*
+  name: Distance
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_Distance_
+  commentId: Overload:Sensus.Probes.Location.ProximityDatum.Distance
+  fullName: Sensus.Probes.Location.ProximityDatum.Distance
+  nameWithType: ProximityDatum.Distance
+- uid: Sensus.Probes.Location.ProximityDatum.MaxDistance
+  name: MaxDistance
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_MaxDistance
+  commentId: P:Sensus.Probes.Location.ProximityDatum.MaxDistance
+  fullName: Sensus.Probes.Location.ProximityDatum.MaxDistance
+  nameWithType: ProximityDatum.MaxDistance
+- uid: Sensus.Probes.Location.ProximityDatum.MaxDistance*
+  name: MaxDistance
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_MaxDistance_
+  commentId: Overload:Sensus.Probes.Location.ProximityDatum.MaxDistance
+  fullName: Sensus.Probes.Location.ProximityDatum.MaxDistance
+  nameWithType: ProximityDatum.MaxDistance
+- uid: Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_StringPlaceholderValue
+  commentId: P:Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue
+  nameWithType: ProximityDatum.StringPlaceholderValue
+- uid: Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue*
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_StringPlaceholderValue_
+  commentId: Overload:Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.Location.ProximityDatum.StringPlaceholderValue
+  nameWithType: ProximityDatum.StringPlaceholderValue
+- uid: Sensus.Probes.Location.ProximityDatum.ToString
+  name: ToString()
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_ToString
+  commentId: M:Sensus.Probes.Location.ProximityDatum.ToString
+  fullName: Sensus.Probes.Location.ProximityDatum.ToString()
+  nameWithType: ProximityDatum.ToString()
+- uid: Sensus.Probes.Location.ProximityDatum.ToString*
+  name: ToString
+  href: api/Sensus.Probes.Location.ProximityDatum.html#Sensus_Probes_Location_ProximityDatum_ToString_
+  commentId: Overload:Sensus.Probes.Location.ProximityDatum.ToString
+  fullName: Sensus.Probes.Location.ProximityDatum.ToString
+  nameWithType: ProximityDatum.ToString
+- uid: Sensus.Probes.Location.ProximityProbe
+  name: ProximityProbe
+  href: api/Sensus.Probes.Location.ProximityProbe.html
+  commentId: T:Sensus.Probes.Location.ProximityProbe
+  fullName: Sensus.Probes.Location.ProximityProbe
+  nameWithType: ProximityProbe
+- uid: Sensus.Probes.Location.ProximityProbe.#ctor
+  name: ProximityProbe()
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe__ctor
+  commentId: M:Sensus.Probes.Location.ProximityProbe.#ctor
+  fullName: Sensus.Probes.Location.ProximityProbe.ProximityProbe()
+  nameWithType: ProximityProbe.ProximityProbe()
+- uid: Sensus.Probes.Location.ProximityProbe.#ctor*
+  name: ProximityProbe
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe__ctor_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.#ctor
+  fullName: Sensus.Probes.Location.ProximityProbe.ProximityProbe
+  nameWithType: ProximityProbe.ProximityProbe
+- uid: Sensus.Probes.Location.ProximityProbe.DatumType
+  name: DatumType
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DatumType
+  commentId: P:Sensus.Probes.Location.ProximityProbe.DatumType
+  fullName: Sensus.Probes.Location.ProximityProbe.DatumType
+  nameWithType: ProximityProbe.DatumType
+- uid: Sensus.Probes.Location.ProximityProbe.DatumType*
+  name: DatumType
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DatumType_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.DatumType
+  fullName: Sensus.Probes.Location.ProximityProbe.DatumType
+  nameWithType: ProximityProbe.DatumType
+- uid: Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake
+  name: DefaultKeepDeviceAwake
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DefaultKeepDeviceAwake
+  commentId: P:Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake
+  fullName: Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake
+  nameWithType: ProximityProbe.DefaultKeepDeviceAwake
+- uid: Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake*
+  name: DefaultKeepDeviceAwake
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DefaultKeepDeviceAwake_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake
+  fullName: Sensus.Probes.Location.ProximityProbe.DefaultKeepDeviceAwake
+  nameWithType: ProximityProbe.DefaultKeepDeviceAwake
+- uid: Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning
+  name: DeviceAsleepWarning
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DeviceAsleepWarning
+  commentId: P:Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning
+  fullName: Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning
+  nameWithType: ProximityProbe.DeviceAsleepWarning
+- uid: Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning*
+  name: DeviceAsleepWarning
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DeviceAsleepWarning_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning
+  fullName: Sensus.Probes.Location.ProximityProbe.DeviceAsleepWarning
+  nameWithType: ProximityProbe.DeviceAsleepWarning
+- uid: Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning
+  name: DeviceAwakeWarning
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DeviceAwakeWarning
+  commentId: P:Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning
+  fullName: Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning
+  nameWithType: ProximityProbe.DeviceAwakeWarning
+- uid: Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning*
+  name: DeviceAwakeWarning
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DeviceAwakeWarning_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning
+  fullName: Sensus.Probes.Location.ProximityProbe.DeviceAwakeWarning
+  nameWithType: ProximityProbe.DeviceAwakeWarning
+- uid: Sensus.Probes.Location.ProximityProbe.DisplayName
+  name: DisplayName
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DisplayName
+  commentId: P:Sensus.Probes.Location.ProximityProbe.DisplayName
+  fullName: Sensus.Probes.Location.ProximityProbe.DisplayName
+  nameWithType: ProximityProbe.DisplayName
+- uid: Sensus.Probes.Location.ProximityProbe.DisplayName*
+  name: DisplayName
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_DisplayName_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.DisplayName
+  fullName: Sensus.Probes.Location.ProximityProbe.DisplayName
+  nameWithType: ProximityProbe.DisplayName
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  name: GetChartDataPointFromDatum(Datum)
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartDataPointFromDatum_Sensus_Datum_
+  commentId: M:Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum(Sensus.Datum)
+  nameWithType: ProximityProbe.GetChartDataPointFromDatum(Datum)
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum*
+  name: GetChartDataPointFromDatum
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartDataPointFromDatum_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartDataPointFromDatum
+  nameWithType: ProximityProbe.GetChartDataPointFromDatum
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis
+  name: GetChartPrimaryAxis()
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartPrimaryAxis
+  commentId: M:Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis()
+  nameWithType: ProximityProbe.GetChartPrimaryAxis()
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis*
+  name: GetChartPrimaryAxis
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartPrimaryAxis_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartPrimaryAxis
+  nameWithType: ProximityProbe.GetChartPrimaryAxis
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis
+  name: GetChartSecondaryAxis()
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartSecondaryAxis
+  commentId: M:Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis()
+  nameWithType: ProximityProbe.GetChartSecondaryAxis()
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis*
+  name: GetChartSecondaryAxis
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartSecondaryAxis_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartSecondaryAxis
+  nameWithType: ProximityProbe.GetChartSecondaryAxis
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartSeries
+  name: GetChartSeries()
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartSeries
+  commentId: M:Sensus.Probes.Location.ProximityProbe.GetChartSeries
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartSeries()
+  nameWithType: ProximityProbe.GetChartSeries()
+- uid: Sensus.Probes.Location.ProximityProbe.GetChartSeries*
+  name: GetChartSeries
+  href: api/Sensus.Probes.Location.ProximityProbe.html#Sensus_Probes_Location_ProximityProbe_GetChartSeries_
+  commentId: Overload:Sensus.Probes.Location.ProximityProbe.GetChartSeries
+  fullName: Sensus.Probes.Location.ProximityProbe.GetChartSeries
+  nameWithType: ProximityProbe.GetChartSeries
 - uid: Sensus.Probes.Location.ProximityThresholdDirection
   name: ProximityThresholdDirection
   href: api/Sensus.Probes.Location.ProximityThresholdDirection.html
@@ -37646,6 +39008,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Script
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.Script
   nameWithType: ScriptRunner.Script
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  name: ScriptRunCallbacks
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  nameWithType: ScriptRunner.ScriptRunCallbacks
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks*
+  name: ScriptRunCallbacks
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
+  nameWithType: ScriptRunner.ScriptRunCallbacks
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups
   name: ShuffleInputGroups
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups
@@ -38501,6 +39875,30 @@ references:
   commentId: Overload:Sensus.Protocol.GpsDesiredAccuracyMeters
   fullName: Sensus.Protocol.GpsDesiredAccuracyMeters
   nameWithType: Protocol.GpsDesiredAccuracyMeters
+- uid: Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset
+  name: GpsLongitudeAnonymizationParticipantOffset
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset
+  commentId: P:Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset
+  fullName: Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset
+  nameWithType: Protocol.GpsLongitudeAnonymizationParticipantOffset
+- uid: Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset*
+  name: GpsLongitudeAnonymizationParticipantOffset
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset_
+  commentId: Overload:Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset
+  fullName: Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset
+  nameWithType: Protocol.GpsLongitudeAnonymizationParticipantOffset
+- uid: Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset
+  name: GpsLongitudeAnonymizationStudyOffset
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsLongitudeAnonymizationStudyOffset
+  commentId: P:Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset
+  fullName: Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset
+  nameWithType: Protocol.GpsLongitudeAnonymizationStudyOffset
+- uid: Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset*
+  name: GpsLongitudeAnonymizationStudyOffset
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsLongitudeAnonymizationStudyOffset_
+  commentId: Overload:Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset
+  fullName: Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset
+  nameWithType: Protocol.GpsLongitudeAnonymizationStudyOffset
 - uid: Sensus.Protocol.GpsMinDistanceDelayMeters
   name: GpsMinDistanceDelayMeters
   href: api/Sensus.Protocol.html#Sensus_Protocol_GpsMinDistanceDelayMeters
@@ -38597,6 +39995,18 @@ references:
   commentId: Overload:Sensus.Protocol.LockPasswordHash
   fullName: Sensus.Protocol.LockPasswordHash
   nameWithType: Protocol.LockPasswordHash
+- uid: Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
+  name: LongitudeOffsetParticipantSeededRandom
+  href: api/Sensus.Protocol.html#Sensus_Protocol_LongitudeOffsetParticipantSeededRandom
+  commentId: P:Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
+  fullName: Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
+  nameWithType: Protocol.LongitudeOffsetParticipantSeededRandom
+- uid: Sensus.Protocol.LongitudeOffsetParticipantSeededRandom*
+  name: LongitudeOffsetParticipantSeededRandom
+  href: api/Sensus.Protocol.html#Sensus_Protocol_LongitudeOffsetParticipantSeededRandom_
+  commentId: Overload:Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
+  fullName: Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
+  nameWithType: Protocol.LongitudeOffsetParticipantSeededRandom
 - uid: Sensus.Protocol.Name
   name: Name
   href: api/Sensus.Protocol.html#Sensus_Protocol_Name
@@ -38693,6 +40103,30 @@ references:
   commentId: E:Sensus.Protocol.ProtocolRunningChanged
   fullName: Sensus.Protocol.ProtocolRunningChanged
   nameWithType: Protocol.ProtocolRunningChanged
+- uid: Sensus.Protocol.PushNotificationsHub
+  name: PushNotificationsHub
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub
+  commentId: P:Sensus.Protocol.PushNotificationsHub
+  fullName: Sensus.Protocol.PushNotificationsHub
+  nameWithType: Protocol.PushNotificationsHub
+- uid: Sensus.Protocol.PushNotificationsHub*
+  name: PushNotificationsHub
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub_
+  commentId: Overload:Sensus.Protocol.PushNotificationsHub
+  fullName: Sensus.Protocol.PushNotificationsHub
+  nameWithType: Protocol.PushNotificationsHub
+- uid: Sensus.Protocol.PushNotificationsSharedAccessSignature
+  name: PushNotificationsSharedAccessSignature
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature
+  commentId: P:Sensus.Protocol.PushNotificationsSharedAccessSignature
+  fullName: Sensus.Protocol.PushNotificationsSharedAccessSignature
+  nameWithType: Protocol.PushNotificationsSharedAccessSignature
+- uid: Sensus.Protocol.PushNotificationsSharedAccessSignature*
+  name: PushNotificationsSharedAccessSignature
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature_
+  commentId: Overload:Sensus.Protocol.PushNotificationsSharedAccessSignature
+  fullName: Sensus.Protocol.PushNotificationsSharedAccessSignature
+  nameWithType: Protocol.PushNotificationsSharedAccessSignature
 - uid: Sensus.Protocol.RandomTimeAnchor
   name: RandomTimeAnchor
   href: api/Sensus.Protocol.html#Sensus_Protocol_RandomTimeAnchor
@@ -39071,6 +40505,78 @@ references:
   commentId: F:Sensus.ProtocolStartConfirmationMode.value__
   fullName: Sensus.ProtocolStartConfirmationMode.value__
   nameWithType: ProtocolStartConfirmationMode.value__
+- uid: Sensus.PushNotificationRequest
+  name: PushNotificationRequest
+  href: api/Sensus.PushNotificationRequest.html
+  commentId: T:Sensus.PushNotificationRequest
+  fullName: Sensus.PushNotificationRequest
+  nameWithType: PushNotificationRequest
+- uid: Sensus.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,Sensus.PushNotificationRequestFormat,System.DateTimeOffset)
+  name: PushNotificationRequest(Protocol, String, String, String, String, PushNotificationRequestFormat, DateTimeOffset)
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest__ctor_Sensus_Protocol_System_String_System_String_System_String_System_String_Sensus_PushNotificationRequestFormat_System_DateTimeOffset_
+  commentId: M:Sensus.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,Sensus.PushNotificationRequestFormat,System.DateTimeOffset)
+  fullName: Sensus.PushNotificationRequest.PushNotificationRequest(Sensus.Protocol, System.String, System.String, System.String, System.String, Sensus.PushNotificationRequestFormat, System.DateTimeOffset)
+  nameWithType: PushNotificationRequest.PushNotificationRequest(Protocol, String, String, String, String, PushNotificationRequestFormat, DateTimeOffset)
+- uid: Sensus.PushNotificationRequest.#ctor(System.String,Sensus.Protocol,System.String,System.String,System.String,System.String,Sensus.PushNotificationRequestFormat,System.DateTimeOffset)
+  name: PushNotificationRequest(String, Protocol, String, String, String, String, PushNotificationRequestFormat, DateTimeOffset)
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest__ctor_System_String_Sensus_Protocol_System_String_System_String_System_String_System_String_Sensus_PushNotificationRequestFormat_System_DateTimeOffset_
+  commentId: M:Sensus.PushNotificationRequest.#ctor(System.String,Sensus.Protocol,System.String,System.String,System.String,System.String,Sensus.PushNotificationRequestFormat,System.DateTimeOffset)
+  fullName: Sensus.PushNotificationRequest.PushNotificationRequest(System.String, Sensus.Protocol, System.String, System.String, System.String, System.String, Sensus.PushNotificationRequestFormat, System.DateTimeOffset)
+  nameWithType: PushNotificationRequest.PushNotificationRequest(String, Protocol, String, String, String, String, PushNotificationRequestFormat, DateTimeOffset)
+- uid: Sensus.PushNotificationRequest.#ctor*
+  name: PushNotificationRequest
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest__ctor_
+  commentId: Overload:Sensus.PushNotificationRequest.#ctor
+  fullName: Sensus.PushNotificationRequest.PushNotificationRequest
+  nameWithType: PushNotificationRequest.PushNotificationRequest
+- uid: Sensus.PushNotificationRequest.GetFormatString(Sensus.PushNotificationRequestFormat)
+  name: GetFormatString(PushNotificationRequestFormat)
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_GetFormatString_Sensus_PushNotificationRequestFormat_
+  commentId: M:Sensus.PushNotificationRequest.GetFormatString(Sensus.PushNotificationRequestFormat)
+  fullName: Sensus.PushNotificationRequest.GetFormatString(Sensus.PushNotificationRequestFormat)
+  nameWithType: PushNotificationRequest.GetFormatString(PushNotificationRequestFormat)
+- uid: Sensus.PushNotificationRequest.GetFormatString*
+  name: GetFormatString
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_GetFormatString_
+  commentId: Overload:Sensus.PushNotificationRequest.GetFormatString
+  fullName: Sensus.PushNotificationRequest.GetFormatString
+  nameWithType: PushNotificationRequest.GetFormatString
+- uid: Sensus.PushNotificationRequest.JSON
+  name: JSON
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_JSON
+  commentId: P:Sensus.PushNotificationRequest.JSON
+  fullName: Sensus.PushNotificationRequest.JSON
+  nameWithType: PushNotificationRequest.JSON
+- uid: Sensus.PushNotificationRequest.JSON*
+  name: JSON
+  href: api/Sensus.PushNotificationRequest.html#Sensus_PushNotificationRequest_JSON_
+  commentId: Overload:Sensus.PushNotificationRequest.JSON
+  fullName: Sensus.PushNotificationRequest.JSON
+  nameWithType: PushNotificationRequest.JSON
+- uid: Sensus.PushNotificationRequestFormat
+  name: PushNotificationRequestFormat
+  href: api/Sensus.PushNotificationRequestFormat.html
+  commentId: T:Sensus.PushNotificationRequestFormat
+  fullName: Sensus.PushNotificationRequestFormat
+  nameWithType: PushNotificationRequestFormat
+- uid: Sensus.PushNotificationRequestFormat.ApplePushNotificationService
+  name: ApplePushNotificationService
+  href: api/Sensus.PushNotificationRequestFormat.html#Sensus_PushNotificationRequestFormat_ApplePushNotificationService
+  commentId: F:Sensus.PushNotificationRequestFormat.ApplePushNotificationService
+  fullName: Sensus.PushNotificationRequestFormat.ApplePushNotificationService
+  nameWithType: PushNotificationRequestFormat.ApplePushNotificationService
+- uid: Sensus.PushNotificationRequestFormat.FirebaseCloudMessaging
+  name: FirebaseCloudMessaging
+  href: api/Sensus.PushNotificationRequestFormat.html#Sensus_PushNotificationRequestFormat_FirebaseCloudMessaging
+  commentId: F:Sensus.PushNotificationRequestFormat.FirebaseCloudMessaging
+  fullName: Sensus.PushNotificationRequestFormat.FirebaseCloudMessaging
+  nameWithType: PushNotificationRequestFormat.FirebaseCloudMessaging
+- uid: Sensus.PushNotificationRequestFormat.value__
+  name: value__
+  href: api/Sensus.PushNotificationRequestFormat.html#Sensus_PushNotificationRequestFormat_value__
+  commentId: F:Sensus.PushNotificationRequestFormat.value__
+  fullName: Sensus.PushNotificationRequestFormat.value__
+  nameWithType: PushNotificationRequestFormat.value__
 - uid: Sensus.QrCodePrefix
   name: QrCodePrefix
   href: api/Sensus.QrCodePrefix.html
@@ -39734,6 +41240,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.ProtocolShouldBeRunning
   fullName: Sensus.SensusServiceHelper.ProtocolShouldBeRunning
   nameWithType: SensusServiceHelper.ProtocolShouldBeRunning
+- uid: Sensus.SensusServiceHelper.PushNotificationToken
+  name: PushNotificationToken
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken
+  commentId: P:Sensus.SensusServiceHelper.PushNotificationToken
+  fullName: Sensus.SensusServiceHelper.PushNotificationToken
+  nameWithType: SensusServiceHelper.PushNotificationToken
+- uid: Sensus.SensusServiceHelper.PushNotificationToken*
+  name: PushNotificationToken
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken_
+  commentId: Overload:Sensus.SensusServiceHelper.PushNotificationToken
+  fullName: Sensus.SensusServiceHelper.PushNotificationToken
+  nameWithType: SensusServiceHelper.PushNotificationToken
 - uid: Sensus.SensusServiceHelper.ReadAllBytes(System.String)
   name: ReadAllBytes(String)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ReadAllBytes_System_String_
@@ -39770,6 +41288,21 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.RegisterProtocol
   fullName: Sensus.SensusServiceHelper.RegisterProtocol
   nameWithType: SensusServiceHelper.RegisterProtocol
+- uid: Sensus.SensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})
+  name: RegisterWithNotificationHub(Tuple<String, String>)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__
+  commentId: M:Sensus.SensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})
+  name.vb: RegisterWithNotificationHub(Tuple(Of String, String))
+  fullName: Sensus.SensusServiceHelper.RegisterWithNotificationHub(System.Tuple<System.String, System.String>)
+  fullName.vb: Sensus.SensusServiceHelper.RegisterWithNotificationHub(System.Tuple(Of System.String, System.String))
+  nameWithType: SensusServiceHelper.RegisterWithNotificationHub(Tuple<String, String>)
+  nameWithType.vb: SensusServiceHelper.RegisterWithNotificationHub(Tuple(Of String, String))
+- uid: Sensus.SensusServiceHelper.RegisterWithNotificationHub*
+  name: RegisterWithNotificationHub
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterWithNotificationHub_
+  commentId: Overload:Sensus.SensusServiceHelper.RegisterWithNotificationHub
+  fullName: Sensus.SensusServiceHelper.RegisterWithNotificationHub
+  nameWithType: SensusServiceHelper.RegisterWithNotificationHub
 - uid: Sensus.SensusServiceHelper.RemoveExpiredScripts(System.Boolean)
   name: RemoveExpiredScripts(Boolean)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScripts_System_Boolean_
@@ -39818,6 +41351,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.RemoveScriptsForRunner
   fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunner
   nameWithType: SensusServiceHelper.RemoveScriptsForRunner
+- uid: Sensus.SensusServiceHelper.RequestNewPushNotificationToken
+  name: RequestNewPushNotificationToken()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RequestNewPushNotificationToken
+  commentId: M:Sensus.SensusServiceHelper.RequestNewPushNotificationToken
+  fullName: Sensus.SensusServiceHelper.RequestNewPushNotificationToken()
+  nameWithType: SensusServiceHelper.RequestNewPushNotificationToken()
+- uid: Sensus.SensusServiceHelper.RequestNewPushNotificationToken*
+  name: RequestNewPushNotificationToken
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RequestNewPushNotificationToken_
+  commentId: Overload:Sensus.SensusServiceHelper.RequestNewPushNotificationToken
+  fullName: Sensus.SensusServiceHelper.RequestNewPushNotificationToken
+  nameWithType: SensusServiceHelper.RequestNewPushNotificationToken
 - uid: Sensus.SensusServiceHelper.RunningProtocolIds
   name: RunningProtocolIds
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RunningProtocolIds
@@ -39968,6 +41513,21 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.TextToSpeechAsync
   fullName: Sensus.SensusServiceHelper.TextToSpeechAsync
   nameWithType: SensusServiceHelper.TextToSpeechAsync
+- uid: Sensus.SensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})
+  name: UnregisterFromNotificationHub(Tuple<String, String>)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__
+  commentId: M:Sensus.SensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})
+  name.vb: UnregisterFromNotificationHub(Tuple(Of String, String))
+  fullName: Sensus.SensusServiceHelper.UnregisterFromNotificationHub(System.Tuple<System.String, System.String>)
+  fullName.vb: Sensus.SensusServiceHelper.UnregisterFromNotificationHub(System.Tuple(Of System.String, System.String))
+  nameWithType: SensusServiceHelper.UnregisterFromNotificationHub(Tuple<String, String>)
+  nameWithType.vb: SensusServiceHelper.UnregisterFromNotificationHub(Tuple(Of String, String))
+- uid: Sensus.SensusServiceHelper.UnregisterFromNotificationHub*
+  name: UnregisterFromNotificationHub
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UnregisterFromNotificationHub_
+  commentId: Overload:Sensus.SensusServiceHelper.UnregisterFromNotificationHub
+  fullName: Sensus.SensusServiceHelper.UnregisterFromNotificationHub
+  nameWithType: SensusServiceHelper.UnregisterFromNotificationHub
 - uid: Sensus.SensusServiceHelper.UnregisterProtocol(Sensus.Protocol)
   name: UnregisterProtocol(Protocol)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UnregisterProtocol_Sensus_Protocol_
@@ -39980,6 +41540,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.UnregisterProtocol
   fullName: Sensus.SensusServiceHelper.UnregisterProtocol
   nameWithType: SensusServiceHelper.UnregisterProtocol
+- uid: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(System.Threading.CancellationToken)
+  name: UpdatePushNotificationRegistrationsAsync(CancellationToken)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(System.Threading.CancellationToken)
+  fullName: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(System.Threading.CancellationToken)
+  nameWithType: SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(CancellationToken)
+- uid: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync*
+  name: UpdatePushNotificationRegistrationsAsync
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_
+  commentId: Overload:Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  fullName: Sensus.SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
+  nameWithType: SensusServiceHelper.UpdatePushNotificationRegistrationsAsync
 - uid: Sensus.SensusServiceHelper.Version
   name: Version
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Version
@@ -40112,6 +41684,18 @@ references:
   commentId: Overload:Sensus.UI.App.DetailPage
   fullName: Sensus.UI.App.DetailPage
   nameWithType: App.DetailPage
+- uid: Sensus.UI.App.MasterPage
+  name: MasterPage
+  href: api/Sensus.UI.App.html#Sensus_UI_App_MasterPage
+  commentId: P:Sensus.UI.App.MasterPage
+  fullName: Sensus.UI.App.MasterPage
+  nameWithType: App.MasterPage
+- uid: Sensus.UI.App.MasterPage*
+  name: MasterPage
+  href: api/Sensus.UI.App.html#Sensus_UI_App_MasterPage_
+  commentId: Overload:Sensus.UI.App.MasterPage
+  fullName: Sensus.UI.App.MasterPage
+  nameWithType: App.MasterPage
 - uid: Sensus.UI.App.OnStart
   name: OnStart()
   href: api/Sensus.UI.App.html#Sensus_UI_App_OnStart
@@ -40217,6 +41801,12 @@ references:
   commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Forward
   fullName: Sensus.UI.InputGroupPage.NavigationResult.Forward
   nameWithType: InputGroupPage.NavigationResult.Forward
+- uid: Sensus.UI.InputGroupPage.NavigationResult.Submit
+  name: Submit
+  href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_Submit
+  commentId: F:Sensus.UI.InputGroupPage.NavigationResult.Submit
+  fullName: Sensus.UI.InputGroupPage.NavigationResult.Submit
+  nameWithType: InputGroupPage.NavigationResult.Submit
 - uid: Sensus.UI.InputGroupPage.NavigationResult.value__
   name: value__
   href: api/Sensus.UI.InputGroupPage.NavigationResult.html#Sensus_UI_InputGroupPage_NavigationResult_value__
@@ -41468,18 +43058,6 @@ references:
   commentId: Overload:Sensus.UI.Inputs.LabelOnlyInput.GetView
   fullName: Sensus.UI.Inputs.LabelOnlyInput.GetView
   nameWithType: LabelOnlyInput.GetView
-- uid: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  name: StoreCompletionRecords
-  href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_StoreCompletionRecords
-  commentId: P:Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  fullName: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  nameWithType: LabelOnlyInput.StoreCompletionRecords
-- uid: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords*
-  name: StoreCompletionRecords
-  href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_StoreCompletionRecords_
-  commentId: Overload:Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  fullName: Sensus.UI.Inputs.LabelOnlyInput.StoreCompletionRecords
-  nameWithType: LabelOnlyInput.StoreCompletionRecords
 - uid: Sensus.UI.Inputs.LabelOnlyInput.Value
   name: Value
   href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_Value
@@ -43556,15 +45134,15 @@ references:
   commentId: T:Sensus.UI.ViewTextLinesPage
   fullName: Sensus.UI.ViewTextLinesPage
   nameWithType: ViewTextLinesPage
-- uid: Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)
-  name: ViewTextLinesPage(String, List<String>, Action, Action)
-  href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_System_Action_
-  commentId: M:Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action,System.Action)
-  name.vb: ViewTextLinesPage(String, List(Of String), Action, Action)
-  fullName: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List<System.String>, System.Action, System.Action)
-  fullName.vb: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List(Of System.String), System.Action, System.Action)
-  nameWithType: ViewTextLinesPage.ViewTextLinesPage(String, List<String>, Action, Action)
-  nameWithType.vb: ViewTextLinesPage.ViewTextLinesPage(String, List(Of String), Action, Action)
+- uid: Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)
+  name: ViewTextLinesPage(String, List<String>, Action)
+  href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_System_String_System_Collections_Generic_List_System_String__System_Action_
+  commentId: M:Sensus.UI.ViewTextLinesPage.#ctor(System.String,System.Collections.Generic.List{System.String},System.Action)
+  name.vb: ViewTextLinesPage(String, List(Of String), Action)
+  fullName: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List<System.String>, System.Action)
+  fullName.vb: Sensus.UI.ViewTextLinesPage.ViewTextLinesPage(System.String, System.Collections.Generic.List(Of System.String), System.Action)
+  nameWithType: ViewTextLinesPage.ViewTextLinesPage(String, List<String>, Action)
+  nameWithType.vb: ViewTextLinesPage.ViewTextLinesPage(String, List(Of String), Action)
 - uid: Sensus.UI.ViewTextLinesPage.#ctor*
   name: ViewTextLinesPage
   href: api/Sensus.UI.ViewTextLinesPage.html#Sensus_UI_ViewTextLinesPage__ctor_

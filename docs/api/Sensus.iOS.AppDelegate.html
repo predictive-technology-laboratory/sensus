@@ -137,6 +137,110 @@
   </table>
   
   
+  <a id="Sensus_iOS_AppDelegate_DidReceiveRemoteNotification_" data-uid="Sensus.iOS.AppDelegate.DidReceiveRemoteNotification*"></a>
+  <h4 id="Sensus_iOS_AppDelegate_DidReceiveRemoteNotification_UIKit_UIApplication_Foundation_NSDictionary_System_Action_UIKit_UIBackgroundFetchResult__" data-uid="Sensus.iOS.AppDelegate.DidReceiveRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary,System.Action{UIKit.UIBackgroundFetchResult})">DidReceiveRemoteNotification(UIApplication, NSDictionary, Action&lt;UIBackgroundFetchResult&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action&lt;UIBackgroundFetchResult&gt; completionHandler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">UIKit.UIApplication</span></td>
+        <td><span class="parametername">application</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Foundation.NSDictionary</span></td>
+        <td><span class="parametername">userInfo</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">UIKit.UIBackgroundFetchResult</span>&gt;</td>
+        <td><span class="parametername">completionHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_iOS_AppDelegate_DidRegisterUserNotificationSettings_" data-uid="Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings*"></a>
+  <h4 id="Sensus_iOS_AppDelegate_DidRegisterUserNotificationSettings_UIKit_UIApplication_UIKit_UIUserNotificationSettings_" data-uid="Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication,UIKit.UIUserNotificationSettings)">DidRegisterUserNotificationSettings(UIApplication, UIUserNotificationSettings)</h4>
+  <div class="markdown level1 summary"><p>Pre-10.0:  Handles local notification registration results.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">UIKit.UIApplication</span></td>
+        <td><span class="parametername">application</span></td>
+        <td><p>Application.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">UIKit.UIUserNotificationSettings</span></td>
+        <td><span class="parametername">notificationSettings</span></td>
+        <td><p>Notification settings.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_iOS_AppDelegate_FailedToRegisterForRemoteNotifications_" data-uid="Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications*"></a>
+  <h4 id="Sensus_iOS_AppDelegate_FailedToRegisterForRemoteNotifications_UIKit_UIApplication_Foundation_NSError_" data-uid="Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications(UIKit.UIApplication,Foundation.NSError)">FailedToRegisterForRemoteNotifications(UIApplication, NSError)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">UIKit.UIApplication</span></td>
+        <td><span class="parametername">application</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Foundation.NSError</span></td>
+        <td><span class="parametername">error</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_iOS_AppDelegate_FinishedLaunching_" data-uid="Sensus.iOS.AppDelegate.FinishedLaunching*"></a>
   <h4 id="Sensus_iOS_AppDelegate_FinishedLaunching_UIKit_UIApplication_Foundation_NSDictionary_" data-uid="Sensus.iOS.AppDelegate.FinishedLaunching(UIKit.UIApplication,Foundation.NSDictionary)">FinishedLaunching(UIApplication, NSDictionary)</h4>
   <div class="markdown level1 summary"></div>
@@ -299,6 +403,70 @@ the corresponding handler for iOS 10.0 and above.</p>
         <td><span class="parametername">notification</span></td>
         <td><p>Notification.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_iOS_AppDelegate_ReceivedRemoteNotification_" data-uid="Sensus.iOS.AppDelegate.ReceivedRemoteNotification*"></a>
+  <h4 id="Sensus_iOS_AppDelegate_ReceivedRemoteNotification_UIKit_UIApplication_Foundation_NSDictionary_" data-uid="Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary)">ReceivedRemoteNotification(UIApplication, NSDictionary)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">UIKit.UIApplication</span></td>
+        <td><span class="parametername">application</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Foundation.NSDictionary</span></td>
+        <td><span class="parametername">userInfo</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_iOS_AppDelegate_RegisteredForRemoteNotifications_" data-uid="Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications*"></a>
+  <h4 id="Sensus_iOS_AppDelegate_RegisteredForRemoteNotifications_UIKit_UIApplication_Foundation_NSData_" data-uid="Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications(UIKit.UIApplication,Foundation.NSData)">RegisteredForRemoteNotifications(UIApplication, NSData)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">UIKit.UIApplication</span></td>
+        <td><span class="parametername">application</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Foundation.NSData</span></td>
+        <td><span class="parametername">deviceToken</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>

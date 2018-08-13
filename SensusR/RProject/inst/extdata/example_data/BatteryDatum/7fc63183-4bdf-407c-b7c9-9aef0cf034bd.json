@@ -1,3 +1,0 @@
-[
-{"$type":"SensusService.Probes.Device.BatteryDatum, SensusAndroid","Level":90.0,"Id":"cd62a555-3283-4daa-b9d5-b48dcc084dd6","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T05:37:46.037236+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
-]

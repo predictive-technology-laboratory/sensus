@@ -176,7 +176,8 @@ namespace Sensus.UI
                     {
                         Text = anonymizableAttribute.PropertyDisplayName ?? anonymizableProperty.Name + ":",
                         FontSize = 20,
-                        HorizontalOptions = LayoutOptions.Start
+                        HorizontalOptions = LayoutOptions.Start,
+                        VerticalTextAlignment = TextAlignment.Center
                     };
 
                     // populate a picker of anonymizers for the current property
