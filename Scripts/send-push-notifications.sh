@@ -8,17 +8,32 @@ if [ $# -ne 1 ]; then
 fi
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
+echo -e "\n************* DOWNLOADING FROM S3 *************"
 s3_path="s3://$1/push-notifications"
 notifications_dir="$1-push-notifications"
 mkdir -p $notifications_dir
 aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
                                                                      # to be the same size and will not come down otherwise.
-
 # get shared access signature.
 sas=$(node get-sas.js)
-    
+
+# process push notification requests
+echo -e "\n\n************* PROCESSING PNRs *************"
 for n in $(ls $notifications_dir/*.json)
 do
+
+    # check if file is empty. this could be caused by a failed/interrupted file transfer to s3, and it could
+    # also be the result of sensus zeroing out PNRs that need to be cancelled.
+    if [ -s $n ]
+    then
+	echo -e "Processing $n ..."
+    else
+	echo -e "Empty request $n. Deleting file...\n"
+	rm $n
+	continue
+    fi
+
+    # parse out data fields
     device=$(jq -r '.device' $n)
     protocol=$(jq '.protocol' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     title=$(jq '.title' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
@@ -40,7 +55,8 @@ do
     if [ "$time" -le "$time_horizon" ]
     then
 
-	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the leading/trailing quotes from the protocol)
+	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the 
+	# leading/trailing quotes from the protocol)
 	protocol_id=${protocol%\"}
 	protocol_id=${protocol_id#\"}
 	token=$(cat "$notifications_dir/${device}:${protocol_id}")
@@ -48,7 +64,7 @@ do
 	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
 	if [[ "$token" = "" ]]
 	then
-	    echo "No token found. Assuming the PNR is stale and should be deleted."
+	    echo -e "No token found. Assuming the PNR is stale and should be deleted.\n"
 	    rm $n
 	    continue
 	fi
@@ -101,11 +117,15 @@ do
 	# check status.
         if [[ "$response" = "201"  ]]
         then
-            echo "Notification sent. Removing file."
+            echo -e "Notification sent. Removing file.\n"
             rm $n
         fi
+    else
+	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
     fi
 done
 
 # sync notifications from local to s3, deleting any in s3 that we completed.
+echo -e "\n************* UPLOADING TO S3 *************"
 aws s3 sync $notifications_dir $s3_path --delete 
+echo ""
