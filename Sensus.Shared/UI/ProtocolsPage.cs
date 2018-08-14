@@ -159,7 +159,7 @@ namespace Sensus.UI
                     }
                 }
 
-                if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallback != null)
+                if (!selectedProtocol.Running && selectedProtocol.StartIsScheduled)
                 {
                     actions.Remove("Start");
                     actions.Insert(0, "Cancel Scheduled Start");

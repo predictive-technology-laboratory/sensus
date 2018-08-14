@@ -580,18 +580,6 @@ namespace Sensus
             get { return _running; }
         }
 
-        [JsonIgnore]
-        public ScheduledCallback ScheduledStartCallback
-        {
-            get { return _scheduledStartCallback; }
-        }
-
-        [JsonIgnore]
-        public ScheduledCallback ScheduledStopCallback
-        {
-            get { return _scheduledStopCallback; }
-        }
-
         public LocalDataStore LocalDataStore
         {
             get { return _localDataStore; }
@@ -1436,7 +1424,7 @@ namespace Sensus
         {
             get
             {
-                return Name + " (" + (Running ? "Running" : (ScheduledStartCallback == null ? "Stopped" : "Scheduled: " + StartDate.ToShortDateString() + " " + (StartDate.Date + StartTime).ToShortTimeString())) + ")";
+                return _name + " (" + (_running ? "Running" : (StartIsScheduled ? "Scheduled:  " + StartDate.ToShortDateString() + " " + (StartDate.Date + StartTime).ToShortTimeString() : "Stopped")) + ")";
             }
         }
 
@@ -1824,6 +1812,9 @@ namespace Sensus
 
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStartCallback);
 
+            // add the token to the backend, as the push notification for the schedule start needs to be active.
+            SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+
             CaptionChanged();
         }
 
@@ -1831,6 +1822,10 @@ namespace Sensus
         {
             SensusContext.Current.CallbackScheduler.UnscheduleCallback(_scheduledStartCallback);
             _scheduledStartCallback = null;
+
+            // remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
+            SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+
             CaptionChanged();
 
             // we might have scheduled a stop when starting the protocol, so be sure to cancel it.

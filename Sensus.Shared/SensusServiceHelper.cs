@@ -709,26 +709,21 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
+        /// </summary>
         public Task StartAsync()
         {
             return Task.Run(() =>
             {
-                Start();
-            });
-        }
-
-        /// <summary>
-        /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
-        /// </summary>
-        public void Start()
-        {
-            foreach (Protocol registeredProtocol in _registeredProtocols)
-            {
-                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
+                foreach (Protocol registeredProtocol in _registeredProtocols)
                 {
-                    registeredProtocol.Start();
+                    if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
+                    {
+                        registeredProtocol.Start();
+                    }
                 }
-            }
+            });
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -1534,7 +1529,7 @@ namespace Sensus
                             // catch any exceptions, as we might just be lacking an internet connection.
                             try
                             {
-                                if (protocol.Running)
+                                if (protocol.Running || protocol.StartIsScheduled)
                                 {
                                     atLeastOneProtocolRunning = true;
 

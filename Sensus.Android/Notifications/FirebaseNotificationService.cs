@@ -48,13 +48,14 @@ namespace Sensus.Android.Notifications
                     SensusServiceHelper.Get().Logger.Log("Failed to get protocol for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
 
-                // ignore the push notification if it targets a protocol that is not running. we explicitly 
-                // attempt to prevent such notifications from coming through by unregistering from hubs
-                // that lack running protocols and clearing the token from the backend; however, there may 
-                // be race conditions that allow a push notification to be delivered to us nonetheless.
-                if (!protocol.Running)
+                // ignore the push notification if it targets a protocol that is not running and is not 
+                // scheduled to run. we explicitly attempt to prevent such notifications from coming through 
+                // by unregistering from hubs that lack running/scheduled protocols and clearing the token 
+                // from the backend; however, there may be race conditions that allow a push notification 
+                // to be delivered to us nonetheless.
+                if (!protocol.Running && !protocol.StartIsScheduled)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running and is not scheduled to run.", LoggingLevel.Normal, GetType());
                     return;
                 }
 
