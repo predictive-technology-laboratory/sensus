@@ -285,6 +285,9 @@ namespace Sensus.Probes.User.Scripts
         [OnOffUiProperty("Use Trigger Timestamp In Subcaption:", true, 17)]
         public bool UseTriggerDatumTimestampInSubcaption { get; set; }
 
+        [OnOffUiProperty("Force Remote Storage On Survey Submission:", true, 18)]
+        public bool ForceRemoteStorageOnSureySubmission { get; set; }
+
         [JsonIgnore]
         public string Caption
         {
