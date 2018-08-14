@@ -345,17 +345,24 @@ namespace Sensus.Callbacks
 
         private PushNotificationRequest GetPushNotificationRequest(ScheduledCallback callback)
         {
-            if (callback.NextExecution.HasValue)
+            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
+            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
+            if (callback.Protocol != null)
             {
-                // the PNR ID is used as the S3 object key. we're using the format SENSUS-CALLBACK:ID, where ID is the callback ID. this helps
-                // to ensure that each callback only has a single PNR in the backend, regardless of the existence of multiple invocation IDs
-                // over time.
-                return new PushNotificationRequest(SENSUS_CALLBACK_KEY + ":" + SensusServiceHelper.Get().DeviceId + ":" + callback.Id, callback.Protocol, "", "", "", callback.InvocationId, callback.NextExecution.Value);
+                try
+                {
+                    // the PNR ID is used as the S3 object key. we're using the format SENSUS-CALLBACK:[DEVICE]:[ID], where [DEVICE] is the device ID and
+                    // [ID] is the callback ID. this helps to ensure that each callback only has a single PNR in the backend, regardless of the existence 
+                    // of multiple invocation IDs, which change over time and are passed as the command value.
+                    return new PushNotificationRequest(SENSUS_CALLBACK_KEY + ":" + SensusServiceHelper.Get().DeviceId + ":" + callback.Id, callback.Protocol, "", "", "", callback.InvocationId, callback.NextExecution.Value);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while getting push notification request:  " + ex.Message, ex);
+                }
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

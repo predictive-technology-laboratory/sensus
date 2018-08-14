@@ -32,8 +32,10 @@ namespace Sensus.Android.Notifications
     {
         public override void OnMessageReceived(RemoteMessage message)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
+                SensusServiceHelper.Get().Logger.Log("Received push notification:  " + message, LoggingLevel.Normal, GetType());
+
                 Protocol protocol = null;
 
                 try
@@ -43,7 +45,7 @@ namespace Sensus.Android.Notifications
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
+                    SensusServiceHelper.Get().Logger.Log("Failed to get protocol for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
 
                 // ignore the push notification if it targets a protocol that is not running. we explicitly 
@@ -52,6 +54,7 @@ namespace Sensus.Android.Notifications
                 // be race conditions that allow a push notification to be delivered to us nonetheless.
                 if (!protocol.Running)
                 {
+                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running.", LoggingLevel.Normal, GetType());
                     return;
                 }
 
@@ -72,9 +75,12 @@ namespace Sensus.Android.Notifications
                 {
                     string title = message.Data["title"];
                     string body = message.Data["body"];
-                    string sound = message.Data["sound"];
+                    string sound = message.Data["sound"];  // sound is optional
 
-                    SensusContext.Current.Notifier.IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
+                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
+                    {
+                        SensusContext.Current.Notifier.IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -96,7 +102,7 @@ namespace Sensus.Android.Notifications
                         string callbackId = idParts.Last();
                         string invocationId = message.Data["command"];
 
-                        (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotification(callbackId, invocationId);
+                        await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotificationAsync(callbackId, invocationId);
                     }
                     else
                     {

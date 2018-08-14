@@ -119,6 +119,11 @@ namespace Sensus.Notifications
         {
             return Task.Run(async () =>
             {
+                if (request == null)
+                {
+                    return;
+                }
+
                 try
                 {
                     await request.Protocol.RemoteDataStore.DeletePushNotificationRequestAsync(request, cancellationToken);

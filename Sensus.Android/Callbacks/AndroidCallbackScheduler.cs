@@ -168,16 +168,46 @@ namespace Sensus.Android.Callbacks
             });
         }
 
-        public void ServiceCallbackFromPushNotification(string callbackId, string invocationId)
+        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId)
         {
-            ScheduledCallback callback = TryGetCallback(callbackId);
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
-            if (callback != null)
+            // it is conceivable that a push notification could arrive in the absence of a running
+            // app. in this case, the service helper would be null and there is nothing to do.
+            if (serviceHelper != null)
             {
-                callback.InvocationId = invocationId;
-                Intent intent = CreateCallbackIntent(callback);
-                PendingIntent pendingIntent = CreateCallbackPendingIntent(intent);
-                pendingIntent.Send();
+                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+                serviceHelper.KeepDeviceAwake();
+
+                return Task.Run(async () =>
+                {
+                    ScheduledCallback callback = TryGetCallback(callbackId);
+
+                    if (callback != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+
+                        // service an intent that targets the given callback and invocation. 
+                        // 
+                        // 1) if this intent arrives with a valid invocation ID before the alarm-triggered 
+                        //    intent arrives, this intent will be serviced and a new pending intent will 
+                        //    be issued with an updated invocation id. in this case, the alarm-triggered 
+                        //    pending intent will be ignored (if it fires) or canceled (when the updated 
+                        //    pending intent is issued).
+                        //
+                        // 2) if this intent arrives after the alarm-triggered intent, or if the invocation
+                        //    id is not valid, then this intent will not be serviced. the alarm-triggered
+                        //    intent will be serviced instead, and the next pending intent will be scheduled
+                        //    thereafter along with a correspondingly new push notification request.
+                        Intent intent = CreateCallbackIntent(callback);
+                        intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, invocationId);
+                        await ServiceCallbackAsync(intent);
+                    }
+                });
+            }
+            else
+            {
+                return Task.CompletedTask;
             }
         }
 

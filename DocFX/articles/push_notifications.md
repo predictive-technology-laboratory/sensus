@@ -3,6 +3,8 @@ uid: push_notifications
 ---
 
 # Push Notifications
+Sensus uses push notifications to deliver information to users and to support quality assurance
+of collected data.
 
 ## Azure Notification Hub
 

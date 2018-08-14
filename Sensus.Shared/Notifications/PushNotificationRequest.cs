@@ -97,6 +97,16 @@ namespace Sensus.Notifications
             _time = time;
             _deviceId = deviceId;
             _format = format;
+
+            if (string.IsNullOrWhiteSpace(_id))
+            {
+                throw new ArgumentException("Each PNR must have an ID", nameof(id));
+            }
+
+            if (protocol == null)
+            {
+                throw new ArgumentNullException(nameof(protocol));
+            }
         }
 
         public PushNotificationRequest(string id, Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
