@@ -297,7 +297,7 @@ namespace Sensus.Callbacks
                         string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                         Dictionary<string, string> properties = new Dictionary<string, string>
                         {
-                                { "Callback Next Execution", "NONE" }
+                            { "Callback Next Execution", "NONE" }
                         };
 
                         Analytics.TrackEvent(eventName, properties);

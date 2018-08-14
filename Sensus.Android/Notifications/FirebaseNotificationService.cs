@@ -39,7 +39,7 @@ namespace Sensus.Android.Notifications
                 try
                 {
                     string protocolId = message.Data["protocol"];
-                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Where(p => p.Id == protocolId).Single();
+                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == protocolId);
                 }
                 catch (Exception ex)
                 {

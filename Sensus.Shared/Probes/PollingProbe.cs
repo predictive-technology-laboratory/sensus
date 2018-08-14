@@ -237,11 +237,11 @@ namespace Sensus.Probes
 
         }
 
-        protected override void InternalStart()
+        protected override void ProtectedStart()
         {
             lock (_locker)
             {
-                base.InternalStart();
+                base.ProtectedStart();
 
 #if __IOS__
                 string userNotificationMessage = DisplayName + " data requested.";

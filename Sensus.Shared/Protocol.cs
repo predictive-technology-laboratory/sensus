@@ -1616,7 +1616,7 @@ namespace Sensus
             });
         }
 
-        private void StartInternal()
+        private void PrivateStart()
         {
             lock (_locker)
             {
@@ -1788,7 +1788,7 @@ namespace Sensus
         {
             if (_startImmediately || (DateTime.Now > _startTimestamp))
             {
-                StartInternal();
+                PrivateStart();
             }
             else
             {
@@ -1809,7 +1809,7 @@ namespace Sensus
             {
                 return Task.Run(() =>
                 {
-                    StartInternal();
+                    PrivateStart();
                     _scheduledStartCallback = null;
                 });
 

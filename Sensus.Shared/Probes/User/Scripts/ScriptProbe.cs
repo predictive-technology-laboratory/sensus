@@ -127,9 +127,9 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        protected override void InternalStart()
+        protected override void ProtectedStart()
         {
-            base.InternalStart();
+            base.ProtectedStart();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {

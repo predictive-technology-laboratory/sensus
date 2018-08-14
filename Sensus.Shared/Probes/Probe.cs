@@ -328,7 +328,7 @@ namespace Sensus.Probes
         {
             try
             {
-                InternalStart();
+                ProtectedStart();
             }
             catch (Exception startException)
             {
@@ -366,7 +366,7 @@ namespace Sensus.Probes
         /// allows for child-class overrides, but since InternalStart is protected, it cannot be called from the outside. Outsiders only have access to
         /// Start (perhaps via Enabled), which takes care of any exceptions arising from the entire chain of InternalStart overrides.
         /// </summary>
-        protected virtual void InternalStart()
+        protected virtual void ProtectedStart()
         {
             lock (_locker)
             {

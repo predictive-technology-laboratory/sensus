@@ -239,7 +239,7 @@ namespace Sensus.Probes
             _deviceAwake = false;
         }
 
-        protected sealed override void InternalStart()
+        protected sealed override void ProtectedStart()
         {
             lock (_locker)
             {
@@ -250,7 +250,7 @@ namespace Sensus.Probes
                     _deviceAwake = true;
                 }
 
-                base.InternalStart();
+                base.ProtectedStart();
 
                 StartListening();
             }
