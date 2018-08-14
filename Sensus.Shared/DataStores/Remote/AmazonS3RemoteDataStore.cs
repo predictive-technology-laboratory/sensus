@@ -29,6 +29,8 @@ using System.Text;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using Sensus.Models;
+using System.Net.Http;
 
 namespace Sensus.DataStores.Remote
 {
@@ -90,6 +92,10 @@ namespace Sensus.DataStores.Remote
     /// </summary>
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
+
+        private const string ACCOUNT_SERVICE_PAGE = "/createaccount?deviceId={0}&participantId={1}";
+        private const string CREDENTIALS_SERVICE_PAGE = "/getcredentials?participantId={0}&password={1}";
+
         private string _region;
         private string _bucket;
         private string _folder;
@@ -99,7 +105,9 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
         private int _putCount;
         private int _successfulPutCount;
-
+        private string _credentialsServiceURL;
+        private string _participantPassword;
+        private string _accountServiceURL;
         /// <summary>
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
@@ -237,6 +245,21 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        public string CredentialsExpiration { get; set; }
+        [JsonIgnore]
+        public bool IsCredentialsExpired
+        {
+            get
+            {
+                var expirationDateTime = DateTimeOffset.MinValue;
+                if (string.IsNullOrWhiteSpace(CredentialsExpiration) == false && long.TryParse(CredentialsExpiration, out long milliseconds))
+                {
+                    expirationDateTime = DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(milliseconds);
+                }
+                return DateTimeOffset.UtcNow > expirationDateTime;
+            }
+        }
+
         [JsonIgnore]
         public override bool CanRetrieveWrittenData
         {
@@ -255,6 +278,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+
         public AmazonS3RemoteDataStore()
         {
             _region = _bucket = _folder = null;
@@ -265,6 +289,22 @@ namespace Sensus.DataStores.Remote
 
         public override void Start()
         {
+
+            if (string.IsNullOrWhiteSpace(Protocol.AccountServiceBaseUrl) == false)
+            {
+                try
+                {
+                    _credentialsServiceURL = Protocol.AccountServiceBaseUrl + CREDENTIALS_SERVICE_PAGE;
+                    _accountServiceURL = Protocol.AccountServiceBaseUrl + ACCOUNT_SERVICE_PAGE;
+                    ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+                }
+                catch(Exception exc)
+                {
+                    var e = exc;
+                    throw;
+                }
+            }
+
             if (_pinnedServiceURL != null)
             {
                 // ensure that we have a pinned public key if we're pinning the service URL
@@ -307,6 +347,12 @@ namespace Sensus.DataStores.Remote
 
         private AmazonS3Client InitializeS3()
         {
+
+            if (string.IsNullOrWhiteSpace(Protocol.AccountServiceBaseUrl) == false)
+            {
+                ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+            }
+
             AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3 related to logging metrics
             AmazonS3Config clientConfig = new AmazonS3Config();
             clientConfig.ForcePathStyle = true;  // when using pinning via CloudFront reverse proxy, the bucket name is prepended to the host if the path style is not used. the resulting host does not exist for our reverse proxy, causing DNS name resolution errors. by using the path style, the bucket is appended to the reverse-proxy host and everything goes through fine.
@@ -333,7 +379,7 @@ namespace Sensus.DataStores.Remote
                 {
                     s3 = InitializeS3();
 
-                    await Put(s3, stream, (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
+                    await Put(s3, stream, (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken, true);
                 }
                 finally
                 {
@@ -357,7 +403,7 @@ namespace Sensus.DataStores.Remote
                     dataStream.Write(datumJsonBytes, 0, datumJsonBytes.Length);
                     dataStream.Position = 0;
 
-                    await Put(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken);
+                    await Put(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken, true);
                 }
                 finally
                 {
@@ -366,14 +412,15 @@ namespace Sensus.DataStores.Remote
             });
         }
 
-        private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken, bool allowRetry = true)
         {
             return Task.Run(async () =>
             {
-                _putCount++;
-
                 try
                 {
+                    _putCount++;
+                    ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+
                     PutObjectRequest putRequest = new PutObjectRequest
                     {
                         BucketName = _bucket,
@@ -396,7 +443,28 @@ namespace Sensus.DataStores.Remote
                 }
                 catch (WebException ex)
                 {
-                    if (ex.Status == WebExceptionStatus.TrustFailure)
+
+                    if (ex.Status == WebExceptionStatus.ReceiveFailure && allowRetry == true && string.IsNullOrWhiteSpace(_credentialsServiceURL) == false) //TODO:  Need to define what an expired error looks like
+                    {
+                        //there was a problem with credentials and we haven't retried so lets force a refresh and try again
+                        AmazonS3Client innerS3 = null;
+                        try
+                        {
+                            CredentialsExpiration = null; //force a refresh
+                            innerS3 = InitializeS3();
+                            await Put(innerS3, stream, key, contentType, cancellationToken, false); //don't allow a second retry if this one fails
+                        }
+                        catch(Exception innerEx)
+                        {
+                            string message = "The credentials from the S3 credentials service failed.";
+                            SensusException.Report(message, innerEx);
+                        }
+                        finally
+                        {
+                            DisposeS3(innerS3);
+                        }
+                    }
+                    else if (ex.Status == WebExceptionStatus.TrustFailure)
                     {
                         string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
                         SensusException.Report(message, ex);
@@ -473,6 +541,74 @@ namespace Sensus.DataStores.Remote
                     SensusServiceHelper.Get().Logger.Log("Failed to dispose Amazon S3 client:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
+        }
+
+        private async Task RefreshAccount()
+        {
+            if (string.IsNullOrWhiteSpace(_accountServiceURL) == false)
+            {
+                var deviceId = SensusServiceHelper.Get().DeviceId;
+                if (string.IsNullOrWhiteSpace(Protocol.ParticipantId))
+                {
+                    Protocol.ParticipantId = Guid.NewGuid().ToString("n");
+                }
+                var url = string.Format(_accountServiceURL, deviceId, Protocol.ParticipantId);
+                var account = await GetJsonObjectFromUrl<Account>(url);
+                if (Protocol.ParticipantId != account.participantId)
+                {
+                    Protocol.ParticipantId = account.participantId;
+                }
+                _participantPassword = account.password;
+            }
+        }
+        private void ConfirmCredentials()
+        {
+            var t = Task.Run(async () =>
+            {
+                if (string.IsNullOrWhiteSpace(_credentialsServiceURL) == false)
+                {
+                    if (string.IsNullOrWhiteSpace(Protocol.ParticipantId) || string.IsNullOrWhiteSpace(_participantPassword))
+                    {
+                        await RefreshAccount();
+                    }
+                    if (IsCredentialsExpired)
+                    {
+                        var url = string.Format(_credentialsServiceURL, Protocol.ParticipantId, _participantPassword);
+                        var account = await GetJsonObjectFromUrl<AccountCredentials>(url);
+                        _iamAccessKey = account.accessKeyId;
+                        _iamSecretKey = account.secretAccessKey;
+                        CredentialsExpiration = account.expiration;
+                    }
+                }
+            });
+            t.Wait();
+        }
+        private async Task<T> GetJsonObjectFromUrl<T>(string url)
+        {
+
+            T rVal = default(T);
+            string response;
+            HttpClient httpClient = new HttpClient();
+            try
+            {
+                response = await httpClient.GetStringAsync(url);
+                if (string.IsNullOrWhiteSpace(response))
+                {
+                    throw new Exception("Response was empty");
+                }
+                rVal = await Sensus.Protocol.DeserializeAsync<T>(response);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log($"Error getting json object {typeof(T).Name} from {url}:  {ex.Message}", LoggingLevel.Normal, GetType());
+                throw;
+            }
+            finally
+            {
+                httpClient.Dispose();
+                httpClient = null;
+            }
+            return rVal;
         }
 
         public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)

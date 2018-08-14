@@ -46,6 +46,8 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
+using System.Net.Http;
+using Sensus.Models;
 
 #if __IOS__
 using HealthKit;
@@ -71,6 +73,7 @@ namespace Sensus
         public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
         public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
+        private const string ACCOUNT_CREDENTIALS_JSON_ENDING = ".sensusstudy";
 
         public static Protocol Create(string name)
         {
@@ -91,7 +94,7 @@ namespace Sensus
             return Task.Run(async () =>
             {
                 Protocol protocol = null;
-
+                AccountCredentials accountCredentials = null; //TODO:  Is this the correct json object that is going to be downloaded?
                 try
                 {
                     // check if the URI points to an S3 bucket
@@ -104,9 +107,27 @@ namespace Sensus
                     {
                     }
 
+
                     if (s3URI == null)
                     {
-                        TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();
+
+                        if (webURI.AbsoluteUri.EndsWith(ACCOUNT_CREDENTIALS_JSON_ENDING)) //if it is a .json link then it might be a setup file
+                        {
+                            using (HttpClient client = new HttpClient())
+                            {
+                                var setupJson = await client.GetStringAsync(webURI);
+                                if (string.IsNullOrWhiteSpace(setupJson) == false && setupJson.TrimStart(' ').StartsWith("{")) //is the source file json
+                                {
+                                    accountCredentials = await DeserializeAsync<AccountCredentials>(setupJson);
+                                    if (accountCredentials?.protocolURL != null)
+                                    {
+                                        webURI = new Uri(accountCredentials.protocolURL); //update the webURI with the one from the account settings and then go through the normal process
+                                    }
+                                }
+                            }
+                        }
+
+                        TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();  //TODO:  Is there a reason you are using WebClient with the callback?  I think this could be refactored to simplify with above but i am hesitant to do that.
                         WebClient downloadClient = new WebClient();
 
                         downloadClient.DownloadDataCompleted += async (o, e) =>
@@ -127,6 +148,11 @@ namespace Sensus
                         downloadClient.DownloadDataAsync(webURI);
 
                         protocol = await completionSource.Task;
+
+                        if(accountCredentials != null)
+                        {
+                            protocol.AsymmetricEncryptionPublicKey = accountCredentials.cmk; //TODO:  What is the schema for this json?  Is it going to be predefined or should we do something dynamic?
+                        }
                     }
                     else
                     {
@@ -155,6 +181,9 @@ namespace Sensus
         {
             return Task.Run(async () =>
             {
+
+
+
                 // decrypt the bytes to JSON
                 string json;
                 try
@@ -186,7 +215,7 @@ namespace Sensus
                 Protocol protocol;
                 try
                 {
-                    protocol = await DeserializeAsync(json);
+                    protocol = await DeserializeAsync<Protocol>(json);
                 }
                 catch (Exception ex)
                 {
@@ -362,11 +391,11 @@ namespace Sensus
             });
         }
 
-        public static Task<Protocol> DeserializeAsync(string json)
+        public static Task<T> DeserializeAsync<T>(string json)
         {
             return Task.Run(() =>
             {
-                Protocol protocol = null;
+                T rVal = default(T);
 
                 try
                 {
@@ -379,11 +408,11 @@ namespace Sensus
                     {
                         try
                         {
-                            protocol = JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+                            rVal = JsonConvert.DeserializeObject<T>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                         }
                         catch (Exception ex)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
+                            SensusServiceHelper.Get().Logger.Log("Error while deserializing " + typeof(T).Name + " from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(T));
                         }
                         finally
                         {
@@ -393,22 +422,22 @@ namespace Sensus
 
                     protocolWait.WaitOne();
 
-                    if (protocol == null)
+                    if (rVal == null)
                     {
-                        throw new Exception("Failed to deserialize protocol from JSON.");
+                        throw new Exception($"Failed to deserialize {typeof(T).Name} from JSON.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                    SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
+                    SensusServiceHelper.Get().Logger.Log($"Failed to deserialize {typeof(T).Name} from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(T));
+                    SensusServiceHelper.Get().FlashNotificationAsync($"Failed to unpack {typeof(T).Name} from JSON:  " + ex.Message);
                 }
                 finally
                 {
                     SensusServiceHelper.Get().FlashNotificationsEnabled = true;
                 }
 
-                return protocol;
+                return rVal;
             });
         }
 
@@ -450,7 +479,7 @@ namespace Sensus
                     {
                         uiTestingProtocolFile.CopyTo(protocolStream);
                         string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray()));
-                        Protocol protocol = await DeserializeAsync(protocolJSON);
+                        Protocol protocol = await DeserializeAsync<Protocol>(protocolJSON);
 
                         if (protocol == null)
                         {
@@ -539,6 +568,7 @@ namespace Sensus
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
+        private string _accountServiceBaseUrl;
 
         private readonly object _locker = new object();
 
@@ -1329,6 +1359,18 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// This is the base url for the S3 Account Service.  We will add 'createaccount?participantId=<see cref="ParticipantId"/>&amp;deviceId=<see cref="SensusServiceHelper.DeviceId"/>' 
+        /// to create an account and 'getcredentials?participantId=<see cref="ParticipantId"/>&amp;password={Provived by service}' to get current Service Url credentials.
+        /// </summary>
+        /// <value>The base url for the account service URL.</value>
+        [EntryStringUiProperty("Account Service URL:", true, 47, false)]
+        public string AccountServiceBaseUrl
+        {
+            get { return _accountServiceBaseUrl; }
+            set { _accountServiceBaseUrl = value?.TrimEnd('/'); }
+        }
+
         [JsonIgnore]
         public bool StartIsScheduled
         {
@@ -1495,7 +1537,7 @@ namespace Sensus
         {
             return Task.Run(async () =>
             {
-                Protocol protocol = await DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                Protocol protocol = await DeserializeAsync<Protocol>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
 
                 protocol.Reset(resetId);
 

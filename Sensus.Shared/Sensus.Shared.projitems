@@ -18,8 +18,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\DataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\FileLocalDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Local\LocalDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3DataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ManagedAmazonS3RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\ConsoleRemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
