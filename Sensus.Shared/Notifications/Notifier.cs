@@ -171,6 +171,8 @@ namespace Sensus.Notifications
                     pushNotifications = _pushNotificationRequestsToSend.ToList();
                 }
 
+                SensusServiceHelper.Get().Logger.Log("Sending " + pushNotifications.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
+
                 foreach (PushNotificationRequest pushNotificationRequestToSend in pushNotifications)
                 {
                     try
@@ -201,6 +203,8 @@ namespace Sensus.Notifications
                 {
                     pushNotifications = _pushNotificationRequestsToDelete.ToList();
                 }
+
+                SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotifications.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
 
                 foreach (PushNotificationRequest pushNotificationRequestToDelete in pushNotifications)
                 {

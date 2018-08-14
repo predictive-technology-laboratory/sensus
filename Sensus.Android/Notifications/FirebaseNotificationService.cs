@@ -34,7 +34,7 @@ namespace Sensus.Android.Notifications
         {
             Task.Run(async () =>
             {
-                SensusServiceHelper.Get().Logger.Log("Received push notification:  " + message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Received push notification.", LoggingLevel.Normal, GetType());
 
                 Protocol protocol = null;
 
@@ -63,12 +63,19 @@ namespace Sensus.Android.Notifications
                 try
                 {
                     id = message.Data["id"];
+
+                    if (string.IsNullOrWhiteSpace(id))
+                    {
+                        throw new Exception("Push notification ID is missing or blank.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     SensusException.Report("Exception while getting push notification id:  " + ex.Message, ex);
                     return;
                 }
+
+                SensusServiceHelper.Get().Logger.Log("Processing push notification " + id + " for protocol " + protocol.Id + ".", LoggingLevel.Normal, GetType());
 
                 // if there is user-targeted information, display the notification.
                 try
