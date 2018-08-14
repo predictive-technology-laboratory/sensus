@@ -61,7 +61,7 @@ namespace Sensus.UI
                 };
 
                 ContextActions.Add(deleteMenuItem);
-                
+
             }
         }
 
@@ -70,7 +70,7 @@ namespace Sensus.UI
             Title = "Pending Surveys";
 
             ListView scriptList = new ListView(ListViewCachingStrategy.RecycleElement)
-            {                
+            {
                 BindingContext = SensusServiceHelper.Get().ScriptsToRun  // used to show/hid when there are no surveys
             };
 
@@ -90,7 +90,7 @@ namespace Sensus.UI
 
                 selectedScript.Submitting = true;
 
-                IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(selectedScript.RunTime, selectedScript.InputGroups, null, selectedScript.Runner.AllowCancel, null, null, selectedScript.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", selectedScript.Runner.DisplayProgress, null);
+                IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(selectedScript.RunTime, selectedScript.InputGroups, null, selectedScript.Runner.AllowCancel, null, null, selectedScript.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", selectedScript.Runner.DisplayProgress, selectedScript.Runner, null);
 
                 bool canceled = inputGroups == null;
 
@@ -116,16 +116,11 @@ namespace Sensus.UI
                                 // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                                 // grouped across runs. this is the difference between scriptId and runId in the following line.
                                 selectedScript.Runner.Probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), selectedScript.Runner.Script.Id, selectedScript.Runner.Name, input.GroupId, input.Id, selectedScript.Id, input.Value, selectedScript.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, selectedScript.RunTime.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
-                             
+
                                 // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                 input.NeedsToBeStored = false;
                                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => input.Enabled = false);
                             }
-                        }
-
-                        if (selectedScript.Runner.ForceRemoteStorageOnSureySubmission)
-                        {
-                            await selectedScript.Runner.Probe.Protocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
                         }
 
                     }

@@ -88,7 +88,7 @@ namespace Sensus.UI
                             Required = false
                         }
 
-                    }, null, true, null, null, null, null, false);
+                    }, null, true, null, null, null, null, null, false);
 
                     if (inputs != null)
                     {

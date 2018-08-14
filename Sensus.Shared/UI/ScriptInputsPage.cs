@@ -94,7 +94,7 @@ namespace Sensus.UI
                         new ItemPickerPageInput("Condition:", Enum.GetValues(typeof(InputValueCondition)).Cast<object>().ToList()),
                         new ItemPickerPageInput("Conjunctive/Disjunctive:", new object[] { "Conjunctive", "Disjunctive" }.ToList())
 
-                    }, null, true, null, null, abortMessage, null, false);
+                    }, null, true, null, null, abortMessage, null, null, false);
 
                     if (inputs == null)
                     {
@@ -130,7 +130,7 @@ namespace Sensus.UI
                                 (conditionInputCopy as IVariableDefiningInput).DefinedVariable = null;
                             }
 
-                            Input input = await SensusServiceHelper.Get().PromptForInputAsync("Display Condition", conditionInputCopy, null, true, "OK", null, abortMessage, null, false);
+                            Input input = await SensusServiceHelper.Get().PromptForInputAsync("Display Condition", conditionInputCopy, null, true, "OK", null, abortMessage, null, null, false);
 
                             if (input?.Valid ?? false)
                             {

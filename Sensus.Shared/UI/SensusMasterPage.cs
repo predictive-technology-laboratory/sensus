@@ -75,7 +75,7 @@ namespace Sensus.UI
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Log In", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Log In", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, null, false);
 
                         if (input == null)
                         {

@@ -1688,35 +1688,35 @@ namespace Sensus
                     {
                         // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
 #if __IOS__
-                            if (HKHealthStore.IsHealthDataAvailable)
+                        if (HKHealthStore.IsHealthDataAvailable)
+                        {
+                            List<iOSHealthKitProbe> enabledHealthKitProbes = new List<iOSHealthKitProbe>();
+                            foreach (Probe probe in _probes)
                             {
-                                List<iOSHealthKitProbe> enabledHealthKitProbes = new List<iOSHealthKitProbe>();
-                                foreach (Probe probe in _probes)
+                                if (probe.Enabled && probe is iOSHealthKitProbe)
                                 {
-                                    if (probe.Enabled && probe is iOSHealthKitProbe)
-                                    {
-                                        enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
-                                    }
-                                }
-
-                                if (enabledHealthKitProbes.Count > 0)
-                                {
-                                    NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
-                                    ManualResetEvent authorizationWait = new ManualResetEvent(false);
-                                    new HKHealthStore().RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
-                                        (success, error) =>
-                                        {
-                                            if (error != null)
-                                            {
-                                                SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
-                                            }
-
-                                            authorizationWait.Set();
-                                        });
-
-                                    authorizationWait.WaitOne();
+                                    enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
                                 }
                             }
+
+                            if (enabledHealthKitProbes.Count > 0)
+                            {
+                                NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
+                                ManualResetEvent authorizationWait = new ManualResetEvent(false);
+                                new HKHealthStore().RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
+                                    (success, error) =>
+                                    {
+                                        if (error != null)
+                                        {
+                                            SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
+                                        }
+
+                                        authorizationWait.Set();
+                                    });
+
+                                authorizationWait.WaitOne();
+                            }
+                        }
 #endif
 
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
@@ -1973,7 +1973,7 @@ namespace Sensus
                     });
                 }
 
-                List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Confirm Study Participation", inputs.ToArray(), null, true, null, "Are you sure you would like cancel your enrollment in this study?", null, null, false);
+                List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Confirm Study Participation", inputs.ToArray(), null, true, null, "Are you sure you would like cancel your enrollment in this study?", null, null, null, false);
 
                 bool start = false;
 

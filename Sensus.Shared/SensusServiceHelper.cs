@@ -631,7 +631,7 @@ namespace Sensus
                         SensusContext.Current.CallbackScheduler.TestHealth();
 
                         // update push notification registrations
-                        if(_updatePushNotificationRegistrationsOnNextHealthTest)
+                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
                         {
                             await UpdatePushNotificationRegistrationsAsync(cancellationToken);
                         }
@@ -920,7 +920,7 @@ namespace Sensus
                     ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
                     {
                         PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
-                                                                                       
+
                     }, scannerOverlay);
 
                     INavigation navigation = (Application.Current as App).DetailPage.Navigation;
@@ -972,16 +972,16 @@ namespace Sensus
             });
         }
 
-        public Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
+        public Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, ScriptRunner runner, bool displayProgress)
         {
             return Task.Run(async () =>
             {
-                List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+                List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, runner, displayProgress);
                 return inputs?.First();
             });
         }
 
-        public Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
+        public Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, ScriptRunner runner, bool displayProgress)
         {
             return Task.Run(async () =>
             {
@@ -992,13 +992,13 @@ namespace Sensus
                     inputGroup.Inputs.Add(input);
                 }
 
-                IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
+                IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, runner, null);
 
                 return inputGroups?.SelectMany(g => g.Inputs).ToList();
             });
         }
 
-        public Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
+        public Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, ScriptRunner runner, Action postDisplayCallback)
         {
             return Task.Run(async () =>
             {
@@ -1040,7 +1040,7 @@ namespace Sensus
                         {
                             int stepNumber = inputGroupNum + 1;
 
-                            InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+                            InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, runner);
 
                             // do not display prompts page under the following conditions:  
                             //
@@ -1086,7 +1086,7 @@ namespace Sensus
                                 // on the page rather than the local 'navigation' variable. this is necessary because the navigation
                                 // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
                                 // notification.
-                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
+                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit ||
                                                                               navigationResult == InputGroupPage.NavigationResult.Cancel);
 
                                 if (navigationResult == InputGroupPage.NavigationResult.Backward)

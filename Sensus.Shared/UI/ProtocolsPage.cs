@@ -42,7 +42,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, null, false);
 
                     if (input == null)
                     {
@@ -255,6 +255,7 @@ namespace Sensus.UI
                         null,
                         null,
                         false,
+                        null,
                         async () =>
                         {
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
@@ -323,6 +324,7 @@ namespace Sensus.UI
                                 null,
                                 null,
                                 false,
+                                null,
                                 async () =>
                                 {
                                     // after the page shows up, attempt to retrieve the participation reward datum.
@@ -410,8 +412,8 @@ namespace Sensus.UI
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-                            
-                        }, null, true, "Group", null, null, null, false);
+
+                        }, null, true, "Group", null, null, null, null, false);
 
                     if (input == null)
                     {
@@ -479,7 +481,7 @@ namespace Sensus.UI
                 }
                 else if (action == "From URL")
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, false);
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, null, false);
 
                     // input might be null (user cancelled), or the value might be null (blank input submitted)
                     if (!string.IsNullOrEmpty(input?.Value?.ToString()))
@@ -488,7 +490,7 @@ namespace Sensus.UI
                         {
                             protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
                         }
