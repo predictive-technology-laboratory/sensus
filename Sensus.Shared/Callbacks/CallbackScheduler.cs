@@ -347,10 +347,10 @@ namespace Sensus.Callbacks
         {
             if (callback.NextExecution.HasValue)
             {
-                // the PNR ID is used as the S3 object key. we're using the format SENSUS-CALLBACk.ID, where ID is the callback ID. this helps
+                // the PNR ID is used as the S3 object key. we're using the format SENSUS-CALLBACK:ID, where ID is the callback ID. this helps
                 // to ensure that each callback only has a single PNR in the backend, regardless of the existence of multiple invocation IDs
                 // over time.
-                return new PushNotificationRequest(SENSUS_CALLBACK_KEY + "." + callback.Id, callback.Protocol, "", "", "", callback.InvocationId, callback.NextExecution.Value);
+                return new PushNotificationRequest(SENSUS_CALLBACK_KEY + ":" + SensusServiceHelper.Get().DeviceId + ":" + callback.Id, callback.Protocol, "", "", "", callback.InvocationId, callback.NextExecution.Value);
             }
             else
             {

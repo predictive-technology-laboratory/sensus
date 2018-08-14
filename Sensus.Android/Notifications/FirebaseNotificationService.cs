@@ -84,26 +84,23 @@ namespace Sensus.Android.Notifications
                 // process push notification commands
                 try
                 {
-                    int dotIndex = id.IndexOf('.');
+                    string[] idParts = id.Split(':');
 
-                    if (dotIndex < 0)
+                    if (idParts.Length != 3)
                     {
-                        throw new Exception("Missing dot separating id prefix and suffix.");
+                        throw new Exception("Invalid push notification ID format:  " + id);
                     }
 
-                    string idPrefix = id.Substring(0, dotIndex);
-                    string idSuffix = id.Substring(dotIndex + 1);
-
-                    if (idPrefix == CallbackScheduler.SENSUS_CALLBACK_KEY)
+                    if (idParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
                     {
-                        string callbackId = idSuffix;
+                        string callbackId = idParts.Last();
                         string invocationId = message.Data["command"];
 
                         (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotification(callbackId, invocationId);
                     }
                     else
                     {
-                        throw new Exception("Unrecognized push notification ID prefix:  " + idPrefix);
+                        throw new Exception("Unrecognized push notification ID prefix:  " + idParts.First());
                     }
                 }
                 catch (Exception pushNotificationCommandException)

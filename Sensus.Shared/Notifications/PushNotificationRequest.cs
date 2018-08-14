@@ -95,8 +95,8 @@ namespace Sensus.Notifications
             _sound = sound;
             _command = command;
             _time = time;
-            _format = format;
             _deviceId = deviceId;
+            _format = format;
         }
 
         public PushNotificationRequest(string id, Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
