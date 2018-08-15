@@ -249,7 +249,7 @@ namespace Sensus.Probes
         {
             get
             {
-                return _mostRecentDatum == null ? "[no data]" : _mostRecentDatum.DisplayDetail + Environment.NewLine + _mostRecentDatum.Timestamp.ToLocalTime();
+                return _mostRecentDatum == null ? "[no data]" : _mostRecentDatum.DisplayDetail + "  " + _mostRecentDatum.Timestamp.ToLocalTime();
             }
         }
 
