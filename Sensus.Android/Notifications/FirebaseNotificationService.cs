@@ -98,7 +98,7 @@ namespace Sensus.Android.Notifications
                 // process push notification commands
                 try
                 {
-                    string[] idParts = id.Split(':');
+                    string[] idParts = id.Split(new char[] { ':' }, 3);
 
                     if (idParts.Length != 3)
                     {
