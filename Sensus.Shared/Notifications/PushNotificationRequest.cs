@@ -15,6 +15,7 @@
 using System;
 using Sensus.Exceptions;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace Sensus.Notifications
 {
@@ -86,9 +87,9 @@ namespace Sensus.Notifications
             }
         }
 
-        public PushNotificationRequest(string id, Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
         {
-            _id = id;
+            _id = Guid.NewGuid().ToString();
             _protocol = protocol;
             _title = title;
             _body = body;
@@ -98,19 +99,14 @@ namespace Sensus.Notifications
             _deviceId = deviceId;
             _format = format;
 
-            if (string.IsNullOrWhiteSpace(_id))
-            {
-                throw new ArgumentException("Each PNR must have an ID", nameof(id));
-            }
-
             if (protocol == null)
             {
                 throw new ArgumentNullException(nameof(protocol));
             }
         }
 
-        public PushNotificationRequest(string id, Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
-            : this(id, protocol, title, body, sound, command, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
+            : this(protocol, title, body, sound, command, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
         {
         }
 

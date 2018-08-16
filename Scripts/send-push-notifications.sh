@@ -29,6 +29,7 @@ do
 	echo -e "Processing $n ..."
     else
 	echo -e "Empty request $n. Deleting file...\n"
+	aws s3 rm "$s3_path/$(basename $n)"
 	rm $n
 	continue
     fi
@@ -65,6 +66,7 @@ do
 	if [[ "$token" = "" ]]
 	then
 	    echo -e "No token found. Assuming the PNR is stale and should be deleted.\n"
+	    aws s3 rm "$s3_path/$(basename $n)"
 	    rm $n
 	    continue
 	fi
@@ -118,14 +120,10 @@ do
         if [[ "$response" = "201"  ]]
         then
             echo -e "Notification sent. Removing file.\n"
-            rm $n
+	    aws s3 rm "$s3_path/$(basename $n)"
+	    rm $n	    
         fi
     else
 	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
     fi
 done
-
-# sync notifications from local to s3, deleting any in s3 that we completed.
-echo -e "\n************* UPLOADING TO S3 *************"
-aws s3 sync $notifications_dir $s3_path --delete 
-echo ""

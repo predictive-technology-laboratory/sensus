@@ -98,23 +98,26 @@ namespace Sensus.Android.Notifications
                 // process push notification commands
                 try
                 {
-                    string[] idParts = id.Split(new char[] { ':' }, 3);
-
-                    if (idParts.Length != 3)
+                    string command = message.Data["command"];
+                    string[] commandParts = command.Split(new char[] { '|' });
+                    if (commandParts.Length > 0)
                     {
-                        throw new Exception("Invalid push notification ID format:  " + id);
-                    }
+                        if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
+                        {
+                            if (commandParts.Length != 4)
+                            {
+                                throw new Exception("Invalid push notification command format:  " + command);
+                            }
 
-                    if (idParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
-                    {
-                        string callbackId = idParts.Last();
-                        string invocationId = message.Data["command"];
+                            string callbackId = commandParts[2];
+                            string invocationId = commandParts[3];
 
-                        await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotificationAsync(callbackId, invocationId);
-                    }
-                    else
-                    {
-                        throw new Exception("Unrecognized push notification ID prefix:  " + idParts.First());
+                            await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotificationAsync(callbackId, invocationId);
+                        }
+                        else
+                        {
+                            throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
+                        }
                     }
                 }
                 catch (Exception pushNotificationCommandException)

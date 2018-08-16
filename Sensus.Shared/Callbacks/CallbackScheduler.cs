@@ -88,12 +88,6 @@ namespace Sensus.Callbacks
         {
             ScheduledCallback callback;
             _idCallback.TryGetValue(id, out callback);
-
-            if (callback == null)
-            {
-                SensusException.Report("Failed to retrieve callback " + id + ".");
-            }
-
             return callback;
         }
 
@@ -351,10 +345,7 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    // the PNR ID is used as the S3 object key. we're using the format SENSUS-CALLBACK:[DEVICE]:[ID], where [DEVICE] is the device ID and
-                    // [ID] is the callback ID. this helps to ensure that each callback only has a single PNR in the backend, regardless of the existence 
-                    // of multiple invocation IDs, which change over time and are passed as the command value.
-                    return new PushNotificationRequest(SENSUS_CALLBACK_KEY + ":" + SensusServiceHelper.Get().DeviceId + ":" + callback.Id, callback.Protocol, "", "", "", callback.InvocationId, callback.NextExecution.Value);
+                    return new PushNotificationRequest(callback.Protocol, "", "", "", SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id + "|" + callback.InvocationId, callback.NextExecution.Value);
                 }
                 catch (Exception ex)
                 {
