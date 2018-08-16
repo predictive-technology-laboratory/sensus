@@ -36,20 +36,18 @@ namespace Sensus.Probes.User.Scripts
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        #region Fields
         private string _name;
         private bool _enabled;
 
         private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
         private TimeSpan? _maxAge;
-        private DateTime? _maxScheduledDate;
+        private DateTime? _maxTriggerTime;
         private readonly List<ScheduledCallback> _scriptRunCallbacks;
         private readonly ScheduleTrigger _scheduleTrigger;
+        private Queue<ScriptTriggerTime> _scriptTriggerTimes;
 
         private readonly object _locker = new object();
-        #endregion
 
-        #region Properties
         public ScriptProbe Probe { get; set; }
 
         public Script Script { get; set; }
@@ -293,9 +291,7 @@ namespace Sensus.Probes.User.Scripts
                 return _name;
             }
         }
-        #endregion
 
-        #region Constructor
         private ScriptRunner()
         {
             _scheduleTrigger = new ScheduleTrigger(); //this needs to be above
@@ -303,6 +299,7 @@ namespace Sensus.Probes.User.Scripts
             _maxAge = null;
             _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
             _scriptRunCallbacks = new List<ScheduledCallback>();
+            _scriptTriggerTimes = new Queue<ScriptTriggerTime>();
             Script = new Script(this);
             Triggers = new ConcurrentObservableCollection<Trigger>(new LockConcurrent());
             RunTimes = new List<DateTime>();
@@ -402,9 +399,7 @@ namespace Sensus.Probes.User.Scripts
             Name = name;
             Probe = probe;
         }
-        #endregion
 
-        #region Public Methods
         public void Initialize()
         {
             foreach (var trigger in Triggers)
@@ -465,42 +460,67 @@ namespace Sensus.Probes.User.Scripts
             UnscheduleCallbacks();
             SensusServiceHelper.Get().RemoveScriptsForRunner(this);
         }
-        #endregion
 
-        #region Private Methods
-        private void ScheduleScriptRuns()
+        public void ScheduleScriptRuns()
         {
             if (_scheduleTrigger.WindowCount == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
             {
                 return;
             }
 
-            // get trigger times with respect to the current time occurring after the maximum previously scheduled trigger time.
-            foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxScheduledDate.Max(DateTime.Now), _maxAge))
+            // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
+            // is a member of the current instance and not global within the script probe. beyond this single scheduled script,
+            // only allow a maximum of 32 script-run callbacks to be scheduled to allow room for other callbacks within sensus (e.g., 
+            // the storage and polling systems). android's app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
+            // as long as we have just a few script runners, each one will be able to schedule a few future script runs. this will 
+            // help mitigate the problem of users ignoring surveys and losing touch with the study. note that even if there are more 
+            // than 32 script runners, each will be allowed to schedule a callback as callback count will be zero, which is not greater 
+            // than the zero resulting from integer truncation below.
+            lock (_scriptRunCallbacks)
             {
-                // don't schedule scripts past the end of the protocol if there's a scheduled end date.
-                if (!Probe.Protocol.ContinueIndefinitely && triggerTime.Trigger > Probe.Protocol.EndDate)
+                while (_scriptRunCallbacks.Count <= 32 / Probe.ScriptRunners.Count)
                 {
-                    break;
-                }
+                    // if the trigger times queue is empty, refill it.
+                    if (_scriptTriggerTimes.Count == 0)
+                    {
+                        // begin the trigger sequence today if we haven't previously scheduled anything
+                        DateTime startDate;
+                        if (_maxTriggerTime == null)
+                        {
+                            startDate = DateTime.Now;
+                        }
+                        // start the trigger sequence on the day following the most recently scheduled trigger date
+                        else
+                        {
+                            startDate = _maxTriggerTime.Value.AddDays(1);
+                        }
 
-                // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
-                // is a member of the current instance and not global within the script probe. beyond this single scheduled script,
-                // only allow a maximum of 32 script-run callbacks to be scheduled to allow room for other callbacks within sensus (e.g., 
-                // the storage and polling systems). android's app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
-                // as long as we have just a few script runners, each one will be able to schedule a few future script runs. this will 
-                // help mitigate the problem of users ignoring surveys and losing touch with the study. note that even if there are more 
-                // than 32 script runners, each will be allowed to schedule a callback as callback count will be zero, which is not greater 
-                // than the zero resulting from integer truncation below.
-                lock (_scriptRunCallbacks)
-                {
-                    if (_scriptRunCallbacks.Count > 32 / Probe.ScriptRunners.Count)
+                        foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, startDate, _maxAge))
+                        {
+                            _maxTriggerTime = _maxTriggerTime.Max(triggerTime.Trigger);
+
+                            // don't schedule scripts past the end of the protocol if there's a scheduled end date.
+                            if (!Probe.Protocol.ContinueIndefinitely && triggerTime.Trigger > Probe.Protocol.EndDate)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                _scriptTriggerTimes.Enqueue(triggerTime);
+                            }
+                        }
+                    }
+
+                    // if there are still no trigger times (e.g., if there is an end date on the protocol), stop.
+                    if (_scriptTriggerTimes.Count == 0)
                     {
                         break;
                     }
+                    else
+                    {
+                        ScheduleScriptRun(_scriptTriggerTimes.Dequeue());
+                    }
                 }
-
-                ScheduleScriptRun(triggerTime);
             }
         }
 
@@ -532,8 +552,6 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
-
-                _maxScheduledDate = _maxScheduledDate.Max(triggerTime.Trigger);
             }
         }
 
@@ -607,7 +625,8 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 _scriptRunCallbacks.Clear();
-                _maxScheduledDate = null;
+                _scriptTriggerTimes.Clear();
+                _maxTriggerTime = null;
             }
         }
 
@@ -711,6 +730,5 @@ namespace Sensus.Probes.User.Scripts
 
             SensusServiceHelper.Get().AddScript(script, RunMode);
         }
-        #endregion
     }
 }

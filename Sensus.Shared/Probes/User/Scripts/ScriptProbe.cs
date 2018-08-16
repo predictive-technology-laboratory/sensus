@@ -18,6 +18,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using Syncfusion.SfChart.XForms;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -138,6 +140,29 @@ namespace Sensus.Probes.User.Scripts
                     scriptRunner.Start();
                 }
             }
+        }
+
+        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        {
+            bool restart = base.TestHealth(ref events);
+
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            {
+                // ensure that surveys are scheduled
+                scriptRunner.ScheduleScriptRuns();
+
+                string eventName = TrackedEvent.Health + ":" + GetType().Name;
+                Dictionary<string, string> properties = new Dictionary<string, string>
+                {
+                    { "Triggers Scheduled", scriptRunner.ScriptRunCallbacks.Count.ToString() }
+                };
+
+                Analytics.TrackEvent(eventName, properties);
+
+                events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            }
+
+            return restart;
         }
 
         public override void Reset()
