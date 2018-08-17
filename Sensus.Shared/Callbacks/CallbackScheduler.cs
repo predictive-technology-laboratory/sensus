@@ -234,25 +234,7 @@ namespace Sensus.Callbacks
                                     callback.RepeatDelay.Value.Ticks > 0 &&
                                     scheduleRepeatCallback != null)
                                 {
-                                    // if this repeating callback is allowed to lag, schedule the next execution from the current time.
-                                    if (callback.AllowRepeatLag.Value)
-                                    {
-                                        callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
-                                    }
-                                    else
-                                    {
-                                        // otherwise, schedule the next execution from the time at which the current callback was supposed to be raised.
-                                        callback.NextExecution = callback.NextExecution.Value + callback.RepeatDelay.Value;
-
-                                        // if we've lagged so long that the next execution is already in the past, just reschedule for now. this will cause
-                                        // the rescheduled callback to be raised as soon as possible, subject to delays in the systems scheduler (e.g., on
-                                        // android most alarms do not come back immediately, even if requested).
-                                        if (callback.NextExecution.Value < DateTime.Now)
-                                        {
-                                            callback.NextExecution = DateTime.Now;
-                                        }
-                                    }
-
+                                    callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
                                     callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
                                     callback.State = ScheduledCallbackState.Scheduled;
 

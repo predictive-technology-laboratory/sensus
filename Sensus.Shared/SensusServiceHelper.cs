@@ -90,12 +90,6 @@ namespace Sensus
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
 #endif
 
-        /// <summary>
-        /// Health tests times are used to compute participation for the listening probes. They must
-        /// be as tight as possible.
-        /// </summary>
-        private const bool HEALTH_TEST_REPEAT_LAG = false;
-
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
@@ -640,7 +634,7 @@ namespace Sensus
                         // test the notifier, which checks the push notification requests
                         await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
                     SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
                 }

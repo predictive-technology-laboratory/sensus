@@ -53,11 +53,6 @@ namespace Sensus.Probes
     /// </summary>
     public abstract class PollingProbe : Probe
     {
-        /// <summary>
-        /// It's important to mitigate lag in polling operations since participation assessments are done on the basis of poll rates.
-        /// </summary>
-        private const bool POLL_CALLBACK_LAG = false;
-
         private int _pollingSleepDurationMS;
         private int _pollingTimeoutMinutes;
         private bool _isPolling;
@@ -303,7 +298,7 @@ namespace Sensus.Probes
                         }
                     });
 
-                }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
 

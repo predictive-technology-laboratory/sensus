@@ -36,13 +36,6 @@ namespace Sensus.DataStores.Remote
     /// </summary>
     public abstract class RemoteDataStore : DataStore
     {
-        /// <summary>
-        /// We don't mind write callback lags, since they don't affect any performance metrics and
-        /// the latencies aren't inspected when testing data store health or participation. It also
-        /// doesn't make sense to force rapid write since data will not have accumulated.
-        /// </summary>
-        private const bool WRITE_CALLBACK_LAG = true;
-
         private int _writeDelayMS;
         private int _writeTimeoutMinutes;
         private DateTime? _mostRecentSuccessfulWriteTime;
@@ -237,7 +230,7 @@ namespace Sensus.DataStores.Remote
             userNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
+            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
             SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
