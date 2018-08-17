@@ -132,7 +132,9 @@ namespace Sensus.iOS.Callbacks
                             callbackNotification.FireDate = callback.NextExecution.Value.ToUniversalTime().ToNSDate();
 
                             // update the user info with the new invocation ID that has been set on the callback
-                            (callbackNotification.UserInfo as NSMutableDictionary).SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+                            NSMutableDictionary newUserInfo = callbackNotification.UserInfo.MutableCopy() as NSMutableDictionary;
+                            newUserInfo.SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+                            callbackNotification.UserInfo = newUserInfo;
 
                             // reissue the notification
                             (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);

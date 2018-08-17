@@ -438,10 +438,14 @@ namespace Sensus.iOS
                     // extract push notification information
                     string protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
                     string id = (userInfo[new NSString("id")] as NSString).ToString();
-                    string title = (userInfo[new NSString("title")] as NSString).ToString();
-                    string body = (userInfo[new NSString("body")] as NSString).ToString();
-                    string sound = (userInfo[new NSString("sound")] as NSString).ToString();
                     string command = (userInfo[new NSString("command")] as NSString).ToString();
+
+                    NSDictionary aps = userInfo[new NSString("aps")] as NSDictionary;
+                    string sound = (aps[new NSString("sound")] as NSString).ToString();
+
+                    NSDictionary alert = aps[new NSString("alert")] as NSDictionary;
+                    string body = (alert[new NSString("body")] as NSString).ToString();
+                    string title = (alert[new NSString("title")] as NSString).ToString();
 
                     // wait for the push notification to be processed
                     await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
