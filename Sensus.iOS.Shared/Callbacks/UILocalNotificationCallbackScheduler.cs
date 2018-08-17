@@ -22,8 +22,10 @@ using UIKit;
 using Xamarin.Forms.Platform.iOS;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
+using Sensus.Notifications;
+using Sensus.iOS.Notifications.UILocalNotifications;
 
-namespace Sensus.iOS.Callbacks.UILocalNotifications
+namespace Sensus.iOS.Callbacks
 {
     public class UILocalNotificationCallbackScheduler : iOSCallbackScheduler
     {
@@ -96,7 +98,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -113,8 +115,9 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                     _callbackIdNotification.Remove(callback.Id);
                 }
 
-                await base.RaiseCallbackAsync(callback, notifyUser,
+                await base.RaiseCallbackAsync(callback, invocationId, notifyUser,
 
+                    // action to schedule the next callback for a repeating callback
                     () =>
                     {
                         // add to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
@@ -125,7 +128,13 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
 
                         SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
+                            // set the next execution date
                             callbackNotification.FireDate = callback.NextExecution.Value.ToUniversalTime().ToNSDate();
+
+                            // update the user info with the new invocation ID
+                            (callbackNotification.UserInfo as NSMutableDictionary).SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+
+                            // reissue the notification
                             (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
                         });
                     },

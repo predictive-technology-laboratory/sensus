@@ -20,10 +20,9 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using UserNotifications;
-using Xamarin.Forms.Platform.iOS;
-using Sensus.Exceptions;
+using Sensus.iOS.Notifications.UNUserNotifications;
 
-namespace Sensus.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Callbacks
 {
     public class UNUserNotificationCallbackScheduler : iOSCallbackScheduler
     {
@@ -96,7 +95,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -109,10 +108,14 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                     _callbackIdRequest.Remove(callback.Id);
                 }
 
-                await base.RaiseCallbackAsync(callback, notifyUser,
+                await base.RaiseCallbackAsync(callback, invocationId, notifyUser,
 
                     () =>
                     {
+                        // update the user info with the new invocation ID
+                        (request.Content.UserInfo as NSMutableDictionary).SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+
+                        // reissue the notification request using the next execution date on the callback
                         (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, callback.NextExecution.Value, newRequest =>
                         {
                             lock (_callbackIdRequest)

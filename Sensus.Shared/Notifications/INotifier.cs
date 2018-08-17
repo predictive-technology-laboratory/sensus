@@ -29,6 +29,8 @@ namespace Sensus.Notifications
 
         Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
 
+        Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, CancellationToken cancellationTokenSource);
+
         Task TestHealthAsync(CancellationToken cancellationToken);
     }
 }

@@ -39,6 +39,11 @@ namespace Sensus.Tests.Classes
         {
         }
 
+        public Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using Foundation;
-using Sensus.Callbacks;
+using Sensus.Notifications;
 
-namespace Sensus.iOS.Callbacks
+namespace Sensus.iOS.Notifications
 {
     public abstract class iOSNotifier : Notifier
     {

@@ -14,10 +14,10 @@
 
 using System;
 using Foundation;
-using Sensus.Callbacks;
 using UserNotifications;
+using Sensus.Notifications;
 
-namespace Sensus.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Notifications.UNUserNotifications
 {
     /// <summary>
     /// Adds notifier methods specific to the UNNotificationCenter architecture.

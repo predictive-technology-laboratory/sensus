@@ -14,10 +14,10 @@
 
 using System;
 using Foundation;
-using Sensus.Callbacks;
+using Sensus.Notifications;
 using UIKit;
 
-namespace Sensus.iOS.Callbacks.UILocalNotifications
+namespace Sensus.iOS.Notifications.UILocalNotifications
 {
     public interface IUILocalNotificationNotifier
     {

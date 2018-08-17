@@ -14,13 +14,15 @@
 
 using System;
 using Foundation;
-using Sensus.Callbacks;
 using Sensus.Context;
 using Sensus.Exceptions;
 using UIKit;
 using UserNotifications;
+using Sensus.Notifications;
+using Sensus.iOS.Callbacks;
+using Sensus.Callbacks;
 
-namespace Sensus.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Notifications.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier, IUNUserNotificationNotifier
     {
@@ -31,11 +33,6 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public void IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
-            if (info == null)
-            {
-                info = new NSMutableDictionary();
-            }
-
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
@@ -44,6 +41,8 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
 
         public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
+            // the callback scheduler will pass in an initialized user info (containing the callback id, invocation id, etc.), but 
+            // other requests for notifications might not come with such information. initialize the user info if needed.
             if (info == null)
             {
                 info = new NSMutableDictionary();

@@ -27,10 +27,10 @@ using UIKit;
 using Foundation;
 using Facebook.CoreKit;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using Sensus.iOS.Callbacks.UILocalNotifications;
+using Sensus.iOS.Notifications.UILocalNotifications;
 using Sensus.iOS.Callbacks;
 using UserNotifications;
-using Sensus.iOS.Callbacks.UNUserNotifications;
+using Sensus.iOS.Notifications.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
 using System.Threading;
@@ -400,22 +400,68 @@ namespace Sensus.iOS
 
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
-            ProcessRemoteNotification(userInfo);
+            ProcessRemoteNotificationAsync(application, userInfo);
         }
 
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-            ProcessRemoteNotification(userInfo);
-            completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
+            ProcessRemoteNotificationAsync(application, userInfo).ContinueWith(finishedTask =>
+            {
+                // once the remote notification has been processed, invoke the completion handler.
+                completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
+            });
         }
 
-        private void ProcessRemoteNotification(NSDictionary userInfo)
+        private System.Threading.Tasks.Task ProcessRemoteNotificationAsync(UIApplication application, NSDictionary userInfo)
         {
-            if (userInfo.ContainsKey(new NSString("command")))
+            return System.Threading.Tasks.Task.Run(async () =>
             {
-                string command = (userInfo[new NSString("command")] as NSString).ToString();
-                SensusServiceHelper.Get().Logger.Log("Received push notification command:  " + command, LoggingLevel.Normal, GetType());
-            }
+                // set up a cancellation token for processing within limits. the cancellation token will be cancelled
+                // under three conditions:  either (1) we run out of background processing time following backgrounding 
+                // of the app; or (2) we run out of push notification processing time (see below); or (3) an exception
+                // is thrown.
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                nint processingTaskId = 0;
+                try
+                {
+                    // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
+                    // be on the conservative side and only run for 25 seconds.
+                    cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(25));
+
+                    // start background task
+                    processingTaskId = application.BeginBackgroundTask(() =>
+                    {
+                        // cancel any processing associated with the remote notification
+                        cancellationTokenSource.Cancel();
+                    });
+
+                    // extract push notification information
+                    string protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
+                    string id = (userInfo[new NSString("id")] as NSString).ToString();
+                    string title = (userInfo[new NSString("title")] as NSString).ToString();
+                    string body = (userInfo[new NSString("body")] as NSString).ToString();
+                    string sound = (userInfo[new NSString("sound")] as NSString).ToString();
+                    string command = (userInfo[new NSString("command")] as NSString).ToString();
+
+                    // wait for the push notification to be processed
+                    await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
+
+                    // end the background task
+                    application.EndBackgroundTask(processingTaskId);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while processing remote notification:  " + ex.Message, ex);
+
+                    try
+                    {
+                        cancellationTokenSource.Cancel();
+                        application.EndBackgroundTask(processingTaskId);
+                    }
+                    catch (Exception)
+                    { }
+                }
+            });
         }
 
         // This method should be used to release shared resources and it should store the application state.

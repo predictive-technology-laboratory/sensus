@@ -15,9 +15,10 @@
 using System;
 using Foundation;
 using Sensus.Context;
+using Sensus.iOS.Callbacks;
 using UserNotifications;
 
-namespace Sensus.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Notifications.UNUserNotifications
 {
     public class UNUserNotificationDelegate : UNUserNotificationCenterDelegate
     {

@@ -91,6 +91,42 @@ namespace Sensus.Callbacks
             return callback;
         }
 
+        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
+        {
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+
+            // it is conceivable that a push notification could arrive in the absence of a running
+            // app. in this case, the service helper would be null and there is nothing to do.
+            if (serviceHelper != null)
+            {
+                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+                serviceHelper.KeepDeviceAwake();
+
+                return Task.Run(async () =>
+                {
+                    ScheduledCallback callback = TryGetCallback(callbackId);
+
+                    if (callback != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+
+                        cancellationToken.Register(() =>
+                        {
+                            CancelRaisedCallback(callback);
+                        });
+
+                        await ServiceCallbackAsync(callback, invocationId);
+                    }
+                });
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
+        }
+
+        public abstract Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId);
+
         /// <summary>
         /// Raises a callback.
         /// </summary>

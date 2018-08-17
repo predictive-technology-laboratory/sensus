@@ -13,7 +13,9 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
 using Sensus.Callbacks;
+using System.Threading;
 
 namespace Sensus.Tests.Classes
 {
@@ -27,6 +29,11 @@ namespace Sensus.Tests.Classes
         public ScheduledCallbackState ScheduleCallback(ScheduledCallback callback)
         {
             return ScheduledCallbackState.Unknown;           
+        }
+
+        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
 
         public void TestHealth()

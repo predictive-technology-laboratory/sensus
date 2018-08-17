@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Sensus.Callbacks
 {
@@ -23,6 +25,8 @@ namespace Sensus.Callbacks
         bool ContainsCallback(ScheduledCallback callback);
 
         void UnscheduleCallback(ScheduledCallback callback);
+
+        Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken);
 
         void TestHealth();
     }

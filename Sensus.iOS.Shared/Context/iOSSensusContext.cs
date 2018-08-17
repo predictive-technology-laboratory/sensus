@@ -16,6 +16,7 @@ using Sensus.Context;
 using Sensus.Concurrent;
 using Sensus.Encryption;
 using Sensus.Callbacks;
+using Sensus.Notifications;
 
 namespace Sensus.iOS.Context
 {

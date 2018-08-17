@@ -29,6 +29,7 @@ using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using Plugin.Geolocator.Abstractions;
 using System.ComponentModel;
+using Sensus.Notifications;
 
 namespace Sensus.Probes.User.Scripts
 {

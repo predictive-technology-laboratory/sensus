@@ -23,6 +23,7 @@ using Sensus.Exceptions;
 using Sensus.Notifications;
 using Sensus.Callbacks;
 using Sensus.Android.Callbacks;
+using System.Threading;
 
 namespace Sensus.Android.Notifications
 {
@@ -34,95 +35,22 @@ namespace Sensus.Android.Notifications
         {
             Task.Run(async () =>
             {
-                SensusServiceHelper.Get().Logger.Log("Received push notification.", LoggingLevel.Normal, GetType());
-
-                Protocol protocol = null;
-
                 try
                 {
+                    // extract push notification information
                     string protocolId = message.Data["protocol"];
-                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == protocolId);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to get protocol for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-
-                // ignore the push notification if it targets a protocol that is not running and is not 
-                // scheduled to run. we explicitly attempt to prevent such notifications from coming through 
-                // by unregistering from hubs that lack running/scheduled protocols and clearing the token 
-                // from the backend; however, there may be race conditions that allow a push notification 
-                // to be delivered to us nonetheless.
-                if (!protocol.Running && !protocol.StartIsScheduled)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running and is not scheduled to run.", LoggingLevel.Normal, GetType());
-                    return;
-                }
-
-                // every PN should have an ID
-                string id = null;
-                try
-                {
-                    id = message.Data["id"];
-
-                    if (string.IsNullOrWhiteSpace(id))
-                    {
-                        throw new Exception("Push notification ID is missing or blank.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while getting push notification id:  " + ex.Message, ex);
-                    return;
-                }
-
-                SensusServiceHelper.Get().Logger.Log("Processing push notification " + id + " for protocol " + protocol.Id + ".", LoggingLevel.Normal, GetType());
-
-                // if there is user-targeted information, display the notification.
-                try
-                {
+                    string id = message.Data["id"];
                     string title = message.Data["title"];
                     string body = message.Data["body"];
-                    string sound = message.Data["sound"];  // sound is optional
-
-                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
-                    {
-                        SensusContext.Current.Notifier.IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
-                }
-
-                // process push notification commands
-                try
-                {
+                    string sound = message.Data["sound"];
                     string command = message.Data["command"];
-                    string[] commandParts = command.Split(new char[] { '|' });
-                    if (commandParts.Length > 0)
-                    {
-                        if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
-                        {
-                            if (commandParts.Length != 4)
-                            {
-                                throw new Exception("Invalid push notification command format:  " + command);
-                            }
 
-                            string callbackId = commandParts[2];
-                            string invocationId = commandParts[3];
-
-                            await (SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler).ServiceCallbackFromPushNotificationAsync(callbackId, invocationId);
-                        }
-                        else
-                        {
-                            throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
-                        }
-                    }
+                    // wait for the push notification to be processed
+                    await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, default(CancellationToken));
                 }
-                catch (Exception pushNotificationCommandException)
+                catch(Exception ex)
                 {
-                    SensusException.Report("Exception while running push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
+                    SensusException.Report("Exception while processing remote notification:  " + ex.Message, ex);
                 }
             });
         }

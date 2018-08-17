@@ -15,12 +15,12 @@
 using System;
 using System.Collections.Generic;
 using Foundation;
-using Sensus.Callbacks;
+using Sensus.Notifications;
 using Sensus.Context;
 using UIKit;
 using Xamarin.Forms.Platform.iOS;
 
-namespace Sensus.iOS.Callbacks.UILocalNotifications
+namespace Sensus.iOS.Notifications.UILocalNotifications
 {
     public class UILocalNotificationNotifier : iOSNotifier, IUILocalNotificationNotifier
     {
