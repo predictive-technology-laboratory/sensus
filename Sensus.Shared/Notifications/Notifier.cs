@@ -221,6 +221,7 @@ namespace Sensus.Notifications
                 try
                 {
                     string[] commandParts = command.Split(new char[] { '|' });
+
                     if (commandParts.Length > 0)
                     {
                         if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)

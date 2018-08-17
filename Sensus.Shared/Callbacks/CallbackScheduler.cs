@@ -100,6 +100,8 @@ namespace Sensus.Callbacks
             if (serviceHelper != null)
             {
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+                // this only applies to android, as iOS does not support such functionality. furthermore, it is the job of the android-specific implementation
+                // of ServiceCallbackAsync to call the corresponding "let sleep".
                 serviceHelper.KeepDeviceAwake();
 
                 return Task.Run(async () =>
@@ -110,6 +112,7 @@ namespace Sensus.Callbacks
                     {
                         SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
 
+                        // if the cancellation token is cancelled, cancel the callback
                         cancellationToken.Register(() =>
                         {
                             CancelRaisedCallback(callback);
