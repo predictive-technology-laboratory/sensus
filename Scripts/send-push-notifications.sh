@@ -119,7 +119,8 @@ do
 	# check status.
         if [[ "$response" = "201"  ]]
         then
-            echo -e "Notification sent. Removing file.\n"
+            echo "Notification sent. Command:  $command"
+	    echo -e "Removing file.\n"
 	    aws s3 rm "$s3_path/$(basename $n)"
 	    rm $n	    
         fi

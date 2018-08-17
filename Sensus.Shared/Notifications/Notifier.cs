@@ -204,7 +204,10 @@ namespace Sensus.Notifications
                     return;
                 }
 
-                // if there is user-targeted information, display the notification.
+#if __ANDROID__
+                // if there is user-targeted information, display the notification. this only applies to android because 
+                // push notifications are automatically displayed on iOS when the app is in the background. when the
+                // app is in the foreground it doesn't make sense to display the notification.
                 try
                 {
                     if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
@@ -216,6 +219,7 @@ namespace Sensus.Notifications
                 {
                     SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
                 }
+#endif
 
                 // process push notification command if there is one
                 try

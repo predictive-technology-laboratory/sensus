@@ -1,13 +1,22 @@
 #!/bin/sh
 
 if [ $# -ne 1 ]; then
-    echo "Usage:  ./dump-push-notifications.sh [dir]"
-    echo "\t[dir]:  Local directory containing push notifications."
+    echo "Usage:  ./dump-push-notifications.sh [s3 bucket name]"
+    echo "\t[s3 bucket name]:  S3 bucket for remote data store (e.g.:  some-bucket). Do not include the s3:// prefix."
     echo ""
     exit 1
 fi
 
-for n in $(ls $1/*.json)
+# sync notifications from s3 to local, deleting anything local that doesn't exist s3.
+echo -e "\n************* DOWNLOADING FROM S3 *************"
+s3_path="s3://$1/push-notifications"
+notifications_dir="$1-push-notifications"
+mkdir -p $notifications_dir
+aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
+                                                                     # to be the same size and will not come down otherwise.
+echo ""
+
+for n in $(ls $notifications_dir/*.json)
 do
     # parse out data fields
     device=$(jq -r '.device' $n)

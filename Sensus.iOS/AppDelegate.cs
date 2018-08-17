@@ -450,6 +450,9 @@ namespace Sensus.iOS
                     // wait for the push notification to be processed
                     await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
 
+                    // we're done. ensure that the time-based cancellation above does not trigger any registered listeners.
+                    cancellationTokenSource.Dispose();
+
                     // end the background task
                     application.EndBackgroundTask(processingTaskId);
                 }
