@@ -28,6 +28,8 @@ do
     two_minutes=$((2 * 60))
     time_horizon=$(($curr_time_seconds + $two_minutes))
 
-    echo -e "To be delivered in $(($time - $time_horizon)) seconds:  $command"
+    echo "$(($time - $time_horizon)) seconds:  $command"
 
-done
+done | 
+sort -n -k1
+
