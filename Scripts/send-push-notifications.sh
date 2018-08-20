@@ -14,7 +14,7 @@ notifications_dir="$1-push-notifications"
 mkdir -p $notifications_dir
 aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
                                                                      # to be the same size and will not come down otherwise.
-# get shared access signature.
+# get shared access signature
 sas=$(node get-sas.js)
 
 # process push notification requests
