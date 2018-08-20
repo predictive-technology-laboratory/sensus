@@ -26,7 +26,7 @@ using Sensus.Notifications;
 
 namespace Sensus.iOS.Callbacks
 {
-    public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
+    public abstract class iOSCallbackScheduler : CallbackScheduler
     {
         /// <summary>
         /// The callback notification horizon threshold. When using notifications to schedule the timing of

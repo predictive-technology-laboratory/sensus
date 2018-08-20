@@ -29,7 +29,7 @@ namespace Sensus.Notifications
     /// <summary>
     /// Exposes the user-facing notification functionality of a platform. Also manages push notifications.
     /// </summary>
-    public abstract class Notifier : INotifier
+    public abstract class Notifier
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 

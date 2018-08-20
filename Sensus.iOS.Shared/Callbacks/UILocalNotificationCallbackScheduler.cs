@@ -68,7 +68,7 @@ namespace Sensus.iOS.Callbacks
                 }
             };
 
-            IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+            UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
 
             if (callback.Silent)
             {
@@ -127,7 +127,7 @@ namespace Sensus.iOS.Callbacks
                                     callbackNotification.UserInfo = newUserInfo;
 
                                     // reissue the notification
-                                    (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
+                                    (SensusContext.Current.Notifier as UILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
                                 }
                             }
                         });
@@ -145,7 +145,7 @@ namespace Sensus.iOS.Callbacks
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callback.Id, out notification))
                 {
-                    (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
+                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
                     _callbackIdNotification.Remove(callback.Id);
                 }
             }
@@ -155,7 +155,7 @@ namespace Sensus.iOS.Callbacks
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+                UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
 
                 foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {

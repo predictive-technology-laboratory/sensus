@@ -24,7 +24,7 @@ using Sensus.Callbacks;
 
 namespace Sensus.iOS.Notifications.UNUserNotifications
 {
-    public class UNUserNotificationNotifier : iOSNotifier, IUNUserNotificationNotifier
+    public class UNUserNotificationNotifier : iOSNotifier
     {
         public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {

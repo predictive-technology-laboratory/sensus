@@ -254,7 +254,7 @@ namespace Sensus.iOS
                             await SensusServiceHelper.Get().StartAsync();
 
                             // update/run all callbacks
-                            await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
+                            await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksAsync();
 
                             // reenable the UI to let the user proceed
                             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
@@ -328,7 +328,7 @@ namespace Sensus.iOS
                 // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
 
                 // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
+                (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
 
                 iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
 

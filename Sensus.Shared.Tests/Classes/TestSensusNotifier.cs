@@ -13,43 +13,18 @@
 // limitations under the License.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Sensus.Callbacks;
 using Sensus.Notifications;
 
 namespace Sensus.Tests.Classes
 {
-    public class TestSensusNotifier : INotifier
+    public class TestSensusNotifier : Notifier
     {
-        public void CancelNotification(string id)
-        {
-        }
-
-        public Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        public override void CancelNotification(string id)
         {
             throw new NotImplementedException();
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage type)
-        {
-        }
-
-        public void OpenDisplayPage(DisplayPage displayPage)
-        {
-        }
-
-        public Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task TestHealthAsync(CancellationToken cancellationToken)
+        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
             throw new NotImplementedException();
         }

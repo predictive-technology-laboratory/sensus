@@ -28,7 +28,7 @@ namespace Sensus.Callbacks
     /// <summary>
     /// Sensus schedules operations via a scheduler.
     /// </summary>
-    public abstract class CallbackScheduler : ICallbackScheduler
+    public abstract class CallbackScheduler
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_INVOCATION_ID_KEY = "SENSUS-CALLBACK-INVOCATION-ID";

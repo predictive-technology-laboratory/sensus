@@ -19,29 +19,21 @@ using System.Threading;
 
 namespace Sensus.Tests.Classes
 {
-    public class TestSensusCallbackScheduler : ICallbackScheduler
+    public class TestSensusCallbackScheduler : CallbackScheduler
     {
-        public bool ContainsCallback(ScheduledCallback callback)
-        {
-            return false;
-        }
-
-        public ScheduledCallbackState ScheduleCallback(ScheduledCallback callback)
-        {
-            return ScheduledCallbackState.Unknown;           
-        }
-
-        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
+        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
         {
             throw new NotImplementedException();
         }
 
-        public void TestHealth()
+        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
+            throw new NotImplementedException();
         }
 
-        public void UnscheduleCallback(ScheduledCallback callback)
+        protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
+            throw new NotImplementedException();
         }
     }
 }

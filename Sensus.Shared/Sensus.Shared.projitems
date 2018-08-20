@@ -212,7 +212,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
@@ -245,7 +244,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Notifications\INotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\DisplayPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />

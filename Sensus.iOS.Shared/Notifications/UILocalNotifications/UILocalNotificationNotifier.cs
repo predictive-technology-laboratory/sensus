@@ -22,7 +22,7 @@ using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.iOS.Notifications.UILocalNotifications
 {
-    public class UILocalNotificationNotifier : iOSNotifier, IUILocalNotificationNotifier
+    public class UILocalNotificationNotifier : iOSNotifier
     {
         private Dictionary<string, UILocalNotification> _idNotification;
 

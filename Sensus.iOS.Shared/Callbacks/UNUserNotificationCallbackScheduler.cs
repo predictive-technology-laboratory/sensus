@@ -65,7 +65,7 @@ namespace Sensus.iOS.Callbacks
                 }
             };
 
-            IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
+            UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
 
             if (callback.Silent)
             {
@@ -121,7 +121,7 @@ namespace Sensus.iOS.Callbacks
                                 // reissue the notification request using the next execution date on the callback. the following call will not return until
                                 // the request has been created, ensuring that the request has been updated in _callbackIdRequest before the next caller 
                                 // obtains the current lock.
-                                (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.NextExecution.Value, newRequest =>
+                                (SensusContext.Current.Notifier as UNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.NextExecution.Value, newRequest =>
                                 {
                                     lock (_callbackIdRequest)
                                     {
@@ -145,7 +145,7 @@ namespace Sensus.iOS.Callbacks
                 UNNotificationRequest request;
                 if (_callbackIdRequest.TryGetValue(callback.Id, out request))
                 {
-                    (SensusContext.Current.Notifier as IUNUserNotificationNotifier)?.CancelNotification(request);
+                    (SensusContext.Current.Notifier as UNUserNotificationNotifier)?.CancelNotification(request);
                     _callbackIdRequest.Remove(callback.Id);
                 }
             }
@@ -155,7 +155,7 @@ namespace Sensus.iOS.Callbacks
         {
             UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
             {
-                IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
+                UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
 
                 foreach (UNNotificationRequest request in requests)
                 {
