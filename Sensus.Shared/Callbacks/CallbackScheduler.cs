@@ -108,6 +108,7 @@ namespace Sensus.Callbacks
                 {
                     ScheduledCallback callback = TryGetCallback(callbackId);
 
+                    // callback might have been unscheduled
                     if (callback != null)
                     {
                         SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());

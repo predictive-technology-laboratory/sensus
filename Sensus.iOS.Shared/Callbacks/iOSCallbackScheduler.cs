@@ -134,7 +134,7 @@ namespace Sensus.iOS.Callbacks
 
                 SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
-                // start background task for callback
+                // start background task for servicing callback
                 nint callbackTaskId = -1;
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {

@@ -416,24 +416,14 @@ namespace Sensus.iOS
         {
             return System.Threading.Tasks.Task.Run(async () =>
             {
-                // set up a cancellation token for processing within limits. the cancellation token will be cancelled
-                // under three conditions:  either (1) we run out of background processing time following backgrounding 
-                // of the app; or (2) we run out of push notification processing time (see below); or (3) an exception
-                // is thrown.
+                // set up a cancellation token for processing within limits. the token will be cancelled
+                // if we run out of time or an exception is thrown in this method
                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                nint processingTaskId = 0;
                 try
                 {
                     // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
                     // be on the conservative side and only run for 25 seconds.
                     cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(25));
-
-                    // start background task
-                    processingTaskId = application.BeginBackgroundTask(() =>
-                    {
-                        // cancel any processing associated with the remote notification
-                        cancellationTokenSource.Cancel();
-                    });
 
                     // extract push notification information
                     string protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
@@ -452,9 +442,6 @@ namespace Sensus.iOS
 
                     // we're done. ensure that the time-based cancellation above does not trigger any registered listeners.
                     cancellationTokenSource.Dispose();
-
-                    // end the background task
-                    application.EndBackgroundTask(processingTaskId);
                 }
                 catch (Exception ex)
                 {
@@ -463,7 +450,6 @@ namespace Sensus.iOS
                     try
                     {
                         cancellationTokenSource.Cancel();
-                        application.EndBackgroundTask(processingTaskId);
                     }
                     catch (Exception)
                     { }
