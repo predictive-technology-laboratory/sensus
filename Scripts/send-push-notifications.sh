@@ -14,12 +14,23 @@ notifications_dir="$1-push-notifications"
 mkdir -p $notifications_dir
 aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
                                                                      # to be the same size and will not come down otherwise.
+# get push notifications reverse sorted by time (newest first)
+file_list=$(mktemp)
+for n in $(ls $notifications_dir/*.json)
+do
+
+    time=$(jq -r '.time' $n)
+    echo "$time $n"
+
+done | sort -n -r -k1 | cut -f2 -d " " > $file_list
+
 # get shared access signature
 sas=$(node get-sas.js)
 
 # process push notification requests
+declare -A processed_command_classes
 echo -e "\n\n************* PROCESSING PNRs *************"
-for n in $(ls $notifications_dir/*.json)
+while read $n
 do
 
     # check if file is empty. this could be caused by a failed/interrupted file transfer to s3, and it could
@@ -44,6 +55,23 @@ do
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)       # the value indicates unix time in seconds
+
+    # if this is a push notification command, check if we've already sent a push notification 
+    # for the command class (everything except for the invocation ID). we're processing the
+    # push notification requests with newest times first, so if we have already processed the
+    # command class we can safely ignore all others as they are obsolete.
+    command_class="${command%|*}"
+    if [[ $command_class != "" ]]
+    then
+	if [[ ${processed_command_classes[$command_class]} ]]
+	then
+	    echo -e "Already processed command class $command_class. Deleting file...\n"
+	    rm $n
+	    continue
+	else
+	    processed_command_classes[$command_class]=1
+	fi
+    fi
 	
     # the cron scheduler runs once per minute. we're going to be proactive and ensure that push notifications arrive
     # at the device no later than the desired time. thus, if the desired time precedes the current time OR if the
@@ -127,4 +155,6 @@ do
     else
 	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
     fi
-done
+done < $file_list
+
+rm $file_list
