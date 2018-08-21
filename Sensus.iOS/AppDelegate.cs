@@ -35,6 +35,7 @@ using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
 using System.Threading;
 using System.Threading.Tasks;
+using Sensus.iOS.Notifications;
 
 namespace Sensus.iOS
 {
@@ -325,16 +326,16 @@ namespace Sensus.iOS
             }
             else
             {
-                // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
-
-                // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
-
-                iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
-
-                if (callbackScheduler == null)
+                // we're in iOS < 10.0, which means we should have a UILocal-based notifier and scheduler to handle the notification.
+                UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
+                UILocalNotificationCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as UILocalNotificationCallbackScheduler;
+                if(notifier == null)
                 {
-                    SensusException.Report("We don't have an iOSCallbackScheduler.");
+                    SensusException.Report("We don't have a UILocalNotificationNotifier.");
+                }
+                else if (callbackScheduler == null)
+                {
+                    SensusException.Report("We don't have a UILocalNotificationCallbackScheduler.");
                 }
                 else if (notification.UserInfo == null)
                 {
@@ -346,27 +347,47 @@ namespace Sensus.iOS
                     System.Threading.Tasks.Task.Run(async () =>
                     {
                         // we've tried pulling some of the code below out of the UI thread, but we do not receive/process
-                        // the callback notifications when doing so..
+                        // the callback notifications when doing so.
                         await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
-                            // service the callback if we've got one (not all notification userinfo bundles are for callbacks)
-                            if (callbackScheduler.IsCallback(notification.UserInfo))
+                            try
                             {
-                                await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
-                            }
-
-                            // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
-                            // also get notifications when the app is active, since we use them for timed callback events.
-                            if (application.ApplicationState != UIApplicationState.Active)
-                            {
-                                // if the user opened the notification, display the page associated with the notification, if any. 
-                                callbackScheduler.OpenDisplayPage(notification.UserInfo);
-
-                                // provide some generic feedback if the user responded to a silent callback notification
-                                if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
+                                // check for the pending survey notification
+                                string notificationId = notification.UserInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY))?.ToString();
+                                if (notificationId == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
                                 {
-                                    await SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
+                                    // flash a message to the user, and don't cancel the notification.
+                                    await SensusServiceHelper.Get().FlashNotificationAsync("A new survey is available.");
                                 }
+                                else
+                                {
+                                    // cancel notification (removing it from the tray), since it has served its purpose (e.g., as a callback notification).
+                                    notifier.CancelNotification(notification);
+                                }
+
+                                // service the callback if we've got one (not all notification userinfo bundles are for callbacks)
+                                if (callbackScheduler.IsCallback(notification.UserInfo))
+                                {
+                                    await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
+                                }
+
+                                // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
+                                // also get notifications when the app is active, since we use them for timed callback events.
+                                if (application.ApplicationState != UIApplicationState.Active)
+                                {
+                                    // if the user opened the notification, display the page associated with the notification, if any. 
+                                    callbackScheduler.OpenDisplayPage(notification.UserInfo);
+
+                                    // provide some generic feedback if the user responded to a silent callback notification
+                                    if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
+                                    {
+                                        await SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusException.Report("Exception while processing local notification (iOS < 10):  " + ex.Message, ex);
                             }
                         });
                     });

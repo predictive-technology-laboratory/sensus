@@ -39,10 +39,19 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             // cancel each notification as it comes in to remove it from the notification center.
             SensusContext.Current.Notifier.CancelNotification(notification?.Request?.Identifier);
 
+            // if the notification is for a callback, service the callback and do not show the notification.
+            NSDictionary notificationInfo = notification?.Request?.Content?.UserInfo;
             iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
-            if(callbackScheduler.IsCallback(notification?.Request?.Content?.UserInfo))
+            if (callbackScheduler.IsCallback(notificationInfo))
             {
-                callbackScheduler.ServiceCallbackAsync(notification?.Request?.Content?.UserInfo);
+                callbackScheduler.ServiceCallbackAsync(notificationInfo);
+                completionHandler?.Invoke(UNNotificationPresentationOptions.None);
+            }
+
+            // if the notification is for pending surveys, show the notification along with any alert or sound.
+            if (notification?.Request?.Identifier == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+            {
+                completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
             }
         }
 
