@@ -21,12 +21,10 @@ namespace Sensus.Tests.Classes
     {
         public override void CancelNotification(string id)
         {
-            throw new NotImplementedException();
         }
 
         public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
-            throw new NotImplementedException();
         }
     }
 }

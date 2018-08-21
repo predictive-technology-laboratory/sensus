@@ -23,17 +23,15 @@ namespace Sensus.Tests.Classes
     {
         public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
-            throw new NotImplementedException();
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
-            throw new NotImplementedException();
         }
     }
 }
