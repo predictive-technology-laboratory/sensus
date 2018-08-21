@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
 using System.Threading.Tasks;
-using Sensus.Probes.User.Scripts;
 
 namespace Sensus.UI
 {
@@ -60,8 +59,7 @@ namespace Sensus.UI
                               string cancelConfirmation,
                               string incompleteSubmissionConfirmation,
                               string submitConfirmation,
-                              bool displayProgress,
-                              ScriptRunner runner)
+                              bool displayProgress)
         {
             _canNavigateBackward = canNavigateBackward;
             _displayedInputCount = 0;
@@ -253,10 +251,6 @@ namespace Sensus.UI
 
                     if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
                     {
-                        if (runner?.ForceRemoteStorageOnSureySubmission == true)
-                        {
-                            await runner.Probe.Protocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
-                        }
                         _responseTaskCompletionSource.TrySetResult(navigationResult);
                     }
                 }

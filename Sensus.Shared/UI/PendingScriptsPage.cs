@@ -90,7 +90,7 @@ namespace Sensus.UI
 
                 selectedScript.Submitting = true;
 
-                IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(selectedScript.RunTime, selectedScript.InputGroups, null, selectedScript.Runner.AllowCancel, null, null, selectedScript.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", selectedScript.Runner.DisplayProgress, selectedScript.Runner, null);
+                IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(selectedScript.RunTime, selectedScript.InputGroups, null, selectedScript.Runner.AllowCancel, null, null, selectedScript.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", selectedScript.Runner.DisplayProgress, null);
 
                 bool canceled = inputGroups == null;
 
@@ -128,6 +128,10 @@ namespace Sensus.UI
 
                 if (selectedScript.Valid)
                 {
+                    if(canceled == false && selectedScript.Runner.ForceRemoteStorageOnSureySubmission)
+                    {
+                        await selectedScript.Runner.Probe.Protocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
+                    }
                     // add completion time and remove all completion times before the participation horizon
                     lock (selectedScript.Runner.CompletionTimes)
                     {

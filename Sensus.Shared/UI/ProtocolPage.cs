@@ -182,7 +182,7 @@ namespace Sensus.UI
             {
                 if (lockButton.Text == "Lock")
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Lock Protocol", new SingleLineTextInput("Password:", Keyboard.Text, true), null, true, null, null, null, null, null, false);
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Lock Protocol", new SingleLineTextInput("Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
 
                     if (input == null)
                     {
