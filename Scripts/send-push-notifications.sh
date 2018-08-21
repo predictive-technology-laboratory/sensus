@@ -8,7 +8,7 @@ if [ $# -ne 1 ]; then
 fi
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
-echo -e "\n************* DOWNLOADING FROM S3 *************"
+echo -e "\n************* DOWNLOADING PNRS FROM S3 *************"
 s3_path="s3://$1/push-notifications"
 notifications_dir="$1-push-notifications"
 mkdir -p $notifications_dir
@@ -70,9 +70,10 @@ do
     else
 	if [[ ${processed_command_classes[$command_class]} ]]
 	then
-	    echo -e "Obsolete command class $command_class (time $time). Deleting file...\n"
+	    echo "Obsolete command class $command_class (time $time). Deleting file..."
 	    aws s3 rm "$s3_path/$(basename $n)"
 	    rm $n
+	    echo ""
 	    continue
 	else
 	    echo "New command class:  $command_class (time $time)."
@@ -100,9 +101,10 @@ do
 	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
 	if [[ "$token" = "" ]]
 	then
-	    echo -e "No token found. Assuming the PNR is stale and should be deleted.\n"
+	    echo "No token found. Assuming the PNR is stale and should be deleted."
 	    aws s3 rm "$s3_path/$(basename $n)"
 	    rm $n
+	    echo ""
 	    continue
 	fi
 
