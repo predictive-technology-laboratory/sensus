@@ -22,6 +22,7 @@ do
     time=$(jq -r '.time' $n)
     echo "$time $n"
 
+# reverse sort by the first field (time) and output the second field (path)
 done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 
 # get shared access signature
@@ -30,7 +31,7 @@ sas=$(node get-sas.js)
 # process push notification requests
 declare -A processed_command_classes
 echo -e "\n\n************* PROCESSING PNRs *************"
-while read $n
+while read n
 do
 
     # check if file is empty. this could be caused by a failed/interrupted file transfer to s3, and it could
@@ -59,16 +60,22 @@ do
     # if this is a push notification command, check if we've already sent a push notification 
     # for the command class (everything except for the invocation ID). we're processing the
     # push notification requests with newest times first, so if we have already processed the
-    # command class we can safely ignore all others as they are obsolete.
-    command_class="${command%|*}"
-    if [[ $command_class != "" ]]
+    # command class then we can safely ignore all others as they are older and obsolete.
+    command_class=${command%|*}        # strip the invocation ID
+    command_class=${command_class#\"}  # strip the leading double-quote (retained above)
+    command_class=${command_class%\"}  # strip the trailing double-quote (retained above)
+    if [[ $command_class = "" ]]
     then
+	echo "No command found."
+    else
 	if [[ ${processed_command_classes[$command_class]} ]]
 	then
-	    echo -e "Already processed command class $command_class. Deleting file...\n"
+	    echo -e "Obsolete command class $command_class (time $time). Deleting file...\n"
+	    aws s3 rm "$s3_path/$(basename $n)"
 	    rm $n
 	    continue
 	else
+	    echo "New command class:  $command_class (time $time)."
 	    processed_command_classes[$command_class]=1
 	fi
     fi
@@ -147,10 +154,10 @@ do
 	# check status.
         if [[ "$response" = "201"  ]]
         then
-            echo "Notification sent. Command:  $command"
-	    echo -e "Removing file.\n"
+            echo "Notification sent. Removing file..."
 	    aws s3 rm "$s3_path/$(basename $n)"
 	    rm $n	    
+	    echo ""
         fi
     else
 	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
