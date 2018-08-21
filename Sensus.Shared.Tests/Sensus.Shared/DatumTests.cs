@@ -14,6 +14,7 @@
 
 using System;
 using NUnit.Framework;
+using Plugin.Geolocator.Abstractions;
 using Sensus.Anonymization;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
@@ -36,7 +37,7 @@ namespace Sensus.Tests
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
-            LocationDatum datum = new LocationDatum(DateTimeOffset.UtcNow, 0.5, 75.5, -35.5, 75.0, -35.0);
+            LocationDatum datum = new LocationDatum(DateTimeOffset.UtcNow, 0.5, new Position(75.5, -35.5), new Position(75.0, -35.0));
 
             Protocol protocol = new Protocol("test");
             AnonymizedJsonContractResolver anonymizer = new AnonymizedJsonContractResolver(protocol);

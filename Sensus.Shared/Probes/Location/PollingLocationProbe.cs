@@ -69,8 +69,8 @@ namespace Sensus.Probes.Location
             else
             {
                 var toReturn = new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, 
-                                                               currentPosition.Latitude, currentPosition.Longitude, 
-                                                               _lastPosition?.Latitude, _lastPosition?.Longitude) };
+                                                               currentPosition, 
+                                                               _lastPosition) };
                 _lastPosition = currentPosition;
                 return toReturn;
             }

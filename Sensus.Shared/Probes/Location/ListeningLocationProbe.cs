@@ -71,8 +71,8 @@ namespace Sensus.Probes.Location
                 SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
                 StoreDatum(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, 
-                                             e.Position.Latitude, e.Position.Longitude, 
-                                             _lastPosition?.Latitude, _lastPosition?.Longitude));
+                                             e.Position, 
+                                             _lastPosition));
                 _lastPosition = e.Position;
             };
         }

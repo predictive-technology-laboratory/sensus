@@ -94,23 +94,16 @@ namespace Sensus.Probes.Location
         /// </summary>
         private LocationDatum() { }
 
-        public LocationDatum(DateTimeOffset timestamp, double accuracy, double latitude, double longitude)
-            : base(timestamp, accuracy)
-        {
-            _latitude = latitude;
-            _longitude = longitude;
-        }
 
-        public LocationDatum(DateTimeOffset timestamp, double accuracy, double latitude, double longitude, double? lastLatitude, double? lastLongitude)
+        public LocationDatum(DateTimeOffset timestamp, double accuracy, Position currentPosition, Position lastPosition = null)
                 : base(timestamp, accuracy)
         {
-            _latitude = latitude;
-            _longitude = longitude;
+            _latitude = currentPosition.Latitude;
+            _longitude = currentPosition.Longitude;
             //TODO:  We might want to refactor this so it isn't calling the into the speed datum
-            if (lastLatitude.HasValue && lastLongitude.HasValue)
+            if (lastPosition != null)
             {
-                _distanceTraveled = Movement.SpeedDatum.CalculateDistanceKM(new Position(lastLatitude.Value, lastLongitude.Value),
-                                                                            new Position(latitude, longitude));
+                _distanceTraveled = Movement.SpeedDatum.CalculateDistanceKM(currentPosition, lastPosition);
             }
        }
 

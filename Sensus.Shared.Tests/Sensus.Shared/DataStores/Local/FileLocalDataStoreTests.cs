@@ -27,6 +27,7 @@ using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Tar;
+using Plugin.Geolocator.Abstractions;
 
 namespace Sensus.Tests.DataStores.Local
 {
@@ -298,7 +299,7 @@ namespace Sensus.Tests.DataStores.Local
                 }
                 else if (type == 1)
                 {
-                    d = new LocationDatum(DateTimeOffset.UtcNow, r.NextDouble(), r.NextDouble(), r.NextDouble(), r.NextDouble(), r.NextDouble());
+                    d = new LocationDatum(DateTimeOffset.UtcNow, r.NextDouble(), new Position(r.NextDouble(), r.NextDouble()), new Position(r.NextDouble(), r.NextDouble()));
                 }
                 else
                 {

@@ -22,6 +22,7 @@ using Plugin.Permissions;
 using Android.Gms.Awareness.Snapshot;
 using Android.Gms.Awareness;
 using Android.Gms.Awareness.Fence;
+using Plugin.Geolocator.Abstractions;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -122,8 +123,8 @@ namespace Sensus.Android.Probes.Movement
                     global::Android.Locations.Location location = locationResult.Location;
                     DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
                     StoreDatum(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, 
-                                                 location.Latitude, location.Longitude, 
-                                                 _lastPosition?.Latitude, _lastPosition?.Longitude));
+                                                 new Position(location.Latitude, location.Longitude),
+                                                 (_lastPosition != null ? new Position(_lastPosition.Latitude, _lastPosition.Longitude) : null)));
                     _lastPosition = location;
                     // replace the previous location fence with one around the current location. additions and removals are handled
                     // in the order specified below.
