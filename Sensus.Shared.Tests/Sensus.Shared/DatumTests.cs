@@ -36,7 +36,7 @@ namespace Sensus.Tests
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
-            LocationDatum datum = new LocationDatum(DateTimeOffset.UtcNow, 0.5, 75.5, -35.5);
+            LocationDatum datum = new LocationDatum(DateTimeOffset.UtcNow, 0.5, 75.5, -35.5, 75.0, -35.0);
 
             Protocol protocol = new Protocol("test");
             AnonymizedJsonContractResolver anonymizer = new AnonymizedJsonContractResolver(protocol);
@@ -52,6 +52,7 @@ namespace Sensus.Tests
             Assert.AreEqual(datum.Longitude, deserializedDatum.Longitude);
             Assert.AreEqual(datum.ProtocolId, deserializedDatum.ProtocolId);
             Assert.AreEqual(datum.Timestamp, deserializedDatum.Timestamp);
+            Assert.AreEqual(datum.DistanceTraveled, datum.DistanceTraveled);
         }
 
         [Test]

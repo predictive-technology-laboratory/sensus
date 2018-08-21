@@ -298,7 +298,7 @@ namespace Sensus.Tests.DataStores.Local
                 }
                 else if (type == 1)
                 {
-                    d = new LocationDatum(DateTimeOffset.UtcNow, r.NextDouble(), r.NextDouble(), r.NextDouble());
+                    d = new LocationDatum(DateTimeOffset.UtcNow, r.NextDouble(), r.NextDouble(), r.NextDouble(), r.NextDouble(), r.NextDouble());
                 }
                 else
                 {
