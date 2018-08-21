@@ -88,18 +88,16 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html">CallbackScheduler</a></div>
     <div class="level2"><span class="xref">iOSCallbackScheduler</span></div>
-      <div class="level3"><a class="xref" href="Sensus.iOS.Callbacks.UILocalNotifications.UILocalNotificationCallbackScheduler.html">UILocalNotificationCallbackScheduler</a></div>
-      <div class="level3"><a class="xref" href="Sensus.iOS.Callbacks.UNUserNotifications.UNUserNotificationCallbackScheduler.html">UNUserNotificationCallbackScheduler</a></div>
-  </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="Sensus.iOS.Callbacks.IiOSCallbackScheduler.html">IiOSCallbackScheduler</a></div>
-    <div><a class="xref" href="Sensus.Callbacks.ICallbackScheduler.html">ICallbackScheduler</a></div>
+      <div class="level3"><a class="xref" href="Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html">UILocalNotificationCallbackScheduler</a></div>
+      <div class="level3"><a class="xref" href="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html">UNUserNotificationCallbackScheduler</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_SENSUS_CALLBACK_KEY">CallbackScheduler.SENSUS_CALLBACK_KEY</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_SENSUS_CALLBACK_INVOCATION_ID_KEY">CallbackScheduler.SENSUS_CALLBACK_INVOCATION_ID_KEY</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_">CallbackScheduler.ScheduleCallbackPlatformSpecific(ScheduledCallback)</a>
@@ -117,7 +115,10 @@
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_TryGetCallback_System_String_">CallbackScheduler.TryGetCallback(String)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_Boolean_System_Action_System_Action_">CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, Boolean, Action, Action)</a>
+      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_System_String_System_String_System_Threading_CancellationToken_">CallbackScheduler.ServiceCallbackFromPushNotificationAsync(String, String, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Action_System_Action_">CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Action, Action)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_TestHealth">CallbackScheduler.TestHealth()</a>
@@ -133,7 +134,7 @@
   <h6><strong>Assembly</strong>: SensusiOS.dll</h6>
   <h5 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler, ICallbackScheduler</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class iOSCallbackScheduler : CallbackScheduler</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -403,12 +404,12 @@ a notification if its fire date is in the past by the time it gets around to doi
   
   
   <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback)">ServiceCallbackAsync(ScheduledCallback)</h4>
+  <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)">ServiceCallbackAsync(ScheduledCallback, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task ServiceCallbackAsync(ScheduledCallback callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -423,6 +424,11 @@ a notification if its fire date is in the past by the time it gets around to doi
       <tr>
         <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
         <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">invocationId</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -442,6 +448,8 @@ a notification if its fire date is in the past by the time it gets around to doi
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_">CallbackScheduler.ServiceCallbackAsync(ScheduledCallback, String)</a></div>
   
   
   <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_TryGetCallback_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.TryGetCallback*"></a>
@@ -512,13 +520,6 @@ Also reissues all silent notifications, which would have been canceled when the 
       </tr>
     </tbody>
   </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="Sensus.iOS.Callbacks.IiOSCallbackScheduler.html">IiOSCallbackScheduler</a>
-  </div>
-  <div>
-      <a class="xref" href="Sensus.Callbacks.ICallbackScheduler.html">ICallbackScheduler</a>
-  </div>
 </article>
           </div>
           

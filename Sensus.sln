@@ -44,8 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8
 		DocFX\articles\protocol_distribution.md = DocFX\articles\protocol_distribution.md
 		DocFX\articles\sensus_r.md = DocFX\articles\sensus_r.md
 		DocFX\articles\ssl_pinning.md = DocFX\articles\ssl_pinning.md
-		DocFX\articles\study_configuration.md = DocFX\articles\study_configuration.md
 		DocFX\articles\toc.yml = DocFX\articles\toc.yml
+		DocFX\articles\push_notifications.md = DocFX\articles\push_notifications.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
