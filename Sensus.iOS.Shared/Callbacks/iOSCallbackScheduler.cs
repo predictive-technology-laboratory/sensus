@@ -20,11 +20,13 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using UIKit;
+using Sensus.iOS.Notifications;
 using Sensus.Exceptions;
+using Sensus.Notifications;
 
 namespace Sensus.iOS.Callbacks
 {
-    public abstract class iOSCallbackScheduler : CallbackScheduler, IiOSCallbackScheduler
+    public abstract class iOSCallbackScheduler : CallbackScheduler
     {
         /// <summary>
         /// The callback notification horizon threshold. When using notifications to schedule the timing of
@@ -62,7 +64,7 @@ namespace Sensus.iOS.Callbacks
                     {
                         iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
                         notifier.CancelNotification(callback.Id);
-                        await ServiceCallbackAsync(callback);
+                        await ServiceCallbackAsync(callback, callback.InvocationId);
                     }
                     // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
                     else if (callback.Silent)
@@ -77,7 +79,7 @@ namespace Sensus.iOS.Callbacks
             });
         }
 
-        protected abstract void ReissueSilentNotification(string id);                            
+        protected abstract void ReissueSilentNotification(string id);
 
         public NSMutableDictionary GetCallbackInfo(ScheduledCallback callback)
         {
@@ -91,7 +93,8 @@ namespace Sensus.iOS.Callbacks
             }
 
             return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true,
-                                                            iOSNotifier.NOTIFICATION_ID_KEY, callback.Id));
+                                                            iOSNotifier.NOTIFICATION_ID_KEY, callback.Id,
+                                                            SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId));
         }
 
         public ScheduledCallback TryGetCallback(NSDictionary callbackInfo)
@@ -114,10 +117,12 @@ namespace Sensus.iOS.Callbacks
 
         public Task ServiceCallbackAsync(NSDictionary callbackInfo)
         {
-            return ServiceCallbackAsync(TryGetCallback(callbackInfo));
+            ScheduledCallback callback = TryGetCallback(callbackInfo);
+            string invocationId = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY)) as NSString;
+            return ServiceCallbackAsync(callback, invocationId);
         }
 
-        public Task ServiceCallbackAsync(ScheduledCallback callback)
+        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
         {
             return Task.Run(async () =>
             {
@@ -129,7 +134,7 @@ namespace Sensus.iOS.Callbacks
 
                 SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
-                // start background task for callback
+                // start background task for servicing callback
                 nint callbackTaskId = -1;
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
@@ -143,7 +148,7 @@ namespace Sensus.iOS.Callbacks
                 // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
                 // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
                 // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-                await RaiseCallbackAsync(callback, false, null, null);
+                await RaiseCallbackAsync(callback, invocationId, false, null, null);
 
                 // end the background task
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>

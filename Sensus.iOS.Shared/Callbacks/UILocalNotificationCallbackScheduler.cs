@@ -22,8 +22,10 @@ using UIKit;
 using Xamarin.Forms.Platform.iOS;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
+using Sensus.Notifications;
+using Sensus.iOS.Notifications.UILocalNotifications;
 
-namespace Sensus.iOS.Callbacks.UILocalNotifications
+namespace Sensus.iOS.Callbacks
 {
     public class UILocalNotificationCallbackScheduler : iOSCallbackScheduler
     {
@@ -66,7 +68,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 }
             };
 
-            IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+            UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
 
             if (callback.Silent)
             {
@@ -96,42 +98,42 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
-                // remove from platform-specific notification collection before raising the callback. the purpose of the platform-specific notification collection 
-                // is to hold the notifications between successive activations of the app. when the app is reactivated, notifications from this collection are 
-                // updated with the new activation id and they are rescheduled. if, in raising the callback associated with the current notification, the app is 
-                // reactivated (e.g., by a call to the facebook probe login manager), then the current notification will be reissued when updated via app reactivation 
-                // (which will occur, e.g., when the facebook login manager returns control to the app). this can lead to duplicate notifications for the same callback, 
-                // or infinite cycles of app reactivation if the notification raises a callback that causes it to be reissued (e.g., in the case of facebook login).
-                UILocalNotification callbackNotification;
-                lock (_callbackIdNotification)
-                {
-                    _callbackIdNotification.TryGetValue(callback.Id, out callbackNotification);
-                    _callbackIdNotification.Remove(callback.Id);
-                }
+                await base.RaiseCallbackAsync(callback, invocationId, notifyUser,
 
-                await base.RaiseCallbackAsync(callback, notifyUser,
-
+                    // reissue the callback notification
                     () =>
                     {
-                        // add to the platform-specific notification collection, so that the notification is updated and reissued if/when the app is reactivated
-                        lock (_callbackIdNotification)
-                        {
-                            _callbackIdNotification.Add(callback.Id, callbackNotification);
-                        }
-
+                        // need to be on UI thread because we are working with UILocalNotifications
                         SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                         {
-                            callbackNotification.FireDate = callback.NextExecution.Value.ToUniversalTime().ToNSDate();
-                            (SensusContext.Current.Notifier as IUILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
+                            lock (_callbackIdNotification)
+                            {
+                                UILocalNotification callbackNotification;
+                                _callbackIdNotification.TryGetValue(callback.Id, out callbackNotification);
+
+                                // might have been unscheduled
+                                if (callbackNotification != null)
+                                {
+                                    // set the next execution date
+                                    callbackNotification.FireDate = callback.NextExecution.Value.ToUniversalTime().ToNSDate();
+
+                                    // update the user info with the new invocation ID that has been set on the callback
+                                    NSMutableDictionary newUserInfo = callbackNotification.UserInfo.MutableCopy() as NSMutableDictionary;
+                                    newUserInfo.SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+                                    callbackNotification.UserInfo = newUserInfo;
+
+                                    // reissue the notification
+                                    (SensusContext.Current.Notifier as UILocalNotificationNotifier).IssueNotificationAsync(callbackNotification);
+                                }
+                            }
                         });
                     },
 
-                    letDeviceSleepCallback
-                );
+                    letDeviceSleepCallback);
             });
         }
 
@@ -143,7 +145,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
                 UILocalNotification notification;
                 if (_callbackIdNotification.TryGetValue(callback.Id, out notification))
                 {
-                    (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
+                    (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
                     _callbackIdNotification.Remove(callback.Id);
                 }
             }
@@ -153,7 +155,7 @@ namespace Sensus.iOS.Callbacks.UILocalNotifications
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                IUILocalNotificationNotifier notifier = SensusContext.Current.Notifier as IUILocalNotificationNotifier;
+                UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
 
                 foreach (UILocalNotification scheduledNotification in UIApplication.SharedApplication.ScheduledLocalNotifications)
                 {

@@ -16,7 +16,7 @@ using Android.App;
 using Firebase.Iid;
 using System.Threading;
 
-namespace Sensus.Android
+namespace Sensus.Android.Notifications
 {
     [Service]
     [IntentFilter(new[] { "com.google.firebase.INSTANCE_ID_EVENT" })]

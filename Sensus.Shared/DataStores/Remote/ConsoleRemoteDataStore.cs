@@ -19,6 +19,7 @@ using System;
 using System.Threading.Tasks;
 using System.IO;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.DataStores.Remote
 {
@@ -62,17 +63,22 @@ namespace Sensus.DataStores.Remote
             return Task.CompletedTask;
         }
 
-        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
         public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
 
         public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

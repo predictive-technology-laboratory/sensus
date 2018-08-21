@@ -60,12 +60,12 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        protected override void InternalStart()
+        protected override void ProtectedStart()
         {
             // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
             _previousPosition = null;
 
-            base.InternalStart();
+            base.ProtectedStart();
         }
 
         protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)

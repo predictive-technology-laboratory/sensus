@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus
+using Foundation;
+using Sensus.Notifications;
+
+namespace Sensus.iOS.Notifications
 {
-    public enum PushNotificationRequestFormat
+    public abstract class iOSNotifier : Notifier
     {
-        FirebaseCloudMessaging,
-        ApplePushNotificationService
+        /// <summary>
+        /// The notification identifier key, which has a value uniquely identifying the issued notification.
+        /// </summary>
+        public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
     }
 }

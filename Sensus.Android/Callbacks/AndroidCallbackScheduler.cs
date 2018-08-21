@@ -17,9 +17,8 @@ using Android.Content;
 using Android.OS;
 using Sensus.Callbacks;
 using System.Threading.Tasks;
-using Sensus.Exceptions;
-using System;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.Android.Callbacks
 {
@@ -46,6 +45,7 @@ namespace Sensus.Android.Callbacks
             callbackIntent.SetAction(callback.Id);
             callbackIntent.PutExtra(Notifier.DISPLAY_PAGE_KEY, callback.DisplayPage.ToString());
             callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+            callbackIntent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
             return callbackIntent;
         }
 
@@ -106,7 +106,7 @@ namespace Sensus.Android.Callbacks
 
         public bool IsCallback(Intent intent)
         {
-            return intent.GetBooleanExtra(CallbackScheduler.SENSUS_CALLBACK_KEY, false);
+            return intent.GetBooleanExtra(SENSUS_CALLBACK_KEY, false);
         }
 
         public Task ServiceCallbackAsync(Intent intent)
@@ -132,12 +132,18 @@ namespace Sensus.Android.Callbacks
                 {                    
                     bool wakeLockReleased = false;
 
+                    string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
+
                     // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                    await RaiseCallbackAsync(callback, true,
+                    await RaiseCallbackAsync(callback, invocationId, true,
 
                         // schedule a new alarm for the same callback at the desired time.
                         () =>
                         {
+                            // update the intent with the new invocation ID.
+                            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
+
+                            // reschedule the alarm. the alarm date will already have been set on the callback.
                             ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
                         },
 
@@ -162,6 +168,28 @@ namespace Sensus.Android.Callbacks
                     UnscheduleCallback(callback);
                     serviceHelper.LetDeviceSleep();
                 }
+            });
+        }
+
+        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
+        {
+            return Task.Run(async () =>
+            {
+                // service an intent that targets the given callback and invocation. 
+                // 
+                // 1) if this intent arrives with a valid invocation ID before the alarm-triggered 
+                //    intent arrives, this intent will be serviced and a new pending intent will 
+                //    be issued with an updated invocation id. in this case, the alarm-triggered 
+                //    pending intent will be ignored (if it fires) or canceled (when the updated 
+                //    pending intent is issued).
+                //
+                // 2) if this intent arrives after the alarm-triggered intent, or if the invocation
+                //    id is not valid, then this intent will not be serviced. the alarm-triggered
+                //    intent will be serviced instead, and the next pending intent will be scheduled
+                //    thereafter along with a correspondingly new push notification request.
+                Intent intent = CreateCallbackIntent(callback);
+                intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, invocationId);
+                await ServiceCallbackAsync(intent);
             });
         }
 

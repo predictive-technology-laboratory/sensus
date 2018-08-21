@@ -35,8 +35,7 @@ namespace Sensus.UI.UiProperties
 
             return new DatePicker
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                MinimumDate = DateTime.Now.Date
+                HorizontalOptions = LayoutOptions.FillAndExpand
             };
         }
     }

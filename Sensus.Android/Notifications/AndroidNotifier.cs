@@ -18,9 +18,9 @@ using Android.App;
 using Android.Content;
 using Android.Media;
 using Android.OS;
-using Sensus.Callbacks;
+using Sensus.Notifications;
 
-namespace Sensus.Android.Callbacks
+namespace Sensus.Android.Notifications
 {
     public class AndroidNotifier : Notifier
     {

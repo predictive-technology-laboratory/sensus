@@ -13,27 +13,24 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
 using Sensus.Callbacks;
+using System.Threading;
 
 namespace Sensus.Tests.Classes
 {
-    public class TestSensusCallbackScheduler : ICallbackScheduler
+    public class TestSensusCallbackScheduler : CallbackScheduler
     {
-        public bool ContainsCallback(ScheduledCallback callback)
+        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
         {
-            return false;
+            return Task.CompletedTask;
         }
 
-        public ScheduledCallbackState ScheduleCallback(ScheduledCallback callback)
-        {
-            return ScheduledCallbackState.Unknown;           
-        }
-
-        public void TestHealth()
+        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
         }
 
-        public void UnscheduleCallback(ScheduledCallback callback)
+        protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)
         {
         }
     }

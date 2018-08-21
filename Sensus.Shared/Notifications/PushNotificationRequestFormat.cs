@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Callbacks
+namespace Sensus.Notifications
 {
-    /// <summary>
-    /// Page to display when a callback notification is tapped by the user.
-    /// </summary>
-    public enum DisplayPage
+    public enum PushNotificationRequestFormat
     {
-        /// <summary>
-        /// Display no page.
-        /// </summary>
-        None,
-
-        /// <summary>
-        /// Display the <see cref="UI.PendingScriptsPage"/>.
-        /// </summary>
-        PendingSurveys
-    };
+        FirebaseCloudMessaging,
+        ApplePushNotificationService
+    }
 }

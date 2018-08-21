@@ -134,47 +134,7 @@ namespace Sensus.Tests.Probes.User.Scripts
         }
 
         [Test]
-        public void SchedulesOneFutureTest()
-        {
-            var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:20-10:30" };
-
-            var referenceDate = new DateTime(1986, 4, 18, 10, 10, 0);
-            var afterDate = new DateTime(1986, 4, 18, 10, 10, 0);
-
-            var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate).Take(6).ToArray();
-
-            Assert.IsTrue(new TimeSpan(0, 0, 10, 0) <= triggerTimes[0].ReferenceTillTrigger && triggerTimes[0].ReferenceTillTrigger <= new TimeSpan(0, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(0, 23, 50, 0), triggerTimes[1].ReferenceTillTrigger);
-
-            Assert.IsTrue(new TimeSpan(1, 0, 10, 0) <= triggerTimes[2].ReferenceTillTrigger && triggerTimes[2].ReferenceTillTrigger <= new TimeSpan(1, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(1, 23, 50, 0), triggerTimes[3].ReferenceTillTrigger);
-
-            Assert.IsTrue(new TimeSpan(2, 0, 10, 0) <= triggerTimes[4].ReferenceTillTrigger && triggerTimes[4].ReferenceTillTrigger <= new TimeSpan(2, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(2, 23, 50, 0), triggerTimes[5].ReferenceTillTrigger);
-        }
-
-        [Test]
-        public void SchedulesAfterOneDayTest()
-        {
-            var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:20-10:30" };
-
-            var referenceDate = new DateTime(1986, 4, 18, 10, 10, 0);
-            var afterDate = new DateTime(1986, 4, 19, 10, 10, 0);
-
-            var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate).Take(6).ToArray();
-
-            Assert.IsTrue(new TimeSpan(1, 0, 10, 0) <= triggerTimes[0].ReferenceTillTrigger && triggerTimes[0].ReferenceTillTrigger <= new TimeSpan(1, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(1, 23, 50, 0), triggerTimes[1].ReferenceTillTrigger);
-
-            Assert.IsTrue(new TimeSpan(2, 0, 10, 0) <= triggerTimes[2].ReferenceTillTrigger && triggerTimes[2].ReferenceTillTrigger <= new TimeSpan(2, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(2, 23, 50, 0), triggerTimes[3].ReferenceTillTrigger);
-
-            Assert.IsTrue(new TimeSpan(3, 0, 10, 0) <= triggerTimes[4].ReferenceTillTrigger && triggerTimes[4].ReferenceTillTrigger <= new TimeSpan(3, 0, 20, 0));
-            Assert.AreEqual(new TimeSpan(3, 23, 50, 0), triggerTimes[5].ReferenceTillTrigger);
-        }
-
-        [Test]
-        public void SchedulesPullsOnlySevenDays()
+        public void SchedulesPullsOnlyTenDays()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00" };
 
@@ -183,7 +143,7 @@ namespace Sensus.Tests.Probes.User.Scripts
 
             var triggerTimeCount = schedule.GetTriggerTimes(referenceDate, afterDate).Count();
 
-            Assert.AreEqual(7, triggerTimeCount);
+            Assert.AreEqual(10, triggerTimeCount);
         }
 
         [Test]
@@ -316,14 +276,10 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(2).ToArray();
 
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(0, 2, 34, 0));
             Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(7, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(14, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(21, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(28, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(35, 2, 34, 0));
         }
 
         [Test]
@@ -337,14 +293,10 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(2).ToArray();
 
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(0, -2, 34, 0));
             Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(7, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(14, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(21, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(28, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(35, -2, 34, 0));
         }
 
         [Test]
@@ -358,14 +310,9 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(1).ToArray();
 
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(4, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(11, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(18, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(25, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(32, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(39, 2, 34, 0));
         }
 
         [Test]
@@ -379,14 +326,9 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(1).ToArray();
 
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, 2, 34, 0));
-            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, 2, 34, 0));
         }
 
         [Test]
@@ -400,14 +342,9 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(1).ToArray();
 
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(13, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[2].Trigger, reference + new TimeSpan(20, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[3].Trigger, reference + new TimeSpan(27, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[4].Trigger, reference + new TimeSpan(34, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(41, -2, 34, 0));
         }
 
         [Test]
@@ -421,25 +358,20 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(14).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(11).ToArray();
 
-            Assert.AreEqual(14, triggerTimes.Length);
+            Assert.AreEqual(11, triggerTimes.Length);
 
             // the 10am interval-based trigger should be scheduled for 10am each day, starting with tomorrow.
-            Assert.AreEqual(triggerTimes[0].Trigger, reference + TimeSpan.FromDays(1));  // Tuesday
-            Assert.AreEqual(triggerTimes[1].Trigger, reference + TimeSpan.FromDays(2));  // Wednesday
-            Assert.AreEqual(triggerTimes[2].Trigger, reference + TimeSpan.FromDays(3));  // Thursday
-            Assert.AreEqual(triggerTimes[3].Trigger, reference + TimeSpan.FromDays(4));  // Friday
-            Assert.AreEqual(triggerTimes[4].Trigger, reference + TimeSpan.FromDays(5));  // Saturday
-            Assert.AreEqual(triggerTimes[5].Trigger, reference + new TimeSpan(6, -2, 34, 0));  // On Sunday, the DOW-based window will be scheduled at 8:34am...                                             
-            Assert.AreEqual(triggerTimes[6].Trigger, reference + TimeSpan.FromDays(6));        // ...preceding our 10am interval-based trigger.
-            Assert.AreEqual(triggerTimes[7].Trigger, reference + TimeSpan.FromDays(7));        
-            Assert.AreEqual(triggerTimes[8].Trigger, reference + new TimeSpan(13, -2, 34, 0));  // we only schedule 7 windows, so there are no more interval-based triggers left.
-            Assert.AreEqual(triggerTimes[9].Trigger, reference + new TimeSpan(20, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[10].Trigger, reference + new TimeSpan(27, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[11].Trigger, reference + new TimeSpan(34, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[12].Trigger, reference + new TimeSpan(41, -2, 34, 0));
-            Assert.AreEqual(triggerTimes[13].Trigger, reference + new TimeSpan(48, -2, 34, 0));
+            Assert.AreEqual(triggerTimes[0].Trigger, reference + TimeSpan.FromDays(0));  // Monday
+            Assert.AreEqual(triggerTimes[1].Trigger, reference + TimeSpan.FromDays(1));  // Tuesday
+            Assert.AreEqual(triggerTimes[2].Trigger, reference + TimeSpan.FromDays(2));  // Wednesday
+            Assert.AreEqual(triggerTimes[3].Trigger, reference + TimeSpan.FromDays(3));  // Thursday
+            Assert.AreEqual(triggerTimes[4].Trigger, reference + TimeSpan.FromDays(4));  // Friday
+            Assert.AreEqual(triggerTimes[5].Trigger, reference + TimeSpan.FromDays(5));  // Saturday
+            Assert.AreEqual(triggerTimes[6].Trigger, reference + new TimeSpan(6, -2, 34, 0));  // On Sunday, the DOW-based window will be scheduled at 8:34am...                                             
+            Assert.AreEqual(triggerTimes[7].Trigger, reference + TimeSpan.FromDays(6));        // ...preceding our 10am interval-based trigger.
+            Assert.AreEqual(triggerTimes[8].Trigger, reference + TimeSpan.FromDays(7));        
         }
 
         [Test]
@@ -454,31 +386,11 @@ namespace Sensus.Tests.Probes.User.Scripts
             var reference = new DateTime(2017, 7, 10, 10, 0, 0);
             var after = new DateTime(2017, 7, 10, 10, 0, 0);  // 2017-7-10 was a Monday
 
-            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(6).ToArray();
+            var triggerTimes = schedule.GetTriggerTimes(reference, after).Take(1).ToArray();
 
             Assert.True(triggerTimes[0].Trigger >= reference + new TimeSpan(6, 2, 0, 0));
             Assert.True(triggerTimes[0].Trigger <= reference + new TimeSpan(6, 4, 0, 0));
             Assert.AreEqual(triggerTimes[0].Expiration.Value, reference + new TimeSpan(6, 4, 0, 0));
-
-            Assert.True(triggerTimes[1].Trigger >= reference + new TimeSpan(13, 2, 0, 0));
-            Assert.True(triggerTimes[1].Trigger <= reference + new TimeSpan(13, 4, 0, 0));
-            Assert.AreEqual(triggerTimes[1].Expiration.Value, reference + new TimeSpan(13, 4, 0, 0));
-
-            Assert.True(triggerTimes[2].Trigger >= reference + new TimeSpan(20, 2, 0, 0));
-            Assert.True(triggerTimes[2].Trigger <= reference + new TimeSpan(20, 4, 0, 0));
-            Assert.AreEqual(triggerTimes[2].Expiration.Value, reference + new TimeSpan(20, 4, 0, 0));
-
-            Assert.True(triggerTimes[3].Trigger >= reference + new TimeSpan(27, 2, 0, 0));
-            Assert.True(triggerTimes[3].Trigger <= reference + new TimeSpan(27, 4, 0, 0));
-            Assert.AreEqual(triggerTimes[3].Expiration.Value, reference + new TimeSpan(27, 4, 0, 0));
-
-            Assert.True(triggerTimes[4].Trigger >= reference + new TimeSpan(34, 2, 0, 0));
-            Assert.True(triggerTimes[4].Trigger <= reference + new TimeSpan(34, 4, 0, 0));
-            Assert.AreEqual(triggerTimes[4].Expiration.Value, reference + new TimeSpan(34, 4, 0, 0));
-
-            Assert.True(triggerTimes[5].Trigger >= reference + new TimeSpan(41, 2, 0, 0));
-            Assert.True(triggerTimes[5].Trigger <= reference + new TimeSpan(41, 4, 0, 0));
-            Assert.AreEqual(triggerTimes[5].Expiration.Value, reference + new TimeSpan(41, 4, 0, 0));
         }
     }
 }

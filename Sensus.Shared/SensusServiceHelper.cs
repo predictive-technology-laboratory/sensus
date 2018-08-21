@@ -32,6 +32,7 @@ using Sensus.Concurrent;
 using Sensus.Exceptions;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
+using Sensus.Notifications;
 
 using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
@@ -88,12 +89,6 @@ namespace Sensus
         // test every 60 minutes in release
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
 #endif
-
-        /// <summary>
-        /// Health tests times are used to compute participation for the listening probes. They must
-        /// be as tight as possible.
-        /// </summary>
-        private const bool HEALTH_TEST_REPEAT_LAG = false;
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
@@ -627,7 +622,7 @@ namespace Sensus
                             await protocolToTest.TestHealthAsync(false, cancellationToken);
                         }
 
-                        // test the callback scheduler itself
+                        // test the callback scheduler
                         SensusContext.Current.CallbackScheduler.TestHealth();
 
                         // update push notification registrations
@@ -636,7 +631,10 @@ namespace Sensus
                             await UpdatePushNotificationRegistrationsAsync(cancellationToken);
                         }
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                        // test the notifier, which checks the push notification requests
+                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
                     SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
                 }
@@ -705,26 +703,21 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
+        /// </summary>
         public Task StartAsync()
         {
             return Task.Run(() =>
             {
-                Start();
-            });
-        }
-
-        /// <summary>
-        /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
-        /// </summary>
-        public void Start()
-        {
-            foreach (Protocol registeredProtocol in _registeredProtocols)
-            {
-                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
+                foreach (Protocol registeredProtocol in _registeredProtocols)
                 {
-                    registeredProtocol.Start();
+                    if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
+                    {
+                        registeredProtocol.Start();
+                    }
                 }
-            }
+            });
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -1530,7 +1523,7 @@ namespace Sensus
                             // catch any exceptions, as we might just be lacking an internet connection.
                             try
                             {
-                                if (protocol.Running)
+                                if (protocol.Running || protocol.StartIsScheduled)
                                 {
                                     atLeastOneProtocolRunning = true;
 

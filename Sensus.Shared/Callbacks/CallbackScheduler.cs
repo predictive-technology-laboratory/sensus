@@ -21,15 +21,17 @@ using Microsoft.AppCenter.Analytics;
 using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.Callbacks
 {
     /// <summary>
     /// Sensus schedules operations via a scheduler.
     /// </summary>
-    public abstract class CallbackScheduler : ICallbackScheduler
+    public abstract class CallbackScheduler
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
+        public const string SENSUS_CALLBACK_INVOCATION_ID_KEY = "SENSUS-CALLBACK-INVOCATION-ID";
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
@@ -50,10 +52,15 @@ namespace Sensus.Callbacks
             }
             else if (_idCallback.TryAdd(callback.Id, callback))
             {
+                callback.InvocationId = Guid.NewGuid().ToString();
                 callback.NextExecution = DateTime.Now + callback.Delay;
                 callback.State = ScheduledCallbackState.Scheduled;
 
+                // schedule callback locally
                 ScheduleCallbackPlatformSpecific(callback);
+
+                // request a push notification for the callback (adds redundancy) 
+                RequestPushNotificationAsync(callback);
             }
             else
             {
@@ -81,24 +88,59 @@ namespace Sensus.Callbacks
         {
             ScheduledCallback callback;
             _idCallback.TryGetValue(id, out callback);
-
-            if (callback == null)
-            {
-                SensusException.Report("Failed to retrieve callback " + id + ".");
-            }
-
             return callback;
         }
+
+        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
+        {
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+
+            // it is conceivable that a push notification could arrive in the absence of a running
+            // app. in this case, the service helper would be null and there is nothing to do.
+            if (serviceHelper != null)
+            {
+                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+                // this only applies to android, as iOS does not support such functionality. furthermore, it is the job of the android-specific implementation
+                // of ServiceCallbackAsync to call the corresponding "let sleep".
+                serviceHelper.KeepDeviceAwake();
+
+                return Task.Run(async () =>
+                {
+                    ScheduledCallback callback = TryGetCallback(callbackId);
+
+                    // callback might have been unscheduled
+                    if (callback != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+
+                        // if the cancellation token is cancelled, cancel the callback
+                        cancellationToken.Register(() =>
+                        {
+                            CancelRaisedCallback(callback);
+                        });
+
+                        await ServiceCallbackAsync(callback, invocationId);
+                    }
+                });
+            }
+            else
+            {
+                return Task.CompletedTask;
+            }
+        }
+
+        public abstract Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId);
 
         /// <summary>
         /// Raises a callback.
         /// </summary>
         /// <returns>Async task</returns>
         /// <param name="callback">Callback to raise.</param>
+        /// <param name="invocationId">Identifier of invocation.</param>
         /// <param name="notifyUser">If set to <c>true</c>, then notify user that the callback is being raised.</param>
         /// <param name="scheduleRepeatCallback">Platform-specific action to execute to schedule the next execution of the callback.</param>
         /// <param name="letDeviceSleepCallback">Action to execute when the system should be allowed to sleep.</param>
-        public virtual Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
@@ -109,20 +151,31 @@ namespace Sensus.Callbacks
                         throw new NullReferenceException("Attemped to raise null callback.");
                     }
 
-                    // the same callback cannot be run multiple times concurrently, so drop the current callback if it's already running. multiple
+                    // the same callback must not be run multiple times concurrently, so drop the current callback if it's already running. multiple
                     // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until the
-                    // the callback has finished executing.
-                    bool runCallbackNow = false;
+                    // the callback has finished executing. furthermore, the callback must not run multiple times in sequence (e.g., if the callback
+                    // is raised by the local scheduling system and then later by a remote push notification). this is handled by tracking invocation
+                    // identifiers, which are only runnable once.
+                    string initiationError = null;
                     lock (callback)
                     {
-                        if (callback.State == ScheduledCallbackState.Scheduled)
+                        if (callback.State != ScheduledCallbackState.Scheduled)
                         {
-                            runCallbackNow = true;
+                            initiationError += "Callback " + callback.Id + " is not scheduled. Current state:  " + callback.State;
+                        }
+
+                        if (invocationId != callback.InvocationId)
+                        {
+                            initiationError += (initiationError == null ? "" : ". ") + "Invocation ID provided for callback " + callback.Id + " does not match the one on record.";
+                        }
+
+                        if (initiationError == null)
+                        {
                             callback.State = ScheduledCallbackState.Running;
                         }
                     }
 
-                    if (runCallbackNow)
+                    if (initiationError == null)
                     {
                         try
                         {
@@ -182,28 +235,15 @@ namespace Sensus.Callbacks
                                     callback.RepeatDelay.Value.Ticks > 0 &&
                                     scheduleRepeatCallback != null)
                                 {
-                                    // if this repeating callback is allowed to lag, schedule the next execution from the current time.
-                                    if (callback.AllowRepeatLag.Value)
-                                    {
-                                        callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
-                                    }
-                                    else
-                                    {
-                                        // otherwise, schedule the next execution from the time at which the current callback was supposed to be raised.
-                                        callback.NextExecution = callback.NextExecution.Value + callback.RepeatDelay.Value;
-
-                                        // if we've lagged so long that the next execution is already in the past, just reschedule for now. this will cause
-                                        // the rescheduled callback to be raised as soon as possible, subject to delays in the systems scheduler (e.g., on
-                                        // android most alarms do not come back immediately, even if requested).
-                                        if (callback.NextExecution.Value < DateTime.Now)
-                                        {
-                                            callback.NextExecution = DateTime.Now;
-                                        }
-                                    }
-
+                                    callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
+                                    callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
                                     callback.State = ScheduledCallbackState.Scheduled;
 
+                                    // schedule callback locally
                                     scheduleRepeatCallback();
+
+                                    // request a push notification for the callback (adds redundancy) 
+                                    await RequestPushNotificationAsync(callback);
                                 }
                                 else
                                 {
@@ -214,13 +254,21 @@ namespace Sensus.Callbacks
                     }
                     else
                     {
-                        throw new Exception("Callback " + callback.Id + " was already running. Not running again.");
+                        SensusServiceHelper.Get().Logger.Log("Initiation error for callback " + callback.Id + ":  " + initiationError, LoggingLevel.Normal, GetType());
                     }
                 }
                 catch (Exception ex)
                 {
                     SensusException.Report("Failed to raise callback:  " + ex.Message, ex);
                 }
+            });
+        }
+
+        private Task RequestPushNotificationAsync(ScheduledCallback callback)
+        {
+            return Task.Run(async () =>
+            {
+                await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
             });
         }
 
@@ -265,7 +313,7 @@ namespace Sensus.Callbacks
                         string eventName = TrackedEvent.Warning + ":" + GetType().Name;
                         Dictionary<string, string> properties = new Dictionary<string, string>
                         {
-                                { "Callback Next Execution", "NONE" }
+                            { "Callback Next Execution", "NONE" }
                         };
 
                         Analytics.TrackEvent(eventName, properties);
@@ -304,8 +352,30 @@ namespace Sensus.Callbacks
                 // tell the current platform cancel its hook into the system's callback system
                 UnscheduleCallbackPlatformSpecific(callback);
 
+                // delete the push notification
+                SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }
+        }
+
+        private PushNotificationRequest GetPushNotificationRequest(ScheduledCallback callback)
+        {
+            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
+            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
+            if (callback.Protocol != null)
+            {
+                try
+                {
+                    return new PushNotificationRequest(callback.Protocol, "", "", "", SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id + "|" + callback.InvocationId, callback.NextExecution.Value);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while getting push notification request:  " + ex.Message, ex);
+                }
+            }
+
+            return null;
         }
     }
 }

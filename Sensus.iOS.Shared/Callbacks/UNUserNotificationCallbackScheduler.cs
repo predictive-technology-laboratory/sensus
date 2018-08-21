@@ -20,10 +20,9 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using UserNotifications;
-using Xamarin.Forms.Platform.iOS;
-using Sensus.Exceptions;
+using Sensus.iOS.Notifications.UNUserNotifications;
 
-namespace Sensus.iOS.Callbacks.UNUserNotifications
+namespace Sensus.iOS.Callbacks
 {
     public class UNUserNotificationCallbackScheduler : iOSCallbackScheduler
     {
@@ -66,7 +65,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 }
             };
 
-            IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
+            UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
 
             if (callback.Silent)
             {
@@ -96,30 +95,41 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
             });
         }
 
-        public override Task RaiseCallbackAsync(ScheduledCallback callback, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
         {
             return Task.Run(async () =>
             {
-                // see corresponding comments in the UILocalNotificationCallbackScheduler
-
-                UNNotificationRequest request;
-                lock (_callbackIdRequest)
-                {
-                    _callbackIdRequest.TryGetValue(callback.Id, out request);
-                    _callbackIdRequest.Remove(callback.Id);
-                }
-
-                await base.RaiseCallbackAsync(callback, notifyUser,
+                await base.RaiseCallbackAsync(callback, invocationId, notifyUser,
 
                     () =>
                     {
-                        (SensusContext.Current.Notifier as IUNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, request.Content, callback.NextExecution.Value, newRequest =>
+                        // reissue the callback notification request
+                        lock (_callbackIdRequest)
                         {
-                            lock (_callbackIdRequest)
+                            UNNotificationRequest request;
+                            _callbackIdRequest.TryGetValue(callback.Id, out request);
+
+                            // might have been unscheduled
+                            if (request != null)
                             {
-                                _callbackIdRequest.Add(newRequest.Identifier, newRequest);
+                                // update the request's user info with the new invocation ID
+                                NSMutableDictionary newUserInfo = request.Content.UserInfo.MutableCopy() as NSMutableDictionary;
+                                newUserInfo.SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+                                UNMutableNotificationContent newContent = request.Content.MutableCopy() as UNMutableNotificationContent;
+                                newContent.UserInfo = newUserInfo;
+
+                                // reissue the notification request using the next execution date on the callback. the following call will not return until
+                                // the request has been created, ensuring that the request has been updated in _callbackIdRequest before the next caller 
+                                // obtains the current lock.
+                                (SensusContext.Current.Notifier as UNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.NextExecution.Value, newRequest =>
+                                {
+                                    lock (_callbackIdRequest)
+                                    {
+                                        _callbackIdRequest[newRequest.Identifier] = newRequest;
+                                    }
+                                });
                             }
-                        });
+                        }
                     },
 
                     letDeviceSleepCallback
@@ -135,7 +145,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
                 UNNotificationRequest request;
                 if (_callbackIdRequest.TryGetValue(callback.Id, out request))
                 {
-                    (SensusContext.Current.Notifier as IUNUserNotificationNotifier)?.CancelNotification(request);
+                    (SensusContext.Current.Notifier as UNUserNotificationNotifier)?.CancelNotification(request);
                     _callbackIdRequest.Remove(callback.Id);
                 }
             }
@@ -145,7 +155,7 @@ namespace Sensus.iOS.Callbacks.UNUserNotifications
         {
             UNUserNotificationCenter.Current.GetPendingNotificationRequests(requests =>
             {
-                IUNUserNotificationNotifier notifier = SensusContext.Current.Notifier as IUNUserNotificationNotifier;
+                UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
 
                 foreach (UNNotificationRequest request in requests)
                 {

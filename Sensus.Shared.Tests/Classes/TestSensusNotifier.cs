@@ -13,21 +13,17 @@
 // limitations under the License.
 
 using System;
-using Sensus.Callbacks;
+using Sensus.Notifications;
 
 namespace Sensus.Tests.Classes
 {
-    public class TestSensusNotifier : INotifier
+    public class TestSensusNotifier : Notifier
     {
-        public void CancelNotification(string id)
+        public override void CancelNotification(string id)
         {
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage type)
-        {
-        }
-
-        public void OpenDisplayPage(DisplayPage displayPage)
+        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
         }
     }

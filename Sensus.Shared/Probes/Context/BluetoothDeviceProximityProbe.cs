@@ -57,9 +57,9 @@ namespace Sensus.Probes.Context
             }
         }
 
-        protected sealed override void InternalStart()
+        protected sealed override void ProtectedStart()
         {
-            base.InternalStart();
+            base.ProtectedStart();
 
             try
             {

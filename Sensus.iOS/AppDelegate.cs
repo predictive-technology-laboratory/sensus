@@ -27,10 +27,10 @@ using UIKit;
 using Foundation;
 using Facebook.CoreKit;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using Sensus.iOS.Callbacks.UILocalNotifications;
+using Sensus.iOS.Notifications.UILocalNotifications;
 using Sensus.iOS.Callbacks;
 using UserNotifications;
-using Sensus.iOS.Callbacks.UNUserNotifications;
+using Sensus.iOS.Notifications.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
 using System.Threading;
@@ -254,7 +254,7 @@ namespace Sensus.iOS
                             await SensusServiceHelper.Get().StartAsync();
 
                             // update/run all callbacks
-                            await (SensusContext.Current.CallbackScheduler as IiOSCallbackScheduler).UpdateCallbacksAsync();
+                            await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksAsync();
 
                             // reenable the UI to let the user proceed
                             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
@@ -328,7 +328,7 @@ namespace Sensus.iOS
                 // we're in iOS < 10.0, which means we should have a notifier and scheduler to handle the notification.
 
                 // cancel notification (removing it from the tray), since it has served its purpose
-                (SensusContext.Current.Notifier as IUILocalNotificationNotifier)?.CancelNotification(notification);
+                (SensusContext.Current.Notifier as UILocalNotificationNotifier)?.CancelNotification(notification);
 
                 iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
 
@@ -400,22 +400,61 @@ namespace Sensus.iOS
 
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
-            ProcessRemoteNotification(userInfo);
+            ProcessRemoteNotificationAsync(application, userInfo);
         }
 
         public override void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-            ProcessRemoteNotification(userInfo);
-            completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
+            ProcessRemoteNotificationAsync(application, userInfo).ContinueWith(finishedTask =>
+            {
+                // once the remote notification has been processed, invoke the completion handler.
+                completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
+            });
         }
 
-        private void ProcessRemoteNotification(NSDictionary userInfo)
+        private System.Threading.Tasks.Task ProcessRemoteNotificationAsync(UIApplication application, NSDictionary userInfo)
         {
-            if (userInfo.ContainsKey(new NSString("command")))
+            return System.Threading.Tasks.Task.Run(async () =>
             {
-                string command = (userInfo[new NSString("command")] as NSString).ToString();
-                SensusServiceHelper.Get().Logger.Log("Received push notification command:  " + command, LoggingLevel.Normal, GetType());
-            }
+                // set up a cancellation token for processing within limits. the token will be cancelled
+                // if we run out of time or an exception is thrown in this method
+                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                try
+                {
+                    // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
+                    // be on the conservative side and only run for 25 seconds.
+                    cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(25));
+
+                    // extract push notification information
+                    string protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
+                    string id = (userInfo[new NSString("id")] as NSString).ToString();
+                    string command = (userInfo[new NSString("command")] as NSString).ToString();
+
+                    NSDictionary aps = userInfo[new NSString("aps")] as NSDictionary;
+                    string sound = (aps[new NSString("sound")] as NSString).ToString();
+
+                    NSDictionary alert = aps[new NSString("alert")] as NSDictionary;
+                    string body = (alert[new NSString("body")] as NSString).ToString();
+                    string title = (alert[new NSString("title")] as NSString).ToString();
+
+                    // wait for the push notification to be processed
+                    await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
+
+                    // we're done. ensure that the time-based cancellation above does not trigger any registered listeners.
+                    cancellationTokenSource.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while processing remote notification:  " + ex.Message, ex);
+
+                    try
+                    {
+                        cancellationTokenSource.Cancel();
+                    }
+                    catch (Exception)
+                    { }
+                }
+            });
         }
 
         // This method should be used to release shared resources and it should store the application state.

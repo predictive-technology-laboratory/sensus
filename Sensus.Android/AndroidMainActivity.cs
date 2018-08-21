@@ -29,7 +29,7 @@ using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
-using Sensus.Callbacks;
+using Sensus.Notifications;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
