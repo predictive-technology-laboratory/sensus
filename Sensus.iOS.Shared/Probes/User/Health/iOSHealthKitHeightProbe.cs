@@ -57,9 +57,13 @@ namespace Sensus.iOS.Probes.User.Health
             HKQuantitySample quantitySample = sample as HKQuantitySample;
 
             if (quantitySample == null)
+            {
                 return null;
+            }
             else
-                return new HeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Inch));
+            {
+                return new HeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime(), TimeSpan.Zero), quantitySample.Quantity.GetDoubleValue(HKUnit.Inch));
+            }
         }
 
         protected override ChartSeries GetChartSeries()

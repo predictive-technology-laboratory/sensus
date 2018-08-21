@@ -59,10 +59,13 @@ namespace Sensus.iOS.Probes.User.Health
                 NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(new HKObjectType[] { ObjectType });
                 ManualResetEvent authorizationWait = new ManualResetEvent(false);
                 _healthStore.RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
+                                                         
                     (success, error) =>
                     {
                         if (error != null)
+                        {
                             SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
+                        }
 
                         authorizationWait.Set();
                     });

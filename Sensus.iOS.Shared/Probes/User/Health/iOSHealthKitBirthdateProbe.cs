@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -65,24 +65,30 @@ namespace Sensus.iOS.Probes.User.Health
             if (error == null)
             {
                 if (dateOfBirth == null)
+                {
                     throw new Exception("User has not provided -- or has not allowed access to -- their date of birth.");
+                }
                 else
-                    data.Add(new BirthdateDatum(DateTimeOffset.Now, new DateTimeOffset(dateOfBirth.ToDateTime())));
+                {
+                    data.Add(new BirthdateDatum(DateTimeOffset.UtcNow, new DateTimeOffset(dateOfBirth.ToDateTime(), TimeSpan.Zero)));
+                }
             }
             else
+            {
                 throw new Exception("Error reading date of birth:  " + error.Description);
+            }
 
             return data;
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()
