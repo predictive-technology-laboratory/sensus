@@ -101,6 +101,7 @@ namespace Sensus.DataStores.Remote
         private string _folder;
         private string _iamAccessKey;
         private string _iamSecretKey;
+        private string _sessionToken;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
         private int _putCount;
@@ -178,7 +179,12 @@ namespace Sensus.DataStores.Remote
         {
             get
             {
-                return _iamAccessKey + ":" + _iamSecretKey;
+                string val = _iamAccessKey + ":" + _iamSecretKey;
+                if(!string.IsNullOrWhiteSpace(_sessionToken))
+                {
+                    val += ":" + _sessionToken; 
+                }
+                return val;
             }
             set
             {
@@ -189,6 +195,13 @@ namespace Sensus.DataStores.Remote
                     {
                         _iamAccessKey = parts[0].Trim();
                         _iamSecretKey = parts[1].Trim();
+                        _sessionToken = null;
+                    }
+                    if (parts.Length == 3)
+                    {
+                        _iamAccessKey = parts[0].Trim();
+                        _iamSecretKey = parts[1].Trim();
+                        _sessionToken = parts[2].Trim();
                     }
                 }
             }
@@ -366,7 +379,8 @@ namespace Sensus.DataStores.Remote
                 clientConfig.ServiceURL = _pinnedServiceURL;
             }
 
-            return new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig);
+            var client = string.IsNullOrWhiteSpace(_sessionToken) ? new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig) : new AmazonS3Client(_iamAccessKey, _iamSecretKey, _sessionToken, clientConfig);
+            return client;
         }
 
         public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
@@ -441,12 +455,11 @@ namespace Sensus.DataStores.Remote
                         throw new Exception("Bad status code:  " + putStatus);
                     }
                 }
-                catch (WebException ex)
+                catch (AmazonS3Exception exc)
                 {
-
-                    if (ex.Status == WebExceptionStatus.ReceiveFailure && allowRetry == true && string.IsNullOrWhiteSpace(_credentialsServiceURL) == false) //TODO:  Need to define what an expired error looks like
+                    if ((exc.ErrorCode == "InvalidAccessKeyId" || exc.ErrorCode == "SignatureDoesNotMatch" || exc.ErrorCode == "InvalidToken") &&
+                         allowRetry == true && string.IsNullOrWhiteSpace(_credentialsServiceURL) == false)
                     {
-                        //there was a problem with credentials and we haven't retried so lets force a refresh and try again
                         AmazonS3Client innerS3 = null;
                         try
                         {
@@ -454,7 +467,7 @@ namespace Sensus.DataStores.Remote
                             innerS3 = InitializeS3();
                             await Put(innerS3, stream, key, contentType, cancellationToken, false); //don't allow a second retry if this one fails
                         }
-                        catch(Exception innerEx)
+                        catch (Exception innerEx)
                         {
                             string message = "The credentials from the S3 credentials service failed.";
                             SensusException.Report(message, innerEx);
@@ -464,7 +477,11 @@ namespace Sensus.DataStores.Remote
                             DisposeS3(innerS3);
                         }
                     }
-                    else if (ex.Status == WebExceptionStatus.TrustFailure)
+                }
+                catch (WebException ex)
+                {
+
+                    if (ex.Status == WebExceptionStatus.TrustFailure)
                     {
                         string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
                         SensusException.Report(message, ex);
@@ -577,6 +594,7 @@ namespace Sensus.DataStores.Remote
                         var account = await GetJsonObjectFromUrl<AccountCredentials>(url);
                         _iamAccessKey = account.accessKeyId;
                         _iamSecretKey = account.secretAccessKey;
+                        _sessionToken = account.sessionToken;
                         CredentialsExpiration = account.expiration;
                     }
                 }
@@ -588,7 +606,20 @@ namespace Sensus.DataStores.Remote
 
             T rVal = default(T);
             string response;
-            HttpClient httpClient = new HttpClient();
+
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
+            {
+                if (policyErrors == SslPolicyErrors.None)
+                {
+                    return true;
+                }
+                System.Diagnostics.Trace.WriteLine(cert.GetCertHashString()); //TODO:  Right now we allow all cetificate errors to go through.  We should probably talk through if this is ok or if we only want a specific/property certificate error/hash to come through.
+                return true;
+            };
+
+            HttpClient httpClient = new HttpClient(handler);
             try
             {
                 response = await httpClient.GetStringAsync(url);
