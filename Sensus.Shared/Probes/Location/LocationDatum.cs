@@ -63,7 +63,7 @@ namespace Sensus.Probes.Location
         /// <summary>
         /// Distance Traveled in kilometers between the last location reading and this one. 
         /// </summary>
-        /// <value>Distance traveled between the last location reading at this one.</value>
+        /// <value>Distance traveled between the last location reading and this one in kilometers.</value>
         [DoubleProbeTriggerProperty]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
         public double? DistanceTraveled
@@ -74,18 +74,18 @@ namespace Sensus.Probes.Location
 
         public override string DisplayDetail
         {
-            get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon)"; }
+            get { return Math.Round(_latitude, 2) + " (lat), " + Math.Round(_longitude, 2) + " (lon), " + (_distanceTraveled.HasValue ? _distanceTraveled.Value.ToString() : "Not Set")+ " (distance KM)"; }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the [lat,lon] location.
+        /// Gets the string placeholder value, which is the [lat,lon, distance from last reading in kilometers] location.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return "[" + Math.Round(_latitude, 2) + "," + Math.Round(_longitude, 2) + "]";
+                return "[" + Math.Round(_latitude, 2) + "," + Math.Round(_longitude, 2) + "," + _distanceTraveled.GetValueOrDefault().ToString() + "]";
             }
         }
 
@@ -105,13 +105,14 @@ namespace Sensus.Probes.Location
             {
                 _distanceTraveled = Movement.SpeedDatum.CalculateDistanceKM(currentPosition, lastPosition);
             }
-       }
+        }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
                    "Latitude:  " + _latitude + Environment.NewLine +
-                   "Longitude:  " + _longitude;
+                   "Longitude:  " + _longitude +
+                   "Distance Traveled (KM):   " + (_distanceTraveled.HasValue ? _distanceTraveled.Value.ToString() : "Not Set");
         }
     }
 }
