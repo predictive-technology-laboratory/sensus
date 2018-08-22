@@ -15,15 +15,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Sensus.Context;
+using System.Threading;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : PollingProbe
     {
-        public const string DEVICE_ID_SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
         public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
         protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
@@ -74,7 +72,7 @@ namespace Sensus.Probes.Context
 
         protected abstract void StartAdvertising();
 
-        protected sealed override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
+        protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
             // restart the scan. on android this will cause the thread to sleep while data accumate. we need to sleep in order
             // to keep the cpu alive, as we're holding a wakelock for the poll. this is not allowed on ios, where we have a 

@@ -13,22 +13,25 @@
 // limitations under the License.
 
 using System;
-using System.Text;
 using Android.Bluetooth;
-using Java.Util;
-using Sensus.Probes.Context;
+using Sensus.Exceptions;
 
 namespace Sensus.Android.Probes.Context
 {
-    public class AndroidBluetoothGattServerCallback : BluetoothGattServerCallback
+    /// <summary>
+    /// Android BLE GATT server callback. Serves requests from clients who wish to read the device ID characteristic.
+    /// </summary>
+    public class AndroidBluetoothServerGattCallback : BluetoothGattServerCallback
     {
         public BluetoothGattServer Server { get; set; }
 
-        private AndroidBluetoothDeviceProximityProbe _probe;
+        private BluetoothGattService _service;
+        private BluetoothGattCharacteristic _characteristic;
 
-        public AndroidBluetoothGattServerCallback(AndroidBluetoothDeviceProximityProbe probe)
+        public AndroidBluetoothServerGattCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic)
         {
-            _probe = probe;
+            _service = service;
+            _characteristic = characteristic;
         }
 
         public override void OnServiceAdded(GattStatus status, BluetoothGattService service)
@@ -38,16 +41,28 @@ namespace Sensus.Android.Probes.Context
             SensusServiceHelper.Get().Logger.Log("Service added status:  " + status, LoggingLevel.Normal, GetType());
         }
 
+        /// <summary>
+        /// Called when a client wishes to read a characteristic from the service.
+        /// </summary>
+        /// <param name="device">Client device making the read request.</param>
+        /// <param name="requestId">Request identifier.</param>
+        /// <param name="offset">Offset.</param>
+        /// <param name="characteristic">Characteristic to read.</param>
         public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic)
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, characteristic);
 
             try
             {
-                if (characteristic.Service.Uuid == _probe.DeviceIdService.Uuid &&
-                    characteristic.Uuid == _probe.DeviceIdCharacteristic.Uuid)
+                if (Server == null)
                 {
-                    Server?.SendResponse(device, requestId, GattStatus.Success, offset, _probe.DeviceIdCharacteristic.GetValue());
+                    SensusException.Report("Null server when responding to BLE characteristic read request.");
+                }
+
+                // only respond to client requests for the service and characteristic we are expecting
+                if (characteristic.Service.Uuid == _service.Uuid && characteristic.Uuid == _characteristic.Uuid)
+                {
+                    Server?.SendResponse(device, requestId, GattStatus.Success, offset, _characteristic.GetValue());
                 }
                 else
                 {

@@ -363,13 +363,13 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="AndroidSensusServiceConnection.cs" />
     <Compile Include="AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothAdvertisingCallback.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothScannerCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothServerAdvertisingCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothClientScannerCallback.cs" />
     <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothGattClientCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothClientGattCallback.cs" />
     <Compile Include="Probes\Movement\AndroidActivityProbe.cs" />
     <Compile Include="Probes\Movement\AndroidAwarenessProbeBroadcastReceiver.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothGattServerCallback.cs" />
+    <Compile Include="Probes\Context\AndroidBluetoothServerGattCallback.cs" />
     <Compile Include="Probes\Location\AndroidEstimoteBeaconProbe.cs" />
     <Compile Include="TextCellDisposedFix.cs" />
     <Compile Include="Probes\Movement\AndroidLocationFenceProbe.cs" />

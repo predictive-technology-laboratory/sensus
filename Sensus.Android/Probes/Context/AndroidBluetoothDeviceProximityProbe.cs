@@ -20,54 +20,26 @@ using Android.Bluetooth;
 using Android.OS;
 using Java.Util;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.Text;
 using Sensus.Context;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace Sensus.Android.Probes.Context
 {
+    /// <summary>
+    /// Scans for the presence of other devices nearby that are running the current <see cref="Protocol"/>. When
+    /// encountered, will read the device ID of these other devices. Also advertises the presence of the current
+    /// device and serves requests for the current device's ID.
+    /// </summary>
     public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
     {
-        private AndroidBluetoothScannerCallback _bluetoothScannerCallback;
-        private AndroidBluetoothAdvertisingCallback _bluetoothAdvertiserCallback;
+        private AndroidBluetoothClientScannerCallback _bluetoothScannerCallback;
+        private AndroidBluetoothServerAdvertisingCallback _bluetoothAdvertiserCallback;
         private BluetoothGattService _deviceIdService;
-        private BluetoothGattCharacteristic _deviceIdCharacteristic;
 
         [JsonIgnore]
-        public BluetoothGattService DeviceIdService
-        {
-            get
-            {
-                return _deviceIdService;
-            }
-        }
-
-        [JsonIgnore]
-        public BluetoothGattCharacteristic DeviceIdCharacteristic
-        {
-            get
-            {
-                return _deviceIdCharacteristic;
-            }
-        }
-
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-
-        public AndroidBluetoothDeviceProximityProbe()
-        {
-            _bluetoothScannerCallback = new AndroidBluetoothScannerCallback(this);
-
-            _bluetoothScannerCallback.DeviceIdEncountered += (sender, bluetoothDeviceProximityDatum) =>
-            {
-                lock (EncounteredDeviceData)
-                {
-                    EncounteredDeviceData.Add(bluetoothDeviceProximityDatum);
-                }
-            };
-
-            _bluetoothAdvertiserCallback = new AndroidBluetoothAdvertisingCallback(this);
-        }
 
         protected override void Initialize()
         {
@@ -83,11 +55,24 @@ namespace Sensus.Android.Probes.Context
                 throw new Exception(error);
             }
 
-            _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
-            _deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
+            BluetoothGattCharacteristic deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
+            deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
 
-            _deviceIdService = new BluetoothGattService(UUID.FromString(DEVICE_ID_SERVICE_UUID), GattServiceType.Primary);
-            _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
+            _deviceIdService = new BluetoothGattService(UUID.FromString(Protocol.Id), GattServiceType.Primary);
+            _deviceIdService.AddCharacteristic(deviceIdCharacteristic);
+
+            _bluetoothScannerCallback = new AndroidBluetoothClientScannerCallback(_deviceIdService, deviceIdCharacteristic);
+
+            // add any read characteristics to the collection
+            _bluetoothScannerCallback.CharacteristicRead += (sender, e) =>
+            {
+                lock (EncounteredDeviceData)
+                {
+                    EncounteredDeviceData.Add(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
+                }
+            };
+
+            _bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, deviceIdCharacteristic);
         }
 
         #region central -- scan
@@ -189,7 +174,7 @@ namespace Sensus.Android.Probes.Context
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             });
         }

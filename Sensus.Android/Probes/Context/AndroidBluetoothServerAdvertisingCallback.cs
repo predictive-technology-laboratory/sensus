@@ -20,16 +20,26 @@ using Sensus.Context;
 
 namespace Sensus.Android.Probes.Context
 {
-    public class AndroidBluetoothAdvertisingCallback : AdvertiseCallback
+    /// <summary>
+    /// Android BLE server advertising callback. Receives events related to the starting and 
+    /// stopping of BLE advertising. Configures a BLE server that responds to client read requests.
+    /// </summary>
+    public class AndroidBluetoothServerAdvertisingCallback : AdvertiseCallback
     {
-        private AndroidBluetoothDeviceProximityProbe _probe;
-        private BluetoothGattServer _bluetoothGattServer;
+        private BluetoothGattService _service;
+        private BluetoothGattCharacteristic _characteristic;
+        private BluetoothGattServer _gattServer;
 
-        public AndroidBluetoothAdvertisingCallback(AndroidBluetoothDeviceProximityProbe probe)
+        public AndroidBluetoothServerAdvertisingCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic)
         {
-            _probe = probe;    
+            _service = service;
+            _characteristic = characteristic;
         }
 
+        /// <summary>
+        /// Called when advertising has successfully started. Sets up a BLE server to handle client requests.
+        /// </summary>
+        /// <param name="settingsInEffect">Settings in effect.</param>
         public override void OnStartSuccess(AdvertiseSettings settingsInEffect)
         {
             SensusServiceHelper.Get().Logger.Log("Started advertising.", LoggingLevel.Normal, GetType());
@@ -37,23 +47,25 @@ namespace Sensus.Android.Probes.Context
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 // the following should never happen, but just in case there is an existing server, close it.
-                if(_bluetoothGattServer != null)
+                if (_gattServer != null)
                 {
                     CloseServer();
                 }
 
-                // open gatt server to service read requests from central clients
                 try
                 {
+                    // create a callback to receive read requests events from client
+                    AndroidBluetoothServerGattCallback serverCallback = new AndroidBluetoothServerGattCallback(_service, _characteristic);
+
+                    // open the server, which contains the substantive connection with a client. this also registers the callback.
                     BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
-                    AndroidBluetoothGattServerCallback serverCallback = new AndroidBluetoothGattServerCallback(_probe);
-                    _bluetoothGattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
+                    _gattServer = bluetoothManager.OpenGattServer(Application.Context, serverCallback);
 
-                    // set server on callback for responding to requests
-                    serverCallback.Server = _bluetoothGattServer;
+                    // set the server on callback, so that responses to read requests can be sent back to clients.
+                    serverCallback.Server = _gattServer;
 
-                    // add service 
-                    _bluetoothGattServer.AddService(_probe.DeviceIdService);
+                    // declare the BLE service handled by the server, which is the same as the one advertised.
+                    _gattServer.AddService(_service);
                 }
                 catch (Exception ex)
                 {
@@ -75,7 +87,7 @@ namespace Sensus.Android.Probes.Context
                 // remove the service
                 try
                 {
-                    _bluetoothGattServer?.RemoveService(_probe.DeviceIdService);
+                    _gattServer?.RemoveService(_service);
                 }
                 catch (Exception ex)
                 {
@@ -85,7 +97,7 @@ namespace Sensus.Android.Probes.Context
                 // close the server
                 try
                 {
-                    _bluetoothGattServer?.Close();
+                    _gattServer?.Close();
                 }
                 catch (Exception ex)
                 {
@@ -93,7 +105,7 @@ namespace Sensus.Android.Probes.Context
                 }
                 finally
                 {
-                    _bluetoothGattServer = null;
+                    _gattServer = null;
                 }
             });
         }

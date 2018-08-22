@@ -20,14 +20,22 @@ using Sensus.Probes.Context;
 
 namespace Sensus.iOS.Probes.Context
 {
+    /// <summary>
+    /// iOS BLE central (scanner/client) delegate class. Receives events related to BLE scanning and  
+    /// characteristic reading.
+    /// </summary>
     public class iOSBluetoothDeviceProximityProbeCentralManagerDelegate : CBCentralManagerDelegate
     {
-        public event EventHandler<BluetoothDeviceProximityDatum> DeviceIdEncountered;
+        public EventHandler<BluetoothCharacteristicReadArgs> CharacteristicRead;
 
+        private CBMutableService _service;
+        private CBMutableCharacteristic _characteristic;
         private iOSBluetoothDeviceProximityProbe _probe;
 
-        public iOSBluetoothDeviceProximityProbeCentralManagerDelegate(iOSBluetoothDeviceProximityProbe probe)
+        public iOSBluetoothDeviceProximityProbeCentralManagerDelegate(CBMutableService service, CBMutableCharacteristic characteristic, iOSBluetoothDeviceProximityProbe probe)
         {
+            _service = service;
+            _characteristic = characteristic;
             _probe = probe;
         }
 
@@ -39,7 +47,7 @@ namespace Sensus.iOS.Probes.Context
             {
                 try
                 {
-                    central.ScanForPeripherals(_probe.DeviceIdService.UUID);
+                    central.ScanForPeripherals(_service.UUID);
                 }
                 catch (Exception ex)
                 {
@@ -56,18 +64,18 @@ namespace Sensus.iOS.Probes.Context
                 {
                     if (e.Error == null)
                     {
-                        // discover characteristics for newly discovered services
+                        // discover characteristics for newly discovered services that match the one we're looking for
                         foreach (CBService service in peripheral.Services)
                         {
-                            if (service.UUID.Equals(_probe.DeviceIdService.UUID))
+                            if (service.UUID.Equals(_service.UUID))
                             {
-                                peripheral.DiscoverCharacteristics(new CBUUID[] { _probe.DeviceIdCharacteristic.UUID }, service);
+                                peripheral.DiscoverCharacteristics(new CBUUID[] { _characteristic.UUID }, service);
                             }
                         }
                     }
                     else
                     {
-                        throw new Exception("Error while discovering service:  " + e.Error);
+                        throw new Exception("Error while discovering characteristics:  " + e.Error);
                     }
                 }
                 catch (Exception ex)
@@ -83,10 +91,10 @@ namespace Sensus.iOS.Probes.Context
                 {
                     if (e.Error == null)
                     {
-                        // read device ID for newly discovered characteristics
+                        // read characteristic value for newly discovered characteristics that match the one we're looking for
                         foreach (CBCharacteristic characteristic in e.Service.Characteristics)
                         {
-                            if (characteristic.UUID.Equals(_probe.DeviceIdCharacteristic.UUID))
+                            if (characteristic.UUID.Equals(_characteristic.UUID))
                             {
                                 peripheral.ReadValue(characteristic);
                             }
@@ -94,12 +102,12 @@ namespace Sensus.iOS.Probes.Context
                     }
                     else
                     {
-                        throw new Exception("Error while discovering characteristic:  " + e.Error);
+                        throw new Exception("Error while reading characteristic values:  " + e.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while reading device ID value from peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while reading characteristic values from peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
                     DisconnectPeripheral(central, peripheral);
                 }
             };
@@ -117,8 +125,8 @@ namespace Sensus.iOS.Probes.Context
                         }
                         else
                         {
-                            string encounteredDeviceId = Encoding.UTF8.GetString(e.Characteristic.Value.ToArray());
-                            DeviceIdEncountered?.Invoke(this, new BluetoothDeviceProximityDatum(DateTime.UtcNow, encounteredDeviceId));
+                            string characteristicValue = Encoding.UTF8.GetString(e.Characteristic.Value.ToArray());
+                            CharacteristicRead?.Invoke(this, new BluetoothCharacteristicReadArgs(characteristicValue, DateTime.UtcNow));
                         }
                     }
                     else
@@ -151,31 +159,13 @@ namespace Sensus.iOS.Probes.Context
             // discover services for newly connected peripheral
             try
             {
-                peripheral.DiscoverServices(new CBUUID[] { _probe.DeviceIdService.UUID });
+                peripheral.DiscoverServices(new CBUUID[] { _service.UUID });
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while discovering services." + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while discovering services:  " + ex.Message, LoggingLevel.Normal, GetType());
                 DisconnectPeripheral(central, peripheral);
             }
-        }
-
-        public override void FailedToConnectPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
-        {
-            if (error != null)
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to connect peripheral:  " + error, LoggingLevel.Normal, GetType());
-            }
-        }
-
-        public override void DisconnectedPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
-        {
-            SensusServiceHelper.Get().Logger.Log("Disconnected peripheral.", LoggingLevel.Normal, GetType());
-        }
-
-        public override void WillRestoreState(CBCentralManager central, NSDictionary dict)
-        {
-            SensusServiceHelper.Get().Logger.Log("Will restore state.", LoggingLevel.Normal, GetType());
         }
 
         private void DisconnectPeripheral(CBCentralManager central, CBPeripheral peripheral)
@@ -188,6 +178,21 @@ namespace Sensus.iOS.Probes.Context
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while disconnecting peripheral:  " + ex, LoggingLevel.Normal, GetType());
             }
+        }
+
+        public override void FailedToConnectPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
+        {
+            SensusServiceHelper.Get().Logger.Log("Failed to connect peripheral:  " + (error?.ToString() ?? "[no error]"), LoggingLevel.Normal, GetType());
+        }
+
+        public override void DisconnectedPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
+        {
+            SensusServiceHelper.Get().Logger.Log("Disconnected peripheral:  " + (error?.ToString() ?? "[no error]"), LoggingLevel.Normal, GetType());
+        }
+
+        public override void WillRestoreState(CBCentralManager central, NSDictionary dict)
+        {
+            SensusServiceHelper.Get().Logger.Log("Will restore state.", LoggingLevel.Normal, GetType());
         }
     }
 }

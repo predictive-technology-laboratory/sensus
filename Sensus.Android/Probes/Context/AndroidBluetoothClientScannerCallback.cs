@@ -19,19 +19,26 @@ using Android.Bluetooth.LE;
 using Android.OS;
 using Java.Lang;
 using Sensus.Context;
+using Android.Bluetooth;
 using Sensus.Probes.Context;
 
 namespace Sensus.Android.Probes.Context
 {
-    public class AndroidBluetoothScannerCallback : ScanCallback
+    /// <summary>
+    /// Android BLE client scanner callback. Receives events related to BLE scanning and  
+    /// configures a BLE client that requests characteristic values from the server.
+    /// </summary>
+    public class AndroidBluetoothClientScannerCallback : ScanCallback
     {
-        public event EventHandler<BluetoothDeviceProximityDatum> DeviceIdEncountered;
+        public event EventHandler<BluetoothCharacteristicReadArgs> CharacteristicRead;
 
-        private AndroidBluetoothDeviceProximityProbe _probe;
+        private BluetoothGattService _service;
+        private BluetoothGattCharacteristic _characteristic;
 
-        public AndroidBluetoothScannerCallback(AndroidBluetoothDeviceProximityProbe probe)
+        public AndroidBluetoothClientScannerCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic)
         {
-            _probe = probe;
+            _service = service;
+            _characteristic = characteristic;
         }
 
         public override void OnScanResult(ScanCallbackType callbackType, ScanResult result)
@@ -61,11 +68,12 @@ namespace Sensus.Android.Probes.Context
                 DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
 
                 // register client callback
-                AndroidBluetoothGattClientCallback gattClientCallback = new AndroidBluetoothGattClientCallback(_probe, encounterTimestamp);
+                AndroidBluetoothClientGattCallback clientCallback = new AndroidBluetoothClientGattCallback(_service, _characteristic, encounterTimestamp);
 
-                if (DeviceIdEncountered != null)
+                // relay the client read event to any callers scanning for results
+                if (CharacteristicRead != null)
                 {
-                    gattClientCallback.DeviceIdEncountered += DeviceIdEncountered;
+                    clientCallback.CharacteristicRead += CharacteristicRead;
                 }
 
                 // connect client to read data from peripheral server
@@ -73,7 +81,7 @@ namespace Sensus.Android.Probes.Context
                 {
                     try
                     {
-                        result.Device.ConnectGatt(Application.Context, false, gattClientCallback);
+                        result.Device.ConnectGatt(Application.Context, false, clientCallback);
                     }
                     catch (System.Exception ex)
                     {
@@ -83,7 +91,7 @@ namespace Sensus.Android.Probes.Context
             }
             catch (System.Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while reading device ID from peripheral:  " + ex, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while connecting to peripheral:  " + ex, LoggingLevel.Normal, GetType());
             }
         }
     }

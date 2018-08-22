@@ -25,45 +25,13 @@ namespace Sensus.iOS.Probes.Context
 {
     public class iOSBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
     {
-        private CBCentralManager _bluetoothCentralManager;
-        private iOSBluetoothDeviceProximityProbeCentralManagerDelegate _bluetoothCentralManagerDelegate;
-        private CBPeripheralManager _bluetoothPeripheralManager;
-        private CBMutableCharacteristic _deviceIdCharacteristic;
         private CBMutableService _deviceIdService;
-
-        [JsonIgnore]
-        public CBMutableCharacteristic DeviceIdCharacteristic
-        {
-            get
-            {
-                return _deviceIdCharacteristic;
-            }
-        }
-
-        [JsonIgnore]
-        public CBMutableService DeviceIdService
-        {
-            get
-            {
-                return _deviceIdService;
-            }
-        }
+        private CBMutableCharacteristic _deviceIdCharacteristic;
+        private CBCentralManager _bluetoothCentralManager;
+        private CBPeripheralManager _bluetoothPeripheralManager;
 
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
-
-        public iOSBluetoothDeviceProximityProbe()
-        {
-            _bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(this);
-
-            _bluetoothCentralManagerDelegate.DeviceIdEncountered += (sender, bluetoothDeviceProximityDatum) =>
-            {
-                // we have no cancellation token. thus, all that can happen here is that the datum is stored locally
-                // and surveys are triggered (if any are defined). size- and force-writes will not result, and this
-                // is important because we might be currently executing from the background on a bluetooth scan result.
-                StoreDatum(bluetoothDeviceProximityDatum, null);
-            };
-        }
 
         protected override void Initialize()
         {
@@ -76,7 +44,7 @@ namespace Sensus.iOS.Probes.Context
                                                                   CBAttributePermissions.Readable);
 
             // create service with device id characteristic
-            _deviceIdService = new CBMutableService(CBUUID.FromString(DEVICE_ID_SERVICE_UUID), true);
+            _deviceIdService = new CBMutableService(CBUUID.FromString(Protocol.Id), true);
             _deviceIdService.Characteristics = new CBCharacteristic[] { _deviceIdCharacteristic };
         }
 
@@ -87,7 +55,17 @@ namespace Sensus.iOS.Probes.Context
             {
                 try
                 {
-                    _bluetoothCentralManager = new CBCentralManager(_bluetoothCentralManagerDelegate,
+                    iOSBluetoothDeviceProximityProbeCentralManagerDelegate bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
+
+                    bluetoothCentralManagerDelegate.CharacteristicRead += (sender, e) =>
+                    {
+                        // we have no cancellation token. thus, all that can happen here is that the datum is stored locally
+                        // and surveys are triggered (if any are defined). size- and force-writes will not result, and this
+                        // is important because we might be currently executing from the background on a bluetooth scan result.
+                        StoreDatum(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
+                    };
+
+                    _bluetoothCentralManager = new CBCentralManager(bluetoothCentralManagerDelegate,
                                                                     DispatchQueue.MainQueue,
                                                                     NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
                 }
@@ -125,7 +103,7 @@ namespace Sensus.iOS.Probes.Context
             {
                 try
                 {
-                    _bluetoothPeripheralManager = new CBPeripheralManager(new iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(this),
+                    _bluetoothPeripheralManager = new CBPeripheralManager(new iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this),
                                                                           DispatchQueue.MainQueue,
                                                                           NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBPeripheralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
                 }
