@@ -142,7 +142,7 @@ namespace Sensus.UI
 
                 selectedScript.Submitting = false;
 
-                if (canceled)
+                if (canceled || selectedScript.Valid == false)
                 {
                     scriptList.SelectedItem = null;
                 }
