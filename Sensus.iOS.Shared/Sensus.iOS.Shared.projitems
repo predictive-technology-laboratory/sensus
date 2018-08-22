@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBloodTypeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitFitzpatrickSkinTypeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitHeightProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitSamplingProbe.cs" />
@@ -34,6 +35,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\UNUserNotificationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotifications\IUNUserNotificationNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitWeightProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitWheelchairUseProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSActivityProbe.cs" />
