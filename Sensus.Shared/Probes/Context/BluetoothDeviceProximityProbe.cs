@@ -26,29 +26,29 @@ namespace Sensus.Probes.Context
     {
         public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
-        private int _scanDurationMS;
+        private TimeSpan _scanDuration;
 
         protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
 
         /// <summary>
-        /// The length of time (in milliseconds) to scan for devices in proximity.
+        /// The length of time to scan for devices in proximity.
         /// </summary>
         /// <value>The scan time ms.</value>
         [TimeUiProperty("Scan Duration (MS):", true, 20, true)]
-        public int ScanDurationMS
+        public TimeSpan ScanDuration
         {
             get
             {
-                return _scanDurationMS;
+                return _scanDuration;
             }
             set
             {
-                if (value < 5000)
+                if (value.TotalSeconds < 5)
                 {
-                    value = 5000;
+                    value = TimeSpan.FromSeconds(5);
                 }
 
-                _scanDurationMS = value;
+                _scanDuration = value;
             }
         }
 
@@ -64,7 +64,7 @@ namespace Sensus.Probes.Context
 
         public BluetoothDeviceProximityProbe()
         {
-            _scanDurationMS = 10000;
+            _scanDuration = TimeSpan.FromSeconds(10);
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 

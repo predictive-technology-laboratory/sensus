@@ -111,7 +111,7 @@ namespace Sensus.Android.Probes.Context
                             if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
                             {
                                 // ensure we get a few (in this case ~3) reports per scan
-                                scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 3.0));
+                                scanSettingsBuilder.SetReportDelay((long)(ScanDuration.TotalMilliseconds / 3.0));
                             }
 
                             BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
@@ -123,7 +123,9 @@ namespace Sensus.Android.Probes.Context
                     }
                 });
 
-                await Task.Delay(ScanDurationMS, cancellationToken);
+                await Task.Delay(ScanDuration, cancellationToken);
+
+                StopScan();
             });
         }
 
