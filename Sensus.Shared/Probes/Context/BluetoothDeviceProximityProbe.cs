@@ -64,7 +64,7 @@ namespace Sensus.Probes.Context
 
         public BluetoothDeviceProximityProbe()
         {
-            _scanDurationMS = 5000;
+            _scanDurationMS = 30000;
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 
