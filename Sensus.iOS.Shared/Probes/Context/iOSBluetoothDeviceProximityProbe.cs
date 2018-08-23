@@ -89,7 +89,7 @@ namespace Sensus.iOS.Probes.Context
                     }
                 });
 
-                await Task.Delay(ScanDuration, cancellationToken);
+                await Task.Delay(ScanDurationMS, cancellationToken);
 
                 StopScan();
             });
