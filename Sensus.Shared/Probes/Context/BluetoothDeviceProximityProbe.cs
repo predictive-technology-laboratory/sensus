@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
+using Sensus.UI.UiProperties;
 
 namespace Sensus.Probes.Context
 {
@@ -24,7 +26,31 @@ namespace Sensus.Probes.Context
     {
         public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
+        private int _scanDurationMS;
+
         protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
+
+        /// <summary>
+        /// The length of time (in milliseconds) to scan for devices in proximity.
+        /// </summary>
+        /// <value>The scan time ms.</value>
+        [TimeUiProperty("Scan Duration (MS):", true, 20, true)]
+        public int ScanDurationMS
+        {
+            get
+            {
+                return _scanDurationMS;
+            }
+            set
+            {
+                if (value < 5000)
+                {
+                    value = 5000;
+                }
+
+                _scanDurationMS = value;
+            }
+        }
 
         public sealed override string DisplayName
         {
@@ -38,6 +64,7 @@ namespace Sensus.Probes.Context
 
         public BluetoothDeviceProximityProbe()
         {
+            _scanDurationMS = 10000;
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 
@@ -74,34 +101,29 @@ namespace Sensus.Probes.Context
 
         protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
         {
-            // restart the scan. on android this will cause the thread to sleep while data accumate. we need to sleep in order
-            // to keep the cpu alive, as we're holding a wakelock for the poll. this is not allowed on ios, where we have a 
-            // limited amount of time to return from the poll. thus, on ios, we just start the scan and return immediately 
-            // without waiting for results to accumulate.
-
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
-                StopScan();
+                SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
+                ScanAsync(cancellationToken).Wait();
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
+            }
+            finally
+            {
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                    StopScan();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
+                }
             }
 
-            try
-            {
-                SensusServiceHelper.Get().Logger.Log("Starting scan.", LoggingLevel.Normal, GetType());
-                StartScan();
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
-            }
-
-            // create a new list to return any data that have accumulated -- this only plays a role in android, where we 
-            // wait for data to accumulate while holding a wakelock. on ios, data are added directly via Probe.StoreDatumAsync 
-            // because we're not allowed to wait for data to accumulate (background time expiration).
+            // create a new list to return any data that have accumulated (prevents cross-thread modification)
             List<BluetoothDeviceProximityDatum> dataToReturn;
 
             lock (EncounteredDeviceData)
@@ -119,7 +141,7 @@ namespace Sensus.Probes.Context
             return dataToReturn;
         }
 
-        protected abstract void StartScan();
+        protected abstract Task ScanAsync(CancellationToken cancellationToken);
 
         public sealed override void Stop()
         {

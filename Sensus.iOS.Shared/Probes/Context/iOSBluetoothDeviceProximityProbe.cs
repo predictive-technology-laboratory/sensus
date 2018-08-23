@@ -20,9 +20,21 @@ using Foundation;
 using System.Text;
 using Newtonsoft.Json;
 using Sensus.Context;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Sensus.iOS.Probes.Context
 {
+    /// <summary>
+    /// Scans for the presence of other devices nearby that are running the current <see cref="Protocol"/>. When
+    /// encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
+    /// of the current device and serves requests for the current device's ID. This Probe reports data in the form 
+    /// of <see cref="BluetoothDeviceProximityDatum"/> objects. There are no caveats to the conditions under which 
+    /// an iOS device running this Probe will detect another device. Detection is possible if the other device is
+    /// Android or iOS and if Sensus is foregrounded or backgrounded on the other device.
+    /// 
+    /// See the Android subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
+    /// </summary>
     public class iOSBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
     {
         private CBMutableService _deviceIdService;
@@ -49,30 +61,35 @@ namespace Sensus.iOS.Probes.Context
         }
 
         #region central -- scan
-        protected override void StartScan()
+        protected override Task ScanAsync(CancellationToken cancellationToken)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return Task.Run(async () =>
             {
-                try
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    iOSBluetoothDeviceProximityProbeCentralManagerDelegate bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
-
-                    bluetoothCentralManagerDelegate.CharacteristicRead += (sender, e) =>
+                    try
                     {
-                        // we have no cancellation token. thus, all that can happen here is that the datum is stored locally
-                        // and surveys are triggered (if any are defined). size- and force-writes will not result, and this
-                        // is important because we might be currently executing from the background on a bluetooth scan result.
-                        StoreDatum(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
-                    };
+                        iOSBluetoothDeviceProximityProbeCentralManagerDelegate bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
 
-                    _bluetoothCentralManager = new CBCentralManager(bluetoothCentralManagerDelegate,
-                                                                    DispatchQueue.MainQueue,
-                                                                    NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                        bluetoothCentralManagerDelegate.CharacteristicRead += (sender, e) =>
+                        {
+                            lock (EncounteredDeviceData)
+                            {
+                                EncounteredDeviceData.Add(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
+                            }
+                        };
+
+                        _bluetoothCentralManager = new CBCentralManager(bluetoothCentralManagerDelegate,
+                                                                        DispatchQueue.MainQueue,
+                                                                        NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while starting scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                });
+
+                await Task.Delay(ScanDurationMS, cancellationToken);
             });
         }
 
