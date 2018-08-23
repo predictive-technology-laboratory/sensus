@@ -76,18 +76,7 @@ namespace Sensus.Android.Probes.Context
                     clientCallback.CharacteristicRead += CharacteristicRead;
                 }
 
-                // connect client to read data from peripheral server
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    try
-                    {
-                        result.Device.ConnectGatt(Application.Context, false, clientCallback);
-                    }
-                    catch (System.Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Exception while connecting GATT client:  " + ex, LoggingLevel.Normal, GetType());
-                    }
-                });
+                result.Device.ConnectGatt(Application.Context, false, clientCallback);
             }
             catch (System.Exception ex)
             {

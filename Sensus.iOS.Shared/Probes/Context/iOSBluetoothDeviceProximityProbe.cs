@@ -47,6 +47,8 @@ namespace Sensus.iOS.Probes.Context
 
         protected override void Initialize()
         {
+            base.Initialize();
+
             // the following code relies on SensusServiceHelper singleton, which will not be available above in the constructor.
 
             // create device id characteristic
@@ -147,7 +149,6 @@ namespace Sensus.iOS.Probes.Context
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while removing service " + _deviceIdService.UUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
-
 
                 // stop advertising
                 try

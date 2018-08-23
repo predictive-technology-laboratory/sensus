@@ -105,13 +105,12 @@ namespace Sensus.Android.Probes.Context
                             List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
 
                             ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
-                                                                                       .SetScanMode(global::Android.Bluetooth.LE.ScanMode.LowPower);
+                                                                                       .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
 
                             // return batched scan results periodically if supported on the BLE chip
                             if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
-                            {
-                                // ensure we get a few (in this case ~3) reports per scan
-                                scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 3.0));
+                            {                                
+                                scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 2.0));
                             }
 
                             BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
@@ -155,7 +154,7 @@ namespace Sensus.Android.Probes.Context
                     if (BluetoothAdapter.DefaultAdapter?.IsMultipleAdvertisementSupported ?? false)
                     {
                         AdvertiseSettings advertisingSettings = new AdvertiseSettings.Builder()
-                                                                                     .SetAdvertiseMode(AdvertiseMode.LowPower)
+                                                                                     .SetAdvertiseMode(AdvertiseMode.Balanced)
                                                                                      .SetTxPowerLevel(AdvertiseTx.PowerLow)
                                                                                      .SetConnectable(true)
                                                                                      .Build();
