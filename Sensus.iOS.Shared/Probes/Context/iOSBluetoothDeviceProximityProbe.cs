@@ -63,37 +63,30 @@ namespace Sensus.iOS.Probes.Context
         }
 
         #region central -- scan
-        protected override Task ScanAsync(CancellationToken cancellationToken)
+        protected override void StartScan()
         {
-            return Task.Run(async () =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                try
                 {
-                    try
-                    {
-                        iOSBluetoothDeviceProximityProbeCentralManagerDelegate bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
+                    iOSBluetoothDeviceProximityProbeCentralManagerDelegate bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
 
-                        bluetoothCentralManagerDelegate.CharacteristicRead += (sender, e) =>
+                    bluetoothCentralManagerDelegate.CharacteristicRead += (sender, e) =>
+                    {
+                        lock (EncounteredDeviceData)
                         {
-                            lock (EncounteredDeviceData)
-                            {
-                                EncounteredDeviceData.Add(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
-                            }
-                        };
+                            EncounteredDeviceData.Add(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
+                        }
+                    };
 
-                        _bluetoothCentralManager = new CBCentralManager(bluetoothCentralManagerDelegate,
-                                                                        DispatchQueue.MainQueue,
-                                                                        NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Exception while starting scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                });
-
-                await Task.Delay(ScanDurationMS, cancellationToken);
-
-                StopScan();
+                    _bluetoothCentralManager = new CBCentralManager(bluetoothCentralManagerDelegate,
+                                                                    DispatchQueue.MainQueue,
+                                                                    NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while starting scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
             });
         }
 

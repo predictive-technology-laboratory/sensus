@@ -103,24 +103,16 @@ namespace Sensus.Probes.Context
         {
             try
             {
+                // start a new scan
                 SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
-                ScanAsync(cancellationToken).Wait();
+                StopScan();
+                StartScan();
+
+                //Task.Delay(ScanDurationMS, cancellationToken).Wait();
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
-            }
-            finally
-            {
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
-                    StopScan();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
-                }
             }
 
             // create a new list to return any data that have accumulated (prevents cross-thread modification)
@@ -141,7 +133,7 @@ namespace Sensus.Probes.Context
             return dataToReturn;
         }
 
-        protected abstract Task ScanAsync(CancellationToken cancellationToken);
+        protected abstract void StartScan();
 
         public sealed override void Stop()
         {

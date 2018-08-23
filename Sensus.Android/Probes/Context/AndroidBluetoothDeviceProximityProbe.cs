@@ -87,44 +87,37 @@ namespace Sensus.Android.Probes.Context
         }
 
         #region central -- scan
-        protected override Task ScanAsync(CancellationToken cancellationToken)
+        protected override void StartScan()
         {
-            return Task.Run(async () =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                // start a scan if bluetooth is present and enabled
+                if (BluetoothAdapter.DefaultAdapter?.IsEnabled ?? false)
                 {
-                    // start a scan if bluetooth is present and enabled
-                    if (BluetoothAdapter.DefaultAdapter?.IsEnabled ?? false)
+                    try
                     {
-                        try
+                        ScanFilter scanFilter = new ScanFilter.Builder()
+                                                              .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
+                                                              .Build();
+
+                        List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
+
+                        ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
+                                                                                   .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
+
+                        // return batched scan results periodically if supported on the BLE chip
+                        if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
                         {
-                            ScanFilter scanFilter = new ScanFilter.Builder()
-                                                                  .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-                                                                  .Build();
-
-                            List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
-
-                            ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
-                                                                                       .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
-
-                            // return batched scan results periodically if supported on the BLE chip
-                            if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
-                            {                                
-                                scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 2.0));
-                            }
-
-                            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+                            scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 2.0));
                         }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Exception while starting scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+
+                        BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
                     }
-                });
-
-                await Task.Delay(ScanDurationMS, cancellationToken);
-
-                StopScan();
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while starting scanner:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
             });
         }
 
