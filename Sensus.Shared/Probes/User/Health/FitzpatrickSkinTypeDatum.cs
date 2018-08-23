@@ -39,12 +39,12 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Fitzpatrick skin type:  " + _fitzPatrickSkinType;
+                return "Fitzpatrick Skin Type:  " + _fitzPatrickSkinType;
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the blood type.
+        /// Gets the string placeholder value, which is the fitzpatrick skin type.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
@@ -64,7 +64,7 @@ namespace Sensus.Probes.User.Health
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Fitzpatrick skin type:  " + _fitzPatrickSkinType;
+            "Fitzpatrick Skin Type:  " + _fitzPatrickSkinType;
         }
     }
 }

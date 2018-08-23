@@ -19,21 +19,21 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.Health
 {
-    public class WeightDatum : Datum
+    public class BodyMassIndexDatum : Datum
     {
-        private double _weightPounds;
+        private double _bodyMassIndex;
 
-        [DoubleProbeTriggerProperty("Weight (Pounds)")]
+        [DoubleProbeTriggerProperty("Body Mass Index")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double WeightPounds
+        public double BodyMassIndex
         {
             get
             {
-                return _weightPounds;
+                return _bodyMassIndex;
             }
             set
             {
-                _weightPounds = value;
+                _bodyMassIndex = value;
             }
         }
 
@@ -41,32 +41,32 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Weight (Pounds):  " + Math.Round(_weightPounds, 1);
+                return "Body Mass Index:  " + Math.Round(_bodyMassIndex, 1);
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the weight (pounds).
+        /// Gets the string placeholder value, which is the BMI (kg/m2).
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return Math.Round(_weightPounds, 1);
+                return Math.Round(_bodyMassIndex, 1);
             }
         }
 
-        public WeightDatum(DateTimeOffset timestamp, double weightPounds)
+        public BodyMassIndexDatum(DateTimeOffset timestamp, double bodyMassIndex)
             : base(timestamp)
         {
-            _weightPounds = weightPounds;
+            _bodyMassIndex = bodyMassIndex;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Weight (Pounds):  " + _weightPounds;
+            "Body Mass Index:  " + _bodyMassIndex;
         }
     }
 }

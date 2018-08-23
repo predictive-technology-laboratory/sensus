@@ -19,21 +19,21 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.Health
 {
-    public class WeightDatum : Datum
+    public class DistanceWalkingRunningDatum : Datum
     {
-        private double _weightPounds;
+        private double _distanceWalkingRunning;
 
-        [DoubleProbeTriggerProperty("Weight (Pounds)")]
+        [DoubleProbeTriggerProperty("Distance Walking/Running")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double WeightPounds
+        public double DistanceWalkingRunning
         {
             get
             {
-                return _weightPounds;
+                return _distanceWalkingRunning;
             }
             set
             {
-                _weightPounds = value;
+                _distanceWalkingRunning = value;
             }
         }
 
@@ -41,32 +41,32 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Weight (Pounds):  " + Math.Round(_weightPounds, 1);
+                return "Distance Walking/Running (Miles):  " + Math.Round(_distanceWalkingRunning, 1);
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the weight (pounds).
+        /// Gets the string placeholder value, which is the distance walking/running.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return Math.Round(_weightPounds, 1);
+                return Math.Round(_distanceWalkingRunning, 1);
             }
         }
 
-        public WeightDatum(DateTimeOffset timestamp, double weightPounds)
+        public DistanceWalkingRunningDatum(DateTimeOffset timestamp, double distanceWalkingRunning)
             : base(timestamp)
         {
-            _weightPounds = weightPounds;
+            _distanceWalkingRunning = distanceWalkingRunning;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Weight (Pounds):  " + _weightPounds;
+            "Distance Walking/Running (Miles):  " + _distanceWalkingRunning;
         }
     }
 }

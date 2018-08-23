@@ -19,21 +19,21 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.Health
 {
-    public class WeightDatum : Datum
+    public class HeartRateDatum : Datum
     {
-        private double _weightPounds;
+        private double _heartRate;
 
-        [DoubleProbeTriggerProperty("Weight (Pounds)")]
+        [DoubleProbeTriggerProperty("Heart Rate (BPM)")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double WeightPounds
+        public double HeartRate
         {
             get
             {
-                return _weightPounds;
+                return _heartRate;
             }
             set
             {
-                _weightPounds = value;
+                _heartRate = value;
             }
         }
 
@@ -41,7 +41,7 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Weight (Pounds):  " + Math.Round(_weightPounds, 1);
+                return "Heart Rate (BPM):  " + Math.Round(_heartRate, 1);
             }
         }
 
@@ -53,20 +53,20 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return Math.Round(_weightPounds, 1);
+                return Math.Round(_heartRate, 1);
             }
         }
 
-        public WeightDatum(DateTimeOffset timestamp, double weightPounds)
+        public HeartRateDatum(DateTimeOffset timestamp, double heartRate)
             : base(timestamp)
         {
-            _weightPounds = weightPounds;
+            _heartRate = heartRate;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Weight (Pounds):  " + _weightPounds;
+            "Heart Rate (BPM):  " + _heartRate;
         }
     }
 }

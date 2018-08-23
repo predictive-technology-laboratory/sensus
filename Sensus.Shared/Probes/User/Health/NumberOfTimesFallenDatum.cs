@@ -19,21 +19,21 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.Health
 {
-    public class WeightDatum : Datum
+    public class NumberOfTimesFallenDatum : Datum
     {
-        private double _weightPounds;
+        private double _numberOfTimesFallen;
 
-        [DoubleProbeTriggerProperty("Weight (Pounds)")]
+        [DoubleProbeTriggerProperty("Number of Times Fallen")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double WeightPounds
+        public double NumberOfTimesFallen
         {
             get
             {
-                return _weightPounds;
+                return _numberOfTimesFallen;
             }
             set
             {
-                _weightPounds = value;
+                _numberOfTimesFallen = value;
             }
         }
 
@@ -41,32 +41,32 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Weight (Pounds):  " + Math.Round(_weightPounds, 1);
+                return "Number of Times Fallen:  " + Math.Round(_numberOfTimesFallen, 1);
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the weight (pounds).
+        /// Gets the string placeholder value, which is the Number of Times Fallen.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return Math.Round(_weightPounds, 1);
+                return Math.Round(_numberOfTimesFallen, 1);
             }
         }
 
-        public WeightDatum(DateTimeOffset timestamp, double weightPounds)
+        public NumberOfTimesFallenDatum(DateTimeOffset timestamp, double numberOfTimesFallen)
             : base(timestamp)
         {
-            _weightPounds = weightPounds;
+            _numberOfTimesFallen = numberOfTimesFallen;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Weight (Pounds):  " + _weightPounds;
+            "Number of Times Fallen:  " + _numberOfTimesFallen;
         }
     }
 }

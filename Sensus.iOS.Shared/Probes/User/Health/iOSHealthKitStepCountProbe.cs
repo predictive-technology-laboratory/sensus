@@ -21,13 +21,13 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.iOS.Probes.User.Health
 {
-    public class iOSHealthKitWeightProbe : iOSHealthKitSamplingProbe
+    public class iOSHealthKitStepCountProbe : iOSHealthKitSamplingProbe
     {
         public sealed override string DisplayName
         {
             get
             {
-                return "HealthKit Weight";
+                return "HealthKit Step Count";
             }
         }
 
@@ -35,7 +35,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return typeof(WeightDatum);
+                return typeof(StepCountDatum);
             }
         }
 
@@ -47,8 +47,8 @@ namespace Sensus.iOS.Probes.User.Health
             }
         }
 
-        public iOSHealthKitWeightProbe()
-            : base(HKQuantityType.Create(HKQuantityTypeIdentifier.BodyMass))
+        public iOSHealthKitStepCountProbe()
+            : base(HKQuantityType.Create(HKQuantityTypeIdentifier.StepCount))
         {
         }
 
@@ -59,7 +59,7 @@ namespace Sensus.iOS.Probes.User.Health
             if (quantitySample == null)
                 return null;
             else
-                return new WeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Pound));
+                return new StepCountDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Count));
         }
 
         protected override ChartSeries GetChartSeries()
@@ -84,14 +84,14 @@ namespace Sensus.iOS.Probes.User.Health
             {
                 Title = new ChartAxisTitle
                 {
-                    Text = "Weight (Pounds)"
+                    Text = "Step Count"
                 }
             };
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as WeightDatum).WeightPounds);
+            return new ChartDataPoint(datum.Timestamp.LocalDateTime, (datum as StepCountDatum).StepCount);
         }
     }
 }

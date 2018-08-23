@@ -19,21 +19,21 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.Health
 {
-    public class WeightDatum : Datum
+    public class FlightsClimbedDatum : Datum
     {
-        private double _weightPounds;
+        private double _flightsClimbed;
 
-        [DoubleProbeTriggerProperty("Weight (Pounds)")]
+        [DoubleProbeTriggerProperty("Flights Climbed")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double WeightPounds
+        public double FlightsClimbed
         {
             get
             {
-                return _weightPounds;
+                return _flightsClimbed;
             }
             set
             {
-                _weightPounds = value;
+                _flightsClimbed = value;
             }
         }
 
@@ -41,32 +41,32 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Weight (Pounds):  " + Math.Round(_weightPounds, 1);
+                return "Flights Climbed (Floors):  " + Math.Round(_flightsClimbed, 1);
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the weight (pounds).
+        /// Gets the string placeholder value, which is the Flights Climbed (floors).
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return Math.Round(_weightPounds, 1);
+                return Math.Round(_flightsClimbed, 1);
             }
         }
 
-        public WeightDatum(DateTimeOffset timestamp, double weightPounds)
+        public FlightsClimbedDatum(DateTimeOffset timestamp, double flightsClimbed)
             : base(timestamp)
         {
-            _weightPounds = weightPounds;
+            _flightsClimbed = flightsClimbed;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Weight (Pounds):  " + _weightPounds;
+            "Flights Climbed (Floors):  " + _flightsClimbed;
         }
     }
 }

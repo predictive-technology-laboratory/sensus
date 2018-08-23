@@ -19,21 +19,21 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.User.Health
 {
-    public class WeightDatum : Datum
+    public class StepCountDatum : Datum
     {
-        private double _weightPounds;
+        private double _stepCount;
 
-        [DoubleProbeTriggerProperty("Weight (Pounds)")]
+        [DoubleProbeTriggerProperty("Step Count")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double WeightPounds
+        public double StepCount
         {
             get
             {
-                return _weightPounds;
+                return _stepCount;
             }
             set
             {
-                _weightPounds = value;
+                _stepCount = value;
             }
         }
 
@@ -41,32 +41,32 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Weight (Pounds):  " + Math.Round(_weightPounds, 1);
+                return "Step Count:  " + Math.Round(_stepCount, 1);
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the weight (pounds).
+        /// Gets the string placeholder value, which is the step count.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
         {
             get
             {
-                return Math.Round(_weightPounds, 1);
+                return Math.Round(_stepCount, 1);
             }
         }
 
-        public WeightDatum(DateTimeOffset timestamp, double weightPounds)
+        public StepCountDatum(DateTimeOffset timestamp, double stepCount)
             : base(timestamp)
         {
-            _weightPounds = weightPounds;
+            _stepCount = stepCount;
         }
 
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Weight (Pounds):  " + _weightPounds;
+            "Step Count:  " + _stepCount;
         }
     }
 }

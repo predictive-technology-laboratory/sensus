@@ -39,12 +39,12 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Wheelchair use:  " + _wheelChairUse;
+                return "Wheelchair Use:  " + _wheelChairUse;
             }
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the blood type.
+        /// Gets the string placeholder value, which is the wheelchair use.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue
@@ -64,7 +64,7 @@ namespace Sensus.Probes.User.Health
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-            "Wheelchair use:  " + _wheelChairUse;
+            "Wheelchair Use:  " + _wheelChairUse;
         }
     }
 }
