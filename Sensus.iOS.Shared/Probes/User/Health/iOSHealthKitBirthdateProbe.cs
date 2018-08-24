@@ -21,6 +21,7 @@ using HealthKit;
 using Foundation;
 using Xamarin.Forms.Platform.iOS;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -55,7 +56,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -78,7 +79,7 @@ namespace Sensus.iOS.Probes.User.Health
                 throw new Exception("Error reading date of birth:  " + error.Description);
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         protected override ChartSeries GetChartSeries()

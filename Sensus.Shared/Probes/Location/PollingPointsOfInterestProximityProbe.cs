@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 using Syncfusion.SfChart.XForms;
 using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Location
 {
@@ -75,38 +76,36 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            List<Datum> data = new List<Datum>();
-
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
-
-            if (currentPosition == null)
+            return Task.Run(async () =>
             {
-                throw new Exception("Failed to get GPS reading.");
-            }
-            else
-            {
-                foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
+                List<Datum> data = new List<Datum>();
+
+                Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
+
+                if (currentPosition == null)
                 {
-                    double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(currentPosition) * 1000;
-
-                    foreach (PointOfInterestProximityTrigger trigger in _triggers)
+                    throw new Exception("Failed to get GPS reading.");
+                }
+                else
+                {
+                    foreach (PointOfInterest pointOfInterest in SensusServiceHelper.Get().PointsOfInterest.Union(Protocol.PointsOfInterest))  // POIs are stored on the service helper (e.g., home locations) and the Protocol (e.g., bars), since the former are user-specific and the latter are universal.
                     {
-                        if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                        double distanceToPointOfInterestMeters = pointOfInterest.KmDistanceTo(currentPosition) * 1000;
+
+                        foreach (PointOfInterestProximityTrigger trigger in _triggers)
                         {
-                            data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                            if (pointOfInterest.Triggers(trigger, distanceToPointOfInterestMeters))
+                            {
+                                data.Add(new PointOfInterestProximityDatum(currentPosition.Timestamp, pointOfInterest, distanceToPointOfInterestMeters, trigger));
+                            }
                         }
                     }
                 }
-            }
 
-            if (data.Count == 0)
-            {
-                data.Add(null);
-            }
-
-            return data;
+                return data;
+            });
         }
 
         protected override ChartSeries GetChartSeries()

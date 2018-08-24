@@ -19,6 +19,7 @@ using Sensus.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Movement
 {
@@ -68,40 +69,36 @@ namespace Sensus.Probes.Movement
             base.ProtectedStart();
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            SpeedDatum datum = null;
-
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
-
-            if (currentPosition == null)
+            return Task.Run(async () =>
             {
-                throw new Exception("Failed to get GPS reading.");
-            }
-            else
-            {
-                lock (_previousPositionLocker)
+                List<Datum> data = new List<Datum>();
+
+                Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
+
+                if (currentPosition == null)
                 {
-                    if (_previousPosition == null)
+                    throw new Exception("Failed to get GPS reading.");
+                }
+                else
+                {
+                    lock (_previousPositionLocker)
                     {
-                        _previousPosition = currentPosition;
-                    }
-                    else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
-                    {
-                        datum = new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition);
-                        _previousPosition = currentPosition;
+                        if (_previousPosition == null)
+                        {
+                            _previousPosition = currentPosition;
+                        }
+                        else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
+                        {
+                            data.Add(new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition));
+                            _previousPosition = currentPosition;
+                        }
                     }
                 }
-            }
 
-            if (datum == null)
-            {
-                return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
-            }
-            else
-            {
-                return new Datum[] { datum };
-            }
+                return data;
+            });
         }
 
         protected override ChartSeries GetChartSeries()

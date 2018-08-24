@@ -26,6 +26,7 @@ using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using System.Reflection;
 using Sensus.Exceptions;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -159,7 +160,7 @@ namespace Sensus.Android.Probes.Apps
             ObtainAccessToken(GetRequiredPermissionNames());
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -281,7 +282,7 @@ namespace Sensus.Android.Probes.Apps
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)

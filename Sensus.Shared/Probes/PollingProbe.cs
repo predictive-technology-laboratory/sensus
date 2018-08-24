@@ -251,17 +251,17 @@ namespace Sensus.Probes
 
                 _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
-                    return Task.Run(() =>
+                    return Task.Run(async () =>
                     {
                         if (Running)
                         {
                             _isPolling = true;
 
-                            IEnumerable<Datum> data = null;
+                            List<Datum> data = null;
                             try
                             {
                                 SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                                data = Poll(cancellationToken);
+                                data = await PollAsync(cancellationToken);
 
                                 lock (_pollTimes)
                                 {
@@ -331,7 +331,7 @@ namespace Sensus.Probes
             }
         }
 
-        protected abstract IEnumerable<Datum> Poll(CancellationToken cancellationToken);
+        protected abstract Task<List<Datum>> PollAsync(CancellationToken cancellationToken);
 
         public override void Stop()
         {

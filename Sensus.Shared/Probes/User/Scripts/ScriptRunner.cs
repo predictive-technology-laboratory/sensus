@@ -683,7 +683,7 @@ namespace Sensus.Probes.User.Scripts
             }
 
             #region submit a separate datum indicating each time the script was run.
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
                 // it wouldn't make sense to gather location data from a user.
@@ -694,7 +694,7 @@ namespace Sensus.Probes.User.Scripts
                 {
                     try
                     {
-                        Position currentPosition = GpsReceiver.Get().GetReading(new CancellationToken(), false);
+                        Position currentPosition = await GpsReceiver.Get().GetReadingAsync(new CancellationToken(), false);
 
                         if (currentPosition == null)
                         {

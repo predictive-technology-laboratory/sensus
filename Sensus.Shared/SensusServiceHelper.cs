@@ -1125,7 +1125,7 @@ namespace Sensus
 
                         try
                         {
-                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault(), true);
+                            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken.GetValueOrDefault(), true);
 
                             if (currentPosition != null)
                             {

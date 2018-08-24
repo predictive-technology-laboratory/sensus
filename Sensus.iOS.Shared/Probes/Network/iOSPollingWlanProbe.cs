@@ -19,20 +19,23 @@ using SystemConfiguration;
 using System.Collections.Generic;
 using Sensus;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Network.Probes
 {
     public class iOSPollingWlanProbe : PollingWlanProbe
     {
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             NSDictionary networkInfo;
 
             string bssid = null;
             if (CaptiveNetwork.TryCopyCurrentNetworkInfo("en0", out networkInfo) != StatusCode.NoKey && networkInfo != null)
+            {
                 bssid = networkInfo[CaptiveNetwork.NetworkInfoKeyBSSID].ToString();
+            }
 
-            return new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, bssid) };
+            return Task.FromResult(new List<Datum>(new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, bssid) }));
         }
     }
 }

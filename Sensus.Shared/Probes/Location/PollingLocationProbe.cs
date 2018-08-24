@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Location
 {
@@ -58,18 +59,21 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected sealed override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
+            return Task.Run(async () =>
+            {
+                Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
 
-            if (currentPosition == null)
-            {
-                throw new Exception("Failed to get GPS reading.");
-            }
-            else
-            {
-                return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) };
-            }
+                if (currentPosition == null)
+                {
+                    throw new Exception("Failed to get GPS reading.");
+                }
+                else
+                {
+                    return new List<Datum>(new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) });
+                }
+            });
         }
 
         protected override ChartSeries GetChartSeries()

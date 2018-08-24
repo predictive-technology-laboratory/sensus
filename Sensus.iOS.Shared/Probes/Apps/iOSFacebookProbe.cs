@@ -110,7 +110,7 @@ namespace Sensus.iOS.Probes.Apps
             ObtainAccessToken(GetRequiredPermissionNames());
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override System.Threading.Tasks.Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -121,7 +121,9 @@ namespace Sensus.iOS.Probes.Apps
                     ObtainAccessToken(missingPermissions);
             }
             else
+            {
                 ObtainAccessToken(GetRequiredPermissionNames());
+            }
 
             if (HasValidAccessToken)
             {
@@ -294,7 +296,7 @@ namespace Sensus.iOS.Probes.Apps
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
             }
 
-            return data;
+            return System.Threading.Tasks.Task.FromResult(data);
         }
 
         public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)

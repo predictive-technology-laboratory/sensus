@@ -99,38 +99,41 @@ namespace Sensus.Probes.Context
 
         protected abstract void StartAdvertising();
 
-        protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected sealed override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            try
+            return Task.Run(async () =>
             {
-                // start a new scan
-                SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
-                StopScan();
-                StartScan();
+                try
+                {
+                    // start a new scan
+                    SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
+                    StopScan();
+                    StartScan();
 
-                //Task.Delay(ScanDurationMS, cancellationToken).Wait();
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
-            }
+                    await Task.Delay(ScanDurationMS, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
+                }
 
-            // create a new list to return any data that have accumulated (prevents cross-thread modification)
-            List<BluetoothDeviceProximityDatum> dataToReturn;
+                // create a new list to return any data that have accumulated (prevents cross-thread modification)
+                List<Datum> dataToReturn;
 
-            lock (EncounteredDeviceData)
-            {
-                dataToReturn = EncounteredDeviceData.ToList();
-                EncounteredDeviceData.Clear();
-            }
+                lock (EncounteredDeviceData)
+                {
+                    dataToReturn = EncounteredDeviceData.Cast<Datum>().ToList();
+                    EncounteredDeviceData.Clear();
+                }
 
-            // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
-            if (dataToReturn.Count == 0)
-            {
-                dataToReturn.Add(null);
-            }
+                // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
+                if (dataToReturn.Count == 0)
+                {
+                    dataToReturn.Add(null);
+                }
 
-            return dataToReturn;
+                return dataToReturn;
+            });
         }
 
         protected abstract void StartScan();

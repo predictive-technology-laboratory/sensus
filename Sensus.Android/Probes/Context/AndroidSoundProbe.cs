@@ -17,43 +17,48 @@ using System.Threading;
 using System.Collections.Generic;
 using Android.Media;
 using Sensus.Probes.Context;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidSoundProbe : SoundProbe
     {
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            MediaRecorder recorder = null;
-
-            try
+            return Task.Run(async () =>
             {
-                recorder = new MediaRecorder();
-                recorder.SetAudioSource(AudioSource.Mic);
-                recorder.SetOutputFormat(OutputFormat.ThreeGpp);
-                recorder.SetAudioEncoder(AudioEncoder.AmrNb);
-                recorder.SetOutputFile("/dev/null");
-                recorder.Prepare();
-                recorder.Start();
+                MediaRecorder recorder = null;
 
-                // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
-                int dummy = recorder.MaxAmplitude;
-
-                Thread.Sleep(SampleLengthMS);
-
-                return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
-            }
-            finally
-            {
-                if (recorder != null)
+                try
                 {
-                    try { recorder.Stop(); }
-                    catch (Exception) { }
+                    recorder = new MediaRecorder();
+                    recorder.SetAudioSource(AudioSource.Mic);
+                    recorder.SetOutputFormat(OutputFormat.ThreeGpp);
+                    recorder.SetAudioEncoder(AudioEncoder.AmrNb);
+                    recorder.SetOutputFile("/dev/null");
+                    recorder.Prepare();
+                    recorder.Start();
 
-                    try { recorder.Release(); }
-                    catch (Exception) { }
+                    // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
+                    int dummy = recorder.MaxAmplitude;
+
+                    await Task.Delay(SampleLengthMS);
+
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) }.ToList();  // http://www.mathworks.com/help/signal/ref/mag2db.html
                 }
-            }
+                finally
+                {
+                    if (recorder != null)
+                    {
+                        try { recorder.Stop(); }
+                        catch (Exception) { }
+
+                        try { recorder.Release(); }
+                        catch (Exception) { }
+                    }
+                }
+            });
         }
     }
 }
