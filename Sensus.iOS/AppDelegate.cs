@@ -254,12 +254,13 @@ namespace Sensus.iOS
                             // ensure service helper is running
                             await SensusServiceHelper.Get().StartAsync();
 
-                            // update/run all callbacks
-                            await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksAsync();
-
-                            // reenable the UI to let the user proceed
+                            // reenable the UI to let the user proceed -- do this before updating callbacks, as the
+                            // callbacks might take a while to complete (e.g., in the case of GPS).
                             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
                             (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
+
+                            // update/run all callbacks
+                            await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksAsync();
 
 #if UI_TESTING
                             // load and run the UI testing protocol
