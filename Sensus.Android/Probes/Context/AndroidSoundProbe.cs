@@ -42,10 +42,10 @@ namespace Sensus.Android.Probes.Context
 
                     // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
                     int dummy = recorder.MaxAmplitude;
-
                     await Task.Delay(SampleLengthMS);
+                    double decibels = 20 * Math.Log10(recorder.MaxAmplitude);  // http://www.mathworks.com/help/signal/ref/mag2db.html
 
-                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) }.ToList();  // http://www.mathworks.com/help/signal/ref/mag2db.html
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
                 }
                 finally
                 {

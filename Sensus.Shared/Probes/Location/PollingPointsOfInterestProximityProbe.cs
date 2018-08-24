@@ -104,18 +104,24 @@ namespace Sensus.Probes.Location
                     }
                 }
 
+                // let the system know that we polled but didn't get any data
+                if (data.Count == 0)
+                {
+                    data.Add(null);
+                }
+
                 return data;
             });
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

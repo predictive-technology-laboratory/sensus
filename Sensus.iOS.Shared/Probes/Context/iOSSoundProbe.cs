@@ -88,7 +88,8 @@ namespace Sensus.iOS.Probes.Context
                         await Task.Delay(SampleLengthMS);
                         recorder.UpdateMeters();
                         double decibels = 100 * (recorder.PeakPower(0) + 160) / 160f;  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
-                        return Task.FromResult(new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList());
+
+                        return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
                     }
                     else
                     {
@@ -112,17 +113,13 @@ namespace Sensus.iOS.Probes.Context
                         {
                             recorder.Stop();
                         }
-                        catch (Exception)
-                        {
-                        }
+                        catch (Exception) { }
 
                         try
                         {
                             recorder.Dispose();
                         }
-                        catch (Exception)
-                        {
-                        }
+                        catch (Exception) { }
                     }
                 }
             });

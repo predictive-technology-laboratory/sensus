@@ -92,9 +92,10 @@ namespace Sensus.iOS.Probes.User.Health
                 throw exception;
             }
 
+            // let the system know that we polled but didn't get any data
             if (data.Count == 0)
             {
-                throw new Exception("User has not provided -- or has not allowed access to -- any " + ObjectType + " information since last poll.");
+                data.Add(null);
             }
 
             return Task.FromResult(data);

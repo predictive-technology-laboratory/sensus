@@ -179,6 +179,12 @@ namespace Sensus.iOS.Probes.Movement
                     }
                 });
 
+                // let the system know that we polled but didn't get any data
+                if (data.Count == 0)
+                {
+                    data.Add(null);
+                }
+
                 return data;
             });
         }

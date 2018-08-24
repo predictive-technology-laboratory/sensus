@@ -129,6 +129,12 @@ namespace Sensus.Probes.Context
                     EncounteredDeviceData.Clear();
                 }
 
+                // let the system know that we polled but didn't get any data
+                if (dataToReturn.Count == 0)
+                {
+                    dataToReturn.Add(null);
+                }
+
                 return dataToReturn;
             });
         }
