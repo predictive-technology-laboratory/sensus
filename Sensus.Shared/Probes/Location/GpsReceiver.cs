@@ -42,7 +42,7 @@ namespace Sensus.Probes.Location
         private event EventHandler<PositionEventArgs> PositionChanged;
 
         private IGeolocator _locator;
-        private int _readingTimeoutMS;
+        private TimeSpan _readingTimeout;
         private List<Tuple<EventHandler<PositionEventArgs>, bool>> _listenerHeadings;
 
         public IGeolocator Locator
@@ -65,7 +65,7 @@ namespace Sensus.Probes.Location
 
         private GpsReceiver()
         {
-            _readingTimeoutMS = 120000;
+            _readingTimeout = TimeSpan.FromMinutes(2);
             _listenerHeadings = new List<Tuple<EventHandler<PositionEventArgs>, bool>>();
             _locator = CrossGeolocator.Current;
             _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
@@ -150,20 +150,20 @@ namespace Sensus.Probes.Location
         {
             return Task.Run(async () =>
             {
-                if (checkAndObtainPermission && await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
-                {
-                    return null;
-                }
-
                 Position reading = null;
 
                 try
                 {
+                    if (checkAndObtainPermission && await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+                    {
+                        throw new Exception("Failed to obtain Location permission from user.");
+                    }
+
                     SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
 
                     DateTimeOffset readingStart = DateTimeOffset.UtcNow;
                     _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
-                    reading = await _locator.GetPositionAsync(TimeSpan.FromMilliseconds(_readingTimeoutMS), cancellationToken);
+                    reading = await _locator.GetPositionAsync(_readingTimeout, cancellationToken);
                     DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
 
                     if (reading != null)

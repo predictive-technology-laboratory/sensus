@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.iOS.Network.Probes
 {
@@ -35,7 +36,7 @@ namespace Sensus.iOS.Network.Probes
                 bssid = networkInfo[CaptiveNetwork.NetworkInfoKeyBSSID].ToString();
             }
 
-            return Task.FromResult(new List<Datum>(new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, bssid) }));
+            return Task.FromResult(new Datum[] { new WlanDatum(DateTimeOffset.UtcNow, bssid) }.ToList());
         }
     }
 }

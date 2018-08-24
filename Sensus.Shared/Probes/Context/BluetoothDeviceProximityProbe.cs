@@ -110,6 +110,9 @@ namespace Sensus.Probes.Context
                     StopScan();
                     StartScan();
 
+                    // wait for scanning results to arrive. we're not going to stop the scan, as it will continue 
+                    // in the background on both android and iOS and continue to deliver results, which will be
+                    // collected upon next poll.
                     await Task.Delay(ScanDurationMS, cancellationToken);
                 }
                 catch (Exception ex)
@@ -124,12 +127,6 @@ namespace Sensus.Probes.Context
                 {
                     dataToReturn = EncounteredDeviceData.Cast<Datum>().ToList();
                     EncounteredDeviceData.Clear();
-                }
-
-                // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
-                if (dataToReturn.Count == 0)
-                {
-                    dataToReturn.Add(null);
                 }
 
                 return dataToReturn;

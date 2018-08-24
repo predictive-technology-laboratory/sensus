@@ -118,7 +118,9 @@ namespace Sensus.iOS.Probes.Apps
             {
                 string[] missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Length > 0)
+                {
                     ObtainAccessToken(missingPermissions);
+                }
             }
             else
             {
@@ -174,18 +176,24 @@ namespace Sensus.iOS.Probes.Apps
                                                     object value = null;
 
                                                     if (property.PropertyType == typeof(string))
+                                                    {
                                                         value = resultDictionary[resultKey].ToString();
+                                                    }
                                                     else if (property.PropertyType == typeof(bool?))
                                                     {
                                                         int parsedBool;
                                                         if (int.TryParse(resultDictionary[resultKey].ToString(), out parsedBool))
+                                                        {
                                                             value = parsedBool == 1 ? true : false;
+                                                        }
                                                     }
                                                     else if (property.PropertyType == typeof(DateTimeOffset?))
                                                     {
                                                         DateTimeOffset parsedDateTimeOffset;
                                                         if (DateTimeOffset.TryParse(resultDictionary[resultKey].ToString(), out parsedDateTimeOffset))
+                                                        {
                                                             value = parsedDateTimeOffset;
+                                                        }
                                                     }
                                                     else if (property.PropertyType == typeof(List<string>))
                                                     {
@@ -212,7 +220,9 @@ namespace Sensus.iOS.Probes.Apps
                                                 }
                                                 // there are several result keys that we don't yet handle. ignore these.
                                                 else if (resultKey != "data" && resultKey != "paging" && resultKey != "summary")
+                                                {
                                                     SensusServiceHelper.Get().Logger.Log("Unrecognized key in Facebook result dictionary:  " + resultKey, LoggingLevel.Verbose, GetType());
+                                                }
                                             }
                                             #endregion
 

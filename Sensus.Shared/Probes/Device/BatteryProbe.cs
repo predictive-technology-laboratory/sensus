@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Syncfusion.SfChart.XForms;
+using System.Linq;
 
 namespace Sensus.Probes.Device
 {
@@ -45,7 +46,7 @@ namespace Sensus.Probes.Device
 
         protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(new List<Datum>(new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, SensusServiceHelper.Get().BatteryChargePercent) }));
+            return Task.FromResult(new Datum[] { new BatteryDatum(DateTimeOffset.UtcNow, SensusServiceHelper.Get().BatteryChargePercent) }.ToList());
         }
 
         protected override ChartSeries GetChartSeries()

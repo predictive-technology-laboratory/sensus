@@ -19,6 +19,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.Probes.Location
 {
@@ -71,7 +72,7 @@ namespace Sensus.Probes.Location
                 }
                 else
                 {
-                    return new List<Datum>(new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) });
+                    return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) }.ToList();
                 }
             });
         }
