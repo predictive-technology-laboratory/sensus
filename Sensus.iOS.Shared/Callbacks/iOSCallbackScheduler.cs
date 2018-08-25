@@ -138,6 +138,8 @@ namespace Sensus.iOS.Callbacks
                 nint callbackTaskId = -1;
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
+                    SensusServiceHelper.Get().Logger.Log("Starting background task for callback.", LoggingLevel.Normal, GetType());
+
                     callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                     {
                         // if we're out of time running in the background, cancel the callback.
@@ -153,6 +155,8 @@ namespace Sensus.iOS.Callbacks
                 // end the background task
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
+                    SensusServiceHelper.Get().Logger.Log("Ending background task for callback.", LoggingLevel.Normal, GetType());
+
                     UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
                 });
             });

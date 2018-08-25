@@ -839,7 +839,7 @@ namespace Sensus
 
                 if (numScriptsToRun == 0)
                 {
-                    ClearPendingSurveysNotificationAsync();
+                    ClearPendingSurveysNotification();
                 }
                 else
                 {
@@ -852,7 +852,7 @@ namespace Sensus
             });
         }
 
-        public void ClearPendingSurveysNotificationAsync()
+        public void ClearPendingSurveysNotification()
         {
             SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
         }

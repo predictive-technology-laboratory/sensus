@@ -371,6 +371,10 @@ namespace Sensus.Probes.User.Scripts
                             // run the script if the current datum's value satisfies the trigger
                             if (trigger.FireFor(currentDatumValue))
                             {
+                                // the current method is often invoked by the collection of a datum,
+                                // and this collection event may be running on the UI thread (e.g., 
+                                // in the case of android sensors). use async below to free up UI 
+                                // thread.
                                 await RunAsync(previousDatum, currentDatum);
                             }
                         };
