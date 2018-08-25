@@ -69,7 +69,7 @@ namespace Sensus.UI
 
             ListView scriptList = new ListView(ListViewCachingStrategy.RecycleElement)
             {                
-                BindingContext = SensusServiceHelper.Get().ScriptsToRun  // used to show/hid when there are no surveys
+                BindingContext = SensusServiceHelper.Get().ScriptsToRun  // used to show/hide when there are no surveys
             };
 
             scriptList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));  // don't show list when there are no surveys

@@ -465,7 +465,7 @@ namespace Sensus
             }
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
-            _scriptsToRun = new ConcurrentObservableCollection<Script>();
+            _scriptsToRun = new ConcurrentObservableCollection<Script>(new LockConcurrent());
             _runningProtocolIds = new List<string>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
@@ -730,28 +730,28 @@ namespace Sensus
 
         public void AddScript(Script script, RunMode runMode)
         {
-            // scripts can be added from several threads, particularly on ios when several script runs can execute concurrently when
-            // the user opens the app. execute all additions to the _scriptsToRun collection on the main thread for safety.
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            // shuffle input groups and inputs if needed
+            Random random = new Random();
+            if (script.Runner.ShuffleInputGroups)
             {
-                // shuffle input groups and inputs if needed
-                Random random = new Random();
-                if (script.Runner.ShuffleInputGroups)
+                random.Shuffle(script.InputGroups);
+            }
+
+            // shuffle inputs in groups if needed
+            foreach (InputGroup inputGroup in script.InputGroups)
+            {
+                if (inputGroup.ShuffleInputs)
                 {
-                    random.Shuffle(script.InputGroups);
+                    random.Shuffle(inputGroup.Inputs);
                 }
+            }
 
-                // shuffle inputs in groups if needed
-                foreach (InputGroup inputGroup in script.InputGroups)
-                {
-                    if (inputGroup.ShuffleInputs)
-                    {
-                        random.Shuffle(inputGroup.Inputs);
-                    }
-                }
+            bool modifiedScriptsToRun = false;
 
-                bool modifiedScriptsToRun = false;
-
+            // scripts can be added from several threads, particularly on ios when several script runs can execute concurrently when
+            // the user opens the app. lock modifications of the collection for safety.
+            _scriptsToRun.Concurrent.ExecuteThreadSafe(() =>
+            {
                 if (runMode == RunMode.Multiple)
                 {
                     _scriptsToRun.Insert(GetScriptIndex(script), script);
@@ -795,12 +795,12 @@ namespace Sensus
                         modifiedScriptsToRun = true;
                     }
                 }
-
-                if (modifiedScriptsToRun)
-                {
-                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
-                }
             });
+
+            if (modifiedScriptsToRun)
+            {
+                IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+            }
         }
 
         public void RemoveScript(Script script)
@@ -833,20 +833,23 @@ namespace Sensus
         {
             RemoveExpiredScripts(false);
 
-            int numScriptsToRun = _scriptsToRun.Count;
+            _scriptsToRun.Concurrent.ExecuteThreadSafe(() =>
+            {
+                int numScriptsToRun = _scriptsToRun.Count;
 
-            if (numScriptsToRun == 0)
-            {
-                ClearPendingSurveysNotificationAsync();
-            }
-            else
-            {
-                string s = numScriptsToRun == 1 ? "" : "s";
-                string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
-                DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
-                string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
-            }
+                if (numScriptsToRun == 0)
+                {
+                    ClearPendingSurveysNotificationAsync();
+                }
+                else
+                {
+                    string s = numScriptsToRun == 1 ? "" : "s";
+                    string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
+                    DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
+                    string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
+                    SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+                }
+            });
         }
 
         public void ClearPendingSurveysNotificationAsync()
