@@ -82,7 +82,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 try
                 {
                     Datum datum = GetDatumFromReading(args.SensorReading);
-                    StoreDatum(datum);
+                    StoreDatumAsync(datum);
                 }
                 catch (Exception ex)
                 {

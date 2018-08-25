@@ -41,7 +41,7 @@ namespace Sensus.Android.Probes.Movement
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, e.Values[0] / GRAVITY, e.Values[1] / GRAVITY, e.Values[2] / GRAVITY));
+                StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, e.Values[0] / GRAVITY, e.Values[1] / GRAVITY, e.Values[2] / GRAVITY));
             });
         }
 

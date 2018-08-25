@@ -29,7 +29,10 @@ using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using Plugin.Geolocator.Abstractions;
 using System.ComponentModel;
+
+#if __IOS__
 using Sensus.Notifications;
+#endif
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -40,7 +43,7 @@ namespace Sensus.Probes.User.Scripts
         private string _name;
         private bool _enabled;
 
-        private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
+        private readonly Dictionary<Trigger, Probe.MostRecentDatumChangedDelegateAsync> _triggerHandlers;
         private TimeSpan? _maxAge;
         private DateTime? _maxTriggerTime;
         private readonly List<ScheduledCallback> _scriptRunCallbacks;
@@ -298,7 +301,7 @@ namespace Sensus.Probes.User.Scripts
             _scheduleTrigger = new ScheduleTrigger(); //this needs to be above
             _enabled = false;
             _maxAge = null;
-            _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
+            _triggerHandlers = new Dictionary<Trigger, Probe.MostRecentDatumChangedDelegateAsync>();
             _scriptRunCallbacks = new List<ScheduledCallback>();
             _scriptTriggerTimes = new Queue<ScriptTriggerTime>();
             Script = new Script(this);
@@ -326,26 +329,23 @@ namespace Sensus.Probes.User.Scripts
                         }
 
                         // create a handler to be called each time the triggering probe stores a datum
-                        EventHandler<Tuple<Datum, Datum>> handler = async (oo, previousCurrentDatum) =>
+                        Probe.MostRecentDatumChangedDelegateAsync handler = (previousDatum, currentDatum) =>
                         {
                             // must be running and must have a current datum
                             lock (_locker)
                             {
-                                if (!Probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
+                                if (!Probe.Running || !_enabled || currentDatum == null)
                                 {
                                     trigger.FireValueConditionMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
-                                    return;
+                                    return Task.CompletedTask;
                                 }
                             }
-
-                            Datum previousDatum = previousCurrentDatum.Item1;
-                            Datum currentDatum = previousCurrentDatum.Item2;
 
                             // get the value that might trigger the script -- it might be null in the case where the property is nullable and is not set (e.g., facebook fields, input locations, etc.)
                             object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
                             if (currentDatumValue == null)
                             {
-                                return;
+                                return Task.CompletedTask;
                             }
 
                             // if we're triggering based on datum value changes/differences instead of absolute values, calculate the change now.
@@ -354,7 +354,7 @@ namespace Sensus.Probes.User.Scripts
                                 // don't need to set ConditionSatisfiedLastTime = false here, since it cannot be the case that it's true and prevDatum == null (we must have had a currDatum last time in order to set ConditionSatisfiedLastTime = true).
                                 if (previousDatum == null)
                                 {
-                                    return;
+                                    return Task.CompletedTask;
                                 }
 
                                 try
@@ -364,7 +364,7 @@ namespace Sensus.Probes.User.Scripts
                                 catch (Exception ex)
                                 {
                                     SensusServiceHelper.Get().Logger.Log("Trigger error:  Failed to convert datum values to doubles for change calculation:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                    return;
+                                    return Task.CompletedTask;
                                 }
                             }
 
@@ -375,7 +375,11 @@ namespace Sensus.Probes.User.Scripts
                                 // and this collection event may be running on the UI thread (e.g., 
                                 // in the case of android sensors). use async below to free up UI 
                                 // thread.
-                                await RunAsync(previousDatum, currentDatum);
+                                return RunAsync(Script.Copy(true), previousDatum, currentDatum);
+                            }
+                            else
+                            {
+                                return Task.CompletedTask;
                             }
                         };
 
@@ -443,7 +447,7 @@ namespace Sensus.Probes.User.Scripts
             // not need to finish running in order for the runner to be considered started.
             if (RunOnStart)
             {
-                RunAsync();
+                RunAsync(Script.Copy(true));
             }
         }
 
@@ -568,7 +572,7 @@ namespace Sensus.Probes.User.Scripts
 
             ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                return Task.Run(() =>
+                return Task.Run(async () =>
                 {
                     SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
 
@@ -577,7 +581,7 @@ namespace Sensus.Probes.User.Scripts
                         return;
                     }
 
-                    Run(scriptToRun);
+                    await RunAsync(scriptToRun);
 
                     lock (_scriptRunCallbacks)
                     {
@@ -635,21 +639,7 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        private Task RunAsync(Datum previousDatum = null, Datum currentDatum = null)
-        {
-            return Task.Run(() =>
-            {
-                Run(Script.Copy(true), previousDatum, currentDatum);
-            });
-        }
-
-        /// <summary>
-        /// Run the specified script.
-        /// </summary>
-        /// <param name="script">Script.</param>
-        /// <param name="previousDatum">Previous datum.</param>
-        /// <param name="currentDatum">Current datum.</param>
-        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null)
+        private Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
         {
             SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
 
@@ -668,14 +658,14 @@ namespace Sensus.Probes.User.Scripts
             if (script.ExpirationDate.HasValue && script.ExpirationDate.Value < DateTime.Now)
             {
                 SensusServiceHelper.Get().Logger.Log("Script expired before it was run.", LoggingLevel.Normal, GetType());
-                return;
+                return Task.CompletedTask;
             }
 
             // do not run a one-shot script if it has already been run
             if (OneShot && RunTimes.Count > 0)
             {
                 SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
-                return;
+                return Task.CompletedTask;
             }
 
             lock (RunTimes)
@@ -715,7 +705,7 @@ namespace Sensus.Probes.User.Scripts
                     }
                 }
 
-                Probe.StoreDatum(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+                await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
             });
             #endregion
 
@@ -733,7 +723,7 @@ namespace Sensus.Probes.User.Scripts
                 script.CurrentDatum = currentDatum;
             }
 
-            SensusServiceHelper.Get().AddScript(script, RunMode);
+            return SensusServiceHelper.Get().AddScriptAsync(script, RunMode);
         }
     }
 }

@@ -62,7 +62,7 @@ namespace Sensus.iOS.Probes.Location
                     try
                     {
                         // apple has a proximitystate bool that returns 1 if device is close to user and 0 if it is not
-                        StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0 : 1), 1));
+                        StoreDatumAsync(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0 : 1), 1));
                     }
                     catch (Exception ex)
                     {

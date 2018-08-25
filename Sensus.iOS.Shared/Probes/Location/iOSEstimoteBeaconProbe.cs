@@ -45,12 +45,12 @@ namespace Sensus.iOS.Probes.Location
 
                     zone.OnEnterAction = (triggeringDeviceAttachment) =>
                     {
-                        StoreDatum(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                        StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
                     };
 
                     zone.OnExitAction = (triggeringDeviceAttachment) =>
                     {
-                        StoreDatum(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                        StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
                     };
 
                     zones.Add(zone);

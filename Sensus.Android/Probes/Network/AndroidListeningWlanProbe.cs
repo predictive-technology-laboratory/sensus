@@ -31,7 +31,7 @@ namespace Sensus.Android.Probes.Network
 
             _wlanConnectionChangedCallback = (sender, wlanDatum) =>
             {
-                StoreDatum(wlanDatum);
+                StoreDatumAsync(wlanDatum);
             };
         }
 

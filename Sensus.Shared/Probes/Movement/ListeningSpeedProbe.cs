@@ -99,7 +99,7 @@ namespace Sensus.Probes.Movement
 
                 if (datum != null)
                 {
-                    StoreDatum(datum);
+                    StoreDatumAsync(datum);
                 }
             };
         }

@@ -49,7 +49,7 @@ namespace Sensus.Android.Probes.Location
                 // its maximum range value in the far state and a lesser value in the near state. Typically, the far value is a value > 5 cm, 
                 // but this can vary from sensor to sensor. You can determine a sensor's maximum range by using the getMaximumRange() method.
 
-                StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, e.Values[0], _maximumRange));
+                StoreDatumAsync(new ProximityDatum(DateTimeOffset.UtcNow, e.Values[0], _maximumRange));
             });
         }
 

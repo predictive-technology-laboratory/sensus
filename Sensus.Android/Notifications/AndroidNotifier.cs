@@ -194,14 +194,14 @@ namespace Sensus.Android.Notifications
         /// <param name="protocol">Protocol to check for alert exclusion time windows.</param>
         /// <param name="alertUser">If set to <c>true</c> alert user.</param>
         /// <param name="displayPage">Display page.</param>
-        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
+        public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
             if (_notificationManager == null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
-            Task.Run(() =>
+            return Task.Run(() =>
             {
                 if (message == null)
                 {

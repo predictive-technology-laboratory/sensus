@@ -30,7 +30,7 @@ namespace Sensus.iOS.Probes.Location
             _positionChangedHandler = (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("Received compass change notification.", LoggingLevel.Verbose, GetType());
-                StoreDatum(new CompassDatum(DateTimeOffset.UtcNow, e.Position.Heading));  // the Position has a timestamp, but it does not get updated:  https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
+                StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, e.Position.Heading));  // the Position has a timestamp, but it does not get updated:  https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
             };
         }
 

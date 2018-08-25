@@ -200,16 +200,16 @@ namespace Sensus.Tests
             {
                 Script script = new Script(runner);
                 script.ScheduledRunTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(random.Next(-100000, 100000));
-                service1.AddScript(script, RunMode.Multiple);
+                service1.AddScriptAsync(script, RunMode.Multiple);
             }
 
             Script scriptMin = new Script(runner);
             scriptMin.ScheduledRunTime = DateTimeOffset.MinValue;
-            service1.AddScript(scriptMin, RunMode.Multiple);
+            service1.AddScriptAsync(scriptMin, RunMode.Multiple);
 
             Script scriptMax = new Script(runner);
             scriptMax.ScheduledRunTime = DateTimeOffset.MaxValue;
-            service1.AddScript(scriptMax, RunMode.Multiple);
+            service1.AddScriptAsync(scriptMax, RunMode.Multiple);
 
             for (int i = 1; i < service1.ScriptsToRun.Count; ++i)
             {

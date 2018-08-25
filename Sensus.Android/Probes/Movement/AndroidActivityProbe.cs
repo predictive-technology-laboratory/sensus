@@ -47,7 +47,7 @@ namespace Sensus.Android.Probes.Movement
         {
             AwarenessBroadcastReceiver.ActivityChanged += (sender, activityDatum) =>
             {
-                StoreDatum(activityDatum);
+                StoreDatumAsync(activityDatum);
             };
         }
 

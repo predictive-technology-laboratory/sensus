@@ -34,7 +34,7 @@ namespace Sensus.Android.Probes.Communication
                 // the observer doesn't set the from number (current device)
                 outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
 
-                StoreDatum(outgoingSmsDatum);
+                StoreDatumAsync(outgoingSmsDatum);
             });
 
             _incomingSmsCallback = (sender, incomingSmsDatum) =>
@@ -42,7 +42,7 @@ namespace Sensus.Android.Probes.Communication
                 // the observer doesn't set the destination number (simply the device's primary number)
                 incomingSmsDatum.ToNumber = _telephonyManager.Line1Number;
 
-                StoreDatum(incomingSmsDatum);
+                StoreDatumAsync(incomingSmsDatum);
             };
         }
 

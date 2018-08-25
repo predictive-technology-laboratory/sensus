@@ -285,7 +285,7 @@ namespace Sensus.Probes
 
                                     try
                                     {
-                                        StoreDatum(datum, cancellationToken);
+                                        await StoreDatumAsync(datum, cancellationToken);
                                     }
                                     catch (Exception ex)
                                     {

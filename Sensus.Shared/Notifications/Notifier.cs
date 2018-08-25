@@ -42,7 +42,7 @@ namespace Sensus.Notifications
             _pushNotificationRequestsToDelete = new List<PushNotificationRequest>();
         }
 
-        public abstract void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
+        public abstract Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
 
@@ -212,7 +212,7 @@ namespace Sensus.Notifications
                 {
                     if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
                     {
-                        IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
+                        await IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
                     }
                 }
                 catch (Exception ex)

@@ -93,7 +93,7 @@ namespace Sensus.Android.Probes.Location
                     // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                     // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                     // will only happen when all listening probes are configured to allow the device to sleep.
-                    StoreDatum(new CompassDatum(DateTimeOffset.UtcNow, heading));
+                    StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, heading));
                 }
 
                 // update values for next call

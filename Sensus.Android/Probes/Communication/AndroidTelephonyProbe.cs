@@ -34,7 +34,7 @@ namespace Sensus.Android.Probes.Communication
             {
                 _outgoingIncomingTime = DateTime.Now;
 
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
+                StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
@@ -43,7 +43,7 @@ namespace Sensus.Android.Probes.Communication
             {
                 _outgoingIncomingTime = DateTime.Now;
 
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
+                StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
             };
 
             _idleIncomingCallListener.Idle += (o, e) =>
@@ -55,7 +55,7 @@ namespace Sensus.Android.Probes.Communication
                     callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.GetValueOrDefault()).TotalSeconds;
                 }
 
-                StoreDatum(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
+                StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, null, callDurationSeconds));
             };
         }
 

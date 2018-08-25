@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Sensus.Notifications;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests.Classes
 {
@@ -23,8 +23,9 @@ namespace Sensus.Tests.Classes
         {
         }
 
-        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
+        public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
+            return Task.CompletedTask;
         }
     }
 }

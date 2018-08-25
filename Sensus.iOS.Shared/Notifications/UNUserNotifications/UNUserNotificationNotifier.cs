@@ -21,25 +21,26 @@ using UserNotifications;
 using Sensus.Notifications;
 using Sensus.iOS.Callbacks;
 using Sensus.Callbacks;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Notifications.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier
     {
-        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
+        public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
-            IssueNotificationAsync(title, message, id, protocol, alertUser, displayPage, DateTime.Now, null, null);
+            return IssueNotificationAsync(title, message, id, protocol, alertUser, displayPage, DateTime.Now, null, null);
         }
 
-        public void IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public Task IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
+            return IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
         }
 
-        public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             // the callback scheduler will pass in an initialized user info (containing the callback id, invocation id, etc.), but 
             // other requests for notifications might not come with such information. initialize the user info if needed.
@@ -74,10 +75,10 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 content.Sound = UNNotificationSound.Default;
             }
 
-            IssueNotificationAsync(id, content, triggerDateTime, requestCreated);
+            return IssueNotificationAsync(id, content, triggerDateTime, requestCreated);
         }
 
-        public void IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
+        public Task IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
         {
             UNCalendarNotificationTrigger trigger = null;
 
@@ -104,16 +105,16 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
             requestCreated?.Invoke(notificationRequest);
-            IssueNotificationAsync(notificationRequest);
+            return IssueNotificationAsync(notificationRequest);
         }
 
-        public void IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
+        public Task IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
         {
             // although we should never, we might be getting in null requests from somewhere. bail if we do.
             if (request == null)
             {
                 SensusException.Report("Null notification request.");
-                return;
+                return Task.CompletedTask;
             }
 
             // don't issue silent notifications from the background, as they will be displayed to the user upon delivery, and this will confuse the user (they're 
@@ -131,22 +132,12 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             if (abort)
             {
                 SensusServiceHelper.Get().Logger.Log("Aborting notification:  Will not issue silent notification from background.", LoggingLevel.Normal, GetType());
-                return;
+                return Task.CompletedTask;
             }
 
-            UNUserNotificationCenter.Current.AddNotificationRequest(request, error =>
+            return UNUserNotificationCenter.Current.AddNotificationRequestAsync(request).ContinueWith(completedTask =>
             {
-                if (error == null)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Notification " + request.Identifier + " requested for " + ((request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate.ToString() ?? "[time not specified]") + ".", LoggingLevel.Normal, GetType());
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to add notification request:  " + error.Description, LoggingLevel.Normal, GetType());
-                    SensusException.Report("Failed to add notification request:  " + error.Description);
-                }
-
-                errorCallback?.Invoke(error);
+                SensusServiceHelper.Get().Logger.Log("Notification " + request.Identifier + " requested for " + ((request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate.ToString() ?? "[time not specified]") + ".", LoggingLevel.Normal, GetType());
             });
         }
 

@@ -106,12 +106,12 @@ namespace Sensus.Probes.Location
                 {
                     foreach (Datum datum in data)
                     {
-                        StoreDatum(datum);
+                        StoreDatumAsync(datum);
                     }
                 }
                 else
                 {
-                    StoreDatum(null);
+                    StoreDatumAsync(null);
                 }
             };
         }

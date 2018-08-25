@@ -56,7 +56,7 @@ namespace Sensus.iOS.Probes.Location
                     // iOS reports kilopascals, in order to share Altitude constructor with 
                     // Android, convert kPa to hPa (kPa * 10) 
                     // https://www.unitjuggler.com/convert-pressure-from-hPa-to-kPa.html?val=10
-                    StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
+                    StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
                 }
             });
         }

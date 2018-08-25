@@ -728,7 +728,7 @@ namespace Sensus
             }
         }
 
-        public void AddScript(Script script, RunMode runMode)
+        public Task AddScriptAsync(Script script, RunMode runMode)
         {
             // shuffle input groups and inputs if needed
             Random random = new Random();
@@ -799,7 +799,11 @@ namespace Sensus
 
             if (modifiedScriptsToRun)
             {
-                IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+                return IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+            }
+            else
+            {
+                return Task.CompletedTask;
             }
         }
 
@@ -818,10 +822,10 @@ namespace Sensus
             RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
-        public void ClearScripts()
+        public Task ClearScriptsAsync()
         {
             _scriptsToRun.Clear();
-            IssuePendingSurveysNotificationAsync(null, false);
+            return IssuePendingSurveysNotificationAsync(null, false);
         }
 
         /// <summary>
@@ -829,17 +833,18 @@ namespace Sensus
         /// </summary>
         /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
         /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public void IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
+        public Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
         {
             RemoveExpiredScripts(false);
 
-            _scriptsToRun.Concurrent.ExecuteThreadSafe(() =>
+            return _scriptsToRun.Concurrent.ExecuteThreadSafe(() =>
             {
                 int numScriptsToRun = _scriptsToRun.Count;
 
                 if (numScriptsToRun == 0)
                 {
                     ClearPendingSurveysNotification();
+                    return Task.CompletedTask;
                 }
                 else
                 {
@@ -847,7 +852,7 @@ namespace Sensus
                     string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                     DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                     string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                    SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+                    return SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
                 }
             });
         }
@@ -1626,7 +1631,7 @@ namespace Sensus
         #region Private Methods
         private void RemoveScripts(bool issueNotification, params Script[] scripts)
         {
-            var removed = false;
+            bool removed = false;
 
             foreach (var script in scripts)
             {
