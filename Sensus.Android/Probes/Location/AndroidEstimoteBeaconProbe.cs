@@ -18,8 +18,8 @@ using Android.App;
 using Sensus.Context;
 using System.Collections.Generic;
 using Sensus.Probes.Location;
-using Sensus.Android.Callbacks;
 using Sensus.Android.Notifications;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Location
 {

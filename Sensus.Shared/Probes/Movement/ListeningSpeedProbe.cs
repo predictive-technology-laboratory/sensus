@@ -73,7 +73,7 @@ namespace Sensus.Probes.Movement
 
         public ListeningSpeedProbe()
         {
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
                 if (e.Position == null)
                 {
@@ -99,7 +99,7 @@ namespace Sensus.Probes.Movement
 
                 if (datum != null)
                 {
-                    StoreDatumAsync(datum);
+                    await StoreDatumAsync(datum);
                 }
             };
         }
@@ -118,10 +118,10 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        protected sealed override void StartListening()
+        protected sealed override async void StartListening()
         {
             _previousPosition = null;
-            GpsReceiver.Get().AddListener(_positionChangedHandler, false);
+            await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
         }
 
         public override void Reset()
@@ -131,9 +131,9 @@ namespace Sensus.Probes.Movement
             _previousPosition = null;
         }
 
-        protected sealed override void StopListening()
+        protected sealed override async void StopListening()
         {
-            GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
             _previousPosition = null;
         }
 

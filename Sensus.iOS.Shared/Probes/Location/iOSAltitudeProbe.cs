@@ -49,14 +49,14 @@ namespace Sensus.iOS.Probes.Location
 
         protected override void StartListening()
         {
-            _altitudeChangeListener?.StartRelativeAltitudeUpdates(new NSOperationQueue(), (data, error) =>
+            _altitudeChangeListener?.StartRelativeAltitudeUpdates(new NSOperationQueue(), async (data, error) =>
             {
                 if (data?.Pressure != null && error == null)
                 {
                     // iOS reports kilopascals, in order to share Altitude constructor with 
                     // Android, convert kPa to hPa (kPa * 10) 
                     // https://www.unitjuggler.com/convert-pressure-from-hPa-to-kPa.html?val=10
-                    StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
+                    await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
                 }
             });
         }

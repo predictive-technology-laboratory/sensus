@@ -29,20 +29,20 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidSmsProbe()
         {
-            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, outgoingSmsDatum =>
+            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, async outgoingSmsDatum =>
             {
                 // the observer doesn't set the from number (current device)
                 outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
 
-                StoreDatumAsync(outgoingSmsDatum);
+                await StoreDatumAsync(outgoingSmsDatum);
             });
 
-            _incomingSmsCallback = (sender, incomingSmsDatum) =>
+            _incomingSmsCallback = async (sender, incomingSmsDatum) =>
             {
                 // the observer doesn't set the destination number (simply the device's primary number)
                 incomingSmsDatum.ToNumber = _telephonyManager.Line1Number;
 
-                StoreDatumAsync(incomingSmsDatum);
+                await StoreDatumAsync(incomingSmsDatum);
             };
         }
 

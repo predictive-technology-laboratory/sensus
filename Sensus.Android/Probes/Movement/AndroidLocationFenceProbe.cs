@@ -78,9 +78,9 @@ namespace Sensus.Android.Probes.Movement
         {
             _locationChangeRadiusMeters = 100;
 
-            AwarenessBroadcastReceiver.LocationChanged += (sender, e) =>
+            AwarenessBroadcastReceiver.LocationChanged += async (sender, e) =>
             {
-                RequestLocationSnapshotAsync();
+                await RequestLocationSnapshotAsync();
             };
         }
 
@@ -103,17 +103,17 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
-        protected override void StartListening()
+        protected async override void StartListening()
         {
             base.StartListening();
 
             // request a location to start location fencing
-            RequestLocationSnapshotAsync();
+            await RequestLocationSnapshotAsync();
         }
 
-        private void RequestLocationSnapshotAsync()
+        private Task RequestLocationSnapshotAsync()
         {
-            Task.Run(async () =>
+            return Task.Run(async () =>
             {
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location) == PermissionStatus.Granted)
                 {

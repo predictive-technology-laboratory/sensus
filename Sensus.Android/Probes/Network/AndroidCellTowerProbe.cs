@@ -29,9 +29,9 @@ namespace Sensus.Android.Probes.Network
         public AndroidCellTowerProbe()
         {
             _cellTowerChangeListener = new AndroidCellTowerChangeListener();
-            _cellTowerChangeListener.CellTowerChanged += (o, cellTowerLocation) =>
+            _cellTowerChangeListener.CellTowerChanged += async (o, cellTowerLocation) =>
             {
-                StoreDatumAsync(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
+                await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
             };
         }
 

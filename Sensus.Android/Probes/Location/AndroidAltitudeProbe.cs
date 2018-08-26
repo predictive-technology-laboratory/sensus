@@ -24,7 +24,7 @@ namespace Sensus.Android.Probes.Location
 
         public AndroidAltitudeProbe()
         {
-            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, e =>
+            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
@@ -34,7 +34,7 @@ namespace Sensus.Android.Probes.Location
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, e.Values[0]));
+                await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, e.Values[0]));
             });
         }
 

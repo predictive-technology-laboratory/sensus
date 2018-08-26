@@ -27,10 +27,10 @@ namespace Sensus.iOS.Probes.Location
 
         public iOSCompassProbe()
         {
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("Received compass change notification.", LoggingLevel.Verbose, GetType());
-                StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, e.Position.Heading));  // the Position has a timestamp, but it does not get updated:  https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
+                await StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, e.Position.Heading));  // the Position has a timestamp, but it does not get updated:  https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
             };
         }
 
@@ -48,24 +48,24 @@ namespace Sensus.iOS.Probes.Location
             }
         }
 
-        protected sealed override void StartListening()
+        protected sealed override async void StartListening()
         {
-            GpsReceiver.Get().AddListener(_positionChangedHandler, true);
+            await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, true);
         }
 
-        protected sealed override void StopListening()
+        protected sealed override async void StopListening()
         {
-            GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

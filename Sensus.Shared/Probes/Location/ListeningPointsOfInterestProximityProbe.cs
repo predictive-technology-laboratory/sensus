@@ -80,7 +80,7 @@ namespace Sensus.Probes.Location
         {
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
 
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
                 List<Datum> data = new List<Datum>();
 
@@ -106,12 +106,12 @@ namespace Sensus.Probes.Location
                 {
                     foreach (Datum datum in data)
                     {
-                        StoreDatumAsync(datum);
+                        await StoreDatumAsync(datum);
                     }
                 }
                 else
                 {
-                    StoreDatumAsync(null);
+                    await StoreDatumAsync(null);
                 }
             };
         }
@@ -130,14 +130,14 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected sealed override void StartListening()
+        protected sealed override async void StartListening()
         { 
-            GpsReceiver.Get().AddListener(_positionChangedHandler, false);
+            await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
         }
 
-        protected sealed override void StopListening()
+        protected sealed override async void StopListening()
         {
-            GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 
         protected override ChartSeries GetChartSeries()

@@ -81,7 +81,7 @@ namespace Sensus.Probes.Location
             };
         }
 
-        public async void AddListener(EventHandler<PositionEventArgs> listener, bool includeHeading)
+        public async Task AddListenerAsync(EventHandler<PositionEventArgs> listener, bool includeHeading)
         {
             if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
             {
@@ -106,7 +106,7 @@ namespace Sensus.Probes.Location
             SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());
         }
 
-        public async void RemoveListener(EventHandler<PositionEventArgs> listener)
+        public async Task RemoveListenerAsync(EventHandler<PositionEventArgs> listener)
         {
             if (ListeningForChanges)
             {

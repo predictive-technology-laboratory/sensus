@@ -29,9 +29,9 @@ namespace Sensus.Android.Probes.Network
         {
             _wlanBroadcastReceiver = new AndroidWlanBroadcastReceiver();
 
-            _wlanConnectionChangedCallback = (sender, wlanDatum) =>
+            _wlanConnectionChangedCallback = async (sender, wlanDatum) =>
             {
-                StoreDatumAsync(wlanDatum);
+                await StoreDatumAsync(wlanDatum);
             };
         }
 

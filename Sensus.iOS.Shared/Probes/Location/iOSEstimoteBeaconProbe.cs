@@ -43,14 +43,14 @@ namespace Sensus.iOS.Probes.Location
                 {
                     EPXProximityZone zone = new EPXProximityZone(new EPXProximityRange(beacon.ProximityMeters), "sensus", beacon.Name);
 
-                    zone.OnEnterAction = (triggeringDeviceAttachment) =>
+                    zone.OnEnterAction = async (triggeringDeviceAttachment) =>
                     {
-                        StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
                     };
 
-                    zone.OnExitAction = (triggeringDeviceAttachment) =>
+                    zone.OnExitAction = async (triggeringDeviceAttachment) =>
                     {
-                        StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
                     };
 
                     zones.Add(zone);

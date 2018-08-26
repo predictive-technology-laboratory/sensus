@@ -66,11 +66,11 @@ namespace Sensus.Probes.Location
 
         public ListeningLocationProbe()
         {
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("Received position change notification.", LoggingLevel.Verbose, GetType());
 
-                StoreDatumAsync(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
+                await StoreDatumAsync(new LocationDatum(e.Position.Timestamp, e.Position.Accuracy, e.Position.Latitude, e.Position.Longitude));
             };
         }
 
@@ -88,14 +88,14 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected sealed override void StartListening()
+        protected sealed override async void StartListening()
         {
-            GpsReceiver.Get().AddListener(_positionChangedHandler, false);
+            await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
         }
 
-        protected sealed override void StopListening()
+        protected sealed override async void StopListening()
         {
-            GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 
         protected override ChartSeries GetChartSeries()

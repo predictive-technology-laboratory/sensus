@@ -57,12 +57,12 @@ namespace Sensus.iOS.Probes.Location
             {
                 // Hook the sensor event 
                 // https://developer.xamarin.com/api/member/MonoTouch.UIKit.UIDevice+Notifications.ObserveProximityStateDidChange/p/System.EventHandler%7BMonoTouch.Foundation.NSNotificationEventArgs%7D/
-                _notification = UIDevice.Notifications.ObserveProximityStateDidChange((o, e) =>
+                _notification = UIDevice.Notifications.ObserveProximityStateDidChange(async (o, e) =>
                 {
                     try
                     {
                         // apple has a proximitystate bool that returns 1 if device is close to user and 0 if it is not
-                        StoreDatumAsync(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0 : 1), 1));
+                        await StoreDatumAsync(new ProximityDatum(DateTimeOffset.UtcNow, (UIDevice.CurrentDevice.ProximityState ? 0 : 1), 1));
                     }
                     catch (Exception ex)
                     {

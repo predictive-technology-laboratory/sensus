@@ -77,12 +77,12 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected virtual void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<ReadingType> args)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 try
                 {
                     Datum datum = GetDatumFromReading(args.SensorReading);
-                    StoreDatumAsync(datum);
+                    await StoreDatumAsync(datum);
                 }
                 catch (Exception ex)
                 {
