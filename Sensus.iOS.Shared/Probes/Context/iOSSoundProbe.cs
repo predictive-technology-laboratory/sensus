@@ -52,77 +52,74 @@ namespace Sensus.iOS.Probes.Context
             _settings = NSDictionary.FromObjectsAndKeys(settingsValues, settingsKeys);
         }
 
-        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            AVAudioRecorder recorder = null;
+            string recordPath = Path.GetTempFileName();
+            try
             {
-                AVAudioRecorder recorder = null;
-                string recordPath = Path.GetTempFileName();
+                AVAudioSession audioSession = AVAudioSession.SharedInstance();
+
+                NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
+                if (error != null)
+                {
+                    throw new Exception("Failed to initialize iOS audio recording session:  " + error.LocalizedDescription);
+                }
+
+                error = audioSession.SetActive(true);
+                if (error != null)
+                {
+                    throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
+                }
+
+                recorder = AVAudioRecorder.Create(NSUrl.FromFilename(recordPath), new AudioSettings(_settings), out error);
+                if (error != null)
+                {
+                    throw new Exception("Failed to create sound recorder:  " + error.LocalizedDescription);
+                }
+
+                recorder.MeteringEnabled = true;
+
+                // we need to take a meter reading while the recorder is running, so record for one second beyond the sample length
+                if (recorder.RecordFor(SampleLengthMS / 1000d + 1))
+                {
+                    await Task.Delay(SampleLengthMS);
+                    recorder.UpdateMeters();
+                    double decibels = 100 * (recorder.PeakPower(0) + 160) / 160f;  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
+
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
+                }
+                else
+                {
+                    throw new Exception("Failed to start recording.");
+                }
+            }
+            finally
+            {
                 try
                 {
-                    AVAudioSession audioSession = AVAudioSession.SharedInstance();
-
-                    NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
-                    if (error != null)
-                    {
-                        throw new Exception("Failed to initialize iOS audio recording session:  " + error.LocalizedDescription);
-                    }
-
-                    error = audioSession.SetActive(true);
-                    if (error != null)
-                    {
-                        throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
-                    }
-
-                    recorder = AVAudioRecorder.Create(NSUrl.FromFilename(recordPath), new AudioSettings(_settings), out error);
-                    if (error != null)
-                    {
-                        throw new Exception("Failed to create sound recorder:  " + error.LocalizedDescription);
-                    }
-
-                    recorder.MeteringEnabled = true;
-
-                    // we need to take a meter reading while the recorder is running, so record for one second beyond the sample length
-                    if (recorder.RecordFor(SampleLengthMS / 1000d + 1))
-                    {
-                        await Task.Delay(SampleLengthMS);
-                        recorder.UpdateMeters();
-                        double decibels = 100 * (recorder.PeakPower(0) + 160) / 160f;  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
-
-                        return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
-                    }
-                    else
-                    {
-                        throw new Exception("Failed to start recording.");
-                    }
+                    File.Delete(recordPath);
                 }
-                finally
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to delete sound file:  " + ex.Message, LoggingLevel.Debug, GetType());
+                }
+
+                if (recorder != null)
                 {
                     try
                     {
-                        File.Delete(recordPath);
+                        recorder.Stop();
                     }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to delete sound file:  " + ex.Message, LoggingLevel.Debug, GetType());
-                    }
+                    catch (Exception) { }
 
-                    if (recorder != null)
+                    try
                     {
-                        try
-                        {
-                            recorder.Stop();
-                        }
-                        catch (Exception) { }
-
-                        try
-                        {
-                            recorder.Dispose();
-                        }
-                        catch (Exception) { }
+                        recorder.Dispose();
                     }
+                    catch (Exception) { }
                 }
-            });
+            }
         }
     }
 }

@@ -34,10 +34,11 @@ namespace Sensus.iOS.Notifications.UILocalNotifications
 
         public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
-            return IssueNotificationAsync(title, message, id, protocol, alertUser, displayPage, DateTime.Now, null);
+            IssueNotification(title, message, id, protocol, alertUser, displayPage, DateTime.Now, null);
+            return Task.CompletedTask;
         }
 
-        public Task IssueSilentNotificationAsync(string id, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueSilentNotification(string id, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
             if (notificationInfo == null)
             {
@@ -47,12 +48,12 @@ namespace Sensus.iOS.Notifications.UILocalNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user.
-            return IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, fireDateTime, notificationInfo, notificationCreated);
+            IssueNotification("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, fireDateTime, notificationInfo, notificationCreated);
         }
 
-        public Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
+        public void IssueNotification(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime fireDateTime, NSMutableDictionary notificationInfo, Action<UILocalNotification> notificationCreated = null)
         {
-            return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 CancelNotification(id);
 
@@ -87,13 +88,13 @@ namespace Sensus.iOS.Notifications.UILocalNotifications
 
                 notificationCreated?.Invoke(notification);
 
-                return IssueNotificationAsync(notification);
+                IssueNotification(notification);
             });
         }
 
-        public Task IssueNotificationAsync(UILocalNotification notification)
+        public void IssueNotification(UILocalNotification notification)
         {
-            return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 string id = null;
 
@@ -111,8 +112,6 @@ namespace Sensus.iOS.Notifications.UILocalNotifications
                 UIApplication.SharedApplication.ScheduleLocalNotification(notification);
 
                 SensusServiceHelper.Get().Logger.Log("Notification " + (id ?? "[null]") + " requested for " + notification.FireDate + ".", LoggingLevel.Normal, GetType());
-
-                return Task.CompletedTask;
             });
         }
 

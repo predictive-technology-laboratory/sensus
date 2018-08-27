@@ -1810,7 +1810,7 @@ namespace Sensus
             $"Started study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStartCallback);
+            SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
             // add the token to the backend, as the push notification for the schedule start needs to be active.
             SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
@@ -1853,7 +1853,7 @@ namespace Sensus
             $"Stopped study: {Name}.");
 #endif
 
-            SensusContext.Current.CallbackScheduler.ScheduleCallback(_scheduledStopCallback);
+            SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStopCallback);
         }
 
         public void CancelScheduledStop()

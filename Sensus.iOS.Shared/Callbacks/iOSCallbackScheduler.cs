@@ -46,40 +46,37 @@ namespace Sensus.iOS.Callbacks
         /// Also reissues all silent notifications, which would have been canceled when the app went into the background.
         /// </summary>
         /// <returns>Async task.</returns>
-        public Task UpdateCallbacksAsync()
+        public async Task UpdateCallbacksAsync()
         {
-            return Task.Run(async () =>
+            foreach (string callbackId in CallbackIds)
             {
-                foreach (string callbackId in CallbackIds)
+                ScheduledCallback callback = TryGetCallback(callbackId);
+
+                if (callback == null)
                 {
-                    ScheduledCallback callback = TryGetCallback(callbackId);
-
-                    if (callback == null)
-                    {
-                        continue;
-                    }
-
-                    // service any callback that should have already been serviced or will soon be serviced
-                    if (callback.NextExecution.Value < DateTime.Now + CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
-                    {
-                        iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
-                        notifier.CancelNotification(callback.Id);
-                        await ServiceCallbackAsync(callback, callback.InvocationId);
-                    }
-                    // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
-                    else if (callback.Silent)
-                    {
-                        ReissueSilentNotification(callback.Id);
-                    }
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Non-silent callback notification " + callback.Id + " has upcoming trigger time of " + callback.NextExecution, LoggingLevel.Normal, GetType());
-                    }
+                    continue;
                 }
-            });
+
+                // service any callback that should have already been serviced or will soon be serviced
+                if (callback.NextExecution.Value < DateTime.Now + CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
+                {
+                    iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
+                    notifier.CancelNotification(callback.Id);
+                    await ServiceCallbackAsync(callback, callback.InvocationId);
+                }
+                // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
+                else if (callback.Silent)
+                {
+                    await ReissueSilentNotificationAsync(callback.Id);
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log("Non-silent callback notification " + callback.Id + " has upcoming trigger time of " + callback.NextExecution, LoggingLevel.Normal, GetType());
+                }
+            }
         }
 
-        protected abstract void ReissueSilentNotification(string id);
+        protected abstract Task ReissueSilentNotificationAsync(string id);
 
         public NSMutableDictionary GetCallbackInfo(ScheduledCallback callback)
         {

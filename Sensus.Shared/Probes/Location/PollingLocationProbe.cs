@@ -60,21 +60,18 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected sealed override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+        protected sealed override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
-            {
-                Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
+            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
 
-                if (currentPosition == null)
-                {
-                    throw new Exception("Failed to get GPS reading.");
-                }
-                else
-                {
-                    return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) }.ToList();
-                }
-            });
+            if (currentPosition == null)
+            {
+                throw new Exception("Failed to get GPS reading.");
+            }
+            else
+            {
+                return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) }.ToList();
+            }
         }
 
         protected override ChartSeries GetChartSeries()

@@ -322,11 +322,11 @@ namespace Sensus.Probes
                 // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
                 if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
                 {
-                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
                 }
 
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
+                SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
 #endif
             }
         }

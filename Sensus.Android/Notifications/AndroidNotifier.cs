@@ -200,43 +200,41 @@ namespace Sensus.Android.Notifications
             {
                 return Task.CompletedTask;
             }
-
-            return Task.Run(() =>
+            else if (message == null)
             {
-                if (message == null)
+                CancelNotification(id);
+            }
+            else
+            {
+                Intent notificationIntent = new Intent(_service, typeof(AndroidMainActivity));
+                notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
+                PendingIntent notificationPendingIntent = PendingIntent.GetActivity(_service, 0, notificationIntent, PendingIntentFlags.OneShot);
+
+                SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
+
+                if (displayPage == DisplayPage.PendingSurveys)
                 {
-                    CancelNotification(id);
+                    notificationChannel = SensusNotificationChannel.Survey;
                 }
-                else
+
+                // reset channel to silent if we're not alerting or if we're in an exclusion window
+                if (!alertUser || (protocol != null && protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay)))
                 {
-                    Intent notificationIntent = new Intent(_service, typeof(AndroidMainActivity));
-                    notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
-                    PendingIntent notificationPendingIntent = PendingIntent.GetActivity(_service, 0, notificationIntent, PendingIntentFlags.OneShot);
-
-                    SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
-
-                    if (displayPage == DisplayPage.PendingSurveys)
-                    {
-                        notificationChannel = SensusNotificationChannel.Survey;
-                    }
-
-                    // reset channel to silent if we're not alerting or if we're in an exclusion window
-                    if (!alertUser || (protocol != null && protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay)))
-                    {
-                        notificationChannel = SensusNotificationChannel.Silent;
-                    }
-
-                    Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, notificationChannel)
-                        .SetContentTitle(title)
-                        .SetContentText(message)
-                        .SetSmallIcon(Resource.Drawable.ic_launcher)
-                        .SetContentIntent(notificationPendingIntent)
-                        .SetAutoCancel(true)
-                        .SetOngoing(false);
-
-                    _notificationManager.Notify(id, 0, notificationBuilder.Build());
+                    notificationChannel = SensusNotificationChannel.Silent;
                 }
-            });
+
+                Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, notificationChannel)
+                    .SetContentTitle(title)
+                    .SetContentText(message)
+                    .SetSmallIcon(Resource.Drawable.ic_launcher)
+                    .SetContentIntent(notificationPendingIntent)
+                    .SetAutoCancel(true)
+                    .SetOngoing(false);
+
+                _notificationManager.Notify(id, 0, notificationBuilder.Build());
+            }
+
+            return Task.CompletedTask;
         }
 
         public override void CancelNotification(string id)

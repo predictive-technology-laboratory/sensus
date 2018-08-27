@@ -40,8 +40,17 @@ namespace Sensus.Android.Probes.Location
 
             public Java.Lang.Object Invoke(Java.Lang.Object p0)
             {
-                _probe.StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon, _proximityEvent));
+                InvokeAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon, _proximityEvent));
                 return null;
+            }
+
+            /// <summary>
+            /// Re-declared <see cref="Invoke(Java.Lang.Object)"/> to properly await result.
+            /// </summary>
+            /// <param name="datum">Datum.</param>
+            private async void InvokeAsync(EstimoteBeaconDatum datum)
+            {
+                await _probe.StoreDatumAsync(datum);
             }
         }
 

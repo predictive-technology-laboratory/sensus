@@ -99,44 +99,41 @@ namespace Sensus.Probes.Context
 
         protected abstract void StartAdvertising();
 
-        protected sealed override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+        protected sealed override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            try
             {
-                try
-                {
-                    // start a new scan
-                    SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
-                    StopScan();
-                    StartScan();
+                // start a new scan
+                SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
+                StopScan();
+                StartScan();
 
-                    // wait for scanning results to arrive. we're not going to stop the scan, as it will continue 
-                    // in the background on both android and iOS and continue to deliver results, which will be
-                    // collected upon next poll.
-                    await Task.Delay(ScanDurationMS, cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
-                }
+                // wait for scanning results to arrive. we're not going to stop the scan, as it will continue 
+                // in the background on both android and iOS and continue to deliver results, which will be
+                // collected upon next poll.
+                await Task.Delay(ScanDurationMS, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
+            }
 
-                // create a new list to return any data that have accumulated (prevents cross-thread modification)
-                List<Datum> dataToReturn;
+            // create a new list to return any data that have accumulated (prevents cross-thread modification)
+            List<Datum> dataToReturn;
 
-                lock (EncounteredDeviceData)
-                {
-                    dataToReturn = EncounteredDeviceData.Cast<Datum>().ToList();
-                    EncounteredDeviceData.Clear();
-                }
+            lock (EncounteredDeviceData)
+            {
+                dataToReturn = EncounteredDeviceData.Cast<Datum>().ToList();
+                EncounteredDeviceData.Clear();
+            }
 
-                // let the system know that we polled but didn't get any data
-                if (dataToReturn.Count == 0)
-                {
-                    dataToReturn.Add(null);
-                }
+            // let the system know that we polled but didn't get any data
+            if (dataToReturn.Count == 0)
+            {
+                dataToReturn.Add(null);
+            }
 
-                return dataToReturn;
-            });
+            return dataToReturn;
         }
 
         protected abstract void StartScan();

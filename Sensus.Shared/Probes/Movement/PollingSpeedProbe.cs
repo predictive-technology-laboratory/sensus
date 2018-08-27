@@ -69,36 +69,33 @@ namespace Sensus.Probes.Movement
             base.ProtectedStart();
         }
 
-        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            List<Datum> data = new List<Datum>();
+
+            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
+
+            if (currentPosition == null)
             {
-                List<Datum> data = new List<Datum>();
-
-                Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
-
-                if (currentPosition == null)
+                throw new Exception("Failed to get GPS reading.");
+            }
+            else
+            {
+                lock (_previousPositionLocker)
                 {
-                    throw new Exception("Failed to get GPS reading.");
-                }
-                else
-                {
-                    lock (_previousPositionLocker)
+                    if (_previousPosition == null)
                     {
-                        if (_previousPosition == null)
-                        {
-                            _previousPosition = currentPosition;
-                        }
-                        else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
-                        {
-                            data.Add(new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition));
-                            _previousPosition = currentPosition;
-                        }
+                        _previousPosition = currentPosition;
+                    }
+                    else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
+                    {
+                        data.Add(new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition));
+                        _previousPosition = currentPosition;
                     }
                 }
+            }
 
-                return data;
-            });
+            return data;
         }
 
         protected override ChartSeries GetChartSeries()

@@ -31,12 +31,13 @@ namespace Sensus.Android.Callbacks
             _service = service;
         }
 
-        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
+        protected override Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)
         {
             Intent callbackIntent = CreateCallbackIntent(callback);
             PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
             ScheduleCallbackAlarm(callback, callbackPendingIntent);
             SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " scheduled for " + callback.NextExecution + " " + (callback.RepeatDelay.HasValue ? "(repeating)" : "(one-time)") + ".", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
         }
 
         private Intent CreateCallbackIntent(ScheduledCallback callback)
@@ -145,6 +146,8 @@ namespace Sensus.Android.Callbacks
 
                             // reschedule the alarm. the alarm date will already have been set on the callback.
                             ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
+
+                            return Task.CompletedTask;
                         },
 
                         // if the callback indicates that it's okay for the device to sleep, release the wake lock now.

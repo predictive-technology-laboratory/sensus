@@ -379,7 +379,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 {
                     // the band health test is static, so it has no domain other than sensus.
                     HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
-                    SensusContext.Current.CallbackScheduler.ScheduleCallback(HEALTH_TEST_CALLBACK);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(HEALTH_TEST_CALLBACK);
                 }
             }
 

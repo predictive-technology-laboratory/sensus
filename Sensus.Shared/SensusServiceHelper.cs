@@ -636,7 +636,7 @@ namespace Sensus
 
                     }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
-                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
+                    SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
                 }
             }
         }
@@ -728,7 +728,7 @@ namespace Sensus
             }
         }
 
-        public Task AddScriptAsync(Script script, RunMode runMode)
+        public async Task AddScriptAsync(Script script, RunMode runMode)
         {
             // shuffle input groups and inputs if needed
             Random random = new Random();
@@ -799,11 +799,7 @@ namespace Sensus
 
             if (modifiedScriptsToRun)
             {
-                return IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
-            }
-            else
-            {
-                return Task.CompletedTask;
+                await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
             }
         }
 
@@ -822,10 +818,10 @@ namespace Sensus
             RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
-        public Task ClearScriptsAsync()
+        public async Task ClearScriptsAsync()
         {
             _scriptsToRun.Clear();
-            return IssuePendingSurveysNotificationAsync(null, false);
+            await IssuePendingSurveysNotificationAsync(null, false);
         }
 
         /// <summary>
@@ -833,18 +829,17 @@ namespace Sensus
         /// </summary>
         /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
         /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
+        public async Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
         {
             RemoveExpiredScripts(false);
 
-            return _scriptsToRun.Concurrent.ExecuteThreadSafe(() =>
+            await _scriptsToRun.Concurrent.ExecuteThreadSafe(async () =>
             {
                 int numScriptsToRun = _scriptsToRun.Count;
 
                 if (numScriptsToRun == 0)
                 {
                     ClearPendingSurveysNotification();
-                    return Task.CompletedTask;
                 }
                 else
                 {
@@ -852,7 +847,7 @@ namespace Sensus
                     string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                     DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                     string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                    return SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
                 }
             });
         }
@@ -882,303 +877,290 @@ namespace Sensus
 #endif
         }
 
-        public Task<string> ScanQrCodeAsync(string resultPrefix)
+        public async Task<string> ScanQrCodeAsync(string resultPrefix)
         {
-            return Task.Run(() =>
+            TaskCompletionSource<string> resultCompletionSource = new TaskCompletionSource<string>();
+
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                string result = null;
-                ManualResetEvent resultWait = new ManualResetEvent(false);
-
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
+                // to take care of. the library does ask for permission, but if it's denied we get an exception
+                // kicked back. ask explicitly here, and bail out if permission is not granted.
+                if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
                 {
-                    // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
-                    // to take care of. the library does ask for permission, but if it's denied we get an exception
-                    // kicked back. ask explicitly here, and bail out if permission is not granted.
-                    if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    resultCompletionSource.SetResult(null);
+                    return;
+                }
+
+                // TODO:  there's a race condition bug in the scanning library:  https://github.com/Redth/ZXing.Net.Mobile/issues/717
+                // delaying a bit seems to fix it.
+                await Task.Delay(1000);
+
+                Button cancelButton = new Button
+                {
+                    Text = "Cancel",
+                    FontSize = 30
+                };
+
+                StackLayout scannerOverlay = new StackLayout
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(30),
+                    Children = { cancelButton }
+                };
+
+                ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
+                {
+                    PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
+
+                }, scannerOverlay);
+
+                INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+
+                Func<Task> CloseScannerPageAsync = new Func<Task>(async () =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        resultWait.Set();
-                        return;
-                    }
+                        barcodeScannerPage.IsScanning = false;
 
-                    // TODO:  there's a race condition bug in the scanning library:  https://github.com/Redth/ZXing.Net.Mobile/issues/717
-                    // delaying a bit seems to fix it.
-                    await Task.Delay(1000);
-
-                    Button cancelButton = new Button
-                    {
-                        Text = "Cancel",
-                        FontSize = 30
-                    };
-
-                    StackLayout scannerOverlay = new StackLayout
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
-                        Padding = new Thickness(30),
-                        Children = { cancelButton }
-                    };
-
-                    ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
-                    {
-                        PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
-                                                                                       
-                    }, scannerOverlay);
-
-                    INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-
-                    Func<Task> CloseScannerPageAsync = new Func<Task>(() =>
-                    {
-                        return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        // we've seen a strange race condition where the QR code input scanner button is 
+                        // pressed, and in the above task delay the input group page is cancelled and 
+                        // another UI button is hit before the scanner page comes up.
+                        if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
                         {
-                            barcodeScannerPage.IsScanning = false;
-
-                            // we've seen a strange race condition where the QR code input scanner button is 
-                            // pressed, and in the above task delay the input group page is cancelled and 
-                            // another UI button is hit before the scanner page comes up.
-                            if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
-                            {
-                                await navigation.PopModalAsync();
-                            }
-
-                            resultWait.Set();
-                        });
-                    });
-
-                    cancelButton.Clicked += async (o, e) =>
-                    {
-                        await CloseScannerPageAsync();
-                    };
-
-                    barcodeScannerPage.OnScanResult += async r =>
-                    {
-                        if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
-                        {
-                            result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
-
-                            await CloseScannerPageAsync();
+                            await navigation.PopModalAsync();
                         }
-                    };
-
-                    barcodeScannerPage.Disappearing += (sender, e) =>
-                    {
-                        resultWait.Set();
-                    };
-
-                    await navigation.PushModalAsync(barcodeScannerPage);
+                    });
                 });
 
-                resultWait.WaitOne();
+                cancelButton.Clicked += async (o, e) =>
+                {
+                    resultCompletionSource.SetResult(null);
 
-                return result;
+                    await CloseScannerPageAsync();
+                };
+
+                barcodeScannerPage.OnScanResult += async r =>
+                {
+                    if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
+                    {
+                        resultCompletionSource.SetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
+
+                        await CloseScannerPageAsync();
+                    }
+                };
+
+                barcodeScannerPage.Disappearing += (sender, e) =>
+                {
+                    // use TrySetResult to account for the cases where the cancel button was pressed or 
+                    // we scanned a barcode. if either of these happens the result will already be set.
+                    resultCompletionSource.TrySetResult(null);
+                };
+
+                await navigation.PushModalAsync(barcodeScannerPage);
             });
+
+            return await resultCompletionSource.Task;
         }
 
-        public Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
+        public async Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            return Task.Run(async () =>
-            {
-                List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
-                return inputs?.First();
-            });
+            List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+            return inputs?.First();
         }
 
-        public Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
+        public async Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            return Task.Run(async () =>
+            InputGroup inputGroup = new InputGroup { Name = windowTitle };
+
+            foreach (var input in inputs)
             {
-                InputGroup inputGroup = new InputGroup { Name = windowTitle };
+                inputGroup.Inputs.Add(input);
+            }
 
-                foreach (var input in inputs)
-                {
-                    inputGroup.Inputs.Add(input);
-                }
+            IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
 
-                IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
-
-                return inputGroups?.SelectMany(g => g.Inputs).ToList();
-            });
+            return inputGroups?.SelectMany(g => g.Inputs).ToList();
         }
 
-        public Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
+        public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
         {
-            return Task.Run(async () =>
+            bool firstPageDisplay = true;
+
+            // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
+            // conditions, so we can't simply decrement the index to navigate backwards.
+            Stack<int> inputGroupNumBackStack = new Stack<int>();
+
+            for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
             {
-                bool firstPageDisplay = true;
+                InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
 
-                // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
-                // conditions, so we can't simply decrement the index to navigate backwards.
-                Stack<int> inputGroupNumBackStack = new Stack<int>();
-
-                for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
+                // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
+                if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                 {
-                    InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
+                    VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
 
-                    // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
-                    if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
+                    if (voiceInput.Enabled && voiceInput.Display)
                     {
-                        VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
-
-                        if (voiceInput.Enabled && voiceInput.Display)
-                        {
-                            try
-                            {
-                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                // to fire only once upon first display.
-                                await voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null);
-                                firstPageDisplay = false;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusException.Report("Voice input failed to run.", ex);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        await BringToForegroundAsync();
-
-                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            int stepNumber = inputGroupNum + 1;
-
-                            InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
-
-                            // do not display prompts page under the following conditions:  
-                            //
-                            // 1) there are no inputs displayed on it
-                            // 2) the cancellation token has requested a cancellation.
-                            //
-                            // if either of these conditions is true, continue to the next input group.
-
-                            if (inputGroupPage.DisplayedInputCount == 0)
-                            {
-                                // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
-                                // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
-                                // input group in the backstack, if there is one.
-                                if (inputGroupNum >= inputGroups.Count() - 1 &&                                                     // this is the final input group
-                                    inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
-                                    !string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
-                                    !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
-                                {
-                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                }
-                            }
-                            // display the page if we've not been canceled
-                            else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                            {
-                                INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-
-                                // display page. only animate the display for the first page.
-                                await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
-
-                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                // to fire only once upon first display.
-                                if (firstPageDisplay)
-                                {
-                                    postDisplayCallback?.Invoke();
-                                    firstPageDisplay = false;
-                                }
-
-                                InputGroupPage.NavigationResult navigationResult = await inputGroupPage.ResponseTask;
-
-                                _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
-
-                                // animate pop if the user submitted or canceled. when doing this, reference the navigation context
-                                // on the page rather than the local 'navigation' variable. this is necessary because the navigation
-                                // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
-                                // notification.
-                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
-                                                                              navigationResult == InputGroupPage.NavigationResult.Cancel);
-
-                                if (navigationResult == InputGroupPage.NavigationResult.Backward)
-                                {
-                                    // we only allow backward navigation when we have something on the back stack. so the following is safe.
-                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                }
-                                else if (navigationResult == InputGroupPage.NavigationResult.Forward)
-                                {
-                                    // keep the group in the back stack.
-                                    inputGroupNumBackStack.Push(inputGroupNum);
-                                }
-                                else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
-                                {
-                                    inputGroups = null;
-                                }
-
-                                // there's nothing to do if the navigation result is submit, since we've finished the final
-                                // group and we are about to return.
-                            }
-                        });
-                    }
-                }
-
-                // process the inputs if the user didn't cancel
-                if (inputGroups != null)
-                {
-                    // set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
-                    // reflect the time that the user hit submit.
-                    DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
-                    foreach (InputGroup inputGroup in inputGroups)
-                    {
-                        foreach (Input input in inputGroup.Inputs)
-                        {
-                            input.SubmissionTimestamp = submissionTimestamp;
-                        }
-                    }
-
-                    #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
-                    if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
-                    {
-                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
-
                         try
                         {
-                            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken.GetValueOrDefault(), true);
+                            // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                            // to fire only once upon first display.
+                            await voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null);
+                            firstPageDisplay = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusException.Report("Voice input failed to run.", ex);
+                        }
+                    }
+                }
+                else
+                {
+                    await BringToForegroundAsync();
 
-                            if (currentPosition != null)
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        int stepNumber = inputGroupNum + 1;
+
+                        InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+
+                        // do not display prompts page under the following conditions:  
+                        //
+                        // 1) there are no inputs displayed on it
+                        // 2) the cancellation token has requested a cancellation.
+                        //
+                        // if either of these conditions is true, continue to the next input group.
+
+                        if (inputGroupPage.DisplayedInputCount == 0)
+                        {
+                            // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
+                            // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
+                            // input group in the backstack, if there is one.
+                            if (inputGroupNum >= inputGroups.Count() - 1 &&                                                     // this is the final input group
+                                inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
+                                !string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
+                                !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
                             {
-                                foreach (InputGroup inputGroup in inputGroups)
+                                inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                            }
+                        }
+                        // display the page if we've not been canceled
+                        else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                        {
+                            INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+
+                            // display page. only animate the display for the first page.
+                            await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
+
+                            // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                            // to fire only once upon first display.
+                            if (firstPageDisplay)
+                            {
+                                postDisplayCallback?.Invoke();
+                                firstPageDisplay = false;
+                            }
+
+                            InputGroupPage.NavigationResult navigationResult = await inputGroupPage.ResponseTask;
+
+                            _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
+
+                            // animate pop if the user submitted or canceled. when doing this, reference the navigation context
+                            // on the page rather than the local 'navigation' variable. this is necessary because the navigation
+                            // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+                            // notification.
+                            await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit ||
+                                                                          navigationResult == InputGroupPage.NavigationResult.Cancel);
+
+                            if (navigationResult == InputGroupPage.NavigationResult.Backward)
+                            {
+                                // we only allow backward navigation when we have something on the back stack. so the following is safe.
+                                inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                            }
+                            else if (navigationResult == InputGroupPage.NavigationResult.Forward)
+                            {
+                                // keep the group in the back stack.
+                                inputGroupNumBackStack.Push(inputGroupNum);
+                            }
+                            else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
+                            {
+                                inputGroups = null;
+                            }
+
+                            // there's nothing to do if the navigation result is submit, since we've finished the final
+                            // group and we are about to return.
+                        }
+                    });
+                }
+            }
+
+            // process the inputs if the user didn't cancel
+            if (inputGroups != null)
+            {
+                // set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
+                // reflect the time that the user hit submit.
+                DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
+                foreach (InputGroup inputGroup in inputGroups)
+                {
+                    foreach (Input input in inputGroup.Inputs)
+                    {
+                        input.SubmissionTimestamp = submissionTimestamp;
+                    }
+                }
+
+                #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
+                if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                {
+                    _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+
+                    try
+                    {
+                        Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken.GetValueOrDefault(), true);
+
+                        if (currentPosition != null)
+                        {
+                            foreach (InputGroup inputGroup in inputGroups)
+                            {
+                                if (inputGroup.Geotag)
                                 {
-                                    if (inputGroup.Geotag)
+                                    foreach (Input input in inputGroup.Inputs)
                                     {
-                                        foreach (Input input in inputGroup.Inputs)
+                                        if (input.Complete)
                                         {
-                                            if (input.Complete)
+                                            bool locationUpdated = false;
+
+                                            if (input.Latitude == null)
                                             {
-                                                bool locationUpdated = false;
+                                                input.Latitude = currentPosition.Latitude;
+                                                locationUpdated = true;
+                                            }
 
-                                                if (input.Latitude == null)
-                                                {
-                                                    input.Latitude = currentPosition.Latitude;
-                                                    locationUpdated = true;
-                                                }
+                                            if (input.Longitude == null)
+                                            {
+                                                input.Longitude = currentPosition.Longitude;
+                                                locationUpdated = true;
+                                            }
 
-                                                if (input.Longitude == null)
-                                                {
-                                                    input.Longitude = currentPosition.Longitude;
-                                                    locationUpdated = true;
-                                                }
-
-                                                if (locationUpdated)
-                                                {
-                                                    input.LocationUpdateTimestamp = currentPosition.Timestamp;
-                                                }
+                                            if (locationUpdated)
+                                            {
+                                                input.LocationUpdateTimestamp = currentPosition.Timestamp;
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
                     }
-                    #endregion
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
+                #endregion
+            }
 
-                return inputGroups;
-            });
+            return inputGroups;
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
