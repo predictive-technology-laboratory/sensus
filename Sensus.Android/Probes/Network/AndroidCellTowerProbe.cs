@@ -16,7 +16,7 @@ using Android.App;
 using Android.Telephony;
 using Sensus.Probes.Network;
 using System;
-using Sensus;
+using System.Threading.Tasks;
 using Plugin.Permissions.Abstractions;
 
 namespace Sensus.Android.Probes.Network
@@ -35,11 +35,11 @@ namespace Sensus.Android.Probes.Network
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
                 if (_telephonyManager == null)
@@ -52,19 +52,21 @@ namespace Sensus.Android.Probes.Network
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Cell tower location is not permitted on this device. Cannot start cell tower probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.None);
+            return Task.CompletedTask;
         }
     }
 }

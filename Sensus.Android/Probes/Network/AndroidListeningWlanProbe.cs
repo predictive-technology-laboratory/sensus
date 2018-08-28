@@ -17,6 +17,7 @@ using Android.Content;
 using Android.Net;
 using Sensus.Probes.Network;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Network
 {
@@ -35,20 +36,24 @@ namespace Sensus.Android.Probes.Network
             };
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             // register receiver for all WLAN intent actions
             Application.Context.RegisterReceiver(_wlanBroadcastReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
 
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
+
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             // stop broadcast receiver
             Application.Context.UnregisterReceiver(_wlanBroadcastReceiver);
 
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED -= _wlanConnectionChangedCallback;
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -18,6 +18,7 @@ using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Movement
 {
@@ -104,21 +105,21 @@ namespace Sensus.Probes.Movement
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.Initialize();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start speed probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected sealed override async void StartListening()
+        protected sealed override async Task StartListeningAsync()
         {
             _previousPosition = null;
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
@@ -131,7 +132,7 @@ namespace Sensus.Probes.Movement
             _previousPosition = null;
         }
 
-        protected sealed override async void StopListening()
+        protected sealed override async Task StopListeningAsync()
         {
             await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
             _previousPosition = null;

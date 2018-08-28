@@ -15,6 +15,7 @@
 using Android.Hardware;
 using Sensus.Probes.Movement;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -45,23 +46,26 @@ namespace Sensus.Android.Probes.Movement
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _accelerometerListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
-            base.StartListening();
+            await base.StartListening();
 
             _accelerometerListener.Start();
         }
 
-        protected override void StopListening()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _accelerometerListener.Stop();
+
         }
     }
 }

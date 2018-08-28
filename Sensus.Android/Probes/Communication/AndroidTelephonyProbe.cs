@@ -16,8 +16,8 @@ using Android.App;
 using Android.Telephony;
 using Sensus.Probes.Communication;
 using System;
-using Sensus;
 using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -59,11 +59,11 @@ namespace Sensus.Android.Probes.Communication
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Phone) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Phone) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
                 if (_telephonyManager == null)
@@ -76,21 +76,23 @@ namespace Sensus.Android.Probes.Communication
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable phone in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Telephony not permitted on this device. Cannot start telephony probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
+            return Task.CompletedTask;
         }
     }
 }

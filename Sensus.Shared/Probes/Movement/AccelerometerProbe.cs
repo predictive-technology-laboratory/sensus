@@ -69,25 +69,24 @@ namespace Sensus.Probes.Movement
             get { return typeof(AccelerometerDatum); }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _stabilizing = true;
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
             // allow the accelerometer to stabilize...the first few readings can be extremely erratic
-            Task.Run(() =>
-            {
-                Thread.Sleep(2000);
-                _stabilizing = false;
+            await Task.Delay(2000);
+            _stabilizing = false;
 
-                // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
-                if (SensusServiceHelper.Get() != null)
-                    SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
-            });
+            // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
+            if (SensusServiceHelper.Get() != null)
+            {
+                SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
+            }
         }
 
         public override void Reset()
@@ -99,12 +98,12 @@ namespace Sensus.Probes.Movement
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

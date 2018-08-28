@@ -66,7 +66,7 @@ namespace Sensus.Android.Probes.Location
         IProximityObserver _proximityObserver;
         IProximityObserverHandler _proximityObservationHandler;
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                                                            .SetSmallIcon(Resource.Drawable.notification_icon_background)
@@ -97,11 +97,14 @@ namespace Sensus.Android.Probes.Location
 
             _proximityObservationHandler = _proximityObserver.AddProximityZones(zones.ToArray())
                                                              .Start();
+
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _proximityObservationHandler.Stop();
+            return Task.CompletedTask;
         }
     }
 }

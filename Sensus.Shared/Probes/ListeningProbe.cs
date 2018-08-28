@@ -32,8 +32,6 @@ namespace Sensus.Probes
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
 
-        private readonly object _locker = new object();
-
         /// <summary>
         /// The maximum number of readings that may be stored in one second.
         /// </summary>
@@ -239,42 +237,36 @@ namespace Sensus.Probes
             _deviceAwake = false;
         }
 
-        protected sealed override void ProtectedStart()
+        protected sealed override async Task ProtectedStartAsync()
         {
-            lock (_locker)
+            // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
+            if (!Running && _keepDeviceAwake)
             {
-                // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
-                if (!Running && _keepDeviceAwake)
-                {
-                    SensusServiceHelper.Get().KeepDeviceAwake();
-                    _deviceAwake = true;
-                }
+                SensusServiceHelper.Get().KeepDeviceAwake();
+                _deviceAwake = true;
+            }
 
-                base.ProtectedStart();
+            await base.ProtectedStart();
 
-                StartListening();
+            await StartListeningAsync();
+        }
+
+        protected abstract Task StartListeningAsync();
+
+        public sealed override Task StopAsync()
+        {
+            await base.Stop();
+
+            await StopListeningAsync();
+
+            if (_deviceAwake)
+            {
+                SensusServiceHelper.Get().LetDeviceSleep();
+                _deviceAwake = false;
             }
         }
 
-        protected abstract void StartListening();
-
-        public sealed override void Stop()
-        {
-            lock (_locker)
-            {
-                base.Stop();
-
-                StopListening();
-
-                if (_deviceAwake)
-                {
-                    SensusServiceHelper.Get().LetDeviceSleep();
-                    _deviceAwake = false;
-                }
-            }
-        }
-
-        protected abstract void StopListening();
+        protected abstract Task StopListeningAsync();
 
         public override void Reset()
         {

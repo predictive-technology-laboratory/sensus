@@ -68,23 +68,23 @@ namespace Sensus.Probes.Context
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Bluetooth not enabled. Cannot start Bluetooth probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected sealed override void ProtectedStart()
+        protected sealed override async Task ProtectedStartAsync()
         {
-            base.ProtectedStart();
+            await base.ProtectedStartAsync();
 
             try
             {
@@ -138,9 +138,9 @@ namespace Sensus.Probes.Context
 
         protected abstract void StartScan();
 
-        public sealed override void Stop()
+        public sealed override async Task StopAsync()
         {
-            base.Stop();
+            await base.StopAsync();
 
             try
             {

@@ -15,6 +15,7 @@
 using Android.Hardware;
 using Sensus.Probes.Context;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -38,21 +39,23 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _lightListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             _lightListener.Start();
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _lightListener.Stop();
+            return Task.CompletedTask;
         }
     }
 }

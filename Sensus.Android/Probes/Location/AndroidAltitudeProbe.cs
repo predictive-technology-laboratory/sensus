@@ -15,6 +15,7 @@
 using Android.Hardware;
 using Sensus.Probes.Location;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -38,21 +39,23 @@ namespace Sensus.Android.Probes.Location
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _altitudeListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             _altitudeListener.Start();
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _altitudeListener.Stop();
+            return Task.CompletedTask;
         }
     }
 }

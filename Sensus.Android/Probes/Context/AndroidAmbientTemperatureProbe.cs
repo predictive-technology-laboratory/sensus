@@ -15,6 +15,7 @@
 using System;
 using Android.Hardware;
 using Sensus.Probes.Context;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -38,21 +39,23 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _temperatureListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             _temperatureListener.Start();
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _temperatureListener.Stop();
+            return Task.CompletedTask;
         }
     }
 }

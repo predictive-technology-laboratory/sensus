@@ -17,6 +17,7 @@ using System;
 using Sensus.Exceptions;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.DataStores
 {
@@ -62,37 +63,41 @@ namespace Sensus.DataStores
             _running = false;
         }
 
-        public virtual void Start()
+        public virtual Task StartAsync()
         {
             if (!_running)
             {
                 _running = true;
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
             }
+
+            return Task.CompletedTask;
         }
 
-        public virtual void Stop()
+        public virtual Task StopAsync()
         {
             if (_running)
             {
                 _running = false;
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
             }
+
+            return Task.CompletedTask;
         }
 
-        public void Restart()
+        public async Task RestartAsync()
         {
-            Stop();
-            Start();
+            await StopAsync();
+            await StartAsync();
         }
 
-        public virtual bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public virtual Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = false;
+            HealthTestResult result = HealthTestResult.Okay;
 
             if (!_running)
             {
-                restart = true;
+                result = HealthTestResult.Restart;
             }
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
@@ -103,9 +108,9 @@ namespace Sensus.DataStores
 
             Analytics.TrackEvent(eventName, properties);
 
-            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return restart;
+            return Task.FromResult(new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(result, events));
         }
 
         public virtual void Reset()

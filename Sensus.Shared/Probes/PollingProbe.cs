@@ -23,7 +23,6 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Microsoft.AppCenter.Analytics;
 using Sensus.Extensions;
-using Sensus.Exceptions;
 
 #if __IOS__
 using CoreLocation;
@@ -64,8 +63,6 @@ namespace Sensus.Probes
         private bool _significantChangePollOverridesScheduledPolls;
         private CLLocationManager _locationManager;
 #endif
-
-        private readonly object _locker = new object();
 
         /// <summary>
         /// How long to sleep (become inactive) between successive polling operations.
@@ -232,128 +229,122 @@ namespace Sensus.Probes
 
         }
 
-        protected override void ProtectedStart()
+        protected override async Task ProtectedStartAsync()
         {
-            lock (_locker)
-            {
-                base.ProtectedStart();
+            await base.ProtectedStartAsync();
 
 #if __IOS__
-                string userNotificationMessage = DisplayName + " data requested.";
+            string userNotificationMessage = DisplayName + " data requested.";
 #elif __ANDROID__
-                string userNotificationMessage = null;
+            string userNotificationMessage = null;
 #elif LOCAL_TESTS
-                string userNotificationMessage = null;
+            string userNotificationMessage = null;
 #else
 #warning "Unrecognized platform"
-                string userNotificationMessage = null;
+            string userNotificationMessage = null;
 #endif
 
-                _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            {
+                return Task.Run(async () =>
                 {
-                    return Task.Run(async () =>
+                    if (Running)
                     {
-                        if (Running)
+                        _isPolling = true;
+
+                        List<Datum> data = null;
+                        try
                         {
-                            _isPolling = true;
+                            SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
+                            data = await PollAsync(cancellationToken);
 
-                            List<Datum> data = null;
-                            try
+                            lock (_pollTimes)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                                data = await PollAsync(cancellationToken);
-
-                                lock (_pollTimes)
-                                {
-                                    _pollTimes.Add(DateTime.Now);
-                                    _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
-                                }
+                                _pollTimes.Add(DateTime.Now);
+                                _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
                             }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            }
-
-                            if (data != null)
-                            {
-                                foreach (Datum datum in data)
-                                {
-                                    if (cancellationToken.IsCancellationRequested)
-                                    {
-                                        break;
-                                    }
-
-                                    try
-                                    {
-                                        await StoreDatumAsync(datum, cancellationToken);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                    }
-                                }
-                            }
-
-                            _isPolling = false;
                         }
-                    });
+                        catch (Exception ex)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        }
 
-                }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                        if (data != null)
+                        {
+                            foreach (Datum datum in data)
+                            {
+                                if (cancellationToken.IsCancellationRequested)
+                                {
+                                    break;
+                                }
+
+                                try
+                                {
+                                    await StoreDatumAsync(datum, cancellationToken);
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }
+                            }
+                        }
+
+                        _isPolling = false;
+                    }
+                });
+
+            }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
 #if __IOS__
 
-                if (_significantChangePoll)
-                {
-                    _locationManager.RequestAlwaysAuthorization();
-                    _locationManager.DistanceFilter = 5.0;
-                    _locationManager.PausesLocationUpdatesAutomatically = false;
-                    _locationManager.AllowsBackgroundLocationUpdates = true;
+            if (_significantChangePoll)
+            {
+                _locationManager.RequestAlwaysAuthorization();
+                _locationManager.DistanceFilter = 5.0;
+                _locationManager.PausesLocationUpdatesAutomatically = false;
+                _locationManager.AllowsBackgroundLocationUpdates = true;
 
-                    if (CLLocationManager.LocationServicesEnabled)
-                    {
-                        _locationManager.StartMonitoringSignificantLocationChanges();
-                    }
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Location services not enabled.", LoggingLevel.Normal, GetType());
-                    }
-                }
-
-                // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
-                if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
+                if (CLLocationManager.LocationServicesEnabled)
                 {
-                    SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
+                   _locationManager.StartMonitoringSignificantLocationChanges();
                 }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log("Location services not enabled.", LoggingLevel.Normal, GetType());
+                }
+            }
+
+            // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
+            if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)  
+            {
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
+            }
 
 #elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
+            await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
 #endif
-            }
         }
 
         protected abstract Task<List<Datum>> PollAsync(CancellationToken cancellationToken);
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
-            lock (_locker)
-            {
-                base.Stop();
+            await base.StopAsync();
 
 #if __IOS__
-                if (_significantChangePoll)
-                {
-                    _locationManager.StopMonitoringSignificantLocationChanges();
-                }
+            if (_significantChangePoll)
+            {
+                _locationManager.StopMonitoringSignificantLocationChanges();
+            }
 #endif
 
-                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback);
-                _pollCallback = null;
-            }
+            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback);
+            _pollCallback = null;
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
 
             if (Running)
             {
@@ -362,7 +353,7 @@ namespace Sensus.Probes
                 // on ios we do significant-change polling, which can override scheduled polls. don't check for polling delays if the scheduled polls are overridden.
                 if (_significantChangePoll && _significantChangePollOverridesScheduledPolls)
                 {
-                    return restart;
+                    resultEvents;
                 }
 #endif
 
@@ -380,8 +371,10 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    resultEvents.Item2.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
                 }
+
+                HealthTestResult result = HealthTestResult.Okay;
 
                 if(!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
                 {
@@ -393,13 +386,13 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    resultEvents.Item2.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
 
-                    restart = true;
+                    result = HealthTestResult.Restart;
                 }
             }
 
-            return restart;
+            return new Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>>(result, resultEvents.Item2);
         }
 
         public override void Reset()

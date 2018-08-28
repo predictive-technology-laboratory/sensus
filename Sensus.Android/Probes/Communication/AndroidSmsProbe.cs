@@ -15,7 +15,7 @@
 using System;
 using Android.App;
 using Android.Telephony;
-using Sensus;
+using System.Threading.Tasks;
 using Sensus.Probes.Communication;
 using Plugin.Permissions.Abstractions;
 
@@ -46,11 +46,11 @@ namespace Sensus.Android.Probes.Communication
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Sms) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sms) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
                 if (_telephonyManager == null)
@@ -63,21 +63,23 @@ namespace Sensus.Android.Probes.Communication
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable SMS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "SMS is not permitted on this device. Cannot start SMS probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             Application.Context.ContentResolver.UnregisterContentObserver(_smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS -= _incomingSmsCallback;
+            return Task.CompletedTask;
         }
     }
 }
