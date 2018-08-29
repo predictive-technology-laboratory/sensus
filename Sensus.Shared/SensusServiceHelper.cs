@@ -866,17 +866,13 @@ namespace Sensus
         /// </summary>
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
-        public Task FlashNotificationAsync(string message)
+        public async Task FlashNotificationAsync(string message)
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
             if (_flashNotificationsEnabled)
             {
-                return ProtectedFlashNotificationAsync(message);
-            }
-            else
-            {
-                return Task.CompletedTask;
+                await ProtectedFlashNotificationAsync(message);
             }
 #endif
         }

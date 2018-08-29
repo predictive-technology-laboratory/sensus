@@ -136,15 +136,14 @@ namespace Sensus.iOS
 
         protected override Task ProtectedFlashNotificationAsync(string message)
         {
-            return Task.Run(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    TTGSnackbar snackbar = new TTGSnackbar(message);
-                    snackbar.Duration = TimeSpan.FromSeconds(5);
-                    snackbar.Show();
-                });
+                TTGSnackbar snackbar = new TTGSnackbar(message);
+                snackbar.Duration = TimeSpan.FromSeconds(5);
+                snackbar.Show();
             });
+
+            return Task.CompletedTask;
         }
 
         public override Task ShareFileAsync(string path, string subject, string mimeType)
