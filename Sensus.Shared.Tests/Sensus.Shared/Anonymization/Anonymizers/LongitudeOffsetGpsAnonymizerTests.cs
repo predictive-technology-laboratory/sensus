@@ -16,6 +16,7 @@ using System;
 using NUnit.Framework;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Tests.Classes;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 {
@@ -23,12 +24,10 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
     public class LongitudeOffsetGpsAnonymizerTests
     {
         [Test]
-        public void LongitudeInRangeNegativeTest()
+        public async Task LongitudeInRangeNegativeTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = 30
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = 30;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
@@ -38,12 +37,10 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         }
 
         [Test]
-        public void LongitudeInRangePositiveTest()
+        public async Task LongitudeInRangePositiveTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = 20
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = 20;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
@@ -53,12 +50,10 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         }
 
         [Test]
-        public void LongitudeOutOfRangePositiveTest()
+        public async Task LongitudeOutOfRangePositiveTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = 20
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = 20;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
@@ -68,12 +63,10 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         }
 
         [Test]
-        public void LongitudeOutOfRangeNegativeTest()
+        public async Task LongitudeOutOfRangeNegativeTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = -185
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = -185;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
@@ -83,14 +76,12 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         }
 
         [Test]
-        public void RandomParticipantOffsetsEqualTest()
+        public async Task RandomParticipantOffsetsEqualTest()
         {
             SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
 
-            Protocol protocol = new Protocol("asdf")
-            {
-                ParticipantId = "qwer"
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.ParticipantId = "qwer";
 
             double randomOffset1 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
             double randomOffset2 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
@@ -99,14 +90,12 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         }
 
         [Test]
-        public void RandomDeviceIdOffsetsEqualTest()
+        public async Task RandomDeviceIdOffsetsEqualTest()
         {
             SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
 
-            Protocol protocol = new Protocol("asdf")
-            {
-                ParticipantId = null
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.ParticipantId = null;
 
             double randomOffset1 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
             double randomOffset2 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);

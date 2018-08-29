@@ -66,7 +66,7 @@ namespace Sensus.Probes.Movement
             // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
             _previousPosition = null;
 
-            await base.ProtectedStart();
+            await base.ProtectedStartAsync();
         }
 
         protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)

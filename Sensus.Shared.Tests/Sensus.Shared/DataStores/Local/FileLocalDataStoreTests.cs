@@ -27,6 +27,7 @@ using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Tar;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests.DataStores.Local
 {
@@ -35,41 +36,41 @@ namespace Sensus.Tests.DataStores.Local
     {
         #region compression should not change the content of the files
         [Test]
-        public void UncompressedBytesEqualUncompressedBytesTest()
+        public async Task UncompressedBytesEqualUncompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
-            byte[] uncompressedBytes1 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
-            byte[] uncompressedBytes2 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
+            byte[] uncompressedBytes1 = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.NoCompression)).ToArray();
+            byte[] uncompressedBytes2 = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.NoCompression)).ToArray();
 
             Assert.True(uncompressedBytes1.SequenceEqual(uncompressedBytes2));
         }
 
         [Test]
-        public void UncompressedBytesEqualFastestDecompressedBytesTest()
+        public async Task UncompressedBytesEqualFastestDecompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
-            byte[] uncompressedBytes = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
+            byte[] uncompressedBytes = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.NoCompression)).ToArray();
 
             Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-            byte[] decompressedBytes = compressor.Decompress(GetLocalDataStoreBytes(data, CompressionLevel.Fastest));
+            byte[] decompressedBytes = compressor.Decompress(await GetLocalDataStoreBytesAsync(data, CompressionLevel.Fastest));
 
             Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
 
         [Test]
-        public void UncompressedBytesEqualOptimalDecompressedBytesTest()
+        public async Task UncompressedBytesEqualOptimalDecompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
-            byte[] uncompressedBytes = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
+            byte[] uncompressedBytes = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.NoCompression)).ToArray();
 
             Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-            byte[] decompressedBytes = compressor.Decompress(GetLocalDataStoreBytes(data, CompressionLevel.Optimal));
+            byte[] decompressedBytes = compressor.Decompress(await GetLocalDataStoreBytesAsync(data, CompressionLevel.Optimal));
 
             Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
@@ -77,14 +78,14 @@ namespace Sensus.Tests.DataStores.Local
 
         #region the file sizes should increase without closing the streams. we need this because we track the file sizes to open new files and force remote writes.
         [Test]
-        public void UncompressedFileSizeIncreasesWithoutClosingTest()
+        public async Task UncompressedFileSizeIncreasesWithoutClosingTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             double currentSizeMB = 0;
 
-            WriteLocalDataStore(data, CompressionLevel.NoCompression, fileLocalDataStore =>
+            await WriteLocalDataStoreAsync(data, CompressionLevel.NoCompression, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
@@ -96,14 +97,14 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void FastestCompressedFileSizeIncreasesWithoutClosingTest()
+        public async Task FastestCompressedFileSizeIncreasesWithoutClosingTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             double currentSizeMB = 0;
 
-            WriteLocalDataStore(data, CompressionLevel.Fastest, fileLocalDataStore =>
+            await WriteLocalDataStoreAsync(data, CompressionLevel.Fastest, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
@@ -115,14 +116,14 @@ namespace Sensus.Tests.DataStores.Local
         }
 
         [Test]
-        public void OptimalCompressedFileSizeIncreasesWithoutClosingTest()
+        public async Task OptimalCompressedFileSizeIncreasesWithoutClosingTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             double currentSizeMB = 0;
 
-            WriteLocalDataStore(data, CompressionLevel.Optimal, fileLocalDataStore =>
+            await WriteLocalDataStoreAsync(data, CompressionLevel.Optimal, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
                 double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
@@ -136,25 +137,25 @@ namespace Sensus.Tests.DataStores.Local
 
         #region compression should reduce file size
         [Test]
-        public void UncompressedBytesGreaterThanFastestCompressedBytesTest()
+        public async Task UncompressedBytesGreaterThanFastestCompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
-            byte[] bytes1 = GetLocalDataStoreBytes(data, CompressionLevel.NoCompression).ToArray();
-            byte[] bytes2 = GetLocalDataStoreBytes(data, CompressionLevel.Fastest).ToArray();
+            byte[] bytes1 = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.NoCompression)).ToArray();
+            byte[] bytes2 = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.Fastest)).ToArray();
 
             Assert.True(bytes1.Length > bytes2.Length);
         }
 
         [Test]
-        public void FastestCompressedBytesGreaterOrEqualOptimalCompressedBytesTest()
+        public async Task FastestCompressedBytesGreaterOrEqualOptimalCompressedBytesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
-            byte[] bytes1 = GetLocalDataStoreBytes(data, CompressionLevel.Fastest).ToArray();
-            byte[] bytes2 = GetLocalDataStoreBytes(data, CompressionLevel.Optimal).ToArray();
+            byte[] bytes1 = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.Fastest)).ToArray();
+            byte[] bytes2 = (await GetLocalDataStoreBytesAsync(data, CompressionLevel.Optimal)).ToArray();
 
             Assert.True(bytes1.Length >= bytes2.Length);
         }
@@ -162,60 +163,60 @@ namespace Sensus.Tests.DataStores.Local
 
         #region data store should create/promote files
         [Test]
-        public void UncompressedRemoteWriteClearsFilesTest()
+        public async Task UncompressedRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             FileLocalDataStore localDataStore = null;
-            WriteLocalDataStore(data, CompressionLevel.NoCompression, (obj) =>
+            await WriteLocalDataStoreAsync(data, CompressionLevel.NoCompression, (obj) =>
             {
                 localDataStore = obj;
             });
 
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
 
-            localDataStore.WriteToRemoteAsync(CancellationToken.None).Wait();
+            await localDataStore.WriteToRemoteAsync(CancellationToken.None);
 
             // there should still be 1 file (the new open file)
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
 
         [Test]
-        public void FastestCompressionRemoteWriteClearsFilesTest()
+        public async Task FastestCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             FileLocalDataStore localDataStore = null;
-            WriteLocalDataStore(data, CompressionLevel.Fastest, (obj) =>
+            await WriteLocalDataStoreAsync(data, CompressionLevel.Fastest, (obj) =>
             {
                 localDataStore = obj;
             });
 
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
 
-            localDataStore.WriteToRemoteAsync(CancellationToken.None).Wait();
+            await localDataStore.WriteToRemoteAsync(CancellationToken.None);
 
             // there should still be 1 file (the new open file)
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
 
         [Test]
-        public void OptimalCompressionRemoteWriteClearsFilesTest()
+        public async Task OptimalCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             FileLocalDataStore localDataStore = null;
-            WriteLocalDataStore(data, CompressionLevel.Optimal, (obj) =>
+            await WriteLocalDataStoreAsync(data, CompressionLevel.Optimal, (obj) =>
             {
                 localDataStore = obj;
             });
 
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
 
-            localDataStore.WriteToRemoteAsync(CancellationToken.None).Wait();
+            await localDataStore.WriteToRemoteAsync(CancellationToken.None);
 
             // there should still be 1 file (the new open file)
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
@@ -224,22 +225,22 @@ namespace Sensus.Tests.DataStores.Local
 
         #region tar
         [Test]
-        public void TarFilesTest()
+        public async Task TarFilesTest()
         {
-            TarTest(1);
-            TarTest(2);
-            TarTest(5);
-            TarTest(10);
+            await TarTestAsync(1);
+            await TarTestAsync(2);
+            await TarTestAsync(5);
+            await TarTestAsync(10);
         }
 
-        private void TarTest(int numFiles)
+        private async Task TarTestAsync(int numFiles)
         {
             InitServiceHelper();
             List<Datum> data = GenerateData();
 
             // write the data store multiple times
             FileLocalDataStore localDataStore = null;
-            string[] paths = WriteLocalDataStore(data, CompressionLevel.Optimal, (obj) =>
+            string[] paths = await WriteLocalDataStoreAsync(data, CompressionLevel.Optimal, (obj) =>
             {
                 localDataStore = obj;
 
@@ -311,26 +312,26 @@ namespace Sensus.Tests.DataStores.Local
             return data;
         }
 
-        private MemoryStream GetLocalDataStoreBytes(List<Datum> data, CompressionLevel compressionLevel)
+        private async Task<MemoryStream> GetLocalDataStoreBytesAsync(List<Datum> data, CompressionLevel compressionLevel)
         {
-            byte[] bytes = File.ReadAllBytes(WriteLocalDataStore(data, compressionLevel, numTimes: 1).Single());
+            byte[] bytes = File.ReadAllBytes((await WriteLocalDataStoreAsync(data, compressionLevel, numTimes: 1)).Single());
             return new MemoryStream(bytes);
         }
 
-        private string[] WriteLocalDataStore(List<Datum> data, CompressionLevel compressionLevel, Action<FileLocalDataStore> postWriteAction = null, int numTimes = 1)
+        private async Task<string[]> WriteLocalDataStoreAsync(List<Datum> data, CompressionLevel compressionLevel, Action<FileLocalDataStore> postWriteAction = null, int numTimes = 1)
         {
-            Protocol protocol = CreateProtocol(compressionLevel);
+            Protocol protocol = await CreateProtocolAsync(compressionLevel);
             FileLocalDataStore localDataStore = protocol.LocalDataStore as FileLocalDataStore;
 
             List<string> paths = new List<string>();
 
             for (int i = 0; i < numTimes; ++i)
             {
-                protocol.LocalDataStore.Start();
+                protocol.LocalDataStore.StartAsync().Wait();
                 WriteData(data, localDataStore, postWriteAction);
                 string path = localDataStore.Path + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
                 paths.Add(path);
-                localDataStore.Stop();
+                localDataStore.StopAsync().Wait();
                 Assert.True(File.Exists(path));
                 Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
             }
@@ -340,7 +341,7 @@ namespace Sensus.Tests.DataStores.Local
             return paths.ToArray();
         }
 
-        private Protocol CreateProtocol(CompressionLevel compressionLevel)
+        private async Task<Protocol> CreateProtocolAsync(CompressionLevel compressionLevel)
         {
             FileLocalDataStore localDataStore = new FileLocalDataStore()
             {
@@ -352,12 +353,10 @@ namespace Sensus.Tests.DataStores.Local
                 WriteDelayMS = 1000000
             };
 
-            Protocol protocol = new Protocol("test")
-            {
-                Id = Guid.NewGuid().ToString(),
-                LocalDataStore = localDataStore,
-                RemoteDataStore = remoteDataStore
-            };
+            Protocol protocol = await Protocol.CreateAsync("test");
+            protocol.Id = Guid.NewGuid().ToString();
+            protocol.LocalDataStore = localDataStore;
+            protocol.RemoteDataStore = remoteDataStore;
 
             return protocol;
         }

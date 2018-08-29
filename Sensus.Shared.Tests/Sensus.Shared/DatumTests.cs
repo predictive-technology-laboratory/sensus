@@ -18,6 +18,7 @@ using Sensus.Anonymization;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests
 {
@@ -31,14 +32,14 @@ namespace Sensus.Tests
         }
 
         [Test]
-        public void SerializeDeserializeTest()
+        public async Task SerializeDeserializeTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
             LocationDatum datum = new LocationDatum(DateTimeOffset.UtcNow, 0.5, 75.5, -35.5);
 
-            Protocol protocol = new Protocol("test");
+            Protocol protocol = await Protocol.CreateAsync("test");
             AnonymizedJsonContractResolver anonymizer = new AnonymizedJsonContractResolver(protocol);
             string serializedJSON = datum.GetJSON(anonymizer, false);
 
@@ -55,7 +56,7 @@ namespace Sensus.Tests
         }
 
         [Test]
-        public void SerializeDeserializeWithEnumTest()
+        public async Task SerializeDeserializeWithEnumTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
@@ -67,7 +68,7 @@ namespace Sensus.Tests
                                                     ActivityState.Inactive,
                                                     ActivityConfidence.Medium);
 
-            Protocol protocol = new Protocol("test");
+            Protocol protocol = await Protocol.CreateAsync("test");
             AnonymizedJsonContractResolver anonymizer = new AnonymizedJsonContractResolver(protocol);
             string serializedJSON = datum.GetJSON(anonymizer, false);
 

@@ -269,7 +269,7 @@ namespace Sensus.DataStores.Local
 
         public override async Task StartAsync()
         {
-            await base.Start();
+            await base.StartAsync();
 
             // ensure that we have a valid encryption setup if one is requested
             if (_encrypt)
@@ -841,7 +841,7 @@ namespace Sensus.DataStores.Local
 
             resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return Task.FromResult(resultEvents);
+            return resultEvents;
         }
     }
 }

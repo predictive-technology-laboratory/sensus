@@ -55,17 +55,15 @@ namespace Sensus.Android.Probes.Movement
 
         protected override async Task StartListeningAsync()
         {
-            await base.StartListening();
+            await base.StartListeningAsync();
 
             _accelerometerListener.Start();
         }
 
-        protected override async Task StopListeningAsync()
+        protected override Task StopListeningAsync()
         {
-            await base.StopListeningAsync();
-
             _accelerometerListener.Stop();
-
+            return Task.CompletedTask;
         }
     }
 }

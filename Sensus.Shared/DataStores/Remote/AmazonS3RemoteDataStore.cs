@@ -297,7 +297,7 @@ namespace Sensus.DataStores.Remote
             }
 
             // start base last so we're set up for any callbacks that get scheduled
-            await base.Start();
+            await base.StartAsync();
         }
 
         private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sllPolicyErrors)
@@ -393,7 +393,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        public override async Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -564,7 +564,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
             Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
 
@@ -578,7 +578,7 @@ namespace Sensus.DataStores.Remote
 
             resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return Task.FromResult(resultEvents);
+            return resultEvents;
         }
     }
 }

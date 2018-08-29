@@ -245,7 +245,7 @@ namespace Sensus.Callbacks
                             }
                             else
                             {
-                                UnscheduleCallback(callback);
+                                await UnscheduleCallbackAsync(callback);
                             }
                         }
                     }
@@ -330,7 +330,7 @@ namespace Sensus.Callbacks
         /// Unschedules the callback, first cancelling any executions that are currently running and then removing the callback from the scheduler.
         /// </summary>
         /// <param name="callback">Callback.</param>
-        public void UnscheduleCallback(ScheduledCallback callback)
+        public async Task UnscheduleCallbackAsync(ScheduledCallback callback)
         {
             if (callback != null)
             {
@@ -347,7 +347,7 @@ namespace Sensus.Callbacks
                 UnscheduleCallbackPlatformSpecific(callback);
 
                 // delete the push notification
-                SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
 
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }

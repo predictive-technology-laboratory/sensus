@@ -582,10 +582,17 @@ namespace Sensus
 
         #region add/remove running protocol ids
 
-        public void AddRunningProtocolId(string id)
+        public async Task AddRunningProtocolIdAsync(string id)
         {
+            bool scheduleHealthTestCallback = false;
+
             lock (_runningProtocolIds)
             {
+                if (_runningProtocolIds.Count == 0)
+                {
+                    scheduleHealthTestCallback = true;
+                }
+
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
@@ -594,68 +601,73 @@ namespace Sensus
                     (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
                 }
+            }
 
-                if (_healthTestCallback == null)
+            if (scheduleHealthTestCallback)
+            {
+                _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
-                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    // get protocols to test (those that should be running)
+                    List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
                     {
-                        // get protocols to test (those that should be running)
-                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
+                        lock (_runningProtocolIds)
                         {
-                            lock (_runningProtocolIds)
-                            {
-                                return _runningProtocolIds.Contains(protocol.Id);
-                            }
-
-                        }).ToList();
-
-                        // test protocols
-                        foreach (Protocol protocolToTest in protocolsToTest)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                break;
-                            }
-
-                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            return _runningProtocolIds.Contains(protocol.Id);
                         }
 
-                        // test the callback scheduler
-                        SensusContext.Current.CallbackScheduler.TestHealth();
+                    }).ToList();
 
-                        // update push notification registrations
-                        if(_updatePushNotificationRegistrationsOnNextHealthTest)
+                    // test protocols
+                    foreach (Protocol protocolToTest in protocolsToTest)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
                         {
-                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                            break;
                         }
 
-                        // test the notifier, which checks the push notification requests
-                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+                        _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                        await protocolToTest.TestHealthAsync(false, cancellationToken);
+                    }
 
-                    SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
-                }
+                    // test the callback scheduler
+                    SensusContext.Current.CallbackScheduler.TestHealth();
+
+                    // update push notification registrations
+                    if (_updatePushNotificationRegistrationsOnNextHealthTest)
+                    {
+                        await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                    }
+
+                    // test the notifier, which checks the push notification requests.
+                    await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+
+                }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
         }
 
-        public void RemoveRunningProtocolId(string id)
+        public async Task RemoveRunningProtocolIdAsync(string id)
         {
+            bool unscheduleHealthTestCallback = false;
+
             lock (_runningProtocolIds)
             {
-                _runningProtocolIds.Remove(id);
-
-                if (_runningProtocolIds.Count == 0)
+                if (_runningProtocolIds.Remove(id) && _runningProtocolIds.Count == 0)
                 {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback);
-                    _healthTestCallback = null;
+                    unscheduleHealthTestCallback = true;
                 }
 
 #if __ANDROID__
                 (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
+            }
+
+            if (unscheduleHealthTestCallback)
+            {
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
+                _healthTestCallback = null;
             }
         }
 
@@ -706,18 +718,15 @@ namespace Sensus
         /// <summary>
         /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
         /// </summary>
-        public Task StartAsync()
+        public async Task StartAsync()
         {
-            return Task.Run(() =>
+            foreach (Protocol registeredProtocol in _registeredProtocols)
             {
-                foreach (Protocol registeredProtocol in _registeredProtocols)
+                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
-                    {
-                        registeredProtocol.Start();
-                    }
+                    await registeredProtocol.StartAsync();
                 }
-            });
+            }
         }
 
         public void RegisterProtocol(Protocol protocol)
@@ -803,19 +812,19 @@ namespace Sensus
             }
         }
 
-        public void RemoveScript(Script script)
+        public async Task RemoveScriptAsync(Script script)
         {
-            RemoveScripts(true, script);
+            await RemoveScriptsAsync(true, script);
         }
 
-        public void RemoveScriptsForRunner(ScriptRunner runner)
+        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner)
         {
-            RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
+            await RemoveScriptsAsync(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public void RemoveExpiredScripts(bool issueNotification)
+        public async Task RemoveExpiredScriptsAsync(bool issueNotification)
         {
-            RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
+            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
         public async Task ClearScriptsAsync()
@@ -831,7 +840,7 @@ namespace Sensus
         /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
         public async Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
         {
-            RemoveExpiredScripts(false);
+            await RemoveExpiredScriptsAsync(false);
 
             await _scriptsToRun.Concurrent.ExecuteThreadSafe(async () =>
             {
@@ -1207,10 +1216,10 @@ namespace Sensus
             });
         }
 
-        public void UnregisterProtocol(Protocol protocol)
+        public async Task UnregisterProtocolAsync(Protocol protocol)
         {
             _registeredProtocols.Remove(protocol);
-            protocol.Stop();
+            await protocol.StopAsync();
         }
 
         /// <summary>
@@ -1287,7 +1296,7 @@ namespace Sensus
 
         public async Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
         {
-            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
                 // before using the plugin.

@@ -54,9 +54,9 @@ namespace Sensus.UI
             {
                 MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
                 deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
-                deleteMenuItem.Clicked += (sender, e) =>
+                deleteMenuItem.Clicked += async (sender, e) =>
                 {
-                    SensusServiceHelper.Get().RemoveScript((sender as MenuItem).CommandParameter as Script);
+                    await SensusServiceHelper.Get().RemoveScriptAsync((sender as MenuItem).CommandParameter as Script);
                 };
 
                 ContextActions.Add(deleteMenuItem);
@@ -141,7 +141,7 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    SensusServiceHelper.Get().RemoveScript(selectedScript);
+                    await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript);
                 }
 
                 SensusServiceHelper.Get().Logger.Log("\"" + selectedScript.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
@@ -184,9 +184,9 @@ namespace Sensus.UI
             // use timer to update available surveys
             System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
 
-            filterTimer.Elapsed += (sender, e) =>
+            filterTimer.Elapsed += async (sender, e) =>
             {
-                SensusServiceHelper.Get().RemoveExpiredScripts(true);
+                await SensusServiceHelper.Get().RemoveExpiredScriptsAsync(true);
             };
 
             Appearing += (sender, e) =>

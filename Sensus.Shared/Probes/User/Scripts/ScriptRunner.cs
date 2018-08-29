@@ -91,19 +91,7 @@ namespace Sensus.Probes.User.Scripts
             }
             set
             {
-                if (value != _enabled)
-                {
-                    _enabled = value;
-
-                    if (Probe != null && Probe.Running && _enabled) // probe can be null when deserializing, if set after this property.
-                    {
-                        Start();
-                    }
-                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
-                    {
-                        Stop();
-                    }
-                }
+                _enabled = value;
             }
         }
 
@@ -405,7 +393,7 @@ namespace Sensus.Probes.User.Scripts
             Probe = probe;
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             foreach (var trigger in Triggers)
             {
@@ -426,44 +414,44 @@ namespace Sensus.Probes.User.Scripts
 
             if (Script.InputGroups.Any(inputGroup => inputGroup.Geotag))
             {
-                SensusServiceHelper.Get().ObtainPermission(Permission.Location);
+                await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location);
             }
         }
 
-        public void Start()
+        public async Task StartAsync()
         {
-            UnscheduleCallbacks();
-            ScheduleScriptRuns();
+            await UnscheduleCallbacksAsync();
+            await ScheduleScriptRunsAsync();
 
             // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
             // that the script won't be running on the UI thread. second, from the caller's perspective the prompt should 
             // not need to finish running in order for the runner to be considered started.
             if (RunOnStart)
             {
-                RunAsync(Script.Copy(true));
+                await RunAsync(Script.Copy(true));
             }
         }
 
-        public void Reset()
+        public async Task ResetAsync()
         {
-            UnscheduleCallbacks();
+            await UnscheduleCallbacksAsync();
             RunTimes.Clear();
             CompletionTimes.Clear();
         }
 
-        public void Restart()
+        public async Task RestartAsync()
         {
-            Stop();
-            Start();
+            await StopAsync();
+            await StartAsync();
         }
 
-        public void Stop()
+        public async Task StopAsync()
         {
-            UnscheduleCallbacks();
-            SensusServiceHelper.Get().RemoveScriptsForRunner(this);
+            await UnscheduleCallbacksAsync();
+            await SensusServiceHelper.Get().RemoveScriptsForRunnerAsync(this);
         }
 
-        public void ScheduleScriptRuns()
+        public async Task ScheduleScriptRunsAsync()
         {
             if (_scheduleTrigger.WindowCount == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
             {
@@ -478,9 +466,12 @@ namespace Sensus.Probes.User.Scripts
             // help mitigate the problem of users ignoring surveys and losing touch with the study. note that even if there are more 
             // than 32 script runners, each will be allowed to schedule a callback as callback count will be zero, which is not greater 
             // than the zero resulting from integer truncation below.
+            List<ScriptTriggerTime> scriptTriggerTimesToSchedule = new List<ScriptTriggerTime>();
             lock (_scriptRunCallbacks)
             {
-                while (_scriptRunCallbacks.Count <= 32 / Probe.ScriptRunners.Count)
+                int scriptRunCallbacksForThisRunner = 32 / Probe.ScriptRunners.Count;
+                int numToSchedule = (scriptRunCallbacksForThisRunner - _scriptRunCallbacks.Count) + 1;
+                for (int i = 0; i < numToSchedule; ++i)
                 {
                     // if the trigger times queue is empty, refill it.
                     if (_scriptTriggerTimes.Count == 0)
@@ -520,13 +511,18 @@ namespace Sensus.Probes.User.Scripts
                     }
                     else
                     {
-                        ScheduleScriptRun(_scriptTriggerTimes.Dequeue());
+                        scriptTriggerTimesToSchedule.Add(_scriptTriggerTimes.Dequeue());
                     }
                 }
             }
+
+            foreach (ScriptTriggerTime scriptTriggerTime in scriptTriggerTimesToSchedule)
+            {
+                await ScheduleScriptRunAsync(scriptTriggerTime);
+            }
         }
 
-        private void ScheduleScriptRun(ScriptTriggerTime triggerTime)
+        private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
         {
             // don't bother with the script if it's coming too soon.
             if (triggerTime.ReferenceTillTrigger.TotalMinutes <= 1)
@@ -546,7 +542,7 @@ namespace Sensus.Probes.User.Scripts
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
             // script run since it was already scheduled. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
+            if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
             {
                 lock (_scriptRunCallbacks)
                 {
@@ -585,7 +581,7 @@ namespace Sensus.Probes.User.Scripts
                     // delivered (1) either to the app in the foreground or (2) to the notification tray where the user has opened
                     // it -- either way on ios the app is in the foreground and the script has been run. now is a good time to update 
                     // the scheduled callbacks to run this script.
-                    ScheduleScriptRuns();
+                    await ScheduleScriptRunsAsync();
 
                 }, cancellationToken);
 
@@ -612,8 +608,10 @@ namespace Sensus.Probes.User.Scripts
             return callback;
         }
 
-        private void UnscheduleCallbacks()
+        private async Task UnscheduleCallbacksAsync()
         {
+            List<ScheduledCallback> scriptRunCallbacksToUnschedule = new List<ScheduledCallback>();
+
             lock (_scriptRunCallbacks)
             {
                 if (_scriptRunCallbacks.Count == 0 || SensusServiceHelper.Get() == null)
@@ -621,14 +619,16 @@ namespace Sensus.Probes.User.Scripts
                     return;
                 }
 
-                foreach (ScheduledCallback callback in _scriptRunCallbacks)
-                {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(callback);
-                }
+                scriptRunCallbacksToUnschedule = _scriptRunCallbacks.ToList();
 
                 _scriptRunCallbacks.Clear();
                 _scriptTriggerTimes.Clear();
                 _maxTriggerTime = null;
+            }
+
+            foreach (ScheduledCallback callback in scriptRunCallbacksToUnschedule)
+            {
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(callback);
             }
         }
 

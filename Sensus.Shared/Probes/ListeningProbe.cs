@@ -246,16 +246,16 @@ namespace Sensus.Probes
                 _deviceAwake = true;
             }
 
-            await base.ProtectedStart();
+            await base.ProtectedStartAsync();
 
             await StartListeningAsync();
         }
 
         protected abstract Task StartListeningAsync();
 
-        public sealed override Task StopAsync()
+        public sealed override async Task StopAsync()
         {
-            await base.Stop();
+            await base.StopAsync();
 
             await StopListeningAsync();
 
@@ -268,9 +268,9 @@ namespace Sensus.Probes
 
         protected abstract Task StopListeningAsync();
 
-        public override void Reset()
+        public override async Task ResetAsync()
         {
-            base.Reset();
+            await base.ResetAsync();
 
             _deviceAwake = false;
         }

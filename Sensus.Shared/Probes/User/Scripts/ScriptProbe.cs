@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -116,40 +117,40 @@ namespace Sensus.Probes.User.Scripts
             _scriptRunners = new ObservableCollection<ScriptRunner>();
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 if (scriptRunner.Enabled)
                 {
-                    scriptRunner.Initialize();
+                    await scriptRunner.InitializeAsync();
                 }
             }
         }
 
-        protected override void ProtectedStart()
+        protected override async Task ProtectedStartAsync()
         {
-            base.ProtectedStart();
+            await base.ProtectedStartAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 if (scriptRunner.Enabled)
                 {
-                    scriptRunner.Start();
+                    await scriptRunner.StartAsync();
                 }
             }
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 // ensure that surveys are scheduled
-                scriptRunner.ScheduleScriptRuns();
+                await scriptRunner.ScheduleScriptRunsAsync();
 
                 string eventName = TrackedEvent.Health + ":" + GetType().Name;
                 Dictionary<string, string> properties = new Dictionary<string, string>
@@ -159,40 +160,40 @@ namespace Sensus.Probes.User.Scripts
 
                 Analytics.TrackEvent(eventName, properties);
 
-                events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
             }
 
-            return restart;
+            return resultEvents;
         }
 
-        public override void Reset()
+        public override async Task ResetAsync()
         {
-            base.Reset();
-
-            foreach (var scriptRunner in _scriptRunners)
-            {
-                scriptRunner.Reset();
-            }
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
+            await base.ResetAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
-                scriptRunner.Stop();
+                await scriptRunner.ResetAsync();
+            }
+        }
+
+        public override async Task StopAsync()
+        {
+            await base.StopAsync();
+
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            {
+                await scriptRunner.StopAsync();
             }
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

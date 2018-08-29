@@ -185,7 +185,7 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Confirm Cancel", "Are you sure you want to cancel " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
-                        selectedProtocol.CancelScheduledStart();
+                        await selectedProtocol.CancelScheduledStartAsync();
                     }
                 }
                 else if (selectedAction == "Stop")
@@ -202,10 +202,10 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Status")
                 {
-                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
-                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
+                    List<AnalyticsTrackedEvent> trackedEvents = await selectedProtocol.TestHealthAsync(true);
+                    await Navigation.PushAsync(new ViewTextLinesPage("Status", trackedEvents.SelectMany(trackedEvent =>
                     {
-                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
+                        return trackedEvent.Properties.Select(propertyValue => trackedEvent.Name + ":  " + propertyValue.Key + "=" + propertyValue.Value);
 
                     }).ToList()));
                 }
@@ -496,7 +496,7 @@ namespace Sensus.UI
                 }
                 else if (action == "New")
                 {
-                    Protocol.Create("New Protocol");
+                    await Protocol.CreateAsync("New Protocol");
                 }
 
                 if (protocol != null)
@@ -522,7 +522,7 @@ namespace Sensus.UI
             {
                 if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                 {
-                    SensusServiceHelper.Get().StopProtocols();
+                    await SensusServiceHelper.Get().StopProtocolsAsync();
 
                     (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
                 }

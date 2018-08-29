@@ -153,9 +153,9 @@ namespace Sensus.Android.Probes.Apps
             }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             ObtainAccessToken(GetRequiredPermissionNames());
         }

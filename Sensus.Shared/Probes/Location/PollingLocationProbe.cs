@@ -46,16 +46,16 @@ namespace Sensus.Probes.Location
             get { return typeof(LocationDatum); }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
             
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start location probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }

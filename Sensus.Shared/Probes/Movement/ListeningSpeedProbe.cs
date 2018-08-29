@@ -107,7 +107,7 @@ namespace Sensus.Probes.Movement
 
         protected override async Task InitializeAsync()
         {
-            await base.Initialize();
+            await base.InitializeAsync();
 
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
@@ -125,9 +125,9 @@ namespace Sensus.Probes.Movement
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
         }
 
-        public override void Reset()
+        public override async Task ResetAsync()
         {
-            base.Reset();
+            await base.ResetAsync();
 
             _previousPosition = null;
         }

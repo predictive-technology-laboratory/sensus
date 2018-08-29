@@ -338,7 +338,7 @@ namespace Sensus.Probes
             }
 #endif
 
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback);
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_pollCallback);
             _pollCallback = null;
         }
 
@@ -371,12 +371,10 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    resultEvents.Item2.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
                 }
 
-                HealthTestResult result = HealthTestResult.Okay;
-
-                if(!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
+                if (!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
                 {
                     string eventName = TrackedEvent.Error + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
@@ -386,18 +384,18 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    resultEvents.Item2.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-                    result = HealthTestResult.Restart;
+                    resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Restart, resultEvents.Item2);
                 }
             }
 
-            return new Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>>(result, resultEvents.Item2);
+            return resultEvents;
         }
 
-        public override void Reset()
+        public override async Task ResetAsync()
         {
-            base.Reset();
+            await base.ResetAsync();
 
             _isPolling = false;
             _pollCallback = null;

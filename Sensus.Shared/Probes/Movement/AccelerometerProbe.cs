@@ -89,9 +89,9 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        public override void Reset()
+        public override async Task ResetAsync()
         {
-            base.Reset();
+            await base.ResetAsync();
 
             _stabilizing = false;
         }

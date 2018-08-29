@@ -237,14 +237,12 @@ namespace Sensus.DataStores.Remote
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
-        public override Task StopAsync()
+        public override async Task StopAsync()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
-
-            return Task.CompletedTask;
         }
 
         public override void Reset()
@@ -257,7 +255,7 @@ namespace Sensus.DataStores.Remote
 
         public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> resultEvents = await base.TestHealthAsync(events);
+            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
 
             if (_mostRecentSuccessfulWriteTime.HasValue)
             {
@@ -288,7 +286,7 @@ namespace Sensus.DataStores.Remote
 
                 Analytics.TrackEvent(eventName, properties);
 
-                resultEvents.Item2.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
 
                 result = HealthTestResult.Restart;
             }

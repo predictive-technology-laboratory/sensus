@@ -83,7 +83,7 @@ namespace Sensus.Probes.Location
 
         public async Task AddListenerAsync(EventHandler<PositionEventArgs> listener, bool includeHeading)
         {
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 throw new Exception("Could not access GPS.");
             }

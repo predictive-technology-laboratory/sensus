@@ -101,19 +101,6 @@ namespace Sensus.Probes
                 {
                     _enabled = value;
 
-                    // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
-                    if (_protocol != null && _protocol.Running)
-                    {
-                        if (_enabled)
-                        {
-                            StartAsync();
-                        }
-                        else
-                        {
-                            StopAsync();
-                        }
-                    }
-
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
                 }
             }
@@ -477,6 +464,8 @@ namespace Sensus.Probes
             {
                 SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
             }
+
+            return Task.CompletedTask;
         }
 
         public async Task RestartAsync()
@@ -485,13 +474,13 @@ namespace Sensus.Probes
             await StartAsync();
         }
 
-        public virtual Task<bool> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public virtual Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = false;
+            HealthTestResult result = HealthTestResult.Okay;
 
             if (!_running)
             {
-                restart = true;
+                result = HealthTestResult.Restart;
             }
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
@@ -525,12 +514,12 @@ namespace Sensus.Probes
                 Analytics.TrackEvent(eventName, properties);
             }
 
-            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return Task.FromResult(restart);
+            return Task.FromResult(new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(result, events));
         }
 
-        public virtual void Reset()
+        public virtual Task ResetAsync()
         {
             if (_running)
             {
@@ -554,6 +543,8 @@ namespace Sensus.Probes
 
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = null;
+
+            return Task.CompletedTask;
         }
 
         public SfChart GetChart()

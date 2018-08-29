@@ -41,7 +41,6 @@ namespace Sensus.Probes.User.MicrosoftBand
         private static ScheduledCallback HEALTH_TEST_CALLBACK;
         private readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(60);
         private readonly TimeSpan HEALTH_TEST_TIMEOUT = TimeSpan.FromSeconds(60);
-        private static readonly object HEALTH_TEST_LOCKER = new object();
         private static bool REENABLE_BLUETOOTH_IF_NEEDED = true;
 
         private static List<MicrosoftBandProbeBase> BandProbesThatShouldBeRunning
@@ -176,105 +175,95 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        public static Task TestBandClientAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        public static async Task TestBandClientAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
         {
-            return Task.Run(() =>
+            // if no band probes should be running, then ignore the current test and unschedule the test callback.
+            if (BandProbesThatShouldBeRunning.Count == 0)
             {
-                // if no band probes should be running, then ignore the current test and unschedule the test callback.
-                if (BandProbesThatShouldBeRunning.Count == 0)
+                await CancelHealthTestAsync();
+                return;
+            }
+
+            try
+            {
+                // ensure that client is connected
+                ConnectClient(cancellationToken);
+
+                // we've successfully connected. if we fail at some point in the future, allow the system to reenable bluetooth.
+                REENABLE_BLUETOOTH_IF_NEEDED = true;
+            }
+            catch (Exception connectException)
+            {
+                SensusServiceHelper.Get().Logger.Log("Band client failed to connect:  " + connectException.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+
+                // we failed to connect. try reenabling bluetooth if we haven't already tried.
+                if (!cancellationToken.IsCancellationRequested && REENABLE_BLUETOOTH_IF_NEEDED)
                 {
-                    CancelHealthTest();
-                    return;
+                    SensusServiceHelper.Get().Logger.Log("Reenabling Bluetooth...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+
+                    try
+                    {
+                        SensusServiceHelper.Get().DisableBluetooth(true, true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies.");
+                    }
+                    catch (Exception reenableBluetoothException)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to reenable Bluetooth:  " + reenableBluetoothException.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
+                    }
+                    finally
+                    {
+                        REENABLE_BLUETOOTH_IF_NEEDED = false;
+                    }
+                }
+            }
+
+            // it's possible that the device was re-paired, resulting in the client being connected but the
+            // readings being disrupted. ensure that readings are coming by starting them every time we test
+            // the probe. if the readings are already coming this will have no effect. if they were disrupted
+            // the readings will be restarted.
+            foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
                 }
 
                 try
                 {
-                    // ensure that client is connected
-                    ConnectClient(cancellationToken);
+                    // ensure that the probe is configured on the current client.
+                    probe.Configure(BandClient);
 
-                    // we've successfully connected. if we fail at some point in the future, allow the system to reenable bluetooth.
-                    REENABLE_BLUETOOTH_IF_NEEDED = true;
+                    // if the probe is already running, start readings to ensure that we're using the potentially newly configured
+                    // sensor on the band client. this could be a probe that was previous started successfully, or the first Band
+                    // probe that faulted when trying to start the protocol.
+                    if (probe.Running)
+                    {
+                        // only start readings if they haven't been stopped due to non-contact.
+                        if (!probe._stoppedBecauseNotWorn)
+                        {
+                            probe.StartReadings();
+                        }
+                    }
+                    // if we attempted to start several band probes upon protocol start up and failed, we would have bailed out after
+                    // the first band probe failed to start. this would leave the other band probes enabled but not running at the time
+                    // of this health test. start such probes now.
+                    else
+                    {
+                        await probe.StartAsync();
+                    }
                 }
-                catch (Exception connectException)
+                catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Band client failed to connect:  " + connectException.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
-
-                    // we failed to connect. try reenabling bluetooth if we haven't already tried.
-                    if (!cancellationToken.IsCancellationRequested && REENABLE_BLUETOOTH_IF_NEEDED)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Reenabling Bluetooth...", LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
-
-                        try
-                        {
-                            SensusServiceHelper.Get().DisableBluetooth(true, true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies.");
-                        }
-                        catch (Exception reenableBluetoothException)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to reenable Bluetooth:  " + reenableBluetoothException.Message, LoggingLevel.Normal, typeof(MicrosoftBandProbeBase));
-                        }
-                        finally
-                        {
-                            REENABLE_BLUETOOTH_IF_NEEDED = false;
-                        }
-                    }
+                    SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
                 }
-
-                // it's possible that the device was re-paired, resulting in the client being connected but the
-                // readings being disrupted. ensure that readings are coming by starting them every time we test
-                // the probe. if the readings are already coming this will have no effect. if they were disrupted
-                // the readings will be restarted.
-                foreach (MicrosoftBandProbeBase probe in BandProbesThatShouldBeRunning)
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    try
-                    {
-                        // ensure that the probe is configured on the current client.
-                        probe.Configure(BandClient);
-
-                        // if the probe is already running, start readings to ensure that we're using the potentially newly configured
-                        // sensor on the band client. this could be a probe that was previous started successfully, or the first Band
-                        // probe that faulted when trying to start the protocol.
-                        if (probe.Running)
-                        {
-                            // only start readings if they haven't been stopped due to non-contact. acquire lock to prevent race
-                            // condition with contact changed event, which might attempt to stop readings on loss of contact.
-                            lock (HEALTH_TEST_LOCKER)
-                            {
-                                if (!probe._stoppedBecauseNotWorn)
-                                {
-                                    probe.StartReadings();
-                                }
-                            }
-                        }
-                        // if we attempted to start several band probes upon protocol start up and failed, we would have bailed out after
-                        // the first band probe failed to start. this would leave the other band probes enabled but not running at the time
-                        // of this health test. start such probes now.
-                        else
-                        {
-                            probe.Start();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to start readings for Band probe:  " + ex.Message, LoggingLevel.Normal, probe.GetType());
-                    }
-                }
-            });
+            }
         }
 
-        private static void CancelHealthTest()
+        private static async Task CancelHealthTestAsync()
         {
-            lock (HEALTH_TEST_LOCKER)
+            if (HEALTH_TEST_CALLBACK != null)
             {
-                if (HEALTH_TEST_CALLBACK != null)
-                {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(HEALTH_TEST_CALLBACK);
-                    HEALTH_TEST_CALLBACK = null;
-                }
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(HEALTH_TEST_CALLBACK);
+                HEALTH_TEST_CALLBACK = null;
             }
         }
 
@@ -359,28 +348,26 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected abstract void Configure(BandClient bandClient);
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _stoppedBecauseNotWorn = false;
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
             // we expect this probe to start successfully, but an exception may occur if no bands are paired with the device of if the
             // connection with a paired band fails. so schedule a static repeating callback to check on all band probes and restart them 
             // if needed/possible. this is better than a non-static callback for each band probe because there are many band probes and 
             // the callbacks would be redundant, frequent, and power-hungry.
-            lock (HEALTH_TEST_LOCKER)
+
+            // only schedule the callback if we haven't done so already. the callback should be global across all band probes.
+            if (HEALTH_TEST_CALLBACK == null)
             {
-                // only schedule the callback if we haven't done so already. the callback should be global across all band probes.
-                if (HEALTH_TEST_CALLBACK == null)
-                {
-                    // the band health test is static, so it has no domain other than sensus.
-                    HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
-                    SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(HEALTH_TEST_CALLBACK);
-                }
+                // the band health test is static, so it has no domain other than sensus.
+                HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(HEALTH_TEST_CALLBACK);
             }
 
             // hook up the contact event for non-contact probes. need to do this before the calls below because they might throw
@@ -400,7 +387,7 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected abstract void StartReadings();
 
-        protected override void StopListening()
+        protected override async Task StopListeningAsync()
         {
             // disconnect the contact event for non-contact probes. this probe has already been marked as non-running, so
             // there's no risk of a race condition in which the contact state changes to worn and the change event attempts
@@ -416,7 +403,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             // only cancel the static health test if none of the band probes should be running.
             if (BandProbesThatShouldBeRunning.Count == 0)
             {
-                CancelHealthTest();
+                await CancelHealthTestAsync();
             }
 
             // disconnect the client if no band probes are actually running.
@@ -425,7 +412,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 try
                 {
                     SensusServiceHelper.Get().Logger.Log("All Band probes have stopped. Disconnecting client.", LoggingLevel.Normal, GetType());
-                    BandClient.DisconnectAsync().Wait();
+                    await BandClient.DisconnectAsync();
                     BandClient = null;
                 }
                 catch (Exception ex)
@@ -451,12 +438,8 @@ namespace Sensus.Probes.User.MicrosoftBand
                 }
                 else if (contactState == ContactState.NotWorn && _stopWhenNotWorn && !_stoppedBecauseNotWorn)
                 {
-                    // prevent race condition with client health test, which will be trying to start readings on this probe.
-                    lock (HEALTH_TEST_LOCKER)
-                    {
-                        StopReadings();
-                        _stoppedBecauseNotWorn = true;
-                    }
+                    StopReadings();
+                    _stoppedBecauseNotWorn = true;
                 }
             }
         }

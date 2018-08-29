@@ -16,6 +16,7 @@ using System;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests
 {
@@ -38,21 +39,19 @@ namespace Sensus.Tests
         #endregion
 
         [Test]
-        public void ProtocolSerializeDeserializeTest()
+        public async Task ProtocolSerializeDeserializeTest()
         {
-            var protocol1 = new Protocol("abc")
-            {
-                ContactEmail = "ContactEmail",
-                ContinueIndefinitely = true,
-                Description = "Description",
-                EndDate = DateTime.MaxValue,
-                EndTime = TimeSpan.MaxValue,
-                GpsDesiredAccuracyMeters = 0.1f,
-                GpsMinDistanceDelayMeters = 0.2f,
-                GpsMinTimeDelayMS = 10,
-                Groupable = true,
-                VariableValueUiProperty = new List<string>(new string[] { "var1: val1", "var1:", "var1:val2", "var2", "var2:" })
-            };
+            var protocol1 = await Protocol.CreateAsync("abc");
+            protocol1.ContactEmail = "ContactEmail";
+            protocol1.ContinueIndefinitely = true;
+            protocol1.Description = "Description";
+            protocol1.EndDate = DateTime.MaxValue;
+            protocol1.EndTime = TimeSpan.MaxValue;
+            protocol1.GpsDesiredAccuracyMeters = 0.1f;
+            protocol1.GpsMinDistanceDelayMeters = 0.2f;
+            protocol1.GpsMinTimeDelayMS = 10;
+            protocol1.Groupable = true;
+            protocol1.VariableValueUiProperty = new List<string>(new string[] { "var1: val1", "var1:", "var1:val2", "var2", "var2:" });
 
             var protocol2 = JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings), _jsonSerializerSettings);
 

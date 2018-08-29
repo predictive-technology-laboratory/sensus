@@ -19,6 +19,7 @@ using Sensus.Tests.Classes;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests
 {
@@ -60,14 +61,14 @@ namespace Sensus.Tests
         }
 
         [Test]
-        public void RegisteredOneProtocolTest()
+        public async Task RegisteredOneProtocolTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
             service1.RegisteredProtocols.Clear();
 
-            Protocol.Create("Test");
+            Protocol protocol = await Protocol.CreateAsync("asdf");
 
             var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
@@ -80,15 +81,15 @@ namespace Sensus.Tests
         }
 
         [Test]
-        public void RegisteredTwoProtocolsTest()
+        public async Task RegisteredTwoProtocolsTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
             service1.RegisteredProtocols.Clear();
 
-            Protocol.Create("Test1");
-            Protocol.Create("Test2");
+            await Protocol.CreateAsync("Test1");
+            await Protocol.CreateAsync("Test2");
 
             var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
             SensusServiceHelper.ClearSingleton();
@@ -102,12 +103,12 @@ namespace Sensus.Tests
         }
 
         [Test]
-        public void RunningProtocolIdsTest()
+        public async Task RunningProtocolIdsTest()
         {
             var service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
-            Protocol.Create("Test");
+            await Protocol.CreateAsync("Test");
 
             service1.RunningProtocolIds.Clear();
             service1.RunningProtocolIds.Add(service1.RegisteredProtocols.Single().Id);
@@ -189,7 +190,7 @@ namespace Sensus.Tests
         }
 
         [Test]
-        public void ScriptsDisplayDateTimeOrderTest()
+        public async Task ScriptsDisplayDateTimeOrderTest()
         {
             var service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
@@ -200,16 +201,16 @@ namespace Sensus.Tests
             {
                 Script script = new Script(runner);
                 script.ScheduledRunTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(random.Next(-100000, 100000));
-                service1.AddScriptAsync(script, RunMode.Multiple);
+                await service1.AddScriptAsync(script, RunMode.Multiple);
             }
 
             Script scriptMin = new Script(runner);
             scriptMin.ScheduledRunTime = DateTimeOffset.MinValue;
-            service1.AddScriptAsync(scriptMin, RunMode.Multiple);
+            await service1.AddScriptAsync(scriptMin, RunMode.Multiple);
 
             Script scriptMax = new Script(runner);
             scriptMax.ScheduledRunTime = DateTimeOffset.MaxValue;
-            service1.AddScriptAsync(scriptMax, RunMode.Multiple);
+            await service1.AddScriptAsync(scriptMax, RunMode.Multiple);
 
             for (int i = 1; i < service1.ScriptsToRun.Count; ++i)
             {
