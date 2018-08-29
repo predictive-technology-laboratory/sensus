@@ -60,7 +60,7 @@ namespace Sensus.Android
             get { return _facebookCallbackManager; }
         }
 
-        protected override void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             Console.Error.WriteLine("--------------------------- Creating activity ---------------------------");
 
@@ -87,7 +87,9 @@ namespace Sensus.Android
             Forms.ViewInitialized += (sender, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.View.StyleId))
+                {
                     e.NativeView.ContentDescription = e.View.StyleId;
+                }
             };
 #endif
 
@@ -128,7 +130,7 @@ namespace Sensus.Android
                 Finish();
             };
 
-            OpenIntentAsync(Intent);
+            await OpenIntentAsync(Intent);
         }
 
         protected override void OnStart()
@@ -267,13 +269,13 @@ namespace Sensus.Android
             }
         }
 
-#region intent handling
+        #region intent handling
 
-        protected override void OnNewIntent(Intent intent)
+        protected override async void OnNewIntent(Intent intent)
         {
             base.OnNewIntent(intent);
 
-            OpenIntentAsync(intent);
+            await OpenIntentAsync(intent);
         }
 
         private async Task OpenIntentAsync(Intent intent)
@@ -411,6 +413,6 @@ namespace Sensus.Android
         }
 #endif
 
-#endregion
+        #endregion
     }
 }

@@ -230,7 +230,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 try
                 {
                     // ensure that the probe is configured on the current client.
-                    probe.Configure(BandClient);
+                    await probe.ConfigureAsync(BandClient);
 
                     // if the probe is already running, start readings to ensure that we're using the potentially newly configured
                     // sensor on the band client. this could be a probe that was previous started successfully, or the first Band
@@ -346,7 +346,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             _stoppedBecauseNotWorn = false;
         }
 
-        protected abstract void Configure(BandClient bandClient);
+        protected abstract Task ConfigureAsync(BandClient bandClient);
 
         protected override async Task InitializeAsync()
         {
@@ -381,7 +381,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
 
             ConnectClient();
-            Configure(BandClient);
+            await ConfigureAsync(BandClient);
             await StartReadingsAsync();
         }
 
