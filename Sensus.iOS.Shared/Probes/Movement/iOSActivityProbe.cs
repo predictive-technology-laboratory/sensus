@@ -58,9 +58,9 @@ namespace Sensus.iOS.Probes.Movement
             _queryStartTime = null;
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             if (!CMMotionActivityManager.IsActivityAvailable)
             {

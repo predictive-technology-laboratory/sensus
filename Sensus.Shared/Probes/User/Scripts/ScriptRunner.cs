@@ -559,31 +559,27 @@ namespace Sensus.Probes.User.Scripts
             scriptToRun.ExpirationDate = triggerTime.Expiration;
             scriptToRun.ScheduledRunTime = triggerTime.Trigger;
 
-            ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                return Task.Run(async () =>
+                SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+
+                if (!Probe.Running || !_enabled)
                 {
-                    SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+                    return;
+                }
 
-                    if (!Probe.Running || !_enabled)
-                    {
-                        return;
-                    }
+                await RunAsync(scriptToRun);
 
-                    await RunAsync(scriptToRun);
+                lock (_scriptRunCallbacks)
+                {
+                    _scriptRunCallbacks.RemoveAll(c => c.Id == callbackId);
+                }
 
-                    lock (_scriptRunCallbacks)
-                    {
-                        _scriptRunCallbacks.RemoveAll(c => c.Id == callbackId);
-                    }
-
-                    // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
-                    // delivered (1) either to the app in the foreground or (2) to the notification tray where the user has opened
-                    // it -- either way on ios the app is in the foreground and the script has been run. now is a good time to update 
-                    // the scheduled callbacks to run this script.
-                    await ScheduleScriptRunsAsync();
-
-                }, cancellationToken);
+                // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
+                // delivered (1) either to the app in the foreground or (2) to the notification tray where the user has opened
+                // it -- either way on ios the app is in the foreground and the script has been run. now is a good time to update 
+                // the scheduled callbacks to run this script.
+                await ScheduleScriptRunsAsync();
 
             }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol);  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 

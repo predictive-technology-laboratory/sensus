@@ -232,10 +232,7 @@ namespace Sensus.iOS
                     {
                         dialogShowWait.Set();
 
-                        if (postDisplayCallback != null)
-                        {
-                            postDisplayCallback();
-                        }
+                        postDisplayCallback?.Invoke();
                     };
 
                     dialog.Clicked += (o, e) =>
@@ -375,12 +372,9 @@ namespace Sensus.iOS
 
         #region methods not implemented in ios
 
-        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override async Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            return Task.Run(async () =>
-            {
-                await FlashNotificationAsync("This is not supported on iOS.");
-            });
+            await FlashNotificationAsync("This is not supported on iOS.");
         }
 
         public override void KeepDeviceAwake()

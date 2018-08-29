@@ -14,10 +14,10 @@
 
 using System;
 using Sensus.Probes.Location;
-using Sensus;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -34,26 +34,26 @@ namespace Sensus.iOS.Probes.Location
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation / heading are not permitted on this device. Cannot start compass probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected sealed override async void StartListening()
+        protected sealed override async Task StartListeningAsync()
         {
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, true);
         }
 
-        protected sealed override async void StopListening()
+        protected sealed override async Task StopListeningAsync()
         {
             await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }

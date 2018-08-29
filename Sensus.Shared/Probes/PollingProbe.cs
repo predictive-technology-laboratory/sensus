@@ -23,6 +23,7 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Microsoft.AppCenter.Analytics;
 using Sensus.Extensions;
+using Sensus.Exceptions;
 
 #if __IOS__
 using CoreLocation;
@@ -205,25 +206,22 @@ namespace Sensus.Probes
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += async (sender, e) =>
             {
-                await Task.Run(async () =>
+                try
                 {
-                    try
-                    {
-                        CancellationTokenSource canceller = new CancellationTokenSource();
+                    CancellationTokenSource canceller = new CancellationTokenSource();
 
-                        // if the callback specified a timeout, request cancellation at the specified time.
-                        if (_pollCallback.CallbackTimeout.HasValue)
-                        {
-                            canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
-                        }
-
-                        await _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
-                    }
-                    catch (Exception ex)
+                    // if the callback specified a timeout, request cancellation at the specified time.
+                    if (_pollCallback.CallbackTimeout.HasValue)
                     {
-                        SensusException.Report("Failed significant change poll.", ex);
+                        canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
                     }
-                });
+
+                    await _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed significant change poll.", ex);
+                }
             };
 #endif
 
@@ -244,54 +242,51 @@ namespace Sensus.Probes
             string userNotificationMessage = null;
 #endif
 
-            _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                return Task.Run(async () =>
+                if (Running)
                 {
-                    if (Running)
+                    _isPolling = true;
+
+                    List<Datum> data = null;
+                    try
                     {
-                        _isPolling = true;
+                        SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
+                        data = await PollAsync(cancellationToken);
 
-                        List<Datum> data = null;
-                        try
+                        lock (_pollTimes)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                            data = await PollAsync(cancellationToken);
-
-                            lock (_pollTimes)
-                            {
-                                _pollTimes.Add(DateTime.Now);
-                                _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
-                            }
+                            _pollTimes.Add(DateTime.Now);
+                            _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
                         }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-
-                        if (data != null)
-                        {
-                            foreach (Datum datum in data)
-                            {
-                                if (cancellationToken.IsCancellationRequested)
-                                {
-                                    break;
-                                }
-
-                                try
-                                {
-                                    await StoreDatumAsync(datum, cancellationToken);
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-                            }
-                        }
-
-                        _isPolling = false;
                     }
-                });
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+
+                    if (data != null)
+                    {
+                        foreach (Datum datum in data)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
+                            try
+                            {
+                                await StoreDatumAsync(datum, cancellationToken);
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+                        }
+                    }
+
+                    _isPolling = false;
+                }
 
             }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
@@ -353,7 +348,7 @@ namespace Sensus.Probes
                 // on ios we do significant-change polling, which can override scheduled polls. don't check for polling delays if the scheduled polls are overridden.
                 if (_significantChangePoll && _significantChangePollOverridesScheduledPolls)
                 {
-                    resultEvents;
+                    return resultEvents;
                 }
 #endif
 

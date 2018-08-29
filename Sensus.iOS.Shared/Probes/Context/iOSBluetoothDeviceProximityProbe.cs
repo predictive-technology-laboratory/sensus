@@ -45,11 +45,9 @@ namespace Sensus.iOS.Probes.Context
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
-
-            // the following code relies on SensusServiceHelper singleton, which will not be available above in the constructor.
+            await base.InitializeAsync();
 
             // create device id characteristic
             _deviceIdCharacteristic = new CBMutableCharacteristic(CBUUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID),

@@ -240,7 +240,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                         // only start readings if they haven't been stopped due to non-contact.
                         if (!probe._stoppedBecauseNotWorn)
                         {
-                            probe.StartReadings();
+                            await probe.StartReadingsAsync();
                         }
                     }
                     // if we attempted to start several band probes upon protocol start up and failed, we would have bailed out after
@@ -377,15 +377,15 @@ namespace Sensus.Probes.User.MicrosoftBand
             if (!(this is MicrosoftBandContactProbe))
             {
                 MicrosoftBandContactProbe contactProbe = Protocol.Probes.Single(probe => probe is MicrosoftBandContactProbe) as MicrosoftBandContactProbe;
-                contactProbe.ContactStateChanged += ContactStateChanged;
+                contactProbe.ContactStateChanged += ContactStateChangedAsync;
             }
 
             ConnectClient();
             Configure(BandClient);
-            StartReadings();
+            await StartReadingsAsync();
         }
 
-        protected abstract void StartReadings();
+        protected abstract Task StartReadingsAsync();
 
         protected override async Task StopListeningAsync()
         {
@@ -395,10 +395,10 @@ namespace Sensus.Probes.User.MicrosoftBand
             if (!(this is MicrosoftBandContactProbe))
             {
                 MicrosoftBandContactProbe contactProbe = Protocol.Probes.Single(probe => probe is MicrosoftBandContactProbe) as MicrosoftBandContactProbe;
-                contactProbe.ContactStateChanged -= ContactStateChanged;
+                contactProbe.ContactStateChanged -= ContactStateChangedAsync;
             }
 
-            StopReadings();
+            await StopReadingsAsync();
 
             // only cancel the static health test if none of the band probes should be running.
             if (BandProbesThatShouldBeRunning.Count == 0)
@@ -422,9 +422,9 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected abstract void StopReadings();
+        protected abstract Task StopReadingsAsync();
 
-        private void ContactStateChanged(object sender, ContactState contactState)
+        private async void ContactStateChangedAsync(object sender, ContactState contactState)
         {
             // contact probe might get a reading before this probe changes to the running state or after it changes
             // to the stopped state.
@@ -433,12 +433,12 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // start readings if band is worn, regardless of whether we're stopping readings when it isn't worn.
                 if (contactState == ContactState.Worn)
                 {
-                    StartReadings();
+                    await StartReadingsAsync();
                     _stoppedBecauseNotWorn = false;
                 }
                 else if (contactState == ContactState.NotWorn && _stopWhenNotWorn && !_stoppedBecauseNotWorn)
                 {
-                    StopReadings();
+                    await StopReadingsAsync();
                     _stoppedBecauseNotWorn = true;
                 }
             }

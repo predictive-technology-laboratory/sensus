@@ -32,38 +32,35 @@ namespace Sensus.UI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
-        public static Task<bool> AuthenticateProtocolAsync(Protocol protocol)
+        public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
-            return Task.Run(async () =>
+            if (protocol.LockPasswordHash == "")
             {
-                if (protocol.LockPasswordHash == "")
+                return true;
+            }
+            else
+            {
+                Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
+
+                if (input == null)
                 {
-                    return true;
+                    return false;
                 }
                 else
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
+                    string password = input.Value as string;
 
-                    if (input == null)
+                    if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
                     {
-                        return false;
+                        return true;
                     }
                     else
                     {
-                        string password = input.Value as string;
-
-                        if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
-                            return false;
-                        }
+                        await SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
+                        return false;
                     }
                 }
-            });
+            }
         }
 
         private ListView _protocolsList;

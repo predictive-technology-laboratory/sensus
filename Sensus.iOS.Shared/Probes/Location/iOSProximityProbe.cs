@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UIKit;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -31,11 +32,11 @@ namespace Sensus.iOS.Probes.Location
     {       
         private NSObject _notification;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Plugin.Permissions.Abstractions.Permission.Sensors) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Plugin.Permissions.Abstractions.Permission.Sensors) == PermissionStatus.Granted)
             {
                 //Enable the proximity Monitoring, is set to false by default, if the device cannot monitor proximity, it will remain false
                 UIDevice.CurrentDevice.ProximityMonitoringEnabled = true;
@@ -45,12 +46,12 @@ namespace Sensus.iOS.Probes.Location
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "This device does not have a proximity sensor, or the user has denied access to it. Cannot start proximity probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             // Check to see if Proximity enabled is true, this would mean that the device can monitor proximity
             if (UIDevice.CurrentDevice.ProximityMonitoringEnabled)
@@ -70,14 +71,18 @@ namespace Sensus.iOS.Probes.Location
                     }
                 });
             }
+
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             // disable proximity monitoring, as it might be slightly irritating to the user for the screen to go blank.
             UIDevice.CurrentDevice.ProximityMonitoringEnabled = false;
 
             _notification.Dispose();
+
+            return Task.CompletedTask;
         }
     }
 }

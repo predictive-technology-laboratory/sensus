@@ -33,9 +33,9 @@ namespace Sensus.iOS.Probes.Context
     {
         private NSDictionary _settings;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             NSObject[] settingsKeys = new NSObject[]
             {

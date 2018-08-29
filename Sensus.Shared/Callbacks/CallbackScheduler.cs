@@ -91,7 +91,7 @@ namespace Sensus.Callbacks
             return callback;
         }
 
-        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
+        public async Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
         {
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
@@ -104,28 +104,21 @@ namespace Sensus.Callbacks
                 // of ServiceCallbackAsync to call the corresponding "let sleep".
                 serviceHelper.KeepDeviceAwake();
 
-                return Task.Run(async () =>
+                ScheduledCallback callback = TryGetCallback(callbackId);
+
+                // callback might have been unscheduled
+                if (callback != null)
                 {
-                    ScheduledCallback callback = TryGetCallback(callbackId);
+                    SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
 
-                    // callback might have been unscheduled
-                    if (callback != null)
+                    // if the cancellation token is cancelled, cancel the callback
+                    cancellationToken.Register(() =>
                     {
-                        SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+                        CancelRaisedCallback(callback);
+                    });
 
-                        // if the cancellation token is cancelled, cancel the callback
-                        cancellationToken.Register(() =>
-                        {
-                            CancelRaisedCallback(callback);
-                        });
-
-                        await ServiceCallbackAsync(callback, invocationId);
-                    }
-                });
-            }
-            else
-            {
-                return Task.CompletedTask;
+                    await ServiceCallbackAsync(callback, invocationId);
+                }
             }
         }
 

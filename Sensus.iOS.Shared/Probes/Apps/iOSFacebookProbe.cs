@@ -24,6 +24,7 @@ using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Probes.Apps;
 using UIKit;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Apps
 {
@@ -103,9 +104,9 @@ namespace Sensus.iOS.Probes.Apps
             }
         }
 
-        protected override void Initialize()
+        protected override async System.Threading.Tasks.Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             ObtainAccessToken(GetRequiredPermissionNames());
         }
@@ -309,16 +310,16 @@ namespace Sensus.iOS.Probes.Apps
             return System.Threading.Tasks.Task.FromResult(data);
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
 
             if (!HasValidAccessToken)
             {
-                restart = true;
+                resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Restart, resultEvents.Item2);
             }
 
-            return restart;
+            return resultEvents;
         }
 
         protected override ICollection<string> GetGrantedPermissions()

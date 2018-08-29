@@ -119,43 +119,40 @@ namespace Sensus.iOS.Callbacks
             return ServiceCallbackAsync(callback, invocationId);
         }
 
-        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
+        public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
         {
-            return Task.Run(async () =>
+            if (callback == null)
             {
-                if (callback == null)
+                SensusServiceHelper.Get().Logger.Log("Attempted to service null callback.", LoggingLevel.Normal, GetType());
+                return;
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+
+            // start background task for servicing callback
+            nint callbackTaskId = -1;
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Starting background task for callback.", LoggingLevel.Normal, GetType());
+
+                callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Attempted to service null callback.", LoggingLevel.Normal, GetType());
-                    return;
-                }
-
-                SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
-
-                // start background task for servicing callback
-                nint callbackTaskId = -1;
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Starting background task for callback.", LoggingLevel.Normal, GetType());
-
-                    callbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                    {
-                        // if we're out of time running in the background, cancel the callback.
-                        CancelRaisedCallback(callback);
-                    });
+                    // if we're out of time running in the background, cancel the callback.
+                    CancelRaisedCallback(callback);
                 });
+            });
 
-                // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
-                // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
-                // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-                await RaiseCallbackAsync(callback, invocationId, false, null, null);
+            // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
+            // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
+            // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
+            await RaiseCallbackAsync(callback, invocationId, false, null, null);
 
-                // end the background task
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Ending background task for callback.", LoggingLevel.Normal, GetType());
+            // end the background task
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Ending background task for callback.", LoggingLevel.Normal, GetType());
 
-                    UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
-                });
+                UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
             });
         }
 

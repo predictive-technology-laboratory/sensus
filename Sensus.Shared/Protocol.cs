@@ -89,69 +89,66 @@ namespace Sensus
             return protocol;
         }
 
-        public static Task<Protocol> DeserializeAsync(Uri webURI)
+        public static async Task<Protocol> DeserializeAsync(Uri webURI)
         {
-            return Task.Run(async () =>
-            {
-                Protocol protocol = null;
+            Protocol protocol = null;
 
+            try
+            {
+                // check if the URI points to an S3 bucket
+                AmazonS3Uri s3URI = null;
                 try
                 {
-                    // check if the URI points to an S3 bucket
-                    AmazonS3Uri s3URI = null;
-                    try
-                    {
-                        s3URI = new AmazonS3Uri(webURI);
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                    if (s3URI == null)
-                    {
-                        TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();
-                        WebClient downloadClient = new WebClient();
-
-                        downloadClient.DownloadDataCompleted += async (o, e) =>
-                        {
-                            if (e.Error == null)
-                            {
-                                completionSource.SetResult(await DeserializeAsync(e.Result));
-                            }
-                            else
-                            {
-                                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + e.Error.Message;
-                                SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                                await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                                completionSource.SetResult(null);
-                            }
-                        };
-
-                        downloadClient.DownloadDataAsync(webURI);
-
-                        protocol = await completionSource.Task;
-                    }
-                    else
-                    {
-                        AmazonS3Client s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
-                        GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
-                        if (response.HttpStatusCode == HttpStatusCode.OK)
-                        {
-                            MemoryStream byteStream = new MemoryStream();
-                            response.ResponseStream.CopyTo(byteStream);
-                            protocol = await DeserializeAsync(byteStream.ToArray());
-                        }
-                    }
+                    s3URI = new AmazonS3Uri(webURI);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + ex.Message;
-                    SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                    await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
                 }
 
-                return protocol;
-            });
+                if (s3URI == null)
+                {
+                    TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();
+                    WebClient downloadClient = new WebClient();
+
+                    downloadClient.DownloadDataCompleted += async (o, e) =>
+                    {
+                        if (e.Error == null)
+                        {
+                            completionSource.SetResult(await DeserializeAsync(e.Result));
+                        }
+                        else
+                        {
+                            string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + e.Error.Message;
+                            SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
+                            await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                            completionSource.SetResult(null);
+                        }
+                    };
+
+                    downloadClient.DownloadDataAsync(webURI);
+
+                    protocol = await completionSource.Task;
+                }
+                else
+                {
+                    AmazonS3Client s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
+                    GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
+                    if (response.HttpStatusCode == HttpStatusCode.OK)
+                    {
+                        MemoryStream byteStream = new MemoryStream();
+                        response.ResponseStream.CopyTo(byteStream);
+                        protocol = await DeserializeAsync(byteStream.ToArray());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
+                await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+            }
+
+            return protocol;
         }
 
         public static async Task<Protocol> DeserializeAsync(byte[] bytes)
@@ -1753,13 +1750,10 @@ namespace Sensus
         {
             TimeSpan timeUntilStart = _startTimestamp - DateTime.Now;
 
-            _scheduledStartCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStartCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                return Task.Run(async () =>
-                {
-                    await PrivateStartAsync();
-                    _scheduledStartCallback = null;
-                });
+                await PrivateStartAsync();
+                _scheduledStartCallback = null;
 
             }, timeUntilStart, "START", _id, this, null,
 #if __ANDROID__
@@ -1796,13 +1790,10 @@ namespace Sensus
         {
             TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
 
-            _scheduledStopCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStopCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                return Task.Run(async () =>
-                {
-                    await StopAsync();
-                    _scheduledStopCallback = null;
-                });
+                await StopAsync();
+                _scheduledStopCallback = null;
 
             }, timeUntilStop, "STOP", _id, this, null,
 #if __ANDROID__

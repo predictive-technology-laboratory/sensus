@@ -17,6 +17,7 @@ using Sensus.Probes.Movement;
 using CoreMotion;
 using Foundation;
 using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Movement
 {
@@ -24,11 +25,11 @@ namespace Sensus.iOS.Probes.Movement
     {
         private CMMotionManager _motionManager;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Sensors) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
             {
                 _motionManager = new CMMotionManager();
             }
@@ -37,14 +38,14 @@ namespace Sensus.iOS.Probes.Movement
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
-            base.StartListening();
+            await base.StartListeningAsync();
 
             _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
             {
@@ -55,9 +56,11 @@ namespace Sensus.iOS.Probes.Movement
             });
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _motionManager?.StopAccelerometerUpdates();
+
+            return Task.CompletedTask;
         }
     }
 }
