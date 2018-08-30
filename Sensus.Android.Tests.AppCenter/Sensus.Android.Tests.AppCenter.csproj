@@ -40,14 +40,6 @@ to run on the AppCenter cloud.</Description>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.Android.Tests\Sensus.Android.Tests.csproj">
-      <Project>{1F5EE54C-7499-4FFA-A088-B1F36A189167}</Project>
-      <Name>Sensus.Android.Tests</Name>
-      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="..\Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

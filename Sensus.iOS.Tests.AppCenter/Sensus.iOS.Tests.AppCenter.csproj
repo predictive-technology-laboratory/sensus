@@ -41,14 +41,6 @@ to run on the AppCenter cloud.</Description>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.iOS.Tests\Sensus.iOS.Tests.csproj">
-      <Project>{CC6093B2-4BA6-49D6-9143-CADCEDEBCA66}</Project>
-      <Name>Sensus.iOS.Tests</Name>
-      <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
-      <Private>False</Private>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="..\Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems')" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
