@@ -143,13 +143,13 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
-                // ensure that surveys are scheduled
+                // ensure that surveys are scheduled to date
                 await scriptRunner.ScheduleScriptRunsAsync();
 
                 string eventName = TrackedEvent.Health + ":" + GetType().Name;
@@ -160,10 +160,10 @@ namespace Sensus.Probes.User.Scripts
 
                 Analytics.TrackEvent(eventName, properties);
 
-                resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
+                events.Add(new AnalyticsTrackedEvent(eventName, properties));
             }
 
-            return resultEvents;
+            return result;
         }
 
         public override async Task ResetAsync()

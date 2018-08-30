@@ -188,9 +188,9 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (Running)
             {
@@ -199,7 +199,7 @@ namespace Sensus.Android.Probes.Context
                 StartAdvertising();
             }
 
-            return resultEvents;
+            return result;
         }
         #endregion
     }

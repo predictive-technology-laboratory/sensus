@@ -285,18 +285,16 @@ namespace Sensus.Android.Probes.Apps
             return Task.FromResult(data);
         }
 
-        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
-
-            HealthTestResult result = HealthTestResult.Okay;
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (!HasValidAccessToken)
             {
                 result = HealthTestResult.Restart;
             }
 
-            return new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(result, resultEvents.Item2);
+            return result;
         }
 
         protected override ICollection<string> GetGrantedPermissions()

@@ -2009,12 +2009,9 @@ namespace Sensus
                 }
             }
 
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Okay, events);
-
             if (_running)
             {
-                resultEvents = await _localDataStore.TestHealthAsync(resultEvents.Item2);
-                if (resultEvents.Item1 == HealthTestResult.Restart)
+                if (await _localDataStore.TestHealthAsync(events) == HealthTestResult.Restart)
                 {
                     try
                     {
@@ -2025,8 +2022,7 @@ namespace Sensus
                     }
                 }
 
-                resultEvents = await _remoteDataStore.TestHealthAsync(resultEvents.Item2);
-                if (resultEvents.Item1 == HealthTestResult.Restart)
+                if (await _remoteDataStore.TestHealthAsync(events) == HealthTestResult.Restart)
                 {
                     try
                     {
@@ -2041,8 +2037,7 @@ namespace Sensus
                 {
                     if (probe.Enabled)
                     {
-                        resultEvents = await probe.TestHealthAsync(resultEvents.Item2);
-                        if (resultEvents.Item1 == HealthTestResult.Restart)
+                        if (await probe.TestHealthAsync(events) == HealthTestResult.Restart)
                         {
                             try
                             {
@@ -2078,7 +2073,7 @@ namespace Sensus
 
             Analytics.TrackEvent(eventName, properties);
 
-            resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 #endif
 
             ParticipationReportDatum participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
@@ -2086,7 +2081,7 @@ namespace Sensus
 
             _localDataStore.WriteDatum(participationReport, cancellationToken);
 
-            return resultEvents.Item2;
+            return events;
         }
 
         public async Task StopAsync()

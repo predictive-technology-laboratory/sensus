@@ -255,15 +255,15 @@ namespace Sensus.Notifications
         public async Task TestHealthAsync(CancellationToken cancellationToken)
         {
             #region send all outstanding push notification requests
-            List<PushNotificationRequest> pushNotifications;
+            List<PushNotificationRequest> pushNotificationRequestsToSend;
             lock (_pushNotificationRequestsToSend)
             {
-                pushNotifications = _pushNotificationRequestsToSend.ToList();
+                pushNotificationRequestsToSend = _pushNotificationRequestsToSend.ToList();
             }
 
-            SensusServiceHelper.Get().Logger.Log("Sending " + pushNotifications.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Sending " + pushNotificationRequestsToSend.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
 
-            foreach (PushNotificationRequest pushNotificationRequestToSend in pushNotifications)
+            foreach (PushNotificationRequest pushNotificationRequestToSend in pushNotificationRequestsToSend)
             {
                 try
                 {
@@ -289,14 +289,15 @@ namespace Sensus.Notifications
             #endregion
 
             #region delete all outstanding push notification requests
+            List<PushNotificationRequest> pushNotificationRequestsToDelete;
             lock (_pushNotificationRequestsToDelete)
             {
-                pushNotifications = _pushNotificationRequestsToDelete.ToList();
+                pushNotificationRequestsToDelete = _pushNotificationRequestsToDelete.ToList();
             }
 
-            SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotifications.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotificationRequestsToDelete.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
 
-            foreach (PushNotificationRequest pushNotificationRequestToDelete in pushNotifications)
+            foreach (PushNotificationRequest pushNotificationRequestToDelete in pushNotificationRequestsToDelete)
             {
                 try
                 {

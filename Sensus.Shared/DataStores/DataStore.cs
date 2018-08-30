@@ -91,7 +91,7 @@ namespace Sensus.DataStores
             await StartAsync();
         }
 
-        public virtual Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public virtual Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
             HealthTestResult result = HealthTestResult.Okay;
 
@@ -110,7 +110,7 @@ namespace Sensus.DataStores
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return Task.FromResult(new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(result, events));
+            return Task.FromResult(result);
         }
 
         public virtual void Reset()

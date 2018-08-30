@@ -918,7 +918,7 @@ namespace Sensus
 
                 INavigation navigation = (Application.Current as App).DetailPage.Navigation;
 
-                Func<Task> CloseScannerPageAsync = new Func<Task>(async () =>
+                Func<Task> closeScannerPageAsync = new Func<Task>(async () =>
                 {
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
@@ -938,7 +938,7 @@ namespace Sensus
                 {
                     resultCompletionSource.SetResult(null);
 
-                    await CloseScannerPageAsync();
+                    await closeScannerPageAsync();
                 };
 
                 barcodeScannerPage.OnScanResult += async r =>
@@ -947,7 +947,7 @@ namespace Sensus
                     {
                         resultCompletionSource.SetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
 
-                        await CloseScannerPageAsync();
+                        await closeScannerPageAsync();
                     }
                 };
 

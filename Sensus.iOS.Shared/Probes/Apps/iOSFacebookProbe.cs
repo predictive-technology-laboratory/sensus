@@ -310,16 +310,16 @@ namespace Sensus.iOS.Probes.Apps
             return System.Threading.Tasks.Task.FromResult(data);
         }
 
-        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (!HasValidAccessToken)
             {
-                resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Restart, resultEvents.Item2);
+                result = HealthTestResult.Restart;
             }
 
-            return resultEvents;
+            return result;
         }
 
         protected override ICollection<string> GetGrantedPermissions()

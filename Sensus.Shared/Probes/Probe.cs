@@ -474,14 +474,9 @@ namespace Sensus.Probes
             await StartAsync();
         }
 
-        public virtual Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public virtual Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
             HealthTestResult result = HealthTestResult.Okay;
-
-            if (!_running)
-            {
-                result = HealthTestResult.Restart;
-            }
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
@@ -512,11 +507,12 @@ namespace Sensus.Probes
             else
             {
                 Analytics.TrackEvent(eventName, properties);
+                result = HealthTestResult.Restart;
             }
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return Task.FromResult(new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(result, events));
+            return Task.FromResult(result);
         }
 
         public virtual Task ResetAsync()

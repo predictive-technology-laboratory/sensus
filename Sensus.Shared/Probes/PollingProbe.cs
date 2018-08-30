@@ -337,9 +337,9 @@ namespace Sensus.Probes
             _pollCallback = null;
         }
 
-        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (Running)
             {
@@ -366,7 +366,7 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
+                    events.Add(new AnalyticsTrackedEvent(eventName, properties));
                 }
 
                 if (!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
@@ -379,13 +379,13 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
+                    events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-                    resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Restart, resultEvents.Item2);
+                    result = HealthTestResult.Restart;
                 }
             }
 
-            return resultEvents;
+            return result;
         }
 
         public override async Task ResetAsync()

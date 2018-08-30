@@ -817,9 +817,9 @@ namespace Sensus.DataStores.Local
             _path = null;
         }
 
-        public override async Task<Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = await base.TestHealthAsync(events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             double storageDirectorySizeMB;
             lock (_locker)
@@ -839,9 +839,9 @@ namespace Sensus.DataStores.Local
 
             Analytics.TrackEvent(eventName, properties);
 
-            resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return resultEvents;
+            return result;
         }
     }
 }
