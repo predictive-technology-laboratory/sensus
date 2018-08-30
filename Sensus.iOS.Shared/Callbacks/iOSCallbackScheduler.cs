@@ -112,11 +112,11 @@ namespace Sensus.iOS.Callbacks
             return isCallback?.BoolValue ?? false;
         }
 
-        public Task ServiceCallbackAsync(NSDictionary callbackInfo)
+        public async Task ServiceCallbackAsync(NSDictionary callbackInfo)
         {
             ScheduledCallback callback = TryGetCallback(callbackInfo);
             string invocationId = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY)) as NSString;
-            return ServiceCallbackAsync(callback, invocationId);
+            await ServiceCallbackAsync(callback, invocationId);
         }
 
         public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)

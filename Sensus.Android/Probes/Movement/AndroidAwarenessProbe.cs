@@ -180,10 +180,16 @@ namespace Sensus.Android.Probes.Movement
 
             try
             {
-                Statuses status = await Awareness.FenceApi.UpdateFencesAsync(_awarenessApiClient, updateRequest);
+                // we've seen cases where the update blocks indefinitely (e.g., due to outdated google play services on the 
+                // phone). impose a timeout to avoid such blocks.
+                Task<Statuses> updateFencesTask = Awareness.FenceApi.UpdateFencesAsync(_awarenessApiClient, updateRequest);
+                Task timeoutTask = Task.Delay(TimeSpan.FromSeconds(60));
+                Task finishedTask = await Task.WhenAny(updateFencesTask, timeoutTask);
 
-                try
+                if (finishedTask == updateFencesTask)
                 {
+                    Statuses status = await updateFencesTask;
+
                     if (status.IsSuccess)
                     {
                         SensusServiceHelper.Get().Logger.Log("Updated Google Awareness API fences.", LoggingLevel.Normal, GetType());
@@ -202,11 +208,12 @@ namespace Sensus.Android.Probes.Movement
                         string message = "Unrecognized fence update status:  " + status;
                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                         SensusException.Report(message);
+                        throw new Exception(message);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while processing update status:  " + ex, LoggingLevel.Normal, GetType());
+                    throw new Exception("Fence update timed out.");
                 }
             }
             // catch any errors from calling UpdateFences

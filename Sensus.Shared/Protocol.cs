@@ -888,18 +888,14 @@ namespace Sensus
             }
             set
             {
-                // if a threshold is given, force it to be in [0,1]
                 if (value != null)
                 {
-                    float threshold = value.GetValueOrDefault();
-                    if (threshold < 0)
+                    if (value.Value < 0)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Reward threshold must be between 0 and 1.");
                         value = 0;
                     }
-                    else if (threshold > 1)
+                    else if (value.Value > 1)
                     {
-                        SensusServiceHelper.Get().FlashNotificationAsync("Reward threshold must be between 0 and 1.");
                         value = 1;
                     }
                 }

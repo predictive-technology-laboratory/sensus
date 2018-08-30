@@ -13,16 +13,11 @@
 // limitations under the License.
 
 using System;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Firebase.Messaging;
 using Sensus.Context;
-using System.Linq;
 using Sensus.Exceptions;
-using Sensus.Notifications;
-using Sensus.Callbacks;
-using Sensus.Android.Callbacks;
 using System.Threading;
 
 namespace Sensus.Android.Notifications

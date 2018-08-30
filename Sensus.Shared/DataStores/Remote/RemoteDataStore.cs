@@ -274,8 +274,6 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
-            HealthTestResult result = HealthTestResult.Okay;
-
             if (!SensusContext.Current.CallbackScheduler.ContainsCallback(_writeCallback))
             {
                 string eventName = TrackedEvent.Error + ":" + GetType().Name;
@@ -288,10 +286,10 @@ namespace Sensus.DataStores.Remote
 
                 resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-                result = HealthTestResult.Restart;
+                resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Restart, resultEvents.Item2);
             }
 
-            return new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(result, resultEvents.Item2);
+            return resultEvents;
         }
 
         public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)

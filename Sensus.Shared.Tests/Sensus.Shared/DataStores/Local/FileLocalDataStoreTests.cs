@@ -327,11 +327,11 @@ namespace Sensus.Tests.DataStores.Local
 
             for (int i = 0; i < numTimes; ++i)
             {
-                protocol.LocalDataStore.StartAsync().Wait();
+                await protocol.LocalDataStore.StartAsync();
                 WriteData(data, localDataStore, postWriteAction);
                 string path = localDataStore.Path + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
                 paths.Add(path);
-                localDataStore.StopAsync().Wait();
+                await localDataStore.StopAsync();
                 Assert.True(File.Exists(path));
                 Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
             }
