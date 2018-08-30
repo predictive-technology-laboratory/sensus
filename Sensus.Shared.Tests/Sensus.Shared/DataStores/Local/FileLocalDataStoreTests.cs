@@ -327,7 +327,7 @@ namespace Sensus.Tests.DataStores.Local
 
             for (int i = 0; i < numTimes; ++i)
             {
-                await protocol.LocalDataStore.StartAsync();
+                await localDataStore.StartAsync();
                 WriteData(data, localDataStore, postWriteAction);
                 string path = localDataStore.Path + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
                 paths.Add(path);
