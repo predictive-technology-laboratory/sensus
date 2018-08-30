@@ -66,6 +66,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests.AppCenter"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Tests.AppCenter.Shared", "Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.shproj", "{1D5FB22F-8472-400C-95B1-CBDD1DB68358}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests", "Sensus.iOS.Tests\Sensus.iOS.Tests.csproj", "{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13
@@ -150,6 +152,20 @@ Global
 		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Android.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Any CPU.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|Android.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|Any CPU.ActiveCfg = Debug|iPhone
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|iPhone.Build.0 = Debug|iPhone
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|Android.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|Any CPU.ActiveCfg = Release|iPhone
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|iPhone.ActiveCfg = Release|iPhone
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
