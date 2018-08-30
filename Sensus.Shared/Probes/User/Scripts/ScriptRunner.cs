@@ -359,10 +359,6 @@ namespace Sensus.Probes.User.Scripts
                             // run the script if the current datum's value satisfies the trigger
                             if (trigger.FireFor(currentDatumValue))
                             {
-                                // the current method is often invoked by the collection of a datum,
-                                // and this collection event may be running on the UI thread (e.g., 
-                                // in the case of android sensors). use async below to free up UI 
-                                // thread.
                                 await RunAsync(Script.Copy(true), previousDatum, currentDatum);
                             }
                         };
@@ -460,7 +456,7 @@ namespace Sensus.Probes.User.Scripts
 
             // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
             // is a member of the current instance and not global within the script probe. beyond this single scheduled script,
-            // only allow a maximum of 32 script-run callbacks to be scheduled to allow room for other callbacks within sensus (e.g., 
+            // only allow a maximum of 32 script-run callbacks to be scheduled app-wide leaving room for other callbacks (e.g., 
             // the storage and polling systems). android's app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
             // as long as we have just a few script runners, each one will be able to schedule a few future script runs. this will 
             // help mitigate the problem of users ignoring surveys and losing touch with the study. note that even if there are more 
@@ -469,9 +465,9 @@ namespace Sensus.Probes.User.Scripts
             List<ScriptTriggerTime> scriptTriggerTimesToSchedule = new List<ScriptTriggerTime>();
             lock (_scriptRunCallbacks)
             {
-                int scriptRunCallbacksForThisRunner = 32 / Probe.ScriptRunners.Count;
-                int numToSchedule = (scriptRunCallbacksForThisRunner - _scriptRunCallbacks.Count) + 1;
-                for (int i = 0; i < numToSchedule; ++i)
+                int scriptRunCallbacksForThisRunner = (32 / Probe.ScriptRunners.Count) + 1;
+                int numCallbacksToSchedule = (scriptRunCallbacksForThisRunner - _scriptRunCallbacks.Count);
+                for (int i = 0; i < numCallbacksToSchedule; ++i)
                 {
                     // if the trigger times queue is empty, refill it.
                     if (_scriptTriggerTimes.Count == 0)
@@ -482,7 +478,8 @@ namespace Sensus.Probes.User.Scripts
                         {
                             startDate = DateTime.Now;
                         }
-                        // start the trigger sequence on the day following the most recently scheduled trigger date
+                        // start the trigger sequence on the day following the most recently scheduled trigger date. we 
+                        // schedule by day, so all triggers on each day will be queued up at once.
                         else
                         {
                             startDate = _maxTriggerTime.Value.AddDays(1);
@@ -576,9 +573,9 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
-                // delivered (1) either to the app in the foreground or (2) to the notification tray where the user has opened
-                // it -- either way on ios the app is in the foreground and the script has been run. now is a good time to update 
-                // the scheduled callbacks to run this script.
+                // delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
+                // it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
+                // time to update the scheduled callbacks to run this script.
                 await ScheduleScriptRunsAsync();
 
             }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol);  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.

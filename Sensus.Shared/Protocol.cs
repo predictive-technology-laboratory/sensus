@@ -273,7 +273,7 @@ namespace Sensus
                 // if we're not using a previously registered protocol, then we need to configure the new one.
                 if (registeredProtocol == null)
                 {
-                    #region if grouped protocols are available, consider swapping the currely assigned one with another.
+                    #region if grouped protocols are available, consider swapping the currently assigned one with another.
                     if (protocol.GroupedProtocols.Count > 0)
                     {
                         // if we didn't select an index above corresponding to the previously registered protocol, generated a random index.
@@ -1713,10 +1713,6 @@ namespace Sensus
             if (startException == null)
             {
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
-            }
-
-            if (startException == null)
-            {
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
             }
             else
@@ -1987,8 +1983,6 @@ namespace Sensus
 
         public async Task<List<AnalyticsTrackedEvent>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
         {
-            ParticipationReportDatum participationReport;
-
             List<AnalyticsTrackedEvent> events = new List<AnalyticsTrackedEvent>();
             string eventName;
             Dictionary<string, string> properties;
@@ -2015,11 +2009,11 @@ namespace Sensus
                 }
             }
 
-            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Okay, new List<AnalyticsTrackedEvent>());
+            Tuple<HealthTestResult, List<AnalyticsTrackedEvent>> resultEvents = new Tuple<HealthTestResult, List<AnalyticsTrackedEvent>>(HealthTestResult.Okay, events);
 
             if (_running)
             {
-                resultEvents = await _localDataStore.TestHealthAsync(events);
+                resultEvents = await _localDataStore.TestHealthAsync(resultEvents.Item2);
                 if (resultEvents.Item1 == HealthTestResult.Restart)
                 {
                     try
@@ -2087,7 +2081,7 @@ namespace Sensus
             resultEvents.Item2.Add(new AnalyticsTrackedEvent(eventName, properties));
 #endif
 
-            participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
+            ParticipationReportDatum participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
             SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + participationReport, LoggingLevel.Normal, GetType());
 
             _localDataStore.WriteDatum(participationReport, cancellationToken);
