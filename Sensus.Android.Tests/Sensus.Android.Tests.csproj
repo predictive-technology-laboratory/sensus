@@ -266,8 +266,8 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.axml" />
-    <AndroidResource Include="..\Sensus.Android\Resources\values\asdfstrings.xml">
-      <Link>Resources\values\asdfstrings.xml</Link>
+    <AndroidResource Include="..\Sensus.Android\Resources\values\strings.xml">
+      <Link>Resources\values\strings.xml</Link>
     </AndroidResource>
     <AndroidResource Include="..\Sensus.Android\Resources\values\style.xml">
       <Link>Resources\values\style.xml</Link>
