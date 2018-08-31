@@ -22,8 +22,8 @@ namespace Sensus.Tests.UI.Inputs
                 Name = "Name"
             };
 
-            Assert.IsTrue(group.Valid);
-            Assert.IsTrue(group.Geotag);
+            Assert.True(group.Valid);
+            Assert.True(group.Geotag);
             Assert.True(group.Inputs.Count == 0);
             Assert.Equal("Name", group.Name);
         }

@@ -269,7 +269,7 @@ namespace Sensus.Tests.DataStores.Local
                 byte[] originalBytes = File.ReadAllBytes(path);
                 string untarredPath = Directory.GetFiles(untarDirectory, Path.GetFileName(path), SearchOption.AllDirectories).Single();
                 byte[] untarredBytes = File.ReadAllBytes(untarredPath);
-                Assert.IsTrue(originalBytes.SequenceEqual(untarredBytes));
+                Assert.True(originalBytes.SequenceEqual(untarredBytes));
             }
 
             Directory.Delete(untarDirectory, true);

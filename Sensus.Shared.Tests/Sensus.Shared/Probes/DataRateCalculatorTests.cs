@@ -136,7 +136,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
                 receivedDataRate = true;
             });
 
-            Assert.IsTrue(receivedDataRate);
+            Assert.True(receivedDataRate);
         }
 
         [Fact]

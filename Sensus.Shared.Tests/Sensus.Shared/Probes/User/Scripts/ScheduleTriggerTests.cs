@@ -124,13 +124,13 @@ namespace Sensus.Tests.Probes.User.Scripts
             var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate).Take(6).ToArray();
 
             Assert.Equal(new TimeSpan(0, 10, 0, 0), triggerTimes[0].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
+            Assert.True(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(1, 10, 0, 0), triggerTimes[2].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
+            Assert.True(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(2, 10, 0, 0), triggerTimes[4].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
+            Assert.True(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
         }
 
         [Fact]
@@ -157,13 +157,13 @@ namespace Sensus.Tests.Probes.User.Scripts
             var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate).Take(6).ToArray();
 
             Assert.Equal(new TimeSpan(0, 10, 0, 0), triggerTimes[0].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
+            Assert.True(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(1, 10, 0, 0), triggerTimes[2].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
+            Assert.True(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(2, 10, 0, 0), triggerTimes[4].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
+            Assert.True(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
 
             Assert.Equal(null, triggerTimes[0].Expiration);
             Assert.Equal(null, triggerTimes[1].Expiration);
@@ -187,13 +187,13 @@ namespace Sensus.Tests.Probes.User.Scripts
             var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate, TimeSpan.FromMinutes(10)).Take(6).ToArray();
 
             Assert.Equal(new TimeSpan(0, 10, 0, 0), triggerTimes[0].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
+            Assert.True(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(1, 10, 0, 0), triggerTimes[2].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
+            Assert.True(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(2, 10, 0, 0), triggerTimes[4].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
+            Assert.True(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
 
             Assert.Equal(referenceDate + triggerTimes[0].ReferenceTillTrigger + TimeSpan.FromMinutes(10), triggerTimes[0].Expiration);
             Assert.Equal(referenceDate + triggerTimes[1].ReferenceTillTrigger + TimeSpan.FromMinutes(10), triggerTimes[1].Expiration);
@@ -218,13 +218,13 @@ namespace Sensus.Tests.Probes.User.Scripts
             var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate).Take(6).ToArray();
 
             Assert.Equal(new TimeSpan(0, 10, 0, 0), triggerTimes[0].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
+            Assert.True(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(1, 10, 0, 0), triggerTimes[2].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
+            Assert.True(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(2, 10, 0, 0), triggerTimes[4].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
+            Assert.True(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
 
             Assert.Equal(null, triggerTimes[0].Expiration);
             Assert.Equal(new DateTime(1986, 4, 18, 10, 20, 00), triggerTimes[1].Expiration);
@@ -249,13 +249,13 @@ namespace Sensus.Tests.Probes.User.Scripts
             var triggerTimes = schedule.GetTriggerTimes(referenceDate, afterDate, TimeSpan.FromMinutes(5)).Take(6).ToArray();
 
             Assert.Equal(new TimeSpan(0, 10, 0, 0), triggerTimes[0].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
+            Assert.True(new TimeSpan(0, 10, 10, 0) <= triggerTimes[1].ReferenceTillTrigger && triggerTimes[1].ReferenceTillTrigger <= new TimeSpan(0, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(1, 10, 0, 0), triggerTimes[2].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
+            Assert.True(new TimeSpan(1, 10, 10, 0) <= triggerTimes[3].ReferenceTillTrigger && triggerTimes[3].ReferenceTillTrigger <= new TimeSpan(1, 10, 20, 0));
 
             Assert.Equal(new TimeSpan(2, 10, 0, 0), triggerTimes[4].ReferenceTillTrigger);
-            Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
+            Assert.True(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
 
             Assert.Equal(referenceDate + triggerTimes[0].ReferenceTillTrigger + TimeSpan.FromMinutes(5), triggerTimes[0].Expiration);
             Assert.Equal(new DateTime(1986, 4, 18, 10, 20, 00).Min(referenceDate + triggerTimes[1].ReferenceTillTrigger + TimeSpan.FromMinutes(5)), triggerTimes[1].Expiration);
