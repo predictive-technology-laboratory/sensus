@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Concurrent;
 
 namespace Sensus.Tests.Concurrent
 {
-    [TestFixture]
+    
     public class ConcurrentObservableCollectionTests
     {        
         #region Fields        
@@ -36,7 +36,7 @@ namespace Sensus.Tests.Concurrent
             Concurrent = concurrent;
         }
 
-        [Test(Description="If this fails the DelayTime likely isn't large enough to cause a failure if future tests break.")]
+        [Fact]
         public void DelayIsLongEnough()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -59,7 +59,7 @@ namespace Sensus.Tests.Concurrent
             Assert.Throws<AggregateException>(() => Task.WaitAll(task1, task2));
         }
 
-        [Test]
+        [Fact]
         public void AddIsThreadSafe()
         {
             var test = new ConcurrentObservableCollection<int> (Concurrent) { 1, 2, 3 };
@@ -82,7 +82,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        [Test]
+        [Fact]
         public void InsertIsThreadSafe()
         {
             var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
@@ -105,7 +105,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        [Test]
+        [Fact]
         public void RemoveIsThreadSafe()
         {
             var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
@@ -128,7 +128,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        [Test]
+        [Fact]
         public void ClearIsThreadSafe()
         {
             var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
@@ -150,7 +150,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        [Test]
+        [Fact]
         public void ContainsIsThreadSafe()
         {
             var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };
@@ -178,7 +178,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        [Test]
+        [Fact]
         public void CopyToIsThreadSafe()
         {
             var test = new ConcurrentObservableCollection<int>(Concurrent) { 1, 2, 3 };

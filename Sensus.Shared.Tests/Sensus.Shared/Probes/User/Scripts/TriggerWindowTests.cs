@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Probes.User.Scripts;
 
 namespace Sensus.Tests.Probes.User.Scripts
 {
-    [TestFixture]
+    
     public class TriggerWindowTests
     {
-        [Test]
+        [Fact]
         public void NextScheduleWindowNoExpiration()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -39,7 +39,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             }
         }
 
-        [Test]
+        [Fact]
         public void NextSchedulePointNoExpiration()
         {
             var t = new TriggerWindow("10:22");
@@ -56,7 +56,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             }
         }
 
-        [Test]
+        [Fact]
         public void NextSchedulePointExpirationNotTooBig()
         {
             var t = new TriggerWindow("10:22");
@@ -73,7 +73,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             }
         }
 
-        [Test]
+        [Fact]
         public void NextSchedulePointExpirationExpireWindow()
         {
             var t = new TriggerWindow("10:22");
@@ -87,7 +87,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(null, nextTriggerTime.Expiration);
         }
 
-        [Test]
+        [Fact]
         public void NextScheduleWindowExpireAge()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -106,7 +106,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             }
         }
 
-        [Test]
+        [Fact]
         public void NextScheduleWindowWithExpireWindow()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -124,7 +124,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             }
         }
 
-        [Test]
+        [Fact]
         public void NextScheduleWindowWithExpirationTime()
         {
             var t = new TriggerWindow("10:22-12:22");

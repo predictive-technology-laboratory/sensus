@@ -14,12 +14,12 @@
 
 using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Xamarin.UITest;
 
 namespace Sensus.Tests.AppCenter.Shared
 {
-    [TestFixture]
+    
     public class UnitTestsFixture
     {
         private IApp _app;
@@ -50,7 +50,7 @@ namespace Sensus.Tests.AppCenter.Shared
                    .StartApp();
         }
 
-        [Test]
+        [Fact]
         public void UnitTests()
         {
             string log = _app.WaitForElement(c => c.All().Marked("sensus-test-log"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;

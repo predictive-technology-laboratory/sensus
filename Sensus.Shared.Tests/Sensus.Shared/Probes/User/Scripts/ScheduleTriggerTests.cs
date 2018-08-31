@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
 
 using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Extensions;
 using Sensus.Probes.User.Scripts;
 
 namespace Sensus.Tests.Probes.User.Scripts
 {
-    [TestFixture]
+    
     public class ScheduleTriggerTests
     {
-        [Test]
+        [Fact]
         public void Deserialize1PointTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00" };
@@ -32,7 +32,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("10:00", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void Deserialize1WindowTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00-10:30" };
@@ -41,7 +41,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("10:00-10:30", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void Deserialize1PointTrailingCommaTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00," };
@@ -50,7 +50,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("10:00", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void Deserialize1Point1WindowTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00,10:10-10:20" };
@@ -59,7 +59,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("10:00, 10:10-10:20", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void Deserialize1Point1WindowSpacesTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00,                10:10-10:20" };
@@ -68,7 +68,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("10:00, 10:10-10:20", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void DowDeserialize1PointTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "Su-10:00" };
@@ -77,7 +77,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("Su-10:00", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void DowDeserialize1WindowTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "Mo-10:00-10:30" };
@@ -86,7 +86,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("Mo-10:00-10:30", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void DowDeserialize1PointTrailingCommaTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "Tu-10:00," };
@@ -95,7 +95,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("Tu-10:00", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void DowDeserialize1Point1WindowTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "We-10:00,10:10-10:20" };
@@ -104,7 +104,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("We-10:00, 10:10-10:20", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void DowDeserialize1Point1WindowSpacesTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00,                Th-10:10-10:20" };
@@ -113,7 +113,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual("10:00, Th-10:10-10:20", schedule.WindowsString);
         }
 
-        [Test]
+        [Fact]
         public void SchedulesAllFutureTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:10-10:20" };
@@ -133,7 +133,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.IsTrue(new TimeSpan(2, 10, 10, 0) <= triggerTimes[5].ReferenceTillTrigger && triggerTimes[5].ReferenceTillTrigger <= new TimeSpan(2, 10, 20, 0));
         }
 
-        [Test]
+        [Fact]
         public void SchedulesPullsOnlyTenDays()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00" };
@@ -146,7 +146,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(10, triggerTimeCount);
         }
 
-        [Test]
+        [Fact]
         public void SchedulesAllFutureNoExpirationsTest()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00, 10:10-10:20" };
@@ -173,7 +173,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(null, triggerTimes[5].Expiration);
         }
 
-        [Test]
+        [Fact]
         public void SchedulesAllFutureExpirationAgeTest()
         {
             var schedule = new ScheduleTrigger
@@ -203,7 +203,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(referenceDate + triggerTimes[5].ReferenceTillTrigger + TimeSpan.FromMinutes(10), triggerTimes[5].Expiration);
         }
 
-        [Test]
+        [Fact]
         public void SchedulesAllFutureExpirationWindowTest()
         {
             var schedule = new ScheduleTrigger
@@ -234,7 +234,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00), triggerTimes[5].Expiration);
         }
 
-        [Test]
+        [Fact]
         public void SchedulesAllFutureExpirationWindowAndAgeTest()
         {
             var schedule = new ScheduleTrigger
@@ -265,7 +265,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(new DateTime(1986, 4, 20, 10, 20, 00).Min(referenceDate + triggerTimes[5].ReferenceTillTrigger + TimeSpan.FromMinutes(5)), triggerTimes[5].Expiration);
         }
 
-        [Test]
+        [Fact]
         public void DowSameDayTest()
         {
             var schedule = new ScheduleTrigger
@@ -282,7 +282,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(7, 2, 34, 0));
         }
 
-        [Test]
+        [Fact]
         public void DowSameDayPriorToAfterTimeTest()
         {
             var schedule = new ScheduleTrigger
@@ -299,7 +299,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(triggerTimes[1].Trigger, reference + new TimeSpan(7, -2, 34, 0));
         }
 
-        [Test]
+        [Fact]
         public void DowWithinWeekTest()
         {
             var schedule = new ScheduleTrigger
@@ -315,7 +315,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(4, 2, 34, 0));
         }
 
-        [Test]
+        [Fact]
         public void DowNextWeekTest()
         {
             var schedule = new ScheduleTrigger
@@ -331,7 +331,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, 2, 34, 0));
         }
 
-        [Test]
+        [Fact]
         public void DowNextWeekPriorToAfterTimeOfDayTest()
         {
             var schedule = new ScheduleTrigger
@@ -347,7 +347,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(triggerTimes[0].Trigger, reference + new TimeSpan(6, -2, 34, 0));
         }
 
-        [Test]
+        [Fact]
         public void DowNextWeekPriorToAfterTimeOfDayPlusIntervalBasedWindowTest()
         {
             var schedule = new ScheduleTrigger
@@ -374,7 +374,7 @@ namespace Sensus.Tests.Probes.User.Scripts
             Assert.AreEqual(triggerTimes[8].Trigger, reference + TimeSpan.FromDays(7));        
         }
 
-        [Test]
+        [Fact]
         public void DowNextWeekWindowExpirationTest()
         {
             var schedule = new ScheduleTrigger

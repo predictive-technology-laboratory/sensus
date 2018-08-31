@@ -13,17 +13,17 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Tests.Classes;
 using System.Threading.Tasks;
 
 namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 {
-    [TestFixture]
+    
     public class LongitudeOffsetGpsAnonymizerTests
     {
-        [Test]
+        [Fact]
         public async Task LongitudeInRangeNegativeTest()
         {
             Protocol protocol = await Protocol.CreateAsync("asdf");
@@ -36,7 +36,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             Assert.AreEqual(offsetValue, -130, 0.000001);
         }
 
-        [Test]
+        [Fact]
         public async Task LongitudeInRangePositiveTest()
         {
             Protocol protocol = await Protocol.CreateAsync("asdf");
@@ -49,7 +49,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             Assert.AreEqual(offsetValue, 85, 0.000001);
         }
 
-        [Test]
+        [Fact]
         public async Task LongitudeOutOfRangePositiveTest()
         {
             Protocol protocol = await Protocol.CreateAsync("asdf");
@@ -62,7 +62,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             Assert.AreEqual(offsetValue, -170, 0.000001);
         }
 
-        [Test]
+        [Fact]
         public async Task LongitudeOutOfRangeNegativeTest()
         {
             Protocol protocol = await Protocol.CreateAsync("asdf");
@@ -75,7 +75,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             Assert.AreEqual(offsetValue, 165, 0.000001);
         }
 
-        [Test]
+        [Fact]
         public async Task RandomParticipantOffsetsEqualTest()
         {
             SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
@@ -89,7 +89,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             Assert.AreEqual(randomOffset1, randomOffset2, 0.000001);
         }
 
-        [Test]
+        [Fact]
         public async Task RandomDeviceIdOffsetsEqualTest()
         {
             SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());

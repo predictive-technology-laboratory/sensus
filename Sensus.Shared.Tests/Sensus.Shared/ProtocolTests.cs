@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 using System;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Sensus.Tests
 {
-    [TestFixture]
+    
     public class ProtocolTests
     {
         #region Fields
@@ -28,8 +28,7 @@ namespace Sensus.Tests
         #endregion
 
         #region SetUp
-        [SetUp]
-        public void TestFixtureSetUp()
+        public ProtocolTests()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
 
@@ -38,7 +37,7 @@ namespace Sensus.Tests
         }
         #endregion
 
-        [Test]
+        [Fact]
         public async Task ProtocolSerializeDeserializeTest()
         {
             var protocol1 = await Protocol.CreateAsync("abc");

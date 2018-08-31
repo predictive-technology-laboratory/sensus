@@ -13,17 +13,17 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Probes.User.Scripts;
 using Sensus.UI.Inputs;
 using System.Linq;
 
 namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 {
-    [TestFixture]
+    
     public class ScriptTests
     {
-        [Test]
+        [Fact]
         public void ScriptCopySameIdTest()
         {
             ScriptProbe probe = new ScriptProbe();
@@ -46,7 +46,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
             Assert.AreEqual(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
         }
 
-        [Test]
+        [Fact]
         public void ScriptCopyNewIdTest()
         {
             ScriptProbe probe = new ScriptProbe();

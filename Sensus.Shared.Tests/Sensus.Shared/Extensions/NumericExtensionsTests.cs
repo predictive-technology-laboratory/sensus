@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Extensions;
 
 namespace Sensus.TestsExtensions
 {
-    [TestFixture]
+    
     public class NumericExtensionsTests
     {
-        [Test]
+        [Fact]
         public void RoundPercentageTo3Test()
         {
             Assert.AreEqual(64.RoundToWholePercentageOf(100, 3), 63);
@@ -30,7 +30,7 @@ namespace Sensus.TestsExtensions
             Assert.AreEqual(99.RoundToWholePercentageOf(100, 3), 99);
         }
 
-        [Test]
+        [Fact]
         public void RoundPercentageTo4Test()
         {
             Assert.AreEqual(85.RoundToWholePercentageOf(100, 4), 84);
@@ -39,7 +39,7 @@ namespace Sensus.TestsExtensions
             Assert.AreEqual(99.RoundToWholePercentageOf(100, 4), 100);
         }
 
-        [Test]
+        [Fact]
         public void RoundPercentageTo5Test()
         {
             Assert.AreEqual(83.RoundToWholePercentageOf(100, 5), 85);
@@ -48,21 +48,21 @@ namespace Sensus.TestsExtensions
             Assert.AreEqual(99.RoundToWholePercentageOf(100, 5), 100);
         }
 
-        [Test]
+        [Fact]
         public void RoundTo10Test()
         {
             Assert.AreEqual(13.RoundToWhole(10), 10);
             Assert.AreEqual(99.RoundToWhole(10), 100);
         }
 
-        [Test]
+        [Fact]
         public void RoundTo1000Test()
         {
             Assert.AreEqual(1350.RoundToWhole(1000), 1000);
             Assert.AreEqual(1550.RoundToWhole(1000), 2000);
         }
 
-        [Test]
+        [Fact]
         public void ZeroDenominatorTest()
         {
             Assert.AreEqual(Convert.ToString(7.RoundToWholePercentageOf(7, 1)), "100");

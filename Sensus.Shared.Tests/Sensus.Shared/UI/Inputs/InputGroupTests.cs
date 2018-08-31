@@ -1,19 +1,19 @@
 ﻿using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using Sensus.UI.Inputs;
 
 namespace Sensus.Tests.UI.Inputs
 {
-    [TestFixture]
+    
     public class InputGroupTests
     {
-        [Test]
+        [Fact]
         public void EmptyConstructorDoesNotThrowTest()
         {
             Assert.DoesNotThrow(() => new InputGroup());
         }
 
-        [Test]
+        [Fact]
         public void BasicPropertyTest()
         {
             var group = new InputGroup
@@ -28,7 +28,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreEqual("Name", group.Name);
         }
 
-        [Test]
+        [Fact]
         public void BasicInputTest()
         {
             var input = new SliderInput();
@@ -46,7 +46,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreEqual(group.Id, group.Inputs.Single().GroupId);
         }
 
-        [Test]
+        [Fact]
         public void BasicPropertyCopyTest()
         {
             var group = new InputGroup
@@ -64,7 +64,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreEqual(group.Name, copy.Name);
         }
 
-        [Test]
+        [Fact]
         public void BasicInputCopyTest()
         {
             var input = new SliderInput();
@@ -78,7 +78,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreEqual(copy.Id, copy.Inputs.Single().GroupId);
         }
 
-        [Test]
+        [Fact]
         public void DisplayConditionInputCopyTest1()
         {
             var input = new SliderInput();
@@ -94,7 +94,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreSame(copy.Inputs.Single(), copy.Inputs.Single().DisplayConditions.Single().Input);
         }
 
-        [Test]
+        [Fact]
         public void DisplayConditionInputCopyTest2()
         {
             var input1 = new SliderInput();
@@ -115,7 +115,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreSame(copy.Inputs.Skip(1).Take(1).Single(), copy.Inputs.Skip(1).Take(1).Single().DisplayConditions.Single().Input);
         }
 
-        [Test]
+        [Fact]
         public void DisplayConditionInputCopyTest3()
         {
             var input1 = new SliderInput();
@@ -136,7 +136,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreSame(copy.Inputs.Skip(0).Take(1).Single(), copy.Inputs.Skip(1).Take(1).Single().DisplayConditions.Single().Input);
         }
 
-        [Test]
+        [Fact]
         public void DisplayConditionInputCopyTest4()
         {
             var input1 = new SliderInput();
@@ -157,7 +157,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreSame(copy.Inputs.Skip(1).Take(1).Single(), copy.Inputs.Skip(0).Take(1).Single().DisplayConditions.Single().Input);
         }
 
-        [Test]
+        [Fact]
         public void DisplayConditionInputCopyTest5()
         {
             var input1 = new SliderInput();

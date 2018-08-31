@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
 using Sensus.DataStores;
 using Sensus.DataStores.Local;
 using Sensus.DataStores.Remote;
@@ -31,11 +31,11 @@ using System.Threading.Tasks;
 
 namespace Sensus.Tests.DataStores.Local
 {
-    [TestFixture]
+    
     public class FileLocalDataStoreTests
     {
         #region compression should not change the content of the files
-        [Test]
+        [Fact]
         public async Task UncompressedBytesEqualUncompressedBytesTest()
         {
             InitServiceHelper();
@@ -47,7 +47,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.True(uncompressedBytes1.SequenceEqual(uncompressedBytes2));
         }
 
-        [Test]
+        [Fact]
         public async Task UncompressedBytesEqualFastestDecompressedBytesTest()
         {
             InitServiceHelper();
@@ -61,7 +61,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.True(uncompressedBytes.SequenceEqual(decompressedBytes));
         }
 
-        [Test]
+        [Fact]
         public async Task UncompressedBytesEqualOptimalDecompressedBytesTest()
         {
             InitServiceHelper();
@@ -77,7 +77,7 @@ namespace Sensus.Tests.DataStores.Local
         #endregion
 
         #region the file sizes should increase without closing the streams. we need this because we track the file sizes to open new files and force remote writes.
-        [Test]
+        [Fact]
         public async Task UncompressedFileSizeIncreasesWithoutClosingTest()
         {
             InitServiceHelper();
@@ -96,7 +96,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.True(currentSizeMB > 0);
         }
 
-        [Test]
+        [Fact]
         public async Task FastestCompressedFileSizeIncreasesWithoutClosingTest()
         {
             InitServiceHelper();
@@ -115,7 +115,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.True(currentSizeMB > 0);
         }
 
-        [Test]
+        [Fact]
         public async Task OptimalCompressedFileSizeIncreasesWithoutClosingTest()
         {
             InitServiceHelper();
@@ -136,7 +136,7 @@ namespace Sensus.Tests.DataStores.Local
         #endregion
 
         #region compression should reduce file size
-        [Test]
+        [Fact]
         public async Task UncompressedBytesGreaterThanFastestCompressedBytesTest()
         {
             InitServiceHelper();
@@ -148,7 +148,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.True(bytes1.Length > bytes2.Length);
         }
 
-        [Test]
+        [Fact]
         public async Task FastestCompressedBytesGreaterOrEqualOptimalCompressedBytesTest()
         {
             InitServiceHelper();
@@ -162,7 +162,7 @@ namespace Sensus.Tests.DataStores.Local
         #endregion
 
         #region data store should create/promote files
-        [Test]
+        [Fact]
         public async Task UncompressedRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
@@ -182,7 +182,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
 
-        [Test]
+        [Fact]
         public async Task FastestCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
@@ -202,7 +202,7 @@ namespace Sensus.Tests.DataStores.Local
             Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
 
-        [Test]
+        [Fact]
         public async Task OptimalCompressionRemoteWriteClearsFilesTest()
         {
             InitServiceHelper();
@@ -224,7 +224,7 @@ namespace Sensus.Tests.DataStores.Local
         #endregion
 
         #region tar
-        [Test]
+        [Fact]
         public async Task TarFilesTest()
         {
             await TarTestAsync(1);

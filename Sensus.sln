@@ -62,8 +62,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1833108D-29E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android.Tests.AppCenter", "Sensus.Android.Tests.AppCenter\Sensus.Android.Tests.AppCenter.csproj", "{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests.AppCenter", "Sensus.iOS.Tests.AppCenter\Sensus.iOS.Tests.AppCenter.csproj", "{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Tests.AppCenter.Shared", "Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.shproj", "{1D5FB22F-8472-400C-95B1-CBDD1DB68358}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests", "Sensus.iOS.Tests\Sensus.iOS.Tests.csproj", "{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}"
@@ -138,20 +136,6 @@ Global
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Debug|Android.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|Android.ActiveCfg = Release|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Android.ActiveCfg = Debug|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Any CPU.ActiveCfg = Debug|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator

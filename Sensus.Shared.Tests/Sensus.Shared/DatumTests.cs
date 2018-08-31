@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Anonymization;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
@@ -22,16 +22,15 @@ using System.Threading.Tasks;
 
 namespace Sensus.Tests
 {
-    [TestFixture]       
+           
     public class DatumTests
     {
-        [SetUp]
-        public void TestSetUp()
+        public DatumTests()
         {
             SensusServiceHelper.ClearSingleton();
         }
 
-        [Test]
+        [Fact]
         public async Task SerializeDeserializeTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
@@ -55,7 +54,7 @@ namespace Sensus.Tests
             Assert.AreEqual(datum.Timestamp, deserializedDatum.Timestamp);
         }
 
-        [Test]
+        [Fact]
         public async Task SerializeDeserializeWithEnumTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();

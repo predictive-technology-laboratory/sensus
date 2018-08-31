@@ -13,17 +13,17 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Probes;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
 
 namespace Sensus.Tests.Sensus.Shared.Probes
 {
-    [TestFixture]
+    
     public class DataRateCalculatorTests
     {
-        [Test]
+        [Fact]
         public void SampleSizeTest()
         {
             Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(-1)));
@@ -33,7 +33,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             Assert.DoesNotThrow(new TestDelegate(() => new DataRateCalculator(100)));
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest1()
         {
             InitServiceHelper();
@@ -46,7 +46,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest2()
         {
             InitServiceHelper();
@@ -59,7 +59,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest3()
         {
             InitServiceHelper();
@@ -72,7 +72,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest4()
         {
             InitServiceHelper();
@@ -85,7 +85,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest5()
         {
             InitServiceHelper();
@@ -98,7 +98,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest6()
         {
             InitServiceHelper();
@@ -111,7 +111,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void NeverKeepWithZeroRateLimitTest()
         {
             InitServiceHelper();
@@ -124,7 +124,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             });
         }
 
-        [Test]
+        [Fact]
         public void HasDataRateWithZeroRateLimitTest()
         {
             InitServiceHelper();
@@ -139,7 +139,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             Assert.IsTrue(receivedDataRate);
         }
 
-        [Test]
+        [Fact]
         public void SamplingRateTest()
         {
             InitServiceHelper();
@@ -161,7 +161,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             Assert.True(Math.Abs(samplingRateCalculator.GetDataPerSecond().Value - nominalSamplingDataRatePerSecond) <= 1);
         }
 
-        [Test]
+        [Fact]
         public void DropNullDatumTest()
         {
             DataRateCalculator samplingRateCalculator = new DataRateCalculator(100);
@@ -169,7 +169,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             Assert.AreEqual(samplingRateCalculator.Add(null), DataRateCalculator.SamplingAction.Drop);
         }
 
-        [Test]
+        [Fact]
         public void ImmediateDataTest()
         {
             InitServiceHelper();

@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Extensions;
 
 namespace Sensus.Tests.Extensions
 {
-    [TestFixture]
+    
     public class DateTimeExtensionsTests
     {
-        [Test]
+        [Fact]
         public void Max()
         {
             var date1 = new DateTime(1, 2, 3);
@@ -31,7 +31,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date2, date2.Max(date1));
         }
 
-        [Test]
+        [Fact]
         public void MaxEquals()
         {
             var date1 = new DateTime(1, 2, 3);
@@ -41,7 +41,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date2, date2.Max(date1));
         }
 
-        [Test]
+        [Fact]
         public void MaxNullableFirst()
         {
             DateTime? date1 = null;
@@ -51,7 +51,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date2, date2.Max(date1));
         }
 
-        [Test]
+        [Fact]
         public void MaxNullableSecond()
         {
             var date1 = new DateTime(1, 2, 3);
@@ -61,7 +61,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date1, date2.Max(date1));
         }
 
-        [Test]
+        [Fact]
         public void Min()
         {
             var date1 = new DateTime(1, 2, 3);
@@ -71,7 +71,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date1, date2.Min(date1));
         }
 
-        [Test]
+        [Fact]
         public void MinEquals()
         {
             var date1 = new DateTime(1, 2, 3);
@@ -81,7 +81,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date2, date2.Min(date1));
         }
 
-        [Test]
+        [Fact]
         public void MinNullableFirst()
         {
             DateTime? date1 = null;
@@ -91,7 +91,7 @@ namespace Sensus.Tests.Extensions
             Assert.AreEqual(date2, date2.Min(date1));
         }
 
-        [Test]
+        [Fact]
         public void MinNullableSecond()
         {
             var date1 = new DateTime(1, 2, 3);

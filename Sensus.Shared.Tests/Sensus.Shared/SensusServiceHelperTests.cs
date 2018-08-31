@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 using System.Linq;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Tests.Classes;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
@@ -22,32 +22,22 @@ using System;
 using System.Threading.Tasks;
 
 namespace Sensus.Tests
-{
-    [TestFixture]
+{    
     public class SensusServiceHelperTests
     {
-        #region Fields
         private JsonSerializerSettings _jsonSerializerSettings;
-        #endregion
 
-        #region SetUp
-        [SetUp]
-        public void TestFixtureSetUp()
+        public SensusServiceHelperTests()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
 
             //we don't want to quietly handle errors when testing.
             _jsonSerializerSettings.Error = null;
-        }
 
-        [SetUp]
-        public void TestSetUp()
-        {
             SensusServiceHelper.ClearSingleton();
         }
-        #endregion
 
-        [Test]
+        [Fact]
         public void SerializeAndDeserializeNoExceptionTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -60,7 +50,7 @@ namespace Sensus.Tests
             Assert.AreEqual(0, service2.RegisteredProtocols.Count);
         }
 
-        [Test]
+        [Fact]
         public async Task RegisteredOneProtocolTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
@@ -80,7 +70,7 @@ namespace Sensus.Tests
             Assert.AreEqual(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
         }
 
-        [Test]
+        [Fact]
         public async Task RegisteredTwoProtocolsTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
@@ -102,7 +92,7 @@ namespace Sensus.Tests
             Assert.AreEqual(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
         }
 
-        [Test]
+        [Fact]
         public async Task RunningProtocolIdsTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -123,7 +113,7 @@ namespace Sensus.Tests
             Assert.AreEqual(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
         }
 
-        [Test]
+        [Fact]
         public void PointsOfInterestTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -142,7 +132,7 @@ namespace Sensus.Tests
             Assert.AreEqual(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
         }
 
-        [Test]
+        [Fact]
         public void FlashNotificationsEnabledTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -169,7 +159,7 @@ namespace Sensus.Tests
             Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
         }
 
-        [Test]
+        [Fact]
         public void ScriptsToRunTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -189,7 +179,7 @@ namespace Sensus.Tests
             Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
         }
 
-        [Test]
+        [Fact]
         public async Task ScriptsDisplayDateTimeOrderTest()
         {
             var service1 = new TestSensusServiceHelper();
