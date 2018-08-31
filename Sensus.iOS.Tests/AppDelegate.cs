@@ -1,31 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System.Reflection;
 using Foundation;
 using UIKit;
-
 using Xunit.Runner;
 using Xunit.Sdk;
 
-
 namespace Sensus.iOS.Tests
 {
-    // The UIApplicationDelegate for the application. This class is responsible for launching the 
-    // User Interface of the application, as well as listening (and optionally responding) to 
-    // application events from iOS.
     [Register("AppDelegate")]
-    public partial class AppDelegate : RunnerAppDelegate
+    public class AppDelegate : RunnerAppDelegate
     {
-
-        //
-        // This method is invoked when the application has loaded and is ready to run. In this 
-        // method you should instantiate the window, load the UI into it and then make the window
-        // visible.
-        //
-        // You have 17 seconds to return from this method, or iOS will terminate your application.
-        //
-        public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+        public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             // We need this to ensure the execution assembly is part of the app bundle
             AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
@@ -33,6 +31,7 @@ namespace Sensus.iOS.Tests
 
             // tests can be inside the main assembly
             AddTestAssembly(Assembly.GetExecutingAssembly());
+
             // otherwise you need to ensure that the test assemblies will 
             // become part of the app bundle
             //AddTestAssembly(typeof(PortableTests).Assembly);
@@ -45,7 +44,8 @@ namespace Sensus.iOS.Tests
 			// crash the application (to ensure it's ended) and return to springboard
 			TerminateAfterExecution = true;
 #endif
-            return base.FinishedLaunching(app, options);
+
+            return base.FinishedLaunching(uiApplication, launchOptions);
 		}
     }
 }
