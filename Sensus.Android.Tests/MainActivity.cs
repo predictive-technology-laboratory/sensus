@@ -25,6 +25,8 @@ using Android.Widget;
 using System;
 using Xunit.Runners;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -33,6 +35,8 @@ namespace Sensus.Android.Tests
     [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme= "@android:style/Theme.Material.Light")]
     public class MainActivity : RunnerActivity, IResultChannel
     {
+        private Dictionary<TestState, int> _testStateCount;
+
         protected override void OnCreate(Bundle bundle)
         {
             SensusContext.Current = new TestSensusContext
@@ -41,12 +45,9 @@ namespace Sensus.Android.Tests
             };
 
             AddTestAssembly(Assembly.GetExecutingAssembly());
-
             AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
-
 			AutoStart = true;
             TerminateAfterExecution = false;
-
             ResultChannel = this;
 
             base.OnCreate(bundle);
@@ -54,17 +55,36 @@ namespace Sensus.Android.Tests
 
         public Task CloseChannel()
         {
+            TextView resultView = new TextView(this)
+            {
+                ContentDescription = "unit-test-results",
+                Text = string.Concat(_testStateCount.OrderBy(stateCount => stateCount.Key).Select(stateCount => stateCount.Key + ":" + stateCount.Value + System.Environment.NewLine)).Trim()
+            };
+
+            new AlertDialog.Builder(this).SetView(resultView).Show();
+             
             return Task.CompletedTask;
         }
 
         public Task<bool> OpenChannel(string message = null)
         {
+            _testStateCount = new Dictionary<TestState, int>();
+
             return Task.FromResult(true);
         }
 
         public void RecordResult(TestResultViewModel result)
         {
-            Console.Out.WriteLine("Error:  " + result.ErrorMessage);
+            TestState testState = result.TestCase.Result;
+
+            if (_testStateCount.ContainsKey(testState))
+            {
+                _testStateCount[testState]++;
+            }
+            else
+            {
+                _testStateCount.Add(testState, 1);
+            }
         }
     }
 }

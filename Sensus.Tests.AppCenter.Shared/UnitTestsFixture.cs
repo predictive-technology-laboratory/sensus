@@ -14,6 +14,9 @@
 
 using Xamarin.UITest;
 using NUnit.Framework;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Sensus.Tests.AppCenter.Shared
 {
@@ -25,33 +28,36 @@ namespace Sensus.Tests.AppCenter.Shared
         [SetUp]
         public void BeforeEachTest()
         {
-            // TODO: If the iOS app being tested is included in the solution then open
-            // the Unit Tests window, right click Test Apps, select Add App Project
-            // and select the app projects that should be tested.
-            //
-            // The iOS project should have the Xamarin.TestCloud.Agent NuGet package
-            // installed. To start the Test Cloud Agent the following code should be
-            // added to the FinishedLaunching method of the AppDelegate:
-            //
-            //    #if ENABLE_TEST_CLOUD
-            //    Xamarin.Calabash.Start();
-            //    #endif
             _app = ConfigureApp
 #if __IOS__
                    .iOS
 #elif __ANDROID__
                    .Android
 #endif
-                   // TODO: Update this path to point to your iOS app and uncomment the
-                   //code if the app is not included in the solution.
-                   //.AppBundle ("../../../iOS/bin/iPhoneSimulator/Debug/Sensus.iOS.Tests.AppCenter.iOS.app")
                    .StartApp();
         }
 
         [Test]
         public void UnitTests()
         {
-            _app.Repl();
+            string resultsStr = _app.WaitForElement(c => c.All().Marked("unit-test-results"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;
+            Assert.NotNull(resultsStr);
+
+            Console.Out.WriteLine("Test results:  " + resultsStr);
+
+            string[] results = resultsStr.Split();
+            Assert.AreEqual(results.Length, 1);
+
+            int testsPassed = int.Parse(results[0].Split(':')[1]);
+
+            int totalTests;
+#if __IOS__
+            totalTests = 154;
+#elif __ANDROID__
+            totalTests = 155;
+#endif
+
+            Assert.AreEqual(testsPassed, totalTests);
         }
     }
 }
