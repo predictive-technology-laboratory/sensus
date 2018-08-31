@@ -20,6 +20,9 @@ using Xunit.Runners.UI;
 using Sensus.Context;
 using Sensus.Tests.Classes;
 using Sensus.Android.Concurrent;
+using Xunit;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Sensus.Android.Tests
 {
