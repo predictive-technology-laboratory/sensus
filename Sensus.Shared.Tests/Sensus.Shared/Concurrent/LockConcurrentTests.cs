@@ -18,7 +18,7 @@ using Sensus.Concurrent;
 namespace Sensus.Tests.Concurrent
 {
     
-    public class LockConcurrentTests: IConcurrentTests
+    public class LockConcurrentTests: ConcurrentTests
     {
         public LockConcurrentTests() : base(new LockConcurrent())
         {

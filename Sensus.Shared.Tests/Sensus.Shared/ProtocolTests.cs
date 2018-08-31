@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Xunit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sensus.Tests.Classes;
 
 namespace Sensus.Tests
 {
@@ -34,12 +35,16 @@ namespace Sensus.Tests
 
             // we don't want to quietly handle errors when testing.
             _jsonSerializerSettings.Error = null;
+
+            SensusServiceHelper.ClearSingleton();
         }
         #endregion
 
         [Fact]
         public async Task ProtocolSerializeDeserializeTest()
         {
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
             var protocol1 = await Protocol.CreateAsync("abc");
             protocol1.ContactEmail = "ContactEmail";
             protocol1.ContinueIndefinitely = true;

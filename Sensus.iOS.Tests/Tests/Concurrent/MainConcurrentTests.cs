@@ -17,7 +17,7 @@ using Sensus.Tests.Concurrent;
 
 namespace Sensus.iOS.Tests.Concurrent
 {
-    public class MainConcurrentTests : IConcurrentTests
+    public class MainConcurrentTests : ConcurrentTests
     {
         public MainConcurrentTests() : base(new MainConcurrent(5000))
         {

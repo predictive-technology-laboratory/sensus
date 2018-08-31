@@ -23,17 +23,12 @@ namespace Sensus.Tests.Concurrent
     
     public class ConcurrentObservableCollectionTests
     {        
-        #region Fields        
         private const int DelayTime = 2;
         private readonly IConcurrent Concurrent;
-        #endregion
 
-        public ConcurrentObservableCollectionTests(): this(new LockConcurrent())
-        { }
-
-        public ConcurrentObservableCollectionTests(IConcurrent concurrent)
+        public ConcurrentObservableCollectionTests()
         {
-            Concurrent = concurrent;
+            Concurrent = new LockConcurrent();
         }
 
         [Fact]

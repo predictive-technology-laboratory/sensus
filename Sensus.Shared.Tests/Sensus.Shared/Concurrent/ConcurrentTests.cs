@@ -20,7 +20,7 @@ using Sensus.Concurrent;
 
 namespace Sensus.Tests.Concurrent
 {
-    public abstract class IConcurrentTests
+    public abstract class ConcurrentTests
     {
         #region Fields
         private const int DelayTime = 2;
@@ -28,7 +28,7 @@ namespace Sensus.Tests.Concurrent
         #endregion
 
         #region Constructors
-        protected IConcurrentTests(IConcurrent concurrent)
+        protected ConcurrentTests(IConcurrent concurrent)
         {
             _concurrent = concurrent;
         }

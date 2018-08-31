@@ -23,9 +23,16 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
     
     public class LongitudeOffsetGpsAnonymizerTests
     {
+        public LongitudeOffsetGpsAnonymizerTests()
+        {
+            SensusServiceHelper.ClearSingleton();
+        }
+
         [Fact]
         public async Task LongitudeInRangeNegativeTest()
         {
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
             Protocol protocol = await Protocol.CreateAsync("asdf");
             protocol.GpsLongitudeAnonymizationStudyOffset = 30;
 
@@ -39,6 +46,8 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         [Fact]
         public async Task LongitudeInRangePositiveTest()
         {
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
             Protocol protocol = await Protocol.CreateAsync("asdf");
             protocol.GpsLongitudeAnonymizationStudyOffset = 20;
 
@@ -52,6 +61,8 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         [Fact]
         public async Task LongitudeOutOfRangePositiveTest()
         {
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
             Protocol protocol = await Protocol.CreateAsync("asdf");
             protocol.GpsLongitudeAnonymizationStudyOffset = 20;
 
@@ -65,6 +76,8 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
         [Fact]
         public async Task LongitudeOutOfRangeNegativeTest()
         {
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
             Protocol protocol = await Protocol.CreateAsync("asdf");
             protocol.GpsLongitudeAnonymizationStudyOffset = -185;
 

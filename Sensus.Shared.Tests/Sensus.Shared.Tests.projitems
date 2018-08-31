@@ -12,7 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\ConcurrentObservableCollectionTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\IConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\ConcurrentTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\LockConcurrentTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Dispose\DisposableTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Encryption\SymmetricEncryptionTests.cs" />

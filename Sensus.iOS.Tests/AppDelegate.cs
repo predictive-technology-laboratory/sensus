@@ -18,8 +18,11 @@ using Sensus.Context;
 using Sensus.iOS.Concurrent;
 using Sensus.Tests.Classes;
 using UIKit;
+using Xunit;
 using Xunit.Runner;
 using Xunit.Sdk;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Sensus.iOS.Tests
 {
