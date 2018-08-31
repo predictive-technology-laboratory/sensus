@@ -26,11 +26,12 @@ namespace Sensus.Tests.Sensus.Shared.Probes
         [Fact]
         public void SampleSizeTest()
         {
-            Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(-1)));
-            Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(0)));
-            Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(1)));
-            Assert.DoesNotThrow(new TestDelegate(() => new DataRateCalculator(2)));
-            Assert.DoesNotThrow(new TestDelegate(() => new DataRateCalculator(100)));
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => new DataRateCalculator(-1));
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => new DataRateCalculator(0));
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => new DataRateCalculator(1));
+
+            DataRateCalculator drc = new DataRateCalculator(2);
+            drc = new DataRateCalculator(100);
         }
 
         [Fact]
@@ -210,7 +211,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
 
                 if (i < sampleSize - 1)
                 {
-                    Assert.IsNull(calculatedDataPerSecond);
+                    Assert.Null(calculatedDataPerSecond);
                 }
                 else
                 {

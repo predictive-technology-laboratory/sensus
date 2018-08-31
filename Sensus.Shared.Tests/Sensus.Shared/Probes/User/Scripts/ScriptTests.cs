@@ -38,7 +38,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 
             Script copy = script.Copy(false);
 
-            Assert.AreSame(script.Runner, copy.Runner);
+            Assert.Same(script.Runner, copy.Runner);
             Assert.Equal(script.Id, copy.Id);
             Assert.Equal(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
             Assert.Equal(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);
@@ -61,8 +61,8 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 
             Script copy = script.Copy(true);
 
-            Assert.AreSame(script.Runner, copy.Runner);
-            Assert.AreNotEqual(script.Id, copy.Id);
+            Assert.Same(script.Runner, copy.Runner);
+            Assert.NotEqual(script.Id, copy.Id);
             Assert.Equal(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
             Assert.Equal(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);    
             Assert.Equal(script.InputGroups.Count, copy.InputGroups.Count);

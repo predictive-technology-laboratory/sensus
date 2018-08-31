@@ -62,19 +62,16 @@ namespace Sensus.Tests.Concurrent
         {
             var test = new List<int> { 1, 2, 3 };
 
-            Assert.DoesNotThrow(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
-                _concurrent.ExecuteThreadSafe(() =>
+                test.Add(4);
+
+                foreach (var i in test)
                 {
-                    test.Add(4);
+                    Task.Delay(DelayTime).Wait();
+                }
 
-                    foreach (var i in test)
-                    {
-                        Task.Delay(DelayTime).Wait();
-                    }
-
-                    test.Add(5);
-                });
+                test.Add(5);
             });
         }
 
@@ -83,21 +80,18 @@ namespace Sensus.Tests.Concurrent
         {
             var test = new List<int> { 1, 2, 3 };
 
-            Assert.DoesNotThrow(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
-                _concurrent.ExecuteThreadSafe(() =>
+                test.Add(4);
+
+                foreach (var i in test)
                 {
-                    test.Add(4);
+                    Task.Delay(DelayTime).Wait();
+                }
 
-                    foreach (var i in test)
-                    {
-                        Task.Delay(DelayTime).Wait();
-                    }
+                test.Add(5);
 
-                    test.Add(5);
-
-                    return test;
-                });
+                return test;
             });
         }
 
@@ -130,7 +124,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        //[Fact] -- we've got problems with this...see https://github.com/predictive-technology-laboratory/sensus/issues/494
+        [Fact]
         public void ExecuteThreadSafeFuncIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -147,7 +141,7 @@ namespace Sensus.Tests.Concurrent
                     return test;
                 });
 
-                Assert.AreSame(output, test);
+                Assert.Same(output, test);
             });
 
             var task2 = Task.Run(() =>
@@ -161,7 +155,7 @@ namespace Sensus.Tests.Concurrent
                     return test;
                 });
 
-                Assert.AreSame(output, test);
+                Assert.Same(output, test);
             });
 
             Task.WaitAll(task1, task2);
@@ -226,7 +220,7 @@ namespace Sensus.Tests.Concurrent
                 return test;
             });
 
-            Assert.AreSame(output, test);
+            Assert.Same(output, test);
         }
 
         [Fact]
@@ -246,7 +240,7 @@ namespace Sensus.Tests.Concurrent
                 });
             });
 
-            Assert.Equal(6, test.Count, "It appears that we deadlocked because the action didn't finish adding items");
+            Assert.Equal(6, test.Count);
         }
 
         [Fact]
@@ -269,13 +263,13 @@ namespace Sensus.Tests.Concurrent
             });
 
             //we check test because in the case of a deadlock I'm not sure what output will be returned...
-            Assert.Equal(6, test.Count, "It appears that we deadlocked because the func didn't finish adding items");
+            Assert.Equal(6, test.Count);
         }
 
         [Fact]
         public void ExecuteThreadSafeActionCatchesExceptionFromSameThread()
         {
-            Assert.Throws(typeof(Exception), new TestDelegate(() =>
+            Assert.Throws(typeof(Exception), () =>
             {
                 _concurrent.ExecuteThreadSafe(() =>
                 {
@@ -284,13 +278,13 @@ namespace Sensus.Tests.Concurrent
                         throw new Exception();
                     });
                 });
-            }));
+            });
         }
 
         [Fact]
         public void ExecuteThreadSafeFuncCatchesExceptionFromSameThread()
         {
-            Assert.Throws(typeof(Exception), new TestDelegate(() =>
+            Assert.Throws(typeof(Exception), () =>
             {
                 _concurrent.ExecuteThreadSafe(() =>
                 {
@@ -300,7 +294,7 @@ namespace Sensus.Tests.Concurrent
                         return 1;  // required to make this a function rather than an action
                     });
                 });
-            }));
+            });
         }
     }
 }

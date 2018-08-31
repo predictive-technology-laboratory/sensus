@@ -57,7 +57,7 @@ namespace Sensus.Tests.Dispose
         {
             using (var badPattern = new BadPattern())
             {
-                Assert.Throws<InvalidOperationException>(badPattern.Dispose);
+                Assert.Throws(typeof(InvalidOperationException), (Action)badPattern.Dispose);
 
                 badPattern.FixDispose = true;
             }
@@ -68,7 +68,7 @@ namespace Sensus.Tests.Dispose
         {
             using (var goodPattern = new GoodPattern())
             {
-                Assert.DoesNotThrow(goodPattern.Dispose);
+                goodPattern.Dispose();
             }
         }
 
@@ -77,8 +77,8 @@ namespace Sensus.Tests.Dispose
         {
             using (var goodPattern = new GoodPattern())
             {
-                Assert.DoesNotThrow(goodPattern.Dispose);
-                Assert.DoesNotThrow(goodPattern.Dispose);
+                goodPattern.Dispose();
+                goodPattern.Dispose();
             }
         }
 
@@ -87,7 +87,7 @@ namespace Sensus.Tests.Dispose
         {
             using (var goodPattern = new GoodPattern())
             {
-                Assert.DoesNotThrow(goodPattern.DisposeCheck);
+                goodPattern.DisposeCheck();
             }
         }
 
@@ -98,7 +98,7 @@ namespace Sensus.Tests.Dispose
             {
                 goodPattern.Dispose();
 
-                Assert.Throws<ObjectDisposedException>(goodPattern.DisposeCheck);
+                Assert.Throws(typeof(ObjectDisposedException), (Action)goodPattern.DisposeCheck);
             }
         }
     }

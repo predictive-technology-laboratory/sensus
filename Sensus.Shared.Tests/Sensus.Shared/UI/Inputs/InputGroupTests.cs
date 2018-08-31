@@ -10,7 +10,7 @@ namespace Sensus.Tests.UI.Inputs
         [Fact]
         public void EmptyConstructorDoesNotThrowTest()
         {
-            Assert.DoesNotThrow(() => new InputGroup());
+            new InputGroup();
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace Sensus.Tests.UI.Inputs
             };
 
             Assert.Equal(input.Id, group.Inputs.Single().Id);
-            Assert.AreSame(group.Inputs.Single(), input);
+            Assert.Same(group.Inputs.Single(), input);
             Assert.Equal(group.Id, group.Inputs.Single().GroupId);
         }
 
@@ -72,9 +72,9 @@ namespace Sensus.Tests.UI.Inputs
             var copy = group.Copy(true);  // assign new ID as done when user taps Copy on the InputGroup.
 
             Assert.Equal(1, copy.Inputs.Count());
-            Assert.AreNotEqual(input.Id, copy.Inputs.Single().Id);  // copied inputs should have different IDs
-            Assert.AreNotSame(input, copy.Inputs.Single());
-            Assert.AreNotEqual(group.Id, copy.Id);
+            Assert.NotEqual(input.Id, copy.Inputs.Single().Id);  // copied inputs should have different IDs
+            Assert.NotSame(input, copy.Inputs.Single());
+            Assert.NotEqual(group.Id, copy.Id);
             Assert.Equal(copy.Id, copy.Inputs.Single().GroupId);
         }
 
@@ -88,10 +88,10 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input } };
             var copy = group.Copy(false);
 
-            Assert.AreSame(input, input.DisplayConditions.Single().Input);
-            Assert.AreSame(input, group.Inputs.Single());
-            Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
-            Assert.AreSame(copy.Inputs.Single(), copy.Inputs.Single().DisplayConditions.Single().Input);
+            Assert.Same(input, input.DisplayConditions.Single().Input);
+            Assert.Same(input, group.Inputs.Single());
+            Assert.NotSame(group.Inputs.Single(), copy.Inputs.Single());
+            Assert.Same(copy.Inputs.Single(), copy.Inputs.Single().DisplayConditions.Single().Input);
         }
 
         [Fact]
@@ -105,14 +105,14 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input1, input2 } };
             var copy = group.Copy(false);
 
-            Assert.AreSame(input2, input2.DisplayConditions.Single().Input);
-            Assert.AreSame(input1, group.Inputs.Skip(0).Take(1).Single());
-            Assert.AreSame(input2, group.Inputs.Skip(1).Take(1).Single());
+            Assert.Same(input2, input2.DisplayConditions.Single().Input);
+            Assert.Same(input1, group.Inputs.Skip(0).Take(1).Single());
+            Assert.Same(input2, group.Inputs.Skip(1).Take(1).Single());
 
-            Assert.AreNotSame(input1, copy.Inputs.Skip(0).Take(1).Single());
-            Assert.AreNotSame(input2, copy.Inputs.Skip(1).Take(1).Single());
+            Assert.NotSame(input1, copy.Inputs.Skip(0).Take(1).Single());
+            Assert.NotSame(input2, copy.Inputs.Skip(1).Take(1).Single());
 
-            Assert.AreSame(copy.Inputs.Skip(1).Take(1).Single(), copy.Inputs.Skip(1).Take(1).Single().DisplayConditions.Single().Input);
+            Assert.Same(copy.Inputs.Skip(1).Take(1).Single(), copy.Inputs.Skip(1).Take(1).Single().DisplayConditions.Single().Input);
         }
 
         [Fact]
@@ -126,14 +126,14 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input1, input2 } };
             var copy = group.Copy(false);
 
-            Assert.AreSame(input1, input2.DisplayConditions.Single().Input);
-            Assert.AreSame(input1, group.Inputs.Skip(0).Take(1).Single());
-            Assert.AreSame(input2, group.Inputs.Skip(1).Take(1).Single());
+            Assert.Same(input1, input2.DisplayConditions.Single().Input);
+            Assert.Same(input1, group.Inputs.Skip(0).Take(1).Single());
+            Assert.Same(input2, group.Inputs.Skip(1).Take(1).Single());
 
-            Assert.AreNotSame(input1, copy.Inputs.Skip(0).Take(1).Single());
-            Assert.AreNotSame(input2, copy.Inputs.Skip(1).Take(1).Single());
+            Assert.NotSame(input1, copy.Inputs.Skip(0).Take(1).Single());
+            Assert.NotSame(input2, copy.Inputs.Skip(1).Take(1).Single());
 
-            Assert.AreSame(copy.Inputs.Skip(0).Take(1).Single(), copy.Inputs.Skip(1).Take(1).Single().DisplayConditions.Single().Input);
+            Assert.Same(copy.Inputs.Skip(0).Take(1).Single(), copy.Inputs.Skip(1).Take(1).Single().DisplayConditions.Single().Input);
         }
 
         [Fact]
@@ -147,14 +147,14 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input1, input2 } };
             var copy = group.Copy(false);
 
-            Assert.AreSame(input2, input1.DisplayConditions.Single().Input);
-            Assert.AreSame(input1, group.Inputs.Skip(0).Take(1).Single());
-            Assert.AreSame(input2, group.Inputs.Skip(1).Take(1).Single());
+            Assert.Same(input2, input1.DisplayConditions.Single().Input);
+            Assert.Same(input1, group.Inputs.Skip(0).Take(1).Single());
+            Assert.Same(input2, group.Inputs.Skip(1).Take(1).Single());
 
-            Assert.AreNotSame(input1, copy.Inputs.Skip(0).Take(1).Single());
-            Assert.AreNotSame(input2, copy.Inputs.Skip(1).Take(1).Single());
+            Assert.NotSame(input1, copy.Inputs.Skip(0).Take(1).Single());
+            Assert.NotSame(input2, copy.Inputs.Skip(1).Take(1).Single());
 
-            Assert.AreSame(copy.Inputs.Skip(1).Take(1).Single(), copy.Inputs.Skip(0).Take(1).Single().DisplayConditions.Single().Input);
+            Assert.Same(copy.Inputs.Skip(1).Take(1).Single(), copy.Inputs.Skip(0).Take(1).Single().DisplayConditions.Single().Input);
         }
 
         [Fact]
@@ -168,11 +168,11 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input1 } };
             var copy = group.Copy(false);
 
-            Assert.AreSame(input2, input1.DisplayConditions.Single().Input);
-            Assert.AreSame(input1, group.Inputs.Single());
+            Assert.Same(input2, input1.DisplayConditions.Single().Input);
+            Assert.Same(input1, group.Inputs.Single());
 
-            Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
-            Assert.AreNotSame(input2, copy.Inputs.Single().DisplayConditions.Single().Input);
+            Assert.NotSame(group.Inputs.Single(), copy.Inputs.Single());
+            Assert.NotSame(input2, copy.Inputs.Single().DisplayConditions.Single().Input);
 
             Assert.Equal(input2.Id, copy.Inputs.Single().DisplayConditions.Single().Input.Id);
         }

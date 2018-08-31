@@ -139,7 +139,7 @@ namespace Sensus.Tests.Probes.User.Scripts
 
                 Assert.True(nextTriggerTime.ReferenceTillTrigger >= TimeSpan.FromDays(8));
                 Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.That(nextTriggerTime.Expiration, Is.EqualTo(reference + nextTriggerTime.ReferenceTillTrigger + expire).Within(TimeSpan.FromSeconds(1)));
+                Assert.Equal(nextTriggerTime.Expiration, reference + nextTriggerTime.ReferenceTillTrigger + expire);
             }
         }
     }

@@ -14,6 +14,9 @@
 
 using System.Reflection;
 using Foundation;
+using Sensus.Context;
+using Sensus.iOS.Concurrent;
+using Sensus.Tests.Classes;
 using UIKit;
 using Xunit.Runner;
 using Xunit.Sdk;
@@ -25,9 +28,13 @@ namespace Sensus.iOS.Tests
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            SensusContext.Current = new TestSensusContext
+            {
+                MainThreadSynchronizer = new MainConcurrent()
+            };
+
             // We need this to ensure the execution assembly is part of the app bundle
             AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
-            
 
             // tests can be inside the main assembly
             AddTestAssembly(Assembly.GetExecutingAssembly());
