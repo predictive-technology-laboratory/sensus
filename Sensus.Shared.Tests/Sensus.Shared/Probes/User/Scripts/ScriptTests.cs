@@ -39,11 +39,11 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
             Script copy = script.Copy(false);
 
             Assert.AreSame(script.Runner, copy.Runner);
-            Assert.AreEqual(script.Id, copy.Id);
-            Assert.AreEqual(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);
-            Assert.AreEqual(script.InputGroups.Count, copy.InputGroups.Count);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
+            Assert.Equal(script.Id, copy.Id);
+            Assert.Equal(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
+            Assert.Equal(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);
+            Assert.Equal(script.InputGroups.Count, copy.InputGroups.Count);
+            Assert.Equal(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
         }
 
         [Fact]
@@ -63,10 +63,10 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 
             Assert.AreSame(script.Runner, copy.Runner);
             Assert.AreNotEqual(script.Id, copy.Id);
-            Assert.AreEqual(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);    
-            Assert.AreEqual(script.InputGroups.Count, copy.InputGroups.Count);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
+            Assert.Equal(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
+            Assert.Equal(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);    
+            Assert.Equal(script.InputGroups.Count, copy.InputGroups.Count);
+            Assert.Equal(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
         }
     }
 }

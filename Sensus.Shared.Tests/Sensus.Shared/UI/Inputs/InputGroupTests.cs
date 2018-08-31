@@ -25,7 +25,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.IsTrue(group.Valid);
             Assert.IsTrue(group.Geotag);
             Assert.True(group.Inputs.Count == 0);
-            Assert.AreEqual("Name", group.Name);
+            Assert.Equal("Name", group.Name);
         }
 
         [Fact]
@@ -41,9 +41,9 @@ namespace Sensus.Tests.UI.Inputs
                 Inputs = { input }
             };
 
-            Assert.AreEqual(input.Id, group.Inputs.Single().Id);
+            Assert.Equal(input.Id, group.Inputs.Single().Id);
             Assert.AreSame(group.Inputs.Single(), input);
-            Assert.AreEqual(group.Id, group.Inputs.Single().GroupId);
+            Assert.Equal(group.Id, group.Inputs.Single().GroupId);
         }
 
         [Fact]
@@ -57,11 +57,11 @@ namespace Sensus.Tests.UI.Inputs
 
             var copy = group.Copy(false);
 
-            Assert.AreEqual(group.Id, copy.Id);
-            Assert.AreEqual(group.Valid, copy.Valid);
-            Assert.AreEqual(group.Geotag, copy.Geotag);
+            Assert.Equal(group.Id, copy.Id);
+            Assert.Equal(group.Valid, copy.Valid);
+            Assert.Equal(group.Geotag, copy.Geotag);
             Assert.True(copy.Inputs.Count == 0);
-            Assert.AreEqual(group.Name, copy.Name);
+            Assert.Equal(group.Name, copy.Name);
         }
 
         [Fact]
@@ -71,11 +71,11 @@ namespace Sensus.Tests.UI.Inputs
             var group = new InputGroup { Inputs = { input } };
             var copy = group.Copy(true);  // assign new ID as done when user taps Copy on the InputGroup.
 
-            Assert.AreEqual(1, copy.Inputs.Count());
+            Assert.Equal(1, copy.Inputs.Count());
             Assert.AreNotEqual(input.Id, copy.Inputs.Single().Id);  // copied inputs should have different IDs
             Assert.AreNotSame(input, copy.Inputs.Single());
             Assert.AreNotEqual(group.Id, copy.Id);
-            Assert.AreEqual(copy.Id, copy.Inputs.Single().GroupId);
+            Assert.Equal(copy.Id, copy.Inputs.Single().GroupId);
         }
 
         [Fact]
@@ -174,7 +174,7 @@ namespace Sensus.Tests.UI.Inputs
             Assert.AreNotSame(group.Inputs.Single(), copy.Inputs.Single());
             Assert.AreNotSame(input2, copy.Inputs.Single().DisplayConditions.Single().Input);
 
-            Assert.AreEqual(input2.Id, copy.Inputs.Single().DisplayConditions.Single().Input.Id);
+            Assert.Equal(input2.Id, copy.Inputs.Single().DisplayConditions.Single().Input.Id);
         }
     }
 }

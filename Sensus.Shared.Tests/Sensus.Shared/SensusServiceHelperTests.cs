@@ -46,8 +46,8 @@ namespace Sensus.Tests
             service1.RegisteredProtocols.Clear();
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial1, _jsonSerializerSettings);
 
-            Assert.AreEqual(0, service1.RegisteredProtocols.Count);
-            Assert.AreEqual(0, service2.RegisteredProtocols.Count);
+            Assert.Equal(0, service1.RegisteredProtocols.Count);
+            Assert.Equal(0, service2.RegisteredProtocols.Count);
         }
 
         [Fact]
@@ -66,8 +66,8 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
-            Assert.AreEqual(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
+            Assert.Equal(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
+            Assert.Equal(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
         }
 
         [Fact]
@@ -85,11 +85,11 @@ namespace Sensus.Tests
             SensusServiceHelper.ClearSingleton();
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(2, service1.RegisteredProtocols.Count);
-            Assert.AreEqual(2, service2.RegisteredProtocols.Count);
+            Assert.Equal(2, service1.RegisteredProtocols.Count);
+            Assert.Equal(2, service2.RegisteredProtocols.Count);
 
-            Assert.AreEqual(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
-            Assert.AreEqual(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
+            Assert.Equal(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
+            Assert.Equal(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
         }
 
         [Fact]
@@ -109,8 +109,8 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
-            Assert.AreEqual(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
+            Assert.Equal(service1.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
+            Assert.Equal(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
         }
 
         [Fact]
@@ -128,8 +128,8 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
-            Assert.AreEqual(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
+            Assert.Equal(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
+            Assert.Equal(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
         }
 
         [Fact]
@@ -146,7 +146,7 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            Assert.Equal(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
 
             service1.FlashNotificationsEnabled = false;
 
@@ -156,7 +156,7 @@ namespace Sensus.Tests
 
             service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            Assert.Equal(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
         }
 
         [Fact]
@@ -175,8 +175,8 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
-            Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
+            Assert.Equal(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
+            Assert.Equal(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
         }
 
         [Fact]

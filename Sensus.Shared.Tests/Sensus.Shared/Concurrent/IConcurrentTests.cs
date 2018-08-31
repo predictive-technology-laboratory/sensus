@@ -246,7 +246,7 @@ namespace Sensus.Tests.Concurrent
                 });
             });
 
-            Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the action didn't finish adding items");
+            Assert.Equal(6, test.Count, "It appears that we deadlocked because the action didn't finish adding items");
         }
 
         [Fact]
@@ -269,7 +269,7 @@ namespace Sensus.Tests.Concurrent
             });
 
             //we check test because in the case of a deadlock I'm not sure what output will be returned...
-            Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the func didn't finish adding items");
+            Assert.Equal(6, test.Count, "It appears that we deadlocked because the func didn't finish adding items");
         }
 
         [Fact]

@@ -54,19 +54,19 @@ namespace Sensus.Tests
 
             var protocol2 = JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings), _jsonSerializerSettings);
 
-            Assert.AreEqual(protocol1.Name, protocol2.Name);
-            Assert.AreEqual(protocol1.ContactEmail, protocol2.ContactEmail);
-            Assert.AreEqual(protocol1.ContinueIndefinitely, protocol2.ContinueIndefinitely);
-            Assert.AreEqual(protocol1.Description, protocol2.Description);
-            Assert.AreEqual(protocol1.EndDate, protocol2.EndDate);
-            Assert.AreEqual(protocol1.EndTime, protocol2.EndTime);
-            Assert.AreEqual(protocol1.GpsDesiredAccuracyMeters, protocol2.GpsDesiredAccuracyMeters);
-            Assert.AreEqual(protocol1.GpsMinDistanceDelayMeters, protocol2.GpsMinDistanceDelayMeters);
-            Assert.AreEqual(protocol1.GpsMinTimeDelayMS, protocol2.GpsMinTimeDelayMS);
-            Assert.AreEqual(protocol1.Groupable, protocol2.Groupable);
-            Assert.AreEqual(protocol2.VariableValue.Count, 2);
-            Assert.AreEqual(protocol2.VariableValue["var1"], "val2");
-            Assert.AreEqual(protocol2.VariableValue["var2"], null);            
+            Assert.Equal(protocol1.Name, protocol2.Name);
+            Assert.Equal(protocol1.ContactEmail, protocol2.ContactEmail);
+            Assert.Equal(protocol1.ContinueIndefinitely, protocol2.ContinueIndefinitely);
+            Assert.Equal(protocol1.Description, protocol2.Description);
+            Assert.Equal(protocol1.EndDate, protocol2.EndDate);
+            Assert.Equal(protocol1.EndTime, protocol2.EndTime);
+            Assert.Equal(protocol1.GpsDesiredAccuracyMeters, protocol2.GpsDesiredAccuracyMeters);
+            Assert.Equal(protocol1.GpsMinDistanceDelayMeters, protocol2.GpsMinDistanceDelayMeters);
+            Assert.Equal(protocol1.GpsMinTimeDelayMS, protocol2.GpsMinTimeDelayMS);
+            Assert.Equal(protocol1.Groupable, protocol2.Groupable);
+            Assert.Equal(protocol2.VariableValue.Count, 2);
+            Assert.Equal(protocol2.VariableValue["var1"], "val2");
+            Assert.Equal(protocol2.VariableValue["var2"], null);            
         }
 
         //[Test, Explicit ("Too many dependencies to get this working right now")]
@@ -90,17 +90,17 @@ namespace Sensus.Tests
 
         //    Protocol.DeserializeAsync(serialize1, protocol2 =>
         //    {
-        //        Assert.AreEqual(protocol1.Name, protocol2.Name);
-        //        Assert.AreEqual(protocol1.ContactEmail, protocol2.ContactEmail);
-        //        Assert.AreEqual(protocol1.ContinueIndefinitely, protocol2.ContinueIndefinitely);
-        //        Assert.AreEqual(protocol1.Description, protocol2.Description);
-        //        Assert.AreEqual(protocol1.EndDate, protocol2.EndDate);
-        //        Assert.AreEqual(protocol1.EndTime, protocol2.EndTime);
-        //        Assert.AreEqual(protocol1.ForceProtocolReportsToRemoteDataStore, protocol2.ForceProtocolReportsToRemoteDataStore);
-        //        Assert.AreEqual(protocol1.GpsDesiredAccuracyMeters, protocol2.GpsDesiredAccuracyMeters);
-        //        Assert.AreEqual(protocol1.GpsMinDistanceDelayMeters, protocol2.GpsMinDistanceDelayMeters);
-        //        Assert.AreEqual(protocol1.GpsMinTimeDelayMS, protocol2.GpsMinTimeDelayMS);
-        //        Assert.AreEqual(protocol1.Groupable, protocol2.Groupable);
+        //        Assert.Equal(protocol1.Name, protocol2.Name);
+        //        Assert.Equal(protocol1.ContactEmail, protocol2.ContactEmail);
+        //        Assert.Equal(protocol1.ContinueIndefinitely, protocol2.ContinueIndefinitely);
+        //        Assert.Equal(protocol1.Description, protocol2.Description);
+        //        Assert.Equal(protocol1.EndDate, protocol2.EndDate);
+        //        Assert.Equal(protocol1.EndTime, protocol2.EndTime);
+        //        Assert.Equal(protocol1.ForceProtocolReportsToRemoteDataStore, protocol2.ForceProtocolReportsToRemoteDataStore);
+        //        Assert.Equal(protocol1.GpsDesiredAccuracyMeters, protocol2.GpsDesiredAccuracyMeters);
+        //        Assert.Equal(protocol1.GpsMinDistanceDelayMeters, protocol2.GpsMinDistanceDelayMeters);
+        //        Assert.Equal(protocol1.GpsMinTimeDelayMS, protocol2.GpsMinTimeDelayMS);
+        //        Assert.Equal(protocol1.Groupable, protocol2.Groupable);
         //    });
         //}
     }

@@ -44,14 +44,14 @@ namespace Sensus.Tests
 
             LocationDatum deserializedDatum = Datum.FromJSON(serializedJSON) as LocationDatum;
 
-            Assert.AreEqual(datum.Accuracy, deserializedDatum.Accuracy);
-            Assert.AreEqual(datum.BuildId, deserializedDatum.BuildId);
-            Assert.AreEqual(datum.DeviceId, deserializedDatum.DeviceId);
-            Assert.AreEqual(datum.Id, deserializedDatum.Id);
-            Assert.AreEqual(datum.Latitude, deserializedDatum.Latitude);
-            Assert.AreEqual(datum.Longitude, deserializedDatum.Longitude);
-            Assert.AreEqual(datum.ProtocolId, deserializedDatum.ProtocolId);
-            Assert.AreEqual(datum.Timestamp, deserializedDatum.Timestamp);
+            Assert.Equal(datum.Accuracy, deserializedDatum.Accuracy);
+            Assert.Equal(datum.BuildId, deserializedDatum.BuildId);
+            Assert.Equal(datum.DeviceId, deserializedDatum.DeviceId);
+            Assert.Equal(datum.Id, deserializedDatum.Id);
+            Assert.Equal(datum.Latitude, deserializedDatum.Latitude);
+            Assert.Equal(datum.Longitude, deserializedDatum.Longitude);
+            Assert.Equal(datum.ProtocolId, deserializedDatum.ProtocolId);
+            Assert.Equal(datum.Timestamp, deserializedDatum.Timestamp);
         }
 
         [Fact]
@@ -73,16 +73,16 @@ namespace Sensus.Tests
 
             ActivityDatum deserializedDatum = Datum.FromJSON(serializedJSON) as ActivityDatum;
 
-            Assert.AreEqual(datum.BuildId, deserializedDatum.BuildId);
-            Assert.AreEqual(datum.DeviceId, deserializedDatum.DeviceId);
-            Assert.AreEqual(datum.Id, deserializedDatum.Id);
-            Assert.AreEqual(datum.ProtocolId, deserializedDatum.ProtocolId);
-            Assert.AreEqual(datum.Timestamp, deserializedDatum.Timestamp);
-            Assert.AreEqual(datum.Activity, deserializedDatum.Activity);
-            Assert.AreEqual(datum.Confidence, deserializedDatum.Confidence);
-            Assert.AreEqual(datum.ActivityStarting, deserializedDatum.ActivityStarting);
-            Assert.AreEqual(datum.Phase, deserializedDatum.Phase);
-            Assert.AreEqual(datum.State, deserializedDatum.State);
+            Assert.Equal(datum.BuildId, deserializedDatum.BuildId);
+            Assert.Equal(datum.DeviceId, deserializedDatum.DeviceId);
+            Assert.Equal(datum.Id, deserializedDatum.Id);
+            Assert.Equal(datum.ProtocolId, deserializedDatum.ProtocolId);
+            Assert.Equal(datum.Timestamp, deserializedDatum.Timestamp);
+            Assert.Equal(datum.Activity, deserializedDatum.Activity);
+            Assert.Equal(datum.Confidence, deserializedDatum.Confidence);
+            Assert.Equal(datum.ActivityStarting, deserializedDatum.ActivityStarting);
+            Assert.Equal(datum.Phase, deserializedDatum.Phase);
+            Assert.Equal(datum.State, deserializedDatum.State);
         }
     }
 }

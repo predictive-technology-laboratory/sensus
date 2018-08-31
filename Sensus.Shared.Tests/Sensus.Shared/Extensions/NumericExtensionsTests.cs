@@ -24,49 +24,49 @@ namespace Sensus.TestsExtensions
         [Fact]
         public void RoundPercentageTo3Test()
         {
-            Assert.AreEqual(64.RoundToWholePercentageOf(100, 3), 63);
-            Assert.AreEqual(65.RoundToWholePercentageOf(100, 3), 66);
-            Assert.AreEqual(0.RoundToWholePercentageOf(100, 3), 0);
-            Assert.AreEqual(99.RoundToWholePercentageOf(100, 3), 99);
+            Assert.Equal(64.RoundToWholePercentageOf(100, 3), 63);
+            Assert.Equal(65.RoundToWholePercentageOf(100, 3), 66);
+            Assert.Equal(0.RoundToWholePercentageOf(100, 3), 0);
+            Assert.Equal(99.RoundToWholePercentageOf(100, 3), 99);
         }
 
         [Fact]
         public void RoundPercentageTo4Test()
         {
-            Assert.AreEqual(85.RoundToWholePercentageOf(100, 4), 84);
-            Assert.AreEqual(81.RoundToWholePercentageOf(100, 4), 80);
-            Assert.AreEqual(0.RoundToWholePercentageOf(100, 4), 0);
-            Assert.AreEqual(99.RoundToWholePercentageOf(100, 4), 100);
+            Assert.Equal(85.RoundToWholePercentageOf(100, 4), 84);
+            Assert.Equal(81.RoundToWholePercentageOf(100, 4), 80);
+            Assert.Equal(0.RoundToWholePercentageOf(100, 4), 0);
+            Assert.Equal(99.RoundToWholePercentageOf(100, 4), 100);
         }
 
         [Fact]
         public void RoundPercentageTo5Test()
         {
-            Assert.AreEqual(83.RoundToWholePercentageOf(100, 5), 85);
-            Assert.AreEqual(82.RoundToWholePercentageOf(100, 5), 80);
-            Assert.AreEqual(0.RoundToWholePercentageOf(100, 5), 0);
-            Assert.AreEqual(99.RoundToWholePercentageOf(100, 5), 100);
+            Assert.Equal(83.RoundToWholePercentageOf(100, 5), 85);
+            Assert.Equal(82.RoundToWholePercentageOf(100, 5), 80);
+            Assert.Equal(0.RoundToWholePercentageOf(100, 5), 0);
+            Assert.Equal(99.RoundToWholePercentageOf(100, 5), 100);
         }
 
         [Fact]
         public void RoundTo10Test()
         {
-            Assert.AreEqual(13.RoundToWhole(10), 10);
-            Assert.AreEqual(99.RoundToWhole(10), 100);
+            Assert.Equal(13.RoundToWhole(10), 10);
+            Assert.Equal(99.RoundToWhole(10), 100);
         }
 
         [Fact]
         public void RoundTo1000Test()
         {
-            Assert.AreEqual(1350.RoundToWhole(1000), 1000);
-            Assert.AreEqual(1550.RoundToWhole(1000), 2000);
+            Assert.Equal(1350.RoundToWhole(1000), 1000);
+            Assert.Equal(1550.RoundToWhole(1000), 2000);
         }
 
         [Fact]
         public void ZeroDenominatorTest()
         {
-            Assert.AreEqual(Convert.ToString(7.RoundToWholePercentageOf(7, 1)), "100");
-            Assert.AreEqual(Convert.ToString(7.RoundToWholePercentageOf(0, 1)), "");
+            Assert.Equal(Convert.ToString(7.RoundToWholePercentageOf(7, 1)), "100");
+            Assert.Equal(Convert.ToString(7.RoundToWholePercentageOf(0, 1)), "");
         }
     }
 }

@@ -27,8 +27,8 @@ namespace Sensus.Tests.Extensions
             var date1 = new DateTime(1, 2, 3);
             var date2 = new DateTime(2, 3, 4);
 
-            Assert.AreEqual(date2, date1.Max(date2));
-            Assert.AreEqual(date2, date2.Max(date1));
+            Assert.Equal(date2, date1.Max(date2));
+            Assert.Equal(date2, date2.Max(date1));
         }
 
         [Fact]
@@ -37,8 +37,8 @@ namespace Sensus.Tests.Extensions
             var date1 = new DateTime(1, 2, 3);
             var date2 = new DateTime(1, 2, 3);
 
-            Assert.AreEqual(date2, date1.Max(date2));
-            Assert.AreEqual(date2, date2.Max(date1));
+            Assert.Equal(date2, date1.Max(date2));
+            Assert.Equal(date2, date2.Max(date1));
         }
 
         [Fact]
@@ -47,8 +47,8 @@ namespace Sensus.Tests.Extensions
             DateTime? date1 = null;
             var date2 = new DateTime(1, 2, 3);
 
-            Assert.AreEqual(date2, date1.Max(date2));
-            Assert.AreEqual(date2, date2.Max(date1));
+            Assert.Equal(date2, date1.Max(date2));
+            Assert.Equal(date2, date2.Max(date1));
         }
 
         [Fact]
@@ -57,8 +57,8 @@ namespace Sensus.Tests.Extensions
             var date1 = new DateTime(1, 2, 3);
             DateTime? date2 = null;
 
-            Assert.AreEqual(date1, date1.Max(date2));
-            Assert.AreEqual(date1, date2.Max(date1));
+            Assert.Equal(date1, date1.Max(date2));
+            Assert.Equal(date1, date2.Max(date1));
         }
 
         [Fact]
@@ -67,8 +67,8 @@ namespace Sensus.Tests.Extensions
             var date1 = new DateTime(1, 2, 3);
             var date2 = new DateTime(2, 3, 4);
 
-            Assert.AreEqual(date1, date1.Min(date2));
-            Assert.AreEqual(date1, date2.Min(date1));
+            Assert.Equal(date1, date1.Min(date2));
+            Assert.Equal(date1, date2.Min(date1));
         }
 
         [Fact]
@@ -77,8 +77,8 @@ namespace Sensus.Tests.Extensions
             var date1 = new DateTime(1, 2, 3);
             var date2 = new DateTime(1, 2, 3);
 
-            Assert.AreEqual(date2, date1.Min(date2));
-            Assert.AreEqual(date2, date2.Min(date1));
+            Assert.Equal(date2, date1.Min(date2));
+            Assert.Equal(date2, date2.Min(date1));
         }
 
         [Fact]
@@ -87,8 +87,8 @@ namespace Sensus.Tests.Extensions
             DateTime? date1 = null;
             var date2 = new DateTime(1, 2, 3);
 
-            Assert.AreEqual(date2, date1.Min(date2));
-            Assert.AreEqual(date2, date2.Min(date1));
+            Assert.Equal(date2, date1.Min(date2));
+            Assert.Equal(date2, date2.Min(date1));
         }
 
         [Fact]
@@ -97,8 +97,8 @@ namespace Sensus.Tests.Extensions
             var date1 = new DateTime(1, 2, 3);
             DateTime? date2 = null;
 
-            Assert.AreEqual(date1, date1.Min(date2));
-            Assert.AreEqual(date1, date2.Min(date1));
+            Assert.Equal(date1, date1.Min(date2));
+            Assert.Equal(date1, date2.Min(date1));
         }
     }
 }

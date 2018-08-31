@@ -33,7 +33,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 
             double offsetValue = (double)anonymizer.Apply(-160.0, protocol);
 
-            Assert.AreEqual(offsetValue, -130, 0.000001);
+            Assert.Equal(offsetValue, -130, 5);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 
             double offsetValue = (double)anonymizer.Apply(65.0, protocol);
 
-            Assert.AreEqual(offsetValue, 85, 0.000001);
+            Assert.Equal(offsetValue, 85, 5);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 
             double offsetValue = (double)anonymizer.Apply(170.0, protocol);
 
-            Assert.AreEqual(offsetValue, -170, 0.000001);
+            Assert.Equal(offsetValue, -170, 5);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 
             double offsetValue = (double)anonymizer.Apply(-10.0, protocol);
 
-            Assert.AreEqual(offsetValue, 165, 0.000001);
+            Assert.Equal(offsetValue, 165, 5);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             double randomOffset1 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
             double randomOffset2 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
 
-            Assert.AreEqual(randomOffset1, randomOffset2, 0.000001);
+            Assert.Equal(randomOffset1, randomOffset2, 5);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
             double randomOffset1 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
             double randomOffset2 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
 
-            Assert.AreEqual(randomOffset1, randomOffset2, 0.000001);
+            Assert.Equal(randomOffset1, randomOffset2, 5);
         }
     }
 }

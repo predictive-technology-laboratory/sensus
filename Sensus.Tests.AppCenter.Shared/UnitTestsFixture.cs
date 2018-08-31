@@ -61,7 +61,7 @@ namespace Sensus.Tests.AppCenter.Shared
 
 #if __IOS__
             string[] resultParts = logLines.Last().Split(':');
-            Assert.AreEqual(resultParts.Length, 6);
+            Assert.Equal(resultParts.Length, 6);
 
             int testsRun = int.Parse(resultParts[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
             int testsPassed = int.Parse(resultParts[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
@@ -72,7 +72,7 @@ namespace Sensus.Tests.AppCenter.Shared
             Assert.True(testsRun == 152);  // will need to update this as we develop. ensures that tests are actually run.
 #elif __ANDROID__
             string[] resultParts = logLines.Last().Split(',');
-            Assert.AreEqual(resultParts.Length, 5);
+            Assert.Equal(resultParts.Length, 5);
 
             int testsRun = int.Parse(resultParts[0].Split(':')[1]);
             int testsPassed = int.Parse(resultParts[1].Split(':')[1]);
@@ -82,10 +82,10 @@ namespace Sensus.Tests.AppCenter.Shared
 
             Assert.True(testsRun == 153);  // will need to update this as we develop. ensures that tests are actually run.
 #endif
-            Assert.AreEqual(testsRun, testsPassed);
-            Assert.AreEqual(testsFailed, 0);
-            Assert.AreEqual(testsSkipped, 0);
-            Assert.AreEqual(testsInconclusive, 0);
+            Assert.Equal(testsRun, testsPassed);
+            Assert.Equal(testsFailed, 0);
+            Assert.Equal(testsSkipped, 0);
+            Assert.Equal(testsInconclusive, 0);
         }
     }
 }

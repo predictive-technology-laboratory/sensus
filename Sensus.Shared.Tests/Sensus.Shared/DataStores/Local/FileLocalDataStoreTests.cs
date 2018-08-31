@@ -174,12 +174,12 @@ namespace Sensus.Tests.DataStores.Local
                 localDataStore = obj;
             });
 
-            Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
+            Assert.Equal(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
 
             await localDataStore.WriteToRemoteAsync(CancellationToken.None);
 
             // there should still be 1 file (the new open file)
-            Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
+            Assert.Equal(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
 
         [Fact]
@@ -194,12 +194,12 @@ namespace Sensus.Tests.DataStores.Local
                 localDataStore = obj;
             });
 
-            Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
+            Assert.Equal(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
 
             await localDataStore.WriteToRemoteAsync(CancellationToken.None);
 
             // there should still be 1 file (the new open file)
-            Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
+            Assert.Equal(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
 
         [Fact]
@@ -214,12 +214,12 @@ namespace Sensus.Tests.DataStores.Local
                 localDataStore = obj;
             });
 
-            Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
+            Assert.Equal(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
 
             await localDataStore.WriteToRemoteAsync(CancellationToken.None);
 
             // there should still be 1 file (the new open file)
-            Assert.AreEqual(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
+            Assert.Equal(Directory.GetFiles(localDataStore.StorageDirectory).Length, 1);
         }
         #endregion
 
@@ -246,7 +246,7 @@ namespace Sensus.Tests.DataStores.Local
 
             }, numFiles);
 
-            Assert.AreEqual(numFiles, paths.Length);
+            Assert.Equal(numFiles, paths.Length);
 
             // write the tar file
             string tarPath = Path.Combine(localDataStore.Protocol.StorageDirectory, Guid.NewGuid().ToString());
@@ -261,7 +261,7 @@ namespace Sensus.Tests.DataStores.Local
             tarFile.Close();
 
             // check that the same number of files were created
-            Assert.AreEqual(numFiles, Directory.GetFiles(untarDirectory, "*.json.gz", SearchOption.AllDirectories).Length);
+            Assert.Equal(numFiles, Directory.GetFiles(untarDirectory, "*.json.gz", SearchOption.AllDirectories).Length);
 
             // check that the files' contents are byte-equal
             foreach (string path in paths)
@@ -333,10 +333,10 @@ namespace Sensus.Tests.DataStores.Local
                 paths.Add(path);
                 await localDataStore.StopAsync();
                 Assert.True(File.Exists(path));
-                Assert.AreEqual(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
+                Assert.Equal(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
             }
 
-            Assert.AreEqual(numTimes, paths.Count);
+            Assert.Equal(numTimes, paths.Count);
 
             return paths.ToArray();
         }

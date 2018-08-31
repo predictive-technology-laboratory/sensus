@@ -64,7 +64,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, _privateKey);
 
-            Assert.AreEqual("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
+            Assert.Equal("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace Sensus.Tests.Encryption
 
             SymmetricEncryption symmetricEncryption = new SymmetricEncryption(key, iv);
             string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes); 
-            Assert.AreEqual(message, decryptedMessage);
+            Assert.Equal(message, decryptedMessage);
         }
     }
 }

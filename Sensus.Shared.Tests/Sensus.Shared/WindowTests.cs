@@ -25,9 +25,9 @@ namespace Sensus.Tests
         {
             var t = new Window("10:22");
 
-            Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
-            Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.End);
-            Assert.AreEqual(TimeSpan.Zero, t.Duration);
+            Assert.Equal(new TimeSpan(0, 10, 22, 0), t.Start);
+            Assert.Equal(new TimeSpan(0, 10, 22, 0), t.End);
+            Assert.Equal(TimeSpan.Zero, t.Duration);
         }
 
         [Fact]
@@ -35,9 +35,9 @@ namespace Sensus.Tests
         {
             var t = new Window("10:22-12:22");
 
-            Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
-            Assert.AreEqual(new TimeSpan(0, 12, 22, 0), t.End);
-            Assert.AreEqual(TimeSpan.FromHours(2), t.Duration);
+            Assert.Equal(new TimeSpan(0, 10, 22, 0), t.Start);
+            Assert.Equal(new TimeSpan(0, 12, 22, 0), t.End);
+            Assert.Equal(TimeSpan.FromHours(2), t.Duration);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Sensus.Tests
         {
             var t = new Window("10:22");
 
-            Assert.AreEqual("10:22", t.ToString());
+            Assert.Equal("10:22", t.ToString());
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Sensus.Tests
         {
             var t = new Window("10:22-12:22");
 
-            Assert.AreEqual("10:22-12:22", t.ToString());
+            Assert.Equal("10:22-12:22", t.ToString());
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace Sensus.Tests
             var t1 = new Window("10:22-12:22");
             var t2 = new Window("10:22-12:22");
 
-            Assert.AreEqual(0, t1.CompareTo(t2));
+            Assert.Equal(0, t1.CompareTo(t2));
         }
 
         [Fact]
@@ -80,9 +80,9 @@ namespace Sensus.Tests
         {
             var t = new Window("Su-10:22");
 
-            Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
-            Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.End);
-            Assert.AreEqual(TimeSpan.Zero, t.Duration);
+            Assert.Equal(new TimeSpan(0, 10, 22, 0), t.Start);
+            Assert.Equal(new TimeSpan(0, 10, 22, 0), t.End);
+            Assert.Equal(TimeSpan.Zero, t.Duration);
         }
 
         [Fact]
@@ -90,9 +90,9 @@ namespace Sensus.Tests
         {
             var t = new Window("Mo-10:22-12:22");
 
-            Assert.AreEqual(new TimeSpan(0, 10, 22, 0), t.Start);
-            Assert.AreEqual(new TimeSpan(0, 12, 22, 0), t.End);
-            Assert.AreEqual(TimeSpan.FromHours(2), t.Duration);
+            Assert.Equal(new TimeSpan(0, 10, 22, 0), t.Start);
+            Assert.Equal(new TimeSpan(0, 12, 22, 0), t.End);
+            Assert.Equal(TimeSpan.FromHours(2), t.Duration);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Sensus.Tests
         {
             var t = new Window("Tu-10:22");
 
-            Assert.AreEqual("Tu-10:22", t.ToString());
+            Assert.Equal("Tu-10:22", t.ToString());
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace Sensus.Tests
         {
             var t = new Window("We-10:22-12:22");
 
-            Assert.AreEqual("We-10:22-12:22", t.ToString());
+            Assert.Equal("We-10:22-12:22", t.ToString());
         }
 
         [Fact]
@@ -127,7 +127,7 @@ namespace Sensus.Tests
             var t1 = new Window("Sa-10:22-12:22");
             var t2 = new Window("Sa-10:22-12:22");
 
-            Assert.AreEqual(0, t1.CompareTo(t2));
+            Assert.Equal(0, t1.CompareTo(t2));
         }
     }
 }
