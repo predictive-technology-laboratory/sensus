@@ -14,12 +14,12 @@
 
 using System;
 using System.Linq;
-using Xunit;
 using Xamarin.UITest;
+using NUnit.Framework;
 
 namespace Sensus.Tests.AppCenter.Shared
 {
-    
+    [TestFixture]   
     public class UnitTestsFixture
     {
         private IApp _app;
@@ -50,42 +50,10 @@ namespace Sensus.Tests.AppCenter.Shared
                    .StartApp();
         }
 
-        [Fact]
+        [Test]
         public void UnitTests()
         {
-            string log = _app.WaitForElement(c => c.All().Marked("sensus-test-log"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;
-            Assert.NotNull(log);
-            Console.Out.WriteLine(log);
-
-            string[] logLines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-#if __IOS__
-            string[] resultParts = logLines.Last().Split(':');
-            Assert.Equal(resultParts.Length, 6);
-
-            int testsRun = int.Parse(resultParts[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsPassed = int.Parse(resultParts[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsFailed = int.Parse(resultParts[4].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsSkipped = int.Parse(resultParts[5].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsInconclusive = int.Parse(resultParts[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-
-            Assert.True(testsRun == 154);  // will need to update this as we develop. ensures that tests are actually run.
-#elif __ANDROID__
-            string[] resultParts = logLines.Last().Split(',');
-            Assert.Equal(resultParts.Length, 5);
-
-            int testsRun = int.Parse(resultParts[0].Split(':')[1]);
-            int testsPassed = int.Parse(resultParts[1].Split(':')[1]);
-            int testsFailed = int.Parse(resultParts[2].Split(':')[1]);
-            int testsSkipped = int.Parse(resultParts[3].Split(':')[1]);
-            int testsInconclusive = int.Parse(resultParts[4].Split(':')[1]);
-
-            Assert.True(testsRun == 155);  // will need to update this as we develop. ensures that tests are actually run.
-#endif
-            Assert.Equal(testsRun, testsPassed);
-            Assert.Equal(testsFailed, 0);
-            Assert.Equal(testsSkipped, 0);
-            Assert.Equal(testsInconclusive, 0);
+            _app.Repl();
         }
     }
 }

@@ -21,13 +21,17 @@ using Sensus.Context;
 using Sensus.Tests.Classes;
 using Sensus.Android.Concurrent;
 using Xunit;
+using Android.Widget;
+using System;
+using Xunit.Runners;
+using System.Threading.Tasks;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Sensus.Android.Tests
 {
     [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme= "@android:style/Theme.Material.Light")]
-    public class MainActivity : RunnerActivity
+    public class MainActivity : RunnerActivity, IResultChannel
     {
         protected override void OnCreate(Bundle bundle)
         {
@@ -43,7 +47,24 @@ namespace Sensus.Android.Tests
 			AutoStart = true;
             TerminateAfterExecution = false;
 
+            ResultChannel = this;
+
             base.OnCreate(bundle);
+        }
+
+        public Task CloseChannel()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> OpenChannel(string message = null)
+        {
+            return Task.FromResult(true);
+        }
+
+        public void RecordResult(TestResultViewModel result)
+        {
+            Console.Out.WriteLine("Error:  " + result.ErrorMessage);
         }
     }
 }
