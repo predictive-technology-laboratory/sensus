@@ -33,10 +33,8 @@ using System.Linq;
 namespace Sensus.Android.Tests
 {
     [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme= "@android:style/Theme.Material.Light")]
-    public class MainActivity : RunnerActivity, IResultChannel
+    public class MainActivity : RunnerActivity
     {
-        private Dictionary<TestState, int> _testStateCount;
-
         protected override void OnCreate(Bundle bundle)
         {
             SensusContext.Current = new TestSensusContext
@@ -48,43 +46,26 @@ namespace Sensus.Android.Tests
             AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
 			AutoStart = true;
             TerminateAfterExecution = false;
-            ResultChannel = this;
 
-            base.OnCreate(bundle);
-        }
+            XUnitResultCounter resultCounter = new XUnitResultCounter();
 
-        public Task CloseChannel()
-        {
-            TextView resultView = new TextView(this)
+            resultCounter.ResultsDelivered += (sender, results) => 
             {
-                ContentDescription = "unit-test-results",
-                Text = string.Concat(_testStateCount.OrderBy(stateCount => stateCount.Key).Select(stateCount => stateCount.Key + ":" + stateCount.Value + System.Environment.NewLine)).Trim()
+                RunOnUiThread(() =>
+                {
+                    TextView resultView = new TextView(this)
+                    {
+                        ContentDescription = "unit-test-results",
+                        Text = results
+                    };
+
+                    new AlertDialog.Builder(this).SetView(resultView).Show();
+                });
             };
 
-            new AlertDialog.Builder(this).SetView(resultView).Show();
-             
-            return Task.CompletedTask;
-        }
+            ResultChannel = resultCounter;
 
-        public Task<bool> OpenChannel(string message = null)
-        {
-            _testStateCount = new Dictionary<TestState, int>();
-
-            return Task.FromResult(true);
-        }
-
-        public void RecordResult(TestResultViewModel result)
-        {
-            TestState testState = result.TestCase.Result;
-
-            if (_testStateCount.ContainsKey(testState))
-            {
-                _testStateCount[testState]++;
-            }
-            else
-            {
-                _testStateCount.Add(testState, 1);
-            }
+            base.OnCreate(bundle);
         }
     }
 }

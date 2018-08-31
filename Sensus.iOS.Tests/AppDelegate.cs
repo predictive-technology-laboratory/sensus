@@ -36,14 +36,28 @@ namespace Sensus.iOS.Tests
                 MainThreadSynchronizer = new MainConcurrent()
             };
 
-            // We need this to ensure the execution assembly is part of the app bundle
-            AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
-
-            // tests can be inside the main assembly
             AddTestAssembly(Assembly.GetExecutingAssembly());
-
+            AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
 			AutoStart = true;
 			TerminateAfterExecution = false;
+
+            XUnitResultCounter resultCounter = new XUnitResultCounter();
+
+            resultCounter.ResultsDelivered += (sender, results) =>
+            {
+                InvokeOnMainThread(() =>
+                {
+                    UIAlertView alertView = new UIAlertView("Results", results, default(IUIAlertViewDelegate), "Close");
+                    alertView.AccessibilityLabel = "unit-test-results";
+                    alertView.Show();
+                });
+            };
+
+            ResultChannel = resultCounter;
+
+#if ENABLE_TEST_CLOUD
+            Xamarin.Calabash.Start();
+#endif
 
             return base.FinishedLaunching(uiApplication, launchOptions);
 		}

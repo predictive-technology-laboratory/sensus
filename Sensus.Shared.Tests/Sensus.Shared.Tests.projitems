@@ -33,6 +33,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\XUnitResultCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\" />
