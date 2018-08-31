@@ -69,7 +69,7 @@ namespace Sensus.Tests.AppCenter.Shared
             int testsSkipped = int.Parse(resultParts[5].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
             int testsInconclusive = int.Parse(resultParts[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
 
-            Assert.True(testsRun == 152);  // will need to update this as we develop. ensures that tests are actually run.
+            Assert.True(testsRun == 154);  // will need to update this as we develop. ensures that tests are actually run.
 #elif __ANDROID__
             string[] resultParts = logLines.Last().Split(',');
             Assert.Equal(resultParts.Length, 5);
