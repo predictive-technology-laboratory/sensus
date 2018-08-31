@@ -16,11 +16,10 @@ using Xamarin.UITest;
 using NUnit.Framework;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace Sensus.Tests.AppCenter.Shared
 {
-    [TestFixture]   
+    [TestFixture]
     public class UnitTestsFixture
     {
         private IApp _app;
@@ -40,7 +39,15 @@ namespace Sensus.Tests.AppCenter.Shared
         [Test]
         public void UnitTests()
         {
-            string resultsStr = _app.WaitForElement(c => c.All().Marked("unit-test-results"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;
+            TimeSpan timeout = TimeSpan.FromMinutes(2);
+
+#if __ANDROID__
+            string resultsStr = _app.WaitForElement(c => c.All().Marked("unit-test-results"), timeout: timeout).FirstOrDefault()?.Text;
+#elif __IOS__
+            _app.WaitForElement(c => c.ClassFull("UILabel").Text("Results"), timeout: timeout);
+            string resultsStr = _app.Query(c => c.ClassFull("UILabel")).SingleOrDefault(c => c.Text.StartsWith("Passed"))?.Text;
+#endif
+
             Assert.NotNull(resultsStr);
 
             Console.Out.WriteLine("Test results:  " + resultsStr);

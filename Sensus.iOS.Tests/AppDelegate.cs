@@ -47,9 +47,7 @@ namespace Sensus.iOS.Tests
             {
                 InvokeOnMainThread(() =>
                 {
-                    UIAlertView alertView = new UIAlertView("Results", results, default(IUIAlertViewDelegate), "Close");
-                    alertView.AccessibilityLabel = "unit-test-results";
-                    alertView.Show();
+                    new UIAlertView("Results", results, default(IUIAlertViewDelegate), "Close").Show();
                 });
             };
 
