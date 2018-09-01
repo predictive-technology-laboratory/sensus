@@ -26,11 +26,12 @@ namespace Sensus.Tests.Classes
 
         private Dictionary<TestState, int> _testStateCount;
 
-        public Task CloseChannel()
+        public async Task CloseChannel()
         {
-            ResultsDelivered?.Invoke(this, string.Concat(_testStateCount.OrderBy(stateCount => stateCount.Key).Select(stateCount => stateCount.Key + ":" + stateCount.Value + System.Environment.NewLine)).Trim());
+            // there's an issue where CloseChannel is called before all of the results come though RecordResult. wait a bit for everything to come through.
+            await Task.Delay(5000);
 
-            return Task.CompletedTask;
+            ResultsDelivered?.Invoke(this, string.Concat(_testStateCount.OrderBy(stateCount => stateCount.Key).Select(stateCount => stateCount.Key + ":" + stateCount.Value + Environment.NewLine)).Trim());
         }
 
         public Task<bool> OpenChannel(string message = null)
