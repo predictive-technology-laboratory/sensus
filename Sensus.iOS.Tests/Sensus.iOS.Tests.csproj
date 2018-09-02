@@ -15,6 +15,7 @@
     <AssemblyName>Sensus.iOS.Tests</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <Description>An iOS application that runs all unit tests on physical and virtual iOS devices.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>

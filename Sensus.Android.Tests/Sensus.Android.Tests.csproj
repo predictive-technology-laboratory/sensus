@@ -24,6 +24,7 @@
     <AndroidManifest>..\Sensus.Android\Properties\AndroidManifest.xml</AndroidManifest>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <Description>An Android application that runs all unit tests on physical and virtual Android devices.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

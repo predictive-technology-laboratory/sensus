@@ -492,7 +492,7 @@ namespace Sensus.Probes
                 double? percentageNominalStoreRate = null;
                 if (storedDataPerSecond.HasValue && MaxDataStoresPerSecond.HasValue)
                 {
-                    percentageNominalStoreRate = storedDataPerSecond.Value / MaxDataStoresPerSecond.Value;
+                    percentageNominalStoreRate = (storedDataPerSecond.Value / MaxDataStoresPerSecond.Value) * 100;
                 }
 
                 properties.Add("Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)));

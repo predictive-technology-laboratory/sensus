@@ -124,6 +124,8 @@ namespace Sensus.Android.Probes.Movement
             }
 
             // connect awareness client
+            TaskCompletionSource<bool> clientConnectCompletionSource = new TaskCompletionSource<bool>();
+
             _awarenessApiClient = new GoogleApiClient.Builder(Application.Context).AddApi(Awareness.Api)
 
                 .AddConnectionCallbacks(
@@ -131,6 +133,7 @@ namespace Sensus.Android.Probes.Movement
                     bundle =>
                     {
                         SensusServiceHelper.Get().Logger.Log("Connected to Google Awareness API.", LoggingLevel.Normal, GetType());
+                        clientConnectCompletionSource.SetResult(true);
                     },
 
                     status =>
@@ -140,7 +143,9 @@ namespace Sensus.Android.Probes.Movement
 
                 .Build();
 
-            _awarenessApiClient.BlockingConnect();
+            _awarenessApiClient.Connect();
+
+            await clientConnectCompletionSource.Task;
         }
 
         protected override Task StartListeningAsync()
