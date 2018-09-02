@@ -65,8 +65,8 @@ namespace Sensus.Android
             Console.Error.WriteLine("--------------------------- Creating activity ---------------------------");
 
             // set the layout resources first
-            FormsAppCompatActivity.ToolbarResource = Resource.Layout.Toolbar;
-            FormsAppCompatActivity.TabLayoutResource = Resource.Layout.Tabbar;
+            ToolbarResource = Resource.Layout.Toolbar;
+            TabLayoutResource = Resource.Layout.Tabbar;
 
             base.OnCreate(savedInstanceState);
 

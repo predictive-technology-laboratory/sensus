@@ -90,9 +90,9 @@ namespace Sensus.Android.Notifications
             else
 #endif
             {
+#pragma warning disable 618
                 builder = new Notification.Builder(context);
 
-#pragma warning disable 618
                 if (silent)
                 {
                     builder.SetSound(null);

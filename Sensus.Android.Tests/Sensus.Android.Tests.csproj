@@ -157,12 +157,6 @@
     <Reference Include="Estimote.Android.Proximity">
       <HintPath>..\dependencies\estimote\android\Estimote.Android.Proximity.dll</HintPath>
     </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\dependencies\mapextend\android\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Android">
-      <HintPath>..\dependencies\mapextend\android\Xam.Plugin.MapExtend.Android.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Band.Android">
       <HintPath>..\dependencies\msband\android\Microsoft.Band.Android.dll</HintPath>
     </Reference>
