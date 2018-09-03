@@ -138,8 +138,6 @@ namespace Sensus.Android
             Console.Error.WriteLine("--------------------------- Starting activity ---------------------------");
 
             base.OnStart();
-
-            CrossCurrentActivity.Current.Activity = this;
         }
 
         protected override async void OnResume()
@@ -147,8 +145,6 @@ namespace Sensus.Android
             Console.Error.WriteLine("--------------------------- Resuming activity ---------------------------");
 
             base.OnResume();
-
-            CrossCurrentActivity.Current.Activity = this;
 
             // temporarily hide UI while we bind to service
             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;

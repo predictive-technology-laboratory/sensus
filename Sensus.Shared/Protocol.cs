@@ -197,6 +197,11 @@ namespace Sensus
             // set up protocol
             try
             {
+                // if probes not present in the current platform are used as script triggers, we'll 
+                // end up with null probes in the protocol that refer to invalid triggers. remove
+                // any nulls.
+                protocol.Probes.RemoveAll(probe => probe == null);
+
                 // don't reset the protocol id -- received protocols should remain in the same study.
                 await protocol.ResetAsync(false);
 
