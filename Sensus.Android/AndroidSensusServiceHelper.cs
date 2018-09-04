@@ -543,16 +543,24 @@ namespace Sensus.Android
             });
         }
 
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
         {
-            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
-            notificationHub.Register(PushNotificationToken);
+            // cannot perform registration on main thread. ensure we're on another thread.
+            return Task.Run(() =>
+            {
+                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+                notificationHub.Register(PushNotificationToken);
+            });
         }
 
-        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
-            NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
-            notificationHub.UnregisterAll(PushNotificationToken);
+            // cannot perform registration on main thread. ensure we're on another thread.
+            return Task.Run(() =>
+            {
+                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+                notificationHub.UnregisterAll(PushNotificationToken);
+            });
         }
 
         protected override void RequestNewPushNotificationToken()
@@ -563,47 +571,40 @@ namespace Sensus.Android
         }
 
         /// <summary>
-        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically.
         /// </summary>
         /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
         /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
         /// <param name="rationale">Rationale.</param>
-        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        public override async Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
         {
-            base.EnableBluetooth(lowEnergy, rationale);
-
-            bool enabled = false;
-
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
             // ensure that the device has the required feature
-            if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth) ||
-                bluetoothAdapter == null)
+            if (bluetoothAdapter == null || !_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
             {
-                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
-                return enabled;
+                await FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
+                return false;
             }
 
             // the system has bluetooth. check whether it's enabled.
-
-            ManualResetEvent enableWait = new ManualResetEvent(false);
-
             if (bluetoothAdapter.IsEnabled)
             {
-                enabled = true;
-                enableWait.Set();
+                return true;
             }
             else
             {
                 // if it's not and if the user has previously denied bluetooth, quit now. don't bother the user again.
                 if (_userDeniedBluetoothEnable)
                 {
-                    enableWait.Set();
+                    return false;
                 }
                 else
                 {
+                    TaskCompletionSource<bool> enableTaskCompletionSource = new TaskCompletionSource<bool>();
+
                     // bring up sensus so we can request bluetooth enable
-                    RunActionUsingMainActivityAsync(mainActivity =>
+                    await RunActionUsingMainActivityAsync(mainActivity =>
                     {
                         mainActivity.RunOnUiThread(async () =>
                         {
@@ -619,58 +620,54 @@ namespace Sensus.Android
                                     if (resultIntent.Item1 == Result.Canceled)
                                     {
                                         _userDeniedBluetoothEnable = true;
+                                        enableTaskCompletionSource.TrySetResult(false);
                                     }
                                     else if (resultIntent.Item1 == Result.Ok)
                                     {
-                                        enabled = true;
+                                        enableTaskCompletionSource.TrySetResult(true);
                                     }
-
-                                    enableWait.Set();
+                                    else
+                                    {
+                                        enableTaskCompletionSource.TrySetResult(false);
+                                    }
                                 });
                             }
                             catch (Exception ex)
                             {
                                 Logger.Log("Failed to start Bluetooth:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                enableWait.Set();
+                                enableTaskCompletionSource.TrySetResult(false);
                             }
                         });
 
                     }, true, false);
+
+                    bool enabled = await enableTaskCompletionSource.Task;
+
+                    if (enabled)
+                    {
+                        // the user enabled bluetooth, so allow one retry at enabling next time we find BLE disabled
+                        _userDeniedBluetoothEnable = false;
+                    }
+
+                    return enabled;
                 }
             }
-
-            enableWait.WaitOne();
-
-            if (enabled)
-            {
-                // the user enabled bluetooth, so allow one retry at enabling next time we find BLE disabled
-                _userDeniedBluetoothEnable = false;
-            }
-
-            return enabled;
         }
 
-        public override bool DisableBluetooth(bool reenable, bool lowEnergy = true, string rationale = null)
+        public override async Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy = true, string rationale = null)
         {
-            base.DisableBluetooth(reenable, lowEnergy, rationale);
-
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
             // check whether bluetooth is enabled
             if (bluetoothAdapter?.IsEnabled ?? false)
             {
-                ManualResetEvent disableWait = new ManualResetEvent(false);
-                ManualResetEvent enableWait = new ManualResetEvent(false);
+                TaskCompletionSource<State> bluetoothStateChangedCompletionSource = new TaskCompletionSource<State>();
 
-                EventHandler<global::Android.Bluetooth.State> StateChangedHandler = (sender, newState) =>
+                EventHandler<State> StateChangedHandler = (sender, newState) =>
                 {
-                    if (newState == global::Android.Bluetooth.State.Off)
+                    if (newState == State.On || newState == State.Off)
                     {
-                        disableWait.Set();
-                    }
-                    else if (newState == global::Android.Bluetooth.State.On)
-                    {
-                        enableWait.Set();
+                        bluetoothStateChangedCompletionSource.TrySetResult(newState);
                     }
                 };
 
@@ -680,31 +677,34 @@ namespace Sensus.Android
                 {
                     if (!bluetoothAdapter.Disable())
                     {
-                        disableWait.Set();
+                        bluetoothStateChangedCompletionSource.TrySetResult(State.On);
                     }
                 }
                 catch (Exception)
                 {
-                    disableWait.Set();
+                    bluetoothStateChangedCompletionSource.TrySetResult(State.On);
                 }
 
-                disableWait.WaitOne(5000);
+                await bluetoothStateChangedCompletionSource.Task;
 
+                // try to reenable without user interaction -- may not be allowed.
                 if (reenable)
                 {
+                    bluetoothStateChangedCompletionSource = new TaskCompletionSource<State>();
+
                     try
                     {
                         if (!bluetoothAdapter.Enable())
                         {
-                            enableWait.Set();
+                            bluetoothStateChangedCompletionSource.TrySetResult(State.Off);
                         }
                     }
                     catch (Exception)
                     {
-                        enableWait.Set();
+                        bluetoothStateChangedCompletionSource.TrySetResult(State.Off);
                     }
 
-                    enableWait.WaitOne(5000);
+                    await bluetoothStateChangedCompletionSource.Task;
                 }
 
                 AndroidBluetoothBroadcastReceiver.STATE_CHANGED -= StateChangedHandler;
@@ -715,7 +715,7 @@ namespace Sensus.Android
             // dispatch an intent to reenable bluetooth, which will require user interaction.
             if (reenable && !isEnabled)
             {
-                return EnableBluetooth(lowEnergy, rationale);
+                return await EnableBluetoothAsync(lowEnergy, rationale);
             }
             else
             {

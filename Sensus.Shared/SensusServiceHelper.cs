@@ -465,7 +465,7 @@ namespace Sensus
             }
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
-            _scriptsToRun = new ConcurrentObservableCollection<Script>(new LockConcurrent());
+            _scriptsToRun = new ConcurrentObservableCollection<Script>();
             _runningProtocolIds = new List<string>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
@@ -546,9 +546,9 @@ namespace Sensus
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
-        protected abstract void RegisterWithNotificationHub(Tuple<string, string> hubSas);
+        protected abstract Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas);
 
-        protected abstract void UnregisterFromNotificationHub(Tuple<string, string> hubSas);
+        protected abstract Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas);
 
         protected abstract void RequestNewPushNotificationToken();
 
@@ -1429,7 +1429,7 @@ namespace Sensus
                     // unregister from the hub, catching any exceptions.
                     try
                     {
-                        UnregisterFromNotificationHub(hubSas);
+                        await UnregisterFromNotificationHubAsync(hubSas);
                     }
                     catch (Exception unregisterEx)
                     {
@@ -1480,7 +1480,7 @@ namespace Sensus
                         // catch any exceptions from registering
                         try
                         {
-                            RegisterWithNotificationHub(hubSas);
+                            await RegisterWithNotificationHubAsync(hubSas);
                         }
                         catch (Exception registerEx)
                         {

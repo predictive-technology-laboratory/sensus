@@ -25,12 +25,10 @@ using Xamarin.Forms;
 using MessageUI;
 using AVFoundation;
 using CoreBluetooth;
-using CoreFoundation;
 using System.Threading.Tasks;
 using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
-using Sensus.Exceptions;
 
 namespace Sensus.iOS
 {
@@ -284,28 +282,16 @@ namespace Sensus.iOS
             });
         }
 
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        protected override async Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-
-            bool registered = notificationHub.RegisterNative(_pushNotificationTokenData, new NSSet(), out NSError error);
-
-            if (error != null)
-            {
-                SensusException.Report("Exception while registering from notification hub.", new Exception(error.ToString()));
-            }
+            await notificationHub.RegisterNativeAsyncAsync(_pushNotificationTokenData, new NSSet());
         }
 
-        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        protected override async Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-
-            bool unregistered = notificationHub.UnregisterAll(_pushNotificationTokenData, out NSError error);
-
-            if (error != null)
-            {
-                SensusException.Report("Exception while unregistering from notification hub.", new Exception(error.ToString()));
-            }
+            await notificationHub.UnregisterAllAsyncAsync(_pushNotificationTokenData);
         }
 
         protected override void RequestNewPushNotificationToken()

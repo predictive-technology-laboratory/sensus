@@ -154,7 +154,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }
@@ -164,7 +164,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }
