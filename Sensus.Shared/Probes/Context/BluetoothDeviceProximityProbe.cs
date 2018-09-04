@@ -72,7 +72,7 @@ namespace Sensus.Probes.Context
         {
             await base.InitializeAsync();
 
-            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
+            if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
                 // and we'd like the probe to be restarted at that time.

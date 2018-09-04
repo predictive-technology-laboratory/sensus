@@ -552,32 +552,9 @@ namespace Sensus
 
         protected abstract void RequestNewPushNotificationToken();
 
-        public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
-        {
-            try
-            {
-                AssertNotOnMainThread(GetType() + " EnableBluetooth");
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        public abstract Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale);
 
-        public virtual bool DisableBluetooth(bool reenable, bool lowEnergy, string rationale)
-        {
-            try
-            {
-                AssertNotOnMainThread(GetType() + " DisableBluetooth");
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
+        public abstract Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale);
         #endregion
 
         #region add/remove running protocol ids

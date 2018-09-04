@@ -31,7 +31,6 @@ using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
-using UserNotifications;
 
 namespace Sensus.iOS
 {
@@ -320,53 +319,62 @@ namespace Sensus.iOS
         }
 
         /// <summary>
-        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically.
         /// </summary>
         /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
         /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
         /// <param name="rationale">Rationale.</param>
-        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        public override async Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
         {
-            base.EnableBluetooth(lowEnergy, rationale);
-
-            bool enabled = false;
-            ManualResetEvent enableWait = new ManualResetEvent(false);
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 try
                 {
-                    CBCentralManager manager = new CBCentralManager(DispatchQueue.MainQueue);
+                    TaskCompletionSource<bool> enableTaskCompletionSource = new TaskCompletionSource<bool>();
+
+                    CBCentralManager manager = new CBCentralManager();
 
                     manager.UpdatedState += (sender, e) =>
                     {
                         if (manager.State == CBCentralManagerState.PoweredOn)
                         {
-                            enabled = true;
-                            enableWait.Set();
+                            enableTaskCompletionSource.TrySetResult(true);
                         }
                     };
 
                     if (manager.State == CBCentralManagerState.PoweredOn)
                     {
-                        enabled = true;
-                        enableWait.Set();
+                        enableTaskCompletionSource.TrySetResult(true);
                     }
+
+                    Task timeoutTask = Task.Delay(BLUETOOTH_ENABLE_TIMEOUT_MS);
+
+                    if (await Task.WhenAny(enableTaskCompletionSource.Task, timeoutTask) == timeoutTask)
+                    {
+                        Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
+                        enableTaskCompletionSource.TrySetResult(false);
+                    }
+
+                    return await enableTaskCompletionSource.Task;
                 }
                 catch (Exception ex)
                 {
                     Logger.Log("Failed while requesting Bluetooth enable:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    enableWait.Set();
+                    return false;
                 }
             });
+        }
 
-            // the base class will ensure that we're not on the main thread, making the following wait okay.
-            if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
-            {
-                Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
-            }
-
-            return enabled;
+        /// <summary>
+        /// Not available on iOS. Will always return a completed <see cref="Task"/> with a result of false.
+        /// </summary>
+        /// <returns>False</returns>
+        /// <param name="reenable">If set to <c>true</c> reenable.</param>
+        /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
+        /// <param name="rationale">Rationale.</param>
+        public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
+        {
+            return Task.FromResult(false);
         }
 
         #region methods not implemented in ios

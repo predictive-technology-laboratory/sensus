@@ -94,6 +94,16 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
+        public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool EnableProbeWhenEnablingAll(Probe probe)
         {
             throw new NotImplementedException();

@@ -233,7 +233,11 @@ namespace Sensus.Callbacks
                                 // schedule callback locally
                                 await scheduleRepeatCallbackAsync();
 
-                                // request a push notification for the callback (adds redundancy) 
+                                // request a push notification for the callback, to be delivered in parallel with the local notification.
+                                // only one of these will be allowed to run based on the invocation id and locking code above. there is
+                                // perhaps an argument to make for deleting the previously requested push notification and thereby preventing
+                                // push notifications from building up in the backend. however, our primary objective should be minimizing 
+                                // the amount of network I/O from the app to S3. the backend will handle filtering out stale invocation IDs.
                                 await RequestPushNotificationAsync(callback);
                             }
                             else
@@ -333,8 +337,7 @@ namespace Sensus.Callbacks
                 CancelRaisedCallback(callback);
 
                 // remove from the scheduler
-                ScheduledCallback removedCallback;
-                _idCallback.TryRemove(callback.Id, out removedCallback);
+                _idCallback.TryRemove(callback.Id, out ScheduledCallback removedCallback);
 
                 // tell the current platform cancel its hook into the system's callback system
                 UnscheduleCallbackPlatformSpecific(callback);

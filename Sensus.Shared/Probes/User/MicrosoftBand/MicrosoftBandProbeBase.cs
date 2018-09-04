@@ -87,9 +87,9 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected static void ConnectClient(CancellationToken cancellationToken = default(CancellationToken))
+        protected static async Task ConnectClientAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
+            if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
             {
                 throw new MicrosoftBandClientConnectException("Bluetooth not enabled.");
             }
@@ -187,7 +187,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             try
             {
                 // ensure that client is connected
-                ConnectClient(cancellationToken);
+                await ConnectClientAsync(cancellationToken);
 
                 // we've successfully connected. if we fail at some point in the future, allow the system to reenable bluetooth.
                 REENABLE_BLUETOOTH_IF_NEEDED = true;
@@ -203,7 +203,7 @@ namespace Sensus.Probes.User.MicrosoftBand
 
                     try
                     {
-                        SensusServiceHelper.Get().DisableBluetooth(true, true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies.");
+                        await SensusServiceHelper.Get().DisableBluetoothAsync(true, true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies.");
                     }
                     catch (Exception reenableBluetoothException)
                     {
@@ -380,7 +380,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 contactProbe.ContactStateChanged += ContactStateChangedAsync;
             }
 
-            ConnectClient();
+            await ConnectClientAsync();
             await ConfigureAsync(BandClient);
             await StartReadingsAsync();
         }

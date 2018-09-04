@@ -145,7 +145,7 @@ namespace Sensus.Probes.Location
                 throw new Exception(error);
             }
 
-            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to identify beacons, which are being used in one of your studies."))
+            if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth to identify beacons, which are being used in one of your studies."))
             {
                 throw new Exception("Bluetooth not enabled.");
             }
