@@ -24,7 +24,7 @@ namespace Sensus.Probes.User.Health
         private double _distanceWalkingRunning;
 
         [DoubleProbeTriggerProperty("Distance Walking/Running")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Distance Walking/Running:", typeof(DoubleRoundingTensAnonymizer), false)]
         public double DistanceWalkingRunning
         {
             get

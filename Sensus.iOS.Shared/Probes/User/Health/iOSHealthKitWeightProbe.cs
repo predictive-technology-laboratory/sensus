@@ -43,7 +43,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return int.MaxValue;
+                return (int)TimeSpan.FromDays(5).TotalMilliseconds;
             }
         }
 
@@ -57,9 +57,13 @@ namespace Sensus.iOS.Probes.User.Health
             HKQuantitySample quantitySample = sample as HKQuantitySample;
 
             if (quantitySample == null)
+            {
                 return null;
+            }
             else
-                return new WeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Pound));
+            {
+                return new WeightDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime(), TimeSpan.Zero), quantitySample.Quantity.GetDoubleValue(HKUnit.Pound));
+            }
         }
 
         protected override ChartSeries GetChartSeries()

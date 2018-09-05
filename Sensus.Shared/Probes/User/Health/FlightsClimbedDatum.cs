@@ -21,11 +21,11 @@ namespace Sensus.Probes.User.Health
 {
     public class FlightsClimbedDatum : Datum
     {
-        private double _flightsClimbed;
+        private int _flightsClimbed;
 
         [DoubleProbeTriggerProperty("Flights Climbed")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double FlightsClimbed
+        [Anonymizable("Flights Climbed:", typeof(DoubleRoundingTensAnonymizer), false)]
+        public int FlightsClimbed
         {
             get
             {
@@ -41,7 +41,7 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Flights Climbed (Floors):  " + Math.Round(_flightsClimbed, 1);
+                return "Flights Climbed (Floors):  " + _flightsClimbed;
             }
         }
 
@@ -53,11 +53,11 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return Math.Round(_flightsClimbed, 1);
+                return _flightsClimbed;
             }
         }
 
-        public FlightsClimbedDatum(DateTimeOffset timestamp, double flightsClimbed)
+        public FlightsClimbedDatum(DateTimeOffset timestamp, int flightsClimbed)
             : base(timestamp)
         {
             _flightsClimbed = flightsClimbed;

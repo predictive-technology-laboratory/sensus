@@ -17,9 +17,9 @@ using Foundation;
 using System;
 using System.Threading;
 using System.Collections.Generic;
-using Sensus;
 using Sensus.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -50,11 +50,11 @@ namespace Sensus.iOS.Probes.User.Health
         }
 
         public iOSHealthKitWheelChairUseProbe()
-            :base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.WheelchairUse))
+            : base(HKCharacteristicType.Create(HKCharacteristicTypeIdentifier.WheelchairUse))
         {
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -64,28 +64,38 @@ namespace Sensus.iOS.Probes.User.Health
             if (error == null)
             {
                 if (wheelChair.WheelchairUse == HKWheelchairUse.NotSet)
+                {
                     data.Add(new WheelChairUseDatum(DateTimeOffset.Now, WheelChairUse.NotSet));
+                }
                 else if (wheelChair.WheelchairUse == HKWheelchairUse.No)
+                {
                     data.Add(new WheelChairUseDatum(DateTimeOffset.Now, WheelChairUse.No));
+                }
                 else if (wheelChair.WheelchairUse == HKWheelchairUse.Yes)
+                {
                     data.Add(new WheelChairUseDatum(DateTimeOffset.Now, WheelChairUse.Yes));
+                }
                 else
-                    throw new Exception("User has not provided -- or has not allowed access to -- their fitzpatrick skin type.");
+                {
+                    throw new Exception("User has not provided -- or has not allowed access to -- their wheel chair use status.");
+                }
             }
             else
-                throw new Exception("Error reading fitzpatrick skin type:  " + error.Description);
+            {
+                throw new Exception("Error reading wheel chair use status:  " + error.Description);
+            }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

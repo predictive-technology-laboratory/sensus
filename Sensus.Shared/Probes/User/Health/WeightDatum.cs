@@ -24,7 +24,7 @@ namespace Sensus.Probes.User.Health
         private double _weightPounds;
 
         [DoubleProbeTriggerProperty("Weight (Pounds)")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Weight (Pounds):", typeof(DoubleRoundingTensAnonymizer), false)]
         public double WeightPounds
         {
             get

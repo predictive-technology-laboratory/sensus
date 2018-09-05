@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus;
 using Sensus.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -54,7 +55,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -64,36 +65,54 @@ namespace Sensus.iOS.Probes.User.Health
             if (error == null)
             {
                 if (skinType.SkinType == HKFitzpatrickSkinType.I)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.TypeI));
+                }
                 else if (skinType.SkinType == HKFitzpatrickSkinType.II)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.TypeII));
+                }
                 else if (skinType.SkinType == HKFitzpatrickSkinType.III)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.TypeIII));
+                }
                 else if (skinType.SkinType == HKFitzpatrickSkinType.IV)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.TypeIV));
+                }
                 else if (skinType.SkinType == HKFitzpatrickSkinType.V)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.TypeV));
+                }
                 else if (skinType.SkinType == HKFitzpatrickSkinType.VI)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.TypeVI));
-                else if(skinType.SkinType == HKFitzpatrickSkinType.NotSet)
+                }
+                else if (skinType.SkinType == HKFitzpatrickSkinType.NotSet)
+                {
                     data.Add(new FitzpatrickSkinTypeDatum(DateTimeOffset.Now, FitzpatrickSkinType.NotSet));
+                }
                 else
+                {
                     throw new Exception("User has not provided -- or has not allowed access to -- their fitzpatrick skin type.");
+                }
             }
             else
-                throw new Exception("Error reading fitzpatrick skin type:  " + error.Description);
+            {
+                throw new Exception("Error reading Fitzpatrick skin type:  " + error.Description);
+            }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

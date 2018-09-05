@@ -24,7 +24,7 @@ namespace Sensus.Probes.User.Health
         private double _heartRate;
 
         [DoubleProbeTriggerProperty("Heart Rate (BPM)")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Heart Rate (BPM):", typeof(DoubleRoundingTensAnonymizer), false)]
         public double HeartRate
         {
             get

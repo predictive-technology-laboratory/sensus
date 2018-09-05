@@ -24,7 +24,7 @@ namespace Sensus.Probes.User.Health
         private double _stepCount;
 
         [DoubleProbeTriggerProperty("Step Count")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Step Count:", typeof(DoubleRoundingTensAnonymizer), false)]
         public double StepCount
         {
             get
@@ -41,7 +41,7 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Step Count:  " + Math.Round(_stepCount, 1);
+                return "Step Count:  " + _stepCount;
             }
         }
 
@@ -53,7 +53,7 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return Math.Round(_stepCount, 1);
+                return _stepCount;
             }
         }
 

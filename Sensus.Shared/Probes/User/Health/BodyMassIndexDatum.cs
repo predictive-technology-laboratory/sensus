@@ -24,7 +24,7 @@ namespace Sensus.Probes.User.Health
         private double _bodyMassIndex;
 
         [DoubleProbeTriggerProperty("Body Mass Index")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
+        [Anonymizable("Body Mass Index:", typeof(DoubleRoundingTensAnonymizer), false)]
         public double BodyMassIndex
         {
             get

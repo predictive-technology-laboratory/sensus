@@ -21,11 +21,11 @@ namespace Sensus.Probes.User.Health
 {
     public class NumberOfTimesFallenDatum : Datum
     {
-        private double _numberOfTimesFallen;
+        private int _numberOfTimesFallen;
 
         [DoubleProbeTriggerProperty("Number of Times Fallen")]
-        [Anonymizable(null, new Type[] { typeof(DoubleRoundingTensAnonymizer) }, -1)]
-        public double NumberOfTimesFallen
+        [Anonymizable("Number of Times Fallen:", typeof(DoubleRoundingTensAnonymizer), false)]
+        public int NumberOfTimesFallen
         {
             get
             {
@@ -41,7 +41,7 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return "Number of Times Fallen:  " + Math.Round(_numberOfTimesFallen, 1);
+                return "Number of Times Fallen:  " + _numberOfTimesFallen;
             }
         }
 
@@ -53,11 +53,11 @@ namespace Sensus.Probes.User.Health
         {
             get
             {
-                return Math.Round(_numberOfTimesFallen, 1);
+                return _numberOfTimesFallen;
             }
         }
 
-        public NumberOfTimesFallenDatum(DateTimeOffset timestamp, double numberOfTimesFallen)
+        public NumberOfTimesFallenDatum(DateTimeOffset timestamp, int numberOfTimesFallen)
             : base(timestamp)
         {
             _numberOfTimesFallen = numberOfTimesFallen;
