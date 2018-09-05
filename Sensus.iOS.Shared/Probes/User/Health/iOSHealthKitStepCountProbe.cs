@@ -43,7 +43,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
             get
             {
-                return int.MaxValue;
+                return (int)TimeSpan.FromDays(1).TotalMilliseconds;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Sensus.iOS.Probes.User.Health
             }
             else
             {
-                return new StepCountDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime(), TimeSpan.Zero), quantitySample.Quantity.GetDoubleValue(HKUnit.Count));
+                return new StepCountDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime(), TimeSpan.Zero), (int)quantitySample.Quantity.GetDoubleValue(HKUnit.Count));
             }
         }
 

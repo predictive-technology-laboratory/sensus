@@ -62,7 +62,7 @@ namespace Sensus.iOS.Probes.User.Health
             }
             else
             {
-                return new HeartRateDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime()), quantitySample.Quantity.GetDoubleValue(HKUnit.Count));
+                return new HeartRateDatum(new DateTimeOffset(quantitySample.StartDate.ToDateTime(), TimeSpan.Zero), quantitySample.Quantity.GetDoubleValue(HKUnit.Count));
             }
         }
 
