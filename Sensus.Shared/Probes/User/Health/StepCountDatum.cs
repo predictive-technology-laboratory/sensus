@@ -21,11 +21,11 @@ namespace Sensus.Probes.User.Health
 {
     public class StepCountDatum : Datum
     {
-        private int _stepCount;
+        private double _stepCount;
 
         [DoubleProbeTriggerProperty("Step Count")]
         [Anonymizable("Step Count:", typeof(DoubleRoundingTensAnonymizer), false)]
-        public int StepCount
+        public double StepCount
         {
             get
             {
@@ -57,7 +57,7 @@ namespace Sensus.Probes.User.Health
             }
         }
 
-        public StepCountDatum(DateTimeOffset timestamp, int stepCount)
+        public StepCountDatum(DateTimeOffset timestamp, double stepCount)
             : base(timestamp)
         {
             _stepCount = stepCount;
