@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Probes.User.Scripts;
 
 namespace Sensus.Tests.Probes.User.Scripts
 {
-    [TestFixture]
+    
     public class TriggerWindowTests
     {
-        [Test]
+        [Fact]
         public void NextScheduleWindowNoExpiration()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -35,11 +35,11 @@ namespace Sensus.Tests.Probes.User.Scripts
 
                 Assert.True(nextTriggerTime.ReferenceTillTrigger >= TimeSpan.FromDays(8));
                 Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(null, nextTriggerTime.Expiration);
+                Assert.Equal(null, nextTriggerTime.Expiration);
             }
         }
 
-        [Test]
+        [Fact]
         public void NextSchedulePointNoExpiration()
         {
             var t = new TriggerWindow("10:22");
@@ -51,12 +51,12 @@ namespace Sensus.Tests.Probes.User.Scripts
             {
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, null);
 
-                Assert.AreEqual(TimeSpan.FromDays(8), nextTriggerTime.ReferenceTillTrigger);
-                Assert.AreEqual(null, nextTriggerTime.Expiration);
+                Assert.Equal(TimeSpan.FromDays(8), nextTriggerTime.ReferenceTillTrigger);
+                Assert.Equal(null, nextTriggerTime.Expiration);
             }
         }
 
-        [Test]
+        [Fact]
         public void NextSchedulePointExpirationNotTooBig()
         {
             var t = new TriggerWindow("10:22");
@@ -68,12 +68,12 @@ namespace Sensus.Tests.Probes.User.Scripts
             {
                 var nextTriggerTime = t.GetNextTriggerTime(reference, after, false, null);
 
-                Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.ReferenceTillTrigger);
-                Assert.AreEqual(null, nextTriggerTime.Expiration);
+                Assert.Equal(TimeSpan.FromDays(31), nextTriggerTime.ReferenceTillTrigger);
+                Assert.Equal(null, nextTriggerTime.Expiration);
             }
         }
 
-        [Test]
+        [Fact]
         public void NextSchedulePointExpirationExpireWindow()
         {
             var t = new TriggerWindow("10:22");
@@ -83,11 +83,11 @@ namespace Sensus.Tests.Probes.User.Scripts
 
             var nextTriggerTime = t.GetNextTriggerTime(reference, after, true, null);
 
-            Assert.AreEqual(TimeSpan.FromDays(31), nextTriggerTime.ReferenceTillTrigger);
-            Assert.AreEqual(null, nextTriggerTime.Expiration);
+            Assert.Equal(TimeSpan.FromDays(31), nextTriggerTime.ReferenceTillTrigger);
+            Assert.Equal(null, nextTriggerTime.Expiration);
         }
 
-        [Test]
+        [Fact]
         public void NextScheduleWindowExpireAge()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -102,11 +102,11 @@ namespace Sensus.Tests.Probes.User.Scripts
 
                 Assert.True(nextTriggerTime.ReferenceTillTrigger >= TimeSpan.FromDays(8));
                 Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(reference + nextTriggerTime.ReferenceTillTrigger + expire, nextTriggerTime.Expiration);
+                Assert.Equal(reference + nextTriggerTime.ReferenceTillTrigger + expire, nextTriggerTime.Expiration);
             }
         }
 
-        [Test]
+        [Fact]
         public void NextScheduleWindowWithExpireWindow()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -120,11 +120,11 @@ namespace Sensus.Tests.Probes.User.Scripts
 
                 Assert.True(nextTriggerTime.ReferenceTillTrigger >= TimeSpan.FromDays(8));
                 Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.AreEqual(reference.AddDays(8).AddHours(2), nextTriggerTime.Expiration);
+                Assert.Equal(reference.AddDays(8).AddHours(2), nextTriggerTime.Expiration);
             }
         }
 
-        [Test]
+        [Fact]
         public void NextScheduleWindowWithExpirationTime()
         {
             var t = new TriggerWindow("10:22-12:22");
@@ -139,7 +139,7 @@ namespace Sensus.Tests.Probes.User.Scripts
 
                 Assert.True(nextTriggerTime.ReferenceTillTrigger >= TimeSpan.FromDays(8));
                 Assert.True(nextTriggerTime.ReferenceTillTrigger <= TimeSpan.FromDays(8).Add(TimeSpan.FromHours(2)));
-                Assert.That(nextTriggerTime.Expiration, Is.EqualTo(reference + nextTriggerTime.ReferenceTillTrigger + expire).Within(TimeSpan.FromSeconds(1)));
+                Assert.Equal(nextTriggerTime.Expiration, reference + nextTriggerTime.ReferenceTillTrigger + expire);
             }
         }
     }

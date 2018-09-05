@@ -21,6 +21,8 @@ using System.IO;
 using Sensus;
 using System.Threading;
 using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.iOS.Probes.Context
 {
@@ -31,9 +33,9 @@ namespace Sensus.iOS.Probes.Context
     {
         private NSDictionary _settings;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             NSObject[] settingsKeys = new NSObject[]
             {
@@ -50,12 +52,12 @@ namespace Sensus.iOS.Probes.Context
             _settings = NSDictionary.FromObjectsAndKeys(settingsValues, settingsKeys);
         }
 
-        protected override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
-        {               
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+        {
             AVAudioRecorder recorder = null;
             string recordPath = Path.GetTempFileName();
             try
-            {                
+            {
                 AVAudioSession audioSession = AVAudioSession.SharedInstance();
 
                 NSError error = audioSession.SetCategory(AVAudioSessionCategory.Record);
@@ -69,7 +71,7 @@ namespace Sensus.iOS.Probes.Context
                 {
                     throw new Exception("Failed to make audio session active:  " + error.LocalizedDescription);
                 }
-                
+
                 recorder = AVAudioRecorder.Create(NSUrl.FromFilename(recordPath), new AudioSettings(_settings), out error);
                 if (error != null)
                 {
@@ -81,9 +83,11 @@ namespace Sensus.iOS.Probes.Context
                 // we need to take a meter reading while the recorder is running, so record for one second beyond the sample length
                 if (recorder.RecordFor(SampleLengthMS / 1000d + 1))
                 {
-                    Thread.Sleep(SampleLengthMS);
+                    await Task.Delay(SampleLengthMS);
                     recorder.UpdateMeters();
-                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 100 * (recorder.PeakPower(0) + 160) / 160f) };  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
+                    double decibels = 100 * (recorder.PeakPower(0) + 160) / 160f;  // range looks to be [-160 - 0] from http://b2cloud.com.au/tutorial/obtaining-decibels-from-the-ios-microphone
+
+                    return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
                 }
                 else
                 {
@@ -107,19 +111,15 @@ namespace Sensus.iOS.Probes.Context
                     {
                         recorder.Stop();
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) { }
 
                     try
                     {
                         recorder.Dispose();
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) { }
                 }
-            }                
+            }
         }
     }
 }

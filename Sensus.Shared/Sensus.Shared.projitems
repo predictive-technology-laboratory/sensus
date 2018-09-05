@@ -223,12 +223,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\Notifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\DisplayPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeacon.cs" />
@@ -255,16 +251,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\QrCodeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\DisplayPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequestFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AnalyticsTrackedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
   </ItemGroup>
 </Project>

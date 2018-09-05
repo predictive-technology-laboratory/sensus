@@ -14,10 +14,10 @@
 
 using System;
 using Sensus.Probes.Location;
-using Sensus;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -27,45 +27,45 @@ namespace Sensus.iOS.Probes.Location
 
         public iOSCompassProbe()
         {
-            _positionChangedHandler = (o, e) =>
+            _positionChangedHandler = async (o, e) =>
             {
                 SensusServiceHelper.Get().Logger.Log("Received compass change notification.", LoggingLevel.Verbose, GetType());
-                StoreDatum(new CompassDatum(DateTimeOffset.UtcNow, e.Position.Heading));  // the Position has a timestamp, but it does not get updated:  https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
+                await StoreDatumAsync(new CompassDatum(DateTimeOffset.UtcNow, e.Position.Heading));  // the Position has a timestamp, but it does not get updated:  https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation / heading are not permitted on this device. Cannot start compass probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected sealed override void StartListening()
+        protected sealed override async Task StartListeningAsync()
         {
-            GpsReceiver.Get().AddListener(_positionChangedHandler, true);
+            await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, true);
         }
 
-        protected sealed override void StopListening()
+        protected sealed override async Task StopListeningAsync()
         {
-            GpsReceiver.Get().RemoveListener(_positionChangedHandler);
+            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

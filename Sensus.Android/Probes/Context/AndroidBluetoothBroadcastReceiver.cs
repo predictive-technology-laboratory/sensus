@@ -15,11 +15,13 @@
 using Android.App;
 using Android.Bluetooth;
 using Android.Content;
-using Sensus.Probes.Context;
 using System;
 
 namespace Sensus.Android.Probes.Context
 {
+    /// <summary>
+    /// A general-purpose broadcast receiver for monitoring BLE states.
+    /// </summary>
     [BroadcastReceiver]
     [IntentFilter(new string[] { BluetoothDevice.ActionFound, BluetoothAdapter.ActionStateChanged }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidBluetoothBroadcastReceiver : BroadcastReceiver

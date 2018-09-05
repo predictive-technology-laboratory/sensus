@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using NUnit.Framework;
 using Sensus.iOS.Concurrent;
 using Sensus.Tests.Concurrent;
 
 namespace Sensus.iOS.Tests.Concurrent
 {
-    [TestFixture]
-    public class MainConcurrentTests : IConcurrentTests
+    public class MainConcurrentTests : ConcurrentTests
     {
         public MainConcurrentTests() : base(new MainConcurrent(5000))
         {

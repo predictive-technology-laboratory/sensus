@@ -14,15 +14,14 @@
 
 using System;
 using Java.Lang;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Extensions;
 
 namespace Sensus.Android.Tests.Extensions
 {
-    [TestFixture]
     public class DateTimeExtensions
     {
-        [Test]
+        [Fact]
         public void ToJavaTime()
         {
             // covert java current time to a local date time
@@ -31,7 +30,7 @@ namespace Sensus.Android.Tests.Extensions
             DateTime currentLocalTime = currentTime.LocalDateTime;
 
             // ensure that our conversion of local date times equals the 
-            Assert.AreEqual(currentTimeMillis, currentLocalTime.ToJavaCurrentTimeMillis());
+            Assert.Equal(currentTimeMillis, currentLocalTime.ToJavaCurrentTimeMillis());
         }
     }
 }

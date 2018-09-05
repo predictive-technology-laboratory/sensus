@@ -15,6 +15,7 @@
 using Android.Hardware;
 using Sensus.Probes.Location;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -33,7 +34,7 @@ namespace Sensus.Android.Probes.Location
             Sensor proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
             _maximumRange = proximitySensor.MaximumRange;
 
-            _proximityListener = new AndroidSensorListener(SensorType.Proximity, null, e =>
+            _proximityListener = new AndroidSensorListener(SensorType.Proximity, null, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
@@ -49,25 +50,27 @@ namespace Sensus.Android.Probes.Location
                 // its maximum range value in the far state and a lesser value in the near state. Typically, the far value is a value > 5 cm, 
                 // but this can vary from sensor to sensor. You can determine a sensor's maximum range by using the getMaximumRange() method.
 
-                StoreDatum(new ProximityDatum(DateTimeOffset.UtcNow, e.Values[0], _maximumRange));
+                await StoreDatumAsync(new ProximityDatum(DateTimeOffset.UtcNow, e.Values[0], _maximumRange));
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _proximityListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             _proximityListener.Start();
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _proximityListener.Stop();
+            return Task.CompletedTask;
         }
     }
 }

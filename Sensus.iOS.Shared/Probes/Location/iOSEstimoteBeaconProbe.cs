@@ -17,6 +17,7 @@ using Sensus.Probes.Location;
 using Estimote.iOS.Proximity;
 using System.Collections.Generic;
 using Sensus.Context;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -28,7 +29,7 @@ namespace Sensus.iOS.Probes.Location
         {
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
@@ -43,14 +44,14 @@ namespace Sensus.iOS.Probes.Location
                 {
                     EPXProximityZone zone = new EPXProximityZone(new EPXProximityRange(beacon.ProximityMeters), "sensus", beacon.Name);
 
-                    zone.OnEnterAction = (triggeringDeviceAttachment) =>
+                    zone.OnEnterAction = async (triggeringDeviceAttachment) =>
                     {
-                        StoreDatum(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
                     };
 
-                    zone.OnExitAction = (triggeringDeviceAttachment) =>
+                    zone.OnExitAction = async (triggeringDeviceAttachment) =>
                     {
-                        StoreDatum(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
                     };
 
                     zones.Add(zone);
@@ -58,14 +59,18 @@ namespace Sensus.iOS.Probes.Location
 
                 _observer.StartObservingZones(zones.ToArray());
             });
+
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 _observer.StopObservingZones();
             });
+
+            return Task.CompletedTask;
         }
     }
 }
