@@ -20,6 +20,7 @@ using HealthKit;
 using Foundation;
 using Sensus.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -54,7 +55,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -85,7 +86,7 @@ namespace Sensus.iOS.Probes.User.Health
                 throw new Exception("Error reading biological sex:  " + error.Description);
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         protected override ChartSeries GetChartSeries()

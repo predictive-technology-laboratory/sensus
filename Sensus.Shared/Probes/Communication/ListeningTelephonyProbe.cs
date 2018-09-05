@@ -70,12 +70,12 @@ namespace Sensus.Probes.Communication
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

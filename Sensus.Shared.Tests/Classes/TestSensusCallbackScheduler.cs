@@ -26,8 +26,9 @@ namespace Sensus.Tests.Classes
             return Task.CompletedTask;
         }
 
-        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
+        protected override Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)
         {
+            return Task.CompletedTask;
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)

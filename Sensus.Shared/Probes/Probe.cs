@@ -55,9 +55,15 @@ namespace Sensus.Probes
         #endregion
 
         /// <summary>
+        /// Delegate for methods that handle <see cref="MostRecentDatumChanged"/> events from <see cref="Probe"/>s.
+        /// </summary>
+        public delegate Task MostRecentDatumChangedDelegateAsync(Datum previous, Datum current);
+
+        /// <summary>
         /// Fired when the most recently sensed datum is changed, regardless of whether the datum was stored.
         /// </summary>
-        public event EventHandler<Tuple<Datum, Datum>> MostRecentDatumChanged;
+        public event MostRecentDatumChangedDelegateAsync MostRecentDatumChanged;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _enabled;
@@ -74,8 +80,6 @@ namespace Sensus.Probes
         private DataRateCalculator _rawRateCalculator;
         private DataRateCalculator _storageRateCalculator;
         private DataRateCalculator _uiUpdateRateCalculator;
-
-        private readonly object _locker = new object();
 
         [JsonIgnore]
         public abstract string DisplayName { get; }
@@ -96,19 +100,6 @@ namespace Sensus.Probes
                 if (value != _enabled)
                 {
                     _enabled = value;
-
-                    // _protocol can be null when deserializing the probe -- if Enabled is set before Protocol
-                    if (_protocol != null && _protocol.Running)
-                    {
-                        if (_enabled)
-                        {
-                            StartAsync();
-                        }
-                        else
-                        {
-                            StopAsync();
-                        }
-                    }
 
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
                 }
@@ -263,11 +254,7 @@ namespace Sensus.Probes
             _chartData = new List<ChartDataPoint>(_maxChartDataCount + 1);
         }
 
-        /// <summary>
-        /// Initializes this probe. Throws an exception if initialization fails. After successful completion the probe is considered to be
-        /// running and a candidate for stopping at some future point.
-        /// </summary>
-        protected virtual void Initialize()
+        protected virtual Task InitializeAsync()
         {
             lock (_chartData)
             {
@@ -281,54 +268,15 @@ namespace Sensus.Probes
             _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);  // track/limit the raw data rate
             _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);                      // track the storage rate
             _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);                  // track/limit the UI update rate
+
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
-        /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
-        /// this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
-        /// probe should not be included in calculations of overall protocol participation. Probes can become disabled if they
-        /// are not supported on the current device or if the user refuses to initialize them (e.g., by not signing into Facebook).
-        /// Although they become disabled, they were originally enabled within the protocol and participation should reflect this.
-        /// Lastly, this will return null if the probe is not storing its data, as might be the case if a probe is enabled in order
-        /// to trigger scripts but not told to store its data.
-        /// </summary>
-        /// <returns>The participation level (null, or somewhere 0-1).</returns>
-        public double? GetParticipation()
-        {
-            if (_originallyEnabled && _storeData)
-            {
-                return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        protected void StartAsync()
-        {
-            Task.Run(() =>
-            {
-                try
-                {
-                    Start();
-                }
-                catch (Exception)
-                {
-                }
-            });
-        }
-
-        /// <summary>
-        /// Start this instance, throwing an exception if anything goes wrong. If an exception is thrown, the caller can assume that any relevant
-        /// information will have already been logged and displayed. Thus, the caller doesn't need to do anything with the exception information.
-        /// </summary>
-        public void Start()
+        public async Task StartAsync()
         {
             try
             {
-                ProtectedStart();
+                await ProtectedStartAsync();
             }
             catch (Exception startException)
             {
@@ -339,7 +287,7 @@ namespace Sensus.Probes
                 {
                     try
                     {
-                        Stop();
+                        await StopAsync();
                     }
                     catch (Exception stopException)
                     {
@@ -349,7 +297,7 @@ namespace Sensus.Probes
 
                 string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                SensusServiceHelper.Get().FlashNotificationAsync(message);
+                await SensusServiceHelper.Get().FlashNotificationAsync(message);
 
                 // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
@@ -361,38 +309,30 @@ namespace Sensus.Probes
             }
         }
 
-        /// <summary>
-        /// Throws an exception if start fails. Should be called first within child-class overrides. This should only be called within Start. This setup
-        /// allows for child-class overrides, but since InternalStart is protected, it cannot be called from the outside. Outsiders only have access to
-        /// Start (perhaps via Enabled), which takes care of any exceptions arising from the entire chain of InternalStart overrides.
-        /// </summary>
-        protected virtual void ProtectedStart()
+        protected virtual async Task ProtectedStartAsync()
         {
-            lock (_locker)
+            if (_running)
             {
-                if (_running)
+                SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already running.", LoggingLevel.Normal, GetType());
+            }
+            else
+            {
+                SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
+
+                await InitializeAsync();
+
+                // the probe has successfully initialized and can now be considered started/running.
+                _running = true;
+
+                lock (_startStopTimes)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already running.", LoggingLevel.Normal, GetType());
+                    _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
+                    _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                 }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
 
-                    Initialize();
-
-                    // the probe has successfully initialized and can now be considered started/running.
-                    _running = true;
-
-                    lock (_startStopTimes)
-                    {
-                        _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
-                        _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
-                    }
-
-                    _rawRateCalculator.Start();
-                    _storageRateCalculator.Start();
-                    _uiUpdateRateCalculator.Start();
-                }
+                _rawRateCalculator.Start();
+                _storageRateCalculator.Start();
+                _uiUpdateRateCalculator.Start();
             }
         }
 
@@ -401,38 +341,23 @@ namespace Sensus.Probes
         /// </summary>
         /// <param name="datum">Datum.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public void StoreDatum(Datum datum, CancellationToken? cancellationToken = null)
+        public async Task StoreDatumAsync(Datum datum, CancellationToken? cancellationToken = null)
         {
-            // track/limit the raw rate
-            if (_rawRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Drop)
-            {
-                return;
-            }
-
-            // track the storage rate
-            _storageRateCalculator.Add(datum);
-
-            // set properties that we were unable to set within the datum constructor. datum is allowed to 
-            // be null, indicating the the probe attempted to obtain data but it didn't find any (in the 
-            // case of polling probes).
+            // track/limit the raw rate of non-null data. all null data will pass this test, and this is 
+            // fine given such data are generated by polling probes when no data were retrieved. such 
+            // return values from polling probes are used to indicate that the poll was completed, which
+            // will be reflect in the _mostRecentStoreTimestamp below.
             if (datum != null)
             {
+                // impose a limit on the raw data rate
+                if (_rawRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Drop)
+                {
+                    return;
+                }
+
+                // set properties that we were unable to set within the datum constructor.
                 datum.ProtocolId = Protocol.Id;
                 datum.ParticipantId = Protocol.ParticipantId;
-            }
-
-            // track the most recent datum regardless of whether the datum is null or whether we're storing data
-            Datum previousDatum = _mostRecentDatum;
-            _mostRecentDatum = datum;
-            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;
-
-            // fire events to notify observers of the stored data and associated UI values
-            MostRecentDatumChanged?.Invoke(this, new Tuple<Datum, Datum>(previousDatum, _mostRecentDatum));
-
-            // don't update the UI too often, as doing so at really high rates causes UI deadlocks.
-            if (_uiUpdateRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Keep)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
             }
 
             // store non-null data
@@ -468,72 +393,90 @@ namespace Sensus.Probes
                 try
                 {
                     _protocol.LocalDataStore.WriteDatum(datum, cancellationToken.GetValueOrDefault());
+
+                    // track the storage rate
+                    _storageRateCalculator.Add(datum);
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
                 }
-            }
-        }
+            } 
 
-        protected void StopAsync()
-        {
-            Task.Run(() =>
+            // update the timestamp of the most recent store. this is used to calculate storage latency, so we
+            // do not restrict its values to those obtained when non-null data are stored (see above). some
+            // probes call this method with null data to signal that they have run their collection to completion.
+            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;
+
+            // don't update the UI too often, as doing so at really high rates causes UI deadlocks. always let
+            // null data update the UI, as these are only generated by polling probes at low rates.
+            if (datum == null || _uiUpdateRateCalculator.Add(datum) == DataRateCalculator.SamplingAction.Keep)
             {
-                try
-                {
-                    Stop();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to stop:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            });
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
+            }
+
+            // track the most recent datum regardless of whether the datum is null or whether we're storing data
+            Datum previousDatum = _mostRecentDatum;
+            _mostRecentDatum = datum;
+
+            // notify observers of the stored data and associated UI values
+            await (MostRecentDatumChanged?.Invoke(previousDatum, _mostRecentDatum) ?? Task.CompletedTask);
         }
 
         /// <summary>
-        /// Should be called first within child-class overrides.
+        /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
+        /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
+        /// this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
+        /// probe should not be included in calculations of overall protocol participation. Probes can become disabled if they
+        /// are not supported on the current device or if the user refuses to initialize them (e.g., by not signing into Facebook).
+        /// Although they become disabled, they were originally enabled within the protocol and participation should reflect this.
+        /// Lastly, this will return null if the probe is not storing its data, as might be the case if a probe is enabled in order
+        /// to trigger scripts but not told to store its data.
         /// </summary>
-        public virtual void Stop()
+        /// <returns>The participation level (null, or somewhere 0-1).</returns>
+        public double? GetParticipation()
         {
-            lock (_locker)
+            if (_originallyEnabled && _storeData)
             {
-                if (_running)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-
-                    _running = false;
-
-                    lock (_startStopTimes)
-                    {
-                        _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
-                        _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
-                    }
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
-                }
+                return Math.Min(RawParticipation, 1);  // raw participations can be > 1, e.g. in the case of polling probes that the user can cause to poll repeatedly. cut off at 1 to maintain the interpretation of 1 as perfect participation.
+            }
+            else
+            {
+                return null;
             }
         }
 
-        public void Restart()
+        public virtual Task StopAsync()
         {
-            lock (_locker)
+            if (_running)
             {
-                Stop();
-                Start();
+                SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
+
+                _running = false;
+
+                lock (_startStopTimes)
+                {
+                    _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
+                    _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
+                }
             }
+            else
+            {
+                SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
+            }
+
+            return Task.CompletedTask;
         }
 
-        public virtual bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public async Task RestartAsync()
         {
-            bool restart = false;
+            await StopAsync();
+            await StartAsync();
+        }
 
-            if (!_running)
-            {
-                restart = true;
-            }
+        public virtual Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        {
+            HealthTestResult result = HealthTestResult.Okay;
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
@@ -549,7 +492,7 @@ namespace Sensus.Probes
                 double? percentageNominalStoreRate = null;
                 if (storedDataPerSecond.HasValue && MaxDataStoresPerSecond.HasValue)
                 {
-                    percentageNominalStoreRate = storedDataPerSecond.Value / MaxDataStoresPerSecond.Value;
+                    percentageNominalStoreRate = (storedDataPerSecond.Value / MaxDataStoresPerSecond.Value) * 100;
                 }
 
                 properties.Add("Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)));
@@ -564,14 +507,15 @@ namespace Sensus.Probes
             else
             {
                 Analytics.TrackEvent(eventName, properties);
+                result = HealthTestResult.Restart;
             }
 
-            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return restart;
+            return Task.FromResult(result);
         }
 
-        public virtual void Reset()
+        public virtual Task ResetAsync()
         {
             if (_running)
             {
@@ -595,6 +539,8 @@ namespace Sensus.Probes
 
             _mostRecentDatum = null;
             _mostRecentStoreTimestamp = null;
+
+            return Task.CompletedTask;
         }
 
         public SfChart GetChart()

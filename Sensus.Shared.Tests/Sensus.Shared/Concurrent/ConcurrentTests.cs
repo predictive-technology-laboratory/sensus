@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Concurrent;
 
 namespace Sensus.Tests.Concurrent
 {
-    public abstract class IConcurrentTests
+    public abstract class ConcurrentTests
     {
         #region Fields
         private const int DelayTime = 2;
@@ -28,13 +28,13 @@ namespace Sensus.Tests.Concurrent
         #endregion
 
         #region Constructors
-        protected IConcurrentTests(IConcurrent concurrent)
+        protected ConcurrentTests(IConcurrent concurrent)
         {
             _concurrent = concurrent;
         }
         #endregion
 
-        [Test(Description = "If this fails the DelayTime likely isn't large enough to cause a failure if future tests break.")]
+        [Fact]
         public void DelayIsLongEnough()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -57,51 +57,45 @@ namespace Sensus.Tests.Concurrent
             Assert.Throws<AggregateException>(() => Task.WaitAll(task1, task2));
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeActionThrowsNoException()
         {
             var test = new List<int> { 1, 2, 3 };
 
-            Assert.DoesNotThrow(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
-                _concurrent.ExecuteThreadSafe(() =>
+                test.Add(4);
+
+                foreach (var i in test)
                 {
-                    test.Add(4);
+                    Task.Delay(DelayTime).Wait();
+                }
 
-                    foreach (var i in test)
-                    {
-                        Task.Delay(DelayTime).Wait();
-                    }
-
-                    test.Add(5);
-                });
+                test.Add(5);
             });
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeFuncThrowsNoException()
         {
             var test = new List<int> { 1, 2, 3 };
 
-            Assert.DoesNotThrow(() =>
+            _concurrent.ExecuteThreadSafe(() =>
             {
-                _concurrent.ExecuteThreadSafe(() =>
+                test.Add(4);
+
+                foreach (var i in test)
                 {
-                    test.Add(4);
+                    Task.Delay(DelayTime).Wait();
+                }
 
-                    foreach (var i in test)
-                    {
-                        Task.Delay(DelayTime).Wait();
-                    }
+                test.Add(5);
 
-                    test.Add(5);
-
-                    return test;
-                });
+                return test;
             });
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeActionIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -130,7 +124,7 @@ namespace Sensus.Tests.Concurrent
             Task.WaitAll(task1, task2);
         }
 
-        //[Test] -- we've got problems with this...see https://github.com/predictive-technology-laboratory/sensus/issues/494
+        [Fact]
         public void ExecuteThreadSafeFuncIsThreadSafe()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -147,7 +141,7 @@ namespace Sensus.Tests.Concurrent
                     return test;
                 });
 
-                Assert.AreSame(output, test);
+                Assert.Same(output, test);
             });
 
             var task2 = Task.Run(() =>
@@ -161,13 +155,13 @@ namespace Sensus.Tests.Concurrent
                     return test;
                 });
 
-                Assert.AreSame(output, test);
+                Assert.Same(output, test);
             });
 
             Task.WaitAll(task1, task2);
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeActionIsSynchronous()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -188,7 +182,7 @@ namespace Sensus.Tests.Concurrent
             Assert.True(test.Contains(5));
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeFuncIsSynchronous()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -211,7 +205,7 @@ namespace Sensus.Tests.Concurrent
             Assert.True(test.Contains(5));
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeFuncReturnsCorrectly()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -226,10 +220,10 @@ namespace Sensus.Tests.Concurrent
                 return test;
             });
 
-            Assert.AreSame(output, test);
+            Assert.Same(output, test);
         }
 
-        [Test]
+        [Fact]
         public void InnerExecuteThreadSafeActionNoDeadlock()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -246,10 +240,10 @@ namespace Sensus.Tests.Concurrent
                 });
             });
 
-            Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the action didn't finish adding items");
+            Assert.Equal(6, test.Count);
         }
 
-        [Test]
+        [Fact]
         public void InnerExecuteThreadSafeFuncNoDeadlock()
         {
             var test = new List<int> { 1, 2, 3 };
@@ -269,13 +263,13 @@ namespace Sensus.Tests.Concurrent
             });
 
             //we check test because in the case of a deadlock I'm not sure what output will be returned...
-            Assert.AreEqual(6, test.Count, "It appears that we deadlocked because the func didn't finish adding items");
+            Assert.Equal(6, test.Count);
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeActionCatchesExceptionFromSameThread()
         {
-            Assert.Throws(typeof(Exception), new TestDelegate(() =>
+            Assert.Throws(typeof(Exception), () =>
             {
                 _concurrent.ExecuteThreadSafe(() =>
                 {
@@ -284,13 +278,13 @@ namespace Sensus.Tests.Concurrent
                         throw new Exception();
                     });
                 });
-            }));
+            });
         }
 
-        [Test]
+        [Fact]
         public void ExecuteThreadSafeFuncCatchesExceptionFromSameThread()
         {
-            Assert.Throws(typeof(Exception), new TestDelegate(() =>
+            Assert.Throws(typeof(Exception), () =>
             {
                 _concurrent.ExecuteThreadSafe(() =>
                 {
@@ -300,7 +294,7 @@ namespace Sensus.Tests.Concurrent
                         return 1;  // required to make this a function rather than an action
                     });
                 });
-            }));
+            });
         }
     }
 }

@@ -249,6 +249,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AnalyticsTrackedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

@@ -48,7 +48,7 @@ namespace Sensus.iOS.Callbacks
             _callbackIdRequest = new Dictionary<string, UNNotificationRequest>();
         }
 
-        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
+        protected override async Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)
         {
             // get the callback information. this can be null if we don't have all required information. don't schedule the notification if this happens.
             NSMutableDictionary callbackInfo = GetCallbackInfo(callback);
@@ -69,18 +69,18 @@ namespace Sensus.iOS.Callbacks
 
             if (callback.Silent)
             {
-                notifier.IssueSilentNotificationAsync(callback.Id, callback.NextExecution.Value, callbackInfo, requestCreated);
+                await notifier.IssueSilentNotificationAsync(callback.Id, callback.NextExecution.Value, callbackInfo, requestCreated);
             }
             else
             {
-                notifier.IssueNotificationAsync(callback.Protocol?.Name ?? "Alert", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage, callback.NextExecution.Value, callbackInfo, requestCreated);
+                await notifier.IssueNotificationAsync(callback.Protocol?.Name ?? "Alert", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage, callback.NextExecution.Value, callbackInfo, requestCreated);
             }
         }
 
-        protected override void ReissueSilentNotification(string id)
+        protected override async Task ReissueSilentNotificationAsync(string id)
         {
             // the following needs to be done on the main thread since we're working with UILocalNotification objects.
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
 
@@ -91,50 +91,48 @@ namespace Sensus.iOS.Callbacks
                     request = _callbackIdRequest[id];
                 }
 
-                notifier.IssueNotificationAsync(request);
+                await notifier.IssueNotificationAsync(request);
             });
         }
 
-        public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public override async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Func<Task> scheduleRepeatCallbackAsync, Action letDeviceSleepCallback)
         {
-            return Task.Run(async () =>
-            {
-                await base.RaiseCallbackAsync(callback, invocationId, notifyUser,
+            await base.RaiseCallbackAsync(callback, invocationId, notifyUser,
 
-                    () =>
+                async () =>
+                {
+                    // reissue the callback notification request
+
+                    UNNotificationRequest request;
+                    lock (_callbackIdRequest)
                     {
-                        // reissue the callback notification request
-                        lock (_callbackIdRequest)
+                        _callbackIdRequest.TryGetValue(callback.Id, out request);
+                    }
+
+                    // might have been unscheduled
+                    if (request != null)
+                    {
+                        // update the request's user info with the new invocation ID
+                        NSMutableDictionary newUserInfo = request.Content.UserInfo.MutableCopy() as NSMutableDictionary;
+                        newUserInfo.SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
+                        UNMutableNotificationContent newContent = request.Content.MutableCopy() as UNMutableNotificationContent;
+                        newContent.UserInfo = newUserInfo;
+
+                        // reissue the notification request using the next execution date on the callback. the following call will not return until
+                        // the request has been created, ensuring that the request has been updated in _callbackIdRequest before the next caller 
+                        // obtains the current lock.
+                        await (SensusContext.Current.Notifier as UNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.NextExecution.Value, newRequest =>
                         {
-                            UNNotificationRequest request;
-                            _callbackIdRequest.TryGetValue(callback.Id, out request);
-
-                            // might have been unscheduled
-                            if (request != null)
+                            lock (_callbackIdRequest)
                             {
-                                // update the request's user info with the new invocation ID
-                                NSMutableDictionary newUserInfo = request.Content.UserInfo.MutableCopy() as NSMutableDictionary;
-                                newUserInfo.SetValueForKey(new NSString(callback.InvocationId), new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY));
-                                UNMutableNotificationContent newContent = request.Content.MutableCopy() as UNMutableNotificationContent;
-                                newContent.UserInfo = newUserInfo;
-
-                                // reissue the notification request using the next execution date on the callback. the following call will not return until
-                                // the request has been created, ensuring that the request has been updated in _callbackIdRequest before the next caller 
-                                // obtains the current lock.
-                                (SensusContext.Current.Notifier as UNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.NextExecution.Value, newRequest =>
-                                {
-                                    lock (_callbackIdRequest)
-                                    {
-                                        _callbackIdRequest[newRequest.Identifier] = newRequest;
-                                    }
-                                });
+                                _callbackIdRequest[newRequest.Identifier] = newRequest;
                             }
-                        }
-                    },
+                        });
+                    }
+                },
 
-                    letDeviceSleepCallback
-                );
-            });
+                letDeviceSleepCallback
+            );
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)

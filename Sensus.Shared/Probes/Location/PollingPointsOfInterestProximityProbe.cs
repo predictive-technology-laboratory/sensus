@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using Plugin.Geolocator.Abstractions;
 using Syncfusion.SfChart.XForms;
 using Plugin.Permissions.Abstractions;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Location
 {
@@ -61,25 +62,25 @@ namespace Sensus.Probes.Location
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start POI probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
+            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
 
             if (currentPosition == null)
             {
@@ -101,6 +102,7 @@ namespace Sensus.Probes.Location
                 }
             }
 
+            // let the system know that we polled but didn't get any data
             if (data.Count == 0)
             {
                 data.Add(null);
@@ -111,12 +113,12 @@ namespace Sensus.Probes.Location
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

@@ -28,7 +28,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
         /// <param name="center"></param>
         /// <param name="notification"></param>
         /// <param name="completionHandler"></param>
-        public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
+        public override async void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
@@ -44,7 +44,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
             if (callbackScheduler.IsCallback(notificationInfo))
             {
-                callbackScheduler.ServiceCallbackAsync(notificationInfo);
+                await callbackScheduler.ServiceCallbackAsync(notificationInfo);
                 completionHandler?.Invoke(UNNotificationPresentationOptions.None);
             }
 
@@ -61,7 +61,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
         /// <param name="center"></param>
         /// <param name="response"></param>
         /// <param name="completionHandler"></param>
-        public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
+        public override async void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, Action completionHandler)
         {
             UNNotificationRequest request = response?.Notification?.Request;
             NSDictionary notificationInfo = request?.Content?.UserInfo;
@@ -78,7 +78,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 // a silent notification is issued just before we enter background.
                 if (callbackScheduler.TryGetCallback(notificationInfo)?.Silent ?? false)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
                 }
             }
 

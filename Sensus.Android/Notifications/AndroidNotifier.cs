@@ -90,9 +90,9 @@ namespace Sensus.Android.Notifications
             else
 #endif
             {
+#pragma warning disable 618
                 builder = new Notification.Builder(context);
 
-#pragma warning disable 618
                 if (silent)
                 {
                     builder.SetSound(null);
@@ -194,49 +194,47 @@ namespace Sensus.Android.Notifications
         /// <param name="protocol">Protocol to check for alert exclusion time windows.</param>
         /// <param name="alertUser">If set to <c>true</c> alert user.</param>
         /// <param name="displayPage">Display page.</param>
-        public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
+        public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
         {
             if (_notificationManager == null)
             {
-                return;
+                return Task.CompletedTask;
+            }
+            else if (message == null)
+            {
+                CancelNotification(id);
+            }
+            else
+            {
+                Intent notificationIntent = new Intent(_service, typeof(AndroidMainActivity));
+                notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
+                PendingIntent notificationPendingIntent = PendingIntent.GetActivity(_service, 0, notificationIntent, PendingIntentFlags.OneShot);
+
+                SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
+
+                if (displayPage == DisplayPage.PendingSurveys)
+                {
+                    notificationChannel = SensusNotificationChannel.Survey;
+                }
+
+                // reset channel to silent if we're not alerting or if we're in an exclusion window
+                if (!alertUser || (protocol != null && protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay)))
+                {
+                    notificationChannel = SensusNotificationChannel.Silent;
+                }
+
+                Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, notificationChannel)
+                    .SetContentTitle(title)
+                    .SetContentText(message)
+                    .SetSmallIcon(Resource.Drawable.ic_launcher)
+                    .SetContentIntent(notificationPendingIntent)
+                    .SetAutoCancel(true)
+                    .SetOngoing(false);
+
+                _notificationManager.Notify(id, 0, notificationBuilder.Build());
             }
 
-            Task.Run(() =>
-            {
-                if (message == null)
-                {
-                    CancelNotification(id);
-                }
-                else
-                {
-                    Intent notificationIntent = new Intent(_service, typeof(AndroidMainActivity));
-                    notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
-                    PendingIntent notificationPendingIntent = PendingIntent.GetActivity(_service, 0, notificationIntent, PendingIntentFlags.OneShot);
-
-                    SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
-
-                    if (displayPage == DisplayPage.PendingSurveys)
-                    {
-                        notificationChannel = SensusNotificationChannel.Survey;
-                    }
-
-                    // reset channel to silent if we're not alerting or if we're in an exclusion window
-                    if (!alertUser || (protocol != null && protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay)))
-                    {
-                        notificationChannel = SensusNotificationChannel.Silent;
-                    }
-
-                    Notification.Builder notificationBuilder = CreateNotificationBuilder(_service, notificationChannel)
-                        .SetContentTitle(title)
-                        .SetContentText(message)
-                        .SetSmallIcon(Resource.Drawable.ic_launcher)
-                        .SetContentIntent(notificationPendingIntent)
-                        .SetAutoCancel(true)
-                        .SetOngoing(false);
-
-                    _notificationManager.Notify(id, 0, notificationBuilder.Build());
-                }
-            });
+            return Task.CompletedTask;
         }
 
         public override void CancelNotification(string id)

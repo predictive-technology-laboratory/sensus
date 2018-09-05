@@ -24,6 +24,7 @@ using Newtonsoft.Json;
 using Sensus.Exceptions;
 using Sensus.Probes;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -95,9 +96,9 @@ namespace Sensus.Android.Probes.Movement
             _fencePendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(AWARENESS_PENDING_INTENT_ACTION), 0);
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             // check for availability of Google Play Services
             int googlePlayServicesAvailability = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(Application.Context);
@@ -123,6 +124,8 @@ namespace Sensus.Android.Probes.Movement
             }
 
             // connect awareness client
+            TaskCompletionSource<bool> clientConnectCompletionSource = new TaskCompletionSource<bool>();
+
             _awarenessApiClient = new GoogleApiClient.Builder(Application.Context).AddApi(Awareness.Api)
 
                 .AddConnectionCallbacks(
@@ -130,6 +133,7 @@ namespace Sensus.Android.Probes.Movement
                     bundle =>
                     {
                         SensusServiceHelper.Get().Logger.Log("Connected to Google Awareness API.", LoggingLevel.Normal, GetType());
+                        clientConnectCompletionSource.SetResult(true);
                     },
 
                     status =>
@@ -139,16 +143,19 @@ namespace Sensus.Android.Probes.Movement
 
                 .Build();
 
-            _awarenessApiClient.BlockingConnect();
+            _awarenessApiClient.Connect();
+
+            await clientConnectCompletionSource.Task;
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             // register receiver for all awareness intent actions
             Application.Context.RegisterReceiver(_awarenessBroadcastReceiver, new IntentFilter(AWARENESS_PENDING_INTENT_ACTION));
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             // stop broadcast receiver
             Application.Context.UnregisterReceiver(_awarenessBroadcastReceiver);
@@ -156,6 +163,8 @@ namespace Sensus.Android.Probes.Movement
             // disconnect client
             _awarenessApiClient.Disconnect();
             _awarenessApiClient = null;
+
+            return Task.CompletedTask;
         }
 
         protected void UpdateRequestBuilder(AwarenessFence fence, string fenceKey, FenceUpdateAction action, ref FenceUpdateRequestBuilder requestBuilder)
@@ -170,63 +179,53 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
-        protected bool UpdateFences(IFenceUpdateRequest updateRequest)
+        protected async Task<bool> UpdateFencesAsync(IFenceUpdateRequest updateRequest)
         {
-            ManualResetEvent updateWait = new ManualResetEvent(false);
-
             bool success = false;
 
             try
             {
-                // update fences is asynchronous
-                Awareness.FenceApi.UpdateFences(_awarenessApiClient, updateRequest).SetResultCallback<Statuses>(status =>
+                // we've seen cases where the update blocks indefinitely (e.g., due to outdated google play services on the 
+                // phone). impose a timeout to avoid such blocks.
+                Task<Statuses> updateFencesTask = Awareness.FenceApi.UpdateFencesAsync(_awarenessApiClient, updateRequest);
+                Task timeoutTask = Task.Delay(TimeSpan.FromSeconds(60));
+                Task finishedTask = await Task.WhenAny(updateFencesTask, timeoutTask);
+
+                if (finishedTask == updateFencesTask)
                 {
-                    try
+                    Statuses status = await updateFencesTask;
+
+                    if (status.IsSuccess)
                     {
-                        if (status.IsSuccess)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Updated Google Awareness API fences.", LoggingLevel.Normal, GetType());
-                            success = true;
-                        }
-                        else if (status.IsCanceled)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update canceled.", LoggingLevel.Normal, GetType());
-                        }
-                        else if (status.IsInterrupted)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update interrupted", LoggingLevel.Normal, GetType());
-                        }
-                        else
-                        {
-                            string message = "Unrecognized fence update status:  " + status;
-                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                            SensusException.Report(message);
-                        }
+                        SensusServiceHelper.Get().Logger.Log("Updated Google Awareness API fences.", LoggingLevel.Normal, GetType());
+                        success = true;
                     }
-                    catch (Exception ex)
+                    else if (status.IsCanceled)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Exception while processing update status:  " + ex, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update canceled.", LoggingLevel.Normal, GetType());
                     }
-                    finally
+                    else if (status.IsInterrupted)
                     {
-                        // ensure that wait is always set
-                        updateWait.Set();
+                        SensusServiceHelper.Get().Logger.Log("Google Awareness API fence update interrupted", LoggingLevel.Normal, GetType());
                     }
-                });
+                    else
+                    {
+                        string message = "Unrecognized fence update status:  " + status;
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        SensusException.Report(message);
+                        throw new Exception(message);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Fence update timed out.");
+                }
             }
             // catch any errors from calling UpdateFences
             catch (Exception ex)
             {
                 // ensure that wait is always set
                 SensusServiceHelper.Get().Logger.Log("Exception while updating fences:  " + ex, LoggingLevel.Normal, GetType());
-                updateWait.Set();
-            }
-
-            // we've seen cases where the update blocks indefinitely (e.g., due to outdated google play services on the phone). impose
-            // a timeout to avoid such blocks.
-            if (!updateWait.WaitOne(TimeSpan.FromSeconds(60)))
-            {
-                SensusServiceHelper.Get().Logger.Log("Timed out while updating fences.", LoggingLevel.Normal, GetType());
             }
 
             return success;

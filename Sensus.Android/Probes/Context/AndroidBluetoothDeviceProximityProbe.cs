@@ -52,17 +52,17 @@ namespace Sensus.Android.Probes.Context
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             // BLE requires location permissions
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start Bluetooth probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
 
@@ -188,9 +188,9 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (Running)
             {
@@ -199,7 +199,7 @@ namespace Sensus.Android.Probes.Context
                 StartAdvertising();
             }
 
-            return restart;
+            return result;
         }
         #endregion
     }

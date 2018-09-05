@@ -29,7 +29,10 @@ using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using Plugin.Geolocator.Abstractions;
 using System.ComponentModel;
+
+#if __IOS__
 using Sensus.Notifications;
+#endif
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -40,7 +43,7 @@ namespace Sensus.Probes.User.Scripts
         private string _name;
         private bool _enabled;
 
-        private readonly Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>> _triggerHandlers;
+        private readonly Dictionary<Trigger, Probe.MostRecentDatumChangedDelegateAsync> _triggerHandlers;
         private TimeSpan? _maxAge;
         private DateTime? _maxTriggerTime;
         private readonly List<ScheduledCallback> _scriptRunCallbacks;
@@ -88,19 +91,7 @@ namespace Sensus.Probes.User.Scripts
             }
             set
             {
-                if (value != _enabled)
-                {
-                    _enabled = value;
-
-                    if (Probe != null && Probe.Running && _enabled) // probe can be null when deserializing, if set after this property.
-                    {
-                        Start();
-                    }
-                    else if (SensusServiceHelper.Get() != null)  // service helper is null when deserializing
-                    {
-                        Stop();
-                    }
-                }
+                _enabled = value;
             }
         }
 
@@ -298,7 +289,7 @@ namespace Sensus.Probes.User.Scripts
             _scheduleTrigger = new ScheduleTrigger(); //this needs to be above
             _enabled = false;
             _maxAge = null;
-            _triggerHandlers = new Dictionary<Trigger, EventHandler<Tuple<Datum, Datum>>>();
+            _triggerHandlers = new Dictionary<Trigger, Probe.MostRecentDatumChangedDelegateAsync>();
             _scriptRunCallbacks = new List<ScheduledCallback>();
             _scriptTriggerTimes = new Queue<ScriptTriggerTime>();
             Script = new Script(this);
@@ -326,20 +317,17 @@ namespace Sensus.Probes.User.Scripts
                         }
 
                         // create a handler to be called each time the triggering probe stores a datum
-                        EventHandler<Tuple<Datum, Datum>> handler = async (oo, previousCurrentDatum) =>
+                        Probe.MostRecentDatumChangedDelegateAsync handler = async (previousDatum, currentDatum) =>
                         {
                             // must be running and must have a current datum
                             lock (_locker)
                             {
-                                if (!Probe.Running || !_enabled || previousCurrentDatum.Item2 == null)
+                                if (!Probe.Running || !_enabled || currentDatum == null)
                                 {
                                     trigger.FireValueConditionMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
                             }
-
-                            Datum previousDatum = previousCurrentDatum.Item1;
-                            Datum currentDatum = previousCurrentDatum.Item2;
 
                             // get the value that might trigger the script -- it might be null in the case where the property is nullable and is not set (e.g., facebook fields, input locations, etc.)
                             object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
@@ -371,7 +359,7 @@ namespace Sensus.Probes.User.Scripts
                             // run the script if the current datum's value satisfies the trigger
                             if (trigger.FireFor(currentDatumValue))
                             {
-                                await RunAsync(previousDatum, currentDatum);
+                                await RunAsync(Script.Copy(true), previousDatum, currentDatum);
                             }
                         };
 
@@ -401,7 +389,7 @@ namespace Sensus.Probes.User.Scripts
             Probe = probe;
         }
 
-        public void Initialize()
+        public async Task InitializeAsync()
         {
             foreach (var trigger in Triggers)
             {
@@ -422,47 +410,44 @@ namespace Sensus.Probes.User.Scripts
 
             if (Script.InputGroups.Any(inputGroup => inputGroup.Geotag))
             {
-                SensusServiceHelper.Get().ObtainPermission(Permission.Location);
+                await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location);
             }
         }
 
-        public void Start()
+        public async Task StartAsync()
         {
-            Task.Run(() =>
-            {
-                UnscheduleCallbacks();
-                ScheduleScriptRuns();
-            });
+            await UnscheduleCallbacksAsync();
+            await ScheduleScriptRunsAsync();
 
             // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
             // that the script won't be running on the UI thread. second, from the caller's perspective the prompt should 
             // not need to finish running in order for the runner to be considered started.
             if (RunOnStart)
             {
-                RunAsync();
+                await RunAsync(Script.Copy(true));
             }
         }
 
-        public void Reset()
+        public async Task ResetAsync()
         {
-            UnscheduleCallbacks();
+            await UnscheduleCallbacksAsync();
             RunTimes.Clear();
             CompletionTimes.Clear();
         }
 
-        public void Restart()
+        public async Task RestartAsync()
         {
-            Stop();
-            Start();
+            await StopAsync();
+            await StartAsync();
         }
 
-        public void Stop()
+        public async Task StopAsync()
         {
-            UnscheduleCallbacks();
-            SensusServiceHelper.Get().RemoveScriptsForRunner(this);
+            await UnscheduleCallbacksAsync();
+            await SensusServiceHelper.Get().RemoveScriptsForRunnerAsync(this);
         }
 
-        public void ScheduleScriptRuns()
+        public async Task ScheduleScriptRunsAsync()
         {
             if (_scheduleTrigger.WindowCount == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
             {
@@ -471,15 +456,18 @@ namespace Sensus.Probes.User.Scripts
 
             // we should always allow at least one future script to be scheduled. this is why the _scheduledCallbackIds collection
             // is a member of the current instance and not global within the script probe. beyond this single scheduled script,
-            // only allow a maximum of 32 script-run callbacks to be scheduled to allow room for other callbacks within sensus (e.g., 
+            // only allow a maximum of 32 script-run callbacks to be scheduled app-wide leaving room for other callbacks (e.g., 
             // the storage and polling systems). android's app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
             // as long as we have just a few script runners, each one will be able to schedule a few future script runs. this will 
             // help mitigate the problem of users ignoring surveys and losing touch with the study. note that even if there are more 
             // than 32 script runners, each will be allowed to schedule a callback as callback count will be zero, which is not greater 
             // than the zero resulting from integer truncation below.
+            List<ScriptTriggerTime> scriptTriggerTimesToSchedule = new List<ScriptTriggerTime>();
             lock (_scriptRunCallbacks)
             {
-                while (_scriptRunCallbacks.Count <= 32 / Probe.ScriptRunners.Count)
+                int scriptRunCallbacksForThisRunner = (32 / Probe.ScriptRunners.Count) + 1;
+                int numCallbacksToSchedule = (scriptRunCallbacksForThisRunner - _scriptRunCallbacks.Count);
+                for (int i = 0; i < numCallbacksToSchedule; ++i)
                 {
                     // if the trigger times queue is empty, refill it.
                     if (_scriptTriggerTimes.Count == 0)
@@ -490,7 +478,8 @@ namespace Sensus.Probes.User.Scripts
                         {
                             startDate = DateTime.Now;
                         }
-                        // start the trigger sequence on the day following the most recently scheduled trigger date
+                        // start the trigger sequence on the day following the most recently scheduled trigger date. we 
+                        // schedule by day, so all triggers on each day will be queued up at once.
                         else
                         {
                             startDate = _maxTriggerTime.Value.AddDays(1);
@@ -519,13 +508,18 @@ namespace Sensus.Probes.User.Scripts
                     }
                     else
                     {
-                        ScheduleScriptRun(_scriptTriggerTimes.Dequeue());
+                        scriptTriggerTimesToSchedule.Add(_scriptTriggerTimes.Dequeue());
                     }
                 }
             }
+
+            foreach (ScriptTriggerTime scriptTriggerTime in scriptTriggerTimesToSchedule)
+            {
+                await ScheduleScriptRunAsync(scriptTriggerTime);
+            }
         }
 
-        private void ScheduleScriptRun(ScriptTriggerTime triggerTime)
+        private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
         {
             // don't bother with the script if it's coming too soon.
             if (triggerTime.ReferenceTillTrigger.TotalMinutes <= 1)
@@ -545,7 +539,7 @@ namespace Sensus.Probes.User.Scripts
             // line when a duplicate is detected. in the case of a duplicate we can simply abort scheduling the
             // script run since it was already scheduled. this issue is much less common in android because all 
             // scripts are run immediately in the background, producing little opportunity for the race condition.
-            if (SensusContext.Current.CallbackScheduler.ScheduleCallback(callback) == ScheduledCallbackState.Scheduled)
+            if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
             {
                 lock (_scriptRunCallbacks)
                 {
@@ -562,31 +556,27 @@ namespace Sensus.Probes.User.Scripts
             scriptToRun.ExpirationDate = triggerTime.Expiration;
             scriptToRun.ScheduledRunTime = triggerTime.Trigger;
 
-            ScheduledCallback callback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                return Task.Run(() =>
+                SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+
+                if (!Probe.Running || !_enabled)
                 {
-                    SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+                    return;
+                }
 
-                    if (!Probe.Running || !_enabled)
-                    {
-                        return;
-                    }
+                await RunAsync(scriptToRun);
 
-                    Run(scriptToRun);
+                lock (_scriptRunCallbacks)
+                {
+                    _scriptRunCallbacks.RemoveAll(c => c.Id == callbackId);
+                }
 
-                    lock (_scriptRunCallbacks)
-                    {
-                        _scriptRunCallbacks.RemoveAll(c => c.Id == callbackId);
-                    }
-
-                    // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
-                    // delivered (1) either to the app in the foreground or (2) to the notification tray where the user has opened
-                    // it -- either way on ios the app is in the foreground and the script has been run. now is a good time to update 
-                    // the scheduled callbacks to run this script.
-                    ScheduleScriptRuns();
-
-                }, cancellationToken);
+                // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
+                // delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
+                // it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
+                // time to update the scheduled callbacks to run this script.
+                await ScheduleScriptRunsAsync();
 
             }, triggerTime.ReferenceTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol);  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 
@@ -611,8 +601,10 @@ namespace Sensus.Probes.User.Scripts
             return callback;
         }
 
-        private void UnscheduleCallbacks()
+        private async Task UnscheduleCallbacksAsync()
         {
+            List<ScheduledCallback> scriptRunCallbacksToUnschedule = new List<ScheduledCallback>();
+
             lock (_scriptRunCallbacks)
             {
                 if (_scriptRunCallbacks.Count == 0 || SensusServiceHelper.Get() == null)
@@ -620,36 +612,38 @@ namespace Sensus.Probes.User.Scripts
                     return;
                 }
 
-                foreach (ScheduledCallback callback in _scriptRunCallbacks)
-                {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(callback);
-                }
+                scriptRunCallbacksToUnschedule = _scriptRunCallbacks.ToList();
 
                 _scriptRunCallbacks.Clear();
                 _scriptTriggerTimes.Clear();
                 _maxTriggerTime = null;
             }
-        }
 
-        private Task RunAsync(Datum previousDatum = null, Datum currentDatum = null)
-        {
-            return Task.Run(() =>
+            foreach (ScheduledCallback callback in scriptRunCallbacksToUnschedule)
             {
-                Run(Script.Copy(true), previousDatum, currentDatum);
-            });
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(callback);
+            }
         }
 
-        /// <summary>
-        /// Run the specified script.
-        /// </summary>
-        /// <param name="script">Script.</param>
-        /// <param name="previousDatum">Previous datum.</param>
-        /// <param name="currentDatum">Current datum.</param>
-        private void Run(Script script, Datum previousDatum = null, Datum currentDatum = null)
+        private async Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
         {
             SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
 
             script.RunTime = DateTimeOffset.UtcNow;
+
+            // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
+            // can also be called without previous / current datum values (e.g., when triggering on a schedule). if
+            // we have such values, set them on the script.
+
+            if (previousDatum != null)
+            {
+                script.PreviousDatum = previousDatum;
+            }
+
+            if (currentDatum != null)
+            {
+                script.CurrentDatum = currentDatum;
+            }
 
             // scheduled scripts have their expiration dates set when they're scheduled. scripts triggered by other probes
             // as well as on-start scripts will not yet have their expiration dates set. so check the script we've been 
@@ -682,54 +676,35 @@ namespace Sensus.Probes.User.Scripts
                 RunTimes.RemoveAll(r => r < Probe.Protocol.ParticipationHorizon);
             }
 
-            #region submit a separate datum indicating each time the script was run.
-            Task.Run(() =>
+            await SensusServiceHelper.Get().AddScriptAsync(script, RunMode);
+
+            // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
+            // it wouldn't make sense to gather location data from a user.
+            double? latitude = null;
+            double? longitude = null;
+            DateTimeOffset? locationTimestamp = null;
+            if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
             {
-                // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
-                // it wouldn't make sense to gather location data from a user.
-                double? latitude = null;
-                double? longitude = null;
-                DateTimeOffset? locationTimestamp = null;
-                if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
+                try
                 {
-                    try
-                    {
-                        Position currentPosition = GpsReceiver.Get().GetReading(new CancellationToken(), false);
+                    Position currentPosition = await GpsReceiver.Get().GetReadingAsync(new CancellationToken(), false);
 
-                        if (currentPosition == null)
-                        {
-                            throw new Exception("GPS receiver returned null position.");
-                        }
-
-                        latitude = currentPosition.Latitude;
-                        longitude = currentPosition.Longitude;
-                        locationTimestamp = currentPosition.Timestamp;
-                    }
-                    catch (Exception ex)
+                    if (currentPosition == null)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        throw new Exception("GPS receiver returned null position.");
                     }
+
+                    latitude = currentPosition.Latitude;
+                    longitude = currentPosition.Longitude;
+                    locationTimestamp = currentPosition.Timestamp;
                 }
-
-                Probe.StoreDatum(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
-            });
-            #endregion
-
-            // this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
-            // can also be called without previous / current datum values (e.g., when triggering on a schedule). if
-            // we have such values, set them on the script.
-
-            if (previousDatum != null)
-            {
-                script.PreviousDatum = previousDatum;
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
             }
 
-            if (currentDatum != null)
-            {
-                script.CurrentDatum = currentDatum;
-            }
-
-            SensusServiceHelper.Get().AddScript(script, RunMode);
+            await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
         }
     }
 }

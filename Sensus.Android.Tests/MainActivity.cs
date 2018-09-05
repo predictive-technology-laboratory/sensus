@@ -1,4 +1,4 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,57 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
 using System.Reflection;
-using System.Text;
 using Android.App;
-using Android.Content.PM;
 using Android.OS;
-using Android.Widget;
-using Sensus.Android.Tests.SetUp;
+using Xunit.Sdk;
+using Xunit.Runners.UI;
+using Sensus.Context;
 using Sensus.Tests.Classes;
-using Xamarin.Android.NUnitLite;
+using Sensus.Android.Concurrent;
+using Xunit;
+using Android.Widget;
+using System;
+using Xunit.Runners;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 
 namespace Sensus.Android.Tests
 {
-    [Activity(Label = "Sensus.Android.Tests", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class MainActivity : TestSuiteActivity
+    [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme= "@android:style/Theme.Material.Light")]
+    public class MainActivity : RunnerActivity
     {
-        private LogSaver _logSaver = new LogSaver();
-
         protected override void OnCreate(Bundle bundle)
         {
-            Console.SetOut(_logSaver);
-            SetUpFixture.SetUp();
-
-            AddTest(Assembly.GetExecutingAssembly());
-
-            // to add tests in additional assemblies, uncomment/adapt the line below
-            // AddTest (typeof (Your.Library.TestClass).Assembly);
-
-            // there is currently an issue where the test runner blocks the UI thread.
-            Intent.PutExtra("automated", true);
-
-            // Once you called base.OnCreate(), you cannot add more assemblies.
-            base.OnCreate(bundle);
-        }
-
-        public override void Finish()
-        {
-            RunOnUiThread(() =>
+            SensusContext.Current = new TestSensusContext
             {
-                TextView logView = new TextView(this)
+                MainThreadSynchronizer = new MainConcurrent()
+            };
+
+            AddTestAssembly(Assembly.GetExecutingAssembly());
+            AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
+			AutoStart = true;
+            TerminateAfterExecution = false;
+
+            XUnitResultCounter resultCounter = new XUnitResultCounter();
+
+            resultCounter.ResultsDelivered += (sender, results) => 
+            {
+                RunOnUiThread(() =>
                 {
-                    ContentDescription = "sensus-test-log",
-                    Text = _logSaver.Log.ToString().Trim()
-                };
+                    TextView resultView = new TextView(this)
+                    {
+                        ContentDescription = "unit-test-results",
+                        Text = results
+                    };
 
-                ScrollView logScroll = new ScrollView(this);
-                logScroll.AddView(logView);
+                    new AlertDialog.Builder(this).SetView(resultView).Show();
+                });
+            };
 
-                SetContentView(logScroll);
-            });
+            ResultChannel = resultCounter;
+
+            base.OnCreate(bundle);
         }
     }
 }

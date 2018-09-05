@@ -58,7 +58,9 @@ namespace Sensus.Android
                 lock (_locker)
                 {
                     if (_disposed)
+                    {
                         return;
+                    }
 
                     _initWait.WaitOne();
                     _utteranceWait.Reset();

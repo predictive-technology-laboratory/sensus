@@ -42,7 +42,7 @@ namespace Sensus.Notifications
             _pushNotificationRequestsToDelete = new List<PushNotificationRequest>();
         }
 
-        public abstract void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
+        public abstract Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
 
@@ -71,267 +71,259 @@ namespace Sensus.Notifications
             });
         }
 
-        public Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        public async Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            if (request == null)
             {
-                if (request == null)
-                {
-                    return;
-                }
+                return;
+            }
 
+            try
+            {
+                await request.Protocol.RemoteDataStore.SendPushNotificationRequestAsync(request, cancellationToken);
+
+                lock (_pushNotificationRequestsToSend)
+                {
+                    _pushNotificationRequestsToSend.Remove(request);
+                }
+            }
+            catch (Exception sendException)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while sending push notification request:  " + sendException.Message, LoggingLevel.Normal, GetType());
+
+                lock (_pushNotificationRequestsToSend)
+                {
+                    int currIndex = _pushNotificationRequestsToSend.IndexOf(request);
+                    if (currIndex < 0)
+                    {
+                        _pushNotificationRequestsToSend.Add(request);
+                    }
+                    else
+                    {
+                        _pushNotificationRequestsToSend[currIndex] = request;
+                    }
+                }
+            }
+            finally
+            {
+                lock (_pushNotificationRequestsToDelete)
+                {
+                    _pushNotificationRequestsToDelete.Remove(request);
+                }
+            }
+        }
+
+        public async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            if (request == null)
+            {
+                return;
+            }
+
+            try
+            {
+                await request.Protocol.RemoteDataStore.DeletePushNotificationRequestAsync(request, cancellationToken);
+
+                lock (_pushNotificationRequestsToDelete)
+                {
+                    _pushNotificationRequestsToDelete.Remove(request);
+                }
+            }
+            catch (Exception deleteException)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while deleting push notification request:  " + deleteException.Message, LoggingLevel.Normal, GetType());
+
+                lock (_pushNotificationRequestsToDelete)
+                {
+                    int currIndex = _pushNotificationRequestsToDelete.IndexOf(request);
+                    if (currIndex < 0)
+                    {
+                        _pushNotificationRequestsToDelete.Add(request);
+                    }
+                    else
+                    {
+                        _pushNotificationRequestsToDelete[currIndex] = request;
+                    }
+                }
+            }
+            finally
+            {
+                lock (_pushNotificationRequestsToSend)
+                {
+                    _pushNotificationRequestsToSend.Remove(request);
+                }
+            }
+        }
+
+        public async Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, CancellationToken cancellationToken)
+        {
+            // every push notification should have an ID
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    throw new Exception("Push notification ID is missing or blank.");
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while getting push notification id:  " + ex.Message, ex);
+                return;
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Processing push notification " + id, LoggingLevel.Normal, GetType());
+
+            // every push notification should target a protocol
+            Protocol protocol = null;
+            try
+            {
+                protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == protocolId);
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
+                return;
+            }
+
+            // ignore the push notification if it targets a protocol that is not running and is not 
+            // scheduled to run. we explicitly attempt to prevent such notifications from coming through 
+            // by unregistering from hubs that lack running/scheduled protocols and clearing the token 
+            // from the backend; however, there may be race conditions that allow a push notification 
+            // to be delivered to us nonetheless.
+            if (!protocol.Running && !protocol.StartIsScheduled)
+            {
+                SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running and is not scheduled to run.", LoggingLevel.Normal, GetType());
+                return;
+            }
+
+#if __ANDROID__
+            // if there is user-targeted information, display the notification. this only applies to android because 
+            // push notifications are automatically displayed on iOS when the app is in the background. when the
+            // app is in the foreground it doesn't make sense to display the notification.
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
+                {
+                    await IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
+            }
+#endif
+
+            // process push notification command if there is one
+            try
+            {
+                string[] commandParts = command.Split(new char[] { '|' });
+
+                if (commandParts.Length > 0)
+                {
+                    if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
+                    {
+                        if (commandParts.Length != 4)
+                        {
+                            throw new Exception("Invalid push notification callback command format:  " + command);
+                        }
+
+                        string callbackId = commandParts[2];
+                        string invocationId = commandParts[3];
+
+                        // cancel any local notification associated with the callback (e.g., the notification 
+                        // that prompts for polling readings). this only applies to ios, as there are no such
+                        // notifications on android. furthermore, we need to do this before servicing the 
+                        // callback below, as the servicing routines will typically schedule a new poll with
+                        // new local/remote notifications. if we cancel the notification after servicing, 
+                        // we will end up cancelling the new notification rather than the current one (found
+                        // this out the hard way!).
+#if __IOS__
+                        SensusContext.Current.Notifier.CancelNotification(callbackId);
+#endif
+
+                        await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
+                    }
+                    else
+                    {
+                        throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
+                    }
+                }
+            }
+            catch (Exception pushNotificationCommandException)
+            {
+                SensusException.Report("Exception while running push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
+            }
+        }
+
+        public async Task TestHealthAsync(CancellationToken cancellationToken)
+        {
+            #region send all outstanding push notification requests
+            List<PushNotificationRequest> pushNotificationRequestsToSend;
+            lock (_pushNotificationRequestsToSend)
+            {
+                pushNotificationRequestsToSend = _pushNotificationRequestsToSend.ToList();
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Sending " + pushNotificationRequestsToSend.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
+
+            foreach (PushNotificationRequest pushNotificationRequestToSend in pushNotificationRequestsToSend)
+            {
                 try
                 {
-                    await request.Protocol.RemoteDataStore.SendPushNotificationRequestAsync(request, cancellationToken);
-
-                    lock (_pushNotificationRequestsToSend)
-                    {
-                        _pushNotificationRequestsToSend.Remove(request);
-                    }
+                    await SendPushNotificationRequestAsync(pushNotificationRequestToSend, cancellationToken);
                 }
                 catch (Exception sendException)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while sending push notification request:  " + sendException.Message, LoggingLevel.Normal, GetType());
-
-                    lock (_pushNotificationRequestsToSend)
-                    {
-                        int currIndex = _pushNotificationRequestsToSend.IndexOf(request);
-                        if (currIndex < 0)
-                        {
-                            _pushNotificationRequestsToSend.Add(request);
-                        }
-                        else
-                        {
-                            _pushNotificationRequestsToSend[currIndex] = request;
-                        }
-                    }
                 }
-                finally
-                {
-                    lock (_pushNotificationRequestsToDelete)
-                    {
-                        _pushNotificationRequestsToDelete.Remove(request);
-                    }
-                }
-            });
-        }
+            }
 
-        public Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            return Task.Run(async () =>
+            // report remaining PNRs to send
+            lock (_pushNotificationRequestsToSend)
             {
-                if (request == null)
+                string eventName = TrackedEvent.Health + ":" + GetType().Name;
+                Dictionary<string, string> properties = new Dictionary<string, string>
                 {
-                    return;
-                }
+                    { "PNRs to Send", _pushNotificationRequestsToSend.Count.ToString() }
+                };
 
+                Analytics.TrackEvent(eventName, properties);
+            }
+            #endregion
+
+            #region delete all outstanding push notification requests
+            List<PushNotificationRequest> pushNotificationRequestsToDelete;
+            lock (_pushNotificationRequestsToDelete)
+            {
+                pushNotificationRequestsToDelete = _pushNotificationRequestsToDelete.ToList();
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotificationRequestsToDelete.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
+
+            foreach (PushNotificationRequest pushNotificationRequestToDelete in pushNotificationRequestsToDelete)
+            {
                 try
                 {
-                    await request.Protocol.RemoteDataStore.DeletePushNotificationRequestAsync(request, cancellationToken);
-
-                    lock (_pushNotificationRequestsToDelete)
-                    {
-                        _pushNotificationRequestsToDelete.Remove(request);
-                    }
+                    await DeletePushNotificationRequestAsync(pushNotificationRequestToDelete, cancellationToken);
                 }
                 catch (Exception deleteException)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while deleting push notification request:  " + deleteException.Message, LoggingLevel.Normal, GetType());
-
-                    lock (_pushNotificationRequestsToDelete)
-                    {
-                        int currIndex = _pushNotificationRequestsToDelete.IndexOf(request);
-                        if (currIndex < 0)
-                        {
-                            _pushNotificationRequestsToDelete.Add(request);
-                        }
-                        else
-                        {
-                            _pushNotificationRequestsToDelete[currIndex] = request;
-                        }
-                    }
                 }
-                finally
-                {
-                    lock (_pushNotificationRequestsToSend)
-                    {
-                        _pushNotificationRequestsToSend.Remove(request);
-                    }
-                }
-            });
-        }
+            }
 
-        public Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, CancellationToken cancellationToken)
-        {
-            return Task.Run(async () =>
+            // report remaining PNRs to delete
+            lock (_pushNotificationRequestsToDelete)
             {
-                // every push notification should have an ID
-                try
+                string eventName = TrackedEvent.Health + ":" + GetType().Name;
+                Dictionary<string, string> properties = new Dictionary<string, string>
                 {
-                    if (string.IsNullOrWhiteSpace(id))
-                    {
-                        throw new Exception("Push notification ID is missing or blank.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while getting push notification id:  " + ex.Message, ex);
-                    return;
-                }
+                    { "PNRs to Delete", _pushNotificationRequestsToDelete.Count.ToString() }
+                };
 
-                SensusServiceHelper.Get().Logger.Log("Processing push notification " + id, LoggingLevel.Normal, GetType());
-
-                // every push notification should target a protocol
-                Protocol protocol = null;
-                try
-                {
-                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == protocolId);
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
-                    return;
-                }
-
-                // ignore the push notification if it targets a protocol that is not running and is not 
-                // scheduled to run. we explicitly attempt to prevent such notifications from coming through 
-                // by unregistering from hubs that lack running/scheduled protocols and clearing the token 
-                // from the backend; however, there may be race conditions that allow a push notification 
-                // to be delivered to us nonetheless.
-                if (!protocol.Running && !protocol.StartIsScheduled)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running and is not scheduled to run.", LoggingLevel.Normal, GetType());
-                    return;
-                }
-
-#if __ANDROID__
-                // if there is user-targeted information, display the notification. this only applies to android because 
-                // push notifications are automatically displayed on iOS when the app is in the background. when the
-                // app is in the foreground it doesn't make sense to display the notification.
-                try
-                {
-                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
-                    {
-                        IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
-                }
-#endif
-
-                // process push notification command if there is one
-                try
-                {
-                    string[] commandParts = command.Split(new char[] { '|' });
-
-                    if (commandParts.Length > 0)
-                    {
-                        if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
-                        {
-                            if (commandParts.Length != 4)
-                            {
-                                throw new Exception("Invalid push notification callback command format:  " + command);
-                            }
-
-                            string callbackId = commandParts[2];
-                            string invocationId = commandParts[3];
-
-                            await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
-
-                            // cancel any local notification associated with the callback (e.g., the notification 
-                            // that prompts for polling readings). this only applies to ios, as there are no such
-                            // notifications on android.
-#if __IOS__
-                            SensusContext.Current.Notifier.CancelNotification(callbackId);
-#endif
-
-                        }
-                        else
-                        {
-                            throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
-                        }
-                    }
-                }
-                catch (Exception pushNotificationCommandException)
-                {
-                    SensusException.Report("Exception while running push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
-                }
-            });
-        }
-
-        public Task TestHealthAsync(CancellationToken cancellationToken)
-        {
-            return Task.Run(async () =>
-            {
-                #region send all outstanding push notification requests
-                List<PushNotificationRequest> pushNotifications;
-                lock (_pushNotificationRequestsToSend)
-                {
-                    pushNotifications = _pushNotificationRequestsToSend.ToList();
-                }
-
-                SensusServiceHelper.Get().Logger.Log("Sending " + pushNotifications.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
-
-                foreach (PushNotificationRequest pushNotificationRequestToSend in pushNotifications)
-                {
-                    try
-                    {
-                        await SendPushNotificationRequestAsync(pushNotificationRequestToSend, cancellationToken);
-                    }
-                    catch (Exception sendException)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Exception while sending push notification request:  " + sendException.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
-
-                // report remaining PNRs to send
-                lock (_pushNotificationRequestsToSend)
-                {
-                    string eventName = TrackedEvent.Health + ":" + GetType().Name;
-                    Dictionary<string, string> properties = new Dictionary<string, string>
-                    {
-                        { "PNRs to Send", _pushNotificationRequestsToSend.Count.ToString() }
-                    };
-
-                    Analytics.TrackEvent(eventName, properties);
-                }
-                #endregion
-
-                #region delete all outstanding push notification requests
-                lock (_pushNotificationRequestsToDelete)
-                {
-                    pushNotifications = _pushNotificationRequestsToDelete.ToList();
-                }
-
-                SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotifications.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
-
-                foreach (PushNotificationRequest pushNotificationRequestToDelete in pushNotifications)
-                {
-                    try
-                    {
-                        await DeletePushNotificationRequestAsync(pushNotificationRequestToDelete, cancellationToken);
-                    }
-                    catch (Exception deleteException)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Exception while deleting push notification request:  " + deleteException.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
-
-                // report remaining PNRs to delete
-                lock (_pushNotificationRequestsToDelete)
-                {
-                    string eventName = TrackedEvent.Health + ":" + GetType().Name;
-                    Dictionary<string, string> properties = new Dictionary<string, string>
-                    {
-                        { "PNRs to Delete", _pushNotificationRequestsToDelete.Count.ToString() }
-                    };
-
-                    Analytics.TrackEvent(eventName, properties);
-                }
-                #endregion
-            });
+                Analytics.TrackEvent(eventName, properties);
+            }
+            #endregion
         }
     }
 }

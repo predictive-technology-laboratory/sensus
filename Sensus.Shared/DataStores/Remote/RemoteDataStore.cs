@@ -215,9 +215,9 @@ namespace Sensus.DataStores.Remote
             };
         }
 
-        public override void Start()
+        public override async Task StartAsync()
         {
-            base.Start();
+            await base.StartAsync();
 
             _mostRecentSuccessfulWriteTime = DateTime.Now;
 
@@ -231,15 +231,15 @@ namespace Sensus.DataStores.Remote
 #endif
 
             _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
-            SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
+            await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
@@ -253,9 +253,9 @@ namespace Sensus.DataStores.Remote
             _writeCallback = null;
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string,string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (_mostRecentSuccessfulWriteTime.HasValue)
             {
@@ -270,7 +270,7 @@ namespace Sensus.DataStores.Remote
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    events.Add(new AnalyticsTrackedEvent(eventName, properties));
                 }
             }
 
@@ -284,15 +284,15 @@ namespace Sensus.DataStores.Remote
 
                 Analytics.TrackEvent(eventName, properties);
 
-                events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-                restart = true;
+                result = HealthTestResult.Restart;
             }
 
-            return restart;
+            return result;
         }
 
-        public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+        public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
         {
             bool write = false;
 
@@ -321,17 +321,14 @@ namespace Sensus.DataStores.Remote
 
             if (write)
             {
-                return Task.Run(async () =>
-                {
-                    // instruct the local data store to write its data to the remote data store.
-                    await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
-                    _mostRecentSuccessfulWriteTime = DateTime.Now;
-                    return true;
-                });
+                // instruct the local data store to write its data to the remote data store.
+                await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
+                _mostRecentSuccessfulWriteTime = DateTime.Now;
+                return true;
             }
             else
             {
-                return Task.FromResult(false);
+                return false;
             }
         }
 

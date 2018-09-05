@@ -13,16 +13,11 @@
 // limitations under the License.
 
 using System;
-using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Firebase.Messaging;
 using Sensus.Context;
-using System.Linq;
 using Sensus.Exceptions;
-using Sensus.Notifications;
-using Sensus.Callbacks;
-using Sensus.Android.Callbacks;
 using System.Threading;
 
 namespace Sensus.Android.Notifications
@@ -31,28 +26,25 @@ namespace Sensus.Android.Notifications
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseNotificationService : FirebaseMessagingService
     {
-        public override void OnMessageReceived(RemoteMessage message)
+        public async override void OnMessageReceived(RemoteMessage message)
         {
-            Task.Run(async () =>
+            try
             {
-                try
-                {
-                    // extract push notification information
-                    string protocolId = message.Data["protocol"];
-                    string id = message.Data["id"];
-                    string title = message.Data["title"];
-                    string body = message.Data["body"];
-                    string sound = message.Data["sound"];
-                    string command = message.Data["command"];
+                // extract push notification information
+                string protocolId = message.Data["protocol"];
+                string id = message.Data["id"];
+                string title = message.Data["title"];
+                string body = message.Data["body"];
+                string sound = message.Data["sound"];
+                string command = message.Data["command"];
 
-                    // wait for the push notification to be processed
-                    await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, default(CancellationToken));
-                }
-                catch(Exception ex)
-                {
-                    SensusException.Report("Exception while processing remote notification:  " + ex.Message, ex);
-                }
-            });
+                // wait for the push notification to be processed
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, default(CancellationToken));
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while processing remote notification:  " + ex.Message, ex);
+            }
         }
     }
 }

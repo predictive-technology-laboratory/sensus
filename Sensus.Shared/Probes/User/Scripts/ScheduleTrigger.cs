@@ -121,7 +121,7 @@ namespace Sensus.Probes.User.Scripts
                 // the effect of such latencies.
                 List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
 
-                // ignore the time component of the start date
+                // ignore the time component of the start date. get all times on the given day.
                 startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 0);
 
                 // schedule enough days to ensure that all windows get at least one trigger. for DOW windows, this

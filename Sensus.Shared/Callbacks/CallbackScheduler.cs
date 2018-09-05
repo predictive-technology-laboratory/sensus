@@ -40,10 +40,10 @@ namespace Sensus.Callbacks
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
         }
 
-        protected abstract void ScheduleCallbackPlatformSpecific(ScheduledCallback callback);
+        protected abstract Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback);
         protected abstract void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback);
 
-        public ScheduledCallbackState ScheduleCallback(ScheduledCallback callback)
+        public async Task<ScheduledCallbackState> ScheduleCallbackAsync(ScheduledCallback callback)
         {
             if (callback.State != ScheduledCallbackState.Created)
             {
@@ -57,10 +57,10 @@ namespace Sensus.Callbacks
                 callback.State = ScheduledCallbackState.Scheduled;
 
                 // schedule callback locally
-                ScheduleCallbackPlatformSpecific(callback);
+                await ScheduleCallbackPlatformSpecificAsync(callback);
 
                 // request a push notification for the callback (adds redundancy) 
-                RequestPushNotificationAsync(callback);
+                await RequestPushNotificationAsync(callback);
             }
             else
             {
@@ -91,7 +91,7 @@ namespace Sensus.Callbacks
             return callback;
         }
 
-        public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
+        public async Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)
         {
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
@@ -104,28 +104,21 @@ namespace Sensus.Callbacks
                 // of ServiceCallbackAsync to call the corresponding "let sleep".
                 serviceHelper.KeepDeviceAwake();
 
-                return Task.Run(async () =>
+                ScheduledCallback callback = TryGetCallback(callbackId);
+
+                // callback might have been unscheduled
+                if (callback != null)
                 {
-                    ScheduledCallback callback = TryGetCallback(callbackId);
+                    SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
 
-                    // callback might have been unscheduled
-                    if (callback != null)
+                    // if the cancellation token is cancelled, cancel the callback
+                    cancellationToken.Register(() =>
                     {
-                        SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+                        CancelRaisedCallback(callback);
+                    });
 
-                        // if the cancellation token is cancelled, cancel the callback
-                        cancellationToken.Register(() =>
-                        {
-                            CancelRaisedCallback(callback);
-                        });
-
-                        await ServiceCallbackAsync(callback, invocationId);
-                    }
-                });
-            }
-            else
-            {
-                return Task.CompletedTask;
+                    await ServiceCallbackAsync(callback, invocationId);
+                }
             }
         }
 
@@ -138,138 +131,136 @@ namespace Sensus.Callbacks
         /// <param name="callback">Callback to raise.</param>
         /// <param name="invocationId">Identifier of invocation.</param>
         /// <param name="notifyUser">If set to <c>true</c>, then notify user that the callback is being raised.</param>
-        /// <param name="scheduleRepeatCallback">Platform-specific action to execute to schedule the next execution of the callback.</param>
+        /// <param name="scheduleRepeatCallbackAsync">Platform-specific action to execute to schedule the next execution of the callback.</param>
         /// <param name="letDeviceSleepCallback">Action to execute when the system should be allowed to sleep.</param>
-        public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)
+        public virtual async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Func<Task> scheduleRepeatCallbackAsync, Action letDeviceSleepCallback)
         {
-            return Task.Run(async () =>
+            try
             {
-                try
+                if (callback == null)
                 {
-                    if (callback == null)
+                    throw new NullReferenceException("Attemped to raise null callback.");
+                }
+
+                // the same callback must not be run multiple times concurrently, so drop the current callback if it's already running. multiple
+                // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until the
+                // the callback has finished executing. furthermore, the callback must not run multiple times in sequence (e.g., if the callback
+                // is raised by the local scheduling system and then later by a remote push notification). this is handled by tracking invocation
+                // identifiers, which are only runnable once.
+                string initiationError = null;
+                lock (callback)
+                {
+                    if (callback.State != ScheduledCallbackState.Scheduled)
                     {
-                        throw new NullReferenceException("Attemped to raise null callback.");
+                        initiationError += "Callback " + callback.Id + " is not scheduled. Current state:  " + callback.State;
                     }
 
-                    // the same callback must not be run multiple times concurrently, so drop the current callback if it's already running. multiple
-                    // callers might compete for the same callback, but only one will win the lock below and it will exclude all others until the
-                    // the callback has finished executing. furthermore, the callback must not run multiple times in sequence (e.g., if the callback
-                    // is raised by the local scheduling system and then later by a remote push notification). this is handled by tracking invocation
-                    // identifiers, which are only runnable once.
-                    string initiationError = null;
-                    lock (callback)
+                    if (invocationId != callback.InvocationId)
                     {
-                        if (callback.State != ScheduledCallbackState.Scheduled)
-                        {
-                            initiationError += "Callback " + callback.Id + " is not scheduled. Current state:  " + callback.State;
-                        }
-
-                        if (invocationId != callback.InvocationId)
-                        {
-                            initiationError += (initiationError == null ? "" : ". ") + "Invocation ID provided for callback " + callback.Id + " does not match the one on record.";
-                        }
-
-                        if (initiationError == null)
-                        {
-                            callback.State = ScheduledCallbackState.Running;
-                        }
+                        initiationError += (initiationError == null ? "" : ". ") + "Invocation ID provided for callback " + callback.Id + " does not match the one on record.";
                     }
 
                     if (initiationError == null)
                     {
+                        callback.State = ScheduledCallbackState.Running;
+                    }
+                }
+
+                if (initiationError == null)
+                {
+                    try
+                    {
+                        if (callback.Canceller.IsCancellationRequested)
+                        {
+                            throw new Exception("Callback " + callback.Id + " was cancelled before it was raised.");
+                        }
+                        else
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Raising callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+
+                            if (notifyUser)
+                            {
+                                await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage);
+                            }
+
+                            // if the callback specified a timeout, request cancellation at the specified time.
+                            if (callback.CallbackTimeout.HasValue)
+                            {
+                                callback.Canceller.CancelAfter(callback.CallbackTimeout.Value);
+                            }
+
+                            await callback.Action(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
+                        }
+                    }
+                    catch (Exception raiseException)
+                    {
+                        SensusException.Report("Callback " + callback.Id + " threw an exception:  " + raiseException.Message, raiseException);
+                    }
+                    finally
+                    {
+                        // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
+                        // cancellation token source because they cannot be reset and we're going to use the same scheduled callback again for the next repeat. 
+                        // if we enter the _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
+                        // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect on the next 
+                        // raise. the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate a callback that is currently in 
+                        // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
+                        // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
                         try
                         {
-                            if (callback.Canceller.IsCancellationRequested)
+                            if (callback.RepeatDelay.HasValue)
                             {
-                                throw new Exception("Callback " + callback.Id + " was cancelled before it was raised.");
-                            }
-                            else
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Raising callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
-
-                                if (notifyUser)
-                                {
-                                    SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage);
-                                }
-
-                                // if the callback specified a timeout, request cancellation at the specified time.
-                                if (callback.CallbackTimeout.HasValue)
-                                {
-                                    callback.Canceller.CancelAfter(callback.CallbackTimeout.Value);
-                                }
-
-                                await callback.Action(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
+                                callback.Canceller = new CancellationTokenSource();
                             }
                         }
-                        catch (Exception raiseException)
+                        catch (Exception ex)
                         {
-                            SensusException.Report("Callback " + callback.Id + " threw an exception:  " + raiseException.Message, raiseException);
+                            SensusException.Report("Exception while assigning new callback canceller.", ex);
                         }
                         finally
                         {
-                            // the cancellation token source for the current callback might have been canceled. if this is a repeating callback then we'll need a new
-                            // cancellation token source because they cannot be reset and we're going to use the same scheduled callback again for the next repeat. 
-                            // if we enter the _idCallback lock before CancelRaisedCallback does, then the next raise will be cancelled. if CancelRaisedCallback enters the 
-                            // _idCallback lock first, then the cancellation token source will be overwritten here and the cancel will not have any effect on the next 
-                            // raise. the latter case is a reasonable outcome, since the purpose of CancelRaisedCallback is to terminate a callback that is currently in 
-                            // progress, and the current callback is no longer in progress. if the desired outcome is complete discontinuation of the repeating callback
-                            // then UnscheduleRepeatingCallback should be used -- this method first cancels any raised callbacks and then removes the callback entirely.
-                            try
+                            callback.State = ScheduledCallbackState.Completed;
+
+                            // schedule callback again if it is still scheduled with a valid repeat delay
+                            if (ContainsCallback(callback) &&
+                                callback.RepeatDelay.HasValue &&
+                                callback.RepeatDelay.Value.Ticks > 0 &&
+                                scheduleRepeatCallbackAsync != null)
                             {
-                                if (callback.RepeatDelay.HasValue)
-                                {
-                                    callback.Canceller = new CancellationTokenSource();
-                                }
+                                callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
+                                callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
+                                callback.State = ScheduledCallbackState.Scheduled;
+
+                                // schedule callback locally
+                                await scheduleRepeatCallbackAsync();
+
+                                // request a push notification for the callback, to be delivered in parallel with the local notification.
+                                // only one of these will be allowed to run based on the invocation id and locking code above. there is
+                                // perhaps an argument to make for deleting the previously requested push notification and thereby preventing
+                                // push notifications from building up in the backend. however, our primary objective should be minimizing 
+                                // the amount of network I/O from the app to S3. the backend will handle filtering out stale invocation IDs.
+                                await RequestPushNotificationAsync(callback);
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                SensusException.Report("Exception while assigning new callback canceller.", ex);
-                            }
-                            finally
-                            {
-                                callback.State = ScheduledCallbackState.Completed;
-
-                                // schedule callback again if it is still scheduled with a valid repeat delay
-                                if (ContainsCallback(callback) &&
-                                    callback.RepeatDelay.HasValue &&
-                                    callback.RepeatDelay.Value.Ticks > 0 &&
-                                    scheduleRepeatCallback != null)
-                                {
-                                    callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
-                                    callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
-                                    callback.State = ScheduledCallbackState.Scheduled;
-
-                                    // schedule callback locally
-                                    scheduleRepeatCallback();
-
-                                    // request a push notification for the callback (adds redundancy) 
-                                    await RequestPushNotificationAsync(callback);
-                                }
-                                else
-                                {
-                                    UnscheduleCallback(callback);
-                                }
+                                await UnscheduleCallbackAsync(callback);
                             }
                         }
                     }
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Initiation error for callback " + callback.Id + ":  " + initiationError, LoggingLevel.Normal, GetType());
-                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    SensusException.Report("Failed to raise callback:  " + ex.Message, ex);
+                    SensusServiceHelper.Get().Logger.Log("Initiation error for callback " + callback.Id + ":  " + initiationError, LoggingLevel.Normal, GetType());
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Failed to raise callback:  " + ex.Message, ex);
+            }
         }
 
-        private Task RequestPushNotificationAsync(ScheduledCallback callback)
+        private async Task RequestPushNotificationAsync(ScheduledCallback callback)
         {
-            return Task.Run(async () =>
-            {
-                await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
-            });
+            await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
         }
 
         public void TestHealth()
@@ -336,7 +327,7 @@ namespace Sensus.Callbacks
         /// Unschedules the callback, first cancelling any executions that are currently running and then removing the callback from the scheduler.
         /// </summary>
         /// <param name="callback">Callback.</param>
-        public void UnscheduleCallback(ScheduledCallback callback)
+        public async Task UnscheduleCallbackAsync(ScheduledCallback callback)
         {
             if (callback != null)
             {
@@ -346,14 +337,13 @@ namespace Sensus.Callbacks
                 CancelRaisedCallback(callback);
 
                 // remove from the scheduler
-                ScheduledCallback removedCallback;
-                _idCallback.TryRemove(callback.Id, out removedCallback);
+                _idCallback.TryRemove(callback.Id, out ScheduledCallback removedCallback);
 
                 // tell the current platform cancel its hook into the system's callback system
                 UnscheduleCallbackPlatformSpecific(callback);
 
                 // delete the push notification
-                SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
 
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }

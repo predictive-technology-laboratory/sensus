@@ -31,12 +31,13 @@ namespace Sensus.Android.Callbacks
             _service = service;
         }
 
-        protected override void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)
+        protected override Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)
         {
             Intent callbackIntent = CreateCallbackIntent(callback);
             PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
             ScheduleCallbackAlarm(callback, callbackPendingIntent);
             SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " scheduled for " + callback.NextExecution + " " + (callback.RepeatDelay.HasValue ? "(repeating)" : "(one-time)") + ".", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
         }
 
         private Intent CreateCallbackIntent(ScheduledCallback callback)
@@ -109,88 +110,84 @@ namespace Sensus.Android.Callbacks
             return intent.GetBooleanExtra(SENSUS_CALLBACK_KEY, false);
         }
 
-        public Task ServiceCallbackAsync(Intent intent)
+        public async Task ServiceCallbackAsync(Intent intent)
         {
-            return Task.Run(async () =>
+            ScheduledCallback callback = TryGetCallback(intent.Action);
+
+            if (callback == null)
             {
-                ScheduledCallback callback = TryGetCallback(intent.Action);
+                return;
+            }
 
-                if (callback == null)
-                {
-                    return;
-                }
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
-                SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+            serviceHelper.Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
-                serviceHelper.Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+            // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
+            // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
+            // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
+            // if the callback is present, it's fine. if it's not, then unschedule it.
+            if (ContainsCallback(callback))
+            {
+                bool wakeLockReleased = false;
 
-                // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
-                // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
-                // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
-                // if the callback is present, it's fine. if it's not, then unschedule it.
-                if (ContainsCallback(callback))
-                {                    
-                    bool wakeLockReleased = false;
+                string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
 
-                    string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
+                // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
+                await RaiseCallbackAsync(callback, invocationId, true,
 
-                    // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                    await RaiseCallbackAsync(callback, invocationId, true,
-
-                        // schedule a new alarm for the same callback at the desired time.
-                        () =>
-                        {
+                    // schedule a new alarm for the same callback at the desired time.
+                    () =>
+                    {
                             // update the intent with the new invocation ID.
                             intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
 
                             // reschedule the alarm. the alarm date will already have been set on the callback.
                             ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
-                        },
 
-                        // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
-                        () =>
-                        {
-                            wakeLockReleased = true;
-                            serviceHelper.LetDeviceSleep();
-                            serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
-                        }
-                    );
+                        return Task.CompletedTask;
+                    },
 
-                    // release wake lock now if we didn't while the callback action was executing.
-                    if (!wakeLockReleased)
+                    // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
+                    () =>
                     {
+                        wakeLockReleased = true;
                         serviceHelper.LetDeviceSleep();
-                        serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
+                        serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
                     }
-                }
-                else
+                );
+
+                // release wake lock now if we didn't while the callback action was executing.
+                if (!wakeLockReleased)
                 {
-                    UnscheduleCallback(callback);
                     serviceHelper.LetDeviceSleep();
+                    serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
                 }
-            });
+            }
+            else
+            {
+                await UnscheduleCallbackAsync(callback);
+                serviceHelper.LetDeviceSleep();
+            }
         }
 
-        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
+        public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
         {
-            return Task.Run(async () =>
-            {
-                // service an intent that targets the given callback and invocation. 
-                // 
-                // 1) if this intent arrives with a valid invocation ID before the alarm-triggered 
-                //    intent arrives, this intent will be serviced and a new pending intent will 
-                //    be issued with an updated invocation id. in this case, the alarm-triggered 
-                //    pending intent will be ignored (if it fires) or canceled (when the updated 
-                //    pending intent is issued).
-                //
-                // 2) if this intent arrives after the alarm-triggered intent, or if the invocation
-                //    id is not valid, then this intent will not be serviced. the alarm-triggered
-                //    intent will be serviced instead, and the next pending intent will be scheduled
-                //    thereafter along with a correspondingly new push notification request.
-                Intent intent = CreateCallbackIntent(callback);
-                intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, invocationId);
-                await ServiceCallbackAsync(intent);
-            });
+            // service an intent that targets the given callback and invocation. 
+            // 
+            // 1) if this intent arrives with a valid invocation ID before the alarm-triggered 
+            //    intent arrives, this intent will be serviced and a new pending intent will 
+            //    be issued with an updated invocation id. in this case, the alarm-triggered 
+            //    pending intent will be ignored (if it fires) or canceled (when the updated 
+            //    pending intent is issued).
+            //
+            // 2) if this intent arrives after the alarm-triggered intent, or if the invocation
+            //    id is not valid, then this intent will not be serviced. the alarm-triggered
+            //    intent will be serviced instead, and the next pending intent will be scheduled
+            //    thereafter along with a correspondingly new push notification request.
+            Intent intent = CreateCallbackIntent(callback);
+            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, invocationId);
+            await ServiceCallbackAsync(intent);
         }
 
         protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)
