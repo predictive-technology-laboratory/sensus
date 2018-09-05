@@ -389,7 +389,7 @@ namespace Sensus.iOS
             }
         }
 
-        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
             serviceHelper.PushNotificationTokenData = deviceToken;
@@ -397,15 +397,9 @@ namespace Sensus.iOS
             // update push notification registrations. this depends on internet connectivity to S3
             // so it might hang if connectivity is poor. ensure we don't violate execution limits.
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-            nint updateTaskId = application.BeginBackgroundTask(() =>
-            {
-                cancellationTokenSource.Cancel();
-            });
-
-            serviceHelper.UpdatePushNotificationRegistrationsAsync(cancellationTokenSource.Token).ContinueWith(finishedTask =>
-            {
-                application.EndBackgroundTask(updateTaskId);
-            });
+            nint updateTaskId = application.BeginBackgroundTask(cancellationTokenSource.Cancel);
+            await serviceHelper.UpdatePushNotificationRegistrationsAsync(cancellationTokenSource.Token);
+            application.EndBackgroundTask(updateTaskId);
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)

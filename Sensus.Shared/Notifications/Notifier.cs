@@ -230,15 +230,18 @@ namespace Sensus.Notifications
                         string callbackId = commandParts[2];
                         string invocationId = commandParts[3];
 
-                        await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
-
                         // cancel any local notification associated with the callback (e.g., the notification 
                         // that prompts for polling readings). this only applies to ios, as there are no such
-                        // notifications on android.
+                        // notifications on android. furthermore, we need to do this before servicing the 
+                        // callback below, as the servicing routines will typically schedule a new poll with
+                        // new local/remote notifications. if we cancel the notification after servicing, 
+                        // we will end up cancelling the new notification rather than the current one (found
+                        // this out the hard way!).
 #if __IOS__
                         SensusContext.Current.Notifier.CancelNotification(callbackId);
 #endif
 
+                        await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
                     }
                     else
                     {

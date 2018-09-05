@@ -108,7 +108,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             await IssueNotificationAsync(notificationRequest);
         }
 
-        public async Task IssueNotificationAsync(UNNotificationRequest request, Action<NSError> errorCallback = null)
+        public async Task IssueNotificationAsync(UNNotificationRequest request)
         {
             // although we should never, we might be getting in null requests from somewhere. bail if we do.
             if (request == null)
