@@ -12,11 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
-using Foundation;
 using UIKit;
 
 namespace Sensus.iOS.Tests
@@ -26,9 +21,9 @@ namespace Sensus.iOS.Tests
         // This is the main entry point of the application.
         static void Main(string[] args)
         {
-            // if you want to use a different Application Delegate class from "UnitTestAppDelegate"
+            // if you want to use a different Application Delegate class from "AppDelegate"
             // you can specify it here.
-            UIApplication.Main(args, null, "UnitTestAppDelegate");
+            UIApplication.Main(args, null, "AppDelegate");
         }
     }
 }

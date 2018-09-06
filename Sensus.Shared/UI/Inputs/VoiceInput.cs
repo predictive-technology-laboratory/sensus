@@ -121,25 +121,22 @@ namespace Sensus.UI.Inputs
             SensusException.Report("Cannot set View on VoiceInput.");
         }
 
-        public Task<string> RunAsync(DateTimeOffset? firstRunTimestamp, Action postDisplayCallback)
+        public async Task<string> RunAsync(DateTimeOffset? firstRunTimestamp, Action postDisplayCallback)
         {
-            return Task.Run(async () =>
+            await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
+
+            _response = await SensusServiceHelper.Get().RunVoicePromptAsync(_outputMessage, postDisplayCallback);
+
+            Viewed = true;
+
+            if (string.IsNullOrWhiteSpace(_response))
             {
-                await SensusServiceHelper.Get().TextToSpeechAsync(_outputMessage);
+                _response = null;
+            }
 
-                _response = await SensusServiceHelper.Get().RunVoicePromptAsync(_outputMessage, postDisplayCallback);
+            Complete = _response != null;
 
-                Viewed = true;
-
-                if (string.IsNullOrWhiteSpace(_response))
-                {
-                    _response = null;
-                }
-
-                Complete = _response != null;
-
-                return _response;
-            });
+            return _response;
         }
     }
 }

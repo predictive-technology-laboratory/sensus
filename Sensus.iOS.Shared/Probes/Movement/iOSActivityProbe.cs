@@ -24,6 +24,7 @@ using Sensus.Probes;
 using Sensus.Probes.Movement;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms.Platform.iOS;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Movement
 {
@@ -57,9 +58,9 @@ namespace Sensus.iOS.Probes.Movement
             _queryStartTime = null;
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             if (!CMMotionActivityManager.IsActivityAvailable)
             {
@@ -67,7 +68,7 @@ namespace Sensus.iOS.Probes.Movement
             }
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -81,124 +82,106 @@ namespace Sensus.iOS.Probes.Movement
                 _queryStartTime = DateTimeOffset.UtcNow;
             }
 
-            ManualResetEvent queryWait = new ManualResetEvent(false);
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 try
                 {
                     CMMotionActivityManager activityManager = new CMMotionActivityManager();
 
-                    activityManager.QueryActivity(_queryStartTime.Value.UtcDateTime.ToNSDate(), NSDate.Now, NSOperationQueue.CurrentQueue, (activities, error) =>
+                    CMMotionActivity[] activities = await activityManager.QueryActivityAsync(_queryStartTime.Value.UtcDateTime.ToNSDate(), NSDate.Now, NSOperationQueue.CurrentQueue);
+
+                    // process each activity, keeping track of most recent
+                    NSDate mostRecentActivityStartTime = null;
+                    foreach (CMMotionActivity activity in activities)
                     {
-                        try
+                        DateTimeOffset timestamp = new DateTimeOffset(activity.StartDate.ToDateTime(), TimeSpan.Zero);
+
+                        #region get confidence
+                        ActivityConfidence confidence = ActivityConfidence.NotAvailable;
+
+                        if (activity.Confidence == CMMotionActivityConfidence.Low)
                         {
-                            if (error == null)
-                            {
-                                // process each activity, keeping track of most recent
-                                NSDate mostRecentActivityStartTime = null;
-                                foreach (CMMotionActivity activity in activities)
-                                {
-                                    DateTimeOffset timestamp = new DateTimeOffset(activity.StartDate.ToDateTime(), TimeSpan.Zero);
-
-                                    #region get confidence
-                                    ActivityConfidence confidence = ActivityConfidence.NotAvailable;
-
-                                    if (activity.Confidence == CMMotionActivityConfidence.Low)
-                                    {
-                                        confidence = ActivityConfidence.Low;
-                                    }
-                                    else if (activity.Confidence == CMMotionActivityConfidence.Medium)
-                                    {
-                                        confidence = ActivityConfidence.Medium;
-                                    }
-                                    else if (activity.Confidence == CMMotionActivityConfidence.High)
-                                    {
-                                        confidence = ActivityConfidence.High;
-                                    }
-                                    else
-                                    {
-                                        SensusException.Report("Unrecognized confidence:  " + activity.Confidence);
-                                    }
-                                    #endregion
-
-                                    #region get activities
-                                    Action<Activities> AddActivityDatum = activityType =>
-                                    {
-                                        ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.Starting, ActivityState.Active, confidence);
-                                        data.Add(activityDatum);
-                                    };
-
-                                    if (activity.Stationary)
-                                    {
-                                        AddActivityDatum(Activities.Still);
-                                    }
-
-                                    if (activity.Walking)
-                                    {
-                                        AddActivityDatum(Activities.Walking);
-                                    }
-
-                                    if (activity.Running)
-                                    {
-                                        AddActivityDatum(Activities.Running);
-                                    }
-
-                                    if (activity.Automotive)
-                                    {
-                                        AddActivityDatum(Activities.InVehicle);
-                                    }
-
-                                    if (activity.Cycling)
-                                    {
-                                        AddActivityDatum(Activities.OnBicycle);
-                                    }
-
-                                    if (activity.Unknown)
-                                    {
-                                        AddActivityDatum(Activities.Unknown);
-                                    }
-                                    #endregion
-
-                                    if (mostRecentActivityStartTime == null)
-                                    {
-                                        mostRecentActivityStartTime = activity.StartDate;
-                                    }
-                                    else
-                                    {
-                                        mostRecentActivityStartTime = mostRecentActivityStartTime.LaterDate(activity.StartDate);
-                                    }
-                                }
-
-                                // set the next query start time one second after the most recent activity's start time
-                                if (mostRecentActivityStartTime != null)
-                                {
-                                    _queryStartTime = new DateTime(mostRecentActivityStartTime.ToDateTime().Ticks, DateTimeKind.Utc).AddSeconds(1);
-                                }
-                            }
-                            else
-                            {
-                                throw new Exception("Error while querying activities:  " + error);
-                            }
+                            confidence = ActivityConfidence.Low;
                         }
-                        catch (Exception ex)
+                        else if (activity.Confidence == CMMotionActivityConfidence.Medium)
                         {
-                            SensusServiceHelper.Get().Logger.Log("Exception while querying activities:  " + ex, LoggingLevel.Normal, GetType());
+                            confidence = ActivityConfidence.Medium;
                         }
-                        finally
+                        else if (activity.Confidence == CMMotionActivityConfidence.High)
                         {
-                            queryWait.Set();
+                            confidence = ActivityConfidence.High;
                         }
-                    });
+                        else
+                        {
+                            SensusException.Report("Unrecognized confidence:  " + activity.Confidence);
+                        }
+                        #endregion
+
+                        #region get activities
+                        Action<Activities> AddActivityDatum = activityType =>
+                        {
+                            ActivityDatum activityDatum = new ActivityDatum(timestamp, activityType, ActivityPhase.Starting, ActivityState.Active, confidence);
+                            data.Add(activityDatum);
+                        };
+
+                        if (activity.Stationary)
+                        {
+                            AddActivityDatum(Activities.Still);
+                        }
+
+                        if (activity.Walking)
+                        {
+                            AddActivityDatum(Activities.Walking);
+                        }
+
+                        if (activity.Running)
+                        {
+                            AddActivityDatum(Activities.Running);
+                        }
+
+                        if (activity.Automotive)
+                        {
+                            AddActivityDatum(Activities.InVehicle);
+                        }
+
+                        if (activity.Cycling)
+                        {
+                            AddActivityDatum(Activities.OnBicycle);
+                        }
+
+                        if (activity.Unknown)
+                        {
+                            AddActivityDatum(Activities.Unknown);
+                        }
+                        #endregion
+
+                        if (mostRecentActivityStartTime == null)
+                        {
+                            mostRecentActivityStartTime = activity.StartDate;
+                        }
+                        else
+                        {
+                            mostRecentActivityStartTime = mostRecentActivityStartTime.LaterDate(activity.StartDate);
+                        }
+                    }
+
+                    // set the next query start time one second after the most recent activity's start time
+                    if (mostRecentActivityStartTime != null)
+                    {
+                        _queryStartTime = new DateTime(mostRecentActivityStartTime.ToDateTime().Ticks, DateTimeKind.Utc).AddSeconds(1);
+                    }
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while querying activities:  " + ex, LoggingLevel.Normal, GetType());
-                    queryWait.Set();
                 }
             });
 
-            WaitHandle.WaitAny(new[] { queryWait, cancellationToken.WaitHandle });
+            // let the system know that we polled but didn't get any data
+            if (data.Count == 0)
+            {
+                data.Add(null);
+            }
 
             return data;
         }

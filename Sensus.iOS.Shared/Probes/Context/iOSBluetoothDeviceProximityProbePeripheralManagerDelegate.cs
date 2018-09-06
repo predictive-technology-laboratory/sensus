@@ -18,12 +18,20 @@ using Foundation;
 
 namespace Sensus.iOS.Probes.Context
 {
+    /// <summary>
+    /// iOS BLE peripheral (advertiser/server) delegate class. Receives events related to BLE advertising and  
+    /// characteristic reading.
+    /// </summary>
     public class iOSBluetoothDeviceProximityProbePeripheralManagerDelegate : CBPeripheralManagerDelegate
     {
+        private CBMutableService _service;
+        private CBMutableCharacteristic _characteristic;
         private iOSBluetoothDeviceProximityProbe _probe;
 
-        public iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(iOSBluetoothDeviceProximityProbe probe)
-        {            
+        public iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(CBMutableService service, CBMutableCharacteristic characteristic, iOSBluetoothDeviceProximityProbe probe)
+        {           
+            _service = service;
+            _characteristic = characteristic;
             _probe = probe;
         }
 
@@ -37,7 +45,7 @@ namespace Sensus.iOS.Probes.Context
                     // on the next line and caught), and the peripheral will already be advertising the service. note that the 
                     // CBPeripheralManager.Advertising property will still show false after the user's off/on setting because we haven't 
                     // called StartAdvertising ourselves:  https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager/1393291-isadvertising
-                    peripheral.AddService(_probe.DeviceIdService);
+                    peripheral.AddService(_service);
                 }
                 catch (Exception ex)
                 {
@@ -54,7 +62,7 @@ namespace Sensus.iOS.Probes.Context
 
                 try
                 {
-                    peripheral.StartAdvertising(new NSDictionary(CBAdvertisement.DataServiceUUIDsKey, NSArray.FromObjects(_probe.DeviceIdService.UUID)));
+                    peripheral.StartAdvertising(new NSDictionary(CBAdvertisement.DataServiceUUIDsKey, NSArray.FromObjects(_service.UUID)));
                 }
                 catch (Exception ex)
                 {
@@ -83,11 +91,10 @@ namespace Sensus.iOS.Probes.Context
         {
             try
             {
-                if (request.Characteristic.Service.UUID.Equals(_probe.DeviceIdService.UUID) &&
-                    request.Characteristic.UUID.Equals(_probe.DeviceIdCharacteristic.UUID))
+                if (request.Characteristic.Service.UUID.Equals(_service.UUID) && request.Characteristic.UUID.Equals(_characteristic.UUID))
                 {
-                    // fill in the device id value for the request and return it to the central
-                    request.Value = _probe.DeviceIdCharacteristic.Value;
+                    // fill in the characteristic value for the request and return it to the central
+                    request.Value = _characteristic.Value;
                     peripheral.RespondToRequest(request, CBATTError.Success);
                 }
                 else

@@ -18,7 +18,8 @@ using Android.App;
 using Sensus.Context;
 using System.Collections.Generic;
 using Sensus.Probes.Location;
-using Sensus.Android.Callbacks;
+using Sensus.Android.Notifications;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -39,8 +40,17 @@ namespace Sensus.Android.Probes.Location
 
             public Java.Lang.Object Invoke(Java.Lang.Object p0)
             {
-                _probe.StoreDatum(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon, _proximityEvent));
+                InvokeAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, _beacon, _proximityEvent));
                 return null;
+            }
+
+            /// <summary>
+            /// Re-declared <see cref="Invoke(Java.Lang.Object)"/> to properly await result.
+            /// </summary>
+            /// <param name="datum">Datum.</param>
+            private async void InvokeAsync(EstimoteBeaconDatum datum)
+            {
+                await _probe.StoreDatumAsync(datum);
             }
         }
 
@@ -56,11 +66,7 @@ namespace Sensus.Android.Probes.Location
         IProximityObserver _proximityObserver;
         IProximityObserverHandler _proximityObservationHandler;
 
-        public AndroidEstimoteBeaconProbe()
-        {
-        }
-
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                                                            .SetSmallIcon(Resource.Drawable.notification_icon_background)
@@ -91,11 +97,14 @@ namespace Sensus.Android.Probes.Location
 
             _proximityObservationHandler = _proximityObserver.AddProximityZones(zones.ToArray())
                                                              .Start();
+
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _proximityObservationHandler.Stop();
+            return Task.CompletedTask;
         }
     }
 }

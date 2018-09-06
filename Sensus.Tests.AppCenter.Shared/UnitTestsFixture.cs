@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Xamarin.UITest;
+using NUnit.Framework;
 using System;
 using System.Linq;
-using NUnit.Framework;
-using Xamarin.UITest;
 
 namespace Sensus.Tests.AppCenter.Shared
 {
@@ -27,65 +27,44 @@ namespace Sensus.Tests.AppCenter.Shared
         [SetUp]
         public void BeforeEachTest()
         {
-            // TODO: If the iOS app being tested is included in the solution then open
-            // the Unit Tests window, right click Test Apps, select Add App Project
-            // and select the app projects that should be tested.
-            //
-            // The iOS project should have the Xamarin.TestCloud.Agent NuGet package
-            // installed. To start the Test Cloud Agent the following code should be
-            // added to the FinishedLaunching method of the AppDelegate:
-            //
-            //    #if ENABLE_TEST_CLOUD
-            //    Xamarin.Calabash.Start();
-            //    #endif
             _app = ConfigureApp
 #if __IOS__
                    .iOS
 #elif __ANDROID__
                    .Android
 #endif
-                   // TODO: Update this path to point to your iOS app and uncomment the
-                   //code if the app is not included in the solution.
-                   //.AppBundle ("../../../iOS/bin/iPhoneSimulator/Debug/Sensus.iOS.Tests.AppCenter.iOS.app")
                    .StartApp();
         }
 
         [Test]
         public void UnitTests()
         {
-            string log = _app.WaitForElement(c => c.All().Marked("sensus-test-log"), timeout: TimeSpan.FromMinutes(2)).FirstOrDefault()?.Text;
-            Assert.NotNull(log);
-            Console.Out.WriteLine(log);
+            TimeSpan timeout = TimeSpan.FromMinutes(2);
 
-            string[] logLines = log.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-#if __IOS__
-            string[] resultParts = logLines.Last().Split(':');
-            Assert.AreEqual(resultParts.Length, 6);
-
-            int testsRun = int.Parse(resultParts[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsPassed = int.Parse(resultParts[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsFailed = int.Parse(resultParts[4].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsSkipped = int.Parse(resultParts[5].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-            int testsInconclusive = int.Parse(resultParts[3].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
-
-            Assert.True(testsRun == 148);  // will need to update this as we develop. ensures that tests are actually run.
-#elif __ANDROID__
-            string[] resultParts = logLines.Last().Split(',');
-            Assert.AreEqual(resultParts.Length, 5);
-
-            int testsRun = int.Parse(resultParts[0].Split(':')[1]);
-            int testsPassed = int.Parse(resultParts[1].Split(':')[1]);
-            int testsFailed = int.Parse(resultParts[2].Split(':')[1]);
-            int testsSkipped = int.Parse(resultParts[3].Split(':')[1]);
-            int testsInconclusive = int.Parse(resultParts[4].Split(':')[1]);
-
-            Assert.True(testsRun == 149);  // will need to update this as we develop. ensures that tests are actually run.
+#if __ANDROID__
+            string resultsStr = _app.WaitForElement(c => c.All().Marked("unit-test-results"), timeout: timeout).FirstOrDefault()?.Text;
+#elif __IOS__
+            _app.WaitForElement(c => c.ClassFull("UILabel").Text("Results"), timeout: timeout);
+            string resultsStr = _app.Query(c => c.ClassFull("UILabel")).SingleOrDefault(c => c.Text.StartsWith("Passed"))?.Text;
 #endif
-            Assert.AreEqual(testsRun, testsPassed);
-            Assert.AreEqual(testsFailed, 0);
-            Assert.AreEqual(testsSkipped, 0);
-            Assert.AreEqual(testsInconclusive, 0);
+
+            Assert.NotNull(resultsStr);
+
+            Console.Out.WriteLine("Test results:  " + resultsStr);
+
+            string[] results = resultsStr.Split();
+            Assert.AreEqual(results.Length, 1);
+
+            int testsPassed = int.Parse(results[0].Split(':')[1]);
+
+            int totalTests;
+#if __IOS__
+            totalTests = 154;
+#elif __ANDROID__
+            totalTests = 155;
+#endif
+
+            Assert.AreEqual(testsPassed, totalTests);
         }
     }
 }

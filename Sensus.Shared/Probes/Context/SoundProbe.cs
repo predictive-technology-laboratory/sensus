@@ -16,6 +16,7 @@ using System;
 using Plugin.Permissions.Abstractions;
 using Sensus.UI.UiProperties;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Context
 {
@@ -58,14 +59,14 @@ namespace Sensus.Probes.Context
             _sampleLengthMS = 5000;
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Microphone) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Microphone) != PermissionStatus.Granted)
             {
                 string error = "Microphone use is not permitted on this device. Cannot start sound probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }

@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using Sensus.Anonymization.Anonymizers;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Apps
 {
@@ -60,9 +61,9 @@ namespace Sensus.Probes.Apps
             }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             if (GetRequiredPermissionNames().Length == 0)
             {

@@ -26,6 +26,7 @@ using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using System.Reflection;
 using Sensus.Exceptions;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -152,14 +153,14 @@ namespace Sensus.Android.Probes.Apps
             }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             ObtainAccessToken(GetRequiredPermissionNames());
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -281,19 +282,19 @@ namespace Sensus.Android.Probes.Apps
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
             }
 
-            return data;
+            return Task.FromResult(data);
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (!HasValidAccessToken)
             {
-                restart = true;
+                result = HealthTestResult.Restart;
             }
 
-            return restart;
+            return result;
         }
 
         protected override ICollection<string> GetGrantedPermissions()

@@ -78,23 +78,23 @@ namespace Sensus.Android.Probes.Movement
         {
             _locationChangeRadiusMeters = 100;
 
-            AwarenessBroadcastReceiver.LocationChanged += (sender, e) =>
+            AwarenessBroadcastReceiver.LocationChanged += async (sender, e) =>
             {
-                RequestLocationSnapshotAsync();
+                await RequestLocationSnapshotAsync();
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             if (AwarenessApiClient.IsConnected)
             {
                 // we need location permission in order to snapshot / fence the user's location.
-                if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+                if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                 {
                     string error = "Geolocation is not permitted on this device. Cannot start location fences.";
-                    SensusServiceHelper.Get().FlashNotificationAsync(error);
+                    await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 }
             }
             else
@@ -103,45 +103,42 @@ namespace Sensus.Android.Probes.Movement
             }
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
-            base.StartListening();
+            await base.StartListeningAsync();
 
             // request a location to start location fencing
-            RequestLocationSnapshotAsync();
+            await RequestLocationSnapshotAsync();
         }
 
-        private void RequestLocationSnapshotAsync()
+        private async Task RequestLocationSnapshotAsync()
         {
-            Task.Run(async () =>
+            if (await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location) == PermissionStatus.Granted)
             {
-                if (await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location) == PermissionStatus.Granted)
-                {
-                    // store current location
-                    ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(AwarenessApiClient);
-                    global::Android.Locations.Location location = locationResult.Location;
-                    DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
-                    StoreDatum(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
+                // store current location
+                ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(AwarenessApiClient);
+                global::Android.Locations.Location location = locationResult.Location;
+                DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
+                await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
 
-                    // replace the previous location fence with one around the current location. additions and removals are handled
-                    // in the order specified below.
-                    FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
-                    UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
-                    AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
-                    UpdateRequestBuilder(locationFence, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Add, ref locationFenceRequestBuilder);
-                    UpdateFences(locationFenceRequestBuilder.Build());
-                }
-            });
+                // replace the previous location fence with one around the current location. additions and removals are handled
+                // in the order specified below.
+                FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
+                UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
+                AwarenessFence locationFence = LocationFence.Exiting(location.Latitude, location.Longitude, _locationChangeRadiusMeters);
+                UpdateRequestBuilder(locationFence, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Add, ref locationFenceRequestBuilder);
+                await UpdateFencesAsync(locationFenceRequestBuilder.Build());
+            }
         }
 
-        protected override void StopListening()
+        protected override async Task StopListeningAsync()
         {
             // remove location fence
             FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
             UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
-            UpdateFences(locationFenceRequestBuilder.Build());
+            await UpdateFencesAsync(locationFenceRequestBuilder.Build());
 
-            base.StopListening();
+            await base.StopListeningAsync();
         }
     }
 }

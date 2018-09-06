@@ -17,6 +17,7 @@ using Android.Gms.Awareness.Fence;
 using Sensus.Exceptions;
 using Sensus.Probes.Movement;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -45,33 +46,33 @@ namespace Sensus.Android.Probes.Movement
 
         public AndroidActivityProbe()
         {
-            AwarenessBroadcastReceiver.ActivityChanged += (sender, activityDatum) =>
+            AwarenessBroadcastReceiver.ActivityChanged += async (sender, activityDatum) =>
             {
-                StoreDatum(activityDatum);
+                await StoreDatumAsync(activityDatum);
             };
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
-            base.StartListening();
+            await base.StartListeningAsync();
 
             // add fences for all phases of all activities
-            AddPhasedFences(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
-            AddPhasedFences(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
-            AddPhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
-            AddPhasedFences(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
-            AddPhasedFences(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
-            AddPhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
-            AddPhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
+            await AddPhasedFencesAsync(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
+            await AddPhasedFencesAsync(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
+            await AddPhasedFencesAsync(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
+            await AddPhasedFencesAsync(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
+            await AddPhasedFencesAsync(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
+            await AddPhasedFencesAsync(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
+            await AddPhasedFencesAsync(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
         }
 
-        private void AddPhasedFences(int activityId, string activityName)
+        private async Task AddPhasedFencesAsync(int activityId, string activityName)
         {
             FenceUpdateRequestBuilder addFencesRequestBuilder = new FenceUpdateRequestBuilder();
             UpdateRequestBuilder(activityId, activityName, ActivityPhase.Starting, FenceUpdateAction.Add, ref addFencesRequestBuilder);
             UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Add, ref addFencesRequestBuilder);
             UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Add, ref addFencesRequestBuilder);
-            UpdateFences(addFencesRequestBuilder.Build());
+            await UpdateFencesAsync(addFencesRequestBuilder.Build());
         }
 
         private void UpdateRequestBuilder(int activityId, string activityName, ActivityPhase phase, FenceUpdateAction action, ref FenceUpdateRequestBuilder requestBuilder)
@@ -99,20 +100,20 @@ namespace Sensus.Android.Probes.Movement
             UpdateRequestBuilder(fence, activityName + "." + phase, action, ref requestBuilder);
         }
 
-        protected override void StopListening()
+        protected override async Task StopListeningAsync()
         {
-            RemovePhasedFences(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
-            RemovePhasedFences(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
-            RemovePhasedFences(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
-            RemovePhasedFences(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
-            RemovePhasedFences(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
-            RemovePhasedFences(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
-            RemovePhasedFences(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
+            await RemovePhasedFencesAsync(DetectedActivityFence.InVehicle, nameof(DetectedActivityFence.InVehicle));
+            await RemovePhasedFencesAsync(DetectedActivityFence.OnBicycle, nameof(DetectedActivityFence.OnBicycle));
+            await RemovePhasedFencesAsync(DetectedActivityFence.OnFoot, nameof(DetectedActivityFence.OnFoot));
+            await RemovePhasedFencesAsync(DetectedActivityFence.Running, nameof(DetectedActivityFence.Running));
+            await RemovePhasedFencesAsync(DetectedActivityFence.Still, nameof(DetectedActivityFence.Still));
+            await RemovePhasedFencesAsync(DetectedActivityFence.Unknown, nameof(DetectedActivityFence.Unknown));
+            await RemovePhasedFencesAsync(DetectedActivityFence.Walking, nameof(DetectedActivityFence.Walking));
 
-            base.StopListening();
+            await base.StopListeningAsync();
         }
 
-        private void RemovePhasedFences(int activityId, string activityName)
+        private async Task RemovePhasedFencesAsync(int activityId, string activityName)
         {
             try
             {
@@ -121,7 +122,7 @@ namespace Sensus.Android.Probes.Movement
                 UpdateRequestBuilder(activityId, activityName, ActivityPhase.During, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
                 UpdateRequestBuilder(activityId, activityName, ActivityPhase.Stopping, FenceUpdateAction.Remove, ref removeFencesRequestBuilder);
 
-                if (!UpdateFences(removeFencesRequestBuilder.Build()))
+                if (!(await UpdateFencesAsync(removeFencesRequestBuilder.Build())))
                 {
                     // we'll catch this immediately
                     throw new Exception("Failed to remove fence (e.g., timed out).");

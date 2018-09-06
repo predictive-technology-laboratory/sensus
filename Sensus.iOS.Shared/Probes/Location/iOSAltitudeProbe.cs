@@ -19,6 +19,7 @@ using Sensus.Probes.Location;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -26,14 +27,14 @@ namespace Sensus.iOS.Probes.Location
     {
         private CMAltimeter _altitudeChangeListener;
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             //the IsRelativeAltitudeAvailable is used to check to see if the device has altitude capablities based on
             //documentation here https://developer.apple.com/documentation/coremotion/cmaltimeter
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Sensors) == PermissionStatus.Granted && CMAltimeter.IsRelativeAltitudeAvailable)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted && CMAltimeter.IsRelativeAltitudeAvailable)
             {
                 _altitudeChangeListener = new CMAltimeter();
             }
@@ -42,28 +43,32 @@ namespace Sensus.iOS.Probes.Location
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "This device does not contain an altimeter, or the user has denied access to it. Cannot start altitude probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
-            _altitudeChangeListener?.StartRelativeAltitudeUpdates(new NSOperationQueue(), (data, error) =>
+            _altitudeChangeListener?.StartRelativeAltitudeUpdates(new NSOperationQueue(), async (data, error) =>
             {
                 if (data?.Pressure != null && error == null)
                 {
                     // iOS reports kilopascals, in order to share Altitude constructor with 
                     // Android, convert kPa to hPa (kPa * 10) 
                     // https://www.unitjuggler.com/convert-pressure-from-hPa-to-kPa.html?val=10
-                    StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
+                    await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
                 }
             });
+
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _altitudeChangeListener?.StopRelativeAltitudeUpdates();
+
+            return Task.CompletedTask;
         }
     }
 }

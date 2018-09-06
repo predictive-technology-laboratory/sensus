@@ -15,6 +15,7 @@
 using Android.Hardware;
 using Sensus.Probes.Movement;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -25,7 +26,7 @@ namespace Sensus.Android.Probes.Movement
 
         public AndroidAccelerometerProbe()
         {
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, e =>
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
             {
                 // should get x, y, and z values
                 if (e.Values.Count != 3 || Stabilizing)
@@ -41,27 +42,28 @@ namespace Sensus.Android.Probes.Movement
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                StoreDatum(new AccelerometerDatum(DateTimeOffset.UtcNow, e.Values[0] / GRAVITY, e.Values[1] / GRAVITY, e.Values[2] / GRAVITY));
+                await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, e.Values[0] / GRAVITY, e.Values[1] / GRAVITY, e.Values[2] / GRAVITY));
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _accelerometerListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override async Task StartListeningAsync()
         {
-            base.StartListening();
+            await base.StartListeningAsync();
 
             _accelerometerListener.Start();
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _accelerometerListener.Stop();
+            return Task.CompletedTask;
         }
     }
 }

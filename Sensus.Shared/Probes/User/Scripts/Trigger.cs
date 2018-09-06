@@ -141,7 +141,10 @@ namespace Sensus.Probes.User.Scripts
 
         public override string ToString()
         {
-            return $"{Probe.DisplayName} ({DatumPropertyName} {Condition} {_conditionValue})";
+            // if a protocol is deserialized from a platform with probes that do not exist in the current platform
+            // and if those probes are used in triggers, then we'll get null probe references in the triggers.
+            // accommodate this below with the null conditional check on Probe.
+            return $"{Probe?.DisplayName} ({DatumPropertyName} {Condition} {_conditionValue})";
         }
 
         public override bool Equals(object obj)

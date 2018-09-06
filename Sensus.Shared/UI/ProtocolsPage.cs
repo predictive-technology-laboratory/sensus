@@ -32,38 +32,35 @@ namespace Sensus.UI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
-        public static Task<bool> AuthenticateProtocolAsync(Protocol protocol)
+        public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
-            return Task.Run(async () =>
+            if (protocol.LockPasswordHash == "")
             {
-                if (protocol.LockPasswordHash == "")
+                return true;
+            }
+            else
+            {
+                Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
+
+                if (input == null)
                 {
-                    return true;
+                    return false;
                 }
                 else
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate \"" + protocol.Name + "\"", new SingleLineTextInput("Protocol Password:", Keyboard.Text, true), null, true, null, null, null, null, false);
+                    string password = input.Value as string;
 
-                    if (input == null)
+                    if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
                     {
-                        return false;
+                        return true;
                     }
                     else
                     {
-                        string password = input.Value as string;
-
-                        if (password != null && SensusServiceHelper.Get().GetHash(password) == protocol.LockPasswordHash)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
-                            return false;
-                        }
+                        await SensusServiceHelper.Get().FlashNotificationAsync("The password you entered was not correct.");
+                        return false;
                     }
                 }
-            });
+            }
         }
 
         private ListView _protocolsList;
@@ -159,7 +156,7 @@ namespace Sensus.UI
                     }
                 }
 
-                if (!selectedProtocol.Running && selectedProtocol.ScheduledStartCallback != null)
+                if (!selectedProtocol.Running && selectedProtocol.StartIsScheduled)
                 {
                     actions.Remove("Start");
                     actions.Insert(0, "Cancel Scheduled Start");
@@ -185,7 +182,7 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Confirm Cancel", "Are you sure you want to cancel " + selectedProtocol.Name + "?", "Yes", "No"))
                     {
-                        selectedProtocol.CancelScheduledStart();
+                        await selectedProtocol.CancelScheduledStartAsync();
                     }
                 }
                 else if (selectedAction == "Stop")
@@ -202,10 +199,10 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Status")
                 {
-                    List<Tuple<string, Dictionary<string, string>>> events = await selectedProtocol.TestHealthAsync(true);
-                    await Navigation.PushAsync(new ViewTextLinesPage("Status", events.SelectMany(healthEventNameProperties =>
+                    List<AnalyticsTrackedEvent> trackedEvents = await selectedProtocol.TestHealthAsync(true);
+                    await Navigation.PushAsync(new ViewTextLinesPage("Status", trackedEvents.SelectMany(trackedEvent =>
                     {
-                        return healthEventNameProperties.Item2.Select(propertyValue => healthEventNameProperties.Item1 + ":  " + propertyValue.Key + "=" + propertyValue.Value);
+                        return trackedEvent.Properties.Select(propertyValue => trackedEvent.Name + ":  " + propertyValue.Key + "=" + propertyValue.Value);
 
                     }).ToList()));
                 }
@@ -496,7 +493,7 @@ namespace Sensus.UI
                 }
                 else if (action == "New")
                 {
-                    Protocol.Create("New Protocol");
+                    await Protocol.CreateAsync("New Protocol");
                 }
 
                 if (protocol != null)
@@ -522,7 +519,7 @@ namespace Sensus.UI
             {
                 if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                 {
-                    SensusServiceHelper.Get().StopProtocols();
+                    await SensusServiceHelper.Get().StopProtocolsAsync();
 
                     (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
                 }

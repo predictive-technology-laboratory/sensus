@@ -12,106 +12,107 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Tests.Classes;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests.Sensus.Shared.Anonymization.Anonymizers
 {
-    [TestFixture]
+    
     public class LongitudeOffsetGpsAnonymizerTests
     {
-        [Test]
-        public void LongitudeInRangeNegativeTest()
+        public LongitudeOffsetGpsAnonymizerTests()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = 30
-            };
+            SensusServiceHelper.ClearSingleton();
+        }
+
+        [Fact]
+        public async Task LongitudeInRangeNegativeTest()
+        {
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = 30;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
             double offsetValue = (double)anonymizer.Apply(-160.0, protocol);
 
-            Assert.AreEqual(offsetValue, -130, 0.000001);
+            Assert.Equal(offsetValue, -130, 5);
         }
 
-        [Test]
-        public void LongitudeInRangePositiveTest()
+        [Fact]
+        public async Task LongitudeInRangePositiveTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = 20
-            };
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = 20;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
             double offsetValue = (double)anonymizer.Apply(65.0, protocol);
 
-            Assert.AreEqual(offsetValue, 85, 0.000001);
+            Assert.Equal(offsetValue, 85, 5);
         }
 
-        [Test]
-        public void LongitudeOutOfRangePositiveTest()
+        [Fact]
+        public async Task LongitudeOutOfRangePositiveTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = 20
-            };
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = 20;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
             double offsetValue = (double)anonymizer.Apply(170.0, protocol);
 
-            Assert.AreEqual(offsetValue, -170, 0.000001);
+            Assert.Equal(offsetValue, -170, 5);
         }
 
-        [Test]
-        public void LongitudeOutOfRangeNegativeTest()
+        [Fact]
+        public async Task LongitudeOutOfRangeNegativeTest()
         {
-            Protocol protocol = new Protocol("asdf")
-            {
-                GpsLongitudeAnonymizationStudyOffset = -185
-            };
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.GpsLongitudeAnonymizationStudyOffset = -185;
 
             LongitudeStudyOffsetGpsAnonymizer anonymizer = new LongitudeStudyOffsetGpsAnonymizer();
 
             double offsetValue = (double)anonymizer.Apply(-10.0, protocol);
 
-            Assert.AreEqual(offsetValue, 165, 0.000001);
+            Assert.Equal(offsetValue, 165, 5);
         }
 
-        [Test]
-        public void RandomParticipantOffsetsEqualTest()
+        [Fact]
+        public async Task RandomParticipantOffsetsEqualTest()
         {
             SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
 
-            Protocol protocol = new Protocol("asdf")
-            {
-                ParticipantId = "qwer"
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.ParticipantId = "qwer";
 
             double randomOffset1 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
             double randomOffset2 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
 
-            Assert.AreEqual(randomOffset1, randomOffset2, 0.000001);
+            Assert.Equal(randomOffset1, randomOffset2, 5);
         }
 
-        [Test]
-        public void RandomDeviceIdOffsetsEqualTest()
+        [Fact]
+        public async Task RandomDeviceIdOffsetsEqualTest()
         {
             SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
 
-            Protocol protocol = new Protocol("asdf")
-            {
-                ParticipantId = null
-            };
+            Protocol protocol = await Protocol.CreateAsync("asdf");
+            protocol.ParticipantId = null;
 
             double randomOffset1 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
             double randomOffset2 = LongitudeOffsetGpsAnonymizer.GetOffset(protocol.LongitudeOffsetParticipantSeededRandom);
 
-            Assert.AreEqual(randomOffset1, randomOffset2, 0.000001);
+            Assert.Equal(randomOffset1, randomOffset2, 5);
         }
     }
 }

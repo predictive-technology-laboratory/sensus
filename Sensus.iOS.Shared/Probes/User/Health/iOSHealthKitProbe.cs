@@ -18,6 +18,9 @@ using Foundation;
 using Newtonsoft.Json;
 using Sensus;
 using Sensus.Probes;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -44,30 +47,22 @@ namespace Sensus.iOS.Probes.User.Health
             _healthStore = new HKHealthStore();
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            // all HealthKit permissions were requested in a single batch when the protocol was started; however, HealthKit probes
-            // can also be started individually after the protocol is started by toggling Enabled on the probe page. in such cases
-            // we want to request permission for the HealthKit probe that was just started. if the permission associated with this
-            // probe was already requested, these calls will have no effect. even if the user previously denied access for this probe
-            // these calls will not do anything by design by iOS. however, if the user has never been prompted for the permission
-            // associated with this probe (i.e., the user is starting the probe by toggling Enabled), then the user will be prompted.
             if (HKHealthStore.IsHealthDataAvailable)
-            {                
+            {
                 NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(new HKObjectType[] { ObjectType });
-                ManualResetEvent authorizationWait = new ManualResetEvent(false);
-                _healthStore.RequestAuthorizationToShare(new NSSet(), objectTypesToRead,
-                    (success, error) =>
-                    {
-                        if (error != null)
-                            SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + error.Description, LoggingLevel.Normal, GetType());
 
-                        authorizationWait.Set();
-                    });
+                Tuple<bool, NSError> successError = await _healthStore.RequestAuthorizationToShareAsync(new NSSet(), objectTypesToRead);
 
-                authorizationWait.WaitOne();
+                if (!successError.Item1)
+                {
+                    string message = "Failed to request HealthKit authorization:  " + (successError.Item2?.ToString() ?? "[no details]");
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    throw new Exception(message);
+                }
             }
         }
     }

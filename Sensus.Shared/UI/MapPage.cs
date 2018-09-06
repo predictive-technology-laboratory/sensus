@@ -66,7 +66,7 @@ namespace Sensus.UI
                 FontSize = 20
             };
 
-            searchGoButton.Clicked += (o, e) =>
+            searchGoButton.Clicked += async (o, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(_searchEntry.Text))
                 {
@@ -81,7 +81,7 @@ namespace Sensus.UI
                         {
                             string errorMessage = "Failed to search for address:  " + ex.Message;
                             SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, GetType());
-                            SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                            await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
                         }
                         catch (Exception)
                         {
