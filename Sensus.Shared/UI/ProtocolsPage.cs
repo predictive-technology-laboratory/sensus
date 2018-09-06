@@ -407,7 +407,7 @@ namespace Sensus.UI
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-
+                            
                         }, null, true, "Group", null, null, null, false);
 
                     if (input == null)
@@ -485,7 +485,7 @@ namespace Sensus.UI
                         {
                             protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
                         }
-                        catch (Exception ex)
+                        catch(Exception ex)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
                         }
