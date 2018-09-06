@@ -275,8 +275,13 @@ namespace Sensus.Probes.User.Scripts
         [OnOffUiProperty("Use Trigger Timestamp In Subcaption:", true, 17)]
         public bool UseTriggerDatumTimestampInSubcaption { get; set; }
 
+        /// <summary>
+        /// Whether or not to force a local-to-remote transfer to run each time this survey is completed
+        /// by the user.
+        /// </summary>
+        /// <value><c>true</c> to force transfer on survey submission; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Force Remote Storage On Survey Submission:", true, 18)]
-        public bool ForceRemoteStorageOnSureySubmission { get; set; }
+        public bool ForceRemoteStorageOnSurveySubmission { get; set; }
 
         [JsonIgnore]
         public string Caption

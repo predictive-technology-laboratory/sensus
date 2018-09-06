@@ -61,7 +61,6 @@ namespace Sensus.UI
                 };
 
                 ContextActions.Add(deleteMenuItem);
-
             }
         }
 
@@ -128,10 +127,6 @@ namespace Sensus.UI
 
                 if (selectedScript.Valid)
                 {
-                    if(canceled == false && selectedScript.Runner.ForceRemoteStorageOnSureySubmission)
-                    {
-                        await selectedScript.Runner.Probe.Protocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
-                    }
                     // add completion time and remove all completion times before the participation horizon
                     lock (selectedScript.Runner.CompletionTimes)
                     {
@@ -152,6 +147,14 @@ namespace Sensus.UI
                 }
 
                 SensusServiceHelper.Get().Logger.Log("\"" + selectedScript.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
+
+                // run a local-to-remote transfer if desired, respecting wifi requirements. do this after everything above, as it may take
+                // quite some time to transfer the data depending on its size.
+                if (selectedScript.Valid && selectedScript.Runner.ForceRemoteStorageOnSurveySubmission)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Forcing a local-to-remote transfer.", LoggingLevel.Normal, typeof(Script));
+                    await selectedScript.Runner.Probe.Protocol.RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken.None);
+                }
             };
 
             // display an informative message when there are no surveys
