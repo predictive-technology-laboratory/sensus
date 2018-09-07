@@ -20,7 +20,6 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
 using System.Collections.Generic;
-using Sensus.DataStores.Local;
 
 namespace Sensus.UI
 {
