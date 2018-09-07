@@ -121,7 +121,6 @@ namespace Sensus.UI
                                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => input.Enabled = false);
                             }
                         }
-
                     }
                 }
 
