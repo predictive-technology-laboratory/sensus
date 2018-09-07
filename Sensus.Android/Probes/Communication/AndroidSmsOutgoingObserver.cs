@@ -14,8 +14,8 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
+using Android.App;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
@@ -26,15 +26,13 @@ namespace Sensus.Android.Probes.Communication
 {
     public class AndroidSmsOutgoingObserver : ContentObserver
     {
-        private global::Android.Content.Context _context;
-        private Action<SmsDatum> _outgoingSMS;
+        private Action<SmsDatum> _outgoingSmsCallback;
         private string _mostRecentlyObservedSmsURI;
 
-        public AndroidSmsOutgoingObserver(global::Android.Content.Context context, Action<SmsDatum> outgoingSmsCallback)
+        public AndroidSmsOutgoingObserver(Action<SmsDatum> outgoingSmsCallback)
             : base(null)
         {
-            _context = context;
-            _outgoingSMS = outgoingSmsCallback;
+            _outgoingSmsCallback = outgoingSmsCallback;
             _mostRecentlyObservedSmsURI = null;
         }
 
@@ -45,84 +43,74 @@ namespace Sensus.Android.Probes.Communication
 
         public override void OnChange(bool selfChange, global::Android.Net.Uri uri)
         {
-            //TODO:  It seems like this always fires on receipt, but it doesn't consistantly fire on MMS send for my LG G6 and it cannot be tested on the emulator.
             // for some reason, we get multiple calls to OnChange for the same outgoing text. ignore repeats.
             if (_mostRecentlyObservedSmsURI != null && uri.ToString() == _mostRecentlyObservedSmsURI)
             {
                 return;
             }
 
-            global::Android.Content.ContentResolver contentResolver = _context.ContentResolver;
-
             string body = null, toNumber = null;
             int type = -1;
             long unixTimeMS = -1;
-            ICursor query = null;
+            ICursor queryResults = null;
             try
             {
-                // https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
-                if (uri.ToString().StartsWith("content://sms/raw")) //is it an mms?
+                // process MMS:  https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
+                if (uri.ToString().StartsWith("content://sms/raw") || uri.ToString().StartsWith("content://mms-sms"))
                 {
-                    query = contentResolver.Query(global::Android.Net.Uri.Parse("content://mms-sms/conversations/"), null, null, null, "_id");
-                    if (query.MoveToLast())
+                    queryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms-sms/conversations/"), null, null, null, "_id");
+
+                    if (queryResults.MoveToLast())
                     {
-                        //TODO:  Do we want to filter out some message types/protocols like we do for the SMS?
+                        unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date")) * 1000;
 
-                        string messageType = query.GetString(query.GetColumnIndexOrThrow("ct_t"));
+                        int messageId = queryResults.GetInt(queryResults.GetColumnIndexOrThrow("_id"));
+                        ICursor innerQueryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms/part"), null, "mid=" + messageId, null, null);
 
-                        if (messageType == "application/vnd.wap.multipart.related" || messageType == "application/vnd.wap.multipart.mixed")
+                        try
                         {
-                            unixTimeMS = query.GetLong(query.GetColumnIndexOrThrow("date")) * 1000;
-                            int messageId = query.GetInt(query.GetColumnIndexOrThrow("_id"));
-                            ICursor innerQuery = _context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms/part"), null, "mid=" + messageId.ToString(), null, null);
-                            try
+                            if (innerQueryResults.MoveToFirst())
                             {
-                                if (innerQuery != null)
+                                if (innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("ct")) == "text/plain")
                                 {
-                                    innerQuery.MoveToFirst();
-                                    do
+                                    string data = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("_data"));
+
+                                    if (data == null)
                                     {
-                                        if (innerQuery.GetString(innerQuery.GetColumnIndexOrThrow("ct")) == "text/plain")
-                                        {
-                                            string data = innerQuery.GetString(innerQuery.GetColumnIndexOrThrow("_data"));
-                                            int partId = innerQuery.GetInt(innerQuery.GetColumnIndexOrThrow("_id"));
-
-                                            if (data != null)
-                                            {
-                                                body = GetMmsText(partId);
-                                            }
-                                            else
-                                            {
-                                                body = innerQuery.GetString(innerQuery.GetColumnIndexOrThrow("text"));
-                                            }
-                                            toNumber = getAddressNumber(messageId, 151); //137 is the from and 151 is the to
-                                        }
-
+                                        body = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("text"));
                                     }
-                                    while (innerQuery.MoveToNext());
+                                    else
+                                    {
+                                        int partId = innerQueryResults.GetInt(innerQueryResults.GetColumnIndexOrThrow("_id"));
+                                        body = GetMmsText(partId);
+                                    }
+
+                                    toNumber = GetAddressNumber(messageId, 151); // 137 is the from and 151 is the to
                                 }
                             }
-                            finally
+                        }
+                        finally
+                        {
+                            // always close cursor
+                            try
                             {
-                                // always close cursor
-                                try
-                                {
-                                    innerQuery.Close();
-                                }
-                                catch
-                                {
-                                }
+                                innerQueryResults.Close();
+                            }
+                            catch
+                            {
                             }
                         }
                     }
                 }
-                else //it is an SMS
+                // proces SMS
+                else
                 {
-                    query = _context.ContentResolver.Query(uri, null, null, null, null);
-                    if (query.MoveToNext())
+                    queryResults = Application.Context.ContentResolver.Query(uri, null, null, null, null);
+
+                    if (queryResults.MoveToNext())
                     {
-                        string protocol = query.GetString(query.GetColumnIndexOrThrow("protocol"));
-                        type = query.GetInt(query.GetColumnIndexOrThrow("type"));
+                        string protocol = queryResults.GetString(queryResults.GetColumnIndexOrThrow("protocol"));
+                        type = queryResults.GetInt(queryResults.GetColumnIndexOrThrow("type"));
 
                         int sentMessageType;
 
@@ -138,21 +126,20 @@ namespace Sensus.Android.Probes.Communication
                             sentMessageType = 2;
                         }
 
-                        if (protocol != null || type != sentMessageType) //TODO:  I am often getting a protocol of "0" for my sent sms messages.  
+                        if (protocol != null || type != sentMessageType)
                         {
                             return;
                         }
 
-                        toNumber = query.GetString(query.GetColumnIndexOrThrow("address"));
-                        unixTimeMS = query.GetLong(query.GetColumnIndexOrThrow("date"));
-                        body = query.GetString(query.GetColumnIndexOrThrow("body"));
+                        toNumber = queryResults.GetString(queryResults.GetColumnIndexOrThrow("address"));
+                        unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date"));
+                        body = queryResults.GetString(queryResults.GetColumnIndexOrThrow("body"));
                     }
                 }
-                if (string.IsNullOrWhiteSpace(body) == false)
-                {
-                    DateTimeOffset dotNetDateTime = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(unixTimeMS);
-                    _outgoingSMS(new SmsDatum(dotNetDateTime, null, toNumber, body, true));
 
+                if (!string.IsNullOrWhiteSpace(body))
+                {
+                    _outgoingSmsCallback(new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMS), null, toNumber, body, true));
                     _mostRecentlyObservedSmsURI = uri.ToString();
                 }
             }
@@ -166,7 +153,7 @@ namespace Sensus.Android.Probes.Communication
                 // always close cursor
                 try
                 {
-                    query.Close();
+                    queryResults.Close();
                 }
                 catch
                 {
@@ -174,20 +161,19 @@ namespace Sensus.Android.Probes.Communication
             }
         }
 
-
         private string GetMmsText(int id)
         {
             string text = null;
+
             Stream inputStream = null;
             try
             {
-                inputStream = _context.ContentResolver.OpenInputStream(global::Android.Net.Uri.Parse("content://mms/part/" + id.ToString()));
+                inputStream = Application.Context.ContentResolver.OpenInputStream(global::Android.Net.Uri.Parse("content://mms/part/" + id.ToString()));
 
                 if (inputStream != null)
                 {
                     text = new StreamReader(inputStream, Encoding.UTF8).ReadToEnd();
                 }
-
             }
             finally
             {
@@ -197,51 +183,48 @@ namespace Sensus.Android.Probes.Communication
                 }
                 catch { }
             }
+
             return text;
         }
 
-        private String getAddressNumber(int id, int type)
+        private String GetAddressNumber(int id, int type)
         {
-            string name = null;
-            ICursor cAdd = _context.ContentResolver.Query(global::Android.Net.Uri.Parse($"content://mms/{id}/addr"), null, "msg_id=" + id, null, null);
+            string number = null;
+
+            ICursor queryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse($"content://mms/{id}/addr"), null, "msg_id=" + id, null, null);
             try
             {
-                if (cAdd.MoveToFirst())
+                while (number == null && queryResults.MoveToNext())
                 {
-                    do
+                    if (queryResults.GetInt(queryResults.GetColumnIndexOrThrow("type")) == type)
                     {
-                        if (cAdd.GetInt(cAdd.GetColumnIndexOrThrow("type")) == type) //137 is the from and 151 is the too
+                        number = queryResults.GetString(queryResults.GetColumnIndexOrThrow("address"));
+
+                        if (number != null)
                         {
-                            string number = cAdd.GetString(cAdd.GetColumnIndexOrThrow("address"));
-                            if (number != null)
+                            try
                             {
-                                try
-                                {
-                                    long.Parse(number.Replace("-", ""));
-                                    name = number;
-                                }
-                                catch (Exception nfe)
-                                {
-                                    if (name == null)
-                                    {
-                                        name = number;
-                                    }
-                                }
+                                // ensure we have a string of digits
+                                long.Parse(number.Replace("-", ""));
+                            }
+                            catch (Exception)
+                            {
+                                number = null;
                             }
                         }
-                    } while (cAdd.MoveToNext());
+                    }
                 }
             }
             finally
             {
                 try
                 {
-                    cAdd?.Close();
+                    queryResults?.Close();
                 }
                 catch { }
             }
 
-            return name;
+            return number;
         }
     }
 }

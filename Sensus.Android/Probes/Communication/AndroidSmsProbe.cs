@@ -29,7 +29,7 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidSmsProbe()
         {
-            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, async outgoingSmsDatum =>
+            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(async outgoingSmsDatum =>
             {
                 // the observer doesn't set the from number (current device)
                 outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
@@ -71,6 +71,7 @@ namespace Sensus.Android.Probes.Communication
         protected override Task StartListeningAsync()
         {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
+            Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://mms-sms"), true, _smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
             return Task.CompletedTask;
         }
