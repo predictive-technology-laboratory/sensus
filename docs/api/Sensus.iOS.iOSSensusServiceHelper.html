@@ -95,6 +95,9 @@
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS">SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS</a>
     </div>
     <div>
+      <span class="xref">Sensus.SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID</span>
+    </div>
+    <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_APP_CENTER_KEY_ANDROID">SensusServiceHelper.APP_CENTER_KEY_ANDROID</a>
     </div>
     <div>
@@ -161,9 +164,6 @@
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StartAsync">SensusServiceHelper.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Start">SensusServiceHelper.Start()</a>
-    </div>
-    <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterProtocol_Sensus_Protocol_">SensusServiceHelper.RegisterProtocol(Protocol)</a>
     </div>
     <div>
@@ -225,6 +225,9 @@
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AssertNotOnMainThread_System_String_">SensusServiceHelper.AssertNotOnMainThread(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_System_Threading_CancellationToken_">SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopProtocols">SensusServiceHelper.StopProtocols()</a>
@@ -487,6 +490,58 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_OperatingSystem">SensusServiceHelper.OperatingSystem</a></div>
+  
+  
+  <a id="Sensus_iOS_iOSSensusServiceHelper_PushNotificationToken_" data-uid="Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken*"></a>
+  <h4 id="Sensus_iOS_iOSSensusServiceHelper_PushNotificationToken" data-uid="Sensus.iOS.iOSSensusServiceHelper.PushNotificationToken">PushNotificationToken</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string PushNotificationToken { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken">SensusServiceHelper.PushNotificationToken</a></div>
+  
+  
+  <a id="Sensus_iOS_iOSSensusServiceHelper_PushNotificationTokenData_" data-uid="Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData*"></a>
+  <h4 id="Sensus_iOS_iOSSensusServiceHelper_PushNotificationTokenData" data-uid="Sensus.iOS.iOSSensusServiceHelper.PushNotificationTokenData">PushNotificationTokenData</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NSData PushNotificationTokenData { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Foundation.NSData</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_iOS_iOSSensusServiceHelper_Version_" data-uid="Sensus.iOS.iOSSensusServiceHelper.Version*"></a>
@@ -830,6 +885,47 @@
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtectedFlashNotificationAsync_System_String_">SensusServiceHelper.ProtectedFlashNotificationAsync(String)</a></div>
   
   
+  <a id="Sensus_iOS_iOSSensusServiceHelper_RegisterWithNotificationHub_" data-uid="Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub*"></a>
+  <h4 id="Sensus_iOS_iOSSensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.iOS.iOSSensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})">RegisterWithNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void RegisterWithNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">hubSas</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__">SensusServiceHelper.RegisterWithNotificationHub(Tuple&lt;String, String&gt;)</a></div>
+  
+  
+  <a id="Sensus_iOS_iOSSensusServiceHelper_RequestNewPushNotificationToken_" data-uid="Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken*"></a>
+  <h4 id="Sensus_iOS_iOSSensusServiceHelper_RequestNewPushNotificationToken" data-uid="Sensus.iOS.iOSSensusServiceHelper.RequestNewPushNotificationToken">RequestNewPushNotificationToken()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void RequestNewPushNotificationToken()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RequestNewPushNotificationToken">SensusServiceHelper.RequestNewPushNotificationToken()</a></div>
+  
+  
   <a id="Sensus_iOS_iOSSensusServiceHelper_RunVoicePromptAsync_" data-uid="Sensus.iOS.iOSSensusServiceHelper.RunVoicePromptAsync*"></a>
   <h4 id="Sensus_iOS_iOSSensusServiceHelper_RunVoicePromptAsync_System_String_System_Action_" data-uid="Sensus.iOS.iOSSensusServiceHelper.RunVoicePromptAsync(System.String,System.Action)">RunVoicePromptAsync(String, Action)</h4>
   <div class="markdown level1 summary"></div>
@@ -1029,6 +1125,35 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_TextToSpeechAsync_System_String_">SensusServiceHelper.TextToSpeechAsync(String)</a></div>
+  
+  
+  <a id="Sensus_iOS_iOSSensusServiceHelper_UnregisterFromNotificationHub_" data-uid="Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub*"></a>
+  <h4 id="Sensus_iOS_iOSSensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.iOS.iOSSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})">UnregisterFromNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void UnregisterFromNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">hubSas</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__">SensusServiceHelper.UnregisterFromNotificationHub(Tuple&lt;String, String&gt;)</a></div>
 </article>
           </div>
           

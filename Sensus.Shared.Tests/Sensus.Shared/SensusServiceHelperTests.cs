@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,39 +14,30 @@
 
 using System.Linq;
 using Newtonsoft.Json;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Tests.Classes;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Tests
-{
-    [TestFixture]
+{    
     public class SensusServiceHelperTests
     {
-        #region Fields
         private JsonSerializerSettings _jsonSerializerSettings;
-        #endregion
 
-        #region SetUp
-        [SetUp]
-        public void TestFixtureSetUp()
+        public SensusServiceHelperTests()
         {
             _jsonSerializerSettings = SensusServiceHelper.JSON_SERIALIZER_SETTINGS;
 
             //we don't want to quietly handle errors when testing.
             _jsonSerializerSettings.Error = null;
-        }
 
-        [SetUp]
-        public void TestSetUp()
-        {
             SensusServiceHelper.ClearSingleton();
         }
-        #endregion
 
-        [Test]
+        [Fact]
         public void SerializeAndDeserializeNoExceptionTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -55,19 +46,19 @@ namespace Sensus.Tests
             service1.RegisteredProtocols.Clear();
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial1, _jsonSerializerSettings);
 
-            Assert.AreEqual(0, service1.RegisteredProtocols.Count);
-            Assert.AreEqual(0, service2.RegisteredProtocols.Count);
+            Assert.Equal(0, service1.RegisteredProtocols.Count);
+            Assert.Equal(0, service2.RegisteredProtocols.Count);
         }
 
-        [Test]
-        public void RegisteredOneProtocolTest()
+        [Fact]
+        public async Task RegisteredOneProtocolTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
             service1.RegisteredProtocols.Clear();
 
-            Protocol.Create("Test");
+            Protocol protocol = await Protocol.CreateAsync("asdf");
 
             var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
 
@@ -75,39 +66,39 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
-            Assert.AreEqual(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
+            Assert.Equal(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
+            Assert.Equal(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
         }
 
-        [Test]
-        public void RegisteredTwoProtocolsTest()
+        [Fact]
+        public async Task RegisteredTwoProtocolsTest()
         {
             TestSensusServiceHelper service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
             service1.RegisteredProtocols.Clear();
 
-            Protocol.Create("Test1");
-            Protocol.Create("Test2");
+            await Protocol.CreateAsync("Test1");
+            await Protocol.CreateAsync("Test2");
 
             var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
             SensusServiceHelper.ClearSingleton();
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(2, service1.RegisteredProtocols.Count);
-            Assert.AreEqual(2, service2.RegisteredProtocols.Count);
+            Assert.Equal(2, service1.RegisteredProtocols.Count);
+            Assert.Equal(2, service2.RegisteredProtocols.Count);
 
-            Assert.AreEqual(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
-            Assert.AreEqual(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
+            Assert.Equal(service1.RegisteredProtocols.Skip(0).Take(1).Single().Name, service2.RegisteredProtocols.Skip(0).Take(1).Single().Name);
+            Assert.Equal(service1.RegisteredProtocols.Skip(1).Take(1).Single().Name, service2.RegisteredProtocols.Skip(1).Take(1).Single().Name);
         }
 
-        [Test]
-        public void RunningProtocolIdsTest()
+        [Fact]
+        public async Task RunningProtocolIdsTest()
         {
             var service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
 
-            Protocol.Create("Test");
+            await Protocol.CreateAsync("Test");
 
             service1.RunningProtocolIds.Clear();
             service1.RunningProtocolIds.Add(service1.RegisteredProtocols.Single().Id);
@@ -118,11 +109,11 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
-            Assert.AreEqual(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
+            Assert.Equal(service1.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
+            Assert.Equal(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());
         }
 
-        [Test]
+        [Fact]
         public void PointsOfInterestTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -137,11 +128,11 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
 
-            Assert.AreEqual(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
-            Assert.AreEqual(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
+            Assert.Equal(service1.PointsOfInterest.Count, service2.PointsOfInterest.Count);
+            Assert.Equal(service1.PointsOfInterest.Single().Name, service2.PointsOfInterest.Single().Name);
         }
 
-        [Test]
+        [Fact]
         public void FlashNotificationsEnabledTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -155,7 +146,7 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            Assert.Equal(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
 
             service1.FlashNotificationsEnabled = false;
 
@@ -165,10 +156,10 @@ namespace Sensus.Tests
 
             service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
+            Assert.Equal(service1.FlashNotificationsEnabled, service2.FlashNotificationsEnabled);
         }
 
-        [Test]
+        [Fact]
         public void ScriptsToRunTest()
         {
             var service1 = new TestSensusServiceHelper();
@@ -184,12 +175,12 @@ namespace Sensus.Tests
 
             var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial);
 
-            Assert.AreEqual(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
-            Assert.AreEqual(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
+            Assert.Equal(service1.ScriptsToRun.Count, service2.ScriptsToRun.Count);
+            Assert.Equal(service1.ScriptsToRun.Single().Id, service2.ScriptsToRun.Single().Id);
         }
 
-        [Test]
-        public void ScriptsDisplayDateTimeOrderTest()
+        [Fact]
+        public async Task ScriptsDisplayDateTimeOrderTest()
         {
             var service1 = new TestSensusServiceHelper();
             SensusServiceHelper.Initialize(() => service1);
@@ -200,16 +191,16 @@ namespace Sensus.Tests
             {
                 Script script = new Script(runner);
                 script.ScheduledRunTime = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero).AddMinutes(random.Next(-100000, 100000));
-                service1.AddScript(script, RunMode.Multiple);
+                await service1.AddScriptAsync(script, RunMode.Multiple);
             }
 
             Script scriptMin = new Script(runner);
             scriptMin.ScheduledRunTime = DateTimeOffset.MinValue;
-            service1.AddScript(scriptMin, RunMode.Multiple);
+            await service1.AddScriptAsync(scriptMin, RunMode.Multiple);
 
             Script scriptMax = new Script(runner);
             scriptMax.ScheduledRunTime = DateTimeOffset.MaxValue;
-            service1.AddScript(scriptMax, RunMode.Multiple);
+            await service1.AddScriptAsync(scriptMax, RunMode.Multiple);
 
             for (int i = 1; i < service1.ScriptsToRun.Count; ++i)
             {

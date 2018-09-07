@@ -19,6 +19,7 @@ using Sensus.Probes.Location;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Movement
 {
@@ -46,33 +47,33 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start speed probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void InternalStart()
+        protected override async Task ProtectedStartAsync()
         {
             // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
             _previousPosition = null;
 
-            base.InternalStart();
+            await base.ProtectedStartAsync();
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            SpeedDatum datum = null;
+            List<Datum> data = new List<Datum>();
 
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
+            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
 
             if (currentPosition == null)
             {
@@ -88,20 +89,13 @@ namespace Sensus.Probes.Movement
                     }
                     else if (currentPosition.Timestamp > _previousPosition.Timestamp)  // it has happened (rarely) that positions come in out of order...drop any such positions.
                     {
-                        datum = new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition);
+                        data.Add(new SpeedDatum(currentPosition.Timestamp, _previousPosition, currentPosition));
                         _previousPosition = currentPosition;
                     }
                 }
             }
 
-            if (datum == null)
-            {
-                return new Datum[] { };  // datum will be null on the first poll and where polls return locations out of order (rare). these should count toward participation.
-            }
-            else
-            {
-                return new Datum[] { datum };
-            }
+            return data;
         }
 
         protected override ChartSeries GetChartSeries()

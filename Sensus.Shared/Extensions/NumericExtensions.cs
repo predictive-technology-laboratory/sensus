@@ -63,5 +63,10 @@ namespace Sensus.Extensions
         {
             return wholeNumber * (int)Math.Round(value / wholeNumber);
         }
+
+        public static double NextDouble(this Random random, double min, double max)
+        {
+            return min + random.NextDouble() * (max - min);
+        }
     }
 }

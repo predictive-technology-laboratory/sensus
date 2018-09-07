@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using Plugin.Geolocator.Abstractions;
 using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.Probes.Location
 {
@@ -44,23 +46,23 @@ namespace Sensus.Probes.Location
             get { return typeof(LocationDatum); }
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
             
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start location probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected sealed override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected sealed override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken, false);
+            Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken, false);
 
             if (currentPosition == null)
             {
@@ -68,7 +70,7 @@ namespace Sensus.Probes.Location
             }
             else
             {
-                return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) };
+                return new Datum[] { new LocationDatum(currentPosition.Timestamp, currentPosition.Accuracy, currentPosition.Latitude, currentPosition.Longitude) }.ToList();
             }
         }
 

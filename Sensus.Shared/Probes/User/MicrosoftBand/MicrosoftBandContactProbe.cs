@@ -49,25 +49,22 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected override void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<BandContactReading> args)
         {
-            Task.Run(() =>
+            try
             {
-                try
-                {
-                    ContactState state = args.SensorReading.State;
+                ContactState state = args.SensorReading.State;
 
-                    if (_previousState == null || state != _previousState.Value)
-                    {
-                        ContactStateChanged?.Invoke(this, state);
-                        _previousState = state;
-                    }
-                }
-                catch (Exception ex)
+                if (_previousState == null || state != _previousState.Value)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Error processing Band contact change:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    ContactStateChanged?.Invoke(this, state);
+                    _previousState = state;
                 }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Error processing Band contact change:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
 
-                base.ReadingChangedAsync(sender, args);
-            });
+            base.ReadingChangedAsync(sender, args);
         }
 
         protected override Datum GetDatumFromReading(BandContactReading reading)

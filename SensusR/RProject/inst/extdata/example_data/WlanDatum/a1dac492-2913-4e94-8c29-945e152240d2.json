@@ -1,3 +1,0 @@
-[
-{"$type":"SensusService.Probes.Network.WlanDatum, SensusAndroid","AccessPointBSSID":"88:f7:c7:5f:51:57","Id":"524da5e0-5817-4002-9655-dfdb70e66f7d","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T09:47:57.234687+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
-]

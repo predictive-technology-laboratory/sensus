@@ -4,8 +4,9 @@
 \alias{sensus.read.json.files}
 \title{Read JSON-formatted Sensus data.}
 \usage{
-sensus.read.json.files(data.path, is.directory = TRUE, recursive = TRUE,
-  convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
+sensus.read.json.files(data.path, is.directory = TRUE,
+  recursive = TRUE, convert.to.local.timezone = TRUE,
+  local.timezone = Sys.timezone())
 }
 \arguments{
 \item{data.path}{Path to Sensus JSON data (either a file or a directory).}

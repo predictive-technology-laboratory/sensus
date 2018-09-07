@@ -15,6 +15,7 @@
 using Android.Hardware;
 using Sensus.Probes.Location;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Location
 {
@@ -24,13 +25,8 @@ namespace Sensus.Android.Probes.Location
 
         public AndroidAltitudeProbe()
         {
-            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, e =>
+            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, async e =>
             {
-                // http://www.srh.noaa.gov/images/epz/wxcalc/pressureAltitude.pdf
-                double hPa = e.Values[0];
-                double stdPressure = 1013.25;
-                double altitude = (1 - Math.Pow((hPa / stdPressure), 0.190284)) * 145366.45;
-
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
                 // compare data across sensors, phones, and android versions. using DateTimeOffset.UtcNow will cause imprecision due to
@@ -39,25 +35,27 @@ namespace Sensus.Android.Probes.Location
                 // until the cpu wakes up, at which time any cached readings will be delivered in bulk to sensus. each of these readings
                 // will be timestamped with similar times by the following line of code, when in reality they originated much earlier. this
                 // will only happen when all listening probes are configured to allow the device to sleep.
-                StoreDatum(new AltitudeDatum(DateTimeOffset.UtcNow, -1, altitude));
+                await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, e.Values[0]));
             });
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             _altitudeListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             _altitudeListener.Start();
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             _altitudeListener.Stop();
+            return Task.CompletedTask;
         }
     }
 }

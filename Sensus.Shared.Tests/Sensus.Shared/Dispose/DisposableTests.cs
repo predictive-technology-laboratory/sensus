@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Dispose;
 
 namespace Sensus.Tests.Dispose
 {
-    [TestFixture]
+    
     public class DisposableTests
     {
         #region Private Classes
@@ -52,53 +52,53 @@ namespace Sensus.Tests.Dispose
         }
         #endregion
 
-        [Test]
+        [Fact]
         public void BadPatternThrowsException()
         {
             using (var badPattern = new BadPattern())
             {
-                Assert.Throws<InvalidOperationException>(badPattern.Dispose);
+                Assert.Throws(typeof(InvalidOperationException), (Action)badPattern.Dispose);
 
                 badPattern.FixDispose = true;
             }
         }
 
-        [Test]
+        [Fact]
         public void GoodPatternThrowsNoException()
         {
             using (var goodPattern = new GoodPattern())
             {
-                Assert.DoesNotThrow(goodPattern.Dispose);
+                goodPattern.Dispose();
             }
         }
 
-        [Test]
+        [Fact]
         public void GoodPatternMultiDisposeThrowsNoException()
         {
             using (var goodPattern = new GoodPattern())
             {
-                Assert.DoesNotThrow(goodPattern.Dispose);
-                Assert.DoesNotThrow(goodPattern.Dispose);
+                goodPattern.Dispose();
+                goodPattern.Dispose();
             }
         }
 
-        [Test]
+        [Fact]
         public void GoodPatternDisposeCheckPassesBeforeDispose()
         {
             using (var goodPattern = new GoodPattern())
             {
-                Assert.DoesNotThrow(goodPattern.DisposeCheck);
+                goodPattern.DisposeCheck();
             }
         }
 
-        [Test]
+        [Fact]
         public void GoodPatternDisposeCheckFailsAfterDispose()
         {
             using (var goodPattern = new GoodPattern())
             {
                 goodPattern.Dispose();
 
-                Assert.Throws<ObjectDisposedException>(goodPattern.DisposeCheck);
+                Assert.Throws(typeof(ObjectDisposedException), (Action)goodPattern.DisposeCheck);
             }
         }
     }

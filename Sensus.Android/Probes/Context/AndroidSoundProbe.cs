@@ -17,12 +17,14 @@ using System.Threading;
 using System.Collections.Generic;
 using Android.Media;
 using Sensus.Probes.Context;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.Android.Probes.Context
 {
     public class AndroidSoundProbe : SoundProbe
     {
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             MediaRecorder recorder = null;
 
@@ -38,10 +40,10 @@ namespace Sensus.Android.Probes.Context
 
                 // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
                 int dummy = recorder.MaxAmplitude;
+                await Task.Delay(SampleLengthMS);
+                double decibels = 20 * Math.Log10(recorder.MaxAmplitude);  // http://www.mathworks.com/help/signal/ref/mag2db.html
 
-                Thread.Sleep(SampleLengthMS);
-
-                return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, 20 * Math.Log10(recorder.MaxAmplitude)) };  // http://www.mathworks.com/help/signal/ref/mag2db.html
+                return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
             }
             finally
             {

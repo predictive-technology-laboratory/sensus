@@ -158,9 +158,6 @@
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StartAsync">SensusServiceHelper.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Start">SensusServiceHelper.Start()</a>
-    </div>
-    <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterProtocol_Sensus_Protocol_">SensusServiceHelper.RegisterProtocol(Protocol)</a>
     </div>
     <div>
@@ -222,6 +219,9 @@
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AssertNotOnMainThread_System_String_">SensusServiceHelper.AssertNotOnMainThread(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UpdatePushNotificationRegistrationsAsync_System_Threading_CancellationToken_">SensusServiceHelper.UpdatePushNotificationRegistrationsAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopProtocols">SensusServiceHelper.StopProtocols()</a>
@@ -466,6 +466,33 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_OperatingSystem">SensusServiceHelper.OperatingSystem</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_PushNotificationToken_" data-uid="Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_PushNotificationToken" data-uid="Sensus.Android.AndroidSensusServiceHelper.PushNotificationToken">PushNotificationToken</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string PushNotificationToken { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken">SensusServiceHelper.PushNotificationToken</a></div>
   
   
   <a id="Sensus_Android_AndroidSensusServiceHelper_UserDeniedBluetoothEnable_" data-uid="Sensus.Android.AndroidSensusServiceHelper.UserDeniedBluetoothEnable*"></a>
@@ -939,6 +966,35 @@
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtectedFlashNotificationAsync_System_String_">SensusServiceHelper.ProtectedFlashNotificationAsync(String)</a></div>
   
   
+  <a id="Sensus_Android_AndroidSensusServiceHelper_RegisterWithNotificationHub_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})">RegisterWithNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void RegisterWithNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">hubSas</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__">SensusServiceHelper.RegisterWithNotificationHub(Tuple&lt;String, String&gt;)</a></div>
+  
+  
   <a id="Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification_" data-uid="Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification*"></a>
   <h4 id="Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification" data-uid="Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification">ReissueForegroundServiceNotification()</h4>
   <div class="markdown level1 summary"></div>
@@ -947,6 +1003,18 @@
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void ReissueForegroundServiceNotification()</code></pre>
   </div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_RequestNewPushNotificationToken_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_RequestNewPushNotificationToken" data-uid="Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken">RequestNewPushNotificationToken()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void RequestNewPushNotificationToken()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RequestNewPushNotificationToken">SensusServiceHelper.RequestNewPushNotificationToken()</a></div>
   
   
   <a id="Sensus_Android_AndroidSensusServiceHelper_RunActionUsingMainActivityAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.RunActionUsingMainActivityAsync*"></a>
@@ -1269,6 +1337,35 @@ or not to hold the action for later when the activity is refocused.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_TextToSpeechAsync_System_String_">SensusServiceHelper.TextToSpeechAsync(String)</a></div>
+  
+  
+  <a id="Sensus_Android_AndroidSensusServiceHelper_UnregisterFromNotificationHub_" data-uid="Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})">UnregisterFromNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void UnregisterFromNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">hubSas</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__">SensusServiceHelper.UnregisterFromNotificationHub(Tuple&lt;String, String&gt;)</a></div>
 </article>
           </div>
           

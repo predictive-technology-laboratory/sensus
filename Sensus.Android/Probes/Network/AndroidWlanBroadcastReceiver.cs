@@ -21,8 +21,6 @@ using System;
 
 namespace Sensus.Android.Probes.Network
 {
-    [BroadcastReceiver]
-    [IntentFilter(new string[] { ConnectivityManager.ConnectivityAction }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidWlanBroadcastReceiver : BroadcastReceiver
     {
         public static event EventHandler<WlanDatum> WIFI_CONNECTION_CHANGED;

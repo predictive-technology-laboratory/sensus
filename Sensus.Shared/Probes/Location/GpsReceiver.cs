@@ -42,13 +42,12 @@ namespace Sensus.Probes.Location
         private event EventHandler<PositionEventArgs> PositionChanged;
 
         private IGeolocator _locator;
-        private bool _readingIsComing;
-        private ManualResetEvent _readingWait;
-        private Position _reading;
-        private int _readingTimeoutMS;
+        private TimeSpan _readingTimeout;
         private List<Tuple<EventHandler<PositionEventArgs>, bool>> _listenerHeadings;
 
-        private readonly object _locker = new object();
+        private readonly object _readingLocker = new object();
+        private TaskCompletionSource<Position> _readingCompletionSource;
+        private bool _takingReading;
 
         public IGeolocator Locator
         {
@@ -70,10 +69,7 @@ namespace Sensus.Probes.Location
 
         private GpsReceiver()
         {
-            _readingIsComing = false;
-            _readingWait = new ManualResetEvent(false);
-            _reading = null;
-            _readingTimeoutMS = 120000;
+            _readingTimeout = TimeSpan.FromMinutes(2);
             _listenerHeadings = new List<Tuple<EventHandler<PositionEventArgs>, bool>>();
             _locator = CrossGeolocator.Current;
             _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
@@ -85,9 +81,9 @@ namespace Sensus.Probes.Location
             };
         }
 
-        public async void AddListener(EventHandler<PositionEventArgs> listener, bool includeHeading)
+        public async Task AddListenerAsync(EventHandler<PositionEventArgs> listener, bool includeHeading)
         {
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 throw new Exception("Could not access GPS.");
             }
@@ -110,7 +106,7 @@ namespace Sensus.Probes.Location
             SensusServiceHelper.Get().Logger.Log("GPS receiver is now listening for changes.", LoggingLevel.Normal, GetType());
         }
 
-        public async void RemoveListener(EventHandler<PositionEventArgs> listener)
+        public async Task RemoveListenerAsync(EventHandler<PositionEventArgs> listener)
         {
             if (ListeningForChanges)
             {
@@ -154,89 +150,64 @@ namespace Sensus.Probes.Location
             return settings;
         }
 
-        /// <summary>
-        /// Gets a GPS reading. Will block the current thread while waiting for a GPS reading. Should not
-        /// be called from the main / UI thread, since GPS runs on main thread (will deadlock). If you need
-        /// to get a reading from the UI thread, call GetReadingAsync instead.
-        /// </summary>
-        /// <returns>The reading.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading. Note that, on Android, this
-        /// may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user's permission prior to
-        /// calling this method.</param>
-        public Position GetReading(CancellationToken cancellationToken, bool checkAndObtainPermission)
+        public async Task<Position> GetReadingAsync(CancellationToken cancellationToken, bool checkAndObtainPermission)
         {
-            lock (_locker)
+            bool takeReading = false;
+
+            lock (_readingLocker)
             {
-                if (checkAndObtainPermission && SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+                if (!_takingReading)
                 {
-                    return null;
+                    _takingReading = true;
+                    _readingCompletionSource = new TaskCompletionSource<Position>();
+                    takeReading = true;
                 }
+            }
 
-                if (_readingIsComing)
-                {
-                    SensusServiceHelper.Get().Logger.Log("A GPS reading is coming. Will wait for it.", LoggingLevel.Debug, GetType());
-                }
-                else
-                {
-                    _readingIsComing = true;  // tell any subsequent, concurrent callers that we're taking a reading
-                    _readingWait.Reset();  // make them wait
+            Position reading = null;
 
-                    Task.Run(async () =>
+            if (takeReading)
+            {
+                try
+                {
+                    if (checkAndObtainPermission && await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
                     {
-                        try
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
+                        throw new Exception("Failed to obtain Location permission from user.");
+                    }
 
-                            DateTimeOffset readingStart = DateTimeOffset.UtcNow;
-                            _locator.DesiredAccuracy = SensusServiceHelper.Get().GpsDesiredAccuracyMeters;
-                            Position newReading = await _locator.GetPositionAsync(TimeSpan.FromMilliseconds(_readingTimeoutMS), cancellationToken);
-                            DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
+                    SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
 
-                            if (newReading != null)
-                            {
-                                // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
-                                _reading = new Position(newReading);
+                    DateTimeOffset readingStart = DateTimeOffset.UtcNow;
+                    reading = await _locator.GetPositionAsync(_readingTimeout, cancellationToken);
+                    DateTimeOffset readingEnd = DateTimeOffset.UtcNow;
 
-                                SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("GPS reading failed:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            _reading = null;
-                        }
+                    if (reading != null)
+                    {
+                        // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
+                        reading = new Position(reading);
 
-                        _readingWait.Set();  // tell anyone waiting on the shared reading that it is ready
-                        _readingIsComing = false;  // direct any future calls to this method to get their own reading
-                    });
+                        SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("GPS reading failed:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    reading = null;
+                }
+                finally
+                {
+                    _readingCompletionSource.SetResult(reading);
+                    _takingReading = false;
                 }
             }
-
-            _readingWait.WaitOne(_readingTimeoutMS);
-
-            if (_reading == null)
+            else
             {
-                SensusServiceHelper.Get().Logger.Log("GPS reading is null.", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Waiting for reading...", LoggingLevel.Normal, GetType());
+                reading = await _readingCompletionSource.Task;
+                SensusServiceHelper.Get().Logger.Log("..." + (reading == null ? " null " : "") + " reading arrived.", LoggingLevel.Normal, GetType());
             }
 
-            return _reading;
-        }
-
-        /// <summary>
-        /// Gets a GPS reading.
-        /// </summary>
-        /// <returns>The reading.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        /// <param name="checkAndObtainPermission">Whether or not to check for and obtain permission for the reading. Note that, on Android, this
-        /// may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user's permission prior to
-        /// calling this method.</param>
-        public Task<Position> GetReadingAsync(CancellationToken cancellationToken, bool checkAndObtainPermission)
-        {
-            return Task.Run(() =>
-            {
-                return GetReading(cancellationToken, checkAndObtainPermission);
-            });
+            return reading;
         }
     }
 }

@@ -37,6 +37,9 @@ using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using System.Threading.Tasks;
 using Sensus.Context;
+using Firebase.Iid;
+using Sensus.Exceptions;
+using WindowsAzure.Messaging;
 
 namespace Sensus.Android
 {
@@ -184,6 +187,14 @@ namespace Sensus.Android
             }
         }
 
+        public override string PushNotificationToken
+        {
+            get
+            {
+                return FirebaseInstanceId.Instance.Token;
+            }
+        }
+
         public AndroidSensusServiceHelper()
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
@@ -309,80 +320,74 @@ namespace Sensus.Android
         #endregion
 
         #region miscellaneous platform-specific functions
-        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override async Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            return Task.Run(async () =>
+            try
             {
-                try
-                {
-                    Intent intent = new Intent(Intent.ActionGetContent);
-                    intent.SetType("*/*");
-                    intent.AddCategory(Intent.CategoryOpenable);
+                Intent intent = new Intent(Intent.ActionGetContent);
+                intent.SetType("*/*");
+                intent.AddCategory(Intent.CategoryOpenable);
 
-                    await RunActionUsingMainActivityAsync(mainActivity =>
+                await RunActionUsingMainActivityAsync(mainActivity =>
+                {
+                    mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, async result =>
                     {
-                        mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, result =>
+                        if (result != null && result.Item1 == Result.Ok)
                         {
-                            if (result != null && result.Item1 == Result.Ok)
+                            try
                             {
-                                try
+                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
                                 {
-                                    using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
-                                    {
-                                        callback(file.ReadToEnd());
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    FlashNotificationAsync("Error reading text file:  " + ex.Message);
+                                    callback(file.ReadToEnd());
                                 }
                             }
-                        });
+                            catch (Exception ex)
+                            {
+                                await FlashNotificationAsync("Error reading text file:  " + ex.Message);
+                            }
+                        }
+                    });
 
-                    }, true, false);
-                }
-                catch (ActivityNotFoundException)
-                {
-                    await FlashNotificationAsync("Please install a file manager from the Apps store.");
-                }
-                catch (Exception ex)
-                {
-                    await FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
-                }
-            });
+                }, true, false);
+            }
+            catch (ActivityNotFoundException)
+            {
+                await FlashNotificationAsync("Please install a file manager from the Apps store.");
+            }
+            catch (Exception ex)
+            {
+                await FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
+            }
         }
 
-        public override Task ShareFileAsync(string path, string subject, string mimeType)
+        public override async Task ShareFileAsync(string path, string subject, string mimeType)
         {
-            return Task.Run(async () =>
+            try
             {
-                try
+                Intent intent = new Intent(Intent.ActionSend);
+                intent.SetType(mimeType);
+                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+
+                if (!string.IsNullOrWhiteSpace(subject))
                 {
-                    Intent intent = new Intent(Intent.ActionSend);
-                    intent.SetType(mimeType);
-                    intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                    if (!string.IsNullOrWhiteSpace(subject))
-                    {
-                        intent.PutExtra(Intent.ExtraSubject, subject);
-                    }
-
-                    Java.IO.File file = new Java.IO.File(path);
-                    global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
-                    intent.PutExtra(Intent.ExtraStream, uri);
-
-                    // run from main activity to get a smoother transition back to sensus
-                    await RunActionUsingMainActivityAsync(mainActivity =>
-                    {
-                        mainActivity.StartActivity(intent);
-
-                    }, true, false);
+                    intent.PutExtra(Intent.ExtraSubject, subject);
                 }
-                catch (Exception ex)
+
+                Java.IO.File file = new Java.IO.File(path);
+                global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                intent.PutExtra(Intent.ExtraStream, uri);
+
+                // run from main activity to get a smoother transition back to sensus
+                await RunActionUsingMainActivityAsync(mainActivity =>
                 {
-                    Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            });
+                    mainActivity.StartActivity(intent);
+
+                }, true, false);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
 
         public override Task SendEmailAsync(string toAddress, string subject, string message)
@@ -400,129 +405,122 @@ namespace Sensus.Android
             }, true, false);
         }
 
-        public override Task TextToSpeechAsync(string text)
+        public override async Task TextToSpeechAsync(string text)
         {
-            return Task.Run(async () =>
-            {
-                AndroidTextToSpeech textToSpeech = new AndroidTextToSpeech(_service);
-                await textToSpeech.SpeakAsync(text);
-                textToSpeech.Dispose();
-            });
+            AndroidTextToSpeech textToSpeech = new AndroidTextToSpeech(_service);
+            await textToSpeech.SpeakAsync(text);
+            textToSpeech.Dispose();
         }
 
-        public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
+        public override async Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
-            return Task.Run(async () =>
+            string input = null;
+            ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
+
+            await RunActionUsingMainActivityAsync(mainActivity =>
             {
-                string input = null;
-                ManualResetEvent dialogDismissWait = new ManualResetEvent(false);
-
-                await RunActionUsingMainActivityAsync(mainActivity =>
+                mainActivity.RunOnUiThread(() =>
                 {
-                    mainActivity.RunOnUiThread(() =>
+                    #region set up dialog
+                    TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
+                    EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
+                    LinearLayout scrollLayout = new LinearLayout(mainActivity) { Orientation = global::Android.Widget.Orientation.Vertical };
+                    scrollLayout.AddView(promptView);
+                    scrollLayout.AddView(inputEdit);
+                    ScrollView scrollView = new ScrollView(mainActivity);
+                    scrollView.AddView(scrollLayout);
+
+                    AlertDialog dialog = new AlertDialog.Builder(mainActivity)
+                        .SetTitle("Sensus is requesting input...")
+                        .SetView(scrollView)
+                        .SetPositiveButton("OK", (o, e) =>
+                        {
+                            input = inputEdit.Text;
+                        })
+                        .SetNegativeButton("Cancel", (o, e) =>
+                        {
+                        })
+                        .Create();
+
+                    dialog.DismissEvent += (o, e) =>
                     {
-                        #region set up dialog
-                        TextView promptView = new TextView(mainActivity) { Text = prompt, TextSize = 20 };
-                        EditText inputEdit = new EditText(mainActivity) { TextSize = 20 };
-                        LinearLayout scrollLayout = new LinearLayout(mainActivity) { Orientation = global::Android.Widget.Orientation.Vertical };
-                        scrollLayout.AddView(promptView);
-                        scrollLayout.AddView(inputEdit);
-                        ScrollView scrollView = new ScrollView(mainActivity);
-                        scrollView.AddView(scrollLayout);
+                        dialogDismissWait.Set();
+                    };
 
-                        AlertDialog dialog = new AlertDialog.Builder(mainActivity)
-                            .SetTitle("Sensus is requesting input...")
-                            .SetView(scrollView)
-                            .SetPositiveButton("OK", (o, e) =>
-                            {
-                                input = inputEdit.Text;
-                            })
-                            .SetNegativeButton("Cancel", (o, e) =>
-                            {
-                            })
-                            .Create();
+                    ManualResetEvent dialogShowWait = new ManualResetEvent(false);
 
-                        dialog.DismissEvent += (o, e) =>
+                    dialog.ShowEvent += (o, e) =>
+                    {
+                        dialogShowWait.Set();
+                        postDisplayCallback?.Invoke();
+                    };
+
+                    // dismiss the keyguard when dialog appears
+                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
+                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
+                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
+                    dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.AdjustResize | global::Android.Views.SoftInput.StateAlwaysHidden);
+
+                    // dim whatever is behind the dialog
+                    dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
+                    dialog.Window.Attributes.DimAmount = 0.75f;
+
+                    dialog.Show();
+                    #endregion
+
+                    #region voice recognizer
+                    Task.Run(() =>
+                    {
+                        // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
+                        dialogShowWait.WaitOne();
+
+                        // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
+                        Thread.Sleep(1000);
+
+                        Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
+                        intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
+                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
+                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
+                        intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
+                        intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
+                        intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
+                        intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
+
+                        mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
                         {
-                            dialogDismissWait.Set();
-                        };
-
-                        ManualResetEvent dialogShowWait = new ManualResetEvent(false);
-
-                        dialog.ShowEvent += (o, e) =>
-                        {
-                            dialogShowWait.Set();
-                            postDisplayCallback?.Invoke();
-                        };
-
-                        // dismiss the keyguard when dialog appears
-                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
-                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
-                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.TurnScreenOn);
-                        dialog.Window.SetSoftInputMode(global::Android.Views.SoftInput.AdjustResize | global::Android.Views.SoftInput.StateAlwaysHidden);
-
-                        // dim whatever is behind the dialog
-                        dialog.Window.AddFlags(global::Android.Views.WindowManagerFlags.DimBehind);
-                        dialog.Window.Attributes.DimAmount = 0.75f;
-
-                        dialog.Show();
-                        #endregion
-
-                        #region voice recognizer
-                        Task.Run(() =>
-                        {
-                            // wait for the dialog to be shown so it doesn't hide our speech recognizer activity
-                            dialogShowWait.WaitOne();
-
-                            // there's a slight race condition between the dialog showing and speech recognition showing. pause here to prevent the dialog from hiding the speech recognizer.
-                            Thread.Sleep(1000);
-
-                            Intent intent = new Intent(RecognizerIntent.ActionRecognizeSpeech);
-                            intent.PutExtra(RecognizerIntent.ExtraLanguageModel, RecognizerIntent.LanguageModelFreeForm);
-                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputCompleteSilenceLengthMillis, 1500);
-                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputPossiblyCompleteSilenceLengthMillis, 1500);
-                            intent.PutExtra(RecognizerIntent.ExtraSpeechInputMinimumLengthMillis, 15000);
-                            intent.PutExtra(RecognizerIntent.ExtraMaxResults, 1);
-                            intent.PutExtra(RecognizerIntent.ExtraLanguage, Java.Util.Locale.Default);
-                            intent.PutExtra(RecognizerIntent.ExtraPrompt, prompt);
-
-                            mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.RecognizeSpeech, result =>
+                            if (result != null && result.Item1 == Result.Ok)
                             {
-                                if (result != null && result.Item1 == Result.Ok)
+                                IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
+                                if (matches != null && matches.Count > 0)
                                 {
-                                    IList<string> matches = result.Item2.GetStringArrayListExtra(RecognizerIntent.ExtraResults);
-                                    if (matches != null && matches.Count > 0)
+                                    mainActivity.RunOnUiThread(() =>
                                     {
-                                        mainActivity.RunOnUiThread(() =>
-                                        {
-                                            inputEdit.Text = matches[0];
-                                        });
-                                    }
+                                        inputEdit.Text = matches[0];
+                                    });
                                 }
-                            });
+                            }
                         });
-                        #endregion
                     });
+                    #endregion
+                });
 
-                }, true, false);
+            }, true, false);
 
-                dialogDismissWait.WaitOne();
+            dialogDismissWait.WaitOne();
 
-                return input;
-            });
+            return input;
         }
 
         #endregion
 
         protected override Task ProtectedFlashNotificationAsync(string message)
         {
-            return Task.Run(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
-                });
+                Toast.MakeText(Application.Context, message, ToastLength.Long).Show();
             });
+
+            return Task.CompletedTask;
         }
 
         public override bool EnableProbeWhenEnablingAll(Probe probe)
@@ -545,48 +543,68 @@ namespace Sensus.Android
             });
         }
 
+        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
+        {
+            // cannot perform registration on main thread. ensure we're on another thread.
+            return Task.Run(() =>
+            {
+                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+                notificationHub.Register(PushNotificationToken);
+            });
+        }
+
+        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
+        {
+            // cannot perform registration on main thread. ensure we're on another thread.
+            return Task.Run(() =>
+            {
+                NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
+                notificationHub.UnregisterAll(PushNotificationToken);
+            });
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            // delete the instance ID and get a new token.
+            FirebaseInstanceId.Instance.DeleteInstanceId();
+            string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
+        }
+
         /// <summary>
-        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically.
         /// </summary>
         /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
         /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
         /// <param name="rationale">Rationale.</param>
-        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        public override async Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
         {
-            base.EnableBluetooth(lowEnergy, rationale);
-
-            bool enabled = false;
-
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
             // ensure that the device has the required feature
-            if (!_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth) ||
-                bluetoothAdapter == null)
+            if (bluetoothAdapter == null || !_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
             {
-                FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
-                return enabled;
+                await FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
+                return false;
             }
 
             // the system has bluetooth. check whether it's enabled.
-
-            ManualResetEvent enableWait = new ManualResetEvent(false);
-
             if (bluetoothAdapter.IsEnabled)
             {
-                enabled = true;
-                enableWait.Set();
+                return true;
             }
             else
             {
                 // if it's not and if the user has previously denied bluetooth, quit now. don't bother the user again.
                 if (_userDeniedBluetoothEnable)
                 {
-                    enableWait.Set();
+                    return false;
                 }
                 else
                 {
+                    TaskCompletionSource<bool> enableTaskCompletionSource = new TaskCompletionSource<bool>();
+
                     // bring up sensus so we can request bluetooth enable
-                    RunActionUsingMainActivityAsync(mainActivity =>
+                    await RunActionUsingMainActivityAsync(mainActivity =>
                     {
                         mainActivity.RunOnUiThread(async () =>
                         {
@@ -602,58 +620,54 @@ namespace Sensus.Android
                                     if (resultIntent.Item1 == Result.Canceled)
                                     {
                                         _userDeniedBluetoothEnable = true;
+                                        enableTaskCompletionSource.TrySetResult(false);
                                     }
                                     else if (resultIntent.Item1 == Result.Ok)
                                     {
-                                        enabled = true;
+                                        enableTaskCompletionSource.TrySetResult(true);
                                     }
-
-                                    enableWait.Set();
+                                    else
+                                    {
+                                        enableTaskCompletionSource.TrySetResult(false);
+                                    }
                                 });
                             }
                             catch (Exception ex)
                             {
                                 Logger.Log("Failed to start Bluetooth:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                enableWait.Set();
+                                enableTaskCompletionSource.TrySetResult(false);
                             }
                         });
 
                     }, true, false);
+
+                    bool enabled = await enableTaskCompletionSource.Task;
+
+                    if (enabled)
+                    {
+                        // the user enabled bluetooth, so allow one retry at enabling next time we find BLE disabled
+                        _userDeniedBluetoothEnable = false;
+                    }
+
+                    return enabled;
                 }
             }
-
-            enableWait.WaitOne();
-
-            if (enabled)
-            {
-                // the user enabled bluetooth, so allow one retry at enabling next time we find BLE disabled
-                _userDeniedBluetoothEnable = false;
-            }
-
-            return enabled;
         }
 
-        public override bool DisableBluetooth(bool reenable, bool lowEnergy = true, string rationale = null)
+        public override async Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy = true, string rationale = null)
         {
-            base.DisableBluetooth(reenable, lowEnergy, rationale);
-
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
             // check whether bluetooth is enabled
             if (bluetoothAdapter?.IsEnabled ?? false)
             {
-                ManualResetEvent disableWait = new ManualResetEvent(false);
-                ManualResetEvent enableWait = new ManualResetEvent(false);
+                TaskCompletionSource<State> bluetoothStateChangedCompletionSource = new TaskCompletionSource<State>();
 
-                EventHandler<global::Android.Bluetooth.State> StateChangedHandler = (sender, newState) =>
+                EventHandler<State> StateChangedHandler = (sender, newState) =>
                 {
-                    if (newState == global::Android.Bluetooth.State.Off)
+                    if (newState == State.On || newState == State.Off)
                     {
-                        disableWait.Set();
-                    }
-                    else if (newState == global::Android.Bluetooth.State.On)
-                    {
-                        enableWait.Set();
+                        bluetoothStateChangedCompletionSource.TrySetResult(newState);
                     }
                 };
 
@@ -663,31 +677,34 @@ namespace Sensus.Android
                 {
                     if (!bluetoothAdapter.Disable())
                     {
-                        disableWait.Set();
+                        bluetoothStateChangedCompletionSource.TrySetResult(State.On);
                     }
                 }
                 catch (Exception)
                 {
-                    disableWait.Set();
+                    bluetoothStateChangedCompletionSource.TrySetResult(State.On);
                 }
 
-                disableWait.WaitOne(5000);
+                await bluetoothStateChangedCompletionSource.Task;
 
+                // try to reenable without user interaction -- may not be allowed.
                 if (reenable)
                 {
+                    bluetoothStateChangedCompletionSource = new TaskCompletionSource<State>();
+
                     try
                     {
                         if (!bluetoothAdapter.Enable())
                         {
-                            enableWait.Set();
+                            bluetoothStateChangedCompletionSource.TrySetResult(State.Off);
                         }
                     }
                     catch (Exception)
                     {
-                        enableWait.Set();
+                        bluetoothStateChangedCompletionSource.TrySetResult(State.Off);
                     }
 
-                    enableWait.WaitOne(5000);
+                    await bluetoothStateChangedCompletionSource.Task;
                 }
 
                 AndroidBluetoothBroadcastReceiver.STATE_CHANGED -= StateChangedHandler;
@@ -698,7 +715,7 @@ namespace Sensus.Android
             // dispatch an intent to reenable bluetooth, which will require user interaction.
             if (reenable && !isEnabled)
             {
-                return EnableBluetooth(lowEnergy, rationale);
+                return await EnableBluetoothAsync(lowEnergy, rationale);
             }
             else
             {

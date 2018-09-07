@@ -707,6 +707,60 @@ public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset_" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset*"></a>
+  <h4 id="Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset">GpsLongitudeAnonymizationParticipantOffset</h4>
+  <div class="markdown level1 summary"><p>We regenerate the offset every time a protocol starts, so there&apos;s 
+no need to serialize it. Furthermore, we never want the offset
+to be shared.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GpsLongitudeAnonymizationParticipantOffset { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><p>The gps longitude anonymization participant offset.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsLongitudeAnonymizationStudyOffset_" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset*"></a>
+  <h4 id="Sensus_Protocol_GpsLongitudeAnonymizationStudyOffset" data-uid="Sensus.Protocol.GpsLongitudeAnonymizationStudyOffset">GpsLongitudeAnonymizationStudyOffset</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GpsLongitudeAnonymizationStudyOffset { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_GpsMinDistanceDelayMeters_" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters*"></a>
   <h4 id="Sensus_Protocol_GpsMinDistanceDelayMeters" data-uid="Sensus.Protocol.GpsMinDistanceDelayMeters">GpsMinDistanceDelayMeters</h4>
   <div class="markdown level1 summary"><p>The minimum distance in meters to wait between deliveries of GPS readings.</p>
@@ -917,6 +971,33 @@ public bool Groupable { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_LongitudeOffsetParticipantSeededRandom_" data-uid="Sensus.Protocol.LongitudeOffsetParticipantSeededRandom*"></a>
+  <h4 id="Sensus_Protocol_LongitudeOffsetParticipantSeededRandom" data-uid="Sensus.Protocol.LongitudeOffsetParticipantSeededRandom">LongitudeOffsetParticipantSeededRandom</h4>
+  <div class="markdown level1 summary"><p>Gets a <span class="xref">System.Random</span> that is seeded specifically to the participant.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Random LongitudeOffsetParticipantSeededRandom { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Random</span></td>
+        <td><p>The seeded <span class="xref">System.Random</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_Name_" data-uid="Sensus.Protocol.Name*"></a>
   <h4 id="Sensus_Protocol_Name" data-uid="Sensus.Protocol.Name">Name</h4>
   <div class="markdown level1 summary"><p>A descriptive name for the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -1103,6 +1184,65 @@ public int ParticipationHorizonDays { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_PushNotificationsHub_" data-uid="Sensus.Protocol.PushNotificationsHub*"></a>
+  <h4 id="Sensus_Protocol_PushNotificationsHub" data-uid="Sensus.Protocol.PushNotificationsHub">PushNotificationsHub</h4>
+  <div class="markdown level1 summary"><p>The push notification hub to listen to. This can be created within the Azure Portal. The
+value to use here is the name of the hub.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 47, false)]
+public string PushNotificationsHub { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The push notifications hub.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_PushNotificationsSharedAccessSignature_" data-uid="Sensus.Protocol.PushNotificationsSharedAccessSignature*"></a>
+  <h4 id="Sensus_Protocol_PushNotificationsSharedAccessSignature" data-uid="Sensus.Protocol.PushNotificationsSharedAccessSignature">PushNotificationsSharedAccessSignature</h4>
+  <div class="markdown level1 summary"><p>The shared access signature for listening for push notifications at the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">PushNotificationsHub</a>. This
+value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
+the value directly to this field.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 48, false)]
+public string PushNotificationsSharedAccessSignature { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The push notifications shared access signature.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_RandomTimeAnchor_" data-uid="Sensus.Protocol.RandomTimeAnchor*"></a>
   <h4 id="Sensus_Protocol_RandomTimeAnchor" data-uid="Sensus.Protocol.RandomTimeAnchor">RandomTimeAnchor</h4>
   <div class="markdown level1 summary"></div>
@@ -1200,56 +1340,6 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Protocol_ScheduledStartCallback_" data-uid="Sensus.Protocol.ScheduledStartCallback*"></a>
-  <h4 id="Sensus_Protocol_ScheduledStartCallback" data-uid="Sensus.Protocol.ScheduledStartCallback">ScheduledStartCallback</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallback ScheduledStartCallback { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Protocol_ScheduledStopCallback_" data-uid="Sensus.Protocol.ScheduledStopCallback*"></a>
-  <h4 id="Sensus_Protocol_ScheduledStopCallback" data-uid="Sensus.Protocol.ScheduledStopCallback">ScheduledStopCallback</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallback ScheduledStopCallback { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
         <td></td>
       </tr>
     </tbody>

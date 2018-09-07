@@ -21,6 +21,11 @@ namespace Sensus.UI
 {
     public class App : Application
     {
+        public Page MasterPage
+        {
+            get { return (MainPage as SensusMasterDetailPage).Master; }   
+        }
+
         public Page DetailPage
         {
             get { return (MainPage as SensusMasterDetailPage).Detail; }

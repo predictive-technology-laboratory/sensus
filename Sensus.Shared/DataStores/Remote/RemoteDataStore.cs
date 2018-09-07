@@ -23,6 +23,7 @@ using System.IO;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.DataStores.Remote
 {
@@ -35,24 +36,17 @@ namespace Sensus.DataStores.Remote
     /// </summary>
     public abstract class RemoteDataStore : DataStore
     {
-        /// <summary>
-        /// We don't mind write callback lags, since they don't affect any performance metrics and
-        /// the latencies aren't inspected when testing data store health or participation. It also
-        /// doesn't make sense to force rapid write since data will not have accumulated.
-        /// </summary>
-        private const bool WRITE_CALLBACK_LAG = true;
-
         private int _writeDelayMS;
         private int _writeTimeoutMinutes;
         private DateTime? _mostRecentSuccessfulWriteTime;
         private ScheduledCallback _writeCallback;
-        private bool _writeOnAcPowerConnect;
+        private bool _writeOnPowerConnect;
         private bool _requireWiFi;
         private bool _requireCharging;
         private float _requiredBatteryChargeLevelPercent;
         private string _userNotificationMessage;
         private EventHandler<bool> _powerConnectionChanged;
-        private CancellationTokenSource _acPowerConnectWriteCancellationToken;
+        private CancellationTokenSource _powerConnectWriteCancellationToken;
 
         /// <summary>
         /// How many milliseconds to pause between each data write cycle.
@@ -96,14 +90,15 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Whether to start writing to remote when the phone is plugged into AC power. This will still respect the other settings (e.g., <see cref="RequireWiFi"/>).
+        /// Whether to initiate data upload when the device is plugged in to external 
+        /// power. This will still respect the other settings (e.g., <see cref="RequireWiFi"/>).
         /// </summary>
-        /// <value><c>true</c> to start writing when the phone is plugged into AC power, otherwise <c>false</c>.</value>
-        [OnOffUiProperty("Write on AC Power Connect:", true, 52)]
-        public bool WriteOnAcPowerConnect
+        /// <value><c>true</c> to upload when plugged in, otherwise <c>false</c>.</value>
+        [OnOffUiProperty("Write on Power Connect:", true, 52)]
+        public bool WriteOnPowerConnect
         {
-            get { return _writeOnAcPowerConnect; }
-            set { _writeOnAcPowerConnect = value; }
+            get { return _writeOnPowerConnect; }
+            set { _writeOnPowerConnect = value; }
         }
 
         /// <summary>
@@ -169,11 +164,27 @@ namespace Sensus.DataStores.Remote
         [JsonIgnore]
         public abstract bool CanRetrieveWrittenData { get; }
 
+        [JsonIgnore]
+        public virtual string StorageDescription
+        {
+            get
+            {
+                if (!Protocol?.LocalDataStore?.WriteToRemote ?? false)
+                {
+                    return "All data will remain on this device. No data will be transmitted.";
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         protected RemoteDataStore()
         {
             _writeTimeoutMinutes = 5;
             _mostRecentSuccessfulWriteTime = null;
-            _writeOnAcPowerConnect = true;
+            _writeOnPowerConnect = true;
             _requireWiFi = true;
             _requireCharging = true;
             _requiredBatteryChargeLevelPercent = 20;
@@ -187,25 +198,26 @@ namespace Sensus.DataStores.Remote
 
             _powerConnectionChanged = async (sender, connected) =>
             {
-                if (connected == true)
+                if (connected)
                 {
-                    if (_writeOnAcPowerConnect)
+                    if (_writeOnPowerConnect)
                     {
-                        _acPowerConnectWriteCancellationToken = new CancellationTokenSource();
-                        await WriteLocalDataStoreAsync(_acPowerConnectWriteCancellationToken.Token);
+                        SensusServiceHelper.Get().Logger.Log("Writing to remote on power connect signal.", LoggingLevel.Normal, GetType());
+                        _powerConnectWriteCancellationToken = new CancellationTokenSource();
+                        await WriteLocalDataStoreAsync(_powerConnectWriteCancellationToken.Token);
                     }
                 }
                 else
                 {
                     // cancel any prior write attempts resulting from AC power connection
-                    _acPowerConnectWriteCancellationToken?.Cancel();
+                    _powerConnectWriteCancellationToken?.Cancel();
                 }
             };
         }
 
-        public override void Start()
+        public override async Task StartAsync()
         {
-            base.Start();
+            await base.StartAsync();
 
             _mostRecentSuccessfulWriteTime = DateTime.Now;
 
@@ -218,19 +230,19 @@ namespace Sensus.DataStores.Remote
             userNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), WRITE_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
-            SensusContext.Current.CallbackScheduler.ScheduleCallback(_writeCallback);
+            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
+            await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
         }
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
-            SensusContext.Current.CallbackScheduler.UnscheduleCallback(_writeCallback);
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
-            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
         }
 
         public override void Reset()
@@ -241,9 +253,9 @@ namespace Sensus.DataStores.Remote
             _writeCallback = null;
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string,string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (_mostRecentSuccessfulWriteTime.HasValue)
             {
@@ -258,7 +270,7 @@ namespace Sensus.DataStores.Remote
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    events.Add(new AnalyticsTrackedEvent(eventName, properties));
                 }
             }
 
@@ -272,15 +284,15 @@ namespace Sensus.DataStores.Remote
 
                 Analytics.TrackEvent(eventName, properties);
 
-                events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-                restart = true;
+                result = HealthTestResult.Restart;
             }
 
-            return restart;
+            return result;
         }
 
-        public Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+        public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
         {
             bool write = false;
 
@@ -309,17 +321,14 @@ namespace Sensus.DataStores.Remote
 
             if (write)
             {
-                return Task.Run(async () =>
-                {
-                    // instruct the local data store to write its data to the remote data store.
-                    await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
-                    _mostRecentSuccessfulWriteTime = DateTime.Now;
-                    return true;
-                });
+                // instruct the local data store to write its data to the remote data store.
+                await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
+                _mostRecentSuccessfulWriteTime = DateTime.Now;
+                return true;
             }
             else
             {
-                return Task.FromResult(false);
+                return false;
             }
         }
 
@@ -340,6 +349,37 @@ namespace Sensus.DataStores.Remote
         /// <param name="datum">Datum.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Sends the push notification token.
+        /// </summary>
+        /// <returns>The push notification token.</returns>
+        /// <param name="token">Token.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deletes the push notification token.
+        /// </summary>
+        /// <returns>The push notification token.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Sends the push notification request.
+        /// </summary>
+        /// <returns>The push notification request.</returns>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Deletes the push notification request.
+        /// </summary>
+        /// <returns>The push notification request.</returns>
+        /// <param name="request">Request.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the key (identifier) value for a <see cref="Datum"/>. Used within <see cref="WriteDatumAsync"/> and <see cref="GetDatumAsync"/>.

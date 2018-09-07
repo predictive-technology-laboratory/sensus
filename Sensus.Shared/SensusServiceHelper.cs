@@ -32,6 +32,7 @@ using Sensus.Concurrent;
 using Sensus.Exceptions;
 using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
+using Sensus.Notifications;
 
 using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
@@ -51,7 +52,7 @@ namespace Sensus
         #region static members
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
-        private const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+        public const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
 
         /// <summary>
         /// App Center key for Android app.
@@ -88,12 +89,6 @@ namespace Sensus
         // test every 60 minutes in release
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
 #endif
-
-        /// <summary>
-        /// Health tests times are used to compute participation for the listening probes. They must
-        /// be as tight as possible.
-        /// </summary>
-        private const bool HEALTH_TEST_REPEAT_LAG = false;
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
         {
@@ -272,8 +267,11 @@ namespace Sensus
         private bool _flashNotificationsEnabled;
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
+        private bool _updatingPushNotificationToken;
+        private bool _updatePushNotificationRegistrationsOnNextHealthTest;
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
+        private readonly object _updatePushNotificationTokenLocker = new object();
 
         [JsonIgnore]
         public Logger Logger
@@ -324,6 +322,9 @@ namespace Sensus
                 return _scriptsToRun;
             }
         }
+
+        [JsonIgnore]
+        public abstract string PushNotificationToken { get; }
 
         [JsonIgnore]
         public float GpsDesiredAccuracyMeters
@@ -545,40 +546,30 @@ namespace Sensus
 
         public abstract ImageSource GetQrCodeImageSource(string contents);
 
-        public virtual bool EnableBluetooth(bool lowEnergy, string rationale)
-        {
-            try
-            {
-                AssertNotOnMainThread(GetType() + " EnableBluetooth");
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        protected abstract Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas);
 
-        public virtual bool DisableBluetooth(bool reenable, bool lowEnergy, string rationale)
-        {
-            try
-            {
-                AssertNotOnMainThread(GetType() + " DisableBluetooth");
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        protected abstract Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas);
 
+        protected abstract void RequestNewPushNotificationToken();
+
+        public abstract Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale);
+
+        public abstract Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale);
         #endregion
 
         #region add/remove running protocol ids
 
-        public void AddRunningProtocolId(string id)
+        public async Task AddRunningProtocolIdAsync(string id)
         {
+            bool scheduleHealthTestCallback = false;
+
             lock (_runningProtocolIds)
             {
+                if (_runningProtocolIds.Count == 0)
+                {
+                    scheduleHealthTestCallback = true;
+                }
+
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
@@ -587,59 +578,73 @@ namespace Sensus
                     (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
                 }
+            }
 
-                if (_healthTestCallback == null)
+            if (scheduleHealthTestCallback)
+            {
+                _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                 {
-                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    // get protocols to test (those that should be running)
+                    List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
                     {
-                        // get protocols to test (those that should be running)
-                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
+                        lock (_runningProtocolIds)
                         {
-                            lock (_runningProtocolIds)
-                            {
-                                return _runningProtocolIds.Contains(protocol.Id);
-                            }
-
-                        }).ToList();
-
-                        // test protocols
-                        foreach (Protocol protocolToTest in protocolsToTest)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                break;
-                            }
-
-                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            return _runningProtocolIds.Contains(protocol.Id);
                         }
 
-                        // test the callback scheduler itself
-                        SensusContext.Current.CallbackScheduler.TestHealth();
+                    }).ToList();
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, HEALTH_TEST_REPEAT_LAG, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                    // test protocols
+                    foreach (Protocol protocolToTest in protocolsToTest)
+                    {
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            break;
+                        }
 
-                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_healthTestCallback);
-                }
+                        _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                        await protocolToTest.TestHealthAsync(false, cancellationToken);
+                    }
+
+                    // test the callback scheduler
+                    SensusContext.Current.CallbackScheduler.TestHealth();
+
+                    // update push notification registrations
+                    if (_updatePushNotificationRegistrationsOnNextHealthTest)
+                    {
+                        await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                    }
+
+                    // test the notifier, which checks the push notification requests.
+                    await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+
+                }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
         }
 
-        public void RemoveRunningProtocolId(string id)
+        public async Task RemoveRunningProtocolIdAsync(string id)
         {
+            bool unscheduleHealthTestCallback = false;
+
             lock (_runningProtocolIds)
             {
-                _runningProtocolIds.Remove(id);
-
-                if (_runningProtocolIds.Count == 0)
+                if (_runningProtocolIds.Remove(id) && _runningProtocolIds.Count == 0)
                 {
-                    SensusContext.Current.CallbackScheduler.UnscheduleCallback(_healthTestCallback);
-                    _healthTestCallback = null;
+                    unscheduleHealthTestCallback = true;
                 }
 
 #if __ANDROID__
                 (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
+            }
+
+            if (unscheduleHealthTestCallback)
+            {
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
+                _healthTestCallback = null;
             }
         }
 
@@ -659,52 +664,39 @@ namespace Sensus
         {
             return Task.Run(() =>
             {
-                Save();
-            });
-        }
-
-        public void Save()
-        {
-            lock (_saveLocker)
-            {
-                _logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
-
-                try
+                lock (_saveLocker)
                 {
-                    string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                    byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
-                    File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+                    _logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
 
-                    _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
+                    try
+                    {
+                        string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
+                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
+                        File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+
+                        _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+
+                    // ensure that all logged messages make it into the file.
+                    _logger.CommitMessageBuffer();
                 }
-                catch (Exception ex)
-                {
-                    _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-
-                // ensure that all logged messages make it into the file.
-                _logger.CommitMessageBuffer();
-            }
-        }
-
-        public Task StartAsync()
-        {
-            return Task.Run(() =>
-            {
-                Start();
             });
         }
 
         /// <summary>
         /// Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.
         /// </summary>
-        public void Start()
+        public async Task StartAsync()
         {
             foreach (Protocol registeredProtocol in _registeredProtocols)
             {
                 if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    registeredProtocol.Start();
+                    await registeredProtocol.StartAsync();
                 }
             }
         }
@@ -717,30 +709,30 @@ namespace Sensus
             }
         }
 
-        public void AddScript(Script script, RunMode runMode)
+        public async Task AddScriptAsync(Script script, RunMode runMode)
         {
-            // scripts can be added from several threads, particularly on ios when several script runs can execute concurrently when
-            // the user opens the app. execute all additions to the _scriptsToRun collection on the main thread for safety.
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            // shuffle input groups and inputs if needed
+            Random random = new Random();
+            if (script.Runner.ShuffleInputGroups)
             {
-                // shuffle input groups and inputs if needed
-                Random random = new Random();
-                if (script.Runner.ShuffleInputGroups)
+                random.Shuffle(script.InputGroups);
+            }
+
+            // shuffle inputs in groups if needed
+            foreach (InputGroup inputGroup in script.InputGroups)
+            {
+                if (inputGroup.ShuffleInputs)
                 {
-                    random.Shuffle(script.InputGroups);
+                    random.Shuffle(inputGroup.Inputs);
                 }
+            }
 
-                // shuffle inputs in groups if needed
-                foreach (InputGroup inputGroup in script.InputGroups)
-                {
-                    if (inputGroup.ShuffleInputs)
-                    {
-                        random.Shuffle(inputGroup.Inputs);
-                    }
-                }
+            bool modifiedScriptsToRun = false;
 
-                bool modifiedScriptsToRun = false;
-
+            // scripts can be added from several threads, particularly on ios when several script runs can execute concurrently when
+            // the user opens the app. lock modifications of the collection for safety.
+            _scriptsToRun.Concurrent.ExecuteThreadSafe(() =>
+            {
                 if (runMode == RunMode.Multiple)
                 {
                     _scriptsToRun.Insert(GetScriptIndex(script), script);
@@ -784,33 +776,33 @@ namespace Sensus
                         modifiedScriptsToRun = true;
                     }
                 }
-
-                if (modifiedScriptsToRun)
-                {
-                    IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
-                }
             });
+
+            if (modifiedScriptsToRun)
+            {
+                await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+            }
         }
 
-        public void RemoveScript(Script script)
+        public async Task RemoveScriptAsync(Script script)
         {
-            RemoveScripts(true, script);
+            await RemoveScriptsAsync(true, script);
         }
 
-        public void RemoveScriptsForRunner(ScriptRunner runner)
+        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner)
         {
-            RemoveScripts(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
+            await RemoveScriptsAsync(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public void RemoveExpiredScripts(bool issueNotification)
+        public async Task RemoveExpiredScriptsAsync(bool issueNotification)
         {
-            RemoveScripts(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
+            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
         }
 
-        public void ClearScripts()
+        public async Task ClearScriptsAsync()
         {
             _scriptsToRun.Clear();
-            IssuePendingSurveysNotificationAsync(null, false);
+            await IssuePendingSurveysNotificationAsync(null, false);
         }
 
         /// <summary>
@@ -818,27 +810,30 @@ namespace Sensus
         /// </summary>
         /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
         /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public void IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
+        public async Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
         {
-            RemoveExpiredScripts(false);
+            await RemoveExpiredScriptsAsync(false);
 
-            int numScriptsToRun = _scriptsToRun.Count;
+            await _scriptsToRun.Concurrent.ExecuteThreadSafe(async () =>
+            {
+                int numScriptsToRun = _scriptsToRun.Count;
 
-            if (numScriptsToRun == 0)
-            {
-                ClearPendingSurveysNotificationAsync();
-            }
-            else
-            {
-                string s = numScriptsToRun == 1 ? "" : "s";
-                string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
-                DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
-                string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
-            }
+                if (numScriptsToRun == 0)
+                {
+                    ClearPendingSurveysNotification();
+                }
+                else
+                {
+                    string s = numScriptsToRun == 1 ? "" : "s";
+                    string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
+                    DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
+                    string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
+                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+                }
+            });
         }
 
-        public void ClearPendingSurveysNotificationAsync()
+        public void ClearPendingSurveysNotification()
         {
             SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
         }
@@ -848,318 +843,301 @@ namespace Sensus
         /// </summary>
         /// <returns>The notification async.</returns>
         /// <param name="message">Message.</param>
-        public Task FlashNotificationAsync(string message)
+        public async Task FlashNotificationAsync(string message)
         {
             // do not show flash notifications when UI testing, as they can disrupt UI scripting on iOS.
 #if !UI_TESTING
             if (_flashNotificationsEnabled)
             {
-                return ProtectedFlashNotificationAsync(message);
-            }
-            else
-            {
-                return Task.CompletedTask;
+                await ProtectedFlashNotificationAsync(message);
             }
 #endif
         }
 
-        public Task<string> ScanQrCodeAsync(string resultPrefix)
+        public async Task<string> ScanQrCodeAsync(string resultPrefix)
         {
-            return Task.Run(() =>
+            TaskCompletionSource<string> resultCompletionSource = new TaskCompletionSource<string>();
+
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                string result = null;
-                ManualResetEvent resultWait = new ManualResetEvent(false);
-
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
+                // to take care of. the library does ask for permission, but if it's denied we get an exception
+                // kicked back. ask explicitly here, and bail out if permission is not granted.
+                if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
                 {
-                    // we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
-                    // to take care of. the library does ask for permission, but if it's denied we get an exception
-                    // kicked back. ask explicitly here, and bail out if permission is not granted.
-                    if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+                    resultCompletionSource.SetResult(null);
+                    return;
+                }
+
+                // TODO:  there's a race condition bug in the scanning library:  https://github.com/Redth/ZXing.Net.Mobile/issues/717
+                // delaying a bit seems to fix it.
+                await Task.Delay(1000);
+
+                Button cancelButton = new Button
+                {
+                    Text = "Cancel",
+                    FontSize = 30
+                };
+
+                StackLayout scannerOverlay = new StackLayout
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(30),
+                    Children = { cancelButton }
+                };
+
+                ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
+                {
+                    PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
+
+                }, scannerOverlay);
+
+                INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+
+                Func<Task> closeScannerPageAsync = new Func<Task>(async () =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        resultWait.Set();
-                        return;
-                    }
+                        barcodeScannerPage.IsScanning = false;
 
-                    // TODO:  there's a race condition bug in the scanning library:  https://github.com/Redth/ZXing.Net.Mobile/issues/717
-                    // delaying a bit seems to fix it.
-                    await Task.Delay(1000);
-
-                    Button cancelButton = new Button
-                    {
-                        Text = "Cancel",
-                        FontSize = 30
-                    };
-
-                    StackLayout scannerOverlay = new StackLayout
-                    {
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        VerticalOptions = LayoutOptions.FillAndExpand,
-                        Padding = new Thickness(30),
-                        Children = { cancelButton }
-                    };
-
-                    ZXingScannerPage barcodeScannerPage = new ZXingScannerPage(new MobileBarcodeScanningOptions
-                    {
-                        PossibleFormats = new BarcodeFormat[] { BarcodeFormat.QR_CODE }.ToList()
-                                                                                       
-                    }, scannerOverlay);
-
-                    INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-
-                    Func<Task> CloseScannerPageAsync = new Func<Task>(() =>
-                    {
-                        return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        // we've seen a strange race condition where the QR code input scanner button is 
+                        // pressed, and in the above task delay the input group page is cancelled and 
+                        // another UI button is hit before the scanner page comes up.
+                        if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
                         {
-                            barcodeScannerPage.IsScanning = false;
-
-                            // we've seen a strange race condition where the QR code input scanner button is 
-                            // pressed, and in the above task delay the input group page is cancelled and 
-                            // another UI button is hit before the scanner page comes up.
-                            if (navigation.ModalStack.LastOrDefault() == barcodeScannerPage)
-                            {
-                                await navigation.PopModalAsync();
-                            }
-
-                            resultWait.Set();
-                        });
-                    });
-
-                    cancelButton.Clicked += async (o, e) =>
-                    {
-                        await CloseScannerPageAsync();
-                    };
-
-                    barcodeScannerPage.OnScanResult += async r =>
-                    {
-                        if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
-                        {
-                            result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
-
-                            await CloseScannerPageAsync();
+                            await navigation.PopModalAsync();
                         }
-                    };
-
-                    barcodeScannerPage.Disappearing += (sender, e) =>
-                    {
-                        resultWait.Set();
-                    };
-
-                    await navigation.PushModalAsync(barcodeScannerPage);
+                    });
                 });
 
-                resultWait.WaitOne();
+                cancelButton.Clicked += async (o, e) =>
+                {
+                    resultCompletionSource.SetResult(null);
 
-                return result;
+                    await closeScannerPageAsync();
+                };
+
+                barcodeScannerPage.OnScanResult += async r =>
+                {
+                    if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
+                    {
+                        resultCompletionSource.SetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
+
+                        await closeScannerPageAsync();
+                    }
+                };
+
+                barcodeScannerPage.Disappearing += (sender, e) =>
+                {
+                    // use TrySetResult to account for the cases where the cancel button was pressed or 
+                    // we scanned a barcode. if either of these happens the result will already be set.
+                    resultCompletionSource.TrySetResult(null);
+                };
+
+                await navigation.PushModalAsync(barcodeScannerPage);
             });
+
+            return await resultCompletionSource.Task;
         }
 
-        public Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
+        public async Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            return Task.Run(async () =>
-            {
-                List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
-                return inputs?.First();
-            });
+            List<Input> inputs = await PromptForInputsAsync(windowTitle, new[] { input }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+            return inputs?.First();
         }
 
-        public Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
+        public async Task<List<Input>> PromptForInputsAsync(string windowTitle, IEnumerable<Input> inputs, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)
         {
-            return Task.Run(async () =>
+            InputGroup inputGroup = new InputGroup { Name = windowTitle };
+
+            foreach (var input in inputs)
             {
-                InputGroup inputGroup = new InputGroup { Name = windowTitle };
+                inputGroup.Inputs.Add(input);
+            }
 
-                foreach (var input in inputs)
-                {
-                    inputGroup.Inputs.Add(input);
-                }
+            IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
 
-                IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
-
-                return inputGroups?.SelectMany(g => g.Inputs).ToList();
-            });
+            return inputGroups?.SelectMany(g => g.Inputs).ToList();
         }
 
-        public Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
+        public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
         {
-            return Task.Run(async () =>
+            bool firstPageDisplay = true;
+
+            // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
+            // conditions, so we can't simply decrement the index to navigate backwards.
+            Stack<int> inputGroupNumBackStack = new Stack<int>();
+
+            for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
             {
-                bool firstPageDisplay = true;
+                InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
 
-                // keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
-                // conditions, so we can't simply decrement the index to navigate backwards.
-                Stack<int> inputGroupNumBackStack = new Stack<int>();
-
-                for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
+                // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
+                if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
                 {
-                    InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
+                    VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
 
-                    // run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
-                    if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
+                    if (voiceInput.Enabled && voiceInput.Display)
                     {
-                        VoiceInput voiceInput = inputGroup.Inputs[0] as VoiceInput;
-
-                        if (voiceInput.Enabled && voiceInput.Display)
-                        {
-                            try
-                            {
-                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                // to fire only once upon first display.
-                                await voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null);
-                                firstPageDisplay = false;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusException.Report("Voice input failed to run.", ex);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        await BringToForegroundAsync();
-
-                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            int stepNumber = inputGroupNum + 1;
-
-                            InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
-
-                            // do not display prompts page under the following conditions:  
-                            //
-                            // 1) there are no inputs displayed on it
-                            // 2) the cancellation token has requested a cancellation.
-                            //
-                            // if either of these conditions is true, continue to the next input group.
-
-                            if (inputGroupPage.DisplayedInputCount == 0)
-                            {
-                                // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
-                                // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
-                                // input group in the backstack, if there is one.
-                                if (inputGroupNum >= inputGroups.Count() - 1 &&                                                     // this is the final input group
-                                    inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
-                                    !string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
-                                    !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
-                                {
-                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                }
-                            }
-                            // display the page if we've not been canceled
-                            else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
-                            {
-                                INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-
-                                // display page. only animate the display for the first page.
-                                await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
-
-                                // only run the post-display callback the first time a page is displayed. the caller expects the callback
-                                // to fire only once upon first display.
-                                if (firstPageDisplay)
-                                {
-                                    postDisplayCallback?.Invoke();
-                                    firstPageDisplay = false;
-                                }
-
-                                InputGroupPage.NavigationResult navigationResult = await inputGroupPage.ResponseTask;
-
-                                _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
-
-                                // animate pop if the user submitted or canceled. when doing this, reference the navigation context
-                                // on the page rather than the local 'navigation' variable. this is necessary because the navigation
-                                // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
-                                // notification.
-                                await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit || 
-                                                                              navigationResult == InputGroupPage.NavigationResult.Cancel);
-
-                                if (navigationResult == InputGroupPage.NavigationResult.Backward)
-                                {
-                                    // we only allow backward navigation when we have something on the back stack. so the following is safe.
-                                    inputGroupNum = inputGroupNumBackStack.Pop() - 1;
-                                }
-                                else if (navigationResult == InputGroupPage.NavigationResult.Forward)
-                                {
-                                    // keep the group in the back stack.
-                                    inputGroupNumBackStack.Push(inputGroupNum);
-                                }
-                                else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
-                                {
-                                    inputGroups = null;
-                                }
-
-                                // there's nothing to do if the navigation result is submit, since we've finished the final
-                                // group and we are about to return.
-                            }
-                        });
-                    }
-                }
-
-                // process the inputs if the user didn't cancel
-                if (inputGroups != null)
-                {
-                    // set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
-                    // reflect the time that the user hit submit.
-                    DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
-                    foreach (InputGroup inputGroup in inputGroups)
-                    {
-                        foreach (Input input in inputGroup.Inputs)
-                        {
-                            input.SubmissionTimestamp = submissionTimestamp;
-                        }
-                    }
-
-                    #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
-                    if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
-                    {
-                        _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
-
                         try
                         {
-                            Position currentPosition = GpsReceiver.Get().GetReading(cancellationToken.GetValueOrDefault(), true);
+                            // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                            // to fire only once upon first display.
+                            await voiceInput.RunAsync(firstPromptTimestamp, firstPageDisplay ? postDisplayCallback : null);
+                            firstPageDisplay = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusException.Report("Voice input failed to run.", ex);
+                        }
+                    }
+                }
+                else
+                {
+                    await BringToForegroundAsync();
 
-                            if (currentPosition != null)
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        int stepNumber = inputGroupNum + 1;
+
+                        InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress);
+
+                        // do not display prompts page under the following conditions:  
+                        //
+                        // 1) there are no inputs displayed on it
+                        // 2) the cancellation token has requested a cancellation.
+                        //
+                        // if either of these conditions is true, continue to the next input group.
+
+                        if (inputGroupPage.DisplayedInputCount == 0)
+                        {
+                            // if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
+                            // users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
+                            // input group in the backstack, if there is one.
+                            if (inputGroupNum >= inputGroups.Count() - 1 &&                                                     // this is the final input group
+                                inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
+                                !string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
+                                !(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
                             {
-                                foreach (InputGroup inputGroup in inputGroups)
+                                inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                            }
+                        }
+                        // display the page if we've not been canceled
+                        else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
+                        {
+                            INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+
+                            // display page. only animate the display for the first page.
+                            await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
+
+                            // only run the post-display callback the first time a page is displayed. the caller expects the callback
+                            // to fire only once upon first display.
+                            if (firstPageDisplay)
+                            {
+                                postDisplayCallback?.Invoke();
+                                firstPageDisplay = false;
+                            }
+
+                            InputGroupPage.NavigationResult navigationResult = await inputGroupPage.ResponseTask;
+
+                            _logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
+
+                            // animate pop if the user submitted or canceled. when doing this, reference the navigation context
+                            // on the page rather than the local 'navigation' variable. this is necessary because the navigation
+                            // context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+                            // notification.
+                            await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit ||
+                                                                          navigationResult == InputGroupPage.NavigationResult.Cancel);
+
+                            if (navigationResult == InputGroupPage.NavigationResult.Backward)
+                            {
+                                // we only allow backward navigation when we have something on the back stack. so the following is safe.
+                                inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+                            }
+                            else if (navigationResult == InputGroupPage.NavigationResult.Forward)
+                            {
+                                // keep the group in the back stack.
+                                inputGroupNumBackStack.Push(inputGroupNum);
+                            }
+                            else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
+                            {
+                                inputGroups = null;
+                            }
+
+                            // there's nothing to do if the navigation result is submit, since we've finished the final
+                            // group and we are about to return.
+                        }
+                    });
+                }
+            }
+
+            // process the inputs if the user didn't cancel
+            if (inputGroups != null)
+            {
+                // set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
+                // reflect the time that the user hit submit.
+                DateTimeOffset submissionTimestamp = DateTimeOffset.UtcNow;
+                foreach (InputGroup inputGroup in inputGroups)
+                {
+                    foreach (Input input in inputGroup.Inputs)
+                    {
+                        input.SubmissionTimestamp = submissionTimestamp;
+                    }
+                }
+
+                #region geotag input groups if we've got input groups with inputs that are complete and lacking locations
+                if (inputGroups.Any(inputGroup => inputGroup.Geotag && inputGroup.Inputs.Any(input => input.Complete && (input.Latitude == null || input.Longitude == null))))
+                {
+                    _logger.Log("Geotagging input groups.", LoggingLevel.Normal, GetType());
+
+                    try
+                    {
+                        Position currentPosition = await GpsReceiver.Get().GetReadingAsync(cancellationToken.GetValueOrDefault(), true);
+
+                        if (currentPosition != null)
+                        {
+                            foreach (InputGroup inputGroup in inputGroups)
+                            {
+                                if (inputGroup.Geotag)
                                 {
-                                    if (inputGroup.Geotag)
+                                    foreach (Input input in inputGroup.Inputs)
                                     {
-                                        foreach (Input input in inputGroup.Inputs)
+                                        if (input.Complete)
                                         {
-                                            if (input.Complete)
+                                            bool locationUpdated = false;
+
+                                            if (input.Latitude == null)
                                             {
-                                                bool locationUpdated = false;
+                                                input.Latitude = currentPosition.Latitude;
+                                                locationUpdated = true;
+                                            }
 
-                                                if (input.Latitude == null)
-                                                {
-                                                    input.Latitude = currentPosition.Latitude;
-                                                    locationUpdated = true;
-                                                }
+                                            if (input.Longitude == null)
+                                            {
+                                                input.Longitude = currentPosition.Longitude;
+                                                locationUpdated = true;
+                                            }
 
-                                                if (input.Longitude == null)
-                                                {
-                                                    input.Longitude = currentPosition.Longitude;
-                                                    locationUpdated = true;
-                                                }
-
-                                                if (locationUpdated)
-                                                {
-                                                    input.LocationUpdateTimestamp = currentPosition.Timestamp;
-                                                }
+                                            if (locationUpdated)
+                                            {
+                                                input.LocationUpdateTimestamp = currentPosition.Timestamp;
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
                     }
-                    #endregion
+                    catch (Exception ex)
+                    {
+                        _logger.Log("Error geotagging input groups:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
                 }
+                #endregion
+            }
 
-                return inputGroups;
-            });
+            return inputGroups;
         }
 
         public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
@@ -1206,10 +1184,10 @@ namespace Sensus
             });
         }
 
-        public void UnregisterProtocol(Protocol protocol)
+        public async Task UnregisterProtocolAsync(Protocol protocol)
         {
             _registeredProtocols.Remove(protocol);
-            protocol.Stop();
+            await protocol.StopAsync();
         }
 
         /// <summary>
@@ -1284,140 +1262,106 @@ namespace Sensus
             return convertedJSON.ToString();
         }
 
-        public Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
+        public async Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
         {
-            return Task.Run(() =>
+            return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
+                // before using the plugin.
+                await BringToForegroundAsync();
+
+                if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                 {
-                    // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
-                    // before using the plugin.
-                    await BringToForegroundAsync();
+                    return PermissionStatus.Granted;
+                }
 
-                    if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
+                string rationale = null;
+
+                if (permission == Permission.Calendar)
+                {
+                    rationale = "Sensus collects calendar information for studies you enroll in.";
+                }
+                else if (permission == Permission.Camera)
+                {
+                    rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
+                }
+                else if (permission == Permission.Contacts)
+                {
+                    rationale = "Sensus collects calendar information for studies you enroll in.";
+                }
+                else if (permission == Permission.Location)
+                {
+                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                }
+                else if (permission == Permission.LocationAlways)
+                {
+                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                }
+                else if (permission == Permission.LocationWhenInUse)
+                {
+                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                }
+                else if (permission == Permission.MediaLibrary)
+                {
+                    rationale = "Sensus collects media for studies you enroll in.";
+                }
+                else if (permission == Permission.Microphone)
+                {
+                    rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+                }
+                else if (permission == Permission.Phone)
+                {
+                    rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+                }
+                else if (permission == Permission.Photos)
+                {
+                    rationale = "Sensus collects photos for studies you enroll in.";
+                }
+                else if (permission == Permission.Reminders)
+                {
+                    rationale = "Sensus collects reminder information for studies you enroll in.";
+                }
+                else if (permission == Permission.Sensors)
+                {
+                    rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+                }
+                else if (permission == Permission.Sms)
+                {
+                    rationale = "Sensus collects text messages for studies you enroll in.";
+                }
+                else if (permission == Permission.Speech)
+                {
+                    rationale = "Sensus uses the microphone for studies you enroll in.";
+                }
+                else if (permission == Permission.Storage)
+                {
+                    rationale = "Sensus must be able to write to your device's storage for proper operation.";
+                }
+
+                if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                {
+                    await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
+                }
+
+                try
+                {
+                    PermissionStatus permissionStatus;
+
+                    // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that.
+                    if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out permissionStatus))
                     {
-                        return PermissionStatus.Granted;
+                        throw new Exception($"Permission status not returned for request:  {permission}");
                     }
 
-                    string rationale = null;
+                    return permissionStatus;
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
 
-                    if (permission == Permission.Calendar)
-                    {
-                        rationale = "Sensus collects calendar information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Camera)
-                    {
-                        rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
-                    }
-                    else if (permission == Permission.Contacts)
-                    {
-                        rationale = "Sensus collects calendar information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Location)
-                    {
-                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.LocationAlways)
-                    {
-                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.LocationWhenInUse)
-                    {
-                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.MediaLibrary)
-                    {
-                        rationale = "Sensus collects media for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Microphone)
-                    {
-                        rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
-                    }
-                    else if (permission == Permission.Phone)
-                    {
-                        rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
-                    }
-                    else if (permission == Permission.Photos)
-                    {
-                        rationale = "Sensus collects photos for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Reminders)
-                    {
-                        rationale = "Sensus collects reminder information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Sensors)
-                    {
-                        rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Sms)
-                    {
-                        rationale = "Sensus collects text messages for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Speech)
-                    {
-                        rationale = "Sensus uses the microphone for studies you enroll in.";
-                    }
-                    else if (permission == Permission.Storage)
-                    {
-                        rationale = "Sensus must be able to write to your device's storage for proper operation.";
-                    }
-
-                    if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-                    {
-                        await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
-                    }
-
-                    try
-                    {
-                        PermissionStatus permissionStatus;
-
-                        // it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that.
-                        if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out permissionStatus))
-                        {
-                            throw new Exception($"Permission status not returned for request:  {permission}");
-                        }
-
-                        return permissionStatus;
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
-
-                        return PermissionStatus.Unknown;
-                    }
-                });
+                    return PermissionStatus.Unknown;
+                }
             });
-        }
-
-        /// <summary>
-        /// Obtains a permission synchronously. Must not call this method from the UI thread, since it blocks waiting for prompts 
-        /// that run on the UI thread (deadlock). If it is necessary to call from the UI thread, call ObtainPermissionAsync instead.
-        /// </summary>
-        /// <returns>The permission status.</returns>
-        /// <param name="permission">Permission.</param>
-        public PermissionStatus ObtainPermission(Permission permission)
-        {
-            try
-            {
-                AssertNotOnMainThread(GetType() + " ObtainPermission");
-            }
-            catch (Exception)
-            {
-                return PermissionStatus.Unknown;
-            }
-
-            PermissionStatus permissionStatus = PermissionStatus.Unknown;
-            ManualResetEvent wait = new ManualResetEvent(false);
-
-            Task.Run(async () =>
-            {
-                permissionStatus = await ObtainPermissionAsync(permission);
-                wait.Set();
-            });
-
-            wait.WaitOne();
-
-            return permissionStatus;
         }
 
         public void AssertNotOnMainThread(string actionDescription)
@@ -1428,7 +1372,168 @@ namespace Sensus
             }
         }
 
-        public void StopProtocols()
+        public async Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)
+        {
+            // the code we need exclusive access to below has an await statement in it, so we
+            // can't lock the entire function. use a gatekeeper to gain exclusive access
+            // and be sure to release the keeper below in the finally clause.
+            lock (_updatePushNotificationTokenLocker)
+            {
+                if (_updatingPushNotificationToken)
+                {
+                    return;
+                }
+                else
+                {
+                    _updatingPushNotificationToken = true;
+                }
+            }
+
+            try
+            {
+                // assume everything is going to be fine and that we won't need to request 
+                // an update on next health test. if the push notification token is not set
+                // we'll throw an exception below and request a new token. when this new token 
+                // arrives, we'll be right back here and we'll proceed with the registration update.
+                _updatePushNotificationRegistrationsOnNextHealthTest = false;
+
+                // we should always have a token. if we do not, throw an exception and request a new token.
+                if (PushNotificationToken == null)
+                {
+                    throw new UnsetPushNotificationTokenException();
+                }
+
+                // it is conceivable that a single hub could be used for multiple protocols. because 
+                // there is only ever a single registration with each hub, we therefore need to 
+                // build a mapping from each hub to its protocols so we can determine whether we
+                // actually need to register with the hub.
+                Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
+                foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol)))
+                {
+                    if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
+                    {
+                        Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
+
+                        if (!hubSasProtocols.ContainsKey(hubSas))
+                        {
+                            hubSasProtocols.Add(hubSas, new List<Protocol>());
+                        }
+
+                        hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
+                    }
+                }
+
+                // process each hub
+                foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+                {
+                    // unregister from the hub, catching any exceptions.
+                    try
+                    {
+                        await UnregisterFromNotificationHubAsync(hubSas);
+                    }
+                    catch (Exception unregisterEx)
+                    {
+                        // no need to request an update on the next health test, as it was just 
+                        // the unregister that failed. as long as the registration below works, 
+                        // we should be fine.
+                        SensusException.Report("Exception while unregistering from hub:  " + unregisterEx.Message, unregisterEx);
+                    }
+
+                    // each protocol may have its own remote data store being monitored for push notification
+                    // requests. tokens are per device, so update the token in each protocol's remote store.
+                    bool atLeastOneProtocolRunning = false;
+                    foreach (Protocol protocol in hubSasProtocols[hubSas])
+                    {
+                        // this only applies to protocols with a remote data store (some might simply be 
+                        // incompletely configured, and those can be skipped).
+                        if (protocol.RemoteDataStore == null)
+                        {
+                            continue;
+                        }
+
+                        // catch any exceptions, as we might just be lacking an internet connection.
+                        try
+                        {
+                            if (protocol.Running || protocol.StartIsScheduled)
+                            {
+                                atLeastOneProtocolRunning = true;
+
+                                await protocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, cancellationToken);
+                            }
+                            else
+                            {
+                                await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(cancellationToken);
+                            }
+                        }
+                        catch (Exception updateTokenException)
+                        {
+                            SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
+
+                            // we absolutely must update the token at the remote data store
+                            _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                        }
+                    }
+
+                    // register with the hub if any of its associated protocols are running
+                    if (atLeastOneProtocolRunning)
+                    {
+                        // catch any exceptions from registering
+                        try
+                        {
+                            await RegisterWithNotificationHubAsync(hubSas);
+                        }
+                        catch (Exception registerEx)
+                        {
+                            SensusException.Report("Exception while registering with hub:  " + registerEx.Message, registerEx);
+
+                            // we absolutely must register with the hub
+                            _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                        }
+                    }
+                }
+            }
+            catch (UnsetPushNotificationTokenException)
+            {
+                try
+                {
+                    SensusException.Report("Push notification token was not set.");
+                }
+                catch (Exception)
+                {
+                }
+
+                try
+                {
+                    RequestNewPushNotificationToken();
+                }
+                catch (Exception newTokenException)
+                {
+                    SensusException.Report("Exception while requesting a new token:  " + newTokenException.Message, newTokenException);
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    SensusException.Report("Exception while updating push notification registrations:  " + ex.Message, ex);
+                }
+                catch (Exception)
+                {
+                }
+
+                // we have just reported the issue to the app center crash api, so hopefully we'll 
+                // see the problem there. one thing we can do is try to update the push notification 
+                // registrations again on the next health test...so...
+                _updatePushNotificationRegistrationsOnNextHealthTest = true;
+            }
+            finally
+            {
+                // we're done...let the next update proceed.
+                _updatingPushNotificationToken = false;
+            }
+        }
+
+        public async Task StopProtocolsAsync()
         {
             _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
@@ -1436,7 +1541,7 @@ namespace Sensus
             {
                 try
                 {
-                    protocol.Stop();
+                    await protocol.StopAsync();
                 }
                 catch (Exception ex)
                 {
@@ -1446,9 +1551,9 @@ namespace Sensus
         }
 
         #region Private Methods
-        private void RemoveScripts(bool issueNotification, params Script[] scripts)
+        private async Task RemoveScriptsAsync(bool issueNotification, params Script[] scripts)
         {
-            var removed = false;
+            bool removed = false;
 
             foreach (var script in scripts)
             {
@@ -1460,7 +1565,7 @@ namespace Sensus
 
             if (removed && issueNotification)
             {
-                IssuePendingSurveysNotificationAsync(null, false);
+                await IssuePendingSurveysNotificationAsync(null, false);
             }
         }
 

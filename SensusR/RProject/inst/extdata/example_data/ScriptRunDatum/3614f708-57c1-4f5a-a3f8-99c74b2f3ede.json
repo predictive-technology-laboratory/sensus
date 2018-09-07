@@ -1,3 +1,0 @@
-[
-{"$type":"SensusService.Probes.User.ScriptRunDatum, SensusAndroid","ScriptId":"02d04710-8fd9-4344-a766-ea91e8295500","ScriptName":"Pain","RunId":"d1075747-2fc7-4b4b-8c4c-428c005ae7fb","TriggerDatumId":"","Latitude":38.06763612,"Longitude":-78.95106873,"LocationTimestamp":"2016-06-22T11:00:05+00:00","Id":"4c16596f-929a-4f14-8eef-3052767fccc6","DeviceId":"287cf65bb08d6f21","Timestamp":"2016-06-22T11:00:02.552744+00:00","ProtocolId":"cc3db0e5-3476-4a2e-9576-bc082880fc73","Anonymized":true}
-]

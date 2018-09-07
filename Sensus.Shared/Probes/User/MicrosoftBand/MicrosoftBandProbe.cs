@@ -34,7 +34,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected override void Configure(BandClient bandClient)
+        protected override async Task ConfigureAsync(BandClient bandClient)
         {
             SensorType bandClientSensor = GetSensor(bandClient);
 
@@ -60,7 +60,7 @@ namespace Sensus.Probes.User.MicrosoftBand
                 // unregister listener
                 try
                 {
-                    _sensor.StopReadingsAsync().Wait();
+                    await _sensor.StopReadingsAsync();
                 }
                 catch (Exception ex)
                 {
@@ -75,37 +75,38 @@ namespace Sensus.Probes.User.MicrosoftBand
 
         protected abstract SensorType GetSensor(BandClient bandClient);
 
-        protected virtual void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<ReadingType> args)
+        protected virtual async void ReadingChangedAsync(object sender, BandSensorReadingEventArgs<ReadingType> args)
         {
-            Task.Run(() =>
+            try
             {
-                try
-                {
-                    Datum datum = GetDatumFromReading(args.SensorReading);
-                    StoreDatum(datum);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Error getting/storing Band datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            });
+                Datum datum = GetDatumFromReading(args.SensorReading);
+                await StoreDatumAsync(datum);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Error getting/storing Band datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
 
-        protected override void StartReadings()
+        protected override async Task StartReadingsAsync()
         {
             if (_sensor == null)
+            {
                 throw new Exception("Sensor not configured.");
+            }
             else
-                _sensor.StartReadingsAsync(SamplingRate).Wait();
+            {
+                await _sensor.StartReadingsAsync(SamplingRate);
+            }
         }
 
         protected abstract Datum GetDatumFromReading(ReadingType reading);
 
-        protected override void StopReadings()
+        protected override async Task StopReadingsAsync()
         {
             if (_sensor != null)
             {
-                _sensor.StopReadingsAsync().Wait();
+                await _sensor.StopReadingsAsync();
             }
         }
     }

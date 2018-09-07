@@ -79,6 +79,8 @@ namespace Sensus.Tests.Classes
             }
         }
 
+        public override string PushNotificationToken => throw new NotImplementedException();
+
         protected override bool IsOnMainThread
         {
             get
@@ -88,6 +90,16 @@ namespace Sensus.Tests.Classes
         }
 
         public override Task BringToForegroundAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
         {
             throw new NotImplementedException();
         }
@@ -138,6 +150,21 @@ namespace Sensus.Tests.Classes
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void RequestNewPushNotificationToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }

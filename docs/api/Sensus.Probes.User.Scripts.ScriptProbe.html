@@ -120,9 +120,6 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
-    </div>
-    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
     </div>
     <div>
@@ -513,16 +510,16 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Initialize">Probe.Initialize()</a></div>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptProbe_InternalStart_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.InternalStart*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_InternalStart" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.InternalStart">InternalStart()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_ProtectedStart_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.ProtectedStart*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_ProtectedStart" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.ProtectedStart">ProtectedStart()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void InternalStart()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override void ProtectedStart()</code></pre>
   </div>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_InternalStart">Probe.InternalStart()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStart">Probe.ProtectedStart()</a></div>
   
   
   <a id="Sensus_Probes_User_Scripts_ScriptProbe_Reset_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Reset*"></a>
@@ -547,6 +544,50 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
   </div>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Stop">Probe.Stop()</a></div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_TestHealth_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.TestHealth*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

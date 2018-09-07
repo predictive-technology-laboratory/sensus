@@ -809,11 +809,13 @@ public bool Required { get; set; }</code></pre>
   
   <a id="Sensus_UI_Inputs_Input_StoreCompletionRecords_" data-uid="Sensus.UI.Inputs.Input.StoreCompletionRecords*"></a>
   <h4 id="Sensus_UI_Inputs_Input_StoreCompletionRecords" data-uid="Sensus.UI.Inputs.Input.StoreCompletionRecords">StoreCompletionRecords</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Whether or not to record a trace of all input values from the first to the final.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool StoreCompletionRecords { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Store Completion Records:&quot;, true, 6)]
+public bool StoreCompletionRecords { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -826,7 +828,8 @@ public bool Required { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> if store completion records; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>

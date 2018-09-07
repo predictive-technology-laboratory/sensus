@@ -267,9 +267,9 @@ namespace Sensus.DataStores.Local
             _encrypt = false;
         }
 
-        public override void Start()
+        public override async Task StartAsync()
         {
-            base.Start();
+            await base.StartAsync();
 
             // ensure that we have a valid encryption setup if one is requested
             if (_encrypt)
@@ -753,20 +753,20 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
             // flush any remaining data to disk.
             Flush();
 
             // stop the data store. it could very well be that someone attempts to add additional data 
             // following the flush and prior to stopping. these data will be lost.
-            base.Stop();
+            await base.StopAsync();
 
             // the data stores state is stopped, but the file write task will still be running if the
             // condition in its while-loop hasn't been checked. to ensure that this condition is checked, 
             // signal the long-running write task to check for data, and wait for the task to finish.
             _checkForBufferedData.Set();
-            _writeToFileTask.Wait();
+            await _writeToFileTask;
 
             lock (_storeBuffer)
             {
@@ -817,9 +817,9 @@ namespace Sensus.DataStores.Local
             _path = null;
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             double storageDirectorySizeMB;
             lock (_locker)
@@ -839,9 +839,9 @@ namespace Sensus.DataStores.Local
 
             Analytics.TrackEvent(eventName, properties);
 
-            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return restart;
+            return result;
         }
     }
 }

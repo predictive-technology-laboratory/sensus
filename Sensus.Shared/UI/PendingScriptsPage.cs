@@ -54,9 +54,9 @@ namespace Sensus.UI
             {
                 MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
                 deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
-                deleteMenuItem.Clicked += (sender, e) =>
+                deleteMenuItem.Clicked += async (sender, e) =>
                 {
-                    SensusServiceHelper.Get().RemoveScript((sender as MenuItem).CommandParameter as Script);
+                    await SensusServiceHelper.Get().RemoveScriptAsync((sender as MenuItem).CommandParameter as Script);
                 };
 
                 ContextActions.Add(deleteMenuItem);
@@ -69,7 +69,7 @@ namespace Sensus.UI
 
             ListView scriptList = new ListView(ListViewCachingStrategy.RecycleElement)
             {                
-                BindingContext = SensusServiceHelper.Get().ScriptsToRun  // used to show/hid when there are no surveys
+                BindingContext = SensusServiceHelper.Get().ScriptsToRun  // used to show/hide when there are no surveys
             };
 
             scriptList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));  // don't show list when there are no surveys
@@ -93,6 +93,7 @@ namespace Sensus.UI
                 bool canceled = inputGroups == null;
 
                 // process all inputs in the script
+                bool inputStored = false;
                 foreach (InputGroup inputGroup in selectedScript.InputGroups)
                 {
                     foreach (Input input in inputGroup.Inputs)
@@ -113,7 +114,9 @@ namespace Sensus.UI
                                 // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
                                 // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                                 // grouped across runs. this is the difference between scriptId and runId in the following line.
-                                selectedScript.Runner.Probe.StoreDatum(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), selectedScript.Runner.Script.Id, selectedScript.Runner.Name, input.GroupId, input.Id, selectedScript.Id, input.Value, selectedScript.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, selectedScript.RunTime.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
+                                await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), selectedScript.Runner.Script.Id, selectedScript.Runner.Name, input.GroupId, input.Id, selectedScript.Id, input.Value, selectedScript.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, selectedScript.RunTime.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
+
+                                inputStored = true;
 
                                 // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                 input.NeedsToBeStored = false;
@@ -123,6 +126,7 @@ namespace Sensus.UI
                     }
                 }
 
+                // track times when script is completely valid
                 if (selectedScript.Valid)
                 {
                     // add completion time and remove all completion times before the participation horizon
@@ -141,10 +145,18 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    SensusServiceHelper.Get().RemoveScript(selectedScript);
+                    await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript);
                 }
 
                 SensusServiceHelper.Get().Logger.Log("\"" + selectedScript.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
+
+                // run a local-to-remote transfer if desired, respecting wifi requirements. do this after everything above, as it may take
+                // quite some time to transfer the data depending on its size.
+                if (inputStored && selectedScript.Runner.ForceRemoteStorageOnSurveySubmission)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Forcing a local-to-remote transfer.", LoggingLevel.Normal, typeof(Script));
+                    await selectedScript.Runner.Probe.Protocol.RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken.None);
+                }
             };
 
             // display an informative message when there are no surveys
@@ -177,16 +189,16 @@ namespace Sensus.UI
             {
                 if (await DisplayAlert("Clear all surveys?", "This action cannot be undone.", "Clear", "Cancel"))
                 {
-                    SensusServiceHelper.Get().ClearScripts();
+                    await SensusServiceHelper.Get().ClearScriptsAsync();
                 }
             }));
 
             // use timer to update available surveys
             System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
 
-            filterTimer.Elapsed += (sender, e) =>
+            filterTimer.Elapsed += async (sender, e) =>
             {
-                SensusServiceHelper.Get().RemoveExpiredScripts(true);
+                await SensusServiceHelper.Get().RemoveExpiredScriptsAsync(true);
             };
 
             Appearing += (sender, e) =>

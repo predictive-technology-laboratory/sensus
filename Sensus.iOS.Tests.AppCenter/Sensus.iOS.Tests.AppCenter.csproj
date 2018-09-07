@@ -3,14 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5C44B0B2-B02F-4774-A806-FE2F8E7F5A29}</ProjectGuid>
+    <ProjectGuid>{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Sensus.iOS.Tests.AppCenter</RootNamespace>
     <AssemblyName>Sensus.iOS.Tests.AppCenter</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <ReleaseVersion>2.0.0</ReleaseVersion>
-    <Description>Endpoint for running Sensus unit tests within the AppCenter cloud. This must be built in debug
-to run on the AppCenter cloud.</Description>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,7 +32,7 @@ to run on the AppCenter cloud.</Description>
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.UITest">
-      <HintPath>..\packages\Xamarin.UITest.2.2.4\lib\net45\Xamarin.UITest.dll</HintPath>
+      <HintPath>..\packages\Xamarin.UITest.2.2.5\lib\net45\Xamarin.UITest.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -42,7 +40,7 @@ to run on the AppCenter cloud.</Description>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sensus.iOS.Tests\Sensus.iOS.Tests.csproj">
-      <Project>{CC6093B2-4BA6-49D6-9143-CADCEDEBCA66}</Project>
+      <Project>{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}</Project>
       <Name>Sensus.iOS.Tests</Name>
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
       <Private>False</Private>

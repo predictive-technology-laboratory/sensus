@@ -18,6 +18,8 @@ using System.Threading;
 using System;
 using System.Threading.Tasks;
 using System.IO;
+using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.DataStores.Remote
 {
@@ -43,6 +45,14 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        public override string StorageDescription
+        {
+            get
+            {
+                return base.StorageDescription ?? "Data will be discarded " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower();
+            }
+        }
+
         public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
@@ -50,7 +60,27 @@ namespace Sensus.DataStores.Remote
 
         public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
+        }
+
+        public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
 
         public override string GetDatumKey(Datum datum)
