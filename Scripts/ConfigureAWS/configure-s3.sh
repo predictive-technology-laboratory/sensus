@@ -51,7 +51,8 @@ fi
 # create/put group policy
 echo "Attaching write-only IAM group policy..."
 cp ./iam-write-only-group-policy.json tmp.json
-sed -i "" "s/bucketName/$bucket/" ./tmp.json
+sed "s/bucketName/$bucket/" ./tmp.json > tmp2.json  # sed in place differs across platforms...avoid and use file redirect instead
+mv tmp2.json tmp.json
 aws iam put-group-policy --group-name $iamWriteOnlyGroupName --policy-document file://tmp.json --policy-name "${iamWriteOnlyGroupName}-policy"
 if [ $? -ne 0 ]; then
     rm tmp.json
