@@ -94,6 +94,7 @@ namespace Sensus.UI
                 bool canceled = inputGroups == null;
 
                 // process all inputs in the script
+                bool inputStored = false;
                 foreach (InputGroup inputGroup in selectedScript.InputGroups)
                 {
                     foreach (Input input in inputGroup.Inputs)
@@ -116,6 +117,8 @@ namespace Sensus.UI
                                 // grouped across runs. this is the difference between scriptId and runId in the following line.
                                 await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), selectedScript.Runner.Script.Id, selectedScript.Runner.Name, input.GroupId, input.Id, selectedScript.Id, input.Value, selectedScript.CurrentDatum?.Id, input.Latitude, input.Longitude, input.LocationUpdateTimestamp, selectedScript.RunTime.Value, input.CompletionRecords, input.SubmissionTimestamp.Value), default(CancellationToken));
 
+                                inputStored = true;
+
                                 // once inputs are stored, they should not be stored again, nor should the user be able to modify them if the script is viewed again.
                                 input.NeedsToBeStored = false;
                                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() => input.Enabled = false);
@@ -124,6 +127,7 @@ namespace Sensus.UI
                     }
                 }
 
+                // track times when script is completely valid
                 if (selectedScript.Valid)
                 {
                     // add completion time and remove all completion times before the participation horizon
@@ -149,7 +153,7 @@ namespace Sensus.UI
 
                 // run a local-to-remote transfer if desired, respecting wifi requirements. do this after everything above, as it may take
                 // quite some time to transfer the data depending on its size.
-                if (selectedScript.Valid && selectedScript.Runner.ForceRemoteStorageOnSurveySubmission)
+                if (inputStored && selectedScript.Runner.ForceRemoteStorageOnSurveySubmission)
                 {
                     SensusServiceHelper.Get().Logger.Log("Forcing a local-to-remote transfer.", LoggingLevel.Normal, typeof(Script));
                     await selectedScript.Runner.Probe.Protocol.RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken.None);
