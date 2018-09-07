@@ -2,12 +2,20 @@
 
 if [ $# -ne 2 ]; then
     echo "Usage:  ./configure-s3.sh [name] [region]"
-    echo "\t[name]:  Informative name for bucket (alphanumerics and dashes)"
+    echo "\t[name]:  Informative name for bucket (alphanumerics and dashes). Must be 11 characters or fewer."
     echo "\t[region]:  AWS region to use (e.g., us-east-1)"
     echo ""
     echo "Output:  The Sensus S3 IAM account that has write-only access to the bucket."
     exit 1
 fi
+
+# ensure bucket name is short enough
+if [[ ${#1} -ge 12 ]]; then
+    echo "Error:  Bucket name must be 11 characters or fewer."
+    exit 1
+fi
+
+exit 0
 
 #####################
 ##### S3 bucket #####
