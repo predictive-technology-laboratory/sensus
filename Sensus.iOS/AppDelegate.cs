@@ -17,7 +17,6 @@ using System.IO;
 using Xamarin;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
-using Xam.Plugin.MapExtend.iOSUnified;
 using Sensus.UI;
 using Sensus.Probes;
 using Sensus.Context;
@@ -70,7 +69,6 @@ namespace Sensus.iOS
 
             Forms.Init();
             FormsMaps.Init();
-            MapExtendRenderer.Init();
             new SfChartRenderer();
             ZXing.Net.Mobile.Forms.iOS.Platform.Init();
 
