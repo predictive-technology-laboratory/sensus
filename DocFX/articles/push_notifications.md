@@ -50,9 +50,7 @@ Configure the Apple Push Notification Service following the official Apple docum
   * nodejs
 
 ```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install 8.11.2
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2
 ```
 
 1. Install an AWS credentials profile in the EC2 instance that has read/write access to the AWS S3 bucket configured above.
