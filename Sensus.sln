@@ -124,6 +124,8 @@ Global
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Any CPU.ActiveCfg = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Any CPU.ActiveCfg = Release|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Android.ActiveCfg = Debug|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Any CPU.ActiveCfg = Debug|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
