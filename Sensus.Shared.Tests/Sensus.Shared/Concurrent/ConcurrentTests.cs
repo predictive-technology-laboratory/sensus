@@ -291,7 +291,9 @@ namespace Sensus.Tests.Concurrent
                     int x = _concurrent.ExecuteThreadSafe(() =>
                     {
                         throw new Exception();
+#pragma warning disable CS0162 // Unreachable code detected
                         return 1;  // required to make this a function rather than an action
+#pragma warning restore CS0162 // Unreachable code detected
                     });
                 });
             });

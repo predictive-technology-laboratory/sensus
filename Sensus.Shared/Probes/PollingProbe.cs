@@ -64,6 +64,9 @@ namespace Sensus.Probes
         private bool _isPolling;
         private List<DateTime> _pollTimes;
         private ScheduledCallback _pollCallback;
+        private bool _acPowerConnectPoll;
+        private bool _acPowerConnectPollOverridesScheduledPolls;
+        private EventHandler<bool> _powerConnectionChanged;
 
 #if __IOS__
         private bool _significantChangePoll;
@@ -140,6 +143,30 @@ namespace Sensus.Probes
             get { return _pollTimes; }
         }
 
+        /// <summary>
+        /// Whether to poll on when the device is connected to AC Power.
+        /// </summary>
+        /// <value><c>true</c> if we should poll on power connect; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Poll On AC Power Connection:", true, 7)]
+        public bool AcPowerConnectPoll
+        {
+            get { return _acPowerConnectPoll; }
+            set { _acPowerConnectPoll = value; }
+        }
+
+        /// <summary>
+        /// Has no effect if <see cref="AcPowerConnectPoll"/> is disabled. If <see cref="AcPowerConnectPoll"/> is enabled:  (1) If this 
+        /// is on, polling will only occur on AC power connect. (2) If this is off, polling will occur based on <see cref="PollingSleepDurationMS"/> and 
+        /// on AC power connect.
+        /// </summary>
+        /// <value><c>true</c> if AC power connect poll overrides scheduled polls; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("AC Power Connection Poll Overrides Scheduled Polls:", true, 8)]
+        public bool AcPowerConnectPollOverridesScheduledPolls
+        {
+            get { return _acPowerConnectPollOverridesScheduledPolls; }
+            set { _acPowerConnectPollOverridesScheduledPolls = value; }
+        }
+
 #if __IOS__
         /// <summary>
         /// Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
@@ -147,7 +174,7 @@ namespace Sensus.Probes
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll:", true, 7)]
+        [OnOffUiProperty("Significant Change Poll:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -160,7 +187,7 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 8)]
+        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
@@ -172,30 +199,38 @@ namespace Sensus.Probes
         {
             get
             {
+                string description = DisplayName + ":  ";
+
+                bool scheduledPollOverridden = false;
 
 #if __IOS__
-                string significantChangeDescription = null;
                 if (_significantChangePoll)
                 {
-                    significantChangeDescription = "On significant changes in the device's location";
+                    description += "On significant changes in the device's location. ";
 
                     if (_significantChangePollOverridesScheduledPolls)
                     {
-                        return DisplayName + ":  " + significantChangeDescription + ".";
+                        scheduledPollOverridden = true;
                     }
                 }
 #endif
 
-                string intervalStr = TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
-
-#if __IOS__
-                if (_significantChangePoll)
+                if (_acPowerConnectPoll)
                 {
-                    intervalStr = significantChangeDescription + "; and " + intervalStr.ToLower();
-                }
-#endif
+                    description += "On AC power connection. ";
 
-                return DisplayName + ":  " + intervalStr;
+                    if (_acPowerConnectPollOverridesScheduledPolls)
+                    {
+                        scheduledPollOverridden = true;
+                    }
+                }
+
+                if (!scheduledPollOverridden)
+                {
+                    description += TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
+                }
+
+                return description;
             }
         }
 
@@ -205,6 +240,8 @@ namespace Sensus.Probes
             _pollingTimeoutMinutes = 5;
             _isPolling = false;
             _pollTimes = new List<DateTime>();
+            _acPowerConnectPoll = false;
+            _acPowerConnectPollOverridesScheduledPolls = false;
 
 #if __IOS__
             _significantChangePoll = false;
@@ -214,15 +251,15 @@ namespace Sensus.Probes
             {
                 try
                 {
-                    CancellationTokenSource canceller = new CancellationTokenSource();
+                    CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                     // if the callback specified a timeout, request cancellation at the specified time.
                     if (_pollCallback.CallbackTimeout.HasValue)
                     {
-                        canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
                     }
 
-                    await _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
+                    await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
                 }
                 catch (Exception ex)
                 {
@@ -231,6 +268,28 @@ namespace Sensus.Probes
             };
 #endif
 
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                try
+                {
+                    if (connected)
+                    {
+                        CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
+
+                        // if the callback specified a timeout, request cancellation at the specified time.
+                        if (_pollCallback.CallbackTimeout.HasValue)
+                        {
+                            pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        }
+
+                        await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed AC power connected poll.", ex);
+                }
+            };
         }
 
         protected override async Task ProtectedStartAsync()
@@ -296,8 +355,9 @@ namespace Sensus.Probes
 
             }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
-#if __IOS__
+            bool schedulePollCallback = true;
 
+#if __IOS__
             if (_significantChangePoll)
             {
                 _locationManager.RequestAlwaysAuthorization();
@@ -307,23 +367,34 @@ namespace Sensus.Probes
 
                 if (CLLocationManager.LocationServicesEnabled)
                 {
-                   _locationManager.StartMonitoringSignificantLocationChanges();
+                    _locationManager.StartMonitoringSignificantLocationChanges();
+
+                    if (_significantChangePollOverridesScheduledPolls)
+                    {
+                        schedulePollCallback = false;
+                    }
                 }
                 else
                 {
                     SensusServiceHelper.Get().Logger.Log("Location services not enabled.", LoggingLevel.Normal, GetType());
                 }
             }
+#endif       
 
-            // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
-            if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)  
+            if (_acPowerConnectPoll)
+            {
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;  //attach to the power connection changed 
+
+                if (_acPowerConnectPollOverridesScheduledPolls)
+                {
+                    schedulePollCallback = false;
+                }
+            }
+
+            if (schedulePollCallback)
             {
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
             }
-
-#elif __ANDROID__
-            await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
-#endif
         }
 
         protected abstract Task<List<Datum>> PollAsync(CancellationToken cancellationToken);
@@ -338,6 +409,13 @@ namespace Sensus.Probes
                 _locationManager.StopMonitoringSignificantLocationChanges();
             }
 #endif
+
+            if (_acPowerConnectPoll)
+            {
+#pragma warning disable RECS0020 // Delegate subtraction has unpredictable result
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
+#pragma warning restore RECS0020 // Delegate subtraction has unpredictable result
+            }
 
             await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_pollCallback);
             _pollCallback = null;
@@ -357,6 +435,12 @@ namespace Sensus.Probes
                     return result;
                 }
 #endif
+
+                // don't check for polling delays if the scheduled polls are overridden.
+                if (_acPowerConnectPoll && _acPowerConnectPollOverridesScheduledPolls)
+                {
+                    return result;
+                }
 
                 TimeSpan timeElapsedSincePreviousStore = DateTimeOffset.UtcNow - MostRecentStoreTimestamp.GetValueOrDefault(DateTimeOffset.MinValue);
                 int allowedLagMS = 5000;
