@@ -144,24 +144,24 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Whether to poll on when the device is plugged into AC Power.
+        /// Whether to poll on when the device is connected to AC Power.
         /// </summary>
         /// <value><c>true</c> if we should poll on power connect; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Poll On AC Power Connection:", true, 7)]
-        public bool ACPowerConnectPoll
+        public bool AcPowerConnectPoll
         {
             get { return _acPowerConnectPoll; }
             set { _acPowerConnectPoll = value; }
         }
 
         /// <summary>
-        /// Has no effect if ac power connect polling is disabled. If AC power connect polling is enabled:  (1) If this 
+        /// Has no effect if <see cref="AcPowerConnectPoll"/> is disalbed. If <see cref="AcPowerConnectPoll"/> is enabled:  (1) If this 
         /// is on, polling will only occur on AC power connect. (2) If this is off, polling will occur based on <see cref="PollingSleepDurationMS"/> and 
         /// on AC power connect.
         /// </summary>
         /// <value><c>true</c> if AC power connect poll overrides scheduled polls; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("AC Power Connection Poll Overrides Scheduled Polls:", true, 8)]
-        public bool ACPowerConnectPollOverridesScheduledPolls
+        public bool AcPowerConnectPollOverridesScheduledPolls
         {
             get { return _acPowerConnectPollOverridesScheduledPolls; }
             set { _acPowerConnectPollOverridesScheduledPolls = value; }
