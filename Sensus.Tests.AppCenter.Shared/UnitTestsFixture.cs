@@ -39,7 +39,7 @@ namespace Sensus.Tests.AppCenter.Shared
         [Test]
         public void UnitTests()
         {
-            TimeSpan timeout = TimeSpan.FromMinutes(2);
+            TimeSpan timeout = TimeSpan.FromMinutes(5);
 
 #if __ANDROID__
             string resultsStr = _app.WaitForElement(c => c.All().Marked("unit-test-results"), timeout: timeout).FirstOrDefault()?.Text;
