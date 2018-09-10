@@ -39,6 +39,7 @@ namespace Sensus.Tests.AppCenter.Shared
         [Test]
         public void UnitTests()
         {
+            // wait for the tests to complete
             TimeSpan timeout = TimeSpan.FromMinutes(5);
 
 #if __ANDROID__
