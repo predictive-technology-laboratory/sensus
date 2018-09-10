@@ -285,12 +285,6 @@
     <Reference Include="Estimote.iOS.Proximity">
       <HintPath>..\dependencies\estimote\ios\Estimote.iOS.Proximity.dll</HintPath>
     </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.Abstractions">
-      <HintPath>..\dependencies\mapextend\ios\Xam.Plugin.MapExtend.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Xam.Plugin.MapExtend.iOSUnified">
-      <HintPath>..\dependencies\mapextend\ios\Xam.Plugin.MapExtend.iOSUnified.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Band.iOS">
       <HintPath>..\dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
     </Reference>
