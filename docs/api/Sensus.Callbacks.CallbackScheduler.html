@@ -235,13 +235,13 @@
   
   
   <a id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Action_System_Action_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Action,System.Action)">RaiseCallbackAsync(ScheduledCallback, String, Boolean, Action, Action)</h4>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Func_System_Threading_Tasks_Task__System_Action_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)">RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func&lt;Task&gt;, Action)</h4>
   <div class="markdown level1 summary"><p>Raises a callback.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Action scheduleRepeatCallback, Action letDeviceSleepCallback)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Func&lt;Task&gt; scheduleRepeatCallbackAsync, Action letDeviceSleepCallback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -272,8 +272,8 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">scheduleRepeatCallback</span></td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td><span class="parametername">scheduleRepeatCallbackAsync</span></td>
         <td><p>Platform-specific action to execute to schedule the next execution of the callback.</p>
 </td>
       </tr>
@@ -303,13 +303,13 @@
   </table>
   
   
-  <a id="Sensus_Callbacks_CallbackScheduler_ScheduleCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallback*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_ScheduleCallback_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallback(Sensus.Callbacks.ScheduledCallback)">ScheduleCallback(ScheduledCallback)</h4>
+  <a id="Sensus_Callbacks_CallbackScheduler_ScheduleCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallbackAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_ScheduleCallbackAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallbackAsync(Sensus.Callbacks.ScheduledCallback)">ScheduleCallbackAsync(ScheduledCallback)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallbackState ScheduleCallback(ScheduledCallback callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;ScheduledCallbackState&gt; ScheduleCallbackAsync(ScheduledCallback callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -338,20 +338,20 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallbackState.html">ScheduledCallbackState</a></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallbackState.html">ScheduledCallbackState</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecific_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecific*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)">ScheduleCallbackPlatformSpecific(ScheduledCallback)</h4>
+  <a id="Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecificAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)">ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void ScheduleCallbackPlatformSpecific(ScheduledCallback callback)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -366,6 +366,21 @@
       <tr>
         <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
         <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -523,14 +538,14 @@
   </table>
   
   
-  <a id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallback*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallback_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallback(Sensus.Callbacks.ScheduledCallback)">UnscheduleCallback(ScheduledCallback)</h4>
+  <a id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackAsync(Sensus.Callbacks.ScheduledCallback)">UnscheduleCallbackAsync(ScheduledCallback)</h4>
   <div class="markdown level1 summary"><p>Unschedules the callback, first cancelling any executions that are currently running and then removing the callback from the scheduler.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void UnscheduleCallback(ScheduledCallback callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task UnscheduleCallbackAsync(ScheduledCallback callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -547,6 +562,21 @@
         <td><span class="parametername">callback</span></td>
         <td><p>Callback.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>

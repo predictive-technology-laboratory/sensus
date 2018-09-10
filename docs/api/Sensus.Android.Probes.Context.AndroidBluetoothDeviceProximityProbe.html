@@ -81,7 +81,19 @@
   
   <h1 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe" class="text-break">Class AndroidBluetoothDeviceProximityProbe
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Scans for the presence of other devices nearby that are running the current <a class="xref" href="Sensus.Protocol.html">Protocol</a>. When
+encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
+of the current device and serves requests for the current device&apos;s ID. This Probe reports data in the form 
+of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityDatum.html">BluetoothDeviceProximityDatum</a> objects.</p>
+<p>There are caveats to the conditions under which an Android device running this Probe will detect another
+device:</p>
+<ul>
+<li>If the other device is an Android device with Sensus running in the foreground or background, detection is possible.</li>
+<li>If the other device is an iOS device with Sensus running in the foreground, detection is possible.</li>
+<li>If the other device is an iOS device with Sensus running in the background, detection is not possible.</li>
+</ul>
+<p>See the iOS subclass of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a> for additional information.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -98,19 +110,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_DEVICE_ID_SERVICE_UUID">BluetoothDeviceProximityProbe.DEVICE_ID_SERVICE_UUID</a>
-    </div>
-    <div>
       <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_DEVICE_ID_CHARACTERISTIC_UUID">BluetoothDeviceProximityProbe.DEVICE_ID_CHARACTERISTIC_UUID</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ProtectedStart">BluetoothDeviceProximityProbe.ProtectedStart()</a>
+      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ProtectedStartAsync">BluetoothDeviceProximityProbe.ProtectedStartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_Poll_System_Threading_CancellationToken_">BluetoothDeviceProximityProbe.Poll(CancellationToken)</a>
+      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_PollAsync_System_Threading_CancellationToken_">BluetoothDeviceProximityProbe.PollAsync(CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_Stop">BluetoothDeviceProximityProbe.Stop()</a>
+      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopAsync">BluetoothDeviceProximityProbe.StopAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_GetChartSeries">BluetoothDeviceProximityProbe.GetChartSeries()</a>
@@ -128,13 +137,16 @@
       <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_EncounteredDeviceData">BluetoothDeviceProximityProbe.EncounteredDeviceData</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanDurationMS">BluetoothDeviceProximityProbe.ScanDurationMS</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_DisplayName">BluetoothDeviceProximityProbe.DisplayName</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_DatumType">BluetoothDeviceProximityProbe.DatumType</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_Reset">PollingProbe.Reset()</a>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ResetAsync">PollingProbe.ResetAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingProbe.PollingSleepDurationMS</a>
@@ -155,28 +167,34 @@
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollTimes">PollingProbe.PollTimes</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPoll">PollingProbe.AcPowerConnectPoll</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPollOverridesScheduledPolls">PollingProbe.AcPowerConnectPollOverridesScheduledPolls</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_CollectionDescription">PollingProbe.CollectionDescription</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -268,70 +286,35 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DefaultPollingSleepDurationMS">PollingProbe.DefaultPollingSleepDurationMS</a></div>
-  
-  
-  <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_DeviceIdCharacteristic_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.DeviceIdCharacteristic*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_DeviceIdCharacteristic" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.DeviceIdCharacteristic">DeviceIdCharacteristic</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public BluetoothGattCharacteristic DeviceIdCharacteristic { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Android.Bluetooth.BluetoothGattCharacteristic</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_DeviceIdService_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.DeviceIdService*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_DeviceIdService" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.DeviceIdService">DeviceIdService</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public BluetoothGattService DeviceIdService { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Android.Bluetooth.BluetoothGattService</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="methods">Methods
   </h3>
   
   
-  <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_Initialize_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.Initialize*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_Initialize" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.Initialize">Initialize()</h4>
+  <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_InitializeAsync_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.InitializeAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_InitializeAsync" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.InitializeAsync">InitializeAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void Initialize()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task InitializeAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_Initialize">BluetoothDeviceProximityProbe.Initialize()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_InitializeAsync">BluetoothDeviceProximityProbe.InitializeAsync()</a></div>
   
   
   <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StartAdvertising_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartAdvertising*"></a>
@@ -382,13 +365,13 @@
   <div><a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopScan">BluetoothDeviceProximityProbe.StopScan()</a></div>
   
   
-  <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <a id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealthAsync_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealthAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -401,7 +384,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
         <td><span class="parametername">events</span></td>
         <td></td>
       </tr>
@@ -417,13 +400,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">PollingProbe.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
+  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">PollingProbe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

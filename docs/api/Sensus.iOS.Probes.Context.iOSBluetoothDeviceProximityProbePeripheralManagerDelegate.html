@@ -81,7 +81,8 @@
   
   <h1 id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbePeripheralManagerDelegate" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate" class="text-break">Class iOSBluetoothDeviceProximityProbePeripheralManagerDelegate
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>iOS BLE peripheral (advertiser/server) delegate class. Receives events related to BLE advertising and<br>characteristic reading.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -99,12 +100,12 @@
   
   
   <a id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbePeripheralManagerDelegate__ctor_" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.#ctor*"></a>
-  <h4 id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbePeripheralManagerDelegate__ctor_Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.#ctor(Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe)">iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(iOSBluetoothDeviceProximityProbe)</h4>
+  <h4 id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbePeripheralManagerDelegate__ctor_CoreBluetooth_CBMutableService_CoreBluetooth_CBMutableCharacteristic_Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.#ctor(CoreBluetooth.CBMutableService,CoreBluetooth.CBMutableCharacteristic,Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe)">iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(CBMutableService, CBMutableCharacteristic, iOSBluetoothDeviceProximityProbe)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(iOSBluetoothDeviceProximityProbe probe)</code></pre>
+    <pre><code class="lang-csharp hljs">public iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(CBMutableService service, CBMutableCharacteristic characteristic, iOSBluetoothDeviceProximityProbe probe)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -116,6 +117,16 @@
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td><span class="xref">CoreBluetooth.CBMutableService</span></td>
+        <td><span class="parametername">service</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">CoreBluetooth.CBMutableCharacteristic</span></td>
+        <td><span class="parametername">characteristic</span></td>
+        <td></td>
+      </tr>
       <tr>
         <td><a class="xref" href="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html">iOSBluetoothDeviceProximityProbe</a></td>
         <td><span class="parametername">probe</span></td>

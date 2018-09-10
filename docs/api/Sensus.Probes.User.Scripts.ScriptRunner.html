@@ -270,6 +270,35 @@ public bool Enabled { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ForceRemoteStorageOnSurveySubmission_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ForceRemoteStorageOnSurveySubmission*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ForceRemoteStorageOnSurveySubmission" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ForceRemoteStorageOnSurveySubmission">ForceRemoteStorageOnSurveySubmission</h4>
+  <div class="markdown level1 summary"><p>Whether or not to force a local-to-remote transfer to run each time this survey is completed
+by the user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Force Remote Storage On Survey Submission:&quot;, true, 18)]
+public bool ForceRemoteStorageOnSurveySubmission { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to force transfer on survey submission; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation">IncompleteSubmissionConfirmation</h4>
   <div class="markdown level1 summary"><p>The message to display to the user if a required field is invalid.</p>
@@ -754,64 +783,154 @@ public bool WindowExpiration { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Initialize_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Initialize*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Initialize" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Initialize">Initialize()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_InitializeAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.InitializeAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_InitializeAsync" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.InitializeAsync">InitializeAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Initialize()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task InitializeAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Reset_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Reset*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Reset" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Reset">Reset()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ResetAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ResetAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ResetAsync" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ResetAsync">ResetAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ResetAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Restart_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Restart*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Restart" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Restart">Restart()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_RestartAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RestartAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_RestartAsync" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RestartAsync">RestartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Restart()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RestartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleScriptRuns_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleScriptRuns*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleScriptRuns" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleScriptRuns">ScheduleScriptRuns()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleScriptRunsAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleScriptRunsAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleScriptRunsAsync" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleScriptRunsAsync">ScheduleScriptRunsAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ScheduleScriptRuns()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ScheduleScriptRunsAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Start_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Start*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Start" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Start">Start()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_StartAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.StartAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_StartAsync" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.StartAsync">StartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_Stop_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Stop*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Stop" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Stop">Stop()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_StopAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.StopAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_StopAsync" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Stop()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="events">Events
   </h3>
   

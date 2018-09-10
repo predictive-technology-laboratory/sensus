@@ -87,18 +87,36 @@
   </h3>
       <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidAmbientTemperatureProbe.html">AndroidAmbientTemperatureProbe</a></h4>
       <section></section>
-      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothAdvertisingCallback.html">AndroidBluetoothAdvertisingCallback</a></h4>
-      <section></section>
       <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothBroadcastReceiver.html">AndroidBluetoothBroadcastReceiver</a></h4>
-      <section></section>
+      <section><p>A general-purpose broadcast receiver for monitoring BLE states.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html">AndroidBluetoothClientGattCallback</a></h4>
+      <section><p>Android BLE GATT client callback. Makes requests to servers to read a characteristic upon encountering a service.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html">AndroidBluetoothClientScannerCallback</a></h4>
+      <section><p>Android BLE client scanner callback. Receives events related to BLE scanning and<br>configures a BLE client that requests characteristic values from the server.</p>
+</section>
       <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html">AndroidBluetoothDeviceProximityProbe</a></h4>
-      <section></section>
-      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothGattClientCallback.html">AndroidBluetoothGattClientCallback</a></h4>
-      <section></section>
-      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothGattServerCallback.html">AndroidBluetoothGattServerCallback</a></h4>
-      <section></section>
-      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothScannerCallback.html">AndroidBluetoothScannerCallback</a></h4>
-      <section></section>
+      <section><p>Scans for the presence of other devices nearby that are running the current <a class="xref" href="Sensus.Protocol.html">Protocol</a>. When
+encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
+of the current device and serves requests for the current device&apos;s ID. This Probe reports data in the form 
+of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityDatum.html">BluetoothDeviceProximityDatum</a> objects.</p>
+<p>There are caveats to the conditions under which an Android device running this Probe will detect another
+device:</p>
+<ul>
+<li>If the other device is an Android device with Sensus running in the foreground or background, detection is possible.</li>
+<li>If the other device is an iOS device with Sensus running in the foreground, detection is possible.</li>
+<li>If the other device is an iOS device with Sensus running in the background, detection is not possible.</li>
+</ul>
+<p>See the iOS subclass of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a> for additional information.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothServerAdvertisingCallback.html">AndroidBluetoothServerAdvertisingCallback</a></h4>
+      <section><p>Android BLE server advertising callback. Receives events related to the starting and 
+stopping of BLE advertising. Configures a BLE server that responds to client read requests.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidBluetoothServerGattCallback.html">AndroidBluetoothServerGattCallback</a></h4>
+      <section><p>Android BLE GATT server callback. Serves requests from clients who wish to read the device ID characteristic.</p>
+</section>
       <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidHumidityProbe.html">AndroidHumidityProbe</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Android.Probes.Context.AndroidLightProbe.html">AndroidLightProbe</a></h4>

@@ -97,7 +97,7 @@ are safely transferred off of the device before their accumulated size grows too
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Restart">DataStore.Restart()</a>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_RestartAsync">DataStore.RestartAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy">DataStore.Copy()</a>
@@ -719,37 +719,67 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_DataStores_Remote_RemoteDataStore_Start_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.Start*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_Start" data-uid="Sensus.DataStores.Remote.RemoteDataStore.Start">Start()</h4>
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_StartAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.StartAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_StartAsync" data-uid="Sensus.DataStores.Remote.RemoteDataStore.StartAsync">StartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Start()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task StartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Start">DataStore.Start()</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_StartAsync">DataStore.StartAsync()</a></div>
   
   
-  <a id="Sensus_DataStores_Remote_RemoteDataStore_Stop_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.Stop*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_Stop" data-uid="Sensus.DataStores.Remote.RemoteDataStore.Stop">Stop()</h4>
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_StopAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.StopAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_StopAsync" data-uid="Sensus.DataStores.Remote.RemoteDataStore.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task StopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Stop">DataStore.Stop()</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_StopAsync">DataStore.StopAsync()</a></div>
   
   
-  <a id="Sensus_DataStores_Remote_RemoteDataStore_TestHealth_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealth*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_TestHealthAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealthAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.DataStores.Remote.RemoteDataStore.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -762,7 +792,7 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
         <td><span class="parametername">events</span></td>
         <td></td>
       </tr>
@@ -778,13 +808,13 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">DataStore.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">DataStore.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_RemoteDataStore_WriteDataStreamAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.WriteDataStreamAsync*"></a>

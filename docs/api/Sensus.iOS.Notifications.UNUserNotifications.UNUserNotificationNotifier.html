@@ -198,7 +198,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -242,6 +242,21 @@
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</a></div>
   
@@ -252,7 +267,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -311,6 +326,21 @@
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync*"></a>
@@ -319,7 +349,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -353,15 +383,30 @@
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_UserNotifications_UNNotificationRequest_System_Action_Foundation_NSError__" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(UserNotifications.UNNotificationRequest,System.Action{Foundation.NSError})">IssueNotificationAsync(UNNotificationRequest, Action&lt;NSError&gt;)</h4>
+  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_UserNotifications_UNNotificationRequest_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(UserNotifications.UNNotificationRequest)">IssueNotificationAsync(UNNotificationRequest)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssueNotificationAsync(UNNotificationRequest request, Action&lt;NSError&gt; errorCallback = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task IssueNotificationAsync(UNNotificationRequest request)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -378,9 +423,19 @@
         <td><span class="parametername">request</span></td>
         <td></td>
       </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">Foundation.NSError</span>&gt;</td>
-        <td><span class="parametername">errorCallback</span></td>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -393,7 +448,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -423,6 +478,21 @@
       <tr>
         <td><span class="xref">System.Action</span>&lt;<span class="xref">UserNotifications.UNNotificationRequest</span>&gt;</td>
         <td><span class="parametername">requestCreated</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

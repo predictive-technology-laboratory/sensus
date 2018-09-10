@@ -88,13 +88,22 @@ information and store the resulting information in the <span class="xref">System
 sleep. The Android operating system will occasionally delay the wake-up signal in order to batch wake-ups and thereby conserve energy; however, 
 this delay is usually only 5-10 seconds. So, if you configure a Polling Probe to poll every 60 seconds, you may see actual polling delays of 
 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.</p>
-<p>Polling on iOS is much less reliable. By design, iOS apps cannot perform processing in the background, with the exception of 
-<a class="xref" href="Sensus.Probes.Location.ListeningLocationProbe.html">ListeningLocationProbe</a>. All other processing within Sensus must be halted when the user backgrounds the app. Furthermore, 
-Sensus cannot wake itself up from the background in order to execute polling operations. Thus, Sensus has no reliable mechanism to support polling-style
-operations. Sensus does its best to support Polling Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking 
-a GPS reading) should execute. This relies on the user to open the notification from the tray and bring Sensus to the foreground so that the polling 
-operation can execute. Of course, the user might not see the notification or might choose not to open it. The polling operation will not be executed
-in such cases. You should assume that Polling Probes will not produce data reliably on iOS.</p>
+<p>Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
+with the following exceptions for <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>s:</p>
+<ul>
+<li><p>Significant location change processing:  If <see cref="!:SignificantChangePoll"></see> is enabled, the Polling Probe will wake up each time
+the user&apos;s physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
+order of several kilometers.</p>
+</li>
+<li><p>Push notification processing:  If you <a class="xref" href="../articles/push_notifications.html">configure push notifications</a>, the Polling Probe will be woken up
+at the desired time to take a reading. Note that the reliability of these timings is subject to push notification throttling imposed
+by the Apple Push Notification Service.</p>
+</li>
+</ul>
+<p>Beyond these exceptions, all processing within Sensus must be halted when the user backgrounds the app. Sensus does its best to support Polling 
+Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 
+user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, the user 
+might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -125,25 +134,25 @@ in such cases. You should assume that Polling Probes will not produce data relia
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Initialize">Probe.Initialize()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_InitializeAsync">Probe.InitializeAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -226,6 +235,64 @@ in such cases. You should assume that Polling Probes will not produce data relia
   </div>
   <h3 id="properties">Properties
   </h3>
+  
+  
+  <a id="Sensus_Probes_PollingProbe_AcPowerConnectPoll_" data-uid="Sensus.Probes.PollingProbe.AcPowerConnectPoll*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_AcPowerConnectPoll" data-uid="Sensus.Probes.PollingProbe.AcPowerConnectPoll">AcPowerConnectPoll</h4>
+  <div class="markdown level1 summary"><p>Whether to poll on when the device is connected to AC Power.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Poll On AC Power Connection:&quot;, true, 7)]
+public bool AcPowerConnectPoll { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if we should poll on power connect; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_PollingProbe_AcPowerConnectPollOverridesScheduledPolls_" data-uid="Sensus.Probes.PollingProbe.AcPowerConnectPollOverridesScheduledPolls*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_AcPowerConnectPollOverridesScheduledPolls" data-uid="Sensus.Probes.PollingProbe.AcPowerConnectPollOverridesScheduledPolls">AcPowerConnectPollOverridesScheduledPolls</h4>
+  <div class="markdown level1 summary"><p>Has no effect if <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPoll">AcPowerConnectPoll</a> is disabled. If <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPoll">AcPowerConnectPoll</a> is enabled:  (1) If this 
+is on, polling will only occur on AC power connect. (2) If this is off, polling will occur based on <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a> and 
+on AC power connect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;AC Power Connection Poll Overrides Scheduled Polls:&quot;, true, 8)]
+public bool AcPowerConnectPollOverridesScheduledPolls { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if AC power connect poll overrides scheduled polls; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_PollingProbe_CollectionDescription_" data-uid="Sensus.Probes.PollingProbe.CollectionDescription*"></a>
@@ -444,13 +511,13 @@ public int PollingTimeoutMinutes { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Probes_PollingProbe_Poll_" data-uid="Sensus.Probes.PollingProbe.Poll*"></a>
-  <h4 id="Sensus_Probes_PollingProbe_Poll_System_Threading_CancellationToken_" data-uid="Sensus.Probes.PollingProbe.Poll(System.Threading.CancellationToken)">Poll(CancellationToken)</h4>
+  <a id="Sensus_Probes_PollingProbe_PollAsync_" data-uid="Sensus.Probes.PollingProbe.PollAsync*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_PollAsync_System_Threading_CancellationToken_" data-uid="Sensus.Probes.PollingProbe.PollAsync(System.Threading.CancellationToken)">PollAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract IEnumerable&lt;Datum&gt; Poll(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract Task&lt;List&lt;Datum&gt;&gt; PollAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -479,56 +546,101 @@ public int PollingTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_Probes_PollingProbe_ProtectedStart_" data-uid="Sensus.Probes.PollingProbe.ProtectedStart*"></a>
-  <h4 id="Sensus_Probes_PollingProbe_ProtectedStart" data-uid="Sensus.Probes.PollingProbe.ProtectedStart">ProtectedStart()</h4>
+  <a id="Sensus_Probes_PollingProbe_ProtectedStartAsync_" data-uid="Sensus.Probes.PollingProbe.ProtectedStartAsync*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_ProtectedStartAsync" data-uid="Sensus.Probes.PollingProbe.ProtectedStartAsync">ProtectedStartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void ProtectedStart()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStart">Probe.ProtectedStart()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStartAsync">Probe.ProtectedStartAsync()</a></div>
   
   
-  <a id="Sensus_Probes_PollingProbe_Reset_" data-uid="Sensus.Probes.PollingProbe.Reset*"></a>
-  <h4 id="Sensus_Probes_PollingProbe_Reset" data-uid="Sensus.Probes.PollingProbe.Reset">Reset()</h4>
+  <a id="Sensus_Probes_PollingProbe_ResetAsync_" data-uid="Sensus.Probes.PollingProbe.ResetAsync*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_ResetAsync" data-uid="Sensus.Probes.PollingProbe.ResetAsync">ResetAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Reset()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task ResetAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Reset">Probe.Reset()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ResetAsync">Probe.ResetAsync()</a></div>
   
   
-  <a id="Sensus_Probes_PollingProbe_Stop_" data-uid="Sensus.Probes.PollingProbe.Stop*"></a>
-  <h4 id="Sensus_Probes_PollingProbe_Stop" data-uid="Sensus.Probes.PollingProbe.Stop">Stop()</h4>
+  <a id="Sensus_Probes_PollingProbe_StopAsync_" data-uid="Sensus.Probes.PollingProbe.StopAsync*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_StopAsync" data-uid="Sensus.Probes.PollingProbe.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task StopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Stop">Probe.Stop()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a></div>
   
   
-  <a id="Sensus_Probes_PollingProbe_TestHealth_" data-uid="Sensus.Probes.PollingProbe.TestHealth*"></a>
-  <h4 id="Sensus_Probes_PollingProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Probes.PollingProbe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <a id="Sensus_Probes_PollingProbe_TestHealthAsync_" data-uid="Sensus.Probes.PollingProbe.TestHealthAsync*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.Probes.PollingProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -541,7 +653,7 @@ public int PollingTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
         <td><span class="parametername">events</span></td>
         <td></td>
       </tr>
@@ -557,13 +669,13 @@ public int PollingTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">Probe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

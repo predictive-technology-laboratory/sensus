@@ -125,13 +125,13 @@
       <a class="xref" href="Sensus.Probes.Location.AltitudeProbe.html#Sensus_Probes_Location_AltitudeProbe_DatumType">AltitudeProbe.DatumType</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStart">ListeningProbe.ProtectedStart()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStartAsync">ListeningProbe.ProtectedStartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_Stop">ListeningProbe.Stop()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopAsync">ListeningProbe.StopAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_Reset">ListeningProbe.Reset()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ResetAsync">ListeningProbe.ResetAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">ListeningProbe.MaxDataStoresPerSecond</a>
@@ -155,25 +155,25 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">Probe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -240,40 +240,85 @@
   </h3>
   
   
-  <a id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_Initialize_" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize*"></a>
-  <h4 id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_Initialize" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.Initialize">Initialize()</h4>
+  <a id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_InitializeAsync_" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.InitializeAsync*"></a>
+  <h4 id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_InitializeAsync" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.InitializeAsync">InitializeAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void Initialize()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task InitializeAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Initialize">Probe.Initialize()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_InitializeAsync">Probe.InitializeAsync()</a></div>
   
   
-  <a id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StartListening_" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening*"></a>
-  <h4 id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StartListening" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListening">StartListening()</h4>
+  <a id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StartListeningAsync_" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListeningAsync*"></a>
+  <h4 id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StartListeningAsync" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StartListeningAsync">StartListeningAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void StartListening()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task StartListeningAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StartListening">ListeningProbe.StartListening()</a></div>
+  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StartListeningAsync">ListeningProbe.StartListeningAsync()</a></div>
   
   
-  <a id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StopListening_" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening*"></a>
-  <h4 id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StopListening" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListening">StopListening()</h4>
+  <a id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StopListeningAsync_" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListeningAsync*"></a>
+  <h4 id="Sensus_iOS_Probes_Location_iOSAltitudeProbe_StopListeningAsync" data-uid="Sensus.iOS.Probes.Location.iOSAltitudeProbe.StopListeningAsync">StopListeningAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void StopListening()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task StopListeningAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopListening">ListeningProbe.StopListening()</a></div>
+  <div><a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopListeningAsync">ListeningProbe.StopListeningAsync()</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

@@ -86,11 +86,20 @@
     <h3 id="classes">Classes
   </h3>
       <h4><a class="xref" href="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html">iOSBluetoothDeviceProximityProbe</a></h4>
-      <section></section>
+      <section><p>Scans for the presence of other devices nearby that are running the current <a class="xref" href="Sensus.Protocol.html">Protocol</a>. When
+encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
+of the current device and serves requests for the current device&apos;s ID. This Probe reports data in the form 
+of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityDatum.html">BluetoothDeviceProximityDatum</a> objects. There are no caveats to the conditions under which 
+an iOS device running this Probe will detect another device. Detection is possible if the other device is
+Android or iOS and if Sensus is foregrounded or backgrounded on the other device.</p>
+<p>See the Android subclass of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a> for additional information.</p>
+</section>
       <h4><a class="xref" href="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html">iOSBluetoothDeviceProximityProbeCentralManagerDelegate</a></h4>
-      <section></section>
+      <section><p>iOS BLE central (scanner/client) delegate class. Receives events related to BLE scanning and<br>characteristic reading.</p>
+</section>
       <h4><a class="xref" href="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.html">iOSBluetoothDeviceProximityProbePeripheralManagerDelegate</a></h4>
-      <section></section>
+      <section><p>iOS BLE peripheral (advertiser/server) delegate class. Receives events related to BLE advertising and<br>characteristic reading.</p>
+</section>
       <h4><a class="xref" href="Sensus.iOS.Probes.Context.iOSSoundProbe.html">iOSSoundProbe</a></h4>
       <section><p>Probes sound level (decibels) from microphone. <a href="http://developer.xamarin.com/recipes/ios/media/sound/record_sound">http://developer.xamarin.com/recipes/ios/media/sound/record_sound</a></p>
 </section>
