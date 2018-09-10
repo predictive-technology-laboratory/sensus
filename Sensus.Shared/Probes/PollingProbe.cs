@@ -155,7 +155,7 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Has no effect if <see cref="AcPowerConnectPoll"/> is disalbed. If <see cref="AcPowerConnectPoll"/> is enabled:  (1) If this 
+        /// Has no effect if <see cref="AcPowerConnectPoll"/> is disabled. If <see cref="AcPowerConnectPoll"/> is enabled:  (1) If this 
         /// is on, polling will only occur on AC power connect. (2) If this is off, polling will occur based on <see cref="PollingSleepDurationMS"/> and 
         /// on AC power connect.
         /// </summary>
@@ -199,13 +199,14 @@ namespace Sensus.Probes
         {
             get
             {
+                string description = DisplayName + ":  ";
+
                 bool scheduledPollOverridden = false;
 
 #if __IOS__
-                string significantChangeDescription = null;
                 if (_significantChangePoll)
                 {
-                    significantChangeDescription = "On significant changes in the device's location.";
+                    description += "On significant changes in the device's location. ";
 
                     if (_significantChangePollOverridesScheduledPolls)
                     {
@@ -214,19 +215,15 @@ namespace Sensus.Probes
                 }
 #endif
 
-                string acPowerConnectDescription = null;
                 if (_acPowerConnectPoll)
                 {
-                    acPowerConnectDescription = "On AC power connection.";
+                    description += "On AC power connection. ";
 
                     if (_acPowerConnectPollOverridesScheduledPolls)
                     {
                         scheduledPollOverridden = true;
                     }
                 }
-
-                string description = DisplayName + ":  " + (significantChangeDescription == null ? "" : significantChangeDescription + " ") +
-                                                           (acPowerConnectDescription == null ? "" : acPowerConnectDescription + " ");
 
                 if (!scheduledPollOverridden)
                 {
