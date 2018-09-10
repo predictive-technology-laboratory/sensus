@@ -7,7 +7,7 @@ if [ $# -ne 6 ]; then
     echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2)"
     echo "\t[instance type]:  Instance type (e.g., t2.micro)"
     echo "\t[azure notification hub]:  The Azure notification hub URL (https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages)"
-    echo "\t[azure notification hub full access signature]:  The Azure notification hub full access signature (DefaultFullSharedAccessSignature)
+    echo "\t[azure notification hub full access signature]:  The Azure notification hub full access signature (DefaultFullSharedAccessSignature)"
     exit 1
 fi
 
@@ -84,10 +84,6 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-##################################
-##### Instance configuration #####
-##################################
-
 # upload IAM credentials to EC2 instance
 cp credentials tmp
 sed "s/keyId/$iamAccessKeyID/" tmp > tmp2
@@ -98,7 +94,9 @@ ssh -i $pemFileName ec2-user@$publicIP "mkdir .aws"
 scp -i $pemFileName tmp ec2-user@$publicIP:~/.aws/credentials
 rm tmp
 
-# set up push notification backend
+##############################
+##### Push Notifications #####
+##############################
 
 # edit/upload get-sas script
 sed "s/XXXXURLXXXX/$5" get-sas.js > tmp
@@ -112,11 +110,15 @@ ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
 ssh -i $pemFileName ec2-user@$publicIP "sudo yum install jq"
 ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2"
 
-# configure crontab to run push notification processor
+# configure crontab to run push notification processor using the get-sas script
 sed "s/BUCKET/$bucket" push-notification-crontab > tmp
 scp -i $pemFileName tmp ec2-user@$publicIP:~/push-notification-crontab
 ssh -i $pemFileName ec2-user@$publicIP "crontab push-notification-crontab"
 rm tmp
+
+##########################
+##### Other Packages #####
+##########################
 
 # install other linux packages
 echo "Installing packages..."
