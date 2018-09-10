@@ -865,7 +865,7 @@ namespace Sensus
                 // kicked back. ask explicitly here, and bail out if permission is not granted.
                 if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
                 {
-                    resultCompletionSource.SetResult(null);
+                    resultCompletionSource.TrySetResult(null);
                     return;
                 }
 
@@ -913,7 +913,7 @@ namespace Sensus
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    resultCompletionSource.SetResult(null);
+                    resultCompletionSource.TrySetResult(null);
 
                     await closeScannerPageAsync();
                 };
@@ -922,7 +922,7 @@ namespace Sensus
                 {
                     if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
                     {
-                        resultCompletionSource.SetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
+                        resultCompletionSource.TrySetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
 
                         await closeScannerPageAsync();
                     }
