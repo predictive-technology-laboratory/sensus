@@ -56,8 +56,8 @@ nvm install 8.11.2
 ```
 
 1. Install an AWS credentials profile in the EC2 instance that has read/write access to the AWS S3 bucket configured above.
-1. Upload [`get-sas.json`](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/get-sas.js) and 
-   [`send-push-notifications.sh`](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/send-push-notifications.sh)
+1. Upload [`get-sas.json`](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/get-sas.js) and 
+   [`send-push-notifications.sh`](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/send-push-notifications.sh)
    to the home directory of the EC2 instance.
 1. Edit `get-sas.json` to include the `url` (use the name of your Azure Notification Hub) and `sharedAccessKey` (use the 
    value of `DefaultListenSharedAccessSignature`, as copied from the above steps).

@@ -1,9 +1,9 @@
 var util = require('util');
 var crypto = require('crypto');
 
-var url = 'XXXX';                                              // for example:  https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages
+var url = 'XXXXURLXXXX';                                       // for example:  https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages
 var sharedAccessKeyName = 'DefaultFullSharedAccessSignature';  // the key with full shared access to the notification hub
-var sharedAccessKey = 'XXXX';                                  // the value of the DefaultFullSharedAccessSignature key
+var sharedAccessKey = 'XXXXKEYXXXX';                           // the value of the DefaultFullSharedAccessSignature key
 var expiry = new Date(); 
 expiry.setMinutes(expiry.getMinutes() + 5);                    // the signature will be valid for 5 minutes
 var expiryEpoch = expiry instanceof Date ? expiry.getTime() / 1000 : expiry;
