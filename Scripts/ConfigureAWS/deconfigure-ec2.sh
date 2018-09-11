@@ -60,3 +60,4 @@ aws ec2 wait instance-terminated --instance-ids $instanceId
 echo "Deleting key pair and security group..."
 aws ec2 delete-key-pair --key-name $1
 aws ec2 delete-security-group --group-name $1
+rm -rf ${1}.pem

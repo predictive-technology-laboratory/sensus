@@ -6,8 +6,8 @@ if [ $# -ne 6 ]; then
     echo "\t[cidr ingress]:  SSH ingress range, in CIDR format (e.g., 123.456.0.0/16)"
     echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2)"
     echo "\t[instance type]:  Instance type (e.g., t2.micro)"
-    echo "\t[azure notification hub]:  The Azure notification hub URL (https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages)"
-    echo "\t[azure notification hub full access signature]:  The Azure notification hub full access signature (DefaultFullSharedAccessSignature)"
+    echo "\t[azure notification hub]:  The Azure notification hub URL (e.g., https://some-notifications.servicebus.windows.net/some-notifications/messages)"
+    echo "\t[azure notification hub full access signature]:  the value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=)"
     echo ""
     echo "Effect:  Configures an EC2 instance with an IAM group/user that has access to the given S3 bucket and monitors the bucket for push notifications."
     exit 1
@@ -20,20 +20,23 @@ bucket=$1
 ########################
 
 # create key pair and secure it
+echo "Creating EC2 key pair..."
 keyPairName=$bucket
 pemFileName="${keyPairName}.pem"
 aws ec2 create-key-pair --key-name $keyPairName  --query 'KeyMaterial' --output text > $pemFileName
 chmod 400 $pemFileName
 
 # create security group with SSH inbound rule
+echo "Creating EC2 security group..."
 securityGroupName=$bucket
 aws ec2 create-security-group --group-name $securityGroupName --description "$securityGroupName Security Group"
 aws ec2 authorize-security-group-ingress --group-name $securityGroupName --protocol tcp --port 22 --cidr $2
 
 # launch ec2 instance and wait for it to start
+echo "Launching EC2 instance..."
 instanceId=$(aws ec2 run-instances --image-id $3 --count 1 --instance-type $4 --key-name $keyPairName --security-groups $securityGroupName | jq -r .Instances[0].InstanceId)
 aws ec2 wait instance-running --instance-ids $instanceId
-sleep 15
+sleep 30
 aws ec2 create-tags --resources $instanceId --tags Key=Name,Value=$bucket
 publicIP=$(aws ec2 describe-instances --instance-ids $instanceId --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
 
@@ -87,6 +90,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # upload IAM credentials to EC2 instance
+echo "Uploading IAM credentials to EC2 instance..."
 cp credentials tmp
 sed "s/keyId/$iamAccessKeyID/" tmp > tmp2
 mv tmp2 tmp
@@ -118,18 +122,6 @@ scp -i $pemFileName tmp ec2-user@$publicIP:~/push-notification-crontab
 ssh -i $pemFileName ec2-user@$publicIP "crontab push-notification-crontab"
 ssh -i $pemFileName ec2-user@$publicIP "rm push-notification-crontab"
 rm tmp
-
-##########################
-##### Other Packages #####
-##########################
-
-# install other linux packages
-echo "Installing packages..."
-ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install R libpng-devel libjpeg-turbo-devel openssl-devel emacs"
-
-# install SensusR package
-echo "Installing SensusR..."
-ssh -i $pemFileName ec2-user@$publicIP "sudo R -e 'install.packages(\"SensusR\", repos = \"http://mirrors.nics.utk.edu/cran/\")'"
 
 # done
 echo "EC2 instance is ready at $publicIP using private PEM file ${pemFileName}."
