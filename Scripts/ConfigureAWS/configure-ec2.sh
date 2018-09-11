@@ -99,21 +99,22 @@ rm tmp
 ##############################
 
 # edit/upload get-sas script
-sed "s/XXXXURLXXXX/$5" get-sas.js > tmp
-sed "s/XXXXKEYXXXX/$6" tmp > tmp2
+sed "s#XXXXURLXXXX#$5#" get-sas.js > tmp
+sed "s#XXXXKEYXXXX#$6#" tmp > tmp2
 scp -i $pemFileName tmp2 ec2-user@$publicIP:~/get-sas.js
 rm tmp tmp2
 
 # upload push notification processor and supporting tools
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
-ssh -i $pemFileName ec2-user@$publicIP "sudo yum install jq"
+ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq"
 ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2"
 
 # configure crontab to run push notification processor using the get-sas script
-sed "s/BUCKET/$bucket" push-notification-crontab > tmp
+sed "s/BUCKET/$bucket/" push-notification-crontab > tmp
 scp -i $pemFileName tmp ec2-user@$publicIP:~/push-notification-crontab
 ssh -i $pemFileName ec2-user@$publicIP "crontab push-notification-crontab"
+ssh -i $pemFileName ec2-user@$publicIP "rm push-notification-crontab"
 rm tmp
 
 ##########################
