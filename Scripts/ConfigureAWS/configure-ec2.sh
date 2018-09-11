@@ -8,6 +8,8 @@ if [ $# -ne 6 ]; then
     echo "\t[instance type]:  Instance type (e.g., t2.micro)"
     echo "\t[azure notification hub]:  The Azure notification hub URL (https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages)"
     echo "\t[azure notification hub full access signature]:  The Azure notification hub full access signature (DefaultFullSharedAccessSignature)"
+    echo ""
+    echo "Effect:  Configures an EC2 instance with an IAM group/user that has access to the given S3 bucket and monitors the bucket for push notifications."
     exit 1
 fi
 
