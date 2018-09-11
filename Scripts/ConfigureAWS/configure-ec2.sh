@@ -7,7 +7,7 @@ if [ $# -ne 6 ]; then
     echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2)"
     echo "\t[instance type]:  Instance type (e.g., t2.micro)"
     echo "\t[azure notification hub]:  The Azure notification hub URL (e.g., https://some-notifications.servicebus.windows.net/some-notifications/messages)"
-    echo "\t[azure notification hub full access signature]:  the value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=)"
+    echo "\t[azure notification hub full access key]:  the value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=)"
     echo ""
     echo "Effect:  Configures an EC2 instance with an IAM group/user that has access to the given S3 bucket and monitors the bucket for push notifications."
     exit 1
