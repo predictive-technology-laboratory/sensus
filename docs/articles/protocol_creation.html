@@ -8,7 +8,7 @@
     <title>Protocol Creation | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Protocol Creation | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -20,7 +20,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -60,7 +60,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -79,20 +81,20 @@
 
 <p>Follow the steps below to get a basic Sensus Protocol up and running.</p>
 <ol>
-<li><a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">Configure</a> an AWS S3 bucket for data storage.</li>
+<li><a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">Configure</a> an AWS S3 bucket for data storage.</li>
 <li>Within the Sensus app:<ol>
 <li>Add a new Protocol.</li>
-<li>Add a <a class="xref" href="../api/Sensus.DataStores.Local.FileLocalDataStore.html">file-based local data store</a> to the Protocol.</li>
-<li>Add an <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> to the Protocol
+<li>Add a <a href="xref:Sensus.DataStores.Local.FileLocalDataStore">file-based local data store</a> to the Protocol.</li>
+<li>Add an <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">AWS S3 remote data store</a> to the Protocol
 based on the information provided by the S3 configuration script that you ran above.</li>
 <li>Configure the Protocol&#39;s probes.</li>
 <li>Start the Protocol.</li>
 </ol>
 </li>
 </ol>
-<p>After a period of time, specifically the <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS">AWS S3 write delay</a>,
+<p>After a period of time, specifically the <a href="xref:Sensus.DataStores.Remote.RemoteDataStore.WriteDelayMS">AWS S3 write delay</a>,
 you should see data appear in your AWS S3 bucket. You can force data to be written to your bucket on demand by enabling 
-the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowSubmitData">write data</a> feature.</p>
+the <a href="xref:Sensus.Protocol.AllowSubmitData">write data</a> feature.</p>
 </article>
           </div>
           

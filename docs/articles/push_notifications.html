@@ -8,7 +8,7 @@
     <title>Push Notifications | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Push Notifications | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -20,7 +20,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -60,7 +60,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -112,39 +114,20 @@ in the steps that follow.</li>
 </ol>
 <h2 id="aws-s3">AWS S3</h2>
 <ol>
-<li>Configure your AWS S3 bucket following the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">guide</a>.</li>
+<li>Configure your AWS S3 bucket following the <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">guide</a>.</li>
 </ol>
 <h2 id="aws-ec2">AWS EC2</h2>
 <ol>
-<li>Set up an EC2 instance (a <code>t2.micro</code> free instance should be fine).</li>
-<li>SSH into the instance.</li>
-<li>Install the following packages<ul>
-<li>jq (via <code>sudo yum install jq</code>)</li>
-<li>nodejs</li>
-</ul>
-</li>
+<li>Configure your AWS EC2 instance using the <code>configure-ec2.sh</code> script within the <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip">configuration</a>
+archive. This script requires you to install the AWS CLI and the <code>jq</code> command line program.</li>
 </ol>
-<pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install 8.11.2
-</code></pre><ol>
-<li>Install an AWS credentials profile in the EC2 instance that has read/write access to the AWS S3 bucket configured above.</li>
-<li>Upload <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/get-sas.js"><code>get-sas.json</code></a> and 
-<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/send-push-notifications.sh"><code>send-push-notifications.sh</code></a>
-to the home directory of the EC2 instance.</li>
-<li>Edit <code>get-sas.json</code> to include the <code>url</code> (use the name of your Azure Notification Hub) and <code>sharedAccessKey</code> (use the 
-value of <code>DefaultListenSharedAccessSignature</code>, as copied from the above steps).</li>
-<li>Configure a cron job to periodically monitor your S3 bucket for push notifications and deliver those whose time has arrived. 
-Use the <code>crontab -e</code> command to edit the cron schedule and include the following in the file:</li>
-</ol>
-<pre><code>PATH=&quot;/home/ec2-user/.nvm/versions/node/v8.11.2/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ec2-user/.local/bin:/home/ec2-user/bin&quot;
-
-* * * * * cd /home/ec2-user &amp;&amp; ./send-push-notifications.sh XXXX
-</code></pre><p>where <code>XXXX</code> is the name of the S3 bucket you configured above (without the <code>s3://</code> prefix).</p>
 <h2 id="sensus-protocol">Sensus Protocol</h2>
-<p>Within your Sensus protocol, set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">Push Notifications Hub</a> to the Azure Notification
-Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
-the <code>DefaultFullSharedAccessSignature</code> of the Azure Notification Hub.</p>
+<ol>
+<li>Within your Sensus protocol, set the <a href="xref:Sensus.Protocol.PushNotificationsHub">Push Notifications Hub</a> to the Azure Notification
+Hub name, and set the <a href="xref:Sensus.Protocol.PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
+the <code>DefaultFullSharedAccessSignature</code> of the Azure Notification Hub.</li>
+<li>Configure the <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">AWS S3 remote data store</a> using the bucket created above.</li>
+</ol>
 <h2 id="conclusion">Conclusion</h2>
 <p>If the above steps are successful, your Sensus protocol should now receive push notification support when
 installed and started on participant devices.</p>
