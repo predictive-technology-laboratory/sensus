@@ -43,37 +43,14 @@ Configure the Apple Push Notification Service following the official Apple docum
 1. Configure your AWS S3 bucket following the [guide](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore).
 
 ## AWS EC2
-1. Set up an EC2 instance (a `t2.micro` free instance should be fine).
-1. SSH into the instance.
-1. Install the following packages
-  * jq (via `sudo yum install jq`)
-  * nodejs
-
-```
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2
-```
-
-1. Install an AWS credentials profile in the EC2 instance that has read/write access to the AWS S3 bucket configured above.
-1. Upload [`get-sas.json`](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/get-sas.js) and 
-   [`send-push-notifications.sh`](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/send-push-notifications.sh)
-   to the home directory of the EC2 instance.
-1. Edit `get-sas.json` to include the `url` (use the name of your Azure Notification Hub) and `sharedAccessKey` (use the 
-   value of `DefaultListenSharedAccessSignature`, as copied from the above steps).
-1. Configure a cron job to periodically monitor your S3 bucket for push notifications and deliver those whose time has arrived. 
-   Use the `crontab -e` command to edit the cron schedule and include the following in the file:
-
-```
-PATH="/home/ec2-user/.nvm/versions/node/v8.11.2/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ec2-user/.local/bin:/home/ec2-user/bin"
-
-* * * * * cd /home/ec2-user && ./send-push-notifications.sh XXXX
-```
-
-where `XXXX` is the name of the S3 bucket you configured above (without the `s3://` prefix).
+1. Configure your AWS EC2 instance using the `configure-ec2.sh` script within the [configuration](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip)
+   archive. This script requires you to install the AWS CLI and the `jq` command line program.
 
 ## Sensus Protocol
-Within your Sensus protocol, set the [Push Notifications Hub](xref:Sensus.Protocol.PushNotificationsHub) to the Azure Notification
+1. Within your Sensus protocol, set the [Push Notifications Hub](xref:Sensus.Protocol.PushNotificationsHub) to the Azure Notification
 Hub name, and set the [Push Notifications Shared Access Signature](xref:Sensus.Protocol.PushNotificationsSharedAccessSignature) to
 the `DefaultFullSharedAccessSignature` of the Azure Notification Hub.
+1. Configure the [AWS S3 remote data store](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore) using the bucket created above.
 
 ## Conclusion
 If the above steps are successful, your Sensus protocol should now receive push notification support when
