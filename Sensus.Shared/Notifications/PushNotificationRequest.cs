@@ -64,6 +64,11 @@ namespace Sensus.Notifications
             get { return _id; }
         }
 
+        public string DeviceId
+        {
+            get { return _deviceId; }
+        }
+
         public Protocol Protocol
         {
             get { return _protocol; }

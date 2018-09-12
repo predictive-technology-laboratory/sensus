@@ -86,6 +86,16 @@ namespace Sensus.Notifications
                 return;
             }
 
+            // if the PNR targets the current device and the protocol isn't listening, don't send the request. this will 
+            // eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
+            if (request.DeviceId == SensusServiceHelper.Get().DeviceId &&
+               (string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsHub) ||
+                string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsSharedAccessSignature)))
+            {
+                SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
+                return;
+            }
+
             try
             {
                 await request.Protocol.RemoteDataStore.SendPushNotificationRequestAsync(request, cancellationToken);
@@ -120,65 +130,6 @@ namespace Sensus.Notifications
                 lock (_pushNotificationRequestsToDelete)
                 {
                     _pushNotificationRequestsToDelete.RemoveAll(idProtocol => idProtocol.Item1 == request.Id);
-                }
-            }
-        }
-
-        public async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            // request can be null (e.g., if being called when working with the app-level health test callback, which has no associated protocol)
-            if (request == null)
-            {
-                return;
-            }
-
-            await DeletePushNotificationRequestAsync(request.Id, request.Protocol, cancellationToken);
-        }
-
-        public async Task DeletePushNotificationRequestAsync(string id, Protocol protocol, CancellationToken cancellationToken)
-        {
-            // bail if id or protocol are null. we need each of these to attempt the delete and subsequent retries.
-            if (id == null)
-            {
-                SensusException.Report("Received null PNR id to delete.");
-                return;
-            }
-
-            if (protocol == null)
-            {
-                SensusException.Report("Received null PNR protocol.");
-                return;
-            }
-
-            try
-            {
-                await protocol.RemoteDataStore.DeletePushNotificationRequestAsync(id, cancellationToken);
-
-                lock (_pushNotificationRequestsToDelete)
-                {
-                    _pushNotificationRequestsToDelete.RemoveAll(idProtocol => idProtocol.Item1 == id);
-                }
-            }
-            catch (Exception deleteException)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while deleting push notification request:  " + deleteException.Message, LoggingLevel.Normal, GetType());
-
-                // hang on to the push notification for deleting in the future, e.g., when internet is restored.
-                lock (_pushNotificationRequestsToDelete)
-                {
-                    if (!_pushNotificationRequestsToDelete.Any(idProtocol => idProtocol.Item1 == id))
-                    {
-                        _pushNotificationRequestsToDelete.Add(new Tuple<string, Protocol>(id, protocol));
-                    }
-                }
-            }
-            finally
-            {
-                // we just deleted the push notification request, so it doesn't make sense for there to be a pending push notification
-                // request to send. remove any pending push notifications to send that match the passed id.
-                lock (_pushNotificationRequestsToSend)
-                {
-                    _pushNotificationRequestsToSend.RemoveAll(pushNotificationRequest => pushNotificationRequest.Id == id);
                 }
             }
         }
@@ -299,6 +250,65 @@ namespace Sensus.Notifications
             catch (Exception pushNotificationCommandException)
             {
                 SensusException.Report("Exception while running push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
+            }
+        }
+
+        public async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            // request can be null (e.g., if being called when working with the app-level health test callback, which has no associated protocol)
+            if (request == null)
+            {
+                return;
+            }
+
+            await DeletePushNotificationRequestAsync(request.Id, request.Protocol, cancellationToken);
+        }
+
+        public async Task DeletePushNotificationRequestAsync(string id, Protocol protocol, CancellationToken cancellationToken)
+        {
+            // bail if id or protocol are null. we need each of these to attempt the delete and subsequent retries.
+            if (id == null)
+            {
+                SensusException.Report("Received null PNR id to delete.");
+                return;
+            }
+
+            if (protocol == null)
+            {
+                SensusException.Report("Received null PNR protocol.");
+                return;
+            }
+
+            try
+            {
+                await protocol.RemoteDataStore.DeletePushNotificationRequestAsync(id, cancellationToken);
+
+                lock (_pushNotificationRequestsToDelete)
+                {
+                    _pushNotificationRequestsToDelete.RemoveAll(idProtocol => idProtocol.Item1 == id);
+                }
+            }
+            catch (Exception deleteException)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while deleting push notification request:  " + deleteException.Message, LoggingLevel.Normal, GetType());
+
+                // hang on to the push notification for deleting in the future, e.g., when internet is restored.
+                lock (_pushNotificationRequestsToDelete)
+                {
+                    if (!_pushNotificationRequestsToDelete.Any(idProtocol => idProtocol.Item1 == id))
+                    {
+                        _pushNotificationRequestsToDelete.Add(new Tuple<string, Protocol>(id, protocol));
+                    }
+                }
+            }
+            finally
+            {
+                // we just deleted the push notification request, so it doesn't make sense for there to be a pending push notification
+                // request to send. remove any pending push notifications to send that match the passed id.
+                lock (_pushNotificationRequestsToSend)
+                {
+                    _pushNotificationRequestsToSend.RemoveAll(pushNotificationRequest => pushNotificationRequest.Id == id);
+                }
             }
         }
 
