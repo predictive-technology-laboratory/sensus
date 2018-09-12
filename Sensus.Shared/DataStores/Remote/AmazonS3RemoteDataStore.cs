@@ -410,6 +410,12 @@ namespace Sensus.DataStores.Remote
             }
         }
 
+        private string GetPushNotificationTokenKey()
+        {
+            // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
+        }
+
         public override async Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
@@ -432,6 +438,11 @@ namespace Sensus.DataStores.Remote
 
         public override async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
+            await DeletePushNotificationRequestAsync(request.Id, cancellationToken);
+        }
+
+        public override async Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)
+        {
             AmazonS3Client s3 = null;
 
             try
@@ -439,7 +450,7 @@ namespace Sensus.DataStores.Remote
                 // send an empty data stream to clear the request. we don't have delete access.
                 s3 = InitializeS3();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(request), "text/plain", cancellationToken);
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(id), "text/plain", cancellationToken);
             }
             finally
             {
@@ -447,15 +458,14 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private string GetPushNotificationTokenKey()
-        {
-            // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
-            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
-        }
-
         private string GetPushNotificationRequestKey(PushNotificationRequest request)
         {
-            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + request.Id + ".json";
+            return GetPushNotificationRequestKey(request.Id);
+        }
+
+        private string GetPushNotificationRequestKey(string pushNotificationRequestId)
+        {
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + pushNotificationRequestId + ".json";
         }
 
         private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)

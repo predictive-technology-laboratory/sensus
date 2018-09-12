@@ -156,10 +156,9 @@ do
 	# check status.
         if [[ "$response" = "201"  ]]
         then
-            echo "Notification sent. Removing file..."
-	    aws s3 rm "$s3_path/$(basename $n)"
-	    rm $n	    
-	    echo ""
+            echo -e "Response 201:  Notification sent.\n"
+	else
+	    echo -e "Non-201 response received:  $response\n"
         fi
     else
 	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"

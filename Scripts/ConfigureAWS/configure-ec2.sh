@@ -113,6 +113,8 @@ rm tmp tmp2
 # upload push notification processor and supporting tools
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
+scp -i $pemFileName dump-push-notifications.sh ec2-user@$publicIP:~/
+ssh -i $pemFileName ec2-user@$publicIP "chmod +x dump-push-notifications.sh"
 ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq"
 ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2"
 
