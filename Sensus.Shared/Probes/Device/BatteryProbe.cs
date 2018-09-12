@@ -35,7 +35,7 @@ namespace Sensus.Probes.Device
         {
             get
             {
-                return 60000 * 15; // every 15 minutes
+                return (int)TimeSpan.FromHours(1).TotalMilliseconds;
             }
         }
 
