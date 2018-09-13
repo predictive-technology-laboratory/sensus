@@ -88,14 +88,16 @@ namespace Sensus.Notifications
 
             // if the PNR targets the current device and the protocol isn't listening, don't send the request. this will 
             // eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
-            if (request.DeviceId == SensusServiceHelper.Get().DeviceId &&
-               (string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsHub) ||
-                string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsSharedAccessSignature)))
+            if (request.DeviceId == SensusServiceHelper.Get().DeviceId)
             {
-                SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
-                return;
+                if (string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsHub) || string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsSharedAccessSignature))
+                {
+                    SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
+                    return;
+                }
             }
 
+            // send the push notification request to the remote data store
             try
             {
                 await request.Protocol.RemoteDataStore.SendPushNotificationRequestAsync(request, cancellationToken);
