@@ -40,9 +40,10 @@ do
     then
 	echo -e "Processing $n ..."
     else
-	echo -e "Empty request $n. Deleting file...\n"
+	echo "Empty request $n. Deleting file..."
 	aws s3 rm "$s3_path/$(basename $n)"
 	rm $n
+	echo ""
 	continue
     fi
 
