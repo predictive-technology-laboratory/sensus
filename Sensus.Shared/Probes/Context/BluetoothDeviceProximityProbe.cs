@@ -31,7 +31,9 @@ namespace Sensus.Probes.Context
         protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
 
         /// <summary>
-        /// The length of time to scan for devices in proximity (in milliseconds)
+        /// The length of time to scan for devices in proximity (in milliseconds). Note that, if the <see cref="Protocol"/>
+        /// is configured to use [push notifications](xref:push_notifications), this should not be set above 25 seconds on
+        /// iOS as background execution is limited to 30 seconds total.
         /// </summary>
         /// <value>The scan time ms.</value>
         [EntryIntegerUiProperty("Scan Duration (MS):", true, 5, true)]
@@ -64,7 +66,7 @@ namespace Sensus.Probes.Context
 
         public BluetoothDeviceProximityProbe()
         {
-            _scanDurationMS = 30000;
+            _scanDurationMS = (int)TimeSpan.FromSeconds(15).TotalMilliseconds;
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 
