@@ -29,7 +29,16 @@ using System.Threading.Tasks;
 namespace Sensus.iOS.Probes.Movement
 {
     /// <summary>
-    /// Provides inferred activity information via the iOS activity recognition API as <see cref="ActivityDatum"/> readings.
+    /// Provides inferred activity information via the iOS activity recognition API as <see cref="ActivityDatum"/> readings. As it is not
+    /// possible to do continuous, real time activity recognition due to battery and network limitations, there are several caveats
+    /// to the data produced by this probe:
+    /// 
+    ///   * The user must typically be engaged in the activity for 30 seconds or more for the activity to be detected.
+    ///   * Detected activities will typically not be available for collection for several minutes. So even if the activity is
+    ///     detected and this probe polls, the activity might not be picked up. After a couple minutes the activity will be 
+    ///     available for collection and a subsequent poll will pick up the reading. The reading timestamp will reflect the actual
+    ///     time when the activity started rather than the time of the poll.
+    /// 
     /// </summary>
     public class iOSActivityProbe : PollingProbe
     {

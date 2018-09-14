@@ -83,7 +83,15 @@
   
   <h1 id="Sensus_Android_Probes_Movement_AndroidActivityProbe" data-uid="Sensus.Android.Probes.Movement.AndroidActivityProbe" class="text-break">Class AndroidActivityProbe
   </h1>
-  <div class="markdown level0 summary"><p>Provides inferred activity information via the Google Awareness API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings.</p>
+  <div class="markdown level0 summary"><p>Provides inferred activity information via the Google Awareness API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings. As it is not
+possible to do continuous, real time activity recognition due to battery and network limitations, there are several caveats
+to the data produced by this probe:</p>
+<ul>
+<li>The user must typically be engaged in the activity for 30 seconds or more for the activity to be detected.</li>
+<li>Activities are typically reported when the user unlocks the device. They are rarely reported when the device is locked.</li>
+<li>Activities have both a <a class="xref" href="Sensus.Probes.Movement.ActivityPhase.html">ActivityPhase</a> and <a class="xref" href="Sensus.Probes.Movement.ActivityState.html">ActivityState</a>, which must be carefully
+inspected to understand the activity the user is engaged in.</li>
+</ul>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">

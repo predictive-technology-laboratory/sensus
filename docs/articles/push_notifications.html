@@ -114,7 +114,7 @@ in the steps that follow.</li>
 </ol>
 <h2 id="aws-s3">AWS S3</h2>
 <ol>
-<li>Configure your AWS S3 bucket following the <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">guide</a>.</li>
+<li>Configure your AWS S3 bucket following the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">guide</a>.</li>
 </ol>
 <h2 id="aws-ec2">AWS EC2</h2>
 <ol>
@@ -123,10 +123,10 @@ archive. This script requires you to install the AWS CLI and the <code>jq</code>
 </ol>
 <h2 id="sensus-protocol">Sensus Protocol</h2>
 <ol>
-<li>Within your Sensus protocol, set the <a href="xref:Sensus.Protocol.PushNotificationsHub">Push Notifications Hub</a> to the Azure Notification
-Hub name, and set the <a href="xref:Sensus.Protocol.PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
+<li>Within your Sensus protocol, set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">Push Notifications Hub</a> to the Azure Notification
+Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
 the <code>DefaultFullSharedAccessSignature</code> of the Azure Notification Hub.</li>
-<li>Configure the <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">AWS S3 remote data store</a> using the bucket created above.</li>
+<li>Configure the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> using the bucket created above.</li>
 </ol>
 <h2 id="conclusion">Conclusion</h2>
 <p>If the above steps are successful, your Sensus protocol should now receive push notification support when

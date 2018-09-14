@@ -95,7 +95,7 @@ for on-device testing.</li>
 <li>Sensus should run with no errors on any version of the Android framework that is greater than or equal to the minimum. </li>
 </ol>
 <p>To achieve the above goals, we use a combination of compiler directives and runtime checks on the Android API. An example 
-is the &lt;xref:Sensus.Android.Probes.Device.AndroidScreenProbe&gt; class, a snippet of which is shown below:</p>
+is the <a class="xref" href="../api/Sensus.Android.Probes.Device.AndroidScreenProbe.html">AndroidScreenProbe</a> class, a snippet of which is shown below:</p>
 <pre><code>#if __ANDROID_20__
 if (Build.VERSION.SdkInt &gt;= BuildVersionCodes.Lollipop)
     screenOn = _powerManager.IsInteractive;  // API level 20

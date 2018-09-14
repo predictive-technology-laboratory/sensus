@@ -81,9 +81,9 @@
 
 <p>Sensus is able to transmit data from the device to remote servers (e.g., AWS S3). Sensus implements SSL certificate pinning 
 to prevent man-in-the-middle attacks in which a third party poses as the remote server to intercept data. Certificate pinning 
-is achieved by embedding the expected SSL public encryption key within the Sensus &lt;xref:Sensus.Protocol&gt;. Upon connecting to 
+is achieved by embedding the expected SSL public encryption key within the Sensus <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>. Upon connecting to 
 the AWS S3 server, Sensus receives the SSL public encryption key that the server wishes to use to secure the connection. If 
-the server provides the expected public key (i.e., the one embedded within the &lt;xref:Sensus.Protocol&gt;, then we can be more 
+the server provides the expected public key (i.e., the one embedded within the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>, then we can be more 
 confident that either (1) the server is actually our AWS S3 server, or (2) the server is a man-in-the-middle that is trying 
 to use our public encryption key. In the latter case, as long as we have maintained control of the private key, the 
 man-in-the-middle will not be able to decrypt data encrypted with the public encryption key. If the server does not provide 
@@ -94,8 +94,8 @@ by a man-in-the-middle server that holds the associated private encryption key.<
 <li>Set up an AWS CloudFront reverse proxy from a domain name that you own to the official AWS S3 endpoint (s3.amazonaws.com).</li>
 <li>Install a new certificate into your CloudFront server using the AWS Certificate Manager.</li>
 <li>Extract the public encryption key from your CloudFront endpoint (e.g., using the developer tools in Chrome on Windows).</li>
-<li>Use your domain name as the &lt;xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedServiceURL&gt;.</li>
-<li>Use the extracted public key as the &lt;xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedPublicKey&gt;.</li>
+<li>Use your domain name as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL">PinnedServiceURL</a>.</li>
+<li>Use the extracted public key as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey">PinnedPublicKey</a>.</li>
 </ul>
 </article>
           </div>

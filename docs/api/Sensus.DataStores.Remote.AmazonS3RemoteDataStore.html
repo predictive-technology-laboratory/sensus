@@ -402,7 +402,7 @@ public string PinnedServiceURL { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;}, true)]
+    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;, &quot;us-gov-west-1&quot;}, true)]
 public string Region { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -499,6 +499,55 @@ public string Region { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(String, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(String, CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationTokenAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync*"></a>

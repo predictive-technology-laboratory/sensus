@@ -22035,6 +22035,12 @@ references:
   commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest, System.Threading.CancellationToken)
   nameWithType: AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)
+  name: DeletePushNotificationRequestAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync*
   name: DeletePushNotificationRequestAsync
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_
@@ -22287,6 +22293,12 @@ references:
   commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest, System.Threading.CancellationToken)
   nameWithType: ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)
+  name: DeletePushNotificationRequestAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync*
   name: DeletePushNotificationRequestAsync
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_
@@ -22440,6 +22452,12 @@ references:
   commentId: M:Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   fullName: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest, System.Threading.CancellationToken)
   nameWithType: RemoteDataStore.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)
+  name: DeletePushNotificationRequestAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.DeletePushNotificationRequestAsync(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync*
   name: DeletePushNotificationRequestAsync
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_
@@ -27807,6 +27825,12 @@ references:
   commentId: M:Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   fullName: Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest, System.Threading.CancellationToken)
   nameWithType: Notifier.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
+- uid: Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(System.String,Sensus.Protocol,System.Threading.CancellationToken)
+  name: DeletePushNotificationRequestAsync(String, Protocol, CancellationToken)
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_System_String_Sensus_Protocol_System_Threading_CancellationToken_
+  commentId: M:Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(System.String,Sensus.Protocol,System.Threading.CancellationToken)
+  fullName: Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(System.String, Sensus.Protocol, System.Threading.CancellationToken)
+  nameWithType: Notifier.DeletePushNotificationRequestAsync(String, Protocol, CancellationToken)
 - uid: Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync*
   name: DeletePushNotificationRequestAsync
   href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_
@@ -27903,6 +27927,18 @@ references:
   commentId: Overload:Sensus.Notifications.PushNotificationRequest.#ctor
   fullName: Sensus.Notifications.PushNotificationRequest.PushNotificationRequest
   nameWithType: PushNotificationRequest.PushNotificationRequest
+- uid: Sensus.Notifications.PushNotificationRequest.DeviceId
+  name: DeviceId
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_DeviceId
+  commentId: P:Sensus.Notifications.PushNotificationRequest.DeviceId
+  fullName: Sensus.Notifications.PushNotificationRequest.DeviceId
+  nameWithType: PushNotificationRequest.DeviceId
+- uid: Sensus.Notifications.PushNotificationRequest.DeviceId*
+  name: DeviceId
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_DeviceId_
+  commentId: Overload:Sensus.Notifications.PushNotificationRequest.DeviceId
+  fullName: Sensus.Notifications.PushNotificationRequest.DeviceId
+  nameWithType: PushNotificationRequest.DeviceId
 - uid: Sensus.Notifications.PushNotificationRequest.Equals(System.Object)
   name: Equals(Object)
   href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_Equals_System_Object_

@@ -287,7 +287,7 @@ namespace Sensus.Probes
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Failed AC power connected poll.", ex);
+                    SensusException.Report("Failed AC power connected poll:  " + ex.Message, ex);
                 }
             };
         }

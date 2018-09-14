@@ -83,7 +83,16 @@
   
   <h1 id="Sensus_iOS_Probes_Movement_iOSActivityProbe" data-uid="Sensus.iOS.Probes.Movement.iOSActivityProbe" class="text-break">Class iOSActivityProbe
   </h1>
-  <div class="markdown level0 summary"><p>Provides inferred activity information via the iOS activity recognition API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings.</p>
+  <div class="markdown level0 summary"><p>Provides inferred activity information via the iOS activity recognition API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings. As it is not
+possible to do continuous, real time activity recognition due to battery and network limitations, there are several caveats
+to the data produced by this probe:</p>
+<ul>
+<li>The user must typically be engaged in the activity for 30 seconds or more for the activity to be detected.</li>
+<li>Detected activities will typically not be available for collection for several minutes. So even if the activity is
+detected and this probe polls, the activity might not be picked up. After a couple minutes the activity will be 
+available for collection and a subsequent poll will pick up the reading. The reading timestamp will reflect the actual
+time when the activity started rather than the time of the poll.</li>
+</ul>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">

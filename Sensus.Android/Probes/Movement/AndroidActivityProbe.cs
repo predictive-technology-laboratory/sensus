@@ -22,7 +22,15 @@ using System.Threading.Tasks;
 namespace Sensus.Android.Probes.Movement
 {
     /// <summary>
-    /// Provides inferred activity information via the Google Awareness API as <see cref="ActivityDatum"/> readings.
+    /// Provides inferred activity information via the Google Awareness API as <see cref="ActivityDatum"/> readings. As it is not
+    /// possible to do continuous, real time activity recognition due to battery and network limitations, there are several caveats
+    /// to the data produced by this probe:
+    /// 
+    ///   * The user must typically be engaged in the activity for 30 seconds or more for the activity to be detected.
+    ///   * Activities are typically reported when the user unlocks the device. They are rarely reported when the device is locked.
+    ///   * Activities have both a <see cref="ActivityPhase"/> and <see cref="ActivityState"/>, which must be carefully
+    ///     inspected to understand the activity the user is engaged in.
+    /// 
     /// </summary>
     public class AndroidActivityProbe : AndroidAwarenessProbe
     {
