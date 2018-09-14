@@ -41,7 +41,6 @@ using Plugin.Permissions;
 namespace Sensus.Android
 {
     [Activity(Label = "@string/app_name", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "http", DataHost = "*", DataPathPattern = ".*\\\\.json")]  // protocols downloaded from an http web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.json")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsAppCompatActivity
@@ -308,7 +307,7 @@ namespace Sensus.Android
 
                     Protocol protocol = null;
 
-                    if (intent.Scheme == "http" || intent.Scheme == "https")
+                    if (intent.Scheme == "https")
                     {
                         protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()));
                     }

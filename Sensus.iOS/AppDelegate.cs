@@ -99,18 +99,7 @@ namespace Sensus.iOS
                     {
                         Protocol protocol = null;
 
-                        if (url.Scheme == "sensus")
-                        {
-                            try
-                            {
-                                protocol = await Protocol.DeserializeAsync(new Uri("http://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()));
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTP URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
-                            }
-                        }
-                        else if (url.Scheme == "sensuss")
+                        if (url.Scheme == "sensuss")
                         {
                             try
                             {
