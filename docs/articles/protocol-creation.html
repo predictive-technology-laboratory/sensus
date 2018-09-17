@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>SSL Certificate Pinning | Sensus Documentation </title>
+    <title>Protocol Creation | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="SSL Certificate Pinning | Sensus Documentation ">
+    <meta name="title" content="Protocol Creation | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -76,27 +76,25 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="ssl_pinning">
-<h1 id="ssl-certificate-pinning">SSL Certificate Pinning</h1>
+            <article class="content wrap" id="_content" data-uid="protocol_creation">
+<h1 id="protocol-creation">Protocol Creation</h1>
 
-<p>Sensus is able to transmit data from the device to remote servers (e.g., AWS S3). Sensus implements SSL certificate pinning 
-to prevent man-in-the-middle attacks in which a third party poses as the remote server to intercept data. Certificate pinning 
-is achieved by embedding the expected SSL public encryption key within the Sensus <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>. Upon connecting to 
-the AWS S3 server, Sensus receives the SSL public encryption key that the server wishes to use to secure the connection. If 
-the server provides the expected public key (i.e., the one embedded within the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>, then we can be more 
-confident that either (1) the server is actually our AWS S3 server, or (2) the server is a man-in-the-middle that is trying 
-to use our public encryption key. In the latter case, as long as we have maintained control of the private key, the 
-man-in-the-middle will not be able to decrypt data encrypted with the public encryption key. If the server does not provide 
-the expected public key, Sensus will refuse to transmit data over the connection because it could potentially be decrypted 
-by a man-in-the-middle server that holds the associated private encryption key.</p>
-<p>Do the following to implement SSL certificate pinning within Sensus for the AWS S3 remote data store:</p>
-<ul>
-<li>Set up an AWS CloudFront reverse proxy from a domain name that you own to the official AWS S3 endpoint (s3.amazonaws.com).</li>
-<li>Install a new certificate into your CloudFront server using the AWS Certificate Manager.</li>
-<li>Extract the public encryption key from your CloudFront endpoint (e.g., using the developer tools in Chrome on Windows).</li>
-<li>Use your domain name as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL">PinnedServiceURL</a>.</li>
-<li>Use the extracted public key as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey">PinnedPublicKey</a>.</li>
-</ul>
+<p>Follow the steps below to get a basic Sensus Protocol up and running.</p>
+<ol>
+<li><a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">Configure</a> an AWS S3 bucket for data storage.</li>
+<li>Within the Sensus app:<ol>
+<li>Add a new Protocol.</li>
+<li>Add a <a class="xref" href="../api/Sensus.DataStores.Local.FileLocalDataStore.html">file-based local data store</a> to the Protocol.</li>
+<li>Add an <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> to the Protocol
+based on the information provided by the S3 configuration script that you ran above.</li>
+<li>Configure the Protocol&#39;s probes.</li>
+<li>Start the Protocol.</li>
+</ol>
+</li>
+</ol>
+<p>After a period of time, specifically the <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS">AWS S3 write delay</a>,
+you should see data appear in your AWS S3 bucket. You can force data to be written to your bucket on demand by enabling 
+the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowSubmitData">write data</a> feature.</p>
 </article>
           </div>
           
@@ -105,7 +103,7 @@ by a man-in-the-middle server that holds the associated private encryption key.<
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/ssl_pinning.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/protocol-creation.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

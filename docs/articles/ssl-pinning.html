@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Configuring a Development System | Sensus Documentation </title>
+    <title>SSL Certificate Pinning | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Configuring a Development System | Sensus Documentation ">
+    <meta name="title" content="SSL Certificate Pinning | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -76,37 +76,27 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="dev_config">
-<h1 id="configuring-a-development-system">Configuring a Development System</h1>
+            <article class="content wrap" id="_content" data-uid="ssl_pinning">
+<h1 id="ssl-certificate-pinning">SSL Certificate Pinning</h1>
 
-<p>Sensus is built on top of the <a href="http://www.xamarin.com">Xamarin</a> framework. The reason for this is two-fold:  first, we aim for a 
-mobile sensing system that runs on Android and iOS; second, we do not have a large software development team to reimplement Sensus 
-from scratch on each mobile OS. Xamarin allows us to write the vast majority of our code one time and run it natively on each mobile 
-OS. This includes the user interface. A small amount of functionality must be reimplemented for each OS (e.g., interacting with the 
-hardware sensors), but the overall economy of our approach is substantial. Xamarin is free, and C# (Xamarin&#39;s high-level language) 
-is a full-featured language that is similar to Java.</p>
-<h1 id="setup">Setup</h1>
-<ol>
-<li>After <a href="https://store.xamarin.com">installing</a> Xamarin (targeting the Xamarin Studio Community IDE or Visual Studio), you should 
-open Xamarin/Visual Studio and grab any remaining updates for the environment.</li>
-<li>Fork the official Sensus repository to your personal GitHub account and then clone the Sensus repository from your personal 
-GitHub account to your local machine. This setup will allow you to commit changes back to your GitHub repository and create 
-pull requests from your repository to the official Sensus repository.</li>
-<li>Open the Sensus solution within Xamarin/Visual Studio. The IDE should automatically restore the packages required for the 
-solution. There are sometimes issues with packages that we have had to address by building our own private versions of the 
-officially distributed packages (e.g., Nugets). See the <code>ReferenceFixes</code> directory for more information and directions for 
-fixing these issues.</li>
-<li>You should now be able to build the solution. After building, close Xamarin/Visual Studio and check that no modifications 
-have been made to your local repository. If any changes have been made, they are probably due to reordering of certain files 
-(e.g., project references within the .csproj files). Since the order of these files does not matter, you can safely <code>git checkout .</code> from 
-the root of your Sensus repository to undo these changes.</li>
-<li><p>Lastly, create a symbolic link from <code>Scripts/git-pre-commit.sh</code> to <code>.git/hooks/pre-commit</code> in your local Sensus repository 
-and make the script executable. For example:</p>
-<p> ln -s [FULL PATH TO SENSUS REPO]/Scripts/git-pre-commit.sh [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
- chmod +x [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit</p>
-</li>
-</ol>
-<p>You now have a clean, compiling version of Sensus.</p>
+<p>Sensus is able to transmit data from the device to remote servers (e.g., AWS S3). Sensus implements SSL certificate pinning 
+to prevent man-in-the-middle attacks in which a third party poses as the remote server to intercept data. Certificate pinning 
+is achieved by embedding the expected SSL public encryption key within the Sensus <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>. Upon connecting to 
+the AWS S3 server, Sensus receives the SSL public encryption key that the server wishes to use to secure the connection. If 
+the server provides the expected public key (i.e., the one embedded within the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>, then we can be more 
+confident that either (1) the server is actually our AWS S3 server, or (2) the server is a man-in-the-middle that is trying 
+to use our public encryption key. In the latter case, as long as we have maintained control of the private key, the 
+man-in-the-middle will not be able to decrypt data encrypted with the public encryption key. If the server does not provide 
+the expected public key, Sensus will refuse to transmit data over the connection because it could potentially be decrypted 
+by a man-in-the-middle server that holds the associated private encryption key.</p>
+<p>Do the following to implement SSL certificate pinning within Sensus for the AWS S3 remote data store:</p>
+<ul>
+<li>Set up an AWS CloudFront reverse proxy from a domain name that you own to the official AWS S3 endpoint (s3.amazonaws.com).</li>
+<li>Install a new certificate into your CloudFront server using the AWS Certificate Manager.</li>
+<li>Extract the public encryption key from your CloudFront endpoint (e.g., using the developer tools in Chrome on Windows).</li>
+<li>Use your domain name as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedServiceURL">PinnedServiceURL</a>.</li>
+<li>Use the extracted public key as the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PinnedPublicKey">PinnedPublicKey</a>.</li>
+</ul>
 </article>
           </div>
           
@@ -115,7 +105,7 @@ and make the script executable. For example:</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/configuring_a_development_system.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/ssl-pinning.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

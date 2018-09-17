@@ -7,10 +7,10 @@
 		</provider>
 		<activity android:name="com.facebook.FacebookActivity" android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="@string/app_name" />
 		<!-- Google Maps V2 API Key. -->
-		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBpz8X7CKS7FXQfyyWRkrw2pVisjypB8a0" />
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<!-- Google Awareness API Key. -->
-		<meta-data android:name="com.google.android.awareness.API_KEY" android:value="AIzaSyB5sElQstoQXBVk-hhSEkdmVSry04hsFn8" />
+		<meta-data android:name="com.google.android.awareness.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
 		<!-- Declare the Estimote scanning service. -->
 		<service android:name="com.estimote.scanning_plugin.packet_provider.service.PacketProviderWrapperService" android:enabled="true" android:exported="false" />
 		<!-- Google Firebase Cloud Messaging -->

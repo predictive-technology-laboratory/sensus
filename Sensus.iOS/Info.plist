@@ -42,16 +42,6 @@
 		</dict>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>edu.virginia.sie.ptl.sensus</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>sensus</string>
-			</array>
-			<key>CFBundleURLTypes</key>
-			<string>Viewer</string>
-		</dict>
-		<dict>
-			<key>CFBundleURLName</key>
 			<string>edu.virginia.sie.ptl.sensuss</string>
 			<key>CFBundleURLSchemes</key>
 			<array>

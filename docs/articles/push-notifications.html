@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Coding Conventions | Sensus Documentation </title>
+    <title>Push Notifications | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Coding Conventions | Sensus Documentation ">
+    <meta name="title" content="Push Notifications | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -76,67 +76,61 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="coding_conventions">
-<h1 id="coding-conventions">Coding Conventions</h1>
+            <article class="content wrap" id="_content" data-uid="push_notifications">
+<h1 id="push-notifications">Push Notifications</h1>
 
-<p>The following snippet (full file <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Android/AndroidSensusServiceHelper.cs">here</a>) 
-demonstrates many of the coding conventions within Sensus. These must be strictly adhered to.</p>
-<p>The start of every source code file must contain the following copyright notice:</p>
-<pre><code>// Copyright 2014 The Rector &amp; Visitors of the University of Virginia
-//
-// Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-</code></pre><p>Next is a blank line followed by the <code>using</code> declarations:</p>
-<pre><code>using System;
-...
-</code></pre><p>Next are the <code>namespace</code> and <code>class</code> declarations (note the upper-camel-casing):</p>
-<pre><code>namespace Sensus.Android
-{
-    public class AndroidSensusServiceHelper : SensusServiceHelper
-    {
-</code></pre><p>Next are any <code>static</code> or <code>const</code> fields, which must be in all capital letters:</p>
-<pre><code>        public const string MAIN_ACTIVITY_WILL_BE_SET = &quot;MAIN-ACTIVITY-WILL-BE-SET&quot;;
-        ...
-</code></pre><p>Next are any <code>private</code> members, which must be explicitly denoted as <code>private</code>, use lower-camel-casing, and be prefixed with an underscore:</p>
-<pre><code>        private AndroidSensusService _service;
-        ...
-</code></pre><p>Next are any properties, which must use upper-camel-casing and be identical to the private member except without the underscore:</p>
-<pre><code>        [JsonIgnore]
-        public AndroidSensusService Service
-        {
-            get { return _service; }
-        }
-        ...
-</code></pre><p>Next are any constructors:</p>
-<pre><code>        public AndroidSensusServiceHelper()
-        {
-            _mainActivityWait = new ManualResetEvent(false);   
-        }
-</code></pre><p>Next are any methods:</p>
-<pre><code>        protected override void InitializeXamarinInsights()
-        {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can&#39;t reference _service here since this method is called from the base class constructor, before the service is set.
-        }
-        ... 
-    }
-}
-</code></pre><p>Some miscellaneous conventions and guidelines:</p>
+<h2 id="introduction">Introduction</h2>
+<p>Sensus uses push notifications to deliver information to users, to let Sensus know when
+updated information is available, and to generally support quality assurance of collected 
+data. This article describes how to enable push notifications within your Sensus deployment.
+The primary components are as follows:</p>
 <ul>
-<li>Always reference private variables within a class rather than their properties.</li>
-<li>Use grammatically appropriate variable names. For example, a list of <code>string</code> objects representing names should be declared 
-as <code>List&lt;string&gt; names</code>, and the associated <code>foreach</code> statement should be <code>foreach(string name in names)</code>.</li>
-<li>Do not update packages while you work. Such changes will often create conflicts with other developers.</li>
-<li>Do not submit code that is commented out.</li>
+<li>Firebase Cloud Messaging:  This is the Android push notification service.</li>
+<li>Apple Push Notification Service:  This is the iOS push notification service.</li>
+<li>Azure Notification Hub:  This is the central manager and distributor of push notifications.
+                         This component takes care of distributing push notifications to the
+                         platform-specific (Android and iOS) push notification services.</li>
+<li>AWS S3:  This is the backend in which push notifications will be stored for future delivery.</li>
+<li>AWS EC2:  This is the backend processor that will read push notifications from AWS S3 and
+          deliver them to the Azure Notification Hub.</li>
+<li>Sensus Protocol:  This contains settings that let the app know where to register for push 
+                  notifications.</li>
 </ul>
+<p>The following sections explain the configuration of each component.</p>
+<h2 id="firebase-cloud-messaging">Firebase Cloud Messaging</h2>
+<p>Configure Firebase Cloud Messaging following the official Google documentation.</p>
+<h2 id="apple-push-notification-service">Apple Push Notification Service</h2>
+<p>Configure the Apple Push Notification Service following the official Apple documentation.</p>
+<h2 id="azure-notification-hub">Azure Notification Hub</h2>
+<ol>
+<li>Create a new Notification Hub within the Azure portal.</li>
+<li>Within the Apple (APNS) settings, upload the the APNS certificate generated from 
+the previous steps. Set the Application Mode to Production.</li>
+<li>Within the Google (GCM) settings, enter the API Key that you generated from the
+previous steps.</li>
+<li>Under Manage -&gt; Access Policies, make a note of the <code>DefaultListenSharedAccessSignature</code> and
+<code>DefaultFullSharedAccessSignature</code>. These names are similar, so be careful not to confuse them
+in the steps that follow.</li>
+</ol>
+<h2 id="aws-s3">AWS S3</h2>
+<ol>
+<li>Configure your AWS S3 bucket following the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">guide</a>.</li>
+</ol>
+<h2 id="aws-ec2">AWS EC2</h2>
+<ol>
+<li>Configure your AWS EC2 instance using the <code>configure-ec2.sh</code> script within the <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip">configuration</a>
+archive. This script requires you to install the AWS CLI and the <code>jq</code> command line program.</li>
+</ol>
+<h2 id="sensus-protocol">Sensus Protocol</h2>
+<ol>
+<li>Within your Sensus protocol, set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">Push Notifications Hub</a> to the Azure Notification
+Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
+the <code>DefaultFullSharedAccessSignature</code> of the Azure Notification Hub.</li>
+<li>Configure the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> using the bucket created above.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>If the above steps are successful, your Sensus protocol should now receive push notification support when
+installed and started on participant devices.</p>
 </article>
           </div>
           
@@ -145,7 +139,7 @@ as <code>List&lt;string&gt; names</code>, and the associated <code>foreach</code
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/coding_conventions.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/push-notifications.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

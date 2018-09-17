@@ -6,19 +6,19 @@ references:
   href: articles/anonymization.html
 - uid: backwards_compat
   name: Backwards Compatibility
-  href: articles/backwards_compatibility.html
+  href: articles/backwards-compatibility.html
 - uid: build_problems
   name: Common Problems
-  href: articles/build_problems.html
+  href: articles/build-problems.html
 - uid: coding_conventions
   name: Coding Conventions
-  href: articles/coding_conventions.html
+  href: articles/coding-conventions.html
 - uid: contributed
   name: contributed
-  href: articles/contributed_resources.html
+  href: articles/contributed-resources.html
 - uid: dev_config
   name: Configuring a Development System
-  href: articles/configuring_a_development_system.html
+  href: articles/configuring-a-development-system.html
 - uid: encryption
   name: Asymmetric Key Encryption
   href: articles/encryption.html
@@ -30,16 +30,19 @@ references:
   href: articles/intro.html
 - uid: privacy_policy
   name: Privacy Policy
-  href: articles/privacy_policy.html
+  href: articles/privacy-policy.html
 - uid: protocol_creation
   name: Protocol Creation
-  href: articles/protocol_creation.html
+  href: articles/protocol-creation.html
 - uid: protocol_distribution
   name: Protocol Distribution
-  href: articles/protocol_distribution.html
+  href: articles/protocol-distribution.html
 - uid: push_notifications
   name: Push Notifications
-  href: articles/push_notifications.html
+  href: articles/push-notifications.html
+- uid: redeploying
+  name: Redeploying Sensus
+  href: articles/redeploying-sensus.html
 - uid: Sensus
   name: Sensus
   href: api/Sensus.html
@@ -47063,7 +47066,7 @@ references:
   nameWithType: Window.ToString
 - uid: sensus_r
   name: SensusR
-  href: articles/sensus_r.html
+  href: articles/sensus-r.html
 - uid: ssl_pinning
   name: SSL Certificate Pinning
-  href: articles/ssl_pinning.html
+  href: articles/ssl-pinning.html

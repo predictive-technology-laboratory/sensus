@@ -31,21 +31,22 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8603D3F-6823-47C7-90D1-024B226A5229}"
 	ProjectSection(SolutionItems) = preProject
 		DocFX\articles\anonymization.md = DocFX\articles\anonymization.md
-		DocFX\articles\backwards_compatibility.md = DocFX\articles\backwards_compatibility.md
-		DocFX\articles\build_problems.md = DocFX\articles\build_problems.md
-		DocFX\articles\coding_conventions.md = DocFX\articles\coding_conventions.md
-		DocFX\articles\configuring_a_development_system.md = DocFX\articles\configuring_a_development_system.md
-		DocFX\articles\contributed_resources.md = DocFX\articles\contributed_resources.md
 		DocFX\articles\encryption.md = DocFX\articles\encryption.md
 		DocFX\articles\github.md = DocFX\articles\github.md
 		DocFX\articles\intro.md = DocFX\articles\intro.md
-		DocFX\articles\privacy_policy.md = DocFX\articles\privacy_policy.md
-		DocFX\articles\protocol_creation.md = DocFX\articles\protocol_creation.md
-		DocFX\articles\protocol_distribution.md = DocFX\articles\protocol_distribution.md
-		DocFX\articles\sensus_r.md = DocFX\articles\sensus_r.md
-		DocFX\articles\ssl_pinning.md = DocFX\articles\ssl_pinning.md
 		DocFX\articles\toc.yml = DocFX\articles\toc.yml
-		DocFX\articles\push_notifications.md = DocFX\articles\push_notifications.md
+		DocFX\articles\backwards-compatibility.md = DocFX\articles\backwards-compatibility.md
+		DocFX\articles\build-problems.md = DocFX\articles\build-problems.md
+		DocFX\articles\coding-conventions.md = DocFX\articles\coding-conventions.md
+		DocFX\articles\configuring-a-development-system.md = DocFX\articles\configuring-a-development-system.md
+		DocFX\articles\contributed-resources.md = DocFX\articles\contributed-resources.md
+		DocFX\articles\privacy-policy.md = DocFX\articles\privacy-policy.md
+		DocFX\articles\protocol-creation.md = DocFX\articles\protocol-creation.md
+		DocFX\articles\protocol-distribution.md = DocFX\articles\protocol-distribution.md
+		DocFX\articles\push-notifications.md = DocFX\articles\push-notifications.md
+		DocFX\articles\sensus-r.md = DocFX\articles\sensus-r.md
+		DocFX\articles\ssl-pinning.md = DocFX\articles\ssl-pinning.md
+		DocFX\articles\redeploying-sensus.md = DocFX\articles\redeploying-sensus.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
