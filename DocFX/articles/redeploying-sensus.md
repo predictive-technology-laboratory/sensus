@@ -31,6 +31,41 @@ Sensus uses the Facebook API to collect public profile information from users wh
 visit the [Facebook developer console](https://developers.facebook.com) and create a new app, noting your app name and ID.
 If you do not do this, you will not be able to use the [Facebook Probe](xref:Sensus.Probes.Apps.FacebookProbe).
 
+## Keys and IDs
+Edit the following fields of `Sensus.SensusServiceHelper.cs` (in the `Sensus.Shared` project):
+
+```
+        /// <summary>
+        /// App Center key for Android app. To obtain this key, create a new Xamarin Android app within the Microsoft App Center. This
+        /// is optional. If you do not provide this key, then Sensus will not send Android crash reports and remote health telemetry 
+        /// to the App Center.
+        /// </summary>
+        public const string APP_CENTER_KEY_ANDROID = "";
+
+        /// <summary>
+        /// App Center key for iOS app. To obtain this key, create a new Xamarin iOS app within the Microsoft App Center. This
+        /// is optional. If you do not provide this key, then Sensus will not send iOS crash reports and remote health telemetry 
+        /// to the App Center.
+        /// </summary>
+        public const string APP_CENTER_KEY_IOS = "";
+
+        /// <summary>
+        /// The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:
+        /// 
+        ///     openssl enc -aes-256-cbc -k secret -P -md sha1
+        /// 
+        /// The above was adapted from:  https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html
+        /// 
+        /// This is mandatory.
+        /// </summary>
+        public const string ENCRYPTION_KEY = "";
+
+        /// <summary>
+        /// The build ID, used to tag each <see cref="Datum"/>. This is an arbitrary string value, and it is optional.
+        /// </summary>
+        public const string BUILD_ID = "";
+```
+
 ## Sensus Android
 
 Sensus Android consumes services provided by Google Cloud Platform. Since these services and their authorized consumers are tied
