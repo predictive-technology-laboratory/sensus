@@ -35,6 +35,7 @@ using Sensus.Encryption;
 using System.Threading;
 using System.Threading.Tasks;
 using Sensus.iOS.Notifications;
+using Firebase.CloudMessaging;
 
 namespace Sensus.iOS
 {
@@ -42,7 +43,7 @@ namespace Sensus.iOS
     // User Interface of the application, as well as listening (and optionally responding) to
     // application events from iOS.
     [Register("AppDelegate")]
-    public class AppDelegate : FormsApplicationDelegate
+    public class AppDelegate : FormsApplicationDelegate, IMessagingDelegate
     {
         private readonly object _onActivatedLocker = new object();
         private bool _authorizingAndConfiguringNotifications = false;
@@ -72,7 +73,11 @@ namespace Sensus.iOS
             new SfChartRenderer();
             ZXing.Net.Mobile.Forms.iOS.Platform.Init();
 
-            LoadApplication(new App());
+            // receive FCM messages
+            Firebase.Core.App.Configure();
+            Messaging.SharedInstance.Delegate = this;
+
+            LoadApplication(new App()); 
 
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
@@ -389,6 +394,12 @@ namespace Sensus.iOS
             application.EndBackgroundTask(updateTaskId);
         }
 
+        [Export("messaging:didReceiveRegistrationToken:")]
+        public void DidReceiveRegistrationToken(Messaging messaging, string fcmToken)
+        {
+            Console.Out.WriteLine(fcmToken);
+        }
+
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
             SensusException.Report("Failed to register for remote notifications.", error == null ? null : new Exception(error.ToString()));
@@ -402,6 +413,8 @@ namespace Sensus.iOS
         public override async void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
             await ProcessRemoteNotificationAsync(userInfo);
+
+            Messaging.SharedInstance.AppDidReceiveMessage(userInfo);
 
             // once the remote notification has been processed, invoke the completion handler.
             completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
