@@ -79,6 +79,7 @@ services and then associate these servies with your app before compiling and dep
    
    * Awareness API
    * Maps SDK for Android
+   * Firebase Cloud Messaging API
 
 1. View your Google Cloud Platform credentials. You should see three credentials that were auto-created (server,
    browser, and Android). Edit the Android credential and restrict the credential to your Android app's SHA-1 signature. 
@@ -86,12 +87,17 @@ services and then associate these servies with your app before compiling and dep
 
    * Awareness API  
    * Maps SDK for Android
+   * Firebase Cloud Messaging API
    * Firebase Services API
 
    Copy the API key for this credential and paste its value into the following fields of your `AndroidManifest.xml` file:
    
    * `com.google.android.maps.v2.API_KEY`
    * `com.google.android.awareness.API_KEY`
+   
+   Note that the API key is not listed in the `AndroidManifest.xml` file in connection with Firebase Cloud Messaging. This
+   is because you already added the `google-services.json` file to the Sensus.Android project. The app will have access
+   to the API key from this file when executing its Firebase communication routines.
 
 1. Edit the `AndroidManifest.xml` file as follows:
 
