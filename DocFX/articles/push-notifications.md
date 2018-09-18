@@ -60,5 +60,6 @@ installed and started on participant devices.
 
 1. Add Firebase iOS project. Download the `GoogleServices-Info.plist` file that is created and replace the existing
    one within the Sensus.iOS project.
+1. Secure the API KEY listed in the `GoogleServices-Info.plist` file, making it specific to your iOS bundle ID and permitting FCM.
 1. Project settings -> Service accounts -> Generate new private key (keep safe).
 1. pip install --upgrade google-api-python-client (should be at least version 4.1.3).
