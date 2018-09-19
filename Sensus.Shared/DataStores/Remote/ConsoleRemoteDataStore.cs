@@ -63,12 +63,12 @@ namespace Sensus.DataStores.Remote
             return Task.CompletedTask;
         }
 
-        public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        public override Task SendPushNotificationTokenAsync(string token, PushNotificationHub hub, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
 
-        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        public override Task DeletePushNotificationTokenAsync(PushNotificationHub hub, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

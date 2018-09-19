@@ -58,6 +58,7 @@ namespace Sensus.Notifications
         private string _command;
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _time;
+        private PushNotificationHub _hub;
 
         public string Id
         {
@@ -87,31 +88,52 @@ namespace Sensus.Notifications
                            "\"sound\":" + JsonConvert.ToString(_sound) + "," +
                            "\"command\":" + JsonConvert.ToString(_command) + "," +
                            "\"format\":" + JsonConvert.ToString(GetFormatString(_format)) + "," +
-                           "\"time\":" + _time.ToUnixTimeSeconds() +
+                           "\"time\":" + _time.ToUnixTimeSeconds() + "," +
+                           "\"hub\":" + _hub + 
                        "}";
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.Notifications.PushNotificationRequest"/> class, targeting another
+        /// device (i.e., inter-device push notification request).
+        /// </summary>
+        /// <param name="protocol">Protocol.</param>
+        /// <param name="title">Title.</param>
+        /// <param name="body">Body.</param>
+        /// <param name="sound">Sound.</param>
+        /// <param name="command">Command.</param>
+        /// <param name="time">Time.</param>
+        /// <param name="hub">Hub.</param>
+        /// <param name="deviceId">Device identifier.</param>
+        /// <param name="format">Format.</param>
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, PushNotificationHub hub, string deviceId, PushNotificationRequestFormat format)
         {
             _id = Guid.NewGuid().ToString();
-            _protocol = protocol;
+            _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _title = title;
             _body = body;
             _sound = sound;
             _command = command;
             _time = time;
+            _hub = hub;
             _deviceId = deviceId;
             _format = format;
-
-            if (protocol == null)
-            {
-                throw new ArgumentNullException(nameof(protocol));
-            }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
-            : this(protocol, title, body, sound, command, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.Notifications.PushNotificationRequest"/> class, targeting the current 
+        /// device (i.e., a callback-style push notification request).
+        /// </summary>
+        /// <param name="protocol">Protocol.</param>
+        /// <param name="title">Title.</param>
+        /// <param name="body">Body.</param>
+        /// <param name="sound">Sound.</param>
+        /// <param name="command">Command.</param>
+        /// <param name="time">Time.</param>
+        /// <param name="hub">Hub.</param>
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, PushNotificationHub hub)
+            : this(protocol, title, body, sound, command, time, hub, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
         {
         }
 

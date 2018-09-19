@@ -15,6 +15,7 @@
 using Android.App;
 using Firebase.Iid;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Notifications
 {
@@ -22,12 +23,12 @@ namespace Sensus.Android.Notifications
     [IntentFilter(new[] { "com.google.firebase.INSTANCE_ID_EVENT" })]
     public class FirebaseRegistrationService : FirebaseInstanceIdService
     {
-        public override void OnTokenRefresh()
+        public override async void OnTokenRefresh()
         {
             // update push notification registrations using the new token. as this 
             // is a service, we're not exactly sure when it will be started. so 
             // the service helper might not be immediately available.
-            SensusServiceHelper.Get()?.UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get()?.UpdatePushNotificationRegistrationsAsync(true, true, default(CancellationToken)) ?? Task.CompletedTask;
         }
     }
 }

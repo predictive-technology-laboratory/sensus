@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
+using Firebase.InstanceID;
 
 namespace Sensus.iOS
 {
@@ -40,7 +41,7 @@ namespace Sensus.iOS
 
         private DateTime _nextToastTime;
         private readonly object _toastLocker = new object();
-        private NSData _pushNotificationTokenData;
+        private NSData _azurePushNotificationTokenData;
 
         public override bool IsCharging
         {
@@ -105,24 +106,32 @@ namespace Sensus.iOS
             }
         }
 
-        public override string PushNotificationToken
+        public override string AzurePushNotificationToken
         {
             get
             {
-                return _pushNotificationTokenData == null ? null : BitConverter.ToString(_pushNotificationTokenData.ToArray()).Replace("-", "").ToUpperInvariant();
+                return _azurePushNotificationTokenData == null ? null : BitConverter.ToString(_azurePushNotificationTokenData.ToArray()).Replace("-", "").ToUpperInvariant();
+            }
+        }
+
+        public override string FirebasePushNotificationToken
+        {
+            get
+            {
+                return InstanceId.SharedInstance.Token;
             }
         }
 
         [JsonIgnore]
-        public NSData PushNotificationTokenData
+        public NSData AzurePushNotificationTokenData
         {
             get
             {
-                return _pushNotificationTokenData;
+                return _azurePushNotificationTokenData;
             }
             set
             {
-                _pushNotificationTokenData = value;
+                _azurePushNotificationTokenData = value;
             }
         }
 
@@ -282,19 +291,19 @@ namespace Sensus.iOS
             });
         }
 
-        protected override async Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
+        protected override async Task RegisterWithAzureNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-            await notificationHub.RegisterNativeAsyncAsync(_pushNotificationTokenData, new NSSet());
+            await notificationHub.RegisterNativeAsyncAsync(_azurePushNotificationTokenData, new NSSet());
         }
 
-        protected override async Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
+        protected override async Task UnregisterFromAzureNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-            await notificationHub.UnregisterAllAsyncAsync(_pushNotificationTokenData);
+            await notificationHub.UnregisterAllAsyncAsync(_azurePushNotificationTokenData);
         }
 
-        protected override void RequestNewPushNotificationToken()
+        protected override void RequestNewAzurePushNotificationToken()
         {
             // reregister for remote notifications to get a new token
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -302,6 +311,20 @@ namespace Sensus.iOS
                 UIApplication.SharedApplication.UnregisterForRemoteNotifications();
                 UIApplication.SharedApplication.RegisterForRemoteNotifications();
             });
+        }
+
+        protected override void RequestNewFirebaseCloudMessagingNotificationToken()
+        {
+            // delete the instance ID and get a new token.
+            InstanceId.SharedInstance.DeleteId(new InstanceIdDeleteHandler(error =>
+            {
+                if (error != null)
+                {
+                    Logger.Log("Failed to delete FCM instance:  " + error, LoggingLevel.Normal, GetType());
+                }
+            }));
+
+            string x = InstanceId.SharedInstance.Token;  // this will force the acquisition of a new token.
         }
 
         /// <summary>

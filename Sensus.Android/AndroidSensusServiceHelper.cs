@@ -187,7 +187,15 @@ namespace Sensus.Android
             }
         }
 
-        public override string PushNotificationToken
+        public override string AzurePushNotificationToken
+        {
+            get
+            {
+                return FirebaseInstanceId.Instance.Token;
+            }
+        }
+
+        public override string FirebaseCloudMessagingPushNotificationToken
         {
             get
             {
@@ -543,27 +551,34 @@ namespace Sensus.Android
             });
         }
 
-        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
+        protected override Task RegisterWithAzureNotificationHubAsync(Tuple<string, string> hubSas)
         {
             // cannot perform registration on main thread. ensure we're on another thread.
             return Task.Run(() =>
             {
                 NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
-                notificationHub.Register(PushNotificationToken);
+                notificationHub.Register(AzurePushNotificationToken);
             });
         }
 
-        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
+        protected override Task UnregisterFromAzureNotificationHubAsync(Tuple<string, string> hubSas)
         {
             // cannot perform registration on main thread. ensure we're on another thread.
             return Task.Run(() =>
             {
                 NotificationHub notificationHub = new NotificationHub(hubSas.Item1, hubSas.Item2, Application.Context);
-                notificationHub.UnregisterAll(PushNotificationToken);
+                notificationHub.UnregisterAll(AzurePushNotificationToken);
             });
         }
 
-        protected override void RequestNewPushNotificationToken()
+        protected override void RequestNewAzurePushNotificationToken()
+        {
+            // delete the instance ID and get a new token.
+            FirebaseInstanceId.Instance.DeleteInstanceId();
+            string x = FirebaseInstanceId.Instance.Token;  // this will force the acquisition of a new token.
+        }
+
+        protected override void RequestNewFirebaseCloudMessagingNotificationToken()
         {
             // delete the instance ID and get a new token.
             FirebaseInstanceId.Instance.DeleteInstanceId();

@@ -335,7 +335,7 @@ namespace Sensus.DataStores.Remote
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.
         /// </summary>
-        /// <returns>The stream.</returns>
+        /// <returns>Task</returns>
         /// <param name="stream">Stream.</param>
         /// <param name="name">Descriptive name for the stream.</param>
         /// <param name="contentType">MIME content type for the stream.</param>
@@ -353,22 +353,24 @@ namespace Sensus.DataStores.Remote
         /// <summary>
         /// Sends the push notification token.
         /// </summary>
-        /// <returns>The push notification token.</returns>
+        /// <returns>Task</returns>
+        /// <param name="hub">Hub associatd with the token.</param>
         /// <param name="token">Token.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken);
+        public abstract Task SendPushNotificationTokenAsync(string token, PushNotificationHub hub, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes the push notification token.
         /// </summary>
-        /// <returns>The push notification token.</returns>
+        /// <returns>Task</returns>
+        /// <param name="hub">Hub associatd with the token.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken);
+        public abstract Task DeletePushNotificationTokenAsync(PushNotificationHub hub, CancellationToken cancellationToken);
 
         /// <summary>
         /// Sends the push notification request.
         /// </summary>
-        /// <returns>The push notification request.</returns>
+        /// <returns>Task</returns>
         /// <param name="request">Request.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);

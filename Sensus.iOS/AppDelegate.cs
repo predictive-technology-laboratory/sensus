@@ -73,7 +73,7 @@ namespace Sensus.iOS
             new SfChartRenderer();
             ZXing.Net.Mobile.Forms.iOS.Platform.Init();
 
-            // receive FCM messages
+            // configure and hook into FCM push notifications
             Firebase.Core.App.Configure();
             Messaging.SharedInstance.Delegate = this;
 
@@ -384,20 +384,25 @@ namespace Sensus.iOS
         public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
         {
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-            serviceHelper.PushNotificationTokenData = deviceToken;
+            serviceHelper.AzurePushNotificationTokenData = deviceToken;
 
             // update push notification registrations. this depends on internet connectivity to S3
             // so it might hang if connectivity is poor. ensure we don't violate execution limits.
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             nint updateTaskId = application.BeginBackgroundTask(cancellationTokenSource.Cancel);
-            await serviceHelper.UpdatePushNotificationRegistrationsAsync(cancellationTokenSource.Token);
+            await serviceHelper.UpdatePushNotificationRegistrationsAsync(true, false, cancellationTokenSource.Token);
             application.EndBackgroundTask(updateTaskId);
         }
 
         [Export("messaging:didReceiveRegistrationToken:")]
-        public void DidReceiveRegistrationToken(Messaging messaging, string fcmToken)
+        public async void DidReceiveRegistrationToken(Messaging messaging, string fcmToken)
         {
-            Console.Out.WriteLine(fcmToken);
+            // update push notification registrations. this depends on internet connectivity to S3
+            // so it might hang if connectivity is poor. ensure we don't violate execution limits.
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            nint updateTaskId = UIApplication.SharedApplication.BeginBackgroundTask(cancellationTokenSource.Cancel);
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(false, true, cancellationTokenSource.Token);
+            UIApplication.SharedApplication.EndBackgroundTask(updateTaskId);
         }
 
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
@@ -413,8 +418,6 @@ namespace Sensus.iOS
         public override async void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
             await ProcessRemoteNotificationAsync(userInfo);
-
-            Messaging.SharedInstance.AppDidReceiveMessage(userInfo);
 
             // once the remote notification has been processed, invoke the completion handler.
             completionHandler?.Invoke(UIBackgroundFetchResult.NewData);

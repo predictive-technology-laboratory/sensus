@@ -372,7 +372,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        public override async Task SendPushNotificationTokenAsync(string token, PushNotificationHub hub, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -385,7 +385,7 @@ namespace Sensus.DataStores.Remote
                 dataStream.Write(tokenBytes, 0, tokenBytes.Length);
                 dataStream.Position = 0;
 
-                await PutAsync(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                await PutAsync(s3, dataStream, GetPushNotificationTokenKey(hub), "text/plain", cancellationToken);
             }
             finally
             {
@@ -393,7 +393,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
+        public override async Task DeletePushNotificationTokenAsync(PushNotificationHub hub, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -402,7 +402,7 @@ namespace Sensus.DataStores.Remote
                 // send an empty data stream to clear the token. we don't have delete access.
                 s3 = InitializeS3();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(hub), "text/plain", cancellationToken);
             }
             finally
             {
@@ -410,10 +410,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private string GetPushNotificationTokenKey()
+        private string GetPushNotificationTokenKey(PushNotificationHub hub)
         {
-            // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
-            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
+            // the key is hub-, device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + hub + ":" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
         }
 
         public override async Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)

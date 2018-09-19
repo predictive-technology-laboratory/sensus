@@ -64,3 +64,4 @@ installed and started on participant devices.
 1. Secure the API KEY listed in the `GoogleServices-Info.plist` file, making it specific to your iOS bundle ID and permitting FCM.
 1. Project settings -> Service accounts -> Generate new private key (keep safe).
 1. pip install --upgrade google-api-python-client (should be at least version 4.1.3).
+1. Use cases for FCM (redeployment required) and Azure (use as-is).

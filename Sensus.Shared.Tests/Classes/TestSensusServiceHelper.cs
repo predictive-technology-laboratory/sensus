@@ -79,7 +79,9 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override string PushNotificationToken => throw new NotImplementedException();
+        public override string AzurePushNotificationToken => throw new NotImplementedException();
+
+        public override string FirebasePushNotificationToken => throw new NotImplementedException();
 
         protected override bool IsOnMainThread
         {
@@ -154,17 +156,22 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
+        protected override Task RegisterWithAzureNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }
 
-        protected override void RequestNewPushNotificationToken()
+        protected override void RequestNewAzurePushNotificationToken()
         {
             throw new NotImplementedException();
         }
 
-        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
+        protected override void RequestNewFirebaseCloudMessagingNotificationToken()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Task UnregisterFromAzureNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }

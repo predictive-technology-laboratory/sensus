@@ -525,8 +525,9 @@ namespace Sensus
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
-        private string _pushNotificationsSharedAccessSignature;
-        private string _pushNotificationsHub;
+        private string _azurePushNotificationsSharedAccessSignature;
+        private string _azurePushNotificationsHub;
+        private bool _enableFirebaseCloudMessagingPushNotifications;
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
 
@@ -1302,28 +1303,47 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The push notification hub to listen to. This can be created within the Azure Portal. The
-        /// value to use here is the name of the hub.
+        /// The Azure push notification hub to listen to. This can be created within the Azure Portal. The
+        /// value to use here is the name of the hub. See <see cref="EnableFirebaseCloudMessagingPushNotifications"/> for
+        /// a comparison with Firebase Cloud Messaging.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
-        public string PushNotificationsHub
+        [EntryStringUiProperty("Azure Push Notification Hub:", true, 47, false)]
+        public string AzurePushNotificationsHub
         {
-            get { return _pushNotificationsHub; }
-            set { _pushNotificationsHub = value; }
+            get { return _azurePushNotificationsHub; }
+            set { _azurePushNotificationsHub = value; }
         }
 
         /// <summary>
-        /// The shared access signature for listening for push notifications at the <see cref="PushNotificationsHub"/>. This
+        /// The Azure shared access signature for listening for push notifications at the <see cref="AzurePushNotificationsHub"/>. This
         /// value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
-        /// the value directly to this field.
+        /// the entire value directly to this field. See <see cref="EnableFirebaseCloudMessagingPushNotifications"/> for
+        /// a comparison with Firebase Cloud Messaging.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]
-        public string PushNotificationsSharedAccessSignature
+        [EntryStringUiProperty("Azure Push Notifications Shared Access Signature:", true, 48, false)]
+        public string AzurePushNotificationsSharedAccessSignature
         {
-            get { return _pushNotificationsSharedAccessSignature; }
-            set { _pushNotificationsSharedAccessSignature = value; }
+            get { return _azurePushNotificationsSharedAccessSignature; }
+            set { _azurePushNotificationsSharedAccessSignature = value; }
+        }
+
+        /// <summary>
+        /// Whether or not to enable push notifications from Firebase Cloud Messaging. Since the Firebase Cloud Messaging API
+        /// key is baked into the Sensus app, the Sensus team has exclusive control over push notifications sent via this
+        /// system. If you wish to use your own Firebase Cloud Messaging deployment, then you will need to [redeploy](xref:redeploying)
+        /// Sensus as your own app and bake your Firebase Cloud Messaging service declaration into it. In such cases, the Sensus
+        /// team recommends that an Azure Notification Hub be used instead, as it allows you to create your own hub and insert the
+        /// hub details as <see cref="AzurePushNotificationsHub"/> and <see cref="AzurePushNotificationsSharedAccessSignature"/>.
+        /// By using Azure, you do not need to redeploy Sensus as your own app.
+        /// </summary>
+        /// <value><c>true</c> if enabled firebase cloud messaging push notifications; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Enable Firebase Cloud Messaging Push Notifications:", true, 49)]
+        public bool EnableFirebaseCloudMessagingPushNotifications
+        {
+            get { return _enableFirebaseCloudMessagingPushNotifications; }
+            set { _enableFirebaseCloudMessagingPushNotifications = value; }
         }
 
         /// <summary>
@@ -1717,7 +1737,7 @@ namespace Sensus
 
             if (startException == null)
             {
-                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(true, true, default(CancellationToken));
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
             }
             else
@@ -1764,7 +1784,7 @@ namespace Sensus
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
             // add the token to the backend, as the push notification for the schedule start needs to be active.
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(true, true, default(CancellationToken));
 
             CaptionChanged();
         }
@@ -1775,7 +1795,7 @@ namespace Sensus
             _scheduledStartCallback = null;
 
             // remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(true, true, default(CancellationToken));
 
             CaptionChanged();
 
@@ -2149,7 +2169,7 @@ namespace Sensus
                 }
             }
 
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(true, true, default(CancellationToken));
 
             SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
             await SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");

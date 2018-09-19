@@ -90,9 +90,15 @@ namespace Sensus.Notifications
             // eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
             if (request.DeviceId == SensusServiceHelper.Get().DeviceId)
             {
-                if (string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsHub) || string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsSharedAccessSignature))
+                if (string.IsNullOrWhiteSpace(request.Protocol.AzurePushNotificationsHub) || string.IsNullOrWhiteSpace(request.Protocol.AzurePushNotificationsSharedAccessSignature))
                 {
-                    SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening to Azure for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
+                    return;
+                }
+
+                if (!request.Protocol.EnableFirebaseCloudMessagingPushNotifications)
+                {
+                    SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening to FCM for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
                     return;
                 }
             }
