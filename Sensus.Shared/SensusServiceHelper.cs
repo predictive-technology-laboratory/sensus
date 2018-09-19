@@ -1375,6 +1375,13 @@ namespace Sensus
             });
         }
 
+        /// <summary>
+        /// Updates the push notification registrations.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="azure">If set to <c>true</c>, update Azure registrations.</param>
+        /// <param name="firebase">If set to <c>true</c>, update Firebase registrations.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         public async Task UpdatePushNotificationRegistrationsAsync(bool azure, bool firebase, CancellationToken cancellationToken)
         {
             // the code we need exclusive access to below has an await statement in it, so we
@@ -1403,97 +1410,114 @@ namespace Sensus
                 #region azure
                 if (azure)
                 {
-                    // we should always have an azure token, as we get it on app start. if we do not, throw an exception and request a new token.
+                    // we should always have an azure token, as we get it on app start. if we do not, then request a new token.
                     if (AzurePushNotificationToken == null)
                     {
-                        throw new UnsetAzurePushNotificationTokenException();
-                    }
-
-                    // it is conceivable that a single hub could be used for multiple protocols. because 
-                    // there is only ever a single registration with each hub, we therefore need to 
-                    // build a mapping from each hub to its protocols so we can determine whether we
-                    // actually need to register with the hub.
-                    Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
-                    foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.AzurePushNotificationsHub, protocol.AzurePushNotificationsSharedAccessSignature, protocol)))
-                    {
-                        if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
-                        {
-                            Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
-
-                            if (!hubSasProtocols.ContainsKey(hubSas))
-                            {
-                                hubSasProtocols.Add(hubSas, new List<Protocol>());
-                            }
-
-                            hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
-                        }
-                    }
-
-                    // process each hub
-                    foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
-                    {
-                        // unregister from the hub, catching any exceptions.
                         try
                         {
-                            await UnregisterFromAzureNotificationHubAsync(hubSas);
+                            SensusException.Report("Azure push notification token was not set.");
                         }
-                        catch (Exception unregisterEx)
+                        catch (Exception)
                         {
-                            // no need to request an update on the next health test, as it was just 
-                            // the unregister that failed. as long as the registration below works, 
-                            // we should be fine.
-                            SensusException.Report("Exception while unregistering from Azure notification hub:  " + unregisterEx.Message, unregisterEx);
                         }
 
-                        // each protocol may have its own remote data store being monitored for push notification
-                        // requests. tokens are per device, so update the token in each protocol's remote store.
-                        bool atLeastOneProtocolRunning = false;
-                        foreach (Protocol protocol in hubSasProtocols[hubSas])
+                        try
                         {
-                            // this only applies to protocols with a remote data store (some might simply be 
-                            // incompletely configured, and those can be skipped).
-                            if (protocol.RemoteDataStore == null)
+                            RequestNewAzurePushNotificationToken();
+                        }
+                        catch (Exception newTokenException)
+                        {
+                            SensusException.Report("Exception while requesting a new Azure token:  " + newTokenException.Message, newTokenException);
+                        }
+                    }
+                    else
+                    {
+                        // it is conceivable that a single hub could be used for multiple protocols. because 
+                        // there is only ever a single registration with each hub, we therefore need to 
+                        // build a mapping from each hub to its protocols so we can determine whether we
+                        // actually need to register with the hub.
+                        Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
+                        foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.AzurePushNotificationsHub, protocol.AzurePushNotificationsSharedAccessSignature, protocol)))
+                        {
+                            if (hubSasProtocol.Item3.AzurePushNotificationsEnabled)
                             {
-                                continue;
-                            }
+                                Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
 
-                            // catch any exceptions, as we might just be lacking an internet connection.
+                                if (!hubSasProtocols.ContainsKey(hubSas))
+                                {
+                                    hubSasProtocols.Add(hubSas, new List<Protocol>());
+                                }
+
+                                hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
+                            }
+                        }
+
+                        // process each hub
+                        foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+                        {
+                            // unregister from the hub, catching any exceptions.
                             try
                             {
-                                if (protocol.Running || protocol.StartIsScheduled)
+                                await UnregisterFromAzureNotificationHubAsync(hubSas);
+                            }
+                            catch (Exception unregisterEx)
+                            {
+                                // no need to request an update on the next health test, as it was just 
+                                // the unregister that failed. as long as the registration below works, 
+                                // we should be fine.
+                                SensusException.Report("Exception while unregistering from Azure notification hub:  " + unregisterEx.Message, unregisterEx);
+                            }
+
+                            // each protocol may have its own remote data store being monitored for push notification
+                            // requests. tokens are per device, so update the token in each protocol's remote store.
+                            bool atLeastOneProtocolRunning = false;
+                            foreach (Protocol protocol in hubSasProtocols[hubSas])
+                            {
+                                // this only applies to protocols with a remote data store (some might simply be 
+                                // incompletely configured, and those can be skipped).
+                                if (protocol.RemoteDataStore == null)
                                 {
-                                    atLeastOneProtocolRunning = true;
-
-                                    await protocol.RemoteDataStore.SendPushNotificationTokenAsync(AzurePushNotificationToken, PushNotificationHub.Azure, cancellationToken);
+                                    continue;
                                 }
-                                else
+
+                                // catch any exceptions, as we might just be lacking an internet connection.
+                                try
                                 {
-                                    await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(PushNotificationHub.Azure, cancellationToken);
+                                    if (protocol.Running || protocol.StartIsScheduled)
+                                    {
+                                        atLeastOneProtocolRunning = true;
+
+                                        await protocol.RemoteDataStore.SendPushNotificationTokenAsync(AzurePushNotificationToken, PushNotificationHub.Azure, cancellationToken);
+                                    }
+                                    else
+                                    {
+                                        await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(PushNotificationHub.Azure, cancellationToken);
+                                    }
+                                }
+                                catch (Exception updateTokenException)
+                                {
+                                    SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
+
+                                    // we absolutely must update the token at the remote data store
+                                    _updatePushNotificationRegistrationsOnNextHealthTest = true;
                                 }
                             }
-                            catch (Exception updateTokenException)
-                            {
-                                SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
 
-                                // we absolutely must update the token at the remote data store
-                                _updatePushNotificationRegistrationsOnNextHealthTest = true;
-                            }
-                        }
-
-                        // register with the hub if any of its associated protocols are running
-                        if (atLeastOneProtocolRunning)
-                        {
-                            // catch any exceptions from registering
-                            try
+                            // register with the hub if any of its associated protocols are running
+                            if (atLeastOneProtocolRunning)
                             {
-                                await RegisterWithAzureNotificationHubAsync(hubSas);
-                            }
-                            catch (Exception registerEx)
-                            {
-                                SensusException.Report("Exception while registering with hub:  " + registerEx.Message, registerEx);
+                                // catch any exceptions from registering
+                                try
+                                {
+                                    await RegisterWithAzureNotificationHubAsync(hubSas);
+                                }
+                                catch (Exception registerEx)
+                                {
+                                    SensusException.Report("Exception while registering with hub:  " + registerEx.Message, registerEx);
 
-                                // we absolutely must register with the hub
-                                _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                                    // we absolutely must register with the hub
+                                    _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                                }
                             }
                         }
                     }
@@ -1503,63 +1527,47 @@ namespace Sensus
                 #region fcm
                 if (firebase)
                 {
-                    // we should always have an FCM token, as we get it on app start. if we do not, throw an exception and request a new token.
+                    // we should always have an FCM token, as we get it on app start. if we do not, then request a new token.
                     if (FirebasePushNotificationToken == null)
                     {
-                        throw new UnsetFirebaseCloudMessagingPushNotificationTokenException();
-                    }
-
-                    foreach (Protocol protocol in _registeredProtocols)
-                    {
-                        if (protocol.EnableFirebaseCloudMessagingPushNotifications && (protocol.Running || protocol.StartIsScheduled))
+                        try
                         {
-                            await protocol.RemoteDataStore.SendPushNotificationTokenAsync(FirebasePushNotificationToken, PushNotificationHub.FirebaseCloudMessaging, cancellationToken);
+                            SensusException.Report("FCM push notification token was not set.");
                         }
-                        else
+                        catch (Exception)
                         {
-                            await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(PushNotificationHub.FirebaseCloudMessaging, cancellationToken);
+                        }
+
+                        try
+                        {
+                            RequestNewFirebaseCloudMessagingNotificationToken();
+                        }
+                        catch (Exception newTokenException)
+                        {
+                            SensusException.Report("Exception while requesting a new FCM token:  " + newTokenException.Message, newTokenException);
+                        }
+                    }
+                    else
+                    {
+                        foreach (Protocol protocol in _registeredProtocols)
+                        {
+                            if (protocol.RemoteDataStore == null)
+                            {
+                                continue;
+                            }
+
+                            if (protocol.EnableFirebaseCloudMessagingPushNotifications && (protocol.Running || protocol.StartIsScheduled))
+                            {
+                                await protocol.RemoteDataStore.SendPushNotificationTokenAsync(FirebasePushNotificationToken, PushNotificationHub.FirebaseCloudMessaging, cancellationToken);
+                            }
+                            else
+                            {
+                                await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(PushNotificationHub.FirebaseCloudMessaging, cancellationToken);
+                            }
                         }
                     }
                 }
                 #endregion
-            }
-            catch (UnsetAzurePushNotificationTokenException)
-            {
-                try
-                {
-                    SensusException.Report("Azure push notification token was not set.");
-                }
-                catch (Exception)
-                {
-                }
-
-                try
-                {
-                    RequestNewAzurePushNotificationToken();
-                }
-                catch (Exception newTokenException)
-                {
-                    SensusException.Report("Exception while requesting a new Azure token:  " + newTokenException.Message, newTokenException);
-                }
-            }
-            catch (UnsetFirebaseCloudMessagingPushNotificationTokenException)
-            {
-                try
-                {
-                    SensusException.Report("FCM push notification token was not set.");
-                }
-                catch (Exception)
-                {
-                }
-
-                try
-                {
-                    RequestNewFirebaseCloudMessagingNotificationToken();
-                }
-                catch (Exception newTokenException)
-                {
-                    SensusException.Report("Exception while requesting a new FCM token:  " + newTokenException.Message, newTokenException);
-                }
             }
             catch (Exception ex)
             {

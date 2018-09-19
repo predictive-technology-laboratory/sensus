@@ -90,15 +90,17 @@ namespace Sensus.Notifications
             // eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
             if (request.DeviceId == SensusServiceHelper.Get().DeviceId)
             {
-                if (string.IsNullOrWhiteSpace(request.Protocol.AzurePushNotificationsHub) || string.IsNullOrWhiteSpace(request.Protocol.AzurePushNotificationsSharedAccessSignature))
+                // if the hub and signature have not been set, then the azure token will not have been sent to the backend. no need to send the PNR.
+                if (request.Hub == PushNotificationHub.Azure && !request.Protocol.AzurePushNotificationsEnabled)
                 {
-                    SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening to Azure for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("PNR targets a protocol on the current device, and the protocol is not listening to Azure for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
                     return;
                 }
 
-                if (!request.Protocol.EnableFirebaseCloudMessagingPushNotifications)
+                // if the protocol has disabled FCM, then the FCM token will not have been sent to the backend. no need to send the PNR.
+                if (request.Hub == PushNotificationHub.FirebaseCloudMessaging && !request.Protocol.EnableFirebaseCloudMessagingPushNotifications)
                 {
-                    SensusServiceHelper.Get().Logger.Log("PNR targets current device, which is not listening to FCM for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("PNR targets a protocol on the current device, and the protocol has not enabled FCM for PNs. Not sending PNR.", LoggingLevel.Normal, GetType());
                     return;
                 }
             }

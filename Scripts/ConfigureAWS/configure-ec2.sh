@@ -104,18 +104,24 @@ rm tmp
 ##### Push Notifications #####
 ##############################
 
-# edit/upload get-sas script
+# edit/upload get-sas script (azure notification hub)
 sed "s#XXXXURLXXXX#$5#" get-sas.js > tmp
 sed "s#XXXXKEYXXXX#$6#" tmp > tmp2
 scp -i $pemFileName tmp2 ec2-user@$publicIP:~/get-sas.js
 rm tmp tmp2
+
+# upload get-fcm-token.py and fcm-service-account.json files (firebase cloud messaging)
+scp -i $pemFileName get-fcm-token.py ec2-user@$publicIP:~/
+ssh -i $pemFileName ec2-user@$publicIP "chmod +x get-fcm-token.py"
+scp -i $pemFileName fcm-service-account.json ec2-user@$publicIP:~/
 
 # upload push notification processor and supporting tools
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
 scp -i $pemFileName dump-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x dump-push-notifications.sh"
-ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq"
+ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq pip"
+ssh -i $pemFileName ec2-user@$publicIP "pip install --user --upgrade oauth2client"
 ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2"
 
 # configure crontab to run push notification processor using the get-sas script

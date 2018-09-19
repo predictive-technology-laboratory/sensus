@@ -58,7 +58,11 @@ installed and started on participant devices.
 
 # FCM-only
 
-1. Add Firebase project. Download the `GoogleServices-Info.plist` file that is created and replace the existing
+1. Create a new FCM project and download the service account file (Settings -> Service accounts -> Generate new private key). Copy the 
+   content of this file into `ConfigureAWS/fcm-service-account.json` and be sure to keep this file secure.
+1. Add Firebase Android project. Download the `google-services.json` file that is created and replace the existing 
+   one within the Sensus.Android project.
+1. Add Firebase iOS project. Download the `GoogleServices-Info.plist` file that is created and replace the existing
    one within the Sensus.iOS project.
 1. Add iOS app to your Firebase project, uploading the development and production APN certificates.
 1. Secure the API KEY listed in the `GoogleServices-Info.plist` file, making it specific to your iOS bundle ID and permitting FCM.

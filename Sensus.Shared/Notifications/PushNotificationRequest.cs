@@ -75,6 +75,11 @@ namespace Sensus.Notifications
             get { return _protocol; }
         }
 
+        public PushNotificationHub Hub
+        {
+            get { return _hub; }
+        }
+
         public string JSON
         {
             get
@@ -104,11 +109,30 @@ namespace Sensus.Notifications
         /// <param name="sound">Sound.</param>
         /// <param name="command">Command.</param>
         /// <param name="time">Time.</param>
-        /// <param name="hub">Hub.</param>
         /// <param name="deviceId">Device identifier.</param>
         /// <param name="format">Format.</param>
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, PushNotificationHub hub, string deviceId, PushNotificationRequestFormat format)
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
         {
+            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
+            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
+            if (protocol != null)
+            {
+                throw new Exception("No protocol.");
+            }
+
+            if (protocol.AzurePushNotificationsEnabled)
+            {
+                _hub = PushNotificationHub.Azure;
+            }
+            else if (protocol.EnableFirebaseCloudMessagingPushNotifications)
+            {
+                _hub = PushNotificationHub.FirebaseCloudMessaging;
+            }
+            else
+            {
+                throw new Exception("Neither Azure nor FCM push notification requests are enabled for the protocol.");
+            }
+
             _id = Guid.NewGuid().ToString();
             _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _title = title;
@@ -116,7 +140,6 @@ namespace Sensus.Notifications
             _sound = sound;
             _command = command;
             _time = time;
-            _hub = hub;
             _deviceId = deviceId;
             _format = format;
         }
@@ -131,9 +154,8 @@ namespace Sensus.Notifications
         /// <param name="sound">Sound.</param>
         /// <param name="command">Command.</param>
         /// <param name="time">Time.</param>
-        /// <param name="hub">Hub.</param>
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, PushNotificationHub hub)
-            : this(protocol, title, body, sound, command, time, hub, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
+            : this(protocol, title, body, sound, command, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
         {
         }
 

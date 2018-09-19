@@ -1306,6 +1306,11 @@ namespace Sensus
         /// The Azure push notification hub to listen to. This can be created within the Azure Portal. The
         /// value to use here is the name of the hub. See <see cref="EnableFirebaseCloudMessagingPushNotifications"/> for
         /// a comparison with Firebase Cloud Messaging.
+        /// 
+        /// If you fill in this setting, then FCM will be disabled for the Protocol.
+        /// 
+        /// Regardless of the push notification hub you use (FCM or Azure), you will need to configure a backend server to 
+        /// process the push notification. More information can be found [here](xref:push_notifications).
         /// </summary>
         /// <value>The push notifications hub.</value>
         [EntryStringUiProperty("Azure Push Notification Hub:", true, 47, false)]
@@ -1320,6 +1325,11 @@ namespace Sensus
         /// value can be obtained by inspecting the Access Policies tab of the Notification Hub within the Azure Portal. Copy
         /// the entire value directly to this field. See <see cref="EnableFirebaseCloudMessagingPushNotifications"/> for
         /// a comparison with Firebase Cloud Messaging.
+        /// 
+        /// If you fill in this setting, then FCM will be disabled for the Protocol.
+        /// 
+        /// Regardless of the push notification hub you use (FCM or Azure), you will need to configure a backend server to 
+        /// process the push notification. More information can be found [here](xref:push_notifications).
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
         [EntryStringUiProperty("Azure Push Notifications Shared Access Signature:", true, 48, false)]
@@ -1330,13 +1340,30 @@ namespace Sensus
         }
 
         /// <summary>
+        /// Gets a value indicating whether this <see cref="T:Sensus.Protocol"/> has enabled Azure push notifications. This amounts to 
+        /// checking whether <see cref="AzurePushNotificationsHub"/> and <see cref="AzurePushNotificationsSharedAccessSignature"/> have 
+        /// been set.
+        /// </summary>
+        /// <value><c>true</c> if azure push notifications enabled; otherwise, <c>false</c>.</value>
+        public bool AzurePushNotificationsEnabled
+        {
+            get { return !string.IsNullOrWhiteSpace(_azurePushNotificationsHub) && !string.IsNullOrWhiteSpace(_azurePushNotificationsSharedAccessSignature); }
+        }
+
+        /// <summary>
         /// Whether or not to enable push notifications from Firebase Cloud Messaging. Since the Firebase Cloud Messaging API
-        /// key is baked into the Sensus app, the Sensus team has exclusive control over push notifications sent via this
-        /// system. If you wish to use your own Firebase Cloud Messaging deployment, then you will need to [redeploy](xref:redeploying)
-        /// Sensus as your own app and bake your Firebase Cloud Messaging service declaration into it. In such cases, the Sensus
-        /// team recommends that an Azure Notification Hub be used instead, as it allows you to create your own hub and insert the
-        /// hub details as <see cref="AzurePushNotificationsHub"/> and <see cref="AzurePushNotificationsSharedAccessSignature"/>.
-        /// By using Azure, you do not need to redeploy Sensus as your own app.
+        /// key is baked into the Sensus app, and since the FCM tokens generated for this key can only be used by the Sensus team's
+        /// account/backend, only the Sensus team can enable this option. If you wish to use your own Firebase Cloud Messaging deployment, 
+        /// then you will need to [redeploy](xref:redeploying) Sensus as your own app and bake your Firebase Cloud Messaging service 
+        /// declaration into it as described. Alternatively, the Sensus team recommends that an Azure Notification Hub be used instead,
+        /// as it allows you to create your own hub and insert the hub details as <see cref="AzurePushNotificationsHub"/> and 
+        /// <see cref="AzurePushNotificationsSharedAccessSignature"/>. By using Azure, you do not need to redeploy Sensus as your own app.
+        /// 
+        /// If you enter values for <see cref="AzurePushNotificationsHub"/> and <see cref="AzurePushNotificationsSharedAccessSignature"/>, 
+        /// then this setting will be ignored.
+        /// 
+        /// Regardless of the push notification hub you use (FCM or Azure), you will need to configure a backend server to 
+        /// process the push notification. More information can be found [here](xref:push_notifications).
         /// </summary>
         /// <value><c>true</c> if enabled firebase cloud messaging push notifications; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Enable Firebase Cloud Messaging Push Notifications:", true, 49)]

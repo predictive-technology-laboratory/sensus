@@ -351,21 +351,18 @@ namespace Sensus.Callbacks
 
         private PushNotificationRequest GetPushNotificationRequest(ScheduledCallback callback)
         {
-            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
-            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
-            if (callback.Protocol != null)
+            PushNotificationRequest request = null;
+
+            try
             {
-                try
-                {
-                    return new PushNotificationRequest(callback.Protocol, "", "", "", SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id + "|" + callback.InvocationId, callback.NextExecution.Value);
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while getting push notification request:  " + ex.Message, ex);
-                }
+                request = new PushNotificationRequest(callback.Protocol, "", "", "", SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id + "|" + callback.InvocationId, callback.NextExecution.Value);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to generate push notification request:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
 
-            return null;
+            return request;
         }
     }
 }

@@ -251,7 +251,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\QrCodeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetAzurePushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
@@ -263,7 +262,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)AnalyticsTrackedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationHub.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetFirebaseCloudMessagingPushNotificationTokenException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

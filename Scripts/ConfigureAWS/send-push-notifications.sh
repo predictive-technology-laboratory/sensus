@@ -57,6 +57,7 @@ do
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)       # the value indicates unix time in seconds
+    hub=$(jq -r '.hub' $n)         # the hub we we should use to distribute the push notification request
 
     # if this is a push notification command, check if we've already sent a push notification 
     # for the command class (everything except for the invocation ID). we're processing the
@@ -128,7 +129,6 @@ do
 "\"sound\":$sound"\
 "}"\
 "}"
-
         elif [[ "$format" = "apple" ]]
         then
 
@@ -148,11 +148,31 @@ do
 "\"id\":$id,"\
 "\"protocol\":$protocol"\
 "}"
-
         fi
 
-	# send notification.
-        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
+	# send notification via the specified hub
+	if [[ "$hub" == "azure" ]]
+	then
+            response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
+	elif [[ "$hub" == "fcm" ]]
+	then
+	    fcm_token=$(./get-fcm-token.py ./fcm-service-account.json)
+	    response=$(curl -X POST -H "Authorization: Bearer $fcm_token" -H "Content-Type: application/json" --data '
+{
+  "message":
+  {
+    "token": "'"${token}"'",
+    "apns":
+    {
+      "headers":
+      {
+        "apns-priority": "10"
+      },
+      "payload":'"${data}"'
+    }
+  }
+}' https://fcm.googleapis.com/v1/projects/sensus-1022/messages:send --write-out %{http_code} --silent --output /dev/null)
+	fi
 	
 	# check status.
         if [[ "$response" = "201"  ]]
