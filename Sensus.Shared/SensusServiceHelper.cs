@@ -1379,10 +1379,10 @@ namespace Sensus
         /// Updates the push notification registrations.
         /// </summary>
         /// <returns>Task.</returns>
-        /// <param name="azure">If set to <c>true</c>, update Azure registrations.</param>
-        /// <param name="firebase">If set to <c>true</c>, update Firebase registrations.</param>
+        /// <param name="updateAzure">If set to <c>true</c>, update Azure registrations.</param>
+        /// <param name="updateFirebase">If set to <c>true</c>, update Firebase registrations.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public async Task UpdatePushNotificationRegistrationsAsync(bool azure, bool firebase, CancellationToken cancellationToken)
+        public async Task UpdatePushNotificationRegistrationsAsync(bool updateAzure, bool updateFirebase, CancellationToken cancellationToken)
         {
             // the code we need exclusive access to below has an await statement in it, so we
             // can't lock the entire function. use a gatekeeper to gain exclusive access
@@ -1408,7 +1408,7 @@ namespace Sensus
             try
             {
                 #region azure
-                if (azure)
+                if (updateAzure)
                 {
                     // we should always have an azure token, as we get it on app start. if we do not, then request a new token.
                     if (AzurePushNotificationToken == null)
@@ -1427,7 +1427,7 @@ namespace Sensus
                         }
                         catch (Exception newTokenException)
                         {
-                            SensusException.Report("Exception while requesting a new Azure token:  " + newTokenException.Message, newTokenException);
+                            Logger.Log("Exception while requesting a new Azure token:  " + newTokenException.Message, LoggingLevel.Normal, GetType());
                         }
                     }
                     else
@@ -1465,7 +1465,7 @@ namespace Sensus
                                 // no need to request an update on the next health test, as it was just 
                                 // the unregister that failed. as long as the registration below works, 
                                 // we should be fine.
-                                SensusException.Report("Exception while unregistering from Azure notification hub:  " + unregisterEx.Message, unregisterEx);
+                                Logger.Log("Exception while unregistering from Azure notification hub:  " + unregisterEx.Message, LoggingLevel.Normal, GetType());
                             }
 
                             // each protocol may have its own remote data store being monitored for push notification
@@ -1496,7 +1496,7 @@ namespace Sensus
                                 }
                                 catch (Exception updateTokenException)
                                 {
-                                    SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
+                                    Logger.Log("Exception while updating push notification token:  " + updateTokenException.Message, LoggingLevel.Normal, GetType());
 
                                     // we absolutely must update the token at the remote data store
                                     _updatePushNotificationRegistrationsOnNextHealthTest = true;
@@ -1513,7 +1513,7 @@ namespace Sensus
                                 }
                                 catch (Exception registerEx)
                                 {
-                                    SensusException.Report("Exception while registering with hub:  " + registerEx.Message, registerEx);
+                                    Logger.Log("Exception while registering with hub:  " + registerEx.Message, LoggingLevel.Normal, GetType());
 
                                     // we absolutely must register with the hub
                                     _updatePushNotificationRegistrationsOnNextHealthTest = true;
@@ -1525,7 +1525,7 @@ namespace Sensus
                 #endregion
 
                 #region fcm
-                if (firebase)
+                if (updateFirebase)
                 {
                     // we should always have an FCM token, as we get it on app start. if we do not, then request a new token.
                     if (FirebasePushNotificationToken == null)
@@ -1544,7 +1544,7 @@ namespace Sensus
                         }
                         catch (Exception newTokenException)
                         {
-                            SensusException.Report("Exception while requesting a new FCM token:  " + newTokenException.Message, newTokenException);
+                            Logger.Log("Exception while requesting a new FCM token:  " + newTokenException.Message, LoggingLevel.Normal, GetType());
                         }
                     }
                     else
@@ -1573,7 +1573,7 @@ namespace Sensus
             {
                 try
                 {
-                    SensusException.Report("Exception while updating push notification registrations:  " + ex.Message, ex);
+                    Logger.Log("Exception while updating push notification registrations:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
                 catch (Exception)
                 {

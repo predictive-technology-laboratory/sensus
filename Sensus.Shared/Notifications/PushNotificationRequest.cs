@@ -94,7 +94,7 @@ namespace Sensus.Notifications
                            "\"command\":" + JsonConvert.ToString(_command) + "," +
                            "\"format\":" + JsonConvert.ToString(GetFormatString(_format)) + "," +
                            "\"time\":" + _time.ToUnixTimeSeconds() + "," +
-                           "\"hub\":" + _hub + 
+                           "\"hub\":" + JsonConvert.ToString(_hub.ToString()) +
                        "}";
             }
         }
@@ -113,13 +113,14 @@ namespace Sensus.Notifications
         /// <param name="format">Format.</param>
         public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
         {
-            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
-            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
-            if (protocol != null)
+            // not all push notification requests are associated with a protocol (e.g., the app-level health test). because push notifications are
+            // currently tied to the remote data store of the protocol, we don't currently support PNRs without a protocol.
+            if (protocol == null)
             {
-                throw new Exception("No protocol.");
+                throw new ArgumentNullException(nameof(protocol));
             }
 
+            // configuring azure push notifications supercede firebase
             if (protocol.AzurePushNotificationsEnabled)
             {
                 _hub = PushNotificationHub.Azure;
@@ -134,7 +135,7 @@ namespace Sensus.Notifications
             }
 
             _id = Guid.NewGuid().ToString();
-            _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
+            _protocol = protocol;
             _title = title;
             _body = body;
             _sound = sound;

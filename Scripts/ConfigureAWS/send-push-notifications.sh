@@ -25,8 +25,9 @@ do
 # reverse sort by the first field (time) and output the second field (path)
 done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 
-# get shared access signature
-sas=$(node get-sas.js)
+# get access authentication for azure and firebase cloud messaging
+azure_sas=$(node get-sas.js)
+fcm_token=$(./get-fcm-token.py ./fcm-service-account.json)
 
 # process push notification requests
 declare -A processed_command_classes
@@ -94,11 +95,11 @@ do
     if [ "$time" -le "$time_horizon" ]
     then
 
-	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the 
+	# get the token for the device, which is stored in a file named as hub:device:protocol (be sure to trim the 
 	# leading/trailing quotes from the protocol)
 	protocol_id=${protocol%\"}
 	protocol_id=${protocol_id#\"}
-	token=$(cat "$notifications_dir/${device}:${protocol_id}")
+	token=$(cat "$notifications_dir/${hub}:${device}:${protocol_id}")
 
 	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
 	if [[ "$token" = "" ]]
@@ -110,15 +111,8 @@ do
 	    continue
 	fi
 
-	# get data payload depending on platform
-	# 
-	# android:  https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
-	# ios:  https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1
-	if [[ "$format" = "gcm" ]]
-        then
-
-            data=\
-"{"\
+	# get android payload:  https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
+        fcm_payload=\
 "\"data\":"\
 "{"\
 "\"command\":$command,"\
@@ -127,13 +121,9 @@ do
 "\"title\":$title,"\
 "\"body\":$body,"\
 "\"sound\":$sound"\
-"}"\
 "}"
-        elif [[ "$format" = "apple" ]]
-        then
-
-            data=\
-"{"\
+        # get ios payload:  https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CreatingtheNotificationPayload.html#//apple_ref/doc/uid/TP40008194-CH10-SW1
+        apple_payload=\
 "\"aps\":"\
 "{"\
 "\"content-available\":1,"\
@@ -146,43 +136,59 @@ do
 "},"\
 "\"command\":$command,"\
 "\"id\":$id,"\
-"\"protocol\":$protocol"\
-"}"
-        fi
+"\"protocol\":$protocol"
 
-	# send notification via the specified hub
-	if [[ "$hub" == "azure" ]]
+	# send notification via azure
+	if [[ "$hub" == "Azure" ]]
 	then
-            response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
-	elif [[ "$hub" == "fcm" ]]
+	    
+	    # select desired format
+	    if [[ "$format" == "gcm" ]]
+	    then
+		payload=$gcm_payload
+	    elif [[ "$format" == "apple" ]]
+	    then
+		payload=$apple_payload
+	    fi
+	    
+	    # submit push notification
+            response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $azure_sas" --header "Content-Type: application/json;charset=utf-8" --data "{$payload}" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04")
+
+	# send notification via firebase
+	elif [[ "$hub" == "FirebaseCloudMessaging" ]]
 	then
-	    fcm_token=$(./get-fcm-token.py ./fcm-service-account.json)
+
+	    # submit push notification
 	    response=$(curl -X POST -H "Authorization: Bearer $fcm_token" -H "Content-Type: application/json" --data '
 {
   "message":
   {
-    "token": "'"${token}"'",
+    "token": "'"$token"'",
+    "android":
+    {
+      "priority": "high",
+      "ttl": "0s",
+      '"$fcm_payload"'
+    },
     "apns":
     {
       "headers":
       {
         "apns-priority": "10"
       },
-      "payload":'"${data}"'
+      "payload":'"{$apple_payload}"'
     }
   }
-}' https://fcm.googleapis.com/v1/projects/sensus-1022/messages:send --write-out %{http_code} --silent --output /dev/null)
+}' https://fcm.googleapis.com/v1/projects/sensus-1022/messages:send)
+
 	fi
-	
-	# check status.
-        if [[ "$response" = "201"  ]]
-        then
-            echo -e "Response 201:  Notification sent.\n"
-	else
-	    echo -e "Non-201 response received:  $response\n"
-        fi
+
+	echo -e "$response\n"
+
     else
+
 	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
+
     fi
 done < $file_list
 

@@ -28,6 +28,7 @@ do
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)       # the value indicates unix time in seconds
+    hub=$(jq -r '.hub' $n)         # the hub we we should use to distribute the push notification request
 
     # at the device no later than the desired time. thus, if the desired time precedes the current time OR if the
     # desired time precedes the next cron run time, go ahead and send the push notification. in addition, there will
