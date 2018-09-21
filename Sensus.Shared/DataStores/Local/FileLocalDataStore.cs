@@ -113,7 +113,7 @@ namespace Sensus.DataStores.Local
                 lock (_locker)
                 {
                     // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
-                    string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+                    string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel == CompressionLevel.NoCompression ? "" : GZIP_FILE_EXTENSION) + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
                     return Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
                 }
             }
@@ -596,7 +596,8 @@ namespace Sensus.DataStores.Local
                     return Task.CompletedTask;
                 }
 
-                // if this is the first write or the previous write is finished, run a new task.
+                // if this is the first write or the previous write is finished, run a new task. if a write-to-remote task
+                // is already running, then bail out and let it finish.
                 if (_writeToRemoteTask == null ||
                     _writeToRemoteTask.Status == TaskStatus.Canceled ||
                     _writeToRemoteTask.Status == TaskStatus.Faulted ||
@@ -659,7 +660,7 @@ namespace Sensus.DataStores.Local
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to write file:  " + ex, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to write file to remote data store:  " + ex, LoggingLevel.Normal, GetType());
                             }
                         }
 
@@ -684,6 +685,7 @@ namespace Sensus.DataStores.Local
                         byte[] jsonEndArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
                         _file.Write(jsonEndArrayBytes, 0, jsonEndArrayBytes.Length);
                         _file.Flush();
+                        _file.Close();
                         _file.Dispose();
                         _file = null;
                         _path = null;
@@ -691,7 +693,7 @@ namespace Sensus.DataStores.Local
                     }
                     catch (Exception ex)
                     {
-                        SensusException.Report("Failed to close the local file.", ex);
+                        SensusException.Report("Failed to close and dispose the local file.", ex);
                     }
                 }
             }
@@ -728,19 +730,37 @@ namespace Sensus.DataStores.Local
                         if (_encrypt)
                         {
                             promotedPath += ENCRYPTED_FILE_EXTENSION;
+
+                            // the target promoted path should not currently exist. if it does, then delete it since we're about to write to it.
+                            if (File.Exists(promotedPath))
+                            {
+                                File.Delete(promotedPath);
+                            }
+
                             Protocol.AsymmetricEncryption.EncryptSymmetrically(File.ReadAllBytes(path), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedPath);
-                            File.Delete(path);
                         }
                         else
                         {
-                            File.Move(path, promotedPath);
+                            // the target promoted path should not currently exist. if it does, then delete it since we're about to copy the current file to it.
+                            if (File.Exists(promotedPath))
+                            {
+                                File.Delete(promotedPath);
+                            }
+
+                            // we were previously using File.Move, but we were getting many sharing violation errors
+                            // when doing so. looks like some folks have seen the same problem, and one person fixed 
+                            // the issue by using a copy followed by delete:  https://forums.xamarin.com/discussion/42145/android-sharing-violation-on-file-rename
+                            File.Copy(path, promotedPath);
                         }
+
+                        // file has been promoted. delete the file.
+                        File.Delete(path);
 
                         _filesPromoted++;
                     }
                     catch (Exception ex)
                     {
-                        SensusException.Report("Failed to promote file.", ex);
+                        SensusException.Report("Failed to promote file:  " + ex.Message, ex);
                     }
                 }
 
