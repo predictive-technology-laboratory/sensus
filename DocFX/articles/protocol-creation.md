@@ -11,6 +11,7 @@ Follow the steps below to get a basic Sensus Protocol up and running.
   1. Add a [file-based local data store](xref:Sensus.DataStores.Local.FileLocalDataStore) to the Protocol.
   1. Add an [AWS S3 remote data store](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore) to the Protocol
      based on the information provided by the S3 configuration script that you ran above.
+  1. If desired, configure [push notification support](xref:push_notifications).
   1. Configure the Protocol's probes.
   1. Start the Protocol.
 

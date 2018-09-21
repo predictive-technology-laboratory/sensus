@@ -50,7 +50,8 @@ namespace Sensus.Probes
     /// 
     ///   * Push notification processing:  If you [configure push notifications](xref:push_notifications), the Polling Probe will be woken up
     ///     at the desired time to take a reading. Note that the reliability of these timings is subject to push notification throttling imposed
-    ///     by the Apple Push Notification Service.
+    ///     by the Apple Push Notification Service. The value of <see cref="PollingSleepDurationMS"/> should be set conservatively for all probes,
+    ///     for example no lower than 15-20 minutes.
     /// 
     /// Beyond these exceptions, all processing within Sensus must be halted when the user backgrounds the app. Sensus does its best to support Polling 
     /// Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 

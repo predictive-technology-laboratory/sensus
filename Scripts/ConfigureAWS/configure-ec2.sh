@@ -2,7 +2,7 @@
 
 if [ $# -ne 6 ]; then
     echo "Usage:  ./configure-ec2.sh [bucket] [cidr ingress] [image id] [instance type] [azure notification hub] [azure notification hub full access signature]"
-    echo "\t[bucket]:  Bucket containing data"
+    echo "\t[bucket]:  Bucket configured using the configure-s3.sh script (e.g., test-bucket-234234234-23423423-423423)"
     echo "\t[cidr ingress]:  SSH ingress range, in CIDR format (e.g., 123.456.0.0/16)"
     echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2)"
     echo "\t[instance type]:  Instance type (e.g., t2.micro)"

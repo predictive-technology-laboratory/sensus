@@ -40,17 +40,21 @@ Configure the Apple Push Notification Service following the official Apple docum
    in the steps that follow.
 
 ## AWS S3
-1. Configure your AWS S3 bucket following the [guide](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore).
+1. Configure your AWS S3 bucket following the [guide](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore). Note the
+   name of the bucket that results from this step (e.g., test-bucket-293843-234234-23234234).
 
 ## AWS EC2
 1. Configure your AWS EC2 instance using the `configure-ec2.sh` script within the [configuration](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip)
-   archive. This script requires you to install the AWS CLI and the `jq` command line program.
+   archive. This script requires you to install the AWS CLI and the `jq` command line program. When supplying the bucket
+   name, use the name obtained from the previous step.
 
 ## Sensus Protocol
 1. Within your Sensus protocol, set the [Push Notifications Hub](xref:Sensus.Protocol.PushNotificationsHub) to the Azure Notification
 Hub name, and set the [Push Notifications Shared Access Signature](xref:Sensus.Protocol.PushNotificationsSharedAccessSignature) to
 the `DefaultFullSharedAccessSignature` of the Azure Notification Hub.
 1. Configure the [AWS S3 remote data store](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore) using the bucket created above.
+1. Note that APNS has been observed to throttle push notification delivery rate. Please see the [Polling Probe](xref:Sensus.Shared.Probes.PollingProbe)
+   documentation for more information on polling rates and push notification throttling.
 
 ## Conclusion
 If the above steps are successful, your Sensus protocol should now receive push notification support when
