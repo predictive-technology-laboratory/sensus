@@ -321,15 +321,22 @@ namespace Sensus.DataStores.Remote
 
             if (write)
             {
-                // instruct the local data store to write its data to the remote data store.
-                await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
-                _mostRecentSuccessfulWriteTime = DateTime.Now;
-                return true;
+                // instruct the local data store to write its data to the remote data store. catch any exceptions that result
+                // as the caller may be on the app's main thread and we want to avoid crashing the app if the write times out
+                // or raises some other exception.
+                try
+                {
+                    await Protocol.LocalDataStore.WriteToRemoteAsync(cancellationToken);
+                    _mostRecentSuccessfulWriteTime = DateTime.Now;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to write local data store to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         /// <summary>
