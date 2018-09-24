@@ -43,15 +43,19 @@ namespace Sensus.Tests.Classes
 
         public void RecordResult(TestResultViewModel result)
         {
-            TestState testState = result.TestCase.Result;
+            // looks like we're getting test failures due to concurrent calling of this method
+            lock (_testStateCount)
+            {
+                TestState testState = result.TestCase.Result;
 
-            if (_testStateCount.ContainsKey(testState))
-            {
-                _testStateCount[testState]++;
-            }
-            else
-            {
-                _testStateCount.Add(testState, 1);
+                if (_testStateCount.ContainsKey(testState))
+                {
+                    _testStateCount[testState]++;
+                }
+                else
+                {
+                    _testStateCount.Add(testState, 1);
+                }
             }
         }
     }
