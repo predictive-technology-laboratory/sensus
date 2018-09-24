@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using CoreBluetooth;
 using Foundation;
@@ -31,12 +32,14 @@ namespace Sensus.iOS.Probes.Context
         private CBMutableService _service;
         private CBMutableCharacteristic _characteristic;
         private iOSBluetoothDeviceProximityProbe _probe;
+        private List<CBPeripheral> _peripherals;
 
         public iOSBluetoothDeviceProximityProbeCentralManagerDelegate(CBMutableService service, CBMutableCharacteristic characteristic, iOSBluetoothDeviceProximityProbe probe)
         {
             _service = service;
             _characteristic = characteristic;
             _probe = probe;
+            _peripherals = new List<CBPeripheral>();
         }
 
         public override void UpdatedState(CBCentralManager central)
@@ -58,12 +61,23 @@ namespace Sensus.iOS.Probes.Context
 
         public override void DiscoveredPeripheral(CBCentralManager central, CBPeripheral peripheral, NSDictionary advertisementData, NSNumber RSSI)
         {
+            // we've observed that, if we do not hold on to a reference to the peripheral, it gets cleaned up by GC and the subsequent connect/read
+            // operations do not go through. this has also been observed by others:  https://stackoverflow.com/questions/21466245/cbcentralmanager-connecting-to-a-cbperipheralmanager-connects-then-disconnects
+            // there is no need to clear this collection out after we process the peripheral, because the current object will be disposed after the
+            // scan has completed. a new object of the current type will be initialized when the next scan beings, and around and around we go.
+            lock (_peripherals)
+            {
+                _peripherals.Add(peripheral);
+            }
+
             peripheral.DiscoveredService += (sender, e) =>
             {
                 try
                 {
                     if (e.Error == null)
                     {
+                        SensusServiceHelper.Get().Logger.Log("Discovered service. Discovering characteristics...", LoggingLevel.Normal, GetType());
+
                         // discover characteristics for newly discovered services that match the one we're looking for
                         foreach (CBService service in peripheral.Services)
                         {
@@ -91,6 +105,8 @@ namespace Sensus.iOS.Probes.Context
                 {
                     if (e.Error == null)
                     {
+                        SensusServiceHelper.Get().Logger.Log("Discovered characteristic. Reading value...", LoggingLevel.Normal, GetType());
+
                         // read characteristic value for newly discovered characteristics that match the one we're looking for
                         foreach (CBCharacteristic characteristic in e.Service.Characteristics)
                         {
@@ -125,6 +141,8 @@ namespace Sensus.iOS.Probes.Context
                         }
                         else
                         {
+                            SensusServiceHelper.Get().Logger.Log("Value read.", LoggingLevel.Normal, GetType());
+
                             string characteristicValue = Encoding.UTF8.GetString(e.Characteristic.Value.ToArray());
                             CharacteristicRead?.Invoke(this, new BluetoothCharacteristicReadArgs(characteristicValue, DateTime.UtcNow));
                         }
@@ -146,6 +164,8 @@ namespace Sensus.iOS.Probes.Context
 
             try
             {
+                SensusServiceHelper.Get().Logger.Log("Discovered peripheral. Connecting to it...", LoggingLevel.Normal, GetType());
+
                 central.ConnectPeripheral(peripheral);
             }
             catch (Exception ex)
@@ -156,6 +176,8 @@ namespace Sensus.iOS.Probes.Context
 
         public override void ConnectedPeripheral(CBCentralManager central, CBPeripheral peripheral)
         {
+            SensusServiceHelper.Get().Logger.Log("Connected to peripheral. Discovering its services...", LoggingLevel.Normal, GetType());
+
             // discover services for newly connected peripheral
             try
             {
@@ -172,6 +194,8 @@ namespace Sensus.iOS.Probes.Context
         {
             try
             {
+                SensusServiceHelper.Get().Logger.Log("Cancelling peripheral connection...", LoggingLevel.Normal, GetType());
+
                 central.CancelPeripheralConnection(peripheral);
             }
             catch (Exception ex)

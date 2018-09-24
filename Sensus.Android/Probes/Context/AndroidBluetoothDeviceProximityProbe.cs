@@ -41,6 +41,28 @@ namespace Sensus.Android.Probes.Context
     ///   * If the other device is an iOS device with Sensus running in the foreground, detection is possible.
     ///   * If the other device is an iOS device with Sensus running in the background, detection is not possible.
     /// 
+    /// NOTE:  The value of <see cref="Protocol.Id"/> running on the other device must equal the value of 
+    /// <see cref="Protocol.Id"/> running on the current device. When a Protocol is created from within the
+    /// Sensus app, it is assigned a unique identifier. This value is maintained or changed depending on what you
+    /// do:
+    /// 
+    ///   * When the newly created Protocol is copied on the current device, a new unique identifier is assigned to
+    ///     it. This breaks the connection between the Protocols.
+    /// 
+    ///   * When the newly created Protocol is shared via the app with another device, its identifier remains 
+    ///     unchanged. This maintains the connection between the Protocols.
+    /// 
+    /// Thus, in order for this <see cref="AndroidBluetoothDeviceProximityProbe"/> to operate properly, you must configure
+    /// your Protocols in one of the two following ways:
+    /// 
+    ///   * Create your Protocol on one platform (either Android or iOS) and then share it with a device from the other
+    ///     platform for customization. The <see cref="Protocol.Id"/> values of these Protocols will remain equal
+    ///     and this <see cref="AndroidBluetoothDeviceProximityProbe"/> will detect encounters across platforms.
+    /// 
+    ///   * Create your Protocols separately on each platform and then set the <see cref="Protocol.Id"/> field on
+    ///     one platform (using the "Set Study Identifier" button) to match the <see cref="Protocol.Id"/> value
+    ///     of the other platform (obtained via "Copy Study Identifier").
+    /// 
     /// See the iOS subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
     /// </summary>
     public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
