@@ -175,7 +175,7 @@ namespace Sensus.Probes.Location
                         throw new Exception("Failed to obtain Location permission from user.");
                     }
 
-                    SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Debug, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Taking GPS reading.", LoggingLevel.Normal, GetType());
 
                     DateTimeOffset readingStart = DateTimeOffset.UtcNow;
                     reading = await _locator.GetPositionAsync(_readingTimeout, cancellationToken);
@@ -186,7 +186,7 @@ namespace Sensus.Probes.Location
                         // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
                         reading = new Position(reading);
 
-                        SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Verbose, GetType());
+                        SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
                     }
                 }
                 catch (Exception ex)
