@@ -529,11 +529,22 @@ namespace Sensus
         private string _pushNotificationsHub;
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
-
+       
+        /// <summary>
+        /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
+        /// like the <see cref="Probes.Context.BluetoothDeviceProximityProbe"/> rely on the study identifiers to be the same
+        /// across Android and iOS platforms in order to make detections.
+        /// </summary>
+        /// <value>The identifier.</value>
+        [EntryStringUiProperty(null, false, 0, true)]
         public string Id
         {
             get { return _id; }
-            set { _id = value; }
+            set
+            {
+                _id = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
+            }
         }
 
         /// <summary>
