@@ -53,7 +53,7 @@ Configure the Apple Push Notification Service following the official Apple docum
 Hub name, and set the [Push Notifications Shared Access Signature](xref:Sensus.Protocol.PushNotificationsSharedAccessSignature) to
 the `DefaultFullSharedAccessSignature` of the Azure Notification Hub.
 1. Configure the [AWS S3 remote data store](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore) using the bucket created above.
-1. Note that APNS has been observed to throttle push notification delivery rate. Please see the [Polling Probe](xref:Sensus.Shared.Probes.PollingProbe)
+1. Note that APNS has been observed to throttle push notification delivery rate. Please see the [Polling Probe](xref:Sensus.Probes.PollingProbe)
    documentation for more information on polling rates and push notification throttling.
 
 ## Conclusion

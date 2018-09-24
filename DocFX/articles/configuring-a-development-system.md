@@ -27,8 +27,10 @@ is a full-featured language that is similar to Java.
    the root of your Sensus repository to undo these changes.
 1. Lastly, create a symbolic link from `Scripts/git-pre-commit.sh` to `.git/hooks/pre-commit` in your local Sensus repository 
    and make the script executable. For example:
-
-    ln -s [FULL PATH TO SENSUS REPO]/Scripts/git-pre-commit.sh [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
-    chmod +x [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
+   
+   ```
+   ln -s [FULL PATH TO SENSUS REPO]/Scripts/git-pre-commit.sh [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
+   chmod +x [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
+   ```
 
 You now have a clean, compiling version of Sensus.

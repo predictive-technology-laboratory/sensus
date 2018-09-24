@@ -99,7 +99,8 @@ order of several kilometers.</p>
 </li>
 <li><p>Push notification processing:  If you <a class="xref" href="../articles/push-notifications.html">configure push notifications</a>, the Polling Probe will be woken up
 at the desired time to take a reading. Note that the reliability of these timings is subject to push notification throttling imposed
-by the Apple Push Notification Service.</p>
+by the Apple Push Notification Service. The value of <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a> should be set conservatively for all probes,
+for example no lower than 15-20 minutes.</p>
 </li>
 </ul>
 <p>Beyond these exceptions, all processing within Sensus must be halted when the user backgrounds the app. Sensus does its best to support Polling 

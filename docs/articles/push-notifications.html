@@ -114,12 +114,14 @@ in the steps that follow.</li>
 </ol>
 <h2 id="aws-s3">AWS S3</h2>
 <ol>
-<li>Configure your AWS S3 bucket following the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">guide</a>.</li>
+<li>Configure your AWS S3 bucket following the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">guide</a>. Note the
+name of the bucket that results from this step (e.g., test-bucket-293843-234234-23234234).</li>
 </ol>
 <h2 id="aws-ec2">AWS EC2</h2>
 <ol>
 <li>Configure your AWS EC2 instance using the <code>configure-ec2.sh</code> script within the <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip">configuration</a>
-archive. This script requires you to install the AWS CLI and the <code>jq</code> command line program.</li>
+archive. This script requires you to install the AWS CLI and the <code>jq</code> command line program. When supplying the bucket
+name, use the name obtained from the previous step.</li>
 </ol>
 <h2 id="sensus-protocol">Sensus Protocol</h2>
 <ol>
@@ -127,6 +129,8 @@ archive. This script requires you to install the AWS CLI and the <code>jq</code>
 Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
 the <code>DefaultFullSharedAccessSignature</code> of the Azure Notification Hub.</li>
 <li>Configure the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> using the bucket created above.</li>
+<li>Note that APNS has been observed to throttle push notification delivery rate. Please see the <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">Polling Probe</a>
+documentation for more information on polling rates and push notification throttling.</li>
 </ol>
 <h2 id="conclusion">Conclusion</h2>
 <p>If the above steps are successful, your Sensus protocol should now receive push notification support when

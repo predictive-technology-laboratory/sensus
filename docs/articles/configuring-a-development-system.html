@@ -102,9 +102,9 @@ have been made to your local repository. If any changes have been made, they are
 the root of your Sensus repository to undo these changes.</li>
 <li><p>Lastly, create a symbolic link from <code>Scripts/git-pre-commit.sh</code> to <code>.git/hooks/pre-commit</code> in your local Sensus repository 
 and make the script executable. For example:</p>
-<p> ln -s [FULL PATH TO SENSUS REPO]/Scripts/git-pre-commit.sh [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
- chmod +x [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit</p>
-</li>
+<pre><code>ln -s [FULL PATH TO SENSUS REPO]/Scripts/git-pre-commit.sh [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
+chmod +x [FULL PATH TO SENSUS REPO]/.git/hooks/pre-commit
+</code></pre></li>
 </ol>
 <p>You now have a clean, compiling version of Sensus.</p>
 </article>
