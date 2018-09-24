@@ -3,22 +3,14 @@
 if [ $# -ne 1 ]; then
     echo "Usage:  ./send-push-notifications.sh [s3 bucket name] [folder name]"
     echo "\t[s3 bucket name]:  S3 bucket for remote data store (e.g.:  some-bucket). Do not include the s3:// prefix or trailing forward slashes."
-    echo "\t[folder name]:  Folder within S3 bucket where data are stored. Can be missing or an empty string \"\", but cannot contain leading or tailing forward slashes."
     echo ""
     exit 1
 fi
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
 echo -e "\n************* DOWNLOADING PNRS FROM S3 *************"
-
-if [[ "$2" == "" ]]
-then
-    s3_path="s3://$1/push-notifications"
-else
-    s3_path="s3://$1/$2/push-notifications"
-fi
-
-notifications_dir="$1-$2-push-notifications"
+s3_path="s3://$1/push-notifications"
+notifications_dir="$1-push-notifications"
 mkdir -p $notifications_dir
 aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
                                                                      # to be the same size and will not come down otherwise.
