@@ -77,6 +77,14 @@ namespace Sensus.Probes.Location
             {
                 SensusServiceHelper.Get().Logger.Log("GPS position has changed.", LoggingLevel.Verbose, GetType());
 
+                // TODO:  the Position has a timestamp, but it does not get updated correctly:  
+                //
+                //    https://github.com/predictive-technology-laboratory/sensus/issues/496
+                //    https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
+                //
+                // set manually to the current time
+                e.Position.Timestamp = DateTimeOffset.UtcNow;
+
                 PositionChanged?.Invoke(o, e);
             };
         }
@@ -184,7 +192,16 @@ namespace Sensus.Probes.Location
                     if (reading != null)
                     {
                         // create copy of new position to keep return references separate, since the same Position object is returned multiple times when a change listener is attached.
-                        reading = new Position(reading);
+                        reading = new Position(reading)
+                        {
+                            // TODO:  the Position has a timestamp, but it does not get updated correctly:  
+                            //
+                            //    https://github.com/predictive-technology-laboratory/sensus/issues/496
+                            //    https://github.com/jamesmontemagno/GeolocatorPlugin/issues/249
+                            //
+                            // set manually to the current time
+                            Timestamp = DateTimeOffset.UtcNow
+                        };
 
                         SensusServiceHelper.Get().Logger.Log("GPS reading obtained in " + (readingEnd - readingStart).TotalSeconds + " seconds.", LoggingLevel.Normal, GetType());
                     }
