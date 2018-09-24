@@ -25,17 +25,17 @@ namespace Sensus
         public const string SENSUS_PARTICIPATION = "sensus-participation:";
 
         /// <summary>
-        /// Sensus protocols.
+        /// Sensus protocols. Following this prefix should be an internet-accessible URL from which to download a protocol file via HTTPS.
         /// </summary>
         public const string SENSUS_PROTOCOL = "sensus-protocol:";
 
         /// <summary>
-        /// Sensus participant identifiers.
+        /// Sensus participant identifiers. Following this prefix should be an arbitrary string denoting a participant.
         /// </summary>
         public const string SENSUS_PARTICIPANT_ID = "sensus-participant:";
 
         /// <summary>
-        /// IAM credentials.
+        /// IAM credentials. Following this prefix should be REGION:ACCESSKEY:SECRET, denoting an IAM user.
         /// </summary>
         public const string IAM_CREDENTIALS = "iam-credentials:";
     }
