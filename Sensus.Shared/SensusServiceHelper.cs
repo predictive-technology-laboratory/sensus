@@ -273,11 +273,11 @@ namespace Sensus
         private bool _flashNotificationsEnabled;
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
-        private bool _updatingPushNotificationToken;
+        private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
-        private readonly object _updatePushNotificationTokenLocker = new object();
+        private readonly object _updatePushNotificationRegistrationsLocker = new object();
 
         [JsonIgnore]
         public Logger Logger
@@ -1383,15 +1383,15 @@ namespace Sensus
             // the code we need exclusive access to below has an await statement in it, so we
             // can't lock the entire function. use a gatekeeper to gain exclusive access
             // and be sure to release the keeper below in the finally clause.
-            lock (_updatePushNotificationTokenLocker)
+            lock (_updatePushNotificationRegistrationsLocker)
             {
-                if (_updatingPushNotificationToken)
+                if (_updatingPushNotificationRegistrations)
                 {
                     return;
                 }
                 else
                 {
-                    _updatingPushNotificationToken = true;
+                    _updatingPushNotificationRegistrations = true;
                 }
             }
 
@@ -1406,122 +1406,120 @@ namespace Sensus
                 // we should always have a token. if we do not, throw an exception and request a new token.
                 if (PushNotificationToken == null)
                 {
-                    throw new UnsetPushNotificationTokenException();
-                }
-
-                // it is conceivable that a single hub could be used for multiple protocols. because 
-                // there is only ever a single registration with each hub, we therefore need to 
-                // build a mapping from each hub to its protocols so we can determine whether we
-                // actually need to register with the hub.
-                Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
-                foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol)))
-                {
-                    if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
-                    {
-                        Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
-
-                        if (!hubSasProtocols.ContainsKey(hubSas))
-                        {
-                            hubSasProtocols.Add(hubSas, new List<Protocol>());
-                        }
-
-                        hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
-                    }
-                }
-
-                // process each hub
-                foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
-                {
-                    // unregister from the hub, catching any exceptions.
                     try
                     {
-                        await UnregisterFromNotificationHubAsync(hubSas);
+                        SensusException.Report("Push notification token was not set.");
                     }
-                    catch (Exception unregisterEx)
+                    catch (Exception)
                     {
-                        // no need to request an update on the next health test, as it was just 
-                        // the unregister that failed. as long as the registration below works, 
-                        // we should be fine.
-                        SensusException.Report("Exception while unregistering from hub:  " + unregisterEx.Message, unregisterEx);
                     }
 
-                    // each protocol may have its own remote data store being monitored for push notification
-                    // requests. tokens are per device, so update the token in each protocol's remote store.
-                    bool atLeastOneProtocolRunning = false;
-                    foreach (Protocol protocol in hubSasProtocols[hubSas])
+                    try
                     {
-                        // this only applies to protocols with a remote data store (some might simply be 
-                        // incompletely configured, and those can be skipped).
-                        if (protocol.RemoteDataStore == null)
+                        RequestNewPushNotificationToken();
+                    }
+                    catch (Exception newTokenException)
+                    {
+                        Logger.Log("Exception while requesting a new token:  " + newTokenException.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+                else
+                {
+                    // it is conceivable that a single hub could be used for multiple protocols. because 
+                    // there is only ever a single registration with each hub, we therefore need to 
+                    // build a mapping from each hub to its protocols so we can determine whether we
+                    // actually need to register with the hub.
+                    Dictionary<Tuple<string, string>, List<Protocol>> hubSasProtocols = new Dictionary<Tuple<string, string>, List<Protocol>>();
+                    foreach (Tuple<string, string, Protocol> hubSasProtocol in _registeredProtocols.Select(protocol => new Tuple<string, string, Protocol>(protocol.PushNotificationsHub, protocol.PushNotificationsSharedAccessSignature, protocol)))
+                    {
+                        if (!string.IsNullOrWhiteSpace(hubSasProtocol.Item1) && !string.IsNullOrWhiteSpace(hubSasProtocol.Item2))
                         {
-                            continue;
-                        }
+                            Tuple<string, string> hubSas = new Tuple<string, string>(hubSasProtocol.Item1, hubSasProtocol.Item2);
 
-                        // catch any exceptions, as we might just be lacking an internet connection.
+                            if (!hubSasProtocols.ContainsKey(hubSas))
+                            {
+                                hubSasProtocols.Add(hubSas, new List<Protocol>());
+                            }
+
+                            hubSasProtocols[hubSas].Add(hubSasProtocol.Item3);
+                        }
+                    }
+
+                    // process each hub
+                    foreach (Tuple<string, string> hubSas in hubSasProtocols.Keys)
+                    {
+                        // unregister from the hub, catching any exceptions.
                         try
                         {
-                            if (protocol.Running || protocol.StartIsScheduled)
-                            {
-                                atLeastOneProtocolRunning = true;
+                            await UnregisterFromNotificationHubAsync(hubSas);
+                        }
+                        catch (Exception unregisterEx)
+                        {
+                            // no need to request an update on the next health test, as it was just 
+                            // the unregister that failed. as long as the registration below works, 
+                            // we should be fine.
+                            Logger.Log("Exception while unregistering from hub:  " + unregisterEx.Message, LoggingLevel.Normal, GetType());
+                        }
 
-                                await protocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, cancellationToken);
-                            }
-                            else
+                        // each protocol may have its own remote data store being monitored for push notification
+                        // requests. tokens are per device, so update the token in each protocol's remote store.
+                        bool atLeastOneProtocolRunning = false;
+                        foreach (Protocol protocol in hubSasProtocols[hubSas])
+                        {
+                            // this only applies to protocols with a remote data store (some might simply be 
+                            // incompletely configured, and those can be skipped).
+                            if (protocol.RemoteDataStore == null)
                             {
-                                await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(cancellationToken);
+                                continue;
+                            }
+
+                            // catch any exceptions, as we might just be lacking an internet connection.
+                            try
+                            {
+                                if (protocol.Running || protocol.StartIsScheduled)
+                                {
+                                    atLeastOneProtocolRunning = true;
+
+                                    await protocol.RemoteDataStore.SendPushNotificationTokenAsync(PushNotificationToken, cancellationToken);
+                                }
+                                else
+                                {
+                                    await protocol.RemoteDataStore.DeletePushNotificationTokenAsync(cancellationToken);
+                                }
+                            }
+                            catch (Exception updateTokenException)
+                            {
+                                Logger.Log("Exception while updating push notification token:  " + updateTokenException.Message, LoggingLevel.Normal, GetType());
+
+                                // we absolutely must update the token at the remote data store
+                                _updatePushNotificationRegistrationsOnNextHealthTest = true;
                             }
                         }
-                        catch (Exception updateTokenException)
-                        {
-                            SensusException.Report("Exception while updating push notification token:  " + updateTokenException.Message, updateTokenException);
 
-                            // we absolutely must update the token at the remote data store
-                            _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                        // register with the hub if any of its associated protocols are running
+                        if (atLeastOneProtocolRunning)
+                        {
+                            // catch any exceptions from registering
+                            try
+                            {
+                                await RegisterWithNotificationHubAsync(hubSas);
+                            }
+                            catch (Exception registerEx)
+                            {
+                                Logger.Log("Exception while registering with hub:  " + registerEx.Message, LoggingLevel.Normal, GetType());
+
+                                // we absolutely must register with the hub
+                                _updatePushNotificationRegistrationsOnNextHealthTest = true;
+                            }
                         }
                     }
-
-                    // register with the hub if any of its associated protocols are running
-                    if (atLeastOneProtocolRunning)
-                    {
-                        // catch any exceptions from registering
-                        try
-                        {
-                            await RegisterWithNotificationHubAsync(hubSas);
-                        }
-                        catch (Exception registerEx)
-                        {
-                            SensusException.Report("Exception while registering with hub:  " + registerEx.Message, registerEx);
-
-                            // we absolutely must register with the hub
-                            _updatePushNotificationRegistrationsOnNextHealthTest = true;
-                        }
-                    }
-                }
-            }
-            catch (UnsetPushNotificationTokenException)
-            {
-                try
-                {
-                    SensusException.Report("Push notification token was not set.");
-                }
-                catch (Exception)
-                {
-                }
-
-                try
-                {
-                    RequestNewPushNotificationToken();
-                }
-                catch (Exception newTokenException)
-                {
-                    SensusException.Report("Exception while requesting a new token:  " + newTokenException.Message, newTokenException);
                 }
             }
             catch (Exception ex)
             {
                 try
                 {
-                    SensusException.Report("Exception while updating push notification registrations:  " + ex.Message, ex);
+                    Logger.Log("Exception while updating push notification registrations:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
                 catch (Exception)
                 {
@@ -1535,7 +1533,7 @@ namespace Sensus
             finally
             {
                 // we're done...let the next update proceed.
-                _updatingPushNotificationToken = false;
+                _updatingPushNotificationRegistrations = false;
             }
         }
 
