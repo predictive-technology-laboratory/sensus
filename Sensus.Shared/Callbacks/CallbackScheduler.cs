@@ -64,7 +64,7 @@ namespace Sensus.Callbacks
             }
             else
             {
-                SensusException.Report("Attempted to schedule duplicate callback for " + callback.Id + ".");
+                SensusServiceHelper.Get().Logger.Log("Attempted to schedule duplicate callback for " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }
 
             return callback.State;
@@ -353,7 +353,10 @@ namespace Sensus.Callbacks
         {
             // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
             // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
-            if (callback.Protocol != null)
+            // on race conditions, it might be the case that the system attempts to schedule a duplicate callback. if this happens
+            // the duplicate will not be assigned a next execution, and the system will try to unschedule/delete it. skip such
+            // callbacks below.
+            if (callback.Protocol != null && callback.NextExecution.HasValue)
             {
                 try
                 {
