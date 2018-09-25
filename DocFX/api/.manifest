@@ -3357,8 +3357,6 @@
   "Sensus.Exceptions.SensusException.#ctor(System.String,System.Exception)": "Sensus.Exceptions.SensusException.yml",
   "Sensus.Exceptions.SensusException.Report(System.Exception)": "Sensus.Exceptions.SensusException.yml",
   "Sensus.Exceptions.SensusException.Report(System.String,System.Exception)": "Sensus.Exceptions.SensusException.yml",
-  "Sensus.Exceptions.UnsetPushNotificationTokenException": "Sensus.Exceptions.UnsetPushNotificationTokenException.yml",
-  "Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor": "Sensus.Exceptions.UnsetPushNotificationTokenException.yml",
   "Sensus.ExtensionMethods": "Sensus.ExtensionMethods.yml",
   "Sensus.ExtensionMethods.Shuffle``1(System.Random,System.Collections.ObjectModel.Collection{``0})": "Sensus.ExtensionMethods.yml",
   "Sensus.ExtensionMethods.ToFormsPosition(Plugin.Geolocator.Abstractions.Position)": "Sensus.ExtensionMethods.yml",

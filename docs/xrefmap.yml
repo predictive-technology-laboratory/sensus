@@ -23262,24 +23262,6 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
-  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  name: UnsetPushNotificationTokenException()
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
-  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
-  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
