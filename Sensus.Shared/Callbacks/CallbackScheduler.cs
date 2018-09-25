@@ -172,7 +172,7 @@ namespace Sensus.Callbacks
                     {
                         if (callback.Canceller.IsCancellationRequested)
                         {
-                            throw new Exception("Callback " + callback.Id + " was cancelled before it was raised.");
+                            SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " was cancelled before it was raised.", LoggingLevel.Normal, GetType());
                         }
                         else
                         {
