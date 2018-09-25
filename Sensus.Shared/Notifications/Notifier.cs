@@ -162,7 +162,7 @@ namespace Sensus.Notifications
             }
             catch (Exception ex)
             {
-                SensusException.Report("Failed to get protocol for push notification:  " + ex.Message, ex);
+                SensusException.Report("Failed to get protocol with id " + protocolId + ":  " + ex.Message, ex);
                 return;
             }
 
