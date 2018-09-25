@@ -145,7 +145,8 @@ namespace Sensus.Android
 
             base.OnResume();
 
-            // temporarily hide UI while we bind to service
+            // temporarily hide UI while we bind to service. allowing the user to click around before the service helper is initialized 
+            // may result in a crash.
             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
             (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 

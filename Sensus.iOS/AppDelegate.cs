@@ -154,10 +154,6 @@ namespace Sensus.iOS
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    // temporarily disable the UI to prevent the user from tapping around before notifications are set up.
-                    (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
-                    (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
-
                     bool notificationsAuthorizedAndConfigured = false;
 
                     if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
@@ -232,45 +228,53 @@ namespace Sensus.iOS
                         }
                     }
 
-                    // if notifications have been authorized and configured, start up sensus. it is okay
-                    // to call the following code multiple times, as repeats have no effect.
+                    // ensure service helper is running. it is okay to call the following line multiple times, as repeats have no effect.
+                    // per apple guidelines, sensus will run properly without notifications, but only for the creation of protocols.
+                    await SensusServiceHelper.Get().StartAsync();
+
                     if (notificationsAuthorizedAndConfigured)
                     {
-                        // ensure service helper is running
-                        await SensusServiceHelper.Get().StartAsync();
-
-                        // reenable the UI to let the user proceed -- do this before updating callbacks, as the
-                        // callbacks might take a while to complete (e.g., in the case of GPS).
-                        (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
-                        (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
-
                         // update/run all callbacks
                         await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksAsync();
-
-#if UI_TESTING
-                            // load and run the UI testing protocol
-                            string filePath = NSBundle.MainBundle.PathForResource("UiTestingProtocol", "json");
-                            using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                            {
-                                await Protocol.RunUiTestingProtocolAsync(file);
-                            }
-#endif
                     }
                     else
                     {
-                        // warn the user and help them to enable notifications
-                        UIAlertView warning = new UIAlertView("Warning", "Sensus will not run with notifications disabled. Please enable notifications.", default(IUIAlertViewDelegate), "Close", "Open Notification Settings");
+                        // warn the user and help them to enable notifications  
+                        UIAlertView warning = new UIAlertView("Warning", "Notifications are disabled. Please enable notifications prior to joining a study.", default(IUIAlertViewDelegate), "Close", "Open Notification Settings");
 
-                        warning.Dismissed += (sender, e) =>
+                        warning.Dismissed += async (sender, e) =>
                         {
                             if (e.ButtonIndex == 1)
                             {
-                                uiApplication.OpenUrl(new NSUrl(UIApplication.OpenSettingsUrlString.ToString()));
+                                NSUrl notificationSettingsURL = new NSUrl(UIApplication.OpenSettingsUrlString.ToString());
+
+                                // deprecation:  https://developer.apple.com/library/archive/releasenotes/General/WhatsNewIniOS/Articles/iOS10.html
+                                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                                {
+#pragma warning disable XI0002 // Notifies you from using newer Apple APIs when targeting an older OS version
+                                    await uiApplication.OpenUrlAsync(notificationSettingsURL, new UIApplicationOpenUrlOptions());
+#pragma warning restore XI0002 // Notifies you from using newer Apple APIs when targeting an older OS version
+                                }
+                                else
+                                {
+#pragma warning disable XI0003 // Notifies you when using a deprecated, obsolete or unavailable Apple API
+                                    uiApplication.OpenUrl(notificationSettingsURL);
+#pragma warning restore XI0003 // Notifies you when using a deprecated, obsolete or unavailable Apple API
+                                }
                             }
                         };
 
                         warning.Show();
                     }
+
+#if UI_TESTING
+                    // load and run the UI testing protocol
+                    string filePath = NSBundle.MainBundle.PathForResource("UiTestingProtocol", "json");
+                    using (Stream file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                    {
+                        await Protocol.RunUiTestingProtocolAsync(file);
+                    }
+#endif
                 });
             }
             catch (Exception ex)

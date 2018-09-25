@@ -1739,6 +1739,13 @@ namespace Sensus
 
         public async Task StartAsync()
         {
+            // on iOS, we might not have a scheduler at this time if the user has not enabled notifications, which they cannot be forced to do per apple guidelines. bail gracefully.
+            if (SensusContext.Current.CallbackScheduler == null)
+            {
+                await SensusServiceHelper.Get().FlashNotificationAsync("Sensus is unable to start your study at this time. Please contact the study administrator for assistance.");
+                return;
+            }
+
             if (_startImmediately || (DateTime.Now > _startTimestamp))
             {
                 await PrivateStartAsync();
