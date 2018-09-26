@@ -1,10 +1,27 @@
 #!/bin/sh
 
+# check options
 if [ $# -ne 1 ]; then
     echo "Usage:  ./send-push-notifications.sh [s3 bucket name] [folder name]"
     echo "\t[s3 bucket name]:  S3 bucket for remote data store (e.g.:  some-bucket). Do not include the s3:// prefix or trailing forward slashes."
     echo ""
     exit 1
+fi
+
+# we don't want this script to run more than once concurrently. check if lock file exists...
+lockfile="send-notifications.lock"
+if [ -f "$lockfile" ]
+then
+    # ...if it does, exit.
+    echo "Lock file present. Script already running."
+    exit 0
+else
+    # ...if it does not, create it.
+    echo "Script not running. Creating lock file."
+    touch $lockfile
+
+    # delete lock file when script exits
+    trap "{ rm -f $lockfile; }" EXIT
 fi
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
