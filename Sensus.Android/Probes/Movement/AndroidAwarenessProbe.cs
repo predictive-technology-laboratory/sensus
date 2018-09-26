@@ -133,7 +133,10 @@ namespace Sensus.Android.Probes.Movement
                     bundle =>
                     {
                         SensusServiceHelper.Get().Logger.Log("Connected to Google Awareness API.", LoggingLevel.Normal, GetType());
-                        clientConnectCompletionSource.SetResult(true);
+
+                        // for some reasons we're getting crashes resulting from the completion source being set multiple times:  https://appcenter.ms/orgs/uva-predictive-technology-lab/apps/sensus-android/crashes/groups/c49680882330078f84ad54076e8a7d19ef7c4f5a/crashes/b75c6830-3fea-487d-a676-533950b72e26/overview
+                        // so use trysetresult instead.
+                        clientConnectCompletionSource.TrySetResult(true);
                     },
 
                     status =>
