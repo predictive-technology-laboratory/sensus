@@ -20,8 +20,10 @@ else
     echo "Script not running. Creating lock file."
     touch $lockfile
 
+    echo "Started $(date)"
+
     # delete lock file when script exits
-    trap "{ rm -f $lockfile; }" EXIT
+    trap "{ rm -f $lockfile; printf \"Finished \"; date; }" EXIT
 fi
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
@@ -58,7 +60,7 @@ do
 	echo -e "Processing $n ..."
     else
 	echo "Empty request $n. Deleting file..."
-	aws s3 rm "$s3_path/$(basename $n)"
+	aws s3 rm "$s3_path/$(basename $n)" &
 	rm $n
 	echo ""
 	continue
@@ -89,7 +91,7 @@ do
 	if [[ ${processed_command_classes[$command_class]} ]]
 	then
 	    echo "Obsolete command class $command_class (time $time). Deleting file..."
-	    aws s3 rm "$s3_path/$(basename $n)"
+	    aws s3 rm "$s3_path/$(basename $n)" &
 	    rm $n
 	    echo ""
 	    continue
@@ -126,7 +128,7 @@ do
 	if [[ "$token" = "" ]]
 	then
 	    echo "No token found. Assuming the PNR is stale and should be deleted."
-	    aws s3 rm "$s3_path/$(basename $n)"
+	    aws s3 rm "$s3_path/$(basename $n)" &
 	    rm $n
 	    echo ""
 	    continue
@@ -174,16 +176,9 @@ do
 
         fi
 
-	# send notification.
-        response=$(curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" --write-out %{http_code} --silent --output /dev/null)
-	
-	# check status.
-        if [[ "$response" = "201"  ]]
-        then
-            echo -e "Response 201:  Notification sent.\n"
-	else
-	    echo -e "Non-201 response received:  $response\n"
-        fi
+	# send notification from background
+        curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" &
+
     else
 	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
     fi
