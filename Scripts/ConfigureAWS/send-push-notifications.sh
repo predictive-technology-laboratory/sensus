@@ -101,19 +101,18 @@ do
 	fi
     fi
 	
-    # the cron scheduler runs once per minute. we're going to be proactive and try to ensure that push notifications 
+    # the cron scheduler runs periodically. we're going to be proactive and try to ensure that push notifications 
     # arrive at the device no later than the desired time. this is important, particularly on iOS where the arrival
     # of push notifications cancels local notifications that disrupt the user. set up a buffer accounting for the 
     # following latencies:
     #   
-    #   * minimum 1-minute interval between cron runs:  1 minute
+    #   * minimum 1-minute interval between cron runs:  5 minutes
     #   * native push notification infrastructure:  1 minute
-    #   * time required for the current script to make a pass through the notifiations:  1 minute
     #
     # we don't know exactly how long it will take for the current script to make a pass through
     # the notifications. this will depend on deployment size and the protocol.
     curr_time_seconds=$(date +%s)
-    buffer=$((3 * 60))
+    buffer=$((6 * 60))
     time_horizon=$(($curr_time_seconds + $buffer))
     if [ "$time" -le "$time_horizon" ]
     then
