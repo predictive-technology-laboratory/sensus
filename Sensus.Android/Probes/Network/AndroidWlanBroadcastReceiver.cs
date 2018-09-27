@@ -30,7 +30,9 @@ namespace Sensus.Android.Probes.Network
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             if (WIFI_CONNECTION_CHANGED != null && intent != null && intent.Action == ConnectivityManager.ConnectivityAction)
+#pragma warning restore CS0618 // Type or member is obsolete
             {
                 string currAccessPointBSSID = GetAccessPointBSSID();
                 if (FIRST_RECEIVE || currAccessPointBSSID != PREVIOUS_ACCESS_POINT_BSSID)

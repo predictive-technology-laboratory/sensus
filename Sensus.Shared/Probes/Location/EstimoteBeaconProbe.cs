@@ -151,13 +151,13 @@ namespace Sensus.Probes.Location
             }
         }
 
-        public List<string> GetSensusBeaconNamesFromCloud()
+        public List<string> GetBeaconTagsFromCloud()
         {
-            List<string> sensusBeaconNames = new List<string>();
+            List<string> tags = new List<string>();
 
             try
             {
-                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v3/attachments");
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v3/devices");
                 request.ContentType = "application/json";
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
@@ -178,15 +178,16 @@ namespace Sensus.Probes.Location
                             throw new Exception("Received empty response content.");
                         }
 
-                        foreach (JObject attachment in JObject.Parse(content).Value<JArray>("data"))
+                        foreach (JObject device in JObject.Parse(content).Value<JArray>("data"))
                         {
                             try
                             {
-                                string deviceName = attachment.Value<JObject>("payload").Value<JValue>("sensus").ToString();
-
-                                if (!sensusBeaconNames.Contains(deviceName))
+                                foreach (string tag in device.Value<JObject>("shadow").Value<JArray>("tags"))
                                 {
-                                    sensusBeaconNames.Add(deviceName);
+                                    if (!tags.Contains(tag))
+                                    {
+                                        tags.Add(tag);
+                                    }
                                 }
                             }
                             catch (Exception)
@@ -202,7 +203,7 @@ namespace Sensus.Probes.Location
                 throw ex;
             }
 
-            return sensusBeaconNames;
+            return tags;
         }
 
         protected override ChartSeries GetChartSeries()

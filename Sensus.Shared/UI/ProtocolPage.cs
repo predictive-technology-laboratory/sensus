@@ -50,22 +50,6 @@ namespace Sensus.UI
 
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
 
-            #region share -- we need this because we need to be able to hide the share button from the protocols while still allowing the protocol to be locked and shared
-            Button shareButton = new Button
-            {
-                Text = "Share Protocol",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            shareButton.Clicked += async (o, e) =>
-            {
-                await _protocol.ShareAsync();
-            };
-
-            views.Add(shareButton);
-            #endregion
-
             #region copy/set id
             Button copyIdButton = new Button
             {
@@ -243,6 +227,22 @@ namespace Sensus.UI
             };
 
             views.Add(viewProbesButton);
+            #endregion
+
+            #region share -- we need this because we need to be able to hide the share button from the protocols while still allowing the protocol to be locked and shared
+            Button shareButton = new Button
+            {
+                Text = "Share Protocol",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            shareButton.Clicked += async (o, e) =>
+            {
+                await _protocol.ShareAsync();
+            };
+
+            views.Add(shareButton);
             #endregion
 
             #region lock

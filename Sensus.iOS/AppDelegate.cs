@@ -64,7 +64,7 @@ namespace Sensus.iOS
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // facebook settings
-            Settings.AppID = "873948892650954";
+            Settings.AppId = "873948892650954";
             Settings.DisplayName = "Sensus";
 
             Forms.Init();

@@ -27,12 +27,12 @@ namespace Sensus.Probes.Location
     public class EstimoteBeaconDatum : Datum
     {
         /// <summary>
-        /// The name assigned to the beacon.
+        /// The tag assigned to the beacon.
         /// </summary>
         /// <value>The name of the beacon.</value>
-        [StringProbeTriggerProperty("Beacon Name")]
-        [Anonymizable("Beacon Name:", typeof(StringHashAnonymizer), false)]
-        public string BeaconName { get; set; }
+        [StringProbeTriggerProperty("Beacon Tag")]
+        [Anonymizable("Beacon Tag:", typeof(StringHashAnonymizer), false)]
+        public string BeaconTag { get; set; }
 
         /// <summary>
         /// Name of the proximity event.
@@ -77,7 +77,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return BeaconName;
+                return BeaconTag;
             }
         }
 
@@ -91,7 +91,7 @@ namespace Sensus.Probes.Location
         public EstimoteBeaconDatum(DateTimeOffset timestamp, EstimoteBeacon beacon, EstimoteBeaconProximityEvent proximityEvent)
             : base(timestamp)
         {
-            BeaconName = beacon.Name;
+            BeaconTag = beacon.Tag;
             EventName = beacon.EventName;
             DistanceMeters = beacon.ProximityMeters;
             ProximityEvent = proximityEvent;
@@ -100,7 +100,7 @@ namespace Sensus.Probes.Location
         public override string ToString()
         {
             return base.ToString() + Environment.NewLine +
-                   "Beacon Name:  " + BeaconName + Environment.NewLine +
+                   "Beacon Tag:  " + BeaconTag + Environment.NewLine +
                    "Event Name:  " + EventName + Environment.NewLine +
                    "Distance (Meters):  " + DistanceMeters + Environment.NewLine +
                    "Proximity Event:  " + ProximityEvent;

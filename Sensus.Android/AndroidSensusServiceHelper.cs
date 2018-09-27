@@ -81,11 +81,20 @@ namespace Sensus.Android
                     return false;
                 }
 
-
                 // see the Backwards Compatibility article for more information
 #if __ANDROID_21__
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                    return connectivityManager.GetAllNetworks().Select(network => connectivityManager.GetNetworkInfo(network)).Any(networkInfo => networkInfo != null && networkInfo.Type == ConnectivityType.Wifi && networkInfo.IsConnected);  // API level 21
+                {
+                    foreach (Network network in connectivityManager.GetAllNetworks())
+                    {
+                        if (connectivityManager.GetNetworkInfo(network).IsConnected && connectivityManager.GetNetworkCapabilities(network).HasTransport(TransportType.Wifi))
+                        {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
                 else
 #endif
                 {

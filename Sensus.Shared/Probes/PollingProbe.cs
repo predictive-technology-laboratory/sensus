@@ -44,7 +44,7 @@ namespace Sensus.Probes
     /// Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
     /// with the following exceptions for <see cref="PollingProbe"/>s:
     /// 
-    ///   * Significant location change processing:  If <see cref="SignificantChangePoll"/> is enabled, the Polling Probe will wake up each time
+    ///   * Significant location change processing:  If SignificantChangePoll is enabled, the Polling Probe will wake up each time
     ///     the user's physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
     ///     order of several kilometers.
     /// 

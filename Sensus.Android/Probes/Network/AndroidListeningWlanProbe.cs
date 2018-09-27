@@ -39,7 +39,9 @@ namespace Sensus.Android.Probes.Network
         protected override Task StartListeningAsync()
         {
             // register receiver for all WLAN intent actions
+#pragma warning disable CS0618 // Type or member is obsolete
             Application.Context.RegisterReceiver(_wlanBroadcastReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+#pragma warning restore CS0618 // Type or member is obsolete
 
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
 

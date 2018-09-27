@@ -78,25 +78,24 @@ namespace Sensus.Android.Probes.Location
             _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
                 .WithBalancedPowerMode()
                 .WithScannerInForegroundService(notification)
-                .WithOnErrorAction(new ErrorHandler())
+                .OnError(new ErrorHandler())
                 .Build();
 
             List<IProximityZone> zones = new List<IProximityZone>();
 
             foreach (EstimoteBeacon beacon in Beacons)
             {
-                IProximityZone zone = _proximityObserver.ZoneBuilder()
-                                                        .ForAttachmentKeyAndValue("sensus", beacon.Name)
-                                                        .InCustomRange(beacon.ProximityMeters)
-                                                        .WithOnEnterAction(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Entered))
-                                                        .WithOnExitAction(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Exited))
-                                                        .Create();
+                IProximityZone zone = new ProximityZoneBuilder()
+                                              .ForTag(beacon.Tag)
+                                              .InCustomRange(beacon.ProximityMeters)
+                                              .OnEnter(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Entered))
+                                              .OnExit(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Exited))
+                                              .Build();
 
                 zones.Add(zone);
             }
 
-            _proximityObservationHandler = _proximityObserver.AddProximityZones(zones.ToArray())
-                                                             .Start();
+            _proximityObservationHandler = _proximityObserver.StartObserving(zones);
 
             return Task.CompletedTask;
         }
@@ -104,6 +103,7 @@ namespace Sensus.Android.Probes.Location
         protected override Task StopListeningAsync()
         {
             _proximityObservationHandler.Stop();
+
             return Task.CompletedTask;
         }
     }

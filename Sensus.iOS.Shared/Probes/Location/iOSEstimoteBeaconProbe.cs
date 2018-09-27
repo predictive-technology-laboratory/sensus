@@ -23,35 +23,32 @@ namespace Sensus.iOS.Probes.Location
 {
     public class iOSEstimoteBeaconProbe : EstimoteBeaconProbe
     {
-        private EPXProximityObserver _observer;
-
-        public iOSEstimoteBeaconProbe()
-        {
-        }
+        private ProximityObserver _observer;
 
         protected override Task StartListeningAsync()
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                _observer = new EPXProximityObserver(new EPXCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
+                _observer = new ProximityObserver(new CloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
                 {
                     SensusServiceHelper.Get().Logger.Log("Error while initializing proximity observer:  " + error, LoggingLevel.Normal, GetType());
                 });
 
-                List<EPXProximityZone> zones = new List<EPXProximityZone>();
+                List<ProximityZone> zones = new List<ProximityZone>();
 
                 foreach (EstimoteBeacon beacon in Beacons)
                 {
-                    EPXProximityZone zone = new EPXProximityZone(new EPXProximityRange(beacon.ProximityMeters), "sensus", beacon.Name);
-
-                    zone.OnEnterAction = async (triggeringDeviceAttachment) =>
+                    ProximityZone zone = new ProximityZone(beacon.Tag, new ProximityRange(beacon.ProximityMeters))
                     {
-                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
-                    };
+                        OnEnter = async (triggeringDeviceAttachment) =>
+                        {
+                            await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                        },
 
-                    zone.OnExitAction = async (triggeringDeviceAttachment) =>
-                    {
-                        await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                        OnExit = async (triggeringDeviceAttachment) =>
+                        {
+                            await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                        }
                     };
 
                     zones.Add(zone);
@@ -65,10 +62,7 @@ namespace Sensus.iOS.Probes.Location
 
         protected override Task StopListeningAsync()
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                _observer.StopObservingZones();
-            });
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(_observer.StopObservingZones);
 
             return Task.CompletedTask;
         }

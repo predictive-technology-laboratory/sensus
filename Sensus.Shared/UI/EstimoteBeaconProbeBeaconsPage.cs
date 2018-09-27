@@ -58,14 +58,14 @@ namespace Sensus.UI
             {
                 EstimoteBeaconProbe estimoteBeaconProbe = probe as EstimoteBeaconProbe;
 
-                List<string> beacons;
+                List<string> beaconTags;
                 try
                 {
-                    beacons = estimoteBeaconProbe.GetSensusBeaconNamesFromCloud();
+                    beaconTags = estimoteBeaconProbe.GetBeaconTagsFromCloud();
 
-                    if (beacons.Count == 0)
+                    if (beaconTags.Count == 0)
                     {
-                        throw new Exception("No beacons present within Estimote Cloud.");
+                        throw new Exception("No beacons with tags present within Estimote Cloud.");
                     }
                 }
                 catch (Exception ex)
@@ -76,12 +76,12 @@ namespace Sensus.UI
 
                 List<Input> inputs = await SensusServiceHelper.Get().PromptForInputsAsync("Add Beacon", new Input[]
                 {
-                    new ItemPickerDialogInput("Beacon Name:", null, beacons)
+                    new ItemPickerDialogInput("Beacon Tag:", null, beaconTags)
                     {
                         AllowClearSelection = false
                     },
                     new NumberEntryInput("Proximity (Meters):"),
-                    new SingleLineTextInput("Event Name (Defaults To Beacon Name):", Keyboard.Default)
+                    new SingleLineTextInput("Event Name (Defaults To Beacon Tag):", Keyboard.Default)
                     {
                             Required = false
                     }
@@ -92,10 +92,10 @@ namespace Sensus.UI
                 {
                     try
                     {
-                        string beaconName = inputs[0].Value.ToString();
+                        string beaconTag = inputs[0].Value.ToString();
                         double beaconProximity = double.Parse(inputs[1].Value.ToString());
                         string eventName = inputs[2].Value?.ToString();
-                        EstimoteBeacon beacon = new EstimoteBeacon(beaconName, beaconProximity, eventName);
+                        EstimoteBeacon beacon = new EstimoteBeacon(beaconTag, beaconProximity, eventName);
                         estimoteBeaconProbe.Beacons.Add(beacon);
                     }
                     catch (Exception)
