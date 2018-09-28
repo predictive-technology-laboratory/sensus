@@ -106,15 +106,29 @@ do
     # of push notifications cancels local notifications that disrupt the user. set up a buffer accounting for the 
     # following latencies:
     #   
-    #   * minimum 1-minute interval between cron runs:  5 minutes
+    #   * interval between cron runs:  5 minutes
     #   * native push notification infrastructure:  1 minute
     #
     # we don't know exactly how long it will take for the current script to make a pass through
     # the notifications. this will depend on deployment size and the protocol.
     curr_time_seconds=$(date +%s)
-    buffer=$((6 * 60))
-    time_horizon=$(($curr_time_seconds + $buffer))
-    if [ "$time" -le "$time_horizon" ]
+    buffer_seconds=$((6 * 60))
+    time_horizon=$(($curr_time_seconds + $buffer_seconds))
+    seconds_until_delivery=$(($time - $time_horizon))
+
+    # delete any push notifications that have failed for an entire day
+    seconds_in_day=$((60 * 60 * 24 * -1))
+    if [ "$seconds_until_delivery" -le "$seconds_in_day" ]
+    then
+	echo "Push notification has failed for a day. Deleting it."
+	aws s3 rm "$s3_path/$(basename $n)" &
+	rm $n
+	echo ""
+	continue
+    fi
+
+    # check whether the delivery time has arrived or passed
+    if [ "$seconds_until_delivery" -le 0 ]
     then
 
 	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the 
@@ -179,7 +193,7 @@ do
         curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" &
 
     else
-	echo -e "Push notification will be delivered in $(($time - $time_horizon)) seconds.\n"
+	echo -e "Push notification will be delivered in $seconds_until_delivery seconds.\n"
     fi
 done < $file_list
 
