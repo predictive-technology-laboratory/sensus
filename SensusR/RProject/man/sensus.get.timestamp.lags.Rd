@@ -16,7 +16,7 @@ List of lags.
 Get timestamp lags for a Sensus datum.
 }
 \examples{
-data.path = system.file("extdata", "example_data", package="SensusR")
+data.path = system.file("extdata", "example-data", package="SensusR")
 data = sensus.read.json.files(data.path)
 plot(sensus.get.timestamp.lags(data$AccelerometerDatum))
 }
