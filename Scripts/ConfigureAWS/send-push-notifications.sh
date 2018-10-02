@@ -1,9 +1,12 @@
 #!/bin/sh
 
 # check options
-if [ $# -ne 1 ]; then
-    echo "Usage:  ./send-push-notifications.sh [s3 bucket name] [folder name]"
+if [ $# -ne 4 ]; then
+    echo "Usage:  ./send-push-notifications.sh [s3 bucket name] [azure namespace] [azure hub]"
     echo "\t[s3 bucket name]:  S3 bucket for remote data store (e.g.:  some-bucket). Do not include the s3:// prefix or trailing forward slashes."
+    echo "\t[azure namespace]:  Azure push notification namespace."
+    echo "\t[azure hub]:  Azure push notification hub."
+    echo "\t[azure key]:  Azure push notification full access key."
     echo ""
     exit 1
 fi
@@ -45,7 +48,7 @@ do
 done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 
 # get shared access signature
-sas=$(node get-sas.js)
+sas=$(node get-sas.js $2 $3 $4)
 
 # process push notification requests
 declare -A processed_command_classes
@@ -190,7 +193,9 @@ do
         fi
 
 	# send notification from background
-        curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://sensus-notifications.servicebus.windows.net/sensus-notifications/messages/?direct&api-version=2015-04" &
+        curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://$2.servicebus.windows.net/$3/messages/?direct&api-version=2015-04" &
+	
+	echo -e "Notification requested.\n"
 
     else
 	echo -e "Push notification will be delivered in $seconds_until_delivery seconds.\n"

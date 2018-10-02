@@ -1,12 +1,13 @@
 #!/bin/sh
 
-if [ $# -ne 6 ]; then
-    echo "Usage:  ./configure-ec2.sh [bucket] [cidr ingress] [image id] [instance type] [azure notification hub] [azure notification hub full access signature] [folder]"
+if [ $# -ne 7 ]; then
+    echo "Usage:  ./configure-ec2.sh [bucket] [cidr ingress] [image id] [instance type] [azure namespace] [azure hub] [azure notification hub full access signature] [folder]"
     echo "\t[bucket]:  Bucket configured using the configure-s3.sh script (e.g., test-bucket-234234234-23423423-423423)"
     echo "\t[cidr ingress]:  SSH ingress range, in CIDR format (e.g., 123.456.0.0/16)"
     echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2)"
     echo "\t[instance type]:  Instance type (e.g., t2.micro)"
-    echo "\t[azure notification hub]:  The Azure notification hub URL (e.g., https://NAMESPACE.servicebus.windows.net/HUB/messages) where NAMESPACE is your Azure push notification namespace name and HUB is your Azure push notification hub name."
+    echo "\t[azure namespace]:  The Azure push notification namespace name."
+    echo "\t[azure hub]:  The Azure push notification hub name."
     echo "\t[azure notification hub full access key]:  The value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=)"
     echo ""
     echo "Effect:  Configures an EC2 instance with an IAM group/user that has access to the given S3 bucket and monitors the bucket for push notifications."
@@ -104,15 +105,10 @@ rm tmp
 ##### Push Notifications #####
 ##############################
 
-# edit/upload get-sas script
-sed "s#XXXXURLXXXX#$5#" get-sas.js > tmp
-sed "s#XXXXKEYXXXX#$6#" tmp > tmp2
-scp -i $pemFileName tmp2 ec2-user@$publicIP:~/get-sas.js
-rm tmp tmp2
-
 # upload push notification processor and supporting tools
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
+scp -i $pemFileName get-sas.js ec2-user@$publicIP:~/
 scp -i $pemFileName dump-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x dump-push-notifications.sh"
 ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq"
@@ -120,6 +116,10 @@ ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.c
 
 # configure crontab to run push notification processor using the get-sas script
 sed "s/BUCKET/$bucket/" push-notification-crontab > tmp
+sed "s/NAMESPACE/$5/" tmp > tmp2
+sed "s/HUB/$6/" tmp2 > tmp
+sed "s/KEY/$7/" tmp > tmp2
+mv tmp2 tmp
 scp -i $pemFileName tmp ec2-user@$publicIP:~/push-notification-crontab
 ssh -i $pemFileName ec2-user@$publicIP "crontab push-notification-crontab"
 ssh -i $pemFileName ec2-user@$publicIP "rm push-notification-crontab"
