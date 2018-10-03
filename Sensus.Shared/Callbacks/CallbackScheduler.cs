@@ -72,10 +72,15 @@ namespace Sensus.Callbacks
 
         public bool ContainsCallback(ScheduledCallback callback)
         {
-            // we should never get a null callback id, but it seems that we are from android.
-            if (callback?.Id == null)
+            if (callback == null)
             {
-                SensusException.Report("Attempted to check scheduling status of callback with null id.");
+                SensusException.Report("Attempted to check contains of null callback.");
+                return false;
+            }
+            // we should never get a null callback id, but it seems that we are from android.
+            else if (callback.Id == null)
+            {
+                SensusException.Report("Attempted to check contains of callback that has null id.");
                 return false;
             }
             else

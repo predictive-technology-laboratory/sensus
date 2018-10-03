@@ -75,7 +75,7 @@ namespace Sensus.iOS
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // register for push notifications. must come after service helper initialization. if the 
-            // subsequently denies authorization to display notifications, then all notifications will
+            // user subsequently denies authorization to display notifications, then all notifications will
             // simply be delivered to the app silently, per the following:  https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications
             UIApplication.SharedApplication.RegisterForRemoteNotifications();
 
@@ -224,7 +224,7 @@ namespace Sensus.iOS
                     if (!notificationsAuthorized)
                     {
                         // warn the user and help them to enable notifications  
-                        UIAlertView warning = new UIAlertView("Warning", "Notifications are disabled. Please enable notifications prior to joining a study. Tap the button below to do this now.", default(IUIAlertViewDelegate), "Close", "Open Notification Settings");
+                        UIAlertView warning = new UIAlertView("Warning", "Notifications are disabled. Please enable notifications to participate fully in your studies. Tap the button below to do this now.", default(IUIAlertViewDelegate), "Close", "Open Notification Settings");
 
                         warning.Dismissed += async (sender, e) =>
                         {
@@ -393,10 +393,6 @@ namespace Sensus.iOS
 
         private async System.Threading.Tasks.Task ProcessRemoteNotificationAsync(NSDictionary userInfo)
         {
-            // we're getting NREs in the app center that point somewhere to the code below. it's difficult 
-            // to tell which variable is null, so we're going a bit overboard with exception handling to
-            // narrow it down.
-
             // set up a cancellation token for processing within limits. the token will be cancelled
             // if we run out of time or an exception is thrown in this method
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -442,12 +438,12 @@ namespace Sensus.iOS
                 {
                     if (SensusContext.Current == null)
                     {
-                        throw new Exception("Null context");
+                        throw new NullReferenceException("Null context");
                     }
 
                     if (SensusContext.Current.Notifier == null)
                     {
-                        throw new Exception("Null notifier");
+                        throw new NullReferenceException("Null notifier");
                     }
 
                     // wait for the push notification to be processed
@@ -460,7 +456,7 @@ namespace Sensus.iOS
             }
             catch (Exception processingException)
             {
-                SensusException.Report("Exception while processing remote notification:  " + processingException.Message + ". PushContent:  " + userInfo, processingException);
+                SensusException.Report("Exception while processing remote notification:  " + processingException.Message + ". Push notification dictionary content:  " + userInfo, processingException);
 
                 try
                 {
