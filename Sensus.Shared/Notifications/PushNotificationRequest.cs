@@ -57,7 +57,8 @@ namespace Sensus.Notifications
         private string _sound;
         private string _command;
         private PushNotificationRequestFormat _format;
-        private DateTimeOffset _time;
+        private DateTimeOffset _creationTime;
+        private DateTimeOffset _notificationTime;
 
         public string Id
         {
@@ -87,12 +88,13 @@ namespace Sensus.Notifications
                            "\"sound\":" + JsonConvert.ToString(_sound) + "," +
                            "\"command\":" + JsonConvert.ToString(_command) + "," +
                            "\"format\":" + JsonConvert.ToString(GetFormatString(_format)) + "," +
-                           "\"time\":" + _time.ToUnixTimeSeconds() +
+                           "\"creation-time\":" + _creationTime.ToUnixTimeSeconds() + "," +
+                           "\"time\":" + _notificationTime.ToUnixTimeSeconds() +
                        "}";
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time, string deviceId, PushNotificationRequestFormat format)
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset notificationTime, string deviceId, PushNotificationRequestFormat format)
         {
             _id = Guid.NewGuid().ToString();
             _protocol = protocol;
@@ -100,7 +102,8 @@ namespace Sensus.Notifications
             _body = body;
             _sound = sound;
             _command = command;
-            _time = time;
+            _creationTime = DateTimeOffset.UtcNow;
+            _notificationTime = notificationTime;
             _deviceId = deviceId;
             _format = format;
 

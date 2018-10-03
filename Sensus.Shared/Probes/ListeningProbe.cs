@@ -229,7 +229,7 @@ namespace Sensus.Probes
         {
             get
             {
-                return DisplayName + ":  When it changes.";
+                return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.");
             }
         }
 

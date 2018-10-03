@@ -36,15 +36,29 @@ notifications_dir="$1-push-notifications"
 mkdir -p $notifications_dir
 aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
                                                                      # to be the same size and will not come down otherwise.
-# get push notifications reverse sorted by time (newest first)
+
+# get push notifications reverse sorted by creation time. we're going to process the most recently created notifications first.
 file_list=$(mktemp)
 for n in $(ls $notifications_dir/*.json)
 do
 
-    time=$(jq -r '.time' $n)
-    echo "$time $n"
+    # for backwards compability:  cover our previous approach in which there was only a "time"
+    # field indicating the target notification time. this previous approach was not correct
+    # because it did not account for push notifications scheduled into the future from 
+    # previous executions of the protocol. for example, if a protocol with surveys is started
+    # and schedules a survey for 1/1/2018 at 9pm, and if this protocol is restarted and
+    # schedules the same survey for 1/1/2018 at 6pm, then the first schedule (with the later
+    # notification time) would be processed first and invalidate the appropriate notification.
+    sort_time=$(jq -r '."creation-time"' $n)
+    if [ "$sort_time" = "null" ] 
+    then
+	# fall back to the notification time (previous approach)
+	sort_time=$(jq -r '.time' $n)
+    fi
 
-# reverse sort by the first field (time) and output the second field (path)
+    echo "$sort_time $n"
+
+# reverse sort by the first field and output the second field (path)
 done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 
 # get shared access signature
@@ -78,7 +92,7 @@ do
     command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
-    time=$(jq -r '.time' $n)       # the value indicates unix time in seconds
+    time=$(jq -r '.time' $n)       # the value indicates unix time in seconds.
 
     # if this is a push notification command, check if we've already sent a push notification 
     # for the command class (everything except for the invocation ID). we're processing the
