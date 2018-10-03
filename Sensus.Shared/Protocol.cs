@@ -1145,6 +1145,8 @@ namespace Sensus
         /// about new surveys) should not have a sound or vibration associated with them. The format
         /// is the same as described for <see cref="ScriptRunner.TriggerWindowsString"/>, except that 
         /// exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.
+        /// The start time must precede the end time (e.g., 19:00-2:00 is not permitted). To specify,
+        /// such a time, provide both intervals (e.g.:  0:00-2:00,19:00-23:59).
         /// </summary>
         /// <value>The alert exclusion window string.</value>
         [EntryStringUiProperty("Alert Exclusion Windows:", true, 36, false)]

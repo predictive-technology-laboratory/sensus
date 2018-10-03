@@ -31710,18 +31710,6 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeacon.GetHashCode
   fullName: Sensus.Probes.Location.EstimoteBeacon.GetHashCode
   nameWithType: EstimoteBeacon.GetHashCode
-- uid: Sensus.Probes.Location.EstimoteBeacon.Name
-  name: Name
-  href: api/Sensus.Probes.Location.EstimoteBeacon.html#Sensus_Probes_Location_EstimoteBeacon_Name
-  commentId: P:Sensus.Probes.Location.EstimoteBeacon.Name
-  fullName: Sensus.Probes.Location.EstimoteBeacon.Name
-  nameWithType: EstimoteBeacon.Name
-- uid: Sensus.Probes.Location.EstimoteBeacon.Name*
-  name: Name
-  href: api/Sensus.Probes.Location.EstimoteBeacon.html#Sensus_Probes_Location_EstimoteBeacon_Name_
-  commentId: Overload:Sensus.Probes.Location.EstimoteBeacon.Name
-  fullName: Sensus.Probes.Location.EstimoteBeacon.Name
-  nameWithType: EstimoteBeacon.Name
 - uid: Sensus.Probes.Location.EstimoteBeacon.ProximityMeters
   name: ProximityMeters
   href: api/Sensus.Probes.Location.EstimoteBeacon.html#Sensus_Probes_Location_EstimoteBeacon_ProximityMeters
@@ -31734,6 +31722,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeacon.ProximityMeters
   fullName: Sensus.Probes.Location.EstimoteBeacon.ProximityMeters
   nameWithType: EstimoteBeacon.ProximityMeters
+- uid: Sensus.Probes.Location.EstimoteBeacon.Tag
+  name: Tag
+  href: api/Sensus.Probes.Location.EstimoteBeacon.html#Sensus_Probes_Location_EstimoteBeacon_Tag
+  commentId: P:Sensus.Probes.Location.EstimoteBeacon.Tag
+  fullName: Sensus.Probes.Location.EstimoteBeacon.Tag
+  nameWithType: EstimoteBeacon.Tag
+- uid: Sensus.Probes.Location.EstimoteBeacon.Tag*
+  name: Tag
+  href: api/Sensus.Probes.Location.EstimoteBeacon.html#Sensus_Probes_Location_EstimoteBeacon_Tag_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeacon.Tag
+  fullName: Sensus.Probes.Location.EstimoteBeacon.Tag
+  nameWithType: EstimoteBeacon.Tag
 - uid: Sensus.Probes.Location.EstimoteBeacon.ToString
   name: ToString()
   href: api/Sensus.Probes.Location.EstimoteBeacon.html#Sensus_Probes_Location_EstimoteBeacon_ToString
@@ -31764,18 +31764,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconDatum.#ctor
   fullName: Sensus.Probes.Location.EstimoteBeaconDatum.EstimoteBeaconDatum
   nameWithType: EstimoteBeaconDatum.EstimoteBeaconDatum
-- uid: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconName
-  name: BeaconName
-  href: api/Sensus.Probes.Location.EstimoteBeaconDatum.html#Sensus_Probes_Location_EstimoteBeaconDatum_BeaconName
-  commentId: P:Sensus.Probes.Location.EstimoteBeaconDatum.BeaconName
-  fullName: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconName
-  nameWithType: EstimoteBeaconDatum.BeaconName
-- uid: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconName*
-  name: BeaconName
-  href: api/Sensus.Probes.Location.EstimoteBeaconDatum.html#Sensus_Probes_Location_EstimoteBeaconDatum_BeaconName_
-  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconDatum.BeaconName
-  fullName: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconName
-  nameWithType: EstimoteBeaconDatum.BeaconName
+- uid: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag
+  name: BeaconTag
+  href: api/Sensus.Probes.Location.EstimoteBeaconDatum.html#Sensus_Probes_Location_EstimoteBeaconDatum_BeaconTag
+  commentId: P:Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag
+  fullName: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag
+  nameWithType: EstimoteBeaconDatum.BeaconTag
+- uid: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag*
+  name: BeaconTag
+  href: api/Sensus.Probes.Location.EstimoteBeaconDatum.html#Sensus_Probes_Location_EstimoteBeaconDatum_BeaconTag_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag
+  fullName: Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag
+  nameWithType: EstimoteBeaconDatum.BeaconTag
 - uid: Sensus.Probes.Location.EstimoteBeaconDatum.DisplayDetail
   name: DisplayDetail
   href: api/Sensus.Probes.Location.EstimoteBeaconDatum.html#Sensus_Probes_Location_EstimoteBeaconDatum_DisplayDetail
@@ -31974,6 +31974,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppToken
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppToken
   nameWithType: EstimoteBeaconProbe.EstimoteCloudAppToken
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
+  name: GetBeaconTagsFromCloud()
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloud
+  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud()
+  nameWithType: EstimoteBeaconProbe.GetBeaconTagsFromCloud()
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud*
+  name: GetBeaconTagsFromCloud
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloud_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
+  nameWithType: EstimoteBeaconProbe.GetBeaconTagsFromCloud
 - uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetChartDataPointFromDatum(Sensus.Datum)
   name: GetChartDataPointFromDatum(Datum)
   href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetChartDataPointFromDatum_Sensus_Datum_
@@ -32022,18 +32034,6 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries
   nameWithType: EstimoteBeaconProbe.GetChartSeries
-- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud
-  name: GetSensusBeaconNamesFromCloud()
-  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetSensusBeaconNamesFromCloud
-  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud
-  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud()
-  nameWithType: EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud()
-- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud*
-  name: GetSensusBeaconNamesFromCloud
-  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetSensusBeaconNamesFromCloud_
-  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud
-  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud
-  nameWithType: EstimoteBeaconProbe.GetSensusBeaconNamesFromCloud
 - uid: Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync
   name: InitializeAsync()
   href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_InitializeAsync
