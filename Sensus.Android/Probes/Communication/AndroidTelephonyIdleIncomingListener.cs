@@ -17,17 +17,28 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
+    /// <summary>
+    /// Listens for new incoming call and idle states of the phone. Since it is not easy to differentiate incoming
+    /// from outgoing calls on the basis of <see cref="CallState"/> values, we also need the <see cref="AndroidTelephonyOutgoingBroadcastReceiver"/>.
+    /// The difficulty is caused by the fact that an incoming call will transition to <see cref="CallState.Ringing"/> and then immediately to
+    /// <see cref="CallState.Offhook"/>, whereas an outgoing call will transition directly to <see cref="CallState.Offhook"/>. We'd rather not have to interpret 
+    /// <see cref="CallState.Offhook"/> differently depending on what the previous state was and how recently it was observed. 
+    /// </summary>
     public class AndroidTelephonyIdleIncomingListener : PhoneStateListener
     {
-        public event EventHandler Idle;
+        public event EventHandler<string> Idle;
         public event EventHandler<string> IncomingCall;
 
-        public override void OnCallStateChanged(CallState state, string incomingNumber)
+        public override void OnCallStateChanged(CallState state, string phoneNumber)
         {
-            if (Idle != null && state == CallState.Idle)
-                Idle(this, null);
-            else if (IncomingCall != null && state == CallState.Ringing)
-                IncomingCall(this, incomingNumber);
+            if (state == CallState.Idle)
+            {
+                Idle?.Invoke(this, phoneNumber);
+            }
+            else if (state == CallState.Ringing)
+            {
+                IncomingCall?.Invoke(this, phoneNumber);
+            }
         }
     }
 }

@@ -18,6 +18,9 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
+    /// <summary>
+    /// Listens for new outgoing calls. See <see cref="AndroidTelephonyIdleIncomingListener"/> for why we need both classes.
+    /// </summary>
     [BroadcastReceiver]
     [IntentFilter(new string[] { Intent.ActionNewOutgoingCall }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidTelephonyOutgoingBroadcastReceiver : BroadcastReceiver
