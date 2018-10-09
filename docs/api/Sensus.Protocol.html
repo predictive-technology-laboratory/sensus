@@ -186,7 +186,9 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <div class="markdown level1 summary"><p>A comma-separated list of time windows during which alerts from Sensus (e.g., notifications
 about new surveys) should not have a sound or vibration associated with them. The format
 is the same as described for <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_TriggerWindowsString">TriggerWindowsString</a>, except that 
-exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.</p>
+exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.
+The start time must precede the end time (e.g., 19:00-2:00 is not permitted). To specify,
+such a time, provide both intervals (e.g.:  0:00-2:00,19:00-23:59).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
