@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
+using Sensus.Exceptions;
 
 namespace Sensus.iOS
 {
@@ -38,8 +39,9 @@ namespace Sensus.iOS
         private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 15000;
         #endregion
 
-        private DateTime _nextToastTime;
-        private readonly object _toastLocker = new object();
+        private readonly string _deviceId;
+        private readonly string _deviceModel;
+        private readonly string _operatingSystem;
         private NSData _pushNotificationTokenData;
 
         public override bool IsCharging
@@ -70,7 +72,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return UIDevice.CurrentDevice.IdentifierForVendor.AsString();
+                return _deviceId;
             }
         }
 
@@ -81,14 +83,14 @@ namespace Sensus.iOS
 
         public override string DeviceModel
         {
-            get { return Xamarin.iOS.DeviceHardware.Version; }
+            get { return _deviceModel; }
         }
 
         public override string OperatingSystem
         {
             get
             {
-                return UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
+                return _operatingSystem;
             }
         }
 
@@ -128,7 +130,42 @@ namespace Sensus.iOS
 
         public iOSSensusServiceHelper()
         {
-            _nextToastTime = DateTime.Now;
+            // we've seen one case of a null reference when getting the identifier.
+            try
+            {
+                _deviceId = UIDevice.CurrentDevice.IdentifierForVendor.AsString();
+
+                if (string.IsNullOrWhiteSpace(_deviceId))
+                {
+                    throw new NullReferenceException("Null device ID.");
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while obtaining device ID:  " + ex.Message, ex);
+
+                // set an arbitrary identifier, since we couldn't get one above. this will change each 
+                // time the app is killed and restarted. but the NRE condition above should be very rare.
+                _deviceId = Guid.NewGuid().ToString();
+            }
+
+            try
+            {
+                _deviceModel = Xamarin.iOS.DeviceHardware.Version;
+            }
+            catch(Exception)
+            {
+
+            }
+
+            try
+            {
+                _operatingSystem = UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)

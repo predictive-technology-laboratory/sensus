@@ -83,11 +83,17 @@ namespace Sensus.iOS
             Settings.AppId = "873948892650954";
             Settings.DisplayName = "Sensus";
 
+            // initialize stuff prior to app load
             Forms.Init();
             FormsMaps.Init();
+
+#pragma warning disable RECS0026 // Possible unassigned object created by 'new'
             new SfChartRenderer();
+#pragma warning restore RECS0026 // Possible unassigned object created by 'new'
+
             ZXing.Net.Mobile.Forms.iOS.Platform.Init();
 
+            // load the app, which starts crash reporting and analytics telemetry.
             LoadApplication(new App());
 
 #if UI_TESTING
