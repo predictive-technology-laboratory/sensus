@@ -289,7 +289,15 @@ namespace Sensus.Android
                 serviceHelper.SetService(null);
             }
 
-            UnregisterReceiver(_powerBroadcastReceiver);
+            // we've seen cases where the receiver doesn't get registered before the service is 
+            // destroyed. catch exception raised from attempting to unregister a receiver that 
+            // hasn't been registered.
+            try
+            {
+                UnregisterReceiver(_powerBroadcastReceiver);
+            }
+            catch (Exception)
+            { }
 
             // do this last so that we don't dispose the service and its system services too early.
             base.OnDestroy();
