@@ -23,15 +23,13 @@ namespace Sensus.Android.Probes.Communication
 {
     public class AndroidSmsOutgoingObserver : ContentObserver
     {
-        private global::Android.Content.Context _context;
-        private Action<SmsDatum> _outgoingSMS;
+        private readonly Action<SmsDatum> _outgoingSmsCallback;
         private string _mostRecentlyObservedSmsURI;
 
-        public AndroidSmsOutgoingObserver(global::Android.Content.Context context, Action<SmsDatum> outgoingSmsCallback)
+        public AndroidSmsOutgoingObserver(Action<SmsDatum> outgoingSmsCallback)
             : base(null)
         {
-            _context = context;
-            _outgoingSMS = outgoingSmsCallback;
+            _outgoingSmsCallback = outgoingSmsCallback;
             _mostRecentlyObservedSmsURI = null;
         }
 
@@ -42,6 +40,12 @@ namespace Sensus.Android.Probes.Communication
 
         public override void OnChange(bool selfChange, global::Android.Net.Uri uri)
         {
+            // might be getting null URIs
+            if (uri == null)
+            {
+                return;
+            }
+
             // for some reason, we get multiple calls to OnChange for the same outgoing text. ignore repeats.
             if (_mostRecentlyObservedSmsURI != null && uri.ToString() == _mostRecentlyObservedSmsURI)
             {
@@ -54,7 +58,7 @@ namespace Sensus.Android.Probes.Communication
                 return;
             }
 
-            ICursor cursor = _context.ContentResolver.Query(uri, null, null, null, null);
+            ICursor cursor = global::Android.App.Application.Context.ContentResolver.Query(uri, null, null, null, null);
 
             if (cursor.MoveToNext())
             {
@@ -88,7 +92,7 @@ namespace Sensus.Android.Probes.Communication
                     DateTimeOffset dotNetDateTime = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(unixTimeMS);
                     string message = cursor.GetString(cursor.GetColumnIndexOrThrow("body"));
 
-                    _outgoingSMS(new SmsDatum(dotNetDateTime, null, toNumber, message, true));
+                    _outgoingSmsCallback?.Invoke(new SmsDatum(dotNetDateTime, null, toNumber, message, true));
 
                     _mostRecentlyObservedSmsURI = uri.ToString();
                 }

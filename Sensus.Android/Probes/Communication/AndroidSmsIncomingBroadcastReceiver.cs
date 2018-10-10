@@ -29,9 +29,10 @@ namespace Sensus.Android.Probes.Communication
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (INCOMING_SMS != null && intent != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED")
+            if (INCOMING_SMS != null && intent?.Action == "android.provider.Telephony.SMS_RECEIVED")
             {
                 Bundle bundle = intent.Extras;
+
                 if (bundle != null)
                 {
                     try
