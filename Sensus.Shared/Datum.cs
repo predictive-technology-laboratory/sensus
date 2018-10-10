@@ -207,7 +207,8 @@ namespace Sensus
         protected Datum(DateTimeOffset timestamp)
         {
             // datum objects are often constructed while on the UI thread, so anything bad here has the 
-            // potential to crash the app. catch any exceptions.
+            // potential to crash the app. catch any exceptions, which should not be possible what
+            // we're actually doing...but nonetheless.
             try
             {
                 _timestamp = timestamp;
