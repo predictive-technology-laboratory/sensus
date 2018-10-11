@@ -36,7 +36,6 @@
     <WarningLevel>4</WarningLevel>
     <JavaMaximumHeapSize></JavaMaximumHeapSize>
     <AndroidSupportedAbis>arm64-v8a;armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
-    <DelaySign>false</DelaySign>
     <NoWarn></NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -126,9 +125,6 @@
     </Reference>
     <Reference Include="ZXing.Net.Mobile.Forms">
       <HintPath>..\packages\ZXing.Net.Mobile.Forms.2.4.1\lib\MonoAndroid71\ZXing.Net.Mobile.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Estimote.Android.Proximity">
-      <HintPath>..\dependencies\estimote\android\Estimote.Android.Proximity.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Band.Android">
       <HintPath>..\dependencies\msband\android\Microsoft.Band.Android.dll</HintPath>

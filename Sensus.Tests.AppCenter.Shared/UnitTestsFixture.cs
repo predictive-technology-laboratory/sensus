@@ -60,9 +60,9 @@ namespace Sensus.Tests.AppCenter.Shared
 
             int totalTests;
 #if __IOS__
-            totalTests = 154;
+            totalTests = 156;
 #elif __ANDROID__
-            totalTests = 155;
+            totalTests = 157;
 #endif
 
             Assert.AreEqual(testsPassed, totalTests);

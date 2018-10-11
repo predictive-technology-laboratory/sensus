@@ -67,6 +67,7 @@ namespace Sensus
                         _messageBuffer.Add(message);
 
                         if (_otherOutputs != null)
+                        {
                             foreach (TextWriter otherOutput in _otherOutputs)
                             {
                                 try
@@ -78,6 +79,7 @@ namespace Sensus
                                     Console.Error.WriteLine("Failed to write to output:  " + writeException.Message);
                                 }
                             }
+                        }
 
                         // append buffer to file periodically
                         if (_messageBuffer.Count % 100 == 0)
@@ -98,7 +100,9 @@ namespace Sensus
             }
 
             if (ex != null)
+            {
                 throw ex;
+            }
         }
 
         public void CommitMessageBuffer()
@@ -112,7 +116,9 @@ namespace Sensus
                         using (StreamWriter file = new StreamWriter(_path, true))
                         {
                             foreach (string bufferedMessage in _messageBuffer)
+                            {
                                 file.WriteLine(bufferedMessage);
+                            }
                         }
 
                         // keep log file under a certain size by reading the most recent MAX_LOG_SIZE_MEGABYTES.
@@ -158,19 +164,26 @@ namespace Sensus
                         {
                             int numLines = 0;
                             while (file.ReadLine() != null)
+                            {
                                 ++numLines;
+                            }
                         
                             file.BaseStream.Position = 0;
                             file.DiscardBufferedData();
 
                             int linesToSkip = Math.Max(numLines - maxMessages, 0);
                             for (int i = 1; i <= linesToSkip; ++i)
+                            {
                                 file.ReadLine();
+                            }
                         }
 
                         string line;
                         while ((line = file.ReadLine()) != null)
+                        {
                             messages.Add(line);
+                        }
+
                     }
                 }
                 catch (Exception ex)
@@ -179,7 +192,9 @@ namespace Sensus
                 }
 
                 if (mostRecentFirst)
+                {
                     messages.Reverse();
+                }
 
                 return messages;
             }

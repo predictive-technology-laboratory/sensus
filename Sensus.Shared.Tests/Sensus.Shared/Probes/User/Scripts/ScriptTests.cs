@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using Xunit;
 using Sensus.Probes.User.Scripts;
 using Sensus.UI.Inputs;
 using System.Linq;
 
-namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
+namespace Sensus.Tests.Probes.User.Scripts
 {
     
     public class ScriptTests

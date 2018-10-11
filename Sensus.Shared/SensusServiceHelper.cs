@@ -106,11 +106,19 @@ namespace Sensus
             #region need the following in order to deserialize protocols between OSs, which have different probes, etc.
             Error = (o, e) =>
             {
-                if (Get() != null)
+                string errorMessage = "Failed to (de)serialize some part of the JSON:  " + e.ErrorContext.Error + ". Path:  " + e.ErrorContext.Path;
+
+                // may not immediately have a service helper for logging. write to console in such cases.
+                if (Get() == null)
                 {
-                    Get().Logger.Log("Failed to (de)serialize some part of the JSON:  " + e.ErrorContext.Error, LoggingLevel.Normal, typeof(SensusServiceHelper));
-                    e.ErrorContext.Handled = true;
+                    Console.Error.WriteLine(errorMessage);
                 }
+                else
+                {
+                    Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(SensusServiceHelper));
+                }
+
+                e.ErrorContext.Handled = true;
             },
 
             // need to ignore missing members for cross-platform deserialization

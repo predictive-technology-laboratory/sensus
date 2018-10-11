@@ -22,11 +22,6 @@ using Sensus.Tests.Classes;
 using Sensus.Android.Concurrent;
 using Xunit;
 using Android.Widget;
-using System;
-using Xunit.Runners;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 

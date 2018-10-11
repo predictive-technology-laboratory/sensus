@@ -18,7 +18,7 @@ using Sensus.Probes;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
 
-namespace Sensus.Tests.Sensus.Shared.Probes
+namespace Sensus.Tests.Probes
 {
     
     public class DataRateCalculatorTests

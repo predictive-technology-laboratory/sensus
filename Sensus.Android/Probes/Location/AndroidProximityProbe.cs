@@ -30,10 +30,6 @@ namespace Sensus.Android.Probes.Location
 
         public AndroidProximityProbe()
         {
-            SensorManager sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
-            Sensor proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
-            _maximumRange = proximitySensor.MaximumRange;
-
             _proximityListener = new AndroidSensorListener(SensorType.Proximity, null, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
@@ -58,6 +54,13 @@ namespace Sensus.Android.Probes.Location
         {
             await base.InitializeAsync();
 
+            // get the maximum range of the proximity sensor. must do the following within initialize rather than 
+            // in the constructor, as upon JSON deserialization we will not yet have a service helper to get.
+            SensorManager sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
+            Sensor proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
+            _maximumRange = proximitySensor.MaximumRange;
+
+            // initialize the listener
             _proximityListener.Initialize(MinDataStoreDelay);
         }
 

@@ -325,7 +325,7 @@ namespace Sensus.UI
             List<DataStore> dataStores = Assembly.GetExecutingAssembly()
                                                  .GetTypes()
                                                  .Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType))
-                                                 .Select(t => Activator.CreateInstance(t))
+                                                 .Select(Activator.CreateInstance)
                                                  .Cast<DataStore>()
                                                  .OrderBy(d => d.DisplayName)
                                                  .ToList();
