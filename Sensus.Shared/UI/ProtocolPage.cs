@@ -81,7 +81,7 @@ namespace Sensus.UI
 
                 }, CancellationToken.None, true, "Set", null, null, "Are you sure you wish to set the study identifier?", false);
 
-                if (string.IsNullOrWhiteSpace(input?.Value.ToString()))
+                if (string.IsNullOrWhiteSpace(input?.Value?.ToString()))
                 {
                     await SensusServiceHelper.Get().FlashNotificationAsync("Identifier not set.");
                     return;
