@@ -43,7 +43,7 @@ using WindowsAzure.Messaging;
 
 namespace Sensus.Android
 {
-    public class AndroidSensusServiceHelper : SensusServiceHelper, IAndroidSensusServiceHelper
+    public class AndroidSensusServiceHelper : SensusServiceHelper
     {
         private AndroidSensusService _service;
         private string _deviceId;

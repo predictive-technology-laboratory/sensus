@@ -335,56 +335,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AndroidActivityResultRequestCode.cs" />
-    <Compile Include="AndroidSensusServiceBootStarter.cs" />
-    <Compile Include="AndroidSensusServiceHelper.cs" />
-    <Compile Include="AndroidTextToSpeech.cs" />
     <Compile Include="AndroidMainActivity.cs" />
-    <Compile Include="Probes\AndroidSensorListener.cs" />
-    <Compile Include="Probes\Apps\AndroidFacebookProbe.cs" />
-    <Compile Include="Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
-    <Compile Include="Probes\Communication\AndroidSmsOutgoingObserver.cs" />
-    <Compile Include="Probes\Communication\AndroidSmsProbe.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
-    <Compile Include="Probes\Communication\AndroidTelephonyProbe.cs" />
-    <Compile Include="Probes\Context\AndroidHumidityProbe.cs" />
-    <Compile Include="Probes\Context\AndroidAmbientTemperatureProbe.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothDeviceProximityProbe.cs" />
-    <Compile Include="Probes\Context\AndroidLightProbe.cs" />
-    <Compile Include="Probes\Context\AndroidSoundProbe.cs" />
-    <Compile Include="Probes\Device\AndroidScreenProbe.cs" />
-    <Compile Include="Probes\Location\AndroidProximityProbe.cs" />
-    <Compile Include="Probes\Location\AndroidAltitudeProbe.cs" />
-    <Compile Include="Probes\Location\AndroidCompassProbe.cs" />
-    <Compile Include="Probes\Movement\AndroidAccelerometerProbe.cs" />
-    <Compile Include="Probes\Network\AndroidCellTowerChangeListener.cs" />
-    <Compile Include="Probes\Network\AndroidCellTowerProbe.cs" />
-    <Compile Include="Probes\Network\AndroidListeningWlanProbe.cs" />
-    <Compile Include="Probes\Network\AndroidWlanBroadcastReceiver.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AndroidSensusService.cs" />
-    <Compile Include="AndroidSensusServiceBinder.cs" />
-    <Compile Include="AndroidSensusServiceConnection.cs" />
-    <Compile Include="AndroidServiceConnectedEventArgs.cs" />
-    <Compile Include="Callbacks\AndroidCallbackScheduler.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothServerAdvertisingCallback.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothClientScannerCallback.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothClientGattCallback.cs" />
-    <Compile Include="Probes\Movement\AndroidActivityProbe.cs" />
-    <Compile Include="Probes\Movement\AndroidAwarenessProbeBroadcastReceiver.cs" />
-    <Compile Include="Probes\Context\AndroidBluetoothServerGattCallback.cs" />
-    <Compile Include="Probes\Location\AndroidEstimoteBeaconProbe.cs" />
-    <Compile Include="TextCellDisposedFix.cs" />
-    <Compile Include="Probes\Movement\AndroidLocationFenceProbe.cs" />
-    <Compile Include="Probes\Movement\AndroidAwarenessProbe.cs" />
-    <Compile Include="AndroidPowerConnectionChangeListener.cs" />
-    <Compile Include="AndroidPowerConnectionChangeBroadcastReceiver.cs" />
-    <Compile Include="Notifications\AndroidNotifier.cs" />
-    <Compile Include="Notifications\FirebaseNotificationService.cs" />
-    <Compile Include="Notifications\FirebaseRegistrationService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -426,10 +379,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Callbacks\" />
     <Folder Include="Resources\values-v21\" />
     <Folder Include="Resources\layout\" />
-    <Folder Include="Notifications\" />
   </ItemGroup>
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />

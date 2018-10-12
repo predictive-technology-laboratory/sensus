@@ -118,6 +118,7 @@ namespace Sensus
                     Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(SensusServiceHelper));
                 }
 
+                // don't throw any errors back up, as we might be on the UI thread and crash the app.
                 e.ErrorContext.Handled = true;
             },
 
@@ -589,7 +590,7 @@ namespace Sensus
                     _runningProtocolIds.Add(id);
 
 #if __ANDROID__
-                    (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
                 }
             }
@@ -651,7 +652,7 @@ namespace Sensus
                 }
 
 #if __ANDROID__
-                (this as Android.IAndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+                (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
             }
 

@@ -521,7 +521,7 @@ namespace Sensus.UI
                 {
                     await SensusServiceHelper.Get().StopProtocolsAsync();
 
-                    (SensusServiceHelper.Get() as Android.IAndroidSensusServiceHelper)?.StopAndroidSensusService();
+                    (SensusServiceHelper.Get() as Android.AndroidSensusServiceHelper)?.StopAndroidSensusService();
                 }
 
             }, ToolbarItemOrder.Secondary));

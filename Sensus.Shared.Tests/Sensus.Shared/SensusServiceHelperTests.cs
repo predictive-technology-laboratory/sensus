@@ -20,6 +20,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 using System;
 using System.Threading.Tasks;
+using Sensus.Context;
 
 namespace Sensus.Tests
 {    
@@ -64,7 +65,11 @@ namespace Sensus.Tests
 
             SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+            TestSensusServiceHelper service2 = null;
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+            });
 
             Assert.Equal(service1.RegisteredProtocols.Count, service2.RegisteredProtocols.Count);
             Assert.Equal(service1.RegisteredProtocols.First().Name, service2.RegisteredProtocols.First().Name);
@@ -82,8 +87,14 @@ namespace Sensus.Tests
             await Protocol.CreateAsync("Test2");
 
             var serial = JsonConvert.SerializeObject(service1, _jsonSerializerSettings);
+
             SensusServiceHelper.ClearSingleton();
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+
+            TestSensusServiceHelper service2 = null;
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+            });
 
             Assert.Equal(2, service1.RegisteredProtocols.Count);
             Assert.Equal(2, service2.RegisteredProtocols.Count);
@@ -107,7 +118,11 @@ namespace Sensus.Tests
 
             SensusServiceHelper.ClearSingleton();
 
-            var service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+            TestSensusServiceHelper service2 = null;
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                service2 = JsonConvert.DeserializeObject<TestSensusServiceHelper>(serial, _jsonSerializerSettings);
+            });
 
             Assert.Equal(service1.RunningProtocolIds.Count, service2.RunningProtocolIds.Count);
             Assert.Equal(service1.RunningProtocolIds.Single(), service2.RunningProtocolIds.Single());

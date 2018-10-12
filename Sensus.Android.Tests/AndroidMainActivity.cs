@@ -22,14 +22,21 @@ using Sensus.Tests.Classes;
 using Sensus.Android.Concurrent;
 using Xunit;
 using Android.Widget;
+using Android.Content;
+using System;
+using Xamarin.Facebook;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
-namespace Sensus.Android.Tests
+// need to use the same namespace as used within the main android app project, as we're pulling in code
+// from the shared project that references the class below.
+namespace Sensus.Android
 {
-    [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme= "@android:style/Theme.Material.Light")]
-    public class MainActivity : RunnerActivity
+    [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme = "@android:style/Theme.Material.Light")]
+    public class AndroidMainActivity : RunnerActivity
     {
+        public ICallbackManager FacebookCallbackManager { get; set; }
+
         protected override void OnCreate(Bundle bundle)
         {
             SensusContext.Current = new TestSensusContext
@@ -39,12 +46,12 @@ namespace Sensus.Android.Tests
 
             AddTestAssembly(Assembly.GetExecutingAssembly());
             AddExecutionAssembly(typeof(ExtensibilityPointFactory).Assembly);
-			AutoStart = true;
+            AutoStart = true;
             TerminateAfterExecution = false;
 
             XUnitResultCounter resultCounter = new XUnitResultCounter();
 
-            resultCounter.ResultsDelivered += (sender, results) => 
+            resultCounter.ResultsDelivered += (sender, results) =>
             {
                 RunOnUiThread(() =>
                 {
@@ -61,6 +68,11 @@ namespace Sensus.Android.Tests
             ResultChannel = resultCounter;
 
             base.OnCreate(bundle);
+        }
+
+        public void GetActivityResultAsync(Intent intent, AndroidActivityResultRequestCode requestCode, Action<Tuple<Result, Intent>> callback)
+        {
+            throw new NotImplementedException();
         }
     }
 }

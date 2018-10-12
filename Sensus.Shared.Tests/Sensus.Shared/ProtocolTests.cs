@@ -18,6 +18,7 @@ using Xunit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sensus.Tests.Classes;
+using Sensus.Context;
 
 namespace Sensus.Tests
 {
@@ -57,7 +58,11 @@ namespace Sensus.Tests
             protocol1.Groupable = true;
             protocol1.VariableValueUiProperty = new List<string>(new string[] { "var1: val1", "var1:", "var1:val2", "var2", "var2:" });
 
-            var protocol2 = JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings), _jsonSerializerSettings);
+            Protocol protocol2 = null;
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                protocol2 = JsonConvert.DeserializeObject<Protocol>(JsonConvert.SerializeObject(protocol1, _jsonSerializerSettings), _jsonSerializerSettings);
+            });
 
             Assert.Equal(protocol1.Name, protocol2.Name);
             Assert.Equal(protocol1.ContactEmail, protocol2.ContactEmail);

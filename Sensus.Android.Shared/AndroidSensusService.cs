@@ -26,6 +26,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sensus.Android.Notifications;
 
+// the unit test project contains the Resource class in its namespace rather than the Sensus.Android
+// namespace. include that namespace below.
+#if UNIT_TEST
+using Sensus.Android.Tests;
+#endif
+
 namespace Sensus.Android
 {
     /// <summary>

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Context;
 using Sensus.Probes;
 using Xunit;
 
@@ -28,8 +29,11 @@ namespace Sensus.Tests.Probes
         [Fact]
         public void ProbeParameterlessConstructorTest()
         {
-            SensusServiceHelper.ClearSingleton();
-            Assert.True(Probe.GetAll().Count > 0);
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                SensusServiceHelper.ClearSingleton();
+                Assert.True(Probe.GetAll().Count > 0);
+            });
         }
     }
 }

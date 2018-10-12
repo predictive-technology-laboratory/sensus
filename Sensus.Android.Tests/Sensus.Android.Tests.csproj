@@ -31,7 +31,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;__ANDROID__</DefineConstants>
+    <DefineConstants>DEBUG;__ANDROID__;UNIT_TEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <JavaMaximumHeapSize></JavaMaximumHeapSize>
@@ -43,7 +43,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>RELEASE;__ANDROID__</DefineConstants>
+    <DefineConstants>RELEASE;__ANDROID__;UNIT_TEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
@@ -270,11 +270,71 @@
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.3.2.0.839982\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Firebase.Common">
+      <HintPath>..\packages\Xamarin.Firebase.Common.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Firebase.Iid">
+      <HintPath>..\packages\Xamarin.Firebase.Iid.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Iid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Firebase.Messaging">
+      <HintPath>..\packages\Xamarin.Firebase.Messaging.60.1142.1\lib\MonoAndroid80\Xamarin.Firebase.Messaging.dll</HintPath>
+    </Reference>
+    <Reference Include="Bolts.AppLinks">
+      <HintPath>..\packages\Bolts.1.4.0.1\lib\MonoAndroid403\Bolts.AppLinks.dll</HintPath>
+    </Reference>
+    <Reference Include="Bolts.Tasks">
+      <HintPath>..\packages\Bolts.1.4.0.1\lib\MonoAndroid403\Bolts.Tasks.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.CustomTabs">
+      <HintPath>..\packages\Xamarin.Android.Support.CustomTabs.27.0.2.1\lib\MonoAndroid81\Xamarin.Android.Support.CustomTabs.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Core.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Core.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Core.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.AppLinks.Android">
+      <HintPath>..\packages\Xamarin.Facebook.AppLinks.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.AppLinks.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Messenger.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Messenger.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Messenger.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Places.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Places.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Places.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.ZXing.Core">
+      <HintPath>..\packages\Xamarin.Google.ZXing.Core.3.3.0\lib\MonoAndroid\Google.ZXing.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Common.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Common.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Common.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Login.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Login.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Login.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Share.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Share.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Share.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Facebook.Android">
+      <HintPath>..\packages\Xamarin.Facebook.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Estimote.Android.Proximity">
+      <HintPath>..\packages\Estimote.Android.Proximity.1.0.3\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Location">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Location.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Location.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Places">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Places.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Places.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.GooglePlayServices.Awareness">
+      <HintPath>..\packages\Xamarin.GooglePlayServices.Awareness.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Awareness.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Azure.NotificationHubs.Android">
+      <HintPath>..\packages\Xamarin.Azure.NotificationHubs.Android.0.4.0\lib\MonoAndroid403\Xamarin.Azure.NotificationHubs.Android.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MainActivity.cs" />
+    <Compile Include="AndroidMainActivity.cs" />
     <Compile Include="Tests\Concurrent\MainConcurrentTests.cs" />
     <Compile Include="Tests\Extensions\DateTimeExtensionsTests.cs" />
   </ItemGroup>
@@ -340,4 +400,11 @@
   <Import Project="..\packages\Xamarin.GooglePlayServices.Base.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Base.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Base.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Base.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Maps.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Maps.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Maps.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Maps.targets')" />
   <Import Project="..\packages\Xamarin.Forms.3.2.0.839982\build\netstandard2.0\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.3.2.0.839982\build\netstandard2.0\Xamarin.Forms.targets')" />
+  <Import Project="..\packages\Xamarin.Firebase.Common.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Common.targets" Condition="Exists('..\packages\Xamarin.Firebase.Common.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Common.targets')" />
+  <Import Project="..\packages\Xamarin.Firebase.Iid.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Iid.targets" Condition="Exists('..\packages\Xamarin.Firebase.Iid.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Iid.targets')" />
+  <Import Project="..\packages\Xamarin.Firebase.Messaging.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Messaging.targets" Condition="Exists('..\packages\Xamarin.Firebase.Messaging.60.1142.1\build\MonoAndroid80\Xamarin.Firebase.Messaging.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.CustomTabs.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.CustomTabs.targets" Condition="Exists('..\packages\Xamarin.Android.Support.CustomTabs.27.0.2.1\build\MonoAndroid81\Xamarin.Android.Support.CustomTabs.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Location.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Location.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Location.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Location.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Places.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Places.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Places.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Places.targets')" />
+  <Import Project="..\packages\Xamarin.GooglePlayServices.Awareness.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Awareness.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Awareness.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Awareness.targets')" />
 </Project>

@@ -21,6 +21,12 @@ using Sensus.Probes.Location;
 using Sensus.Android.Notifications;
 using System.Threading.Tasks;
 
+// the unit test project contains the Resource class in its namespace rather than the Sensus.Android
+// namespace. include that namespace below.
+#if UNIT_TEST
+using Sensus.Android.Tests;
+#endif
+
 namespace Sensus.Android.Probes.Location
 {
     public class AndroidEstimoteBeaconProbe : EstimoteBeaconProbe
