@@ -15,6 +15,7 @@
 using Android.App;
 using Android.Bluetooth;
 using Android.Content;
+using Sensus.Exceptions;
 using System;
 
 namespace Sensus.Android.Probes.Context
@@ -31,8 +32,14 @@ namespace Sensus.Android.Probes.Context
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (intent != null)
+            // this method is usually called on the UI thread and can crash the app if it throws an exception
+            try
             {
+                if (intent == null)
+                {
+                    throw new ArgumentNullException(nameof(intent));
+                }
+
                 if (intent.Action == BluetoothDevice.ActionFound && DEVICE_FOUND != null)
                 {
                     BluetoothDevice device = intent.GetParcelableExtra(BluetoothDevice.ExtraDevice) as BluetoothDevice;
@@ -47,6 +54,10 @@ namespace Sensus.Android.Probes.Context
                         STATE_CHANGED(this, (State)stateInt);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception in BLE broadcast receiver:  " + ex.Message, ex);
             }
         }
     }

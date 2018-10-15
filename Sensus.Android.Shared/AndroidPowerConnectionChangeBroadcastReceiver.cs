@@ -27,6 +27,7 @@ namespace Sensus.Android
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
+            // this method is usually called on the UI thread and can crash the app if it throws an exception
             try
             {
                 if (intent == null)
@@ -41,7 +42,7 @@ namespace Sensus.Android
             }
             catch (Exception ex)
             {
-                SensusException.Report("Failed to process power connection change intent.", ex);
+                SensusException.Report("Exception in power connection change broadcast receiver:  " + ex.Message, ex);
             }
         }
     }

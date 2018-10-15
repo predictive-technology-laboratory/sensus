@@ -14,6 +14,7 @@
 
 using Android.App;
 using Android.Content;
+using Sensus.Exceptions;
 using System;
 
 namespace Sensus.Android.Probes.Communication
@@ -29,9 +30,22 @@ namespace Sensus.Android.Probes.Communication
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (OUTGOING_CALL != null && intent != null && intent.Action == Intent.ActionNewOutgoingCall)
+            // this method is usually called on the UI thread and can crash the app if it throws an exception
+            try
             {
-                OUTGOING_CALL(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
+                if (intent == null)
+                {
+                    throw new ArgumentNullException(nameof(intent));
+                }
+
+                if (intent.Action == Intent.ActionNewOutgoingCall)
+                {
+                    OUTGOING_CALL?.Invoke(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception in telephony broadcast receiver:  " + ex.Message, ex);
             }
         }
     }

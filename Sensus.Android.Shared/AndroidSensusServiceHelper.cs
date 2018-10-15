@@ -87,7 +87,9 @@ namespace Sensus.Android
                 {
                     foreach (Network network in connectivityManager.GetAllNetworks())
                     {
-                        if (connectivityManager.GetNetworkInfo(network).IsConnected && connectivityManager.GetNetworkCapabilities(network).HasTransport(TransportType.Wifi))
+                        // we've seen NREs in the following lines. 
+                        if ((connectivityManager.GetNetworkInfo(network)?.IsConnected ?? false) && 
+                            (connectivityManager.GetNetworkCapabilities(network)?.HasTransport(TransportType.Wifi) ?? false))
                         {
                             return true;
                         }

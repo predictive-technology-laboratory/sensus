@@ -16,6 +16,7 @@ using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Telephony;
+using Sensus.Exceptions;
 using Sensus.Probes.Communication;
 using System;
 
@@ -29,13 +30,19 @@ namespace Sensus.Android.Probes.Communication
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (INCOMING_SMS != null && intent?.Action == "android.provider.Telephony.SMS_RECEIVED")
+            // this method is usually called on the UI thread and can crash the app if it throws an exception
+            try
             {
-                Bundle bundle = intent.Extras;
-
-                if (bundle != null)
+                if (intent == null)
                 {
-                    try
+                    throw new ArgumentNullException(nameof(intent));
+                }
+
+                if (INCOMING_SMS != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED")
+                {
+                    Bundle bundle = intent.Extras;
+
+                    if (bundle != null)
                     {
                         Java.Lang.Object[] pdus = (Java.Lang.Object[])bundle.Get("pdus");
                         for (int i = 0; i < pdus.Length; i++)
@@ -60,11 +67,13 @@ namespace Sensus.Android.Probes.Communication
                             DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(message.TimestampMillis);
                             INCOMING_SMS(this, new SmsDatum(timestamp, message.OriginatingAddress, null, message.MessageBody, false));
                         }
-                    }
-                    catch (Exception)
-                    {
+
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception in SMS broadcast receiver:  " + ex.Message, ex);
             }
         }
     }

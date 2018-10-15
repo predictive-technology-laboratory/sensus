@@ -2,15 +2,15 @@
 
 if [ $# -ne 7 ]; then
     echo "Usage:  ./configure-ec2.sh [bucket] [cidr ingress] [image id] [instance type] [azure namespace] [azure hub] [azure notification hub full access signature]"
-    echo "\t[bucket]:  Bucket configured using the configure-s3.sh script (e.g., test-bucket-234234234-23423423-423423)"
-    echo "\t[cidr ingress]:  SSH ingress range, in CIDR format (e.g., 123.456.0.0/16)"
-    echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2)"
-    echo "\t[instance type]:  Instance type (e.g., t2.micro)"
-    echo "\t[azure namespace]:  The Azure push notification namespace name."
-    echo "\t[azure hub]:  The Azure push notification hub name."
-    echo "\t[azure notification hub full access key]:  The value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=)"
+    echo "\t[bucket]:  Bucket configured using the configure-s3.sh script (e.g., test-bucket-234234234-23423423-423423)."
+    echo "\t[cidr ingress]:  SSH ingress range for firewall, in CIDR format (e.g., 123.456.0.0/16 to allow access from the 123.456.*.* subnet, or 0.0.0.0/0 to allow access from any IP address)."
+    echo "\t[image id]:  Image ID to use (e.g., ami-a4c7edb2, see AWS EC2 image list on the web)."
+    echo "\t[instance type]:  Instance type (e.g., t2.micro)."
+    echo "\t[azure namespace]:  The Azure push notification namespace name. See Push Notification documentation. Can be ignored by using \"\"."
+    echo "\t[azure hub]:  The Azure push notification hub name. See Push Notification documentation. Can be ignored by using \"\"."
+    echo "\t[azure notification hub full access key]:  The value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=). See Push notification documentation. Can be ignored by using \"\"."
     echo ""
-    echo "Effect:  Configures an EC2 instance with an IAM group/user that has access to the given S3 bucket and monitors the bucket for push notifications."
+    echo "Effect:  Configures an EC2 instance with an IAM group/user that has read-only access to the given S3 bucket and monitors the bucket for push notifications."
     exit 1
 fi
 

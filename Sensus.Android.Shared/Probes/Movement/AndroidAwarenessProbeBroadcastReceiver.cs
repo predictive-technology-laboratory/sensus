@@ -30,66 +30,79 @@ namespace Sensus.Android.Probes.Movement
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-            if (intent.Action == AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION)
+            // this method is usually called on the UI thread and can crash the app if it throws an exception
+            try
             {
-                FenceState fenceState = FenceState.Extract(intent);
-                if (fenceState == null)
+                if (intent == null)
                 {
-                    SensusException.Report("Null awareness fence state.");
-                    return;
+                    throw new ArgumentNullException(nameof(intent));
                 }
 
-                // is this a location fence event?
-                if (fenceState.FenceKey == AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY)
+                if (intent.Action == AndroidAwarenessProbe.AWARENESS_PENDING_INTENT_ACTION)
                 {
-                    if (fenceState.CurrentState == FenceState.True)
+                    FenceState fenceState = FenceState.Extract(intent);
+                    if (fenceState == null)
                     {
-                        LocationChanged?.Invoke(this, fenceState);
-                    }
-                }
-                // otherwise, it should be an activity fence event.
-                else
-                {
-                    string[] fenceKeyParts;
-                    if (fenceState.FenceKey == null || (fenceKeyParts = fenceState.FenceKey.Split('.')).Length != 2)
-                    {
-                        SensusException.Report("Awareness fence key \"" + fenceState.FenceKey + "\" does not have two parts.");
+                        SensusException.Report("Null awareness fence state.");
                         return;
                     }
 
-                    Activities activity;
-                    if (!Enum.TryParse(fenceKeyParts[0], out activity))
+                    // is this a location fence event?
+                    if (fenceState.FenceKey == AndroidLocationFenceProbe.AWARENESS_EXITING_LOCATION_FENCE_KEY)
                     {
-                        SensusException.Report("Unrecognized awareness activity:  " + fenceKeyParts[0]);
-                        return;
+                        if (fenceState.CurrentState == FenceState.True)
+                        {
+                            LocationChanged?.Invoke(this, fenceState);
+                        }
                     }
-
-                    ActivityPhase phase;
-                    if (!Enum.TryParse(fenceKeyParts[1], out phase))
-                    {
-                        SensusException.Report("Unrecognized awareness activity phase:  " + fenceKeyParts[1]);
-                        return;
-                    }
-
-                    DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(fenceState.LastFenceUpdateTimeMillis);
-
-                    if (fenceState.CurrentState == FenceState.True)
-                    {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Active, ActivityConfidence.NotAvailable));
-                    }
-                    else if (fenceState.CurrentState == FenceState.False)
-                    {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Inactive, ActivityConfidence.NotAvailable));
-                    }
-                    else if (fenceState.CurrentState == FenceState.Unknown)
-                    {
-                        ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Unknown, ActivityConfidence.NotAvailable));
-                    }
+                    // otherwise, it should be an activity fence event.
                     else
                     {
-                        SensusException.Report("Unrecognized fence state:  " + fenceState.CurrentState);
+                        string[] fenceKeyParts;
+                        if (fenceState.FenceKey == null || (fenceKeyParts = fenceState.FenceKey.Split('.')).Length != 2)
+                        {
+                            SensusException.Report("Awareness fence key \"" + fenceState.FenceKey + "\" does not have two parts.");
+                            return;
+                        }
+
+                        Activities activity;
+                        if (!Enum.TryParse(fenceKeyParts[0], out activity))
+                        {
+                            SensusException.Report("Unrecognized awareness activity:  " + fenceKeyParts[0]);
+                            return;
+                        }
+
+                        ActivityPhase phase;
+                        if (!Enum.TryParse(fenceKeyParts[1], out phase))
+                        {
+                            SensusException.Report("Unrecognized awareness activity phase:  " + fenceKeyParts[1]);
+                            return;
+                        }
+
+                        DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(fenceState.LastFenceUpdateTimeMillis);
+
+                        if (fenceState.CurrentState == FenceState.True)
+                        {
+                            ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Active, ActivityConfidence.NotAvailable));
+                        }
+                        else if (fenceState.CurrentState == FenceState.False)
+                        {
+                            ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Inactive, ActivityConfidence.NotAvailable));
+                        }
+                        else if (fenceState.CurrentState == FenceState.Unknown)
+                        {
+                            ActivityChanged?.Invoke(this, new ActivityDatum(timestamp, activity, phase, ActivityState.Unknown, ActivityConfidence.NotAvailable));
+                        }
+                        else
+                        {
+                            SensusException.Report("Unrecognized fence state:  " + fenceState.CurrentState);
+                        }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                SensusException.Report("Exception in Awareness broadcast receiver:  " + ex.Message, ex);
             }
         }
     }

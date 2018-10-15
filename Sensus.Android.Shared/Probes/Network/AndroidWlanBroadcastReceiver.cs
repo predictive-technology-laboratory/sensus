@@ -16,6 +16,7 @@ using Android.App;
 using Android.Content;
 using Android.Net;
 using Android.Net.Wifi;
+using Sensus.Exceptions;
 using Sensus.Probes.Network;
 using System;
 
@@ -30,17 +31,33 @@ namespace Sensus.Android.Probes.Network
 
         public override void OnReceive(global::Android.Content.Context context, Intent intent)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            if (WIFI_CONNECTION_CHANGED != null && intent != null && intent.Action == ConnectivityManager.ConnectivityAction)
-#pragma warning restore CS0618 // Type or member is obsolete
+            // this method is usually called on the UI thread and can crash the app if it throws an exception
+            try
             {
-                string currAccessPointBSSID = GetAccessPointBSSID();
-                if (FIRST_RECEIVE || currAccessPointBSSID != PREVIOUS_ACCESS_POINT_BSSID)
+                if (intent == null)
                 {
-                    WIFI_CONNECTION_CHANGED(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID));
-                    PREVIOUS_ACCESS_POINT_BSSID = currAccessPointBSSID;
-                    FIRST_RECEIVE = false;
+                    throw new ArgumentNullException(nameof(intent));
                 }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (intent.Action == ConnectivityManager.ConnectivityAction)
+#pragma warning restore CS0618 // Type or member is obsolete
+                {
+                    // we've seen duplicate reports of the BSSID. only call the event handler if this is the first report
+                    // or if the BSSID has changed to a new value. it's possible for the current to be null multiple times
+                    // hence the need for both the first check as well as the change check.
+                    string currAccessPointBSSID = GetAccessPointBSSID();
+                    if (FIRST_RECEIVE || currAccessPointBSSID != PREVIOUS_ACCESS_POINT_BSSID)
+                    {
+                        WIFI_CONNECTION_CHANGED?.Invoke(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID));
+                        PREVIOUS_ACCESS_POINT_BSSID = currAccessPointBSSID;
+                        FIRST_RECEIVE = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception in WLAN broadcast receiver:  " + ex.Message, ex);
             }
         }
 
