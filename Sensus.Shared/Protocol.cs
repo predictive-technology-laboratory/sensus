@@ -1730,7 +1730,13 @@ namespace Sensus
 
             if (startException == null)
             {
+                // we're all good. register with push notification hubs.
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+
+                // save the state of the app in case it crashes or -- on ios -- in case the user terminates
+                // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts.
+                await SensusServiceHelper.Get().SaveAsync();
+
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
             }
             else
@@ -2163,6 +2169,10 @@ namespace Sensus
             }
 
             await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+
+            // save the state of the app, so that if it terminates unexpectedly (e.g., if the user swipes it away)
+            // we won't attempt to restart the protocol if/when the app restarts.
+            await SensusServiceHelper.Get().SaveAsync();
 
             SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
             await SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");

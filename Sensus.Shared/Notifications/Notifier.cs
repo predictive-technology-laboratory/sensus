@@ -185,15 +185,34 @@ namespace Sensus.Notifications
                 SensusException.Report("Failed to delete push notification from backend:  " + ex.Message, ex);
             }
 
-            // ignore the push notification if it targets a protocol that is not running and is not 
-            // scheduled to run. we explicitly attempt to prevent such notifications from coming through 
-            // by unregistering from hubs that lack running/scheduled protocols and clearing the token 
-            // from the backend; however, there may be race conditions that allow a push notification 
-            // to be delivered to us nonetheless.
-            if (!protocol.Running && !protocol.StartIsScheduled)
+            // if the targeted protocol is not running, do some digging.
+            if (!protocol.Running)
             {
-                SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running and is not scheduled to run.", LoggingLevel.Normal, GetType());
-                return;
+                // the protocol is scheduled to start in the future. as the push notification should be the start command itself, 
+                // we should allow the push notification processing to continue.
+                if (protocol.StartIsScheduled)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Push notification targets protocol that has not started but is scheduled to do so. Allowing.", LoggingLevel.Normal, GetType());
+                }
+                // the protocol should be running but is not. this can happen if the app dies while 
+                // the protocol is running (e.g., due to system killing it or an exception) and 
+                // is subsequently restarted (e.g., due to resource pressure alleviation or the 
+                // arrival of a push notification). attempt to start the protocol.
+                else if (SensusServiceHelper.Get().RunningProtocolIds.Contains(protocol.Id))
+                {
+                    SensusServiceHelper.Get().Logger.Log("Push notification targets a protocol that is not running but should be. Starting protocol.", LoggingLevel.Normal, GetType());
+                    await protocol.StartAsync();
+                }
+                else
+                {
+                    // the protocol is not running, should not be, and never will be. we explicitly attempt to 
+                    // prevent such notifications from coming through by unregistering from hubs that lack 
+                    // running/scheduled protocols and clearing the token from the backend; however, there may 
+                    // be race conditions (e.g., stopping the protocol just before the arrival of a push 
+                    // notification) that allow a push notification to be delivered to us nonetheless.
+                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not running and is not scheduled to run.", LoggingLevel.Normal, GetType());
+                    return;
+                }
             }
 
 #if __ANDROID__
