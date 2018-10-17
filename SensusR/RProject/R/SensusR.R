@@ -194,8 +194,32 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       next
     }
     
-    # read and parse JSON
+    # read JSON
     file.text = readChar(path, file.size)
+    
+    # check for incomplete JSON file. this can happen if the app is killed before it has a chance
+    # to properly close of the JSON array. in such cases, the file will abruptly terminate with
+    # an unclosed JSON array, and the fromJSON call below will fail. detect this condition and fix
+    # up the JSON accordingly.
+    if(!endsWith(file.text, "]"))
+    {
+      # replace the final line, which is incomplete, with a closing square brace to 
+      # complete the JSON array. if the final line is preceded by a comma (as it will 
+      # typically be with one JSON object per line) then also include the comma in the 
+      # text to be replaced. the final result should be a valid JSON array.
+      file.text = sub(",?\n[^\n]*$", "\n]", file.text)
+      
+      warning(paste("File", path, "contained an unclosed JSON array. Trimmed off final line."))
+      
+      # if we somehow failed to fix up the array with our regex substitution, let the
+      # user know and ignore the file.
+      if(!endsWith(file.text, "]"))
+      {
+        warning(paste("Failed to fix path", path, ". Ignoring this file."))
+        next
+      }
+    }
+    
     file.json = jsonlite::fromJSON(file.text)
 
     # skip empty JSON
