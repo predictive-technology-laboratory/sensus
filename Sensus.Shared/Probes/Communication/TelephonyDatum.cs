@@ -21,12 +21,23 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Communication
 {
+    /// <summary>
+    /// Represents phone call meta-data in terms of the phones <see cref="TelephonyState"/>, the other phone number, and -- if
+    /// a call just ended -- the duration of the call. Both <see cref="TelephonyState.IncomingCall"/> and <see cref="TelephonyState.OutgoingCall"/>
+    /// values will be associated with an unspecified <see cref="CallDurationSeconds"/>, as the former are recorded to mark the time
+    /// at which the incoming call arrived or went out, respectively. When a call ends and the phone returns to <see cref="TelephonyState.Idle"/>, then
+    /// there will be a value for <see cref="CallDurationSeconds"/> indicating how long the call lasted.
+    /// </summary>
     public class TelephonyDatum : Datum
     {
         private TelephonyState _state;
         private string _phoneNumber;
         private double? _callDurationSeconds;
 
+        /// <summary>
+        /// The duration of the call. Note that this includes the time spent ringing.
+        /// </summary>
+        /// <value>The call duration seconds.</value>
         [DoubleProbeTriggerProperty("Call Duration (Secs.)")]
         public double? CallDurationSeconds
         {

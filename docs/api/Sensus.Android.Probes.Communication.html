@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Sensus.Android.Probes.Communication
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -92,9 +94,15 @@
       <h4><a class="xref" href="Sensus.Android.Probes.Communication.AndroidSmsProbe.html">AndroidSmsProbe</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Android.Probes.Communication.AndroidTelephonyIdleIncomingListener.html">AndroidTelephonyIdleIncomingListener</a></h4>
-      <section></section>
+      <section><p>Listens for new incoming call and idle states of the phone. Since it is not easy to differentiate incoming
+from outgoing calls on the basis of <span class="xref">Android.Telephony.CallState</span> values, we also need the <a class="xref" href="Sensus.Android.Probes.Communication.AndroidTelephonyOutgoingBroadcastReceiver.html">AndroidTelephonyOutgoingBroadcastReceiver</a>.
+The difficulty is caused by the fact that an incoming call will transition to <span class="xref">Android.Telephony.CallState.Ringing</span> and then immediately to
+<span class="xref">Android.Telephony.CallState.Offhook</span>, whereas an outgoing call will transition directly to <span class="xref">Android.Telephony.CallState.Offhook</span>. We&apos;d rather not have to interpret 
+<span class="xref">Android.Telephony.CallState.Offhook</span> differently depending on what the previous state was and how recently it was observed. </p>
+</section>
       <h4><a class="xref" href="Sensus.Android.Probes.Communication.AndroidTelephonyOutgoingBroadcastReceiver.html">AndroidTelephonyOutgoingBroadcastReceiver</a></h4>
-      <section></section>
+      <section><p>Listens for new outgoing calls. See <a class="xref" href="Sensus.Android.Probes.Communication.AndroidTelephonyIdleIncomingListener.html">AndroidTelephonyIdleIncomingListener</a> for why we need both classes.</p>
+</section>
       <h4><a class="xref" href="Sensus.Android.Probes.Communication.AndroidTelephonyProbe.html">AndroidTelephonyProbe</a></h4>
       <section></section>
 </article>

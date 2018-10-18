@@ -12,7 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\ConcurrentObservableCollectionTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\IConcurrentTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\ConcurrentTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Concurrent\LockConcurrentTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Dispose\DisposableTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Encryption\SymmetricEncryptionTests.cs" />
@@ -32,8 +32,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\DataRateCalculatorTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Classes\TestSensusCallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Classes\LogSaver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Classes\XUnitResultCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\ProbeTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\DataStoreTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\" />

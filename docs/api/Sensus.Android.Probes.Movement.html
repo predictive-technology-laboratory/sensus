@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Sensus.Android.Probes.Movement
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -88,7 +90,15 @@
       <h4><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAccelerometerProbe.html">AndroidAccelerometerProbe</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Android.Probes.Movement.AndroidActivityProbe.html">AndroidActivityProbe</a></h4>
-      <section><p>Provides inferred activity information via the Google Awareness API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings.</p>
+      <section><p>Provides inferred activity information via the Google Awareness API as <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> readings. As it is not
+possible to do continuous, real time activity recognition due to battery and network limitations, there are several caveats
+to the data produced by this probe:</p>
+<ul>
+<li>The user must typically be engaged in the activity for 30 seconds or more for the activity to be detected.</li>
+<li>Activities are typically reported when the user unlocks the device. They are rarely reported when the device is locked.</li>
+<li>Activities have both a <a class="xref" href="Sensus.Probes.Movement.ActivityPhase.html">ActivityPhase</a> and <a class="xref" href="Sensus.Probes.Movement.ActivityState.html">ActivityState</a>, which must be carefully
+inspected to understand the activity the user is engaged in.</li>
+</ul>
 </section>
       <h4><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html">AndroidAwarenessProbe</a></h4>
       <section><p>Base class for Google Awareness API probes.</p>

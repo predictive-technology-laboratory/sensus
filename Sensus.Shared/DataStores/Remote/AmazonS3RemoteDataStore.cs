@@ -29,6 +29,7 @@ using System.Text;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
+using Sensus.Notifications;
 
 namespace Sensus.DataStores.Remote
 {
@@ -107,7 +108,7 @@ namespace Sensus.DataStores.Remote
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
         /// <value>The region.</value>
-        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1" }, true)]
+        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1", "us-gov-west-1" }, true)]
         public string Region
         {
             get
@@ -274,7 +275,7 @@ namespace Sensus.DataStores.Remote
             _putCount = _successfulPutCount = 0;
         }
 
-        public override void Start()
+        public override async Task StartAsync()
         {
             if (_pinnedServiceURL != null)
             {
@@ -296,7 +297,7 @@ namespace Sensus.DataStores.Remote
             }
 
             // start base last so we're set up for any callbacks that get scheduled
-            base.Start();
+            await base.StartAsync();
         }
 
         private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sllPolicyErrors)
@@ -334,114 +335,79 @@ namespace Sensus.DataStores.Remote
             return new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig);
         }
 
-        public override Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
+        public override async Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            AmazonS3Client s3 = null;
+
+            try
             {
-                AmazonS3Client s3 = null;
+                s3 = InitializeS3();
 
-                try
-                {
-                    s3 = InitializeS3();
-
-                    await Put(s3, stream, DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
-                }
-                finally
-                {
-                    DisposeS3(s3);
-                }
-            });
+                await PutAsync(s3, stream, DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
         }
 
-        public override Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
+        public override async Task WriteDatumAsync(Datum datum, CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            AmazonS3Client s3 = null;
+
+            try
             {
-                AmazonS3Client s3 = null;
+                s3 = InitializeS3();
+                string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
+                byte[] datumJsonBytes = Encoding.UTF8.GetBytes(datumJSON);
+                MemoryStream dataStream = new MemoryStream();
+                dataStream.Write(datumJsonBytes, 0, datumJsonBytes.Length);
+                dataStream.Position = 0;
 
-                try
-                {
-                    s3 = InitializeS3();
-                    string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
-                    byte[] datumJsonBytes = Encoding.UTF8.GetBytes(datumJSON);
-                    MemoryStream dataStream = new MemoryStream();
-                    dataStream.Write(datumJsonBytes, 0, datumJsonBytes.Length);
-                    dataStream.Position = 0;
-
-                    await Put(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken);
-                }
-                finally
-                {
-                    DisposeS3(s3);
-                }
-            });
+                await PutAsync(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
         }
 
-        public override Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        public override async Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            AmazonS3Client s3 = null;
+
+            try
             {
-                AmazonS3Client s3 = null;
+                // send the token
+                s3 = InitializeS3();
+                byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
+                MemoryStream dataStream = new MemoryStream();
+                dataStream.Write(tokenBytes, 0, tokenBytes.Length);
+                dataStream.Position = 0;
 
-                try
-                {
-                    s3 = InitializeS3();
-                    byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
-                    MemoryStream dataStream = new MemoryStream();
-                    dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
-                    dataStream.Position = 0;
-
-                    await Put(s3, dataStream, PUSH_NOTIFICATIONS_DIRECTORY + "/" + Guid.NewGuid() + ".json", "application/json", cancellationToken);
-                }
-                finally
-                {
-                    DisposeS3(s3);
-                }
-            });
+                await PutAsync(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
         }
 
-        public override Task SendPushNotificationTokenAsync(string token, CancellationToken cancellationToken)
+        public override async Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            AmazonS3Client s3 = null;
+
+            try
             {
-                AmazonS3Client s3 = null;
+                // send an empty data stream to clear the token. we don't have delete access.
+                s3 = InitializeS3();
 
-                try
-                {
-                    // send the token
-                    s3 = InitializeS3();
-                    byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
-                    MemoryStream dataStream = new MemoryStream();
-                    dataStream.Write(tokenBytes, 0, tokenBytes.Length);
-                    dataStream.Position = 0;
-
-                    await Put(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
-                }
-                finally
-                {
-                    DisposeS3(s3);
-                }
-            });
-        }
-
-        public override Task DeletePushNotificationTokenAsync(CancellationToken cancellationToken)
-        {
-            return Task.Run(async () =>
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+            }
+            finally
             {
-                AmazonS3Client s3 = null;
-
-                try
-                {
-                    // send an empty data stream to clear the token. we don't have delete access.
-                    s3 = InitializeS3();
-
-                    await Put(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
-                }
-                finally
-                {
-                    DisposeS3(s3);
-                }
-            });
+                DisposeS3(s3);
+            }
         }
 
         private string GetPushNotificationTokenKey()
@@ -450,51 +416,100 @@ namespace Sensus.DataStores.Remote
             return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
         }
 
-        private Task Put(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        public override async Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            AmazonS3Client s3 = null;
+
+            try
             {
-                _putCount++;
+                s3 = InitializeS3();
+                byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
+                MemoryStream dataStream = new MemoryStream();
+                dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
+                dataStream.Position = 0;
 
-                try
+                await PutAsync(s3, dataStream, GetPushNotificationRequestKey(request), "application/json", cancellationToken);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
+        }
+
+        public override async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
+        {
+            await DeletePushNotificationRequestAsync(request.Id, cancellationToken);
+        }
+
+        public override async Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                // send an empty data stream to clear the request. we don't have delete access.
+                s3 = InitializeS3();
+
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(id), "text/plain", cancellationToken);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
+        }
+
+        private string GetPushNotificationRequestKey(PushNotificationRequest request)
+        {
+            return GetPushNotificationRequestKey(request.Id);
+        }
+
+        private string GetPushNotificationRequestKey(string pushNotificationRequestId)
+        {
+            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + pushNotificationRequestId + ".json";
+        }
+
+        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        {
+            _putCount++;
+
+            try
+            {
+                PutObjectRequest putRequest = new PutObjectRequest
                 {
-                    PutObjectRequest putRequest = new PutObjectRequest
-                    {
-                        BucketName = _bucket,
-                        CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
-                        InputStream = stream,
-                        Key = key,
-                        ContentType = contentType
-                    };
+                    BucketName = _bucket,
+                    CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
+                    InputStream = stream,
+                    Key = key,
+                    ContentType = contentType
+                };
 
-                    HttpStatusCode putStatus = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
+                HttpStatusCode putStatus = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
 
-                    if (putStatus == HttpStatusCode.OK)
-                    {
-                        _successfulPutCount++;
-                    }
-                    else
-                    {
-                        throw new Exception("Bad status code:  " + putStatus);
-                    }
-                }
-                catch (WebException ex)
+                if (putStatus == HttpStatusCode.OK)
                 {
-                    if (ex.Status == WebExceptionStatus.TrustFailure)
-                    {
-                        string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
-                        SensusException.Report(message, ex);
-                    }
-
-                    throw ex;
+                    _successfulPutCount++;
                 }
-                catch (Exception ex)
+                else
                 {
-                    string message = "Failed to write data stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                    SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
-                    throw new Exception(message, ex);
+                    throw new Exception("Bad status code:  " + putStatus);
                 }
-            });
+            }
+            catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.TrustFailure)
+                {
+                    string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
+                    SensusException.Report(message, ex);
+                }
+
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to write data stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                throw new Exception(message, ex);
+            }
         }
 
         public override string GetDatumKey(Datum datum)
@@ -533,9 +548,9 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
-            base.Stop();
+            await base.StopAsync();
 
             // remove the callback
             if (_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey))
@@ -559,9 +574,9 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
@@ -571,9 +586,9 @@ namespace Sensus.DataStores.Remote
 
             Analytics.TrackEvent(eventName, properties);
 
-            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return restart;
+            return result;
         }
     }
 }

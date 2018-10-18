@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using Sensus.Context;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
+using System.Threading;
+using Plugin.Clipboard;
 
 namespace Sensus.UI
 {
@@ -47,6 +49,63 @@ namespace Sensus.UI
             List<View> views = new List<View>();
 
             views.AddRange(UiProperty.GetPropertyStacks(_protocol));
+
+            #region copy/set id
+            Button copyIdButton = new Button
+            {
+                Text = "Copy Study Identifier",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+            };
+
+            copyIdButton.Clicked += async (o, e) =>
+            {
+                CrossClipboard.Current.SetText(protocol.Id);
+                await SensusServiceHelper.Get().FlashNotificationAsync("Copied study identifier to clipboard.");
+            };
+
+            views.Add(copyIdButton);
+
+            Button editIdButton = new Button
+            {
+                Text = "Set Study Identifier",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+            };
+
+            editIdButton.Clicked += async (o, e) =>
+            {
+                Input input = await SensusServiceHelper.Get().PromptForInputAsync("Set Study Identifier", new SingleLineTextInput("Identifier:", "id", Keyboard.Text)
+                {
+                    Required = true
+
+                }, CancellationToken.None, true, "Set", null, null, "Are you sure you wish to set the study identifier?", false);
+
+                if (string.IsNullOrWhiteSpace(input?.Value?.ToString()))
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Identifier not set.");
+                    return;
+                }
+
+                string newId = input.Value.ToString().Trim();
+
+                if (protocol.Id == newId)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Identifier unchanged.");
+                }
+                else if (SensusServiceHelper.Get().RegisteredProtocols.Any(p => p.Id == newId))
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("A study with the same identifier already exists.");
+                }
+                else
+                {
+                    protocol.Id = newId;
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Identifier set.");
+                }
+            };
+
+            views.Add(editIdButton);
+            #endregion  
 
             #region data stores
             string localDataStoreSize = _protocol.LocalDataStore?.SizeDescription;
@@ -170,6 +229,22 @@ namespace Sensus.UI
             views.Add(viewProbesButton);
             #endregion
 
+            #region share -- we need this because we need to be able to hide the share button from the protocols while still allowing the protocol to be locked and shared
+            Button shareButton = new Button
+            {
+                Text = "Share Protocol",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            shareButton.Clicked += async (o, e) =>
+            {
+                await _protocol.ShareAsync();
+            };
+
+            views.Add(shareButton);
+            #endregion
+
             #region lock
             Button lockButton = new Button
             {
@@ -211,22 +286,6 @@ namespace Sensus.UI
             views.Add(lockButton);
             #endregion
 
-            #region share -- we need this because we need to be able to hide the share button from the protocols while still allowing the protocol to be locked and shared
-            Button shareButton = new Button
-            {
-                Text = "Share Protocol",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            shareButton.Clicked += async (o, e) =>
-            {
-                await _protocol.ShareAsync();
-            };
-
-            views.Add(shareButton);
-            #endregion
-
             _protocolRunningChangedAction = (o, running) =>
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -266,7 +325,7 @@ namespace Sensus.UI
             List<DataStore> dataStores = Assembly.GetExecutingAssembly()
                                                  .GetTypes()
                                                  .Where(t => !t.IsAbstract && t.IsSubclassOf(dataStoreType))
-                                                 .Select(t => Activator.CreateInstance(t))
+                                                 .Select(Activator.CreateInstance)
                                                  .Cast<DataStore>()
                                                  .OrderBy(d => d.DisplayName)
                                                  .ToList();

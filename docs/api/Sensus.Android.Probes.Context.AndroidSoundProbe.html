@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AndroidSoundProbe
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -98,7 +100,7 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_Initialize">SoundProbe.Initialize()</a>
+      <a class="xref" href="Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_InitializeAsync">SoundProbe.InitializeAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_GetChartSeries">SoundProbe.GetChartSeries()</a>
@@ -125,16 +127,16 @@
       <a class="xref" href="Sensus.Probes.Context.SoundProbe.html#Sensus_Probes_Context_SoundProbe_DatumType">SoundProbe.DatumType</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_InternalStart">PollingProbe.InternalStart()</a>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ProtectedStartAsync">PollingProbe.ProtectedStartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_Stop">PollingProbe.Stop()</a>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_StopAsync">PollingProbe.StopAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">PollingProbe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">PollingProbe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_Reset">PollingProbe.Reset()</a>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ResetAsync">PollingProbe.ResetAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingProbe.PollingSleepDurationMS</a>
@@ -155,28 +157,34 @@
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollTimes">PollingProbe.PollTimes</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPoll">PollingProbe.AcPowerConnectPoll</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPollOverridesScheduledPolls">PollingProbe.AcPowerConnectPollOverridesScheduledPolls</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_CollectionDescription">PollingProbe.CollectionDescription</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -243,13 +251,13 @@
   </h3>
   
   
-  <a id="Sensus_Android_Probes_Context_AndroidSoundProbe_Poll_" data-uid="Sensus.Android.Probes.Context.AndroidSoundProbe.Poll*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidSoundProbe_Poll_System_Threading_CancellationToken_" data-uid="Sensus.Android.Probes.Context.AndroidSoundProbe.Poll(System.Threading.CancellationToken)">Poll(CancellationToken)</h4>
+  <a id="Sensus_Android_Probes_Context_AndroidSoundProbe_PollAsync_" data-uid="Sensus.Android.Probes.Context.AndroidSoundProbe.PollAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Context_AndroidSoundProbe_PollAsync_System_Threading_CancellationToken_" data-uid="Sensus.Android.Probes.Context.AndroidSoundProbe.PollAsync(System.Threading.CancellationToken)">PollAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override IEnumerable&lt;Datum&gt; Poll(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task&lt;List&lt;Datum&gt;&gt; PollAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -278,13 +286,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_Poll_System_Threading_CancellationToken_">PollingProbe.Poll(CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollAsync_System_Threading_CancellationToken_">PollingProbe.PollAsync(CancellationToken)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

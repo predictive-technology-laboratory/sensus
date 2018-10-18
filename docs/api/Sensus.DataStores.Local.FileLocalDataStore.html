@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class FileLocalDataStore
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -108,7 +110,7 @@ supports encryption.</p>
       <a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote">LocalDataStore.WriteToRemote</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Restart">DataStore.Restart()</a>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_RestartAsync">DataStore.RestartAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy">DataStore.Copy()</a>
@@ -537,37 +539,67 @@ public bool Encrypt { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Reset">DataStore.Reset()</a></div>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_Start_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Start*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Start" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Start">Start()</h4>
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_StartAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StartAsync*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_StartAsync" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StartAsync">StartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Start()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task StartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Start">DataStore.Start()</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_StartAsync">DataStore.StartAsync()</a></div>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_Stop_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Stop*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Stop" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Stop">Stop()</h4>
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_StopAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StopAsync*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_StopAsync" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task StopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Stop">DataStore.Stop()</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_StopAsync">DataStore.StopAsync()</a></div>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_TestHealth_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TestHealth*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_TestHealthAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TestHealthAsync*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -580,7 +612,7 @@ public bool Encrypt { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
         <td><span class="parametername">events</span></td>
         <td></td>
       </tr>
@@ -596,13 +628,13 @@ public bool Encrypt { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">DataStore.TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">DataStore.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a></div>
   
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_WriteDatum_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.WriteDatum*"></a>

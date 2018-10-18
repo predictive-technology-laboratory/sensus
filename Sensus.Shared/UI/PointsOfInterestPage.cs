@@ -130,14 +130,6 @@ namespace Sensus.UI
                     }
                 }
             }));
-
-            Disappearing += (o, e) =>
-            {
-                if (gpsCancellationTokenSource != null && !gpsCancellationTokenSource.IsCancellationRequested)
-                {
-                    gpsCancellationTokenSource.Cancel();
-                }
-            };
         }
     }
 }

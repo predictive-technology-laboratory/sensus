@@ -21,12 +21,9 @@ namespace Sensus.Probes.User.Scripts
 {
     public class ScheduleTrigger
     {
-        #region Fields
         private readonly List<TriggerWindow> _windows;
         private int _nonDowTriggerIntervalDays;
-        #endregion
 
-        #region Properties
         public int WindowCount => _windows.Count;
 
         public string WindowsString
@@ -100,25 +97,21 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
         }
-        #endregion
 
-        #region Constructor
         public ScheduleTrigger()
         {
             _windows = new List<TriggerWindow>();
             _nonDowTriggerIntervalDays = 1;
         }
-        #endregion
 
-        #region Public Methods
         /// <summary>
-        /// Gets trigger times relative to a given time after some other time.
+        /// Gets trigger times relative to a given reference, starting on a particular date.
         /// </summary>
         /// <returns>Trigger times.</returns>
         /// <param name="reference">The reference time, from which the next time should be computed.</param>
-        /// <param name="after">The time after which the trigger time should occur.</param>
-        /// <param name="maxAge">Maximum age of the trigger.</param>
-        public List<ScriptTriggerTime> GetTriggerTimes(DateTime reference, DateTime after, TimeSpan? maxAge = null)
+        /// <param name="startDate">The date on which the scheduled triggers should start.</param>
+        /// <param name="maxAge">Maximum age of the triggers, during which they should be valid.</param>
+        public List<ScriptTriggerTime> GetTriggerTimes(DateTime reference, DateTime startDate, TimeSpan? maxAge = null)
         {
             lock (_windows)
             {
@@ -128,56 +121,55 @@ namespace Sensus.Probes.User.Scripts
                 // the effect of such latencies.
                 List<ScriptTriggerTime> triggerTimes = new List<ScriptTriggerTime>();
 
-                // return 7 triggers for each window
-                for (int triggerNum = 0; triggerNum < 7; ++triggerNum)
+                // ignore the time component of the start date. get all times on the given day.
+                startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 0);
+
+                // schedule enough days to ensure that all windows get at least one trigger. for DOW windows, this
+                // means that we must schedule enough days to cover all days of the week (10 will suffice).  for
+                // time-of-day-winows, this means that we must schedule at least the number of days specified in the
+                // interval. the reason this is important is that, if the number of days that we schedule does not
+                // include any trigger windows, then no surveys will be scheduled and we run the risk of losing
+                // touch with the user. the health test callbacks should ensure that survey triggers continue to
+                // be scheduled, so it should not be the case that we lose the user entirely. however, on ios it is
+                // more likely that the user will ignore surveys without bringing the app to the foreground and giving 
+                // an opportunity to schedule additional surveys.
+                int numDays = Math.Max(10, _nonDowTriggerIntervalDays);
+
+                for (int dayOffset = 0; dayOffset < numDays; ++dayOffset)
                 {
+                    DateTime triggerDate = startDate.AddDays(dayOffset);
+                    DayOfWeek triggerDateDOW = triggerDate.DayOfWeek;
+
+                    // schedule each window for the current date as necessary
                     foreach (TriggerWindow window in _windows)
                     {
-                        DateTime currTriggerAfter;
+                        bool scheduleWindowForCurrentDate = false;
 
-                        // if the window has a day-of-week specified, ignore the interval days field and go week-by-week instead
                         if (window.DayOfTheWeek.HasValue)
                         {
-                            // how many days from the after DOW to the window's DOW?
-                            int daysUntilWindowDOW = 0;
-
-                            // if the after DOW (e.g., Tuesday) precedes the window's DOW (e.g., Thursday), the answer is simple (e.g., 2)
-                            if (after.DayOfWeek < window.DayOfTheWeek.Value)
+                            if (window.DayOfTheWeek.Value == triggerDateDOW)
                             {
-                                daysUntilWindowDOW = window.DayOfTheWeek.Value - after.DayOfWeek;
+                                scheduleWindowForCurrentDate = true;
                             }
-                            // if the after DOW (e.g., Wednesday) is after the window's DOW (e.g., Monday), we need to wrap around (e.g., 5)
-                            else if (after.DayOfWeek > window.DayOfTheWeek.Value)
-                            {
-                                // number of days until saturday + number of days from saturday to window's DOW
-                                daysUntilWindowDOW = (DayOfWeek.Saturday - after.DayOfWeek) + (int)window.DayOfTheWeek.Value + 1;
-                            }
-
-                            // each DOW-based window is separated by a week
-                            currTriggerAfter = after.AddDays(triggerNum * 7 + daysUntilWindowDOW);
-
-                            // ensure that the trigger time is not shifted to the next day by removing the time component (i.e., setting is to 12:00am). this
-                            // ensures that any window time (e.g., 1am) will be feasible.
-                            currTriggerAfter = currTriggerAfter.Date;
                         }
-                        else
+                        // we need a reference point for calculating the day-based interval. the minimum value will work.
+                        else if ((triggerDate - DateTime.MinValue).Days % _nonDowTriggerIntervalDays == 0)
                         {
-                            // the window is interval-based, so skip ahead the current number of days
-                            currTriggerAfter = after.AddDays(triggerNum * _nonDowTriggerIntervalDays);
+                            scheduleWindowForCurrentDate = true;
                         }
 
-                        ScriptTriggerTime triggerTime = window.GetNextTriggerTime(reference, currTriggerAfter, WindowExpiration, maxAge);
-
-                        triggerTimes.Add(triggerTime);
+                        if (scheduleWindowForCurrentDate)
+                        {
+                            ScriptTriggerTime triggerTime = window.GetNextTriggerTime(reference, triggerDate, WindowExpiration, maxAge);
+                            triggerTimes.Add(triggerTime);
+                        }
                     }
                 }
 
-                // it is important that these are ordered otherwise we might skip windows since we use the _maxScheduledDate to determine which schedule comes next.
                 triggerTimes.Sort((x, y) => x.Trigger.CompareTo(y.Trigger));
 
                 return triggerTimes;
             }
         }
-        #endregion
     }
 }

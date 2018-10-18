@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ScriptProbe
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -102,25 +104,22 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -501,52 +500,156 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSeries">Probe.GetChartSeries()</a></div>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptProbe_Initialize_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Initialize*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_Initialize" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Initialize">Initialize()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_InitializeAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.InitializeAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_InitializeAsync" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.InitializeAsync">InitializeAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void Initialize()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task InitializeAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Initialize">Probe.Initialize()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_InitializeAsync">Probe.InitializeAsync()</a></div>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptProbe_InternalStart_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.InternalStart*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_InternalStart" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.InternalStart">InternalStart()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_ProtectedStartAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.ProtectedStartAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_ProtectedStartAsync" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.ProtectedStartAsync">ProtectedStartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void InternalStart()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_InternalStart">Probe.InternalStart()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStartAsync">Probe.ProtectedStartAsync()</a></div>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptProbe_Reset_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Reset*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_Reset" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Reset">Reset()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_ResetAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.ResetAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_ResetAsync" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.ResetAsync">ResetAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Reset()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task ResetAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Reset">Probe.Reset()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ResetAsync">Probe.ResetAsync()</a></div>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptProbe_Stop_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Stop*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_Stop" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Stop">Stop()</h4>
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_StopAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.StopAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_StopAsync" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Stop()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task StopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Stop">Probe.Stop()</a></div>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a></div>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_TestHealthAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.TestHealthAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">Probe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

@@ -17,7 +17,7 @@ sensus.write.csv.files(data, directory, file.name.prefix = "")
 Write data to CSV files.
 }
 \examples{
-data.path = system.file("extdata", "example_data", package="SensusR")
+data.path = system.file("extdata", "example-data", package="SensusR")
 data = sensus.read.json.files(data.path)
 # sensus.write.csv.files(data, directory = "/path/to/directory")
 }

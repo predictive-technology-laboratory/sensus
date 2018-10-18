@@ -43,7 +43,7 @@ namespace Sensus.UI
 
             Title = "Add Trigger";
 
-            var enabledProbes = _scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToArray();
+            Probe[] enabledProbes = _scriptRunner.Probe.Protocol.Probes.Where(p => p != _scriptRunner.Probe && p.Enabled).ToArray();
 
             if (!enabledProbes.Any())
             {
@@ -52,13 +52,18 @@ namespace Sensus.UI
                 return;
             }
 
-            var contentLayout = new StackLayout
+            StackLayout contentLayout = new StackLayout
             {
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
-            var probeLabel = new Label { Text = "Probe:", FontSize = 20 };
+            Label probeLabel = new Label 
+            { 
+                Text = "Probe:", 
+                FontSize = 20,
+                VerticalTextAlignment = TextAlignment.Center
+            };
 
             Picker probePicker = new Picker { Title = "Select Probe", HorizontalOptions = LayoutOptions.FillAndExpand };
 
@@ -116,13 +121,14 @@ namespace Sensus.UI
                 Label datumPropertyLabel = new Label
                 {
                     Text = "Property:",
-                    FontSize = 20
+                    FontSize = 20,
+                    VerticalTextAlignment = TextAlignment.Center
                 };
 
                 Picker datumPropertyPicker = new Picker { Title = "Select Datum Property", HorizontalOptions = LayoutOptions.FillAndExpand };
                 foreach (PropertyInfo datumProperty in datumProperties)
                 {
-                    var triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
+                    ProbeTriggerProperty triggerProperty = datumProperty.GetCustomAttributes<ProbeTriggerProperty>().First();
                     datumPropertyPicker.Items.Add(triggerProperty.Name ?? datumProperty.Name);
                 }
 
@@ -138,7 +144,8 @@ namespace Sensus.UI
                 Label conditionLabel = new Label
                 {
                     Text = "Condition:",
-                    FontSize = 20
+                    FontSize = 20,
+                    VerticalTextAlignment = TextAlignment.Center
                 };
 
                 Picker conditionPicker = new Picker { Title = "Select Condition", HorizontalOptions = LayoutOptions.FillAndExpand };
@@ -259,7 +266,8 @@ namespace Sensus.UI
                     Label conditionValueStackLabel = new Label
                     {
                         Text = "Value:",
-                        FontSize = 20
+                        FontSize = 20,
+                        VerticalTextAlignment = TextAlignment.Center
                     };
 
                     conditionValueStack.Children.Add(new StackLayout
@@ -275,7 +283,8 @@ namespace Sensus.UI
                         Label changeLabel = new Label
                         {
                             Text = "Change:",
-                            FontSize = 20
+                            FontSize = 20,
+                            VerticalTextAlignment = TextAlignment.Center
                         };
 
                         changeSwitch.IsToggled = false;
@@ -295,7 +304,8 @@ namespace Sensus.UI
                         Label regexLabel = new Label
                         {
                             Text = "Regular Expression:",
-                            FontSize = 20
+                            FontSize = 20,
+                            VerticalTextAlignment = TextAlignment.Center
                         };
 
                         regexSwitch.IsToggled = false;
@@ -317,7 +327,8 @@ namespace Sensus.UI
                 Label fireRepeatedlyLabel = new Label
                 {
                     Text = "Fire Repeatedly:",
-                    FontSize = 20
+                    FontSize = 20,
+                    VerticalTextAlignment = TextAlignment.Center
                 };
 
                 fireRepeatedlySwitch.IsToggled = true;
@@ -334,7 +345,8 @@ namespace Sensus.UI
                 Label startTimeLabel = new Label
                 {
                     Text = "Start Time:",
-                    FontSize = 20
+                    FontSize = 20,
+                    VerticalTextAlignment = TextAlignment.Center
                 };
 
                 startTimePicker.Time = new TimeSpan(0, 0, 0);
@@ -349,7 +361,8 @@ namespace Sensus.UI
                 Label endTimeLabel = new Label
                 {
                     Text = "End Time:",
-                    FontSize = 20
+                    FontSize = 20,
+                    VerticalTextAlignment = TextAlignment.Center
                 };
 
                 endTimePicker.Time = new TimeSpan(23, 59, 59);

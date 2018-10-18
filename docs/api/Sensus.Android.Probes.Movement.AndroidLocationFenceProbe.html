@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AndroidLocationFenceProbe
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -105,7 +107,7 @@
       <a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateRequestBuilder_Android_Gms_Awareness_Fence_AwarenessFence_System_String_Sensus_Android_Probes_Movement_AndroidAwarenessProbe_FenceUpdateAction_Android_Gms_Awareness_Fence_FenceUpdateRequestBuilder__">AndroidAwarenessProbe.UpdateRequestBuilder(AwarenessFence, String, AndroidAwarenessProbe.FenceUpdateAction, FenceUpdateRequestBuilder)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateFences_Android_Gms_Awareness_Fence_IFenceUpdateRequest_">AndroidAwarenessProbe.UpdateFences(IFenceUpdateRequest)</a>
+      <a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_UpdateFencesAsync_Android_Gms_Awareness_Fence_IFenceUpdateRequest_">AndroidAwarenessProbe.UpdateFencesAsync(IFenceUpdateRequest)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_GetChartDataPointFromDatum_Sensus_Datum_">AndroidAwarenessProbe.GetChartDataPointFromDatum(Datum)</a>
@@ -135,13 +137,13 @@
       <a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_DeviceAwakeWarning">AndroidAwarenessProbe.DeviceAwakeWarning</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_InternalStart">ListeningProbe.InternalStart()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStartAsync">ListeningProbe.ProtectedStartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_Stop">ListeningProbe.Stop()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopAsync">ListeningProbe.StopAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_Reset">ListeningProbe.Reset()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ResetAsync">ListeningProbe.ResetAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">ListeningProbe.MaxDataStoresPerSecond</a>
@@ -165,25 +167,25 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetAll">Probe.GetAll()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_">Probe.remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartAsync">Probe.StartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Start">Probe.Start()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Restart">Probe.Restart()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____">Probe.TestHealth(List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">Probe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChart">Probe.GetChart()</a>
@@ -360,40 +362,85 @@ public int LocationChangeRadiusMeters { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_Initialize_" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize*"></a>
-  <h4 id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_Initialize" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.Initialize">Initialize()</h4>
+  <a id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_InitializeAsync_" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.InitializeAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_InitializeAsync" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.InitializeAsync">InitializeAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void Initialize()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task InitializeAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_Initialize">AndroidAwarenessProbe.Initialize()</a></div>
+  <div><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_InitializeAsync">AndroidAwarenessProbe.InitializeAsync()</a></div>
   
   
-  <a id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StartListening_" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening*"></a>
-  <h4 id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StartListening" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListening">StartListening()</h4>
+  <a id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StartListeningAsync_" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListeningAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StartListeningAsync" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StartListeningAsync">StartListeningAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void StartListening()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task StartListeningAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StartListening">AndroidAwarenessProbe.StartListening()</a></div>
+  <div><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StartListeningAsync">AndroidAwarenessProbe.StartListeningAsync()</a></div>
   
   
-  <a id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StopListening_" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening*"></a>
-  <h4 id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StopListening" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListening">StopListening()</h4>
+  <a id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StopListeningAsync_" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListeningAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Movement_AndroidLocationFenceProbe_StopListeningAsync" data-uid="Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.StopListeningAsync">StopListeningAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void StopListening()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task StopListeningAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StopListening">AndroidAwarenessProbe.StopListening()</a></div>
+  <div><a class="xref" href="Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html#Sensus_Android_Probes_Movement_AndroidAwarenessProbe_StopListeningAsync">AndroidAwarenessProbe.StopListeningAsync()</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

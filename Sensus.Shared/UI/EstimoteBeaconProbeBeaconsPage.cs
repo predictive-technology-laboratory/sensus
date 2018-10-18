@@ -56,56 +56,53 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
             {
-                await Task.Run(async () =>
-                {
-                    EstimoteBeaconProbe estimoteBeaconProbe = probe as EstimoteBeaconProbe;
+                EstimoteBeaconProbe estimoteBeaconProbe = probe as EstimoteBeaconProbe;
 
-                    List<string> beacons;
+                List<string> beaconTags;
+                try
+                {
+                    beaconTags = estimoteBeaconProbe.GetBeaconTagsFromCloud();
+
+                    if (beaconTags.Count == 0)
+                    {
+                        throw new Exception("No beacons with tags present within Estimote Cloud.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Cannot add beacon:  " + ex);
+                    return;
+                }
+
+                List<Input> inputs = await SensusServiceHelper.Get().PromptForInputsAsync("Add Beacon", new Input[]
+                {
+                    new ItemPickerDialogInput("Beacon Tag:", null, beaconTags)
+                    {
+                        AllowClearSelection = false
+                    },
+                    new NumberEntryInput("Proximity (Meters):"),
+                    new SingleLineTextInput("Event Name (Defaults To Beacon Tag):", Keyboard.Default)
+                    {
+                            Required = false
+                    }
+
+                }, null, true, null, null, null, null, false);
+
+                if (inputs != null)
+                {
                     try
                     {
-                        beacons = estimoteBeaconProbe.GetSensusBeaconNamesFromCloud();
-
-                        if (beacons.Count == 0)
-                        {
-                            throw new Exception("No beacons present within Estimote Cloud.");
-                        }
+                        string beaconTag = inputs[0].Value.ToString();
+                        double beaconProximity = double.Parse(inputs[1].Value.ToString());
+                        string eventName = inputs[2].Value?.ToString();
+                        EstimoteBeacon beacon = new EstimoteBeacon(beaconTag, beaconProximity, eventName);
+                        estimoteBeaconProbe.Beacons.Add(beacon);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Cannot add beacon:  " + ex);
-                        return;
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon.");
                     }
-
-                    List<Input> inputs = await SensusServiceHelper.Get().PromptForInputsAsync("Add Beacon", new Input[]
-                    {
-                        new ItemPickerDialogInput("Beacon Name:", null, beacons)
-                        {
-                            AllowClearSelection = false
-                        },
-                        new NumberEntryInput("Proximity (Meters):"),
-                        new SingleLineTextInput("Event Name (Defaults To Beacon Name):", Keyboard.Default)
-                        {
-                            Required = false
-                        }
-
-                    }, null, true, null, null, null, null, false);
-
-                    if (inputs != null)
-                    {
-                        try
-                        {
-                            string beaconName = inputs[0].Value.ToString();
-                            double beaconProximity = double.Parse(inputs[1].Value.ToString());
-                            string eventName = inputs[2].Value?.ToString();
-                            EstimoteBeacon beacon = new EstimoteBeacon(beaconName, beaconProximity, eventName);
-                            estimoteBeaconProbe.Beacons.Add(beacon);
-                        }
-                        catch (Exception)
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon.");
-                        }
-                    }
-                });
+                }
             }));
         }
     }

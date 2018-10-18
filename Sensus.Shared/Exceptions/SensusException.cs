@@ -47,8 +47,8 @@ namespace Sensus.Exceptions
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to report Sensus exception:  " + ex.Message, LoggingLevel.Normal, typeof(SensusException));
                 }
-                catch(Exception)
-                {}
+                catch (Exception)
+                { }
             }
         }
 
@@ -80,8 +80,8 @@ namespace Sensus.Exceptions
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to report exception:  " + ex.Message, LoggingLevel.Normal, typeof(SensusException));
                 }
-                catch(Exception)
-                {}
+                catch (Exception)
+                { }
             }
 
             return exceptionToReport;

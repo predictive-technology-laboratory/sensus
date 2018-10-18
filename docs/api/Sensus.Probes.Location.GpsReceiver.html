@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class GpsReceiver
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -177,13 +179,13 @@
   </h3>
   
   
-  <a id="Sensus_Probes_Location_GpsReceiver_AddListener_" data-uid="Sensus.Probes.Location.GpsReceiver.AddListener*"></a>
-  <h4 id="Sensus_Probes_Location_GpsReceiver_AddListener_System_EventHandler_Plugin_Geolocator_Abstractions_PositionEventArgs__System_Boolean_" data-uid="Sensus.Probes.Location.GpsReceiver.AddListener(System.EventHandler{Plugin.Geolocator.Abstractions.PositionEventArgs},System.Boolean)">AddListener(EventHandler&lt;PositionEventArgs&gt;, Boolean)</h4>
+  <a id="Sensus_Probes_Location_GpsReceiver_AddListenerAsync_" data-uid="Sensus.Probes.Location.GpsReceiver.AddListenerAsync*"></a>
+  <h4 id="Sensus_Probes_Location_GpsReceiver_AddListenerAsync_System_EventHandler_Plugin_Geolocator_Abstractions_PositionEventArgs__System_Boolean_" data-uid="Sensus.Probes.Location.GpsReceiver.AddListenerAsync(System.EventHandler{Plugin.Geolocator.Abstractions.PositionEventArgs},System.Boolean)">AddListenerAsync(EventHandler&lt;PositionEventArgs&gt;, Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddListener(EventHandler&lt;PositionEventArgs&gt; listener, bool includeHeading)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task AddListenerAsync(EventHandler&lt;PositionEventArgs&gt; listener, bool includeHeading)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -203,6 +205,21 @@
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">includeHeading</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -234,65 +251,9 @@
   </table>
   
   
-  <a id="Sensus_Probes_Location_GpsReceiver_GetReading_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading*"></a>
-  <h4 id="Sensus_Probes_Location_GpsReceiver_GetReading_System_Threading_CancellationToken_System_Boolean_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReading(System.Threading.CancellationToken,System.Boolean)">GetReading(CancellationToken, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Gets a GPS reading. Will block the current thread while waiting for a GPS reading. Should not
-be called from the main / UI thread, since GPS runs on main thread (will deadlock). If you need
-to get a reading from the UI thread, call GetReadingAsync instead.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Position GetReading(CancellationToken cancellationToken, bool checkAndObtainPermission)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">checkAndObtainPermission</span></td>
-        <td><p>Whether or not to check for and obtain permission for the reading. Note that, on Android, this
-may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user&apos;s permission prior to
-calling this method.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Plugin.Geolocator.Abstractions.Position</span></td>
-        <td><p>The reading.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Probes_Location_GpsReceiver_GetReadingAsync_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReadingAsync*"></a>
   <h4 id="Sensus_Probes_Location_GpsReceiver_GetReadingAsync_System_Threading_CancellationToken_System_Boolean_" data-uid="Sensus.Probes.Location.GpsReceiver.GetReadingAsync(System.Threading.CancellationToken,System.Boolean)">GetReadingAsync(CancellationToken, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Gets a GPS reading.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -311,16 +272,12 @@ calling this method.</p>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">checkAndObtainPermission</span></td>
-        <td><p>Whether or not to check for and obtain permission for the reading. Note that, on Android, this
-may result in bringing the Sensus UI to the foreground. If you do not wish this to happen, then obtain the user&apos;s permission prior to
-calling this method.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -335,20 +292,19 @@ calling this method.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">Plugin.Geolocator.Abstractions.Position</span>&gt;</td>
-        <td><p>The reading.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_Probes_Location_GpsReceiver_RemoveListener_" data-uid="Sensus.Probes.Location.GpsReceiver.RemoveListener*"></a>
-  <h4 id="Sensus_Probes_Location_GpsReceiver_RemoveListener_System_EventHandler_Plugin_Geolocator_Abstractions_PositionEventArgs__" data-uid="Sensus.Probes.Location.GpsReceiver.RemoveListener(System.EventHandler{Plugin.Geolocator.Abstractions.PositionEventArgs})">RemoveListener(EventHandler&lt;PositionEventArgs&gt;)</h4>
+  <a id="Sensus_Probes_Location_GpsReceiver_RemoveListenerAsync_" data-uid="Sensus.Probes.Location.GpsReceiver.RemoveListenerAsync*"></a>
+  <h4 id="Sensus_Probes_Location_GpsReceiver_RemoveListenerAsync_System_EventHandler_Plugin_Geolocator_Abstractions_PositionEventArgs__" data-uid="Sensus.Probes.Location.GpsReceiver.RemoveListenerAsync(System.EventHandler{Plugin.Geolocator.Abstractions.PositionEventArgs})">RemoveListenerAsync(EventHandler&lt;PositionEventArgs&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RemoveListener(EventHandler&lt;PositionEventArgs&gt; listener)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RemoveListenerAsync(EventHandler&lt;PositionEventArgs&gt; listener)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -363,6 +319,21 @@ calling this method.</p>
       <tr>
         <td><span class="xref">System.EventHandler</span>&lt;<span class="xref">Plugin.Geolocator.Abstractions.PositionEventArgs</span>&gt;</td>
         <td><span class="parametername">listener</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

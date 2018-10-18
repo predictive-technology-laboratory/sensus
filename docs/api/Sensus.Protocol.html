@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Protocol
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -101,37 +103,6 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged</code></pre>
   </div>
-  <h3 id="constructors">Constructors
-  </h3>
-  
-  
-  <a id="Sensus_Protocol__ctor_" data-uid="Sensus.Protocol.#ctor*"></a>
-  <h4 id="Sensus_Protocol__ctor_System_String_" data-uid="Sensus.Protocol.#ctor(System.String)">Protocol(String)</h4>
-  <div class="markdown level1 summary"><p>Called by static CreateAsync. Should not be called directly by outside callers.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Protocol(string name)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">name</span></td>
-        <td><p>Name.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="fields">Fields
   </h3>
   
@@ -215,7 +186,9 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <div class="markdown level1 summary"><p>A comma-separated list of time windows during which alerts from Sensus (e.g., notifications
 about new surveys) should not have a sound or vibration associated with them. The format
 is the same as described for <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_TriggerWindowsString">TriggerWindowsString</a>, except that 
-exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.</p>
+exact times (e.g., 11:32am) do not make any sense -- only windows (e.g., 11:32am-1:00pm) do.
+The start time must precede the end time (e.g., 19:00-2:00 is not permitted). To specify,
+such a time, provide both intervals (e.g.:  0:00-2:00,19:00-23:59).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -873,11 +846,15 @@ public bool Groupable { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_Id_" data-uid="Sensus.Protocol.Id*"></a>
   <h4 id="Sensus_Protocol_Id" data-uid="Sensus.Protocol.Id">Id</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The study&apos;s identifier. All studies on the same device must have unique identifiers. Certain <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s
+like the <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a> rely on the study identifiers to be the same
+across Android and iOS platforms in order to make detections.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(null, false, 0, true)]
+public string Id { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -890,7 +867,8 @@ public bool Groupable { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The identifier.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -1346,56 +1324,6 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_ScheduledStartCallback_" data-uid="Sensus.Protocol.ScheduledStartCallback*"></a>
-  <h4 id="Sensus_Protocol_ScheduledStartCallback" data-uid="Sensus.Protocol.ScheduledStartCallback">ScheduledStartCallback</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallback ScheduledStartCallback { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Protocol_ScheduledStopCallback_" data-uid="Sensus.Protocol.ScheduledStopCallback*"></a>
-  <h4 id="Sensus_Protocol_ScheduledStopCallback" data-uid="Sensus.Protocol.ScheduledStopCallback">ScheduledStopCallback</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallback ScheduledStopCallback { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Protocol_Shareable_" data-uid="Sensus.Protocol.Shareable*"></a>
   <h4 id="Sensus_Protocol_Shareable" data-uid="Sensus.Protocol.Shareable">Shareable</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to share the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -1672,24 +1600,54 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Protocol_CancelScheduledStart_" data-uid="Sensus.Protocol.CancelScheduledStart*"></a>
-  <h4 id="Sensus_Protocol_CancelScheduledStart" data-uid="Sensus.Protocol.CancelScheduledStart">CancelScheduledStart()</h4>
+  <a id="Sensus_Protocol_CancelScheduledStartAsync_" data-uid="Sensus.Protocol.CancelScheduledStartAsync*"></a>
+  <h4 id="Sensus_Protocol_CancelScheduledStartAsync" data-uid="Sensus.Protocol.CancelScheduledStartAsync">CancelScheduledStartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void CancelScheduledStart()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task CancelScheduledStartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Protocol_CancelScheduledStop_" data-uid="Sensus.Protocol.CancelScheduledStop*"></a>
-  <h4 id="Sensus_Protocol_CancelScheduledStop" data-uid="Sensus.Protocol.CancelScheduledStop">CancelScheduledStop()</h4>
+  <a id="Sensus_Protocol_CancelScheduledStopAsync_" data-uid="Sensus.Protocol.CancelScheduledStopAsync*"></a>
+  <h4 id="Sensus_Protocol_CancelScheduledStopAsync" data-uid="Sensus.Protocol.CancelScheduledStopAsync">CancelScheduledStopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void CancelScheduledStop()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task CancelScheduledStopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Protocol_CopyAsync_" data-uid="Sensus.Protocol.CopyAsync*"></a>
@@ -1739,13 +1697,13 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_Create_" data-uid="Sensus.Protocol.Create*"></a>
-  <h4 id="Sensus_Protocol_Create_System_String_" data-uid="Sensus.Protocol.Create(System.String)">Create(String)</h4>
+  <a id="Sensus_Protocol_CreateAsync_" data-uid="Sensus.Protocol.CreateAsync*"></a>
+  <h4 id="Sensus_Protocol_CreateAsync_System_String_" data-uid="Sensus.Protocol.CreateAsync(System.String)">CreateAsync(String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Protocol Create(string name)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; CreateAsync(string name)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1774,21 +1732,11 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Sensus_Protocol_Delete_" data-uid="Sensus.Protocol.Delete*"></a>
-  <h4 id="Sensus_Protocol_Delete" data-uid="Sensus.Protocol.Delete">Delete()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Delete()</code></pre>
-  </div>
   
   
   <a id="Sensus_Protocol_DeleteAsync_" data-uid="Sensus.Protocol.DeleteAsync*"></a>
@@ -2120,24 +2068,54 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_ScheduleStart_" data-uid="Sensus.Protocol.ScheduleStart*"></a>
-  <h4 id="Sensus_Protocol_ScheduleStart" data-uid="Sensus.Protocol.ScheduleStart">ScheduleStart()</h4>
+  <a id="Sensus_Protocol_ScheduleStartAsync_" data-uid="Sensus.Protocol.ScheduleStartAsync*"></a>
+  <h4 id="Sensus_Protocol_ScheduleStartAsync" data-uid="Sensus.Protocol.ScheduleStartAsync">ScheduleStartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ScheduleStart()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ScheduleStartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Protocol_ScheduleStop_" data-uid="Sensus.Protocol.ScheduleStop*"></a>
-  <h4 id="Sensus_Protocol_ScheduleStop" data-uid="Sensus.Protocol.ScheduleStop">ScheduleStop()</h4>
+  <a id="Sensus_Protocol_ScheduleStopAsync_" data-uid="Sensus.Protocol.ScheduleStopAsync*"></a>
+  <h4 id="Sensus_Protocol_ScheduleStopAsync" data-uid="Sensus.Protocol.ScheduleStopAsync">ScheduleStopAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ScheduleStop()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ScheduleStopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Protocol_ShareAsync_" data-uid="Sensus.Protocol.ShareAsync*"></a>
@@ -2165,14 +2143,29 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_Start_" data-uid="Sensus.Protocol.Start*"></a>
-  <h4 id="Sensus_Protocol_Start" data-uid="Sensus.Protocol.Start">Start()</h4>
+  <a id="Sensus_Protocol_StartAsync_" data-uid="Sensus.Protocol.StartAsync*"></a>
+  <h4 id="Sensus_Protocol_StartAsync" data-uid="Sensus.Protocol.StartAsync">StartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Protocol_StartWithUserAgreementAsync_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync*"></a>
@@ -2217,16 +2210,6 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_Stop_" data-uid="Sensus.Protocol.Stop*"></a>
-  <h4 id="Sensus_Protocol_Stop" data-uid="Sensus.Protocol.Stop">Stop()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Stop()</code></pre>
-  </div>
-  
-  
   <a id="Sensus_Protocol_StopAsync_" data-uid="Sensus.Protocol.StopAsync*"></a>
   <h4 id="Sensus_Protocol_StopAsync" data-uid="Sensus.Protocol.StopAsync">StopAsync()</h4>
   <div class="markdown level1 summary"></div>
@@ -2258,7 +2241,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt;&gt; TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;AnalyticsTrackedEvent&gt;&gt; TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2292,7 +2275,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Sensus.Probes.Communication
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -96,7 +98,12 @@
       <section><p>Probes information about SMS messages sent and received.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html">TelephonyDatum</a></h4>
-      <section></section>
+      <section><p>Represents phone call meta-data in terms of the phones <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html">TelephonyState</a>, the other phone number, and -- if
+a call just ended -- the duration of the call. Both <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_IncomingCall">IncomingCall</a> and <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_OutgoingCall">OutgoingCall</a>
+values will be associated with an unspecified <a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html#Sensus_Probes_Communication_TelephonyDatum_CallDurationSeconds">CallDurationSeconds</a>, as the former are recorded to mark the time
+at which the incoming call arrived or went out, respectively. When a call ends and the phone returns to <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_Idle">Idle</a>, then
+there will be a value for <a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html#Sensus_Probes_Communication_TelephonyDatum_CallDurationSeconds">CallDurationSeconds</a> indicating how long the call lasted.</p>
+</section>
       <h4><a class="xref" href="Sensus.Probes.Communication.TelephonyState.html">TelephonyState</a></h4>
       <section></section>
 </article>

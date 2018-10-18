@@ -15,18 +15,45 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Sensus.Context;
+using System.Threading;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
+using Sensus.UI.UiProperties;
 
 namespace Sensus.Probes.Context
 {
     public abstract class BluetoothDeviceProximityProbe : PollingProbe
     {
-        public const string DEVICE_ID_SERVICE_UUID = "AF2FB88A-9A79-4748-8DB6-9AC1F8F41B2B";
         public const string DEVICE_ID_CHARACTERISTIC_UUID = "2647AAAE-B7AC-4331-A3FF-0DF73288D3F7";
 
+        private int _scanDurationMS;
+
         protected List<BluetoothDeviceProximityDatum> EncounteredDeviceData { get; }
+
+        /// <summary>
+        /// The length of time to scan for devices in proximity (in milliseconds). Note that, if the <see cref="Protocol"/>
+        /// is configured to use [push notifications](xref:push_notifications), then this should not be set above 20 seconds 
+        /// on iOS as background execution is limited to 30 seconds total. It should also not be set to less than 10 seconds
+        /// as the scan can take at least this long to pick up nearby devices. The recommended value is 20000ms.
+        /// </summary>
+        /// <value>The scan time ms.</value>
+        [EntryIntegerUiProperty("Scan Duration (MS):", true, 5, true)]
+        public int ScanDurationMS
+        {
+            get
+            {
+                return _scanDurationMS;
+            }
+            set
+            {
+                if (value < 5000)
+                {
+                    value = 5000;
+                }
+
+                _scanDurationMS = value;
+            }
+        }
 
         public sealed override string DisplayName
         {
@@ -40,26 +67,27 @@ namespace Sensus.Probes.Context
 
         public BluetoothDeviceProximityProbe()
         {
+            _scanDurationMS = (int)TimeSpan.FromSeconds(20).TotalMilliseconds;
             EncounteredDeviceData = new List<BluetoothDeviceProximityDatum>();
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
+            if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Bluetooth not enabled. Cannot start Bluetooth probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected sealed override void InternalStart()
+        protected sealed override async Task ProtectedStartAsync()
         {
-            base.InternalStart();
+            await base.ProtectedStartAsync();
 
             try
             {
@@ -74,45 +102,35 @@ namespace Sensus.Probes.Context
 
         protected abstract void StartAdvertising();
 
-        protected sealed override IEnumerable<Datum> Poll(System.Threading.CancellationToken cancellationToken)
+        protected sealed override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            // restart the scan. on android this will cause the thread to sleep while data accumate. we need to sleep in order
-            // to keep the cpu alive, as we're holding a wakelock for the poll. this is not allowed on ios, where we have a 
-            // limited amount of time to return from the poll. thus, on ios, we just start the scan and return immediately 
-            // without waiting for results to accumulate.
-
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Stopping scan.", LoggingLevel.Normal, GetType());
+                // start a new scan
+                SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
                 StopScan();
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex, LoggingLevel.Normal, GetType());
-            }
-
-            try
-            {
-                SensusServiceHelper.Get().Logger.Log("Starting scan.", LoggingLevel.Normal, GetType());
                 StartScan();
+
+                // wait for scanning results to arrive. we're not going to stop the scan, as it will continue 
+                // in the background on both android and iOS and continue to deliver results, which will be
+                // collected upon next poll.
+                await Task.Delay(ScanDurationMS, cancellationToken);
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while starting scan:  " + ex, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex, LoggingLevel.Normal, GetType());
             }
 
-            // create a new list to return any data that have accumulated -- this only plays a role in android, where we 
-            // wait for data to accumulate while holding a wakelock. on ios, data are added directly via Probe.StoreDatumAsync 
-            // because we're not allowed to wait for data to accumulate (background time expiration).
-            List<BluetoothDeviceProximityDatum> dataToReturn;
+            // create a new list to return any data that have accumulated (prevents cross-thread modification)
+            List<Datum> dataToReturn;
 
             lock (EncounteredDeviceData)
             {
-                dataToReturn = EncounteredDeviceData.ToList();
+                dataToReturn = EncounteredDeviceData.Cast<Datum>().ToList();
                 EncounteredDeviceData.Clear();
             }
 
-            // if we have no new data, return a null datum to signal to the storage system that the poll ran successfully (null won't actually be stored).
+            // let the system know that we polled but didn't get any data
             if (dataToReturn.Count == 0)
             {
                 dataToReturn.Add(null);
@@ -123,9 +141,9 @@ namespace Sensus.Probes.Context
 
         protected abstract void StartScan();
 
-        public sealed override void Stop()
+        public sealed override async Task StopAsync()
         {
-            base.Stop();
+            await base.StopAsync();
 
             try
             {

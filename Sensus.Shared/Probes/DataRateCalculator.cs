@@ -161,6 +161,7 @@ namespace Sensus.Probes
                             // a sample with more reasonable data timestamps comes in.
                             else if (double.IsInfinity(overagePerSecond))
                             {
+                                SensusServiceHelper.Get().Logger.Log("Data and start timestamps are equal. Dropping all data.", LoggingLevel.Normal, GetType());
                                 _samplingModulus = 1;
                                 _samplingModulusMatchAction = SamplingAction.Drop;
                             }

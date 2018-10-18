@@ -8,6 +8,11 @@
         "s3:List*"
       ],
       "Resource": "arn:aws:s3:::bucketName*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:DeleteObject",
+      "Resource": "arn:aws:s3:::bucketName/push-notifications/*"
     }
   ]
 }

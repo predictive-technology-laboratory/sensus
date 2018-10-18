@@ -32,7 +32,6 @@ using CoreLocation;
 namespace Sensus.Probes
 {
     /// <summary>
-    /// 
     /// Polling Probes are triggered at regular intervals. When triggered, Polling Probes ask the device (and perhaps the user) for some type of 
     /// information and store the resulting information in the <see cref="LocalDataStore"/>.
     /// 
@@ -42,35 +41,39 @@ namespace Sensus.Probes
     /// this delay is usually only 5-10 seconds. So, if you configure a Polling Probe to poll every 60 seconds, you may see actual polling delays of 
     /// 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.
     /// 
-    /// Polling on iOS is much less reliable. By design, iOS apps cannot perform processing in the background, with the exception of 
-    /// <see cref="Location.ListeningLocationProbe"/>. All other processing within Sensus must be halted when the user backgrounds the app. Furthermore, 
-    /// Sensus cannot wake itself up from the background in order to execute polling operations. Thus, Sensus has no reliable mechanism to support polling-style
-    /// operations. Sensus does its best to support Polling Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking 
-    /// a GPS reading) should execute. This relies on the user to open the notification from the tray and bring Sensus to the foreground so that the polling 
-    /// operation can execute. Of course, the user might not see the notification or might choose not to open it. The polling operation will not be executed
-    /// in such cases. You should assume that Polling Probes will not produce data reliably on iOS.
+    /// Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
+    /// with the following exceptions for <see cref="PollingProbe"/>s:
     /// 
+    ///   * Significant location change processing:  If SignificantChangePoll is enabled, the Polling Probe will wake up each time
+    ///     the user's physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
+    ///     order of several kilometers.
+    /// 
+    ///   * Push notification processing:  If you [configure push notifications](xref:push_notifications), the Polling Probe will be woken up
+    ///     at the desired time to take a reading. Note that the reliability of these timings is subject to push notification throttling imposed
+    ///     by the Apple Push Notification Service. The value of <see cref="PollingSleepDurationMS"/> should be set conservatively for all probes,
+    ///     for example no lower than 15-20 minutes.
+    /// 
+    /// Beyond these exceptions, all processing within Sensus must be halted when the user backgrounds the app. Sensus does its best to support Polling 
+    /// Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 
+    /// user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, the user 
+    /// might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
     /// </summary>
     public abstract class PollingProbe : Probe
     {
-        /// <summary>
-        /// It's important to mitigate lag in polling operations since participation assessments are done on the basis of poll rates.
-        /// </summary>
-        private const bool POLL_CALLBACK_LAG = false;
-
         private int _pollingSleepDurationMS;
         private int _pollingTimeoutMinutes;
         private bool _isPolling;
         private List<DateTime> _pollTimes;
         private ScheduledCallback _pollCallback;
+        private bool _acPowerConnectPoll;
+        private bool _acPowerConnectPollOverridesScheduledPolls;
+        private EventHandler<bool> _powerConnectionChanged;
 
 #if __IOS__
         private bool _significantChangePoll;
         private bool _significantChangePollOverridesScheduledPolls;
         private CLLocationManager _locationManager;
 #endif
-
-        private readonly object _locker = new object();
 
         /// <summary>
         /// How long to sleep (become inactive) between successive polling operations.
@@ -141,6 +144,30 @@ namespace Sensus.Probes
             get { return _pollTimes; }
         }
 
+        /// <summary>
+        /// Whether to poll on when the device is connected to AC Power.
+        /// </summary>
+        /// <value><c>true</c> if we should poll on power connect; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Poll On AC Power Connection:", true, 7)]
+        public bool AcPowerConnectPoll
+        {
+            get { return _acPowerConnectPoll; }
+            set { _acPowerConnectPoll = value; }
+        }
+
+        /// <summary>
+        /// Has no effect if <see cref="AcPowerConnectPoll"/> is disabled. If <see cref="AcPowerConnectPoll"/> is enabled:  (1) If this 
+        /// is on, polling will only occur on AC power connect. (2) If this is off, polling will occur based on <see cref="PollingSleepDurationMS"/> and 
+        /// on AC power connect.
+        /// </summary>
+        /// <value><c>true</c> if AC power connect poll overrides scheduled polls; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("AC Power Connection Poll Overrides Scheduled Polls:", true, 8)]
+        public bool AcPowerConnectPollOverridesScheduledPolls
+        {
+            get { return _acPowerConnectPollOverridesScheduledPolls; }
+            set { _acPowerConnectPollOverridesScheduledPolls = value; }
+        }
+
 #if __IOS__
         /// <summary>
         /// Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
@@ -148,7 +175,7 @@ namespace Sensus.Probes
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll:", true, 7)]
+        [OnOffUiProperty("Poll On Significant Location Change:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -161,7 +188,7 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 8)]
+        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
@@ -173,30 +200,38 @@ namespace Sensus.Probes
         {
             get
             {
+                string description = DisplayName + ":  ";
+
+                bool scheduledPollOverridden = false;
 
 #if __IOS__
-                string significantChangeDescription = null;
                 if (_significantChangePoll)
                 {
-                    significantChangeDescription = "On significant changes in the device's location";
+                    description += "On significant changes in the device's location. ";
 
                     if (_significantChangePollOverridesScheduledPolls)
                     {
-                        return DisplayName + ":  " + significantChangeDescription + ".";
+                        scheduledPollOverridden = true;
                     }
                 }
 #endif
 
-                string intervalStr = TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
-
-#if __IOS__
-                if (_significantChangePoll)
+                if (_acPowerConnectPoll)
                 {
-                    intervalStr = significantChangeDescription + "; and " + intervalStr.ToLower();
-                }
-#endif
+                    description += "On AC power connection. ";
 
-                return DisplayName + ":  " + intervalStr;
+                    if (_acPowerConnectPollOverridesScheduledPolls)
+                    {
+                        scheduledPollOverridden = true;
+                    }
+                }
+
+                if (!scheduledPollOverridden)
+                {
+                    description += TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
+                }
+
+                return description;
             }
         }
 
@@ -206,6 +241,8 @@ namespace Sensus.Probes
             _pollingTimeoutMinutes = 5;
             _isPolling = false;
             _pollTimes = new List<DateTime>();
+            _acPowerConnectPoll = false;
+            _acPowerConnectPollOverridesScheduledPolls = false;
 
 #if __IOS__
             _significantChangePoll = false;
@@ -213,152 +250,181 @@ namespace Sensus.Probes
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += async (sender, e) =>
             {
-                await Task.Run(async () =>
+                try
                 {
-                    try
+                    CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
+
+                    // if the callback specified a timeout, request cancellation at the specified time.
+                    if (_pollCallback.CallbackTimeout.HasValue)
                     {
-                        CancellationTokenSource canceller = new CancellationTokenSource();
+                        pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                    }
+
+                    await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed significant change poll.", ex);
+                }
+            };
+#endif
+
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                try
+                {
+                    if (connected)
+                    {
+                        CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                         // if the callback specified a timeout, request cancellation at the specified time.
                         if (_pollCallback.CallbackTimeout.HasValue)
                         {
-                            canceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                            pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
                         }
 
-                        await _pollCallback.Action(_pollCallback.Id, canceller.Token, () => { });
+                        await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed AC power connected poll:  " + ex.Message, ex);
+                }
+            };
+        }
+
+        protected override async Task ProtectedStartAsync()
+        {
+            await base.ProtectedStartAsync();
+
+#if __IOS__
+            string userNotificationMessage = DisplayName + " data requested.";
+#elif __ANDROID__
+            string userNotificationMessage = null;
+#elif LOCAL_TESTS
+            string userNotificationMessage = null;
+#else
+#warning "Unrecognized platform"
+            string userNotificationMessage = null;
+#endif
+
+            _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            {
+                if (Running)
+                {
+                    _isPolling = true;
+
+                    List<Datum> data = null;
+                    try
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
+                        data = await PollAsync(cancellationToken);
+
+                        lock (_pollTimes)
+                        {
+                            _pollTimes.Add(DateTime.Now);
+                            _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
+                        }
                     }
                     catch (Exception ex)
                     {
-                        SensusException.Report("Failed significant change poll.", ex);
+                        SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
-                });
-            };
-#endif
 
-        }
-
-        protected override void InternalStart()
-        {
-            lock (_locker)
-            {
-                base.InternalStart();
-
-#if __IOS__
-                string userNotificationMessage = DisplayName + " data requested.";
-#elif __ANDROID__
-                string userNotificationMessage = null;
-#elif LOCAL_TESTS
-                string userNotificationMessage = null;
-#else
-#warning "Unrecognized platform"
-                string userNotificationMessage = null;
-#endif
-
-                _pollCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) =>
-                {
-                    return Task.Run(() =>
+                    if (data != null)
                     {
-                        if (Running)
+                        foreach (Datum datum in data)
                         {
-                            _isPolling = true;
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
 
-                            IEnumerable<Datum> data = null;
                             try
                             {
-                                SensusServiceHelper.Get().Logger.Log("Polling.", LoggingLevel.Normal, GetType());
-                                data = Poll(cancellationToken);
-
-                                lock (_pollTimes)
-                                {
-                                    _pollTimes.Add(DateTime.Now);
-                                    _pollTimes.RemoveAll(pollTime => pollTime < Protocol.ParticipationHorizon);
-                                }
+                                await StoreDatumAsync(datum, cancellationToken);
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to poll:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
-
-                            if (data != null)
-                            {
-                                foreach (Datum datum in data)
-                                {
-                                    if (cancellationToken.IsCancellationRequested)
-                                    {
-                                        break;
-                                    }
-
-                                    try
-                                    {
-                                        StoreDatum(datum, cancellationToken);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        SensusServiceHelper.Get().Logger.Log("Failed to store datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                    }
-                                }
-                            }
-
-                            _isPolling = false;
                         }
-                    });
+                    }
 
-                }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), POLL_CALLBACK_LAG, GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+                    _isPolling = false;
+                }
+
+            }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+
+            bool schedulePollCallback = true;
 
 #if __IOS__
-
-                if (_significantChangePoll)
-                {
-                    _locationManager.RequestAlwaysAuthorization();
-                    _locationManager.DistanceFilter = 5.0;
-                    _locationManager.PausesLocationUpdatesAutomatically = false;
-                    _locationManager.AllowsBackgroundLocationUpdates = true;
-
-                    if (CLLocationManager.LocationServicesEnabled)
-                    {
-                        _locationManager.StartMonitoringSignificantLocationChanges();
-                    }
-                    else
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Location services not enabled.", LoggingLevel.Normal, GetType());
-                    }
-                }
-
-                // schedule the callback if we're not doing significant-change polling, or if we are but the latter doesn't override the former.
-                if (!_significantChangePoll || !_significantChangePollOverridesScheduledPolls)
-                {
-                    SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
-                }
-
-#elif __ANDROID__
-                SensusContext.Current.CallbackScheduler.ScheduleCallback(_pollCallback);
-#endif
-            }
-        }
-
-        protected abstract IEnumerable<Datum> Poll(CancellationToken cancellationToken);
-
-        public override void Stop()
-        {
-            lock (_locker)
+            if (_significantChangePoll)
             {
-                base.Stop();
+                _locationManager.RequestAlwaysAuthorization();
+                _locationManager.DistanceFilter = 5.0;
+                _locationManager.PausesLocationUpdatesAutomatically = false;
+                _locationManager.AllowsBackgroundLocationUpdates = true;
 
-#if __IOS__
-                if (_significantChangePoll)
+                if (CLLocationManager.LocationServicesEnabled)
                 {
-                    _locationManager.StopMonitoringSignificantLocationChanges();
-                }
-#endif
+                    _locationManager.StartMonitoringSignificantLocationChanges();
 
-                SensusContext.Current.CallbackScheduler.UnscheduleCallback(_pollCallback);
-                _pollCallback = null;
+                    if (_significantChangePollOverridesScheduledPolls)
+                    {
+                        schedulePollCallback = false;
+                    }
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log("Location services not enabled.", LoggingLevel.Normal, GetType());
+                }
+            }
+#endif       
+
+            if (_acPowerConnectPoll)
+            {
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;  //attach to the power connection changed 
+
+                if (_acPowerConnectPollOverridesScheduledPolls)
+                {
+                    schedulePollCallback = false;
+                }
+            }
+
+            if (schedulePollCallback)
+            {
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_pollCallback);
             }
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        protected abstract Task<List<Datum>> PollAsync(CancellationToken cancellationToken);
+
+        public override async Task StopAsync()
         {
-            bool restart = base.TestHealth(ref events);
+            await base.StopAsync();
+
+#if __IOS__
+            if (_significantChangePoll)
+            {
+                _locationManager.StopMonitoringSignificantLocationChanges();
+            }
+#endif
+
+            if (_acPowerConnectPoll)
+            {
+#pragma warning disable RECS0020 // Delegate subtraction has unpredictable result
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
+#pragma warning restore RECS0020 // Delegate subtraction has unpredictable result
+            }
+
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_pollCallback);
+            _pollCallback = null;
+        }
+
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+        {
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (Running)
             {
@@ -367,9 +433,15 @@ namespace Sensus.Probes
                 // on ios we do significant-change polling, which can override scheduled polls. don't check for polling delays if the scheduled polls are overridden.
                 if (_significantChangePoll && _significantChangePollOverridesScheduledPolls)
                 {
-                    return restart;
+                    return result;
                 }
 #endif
+
+                // don't check for polling delays if the scheduled polls are overridden.
+                if (_acPowerConnectPoll && _acPowerConnectPollOverridesScheduledPolls)
+                {
+                    return result;
+                }
 
                 TimeSpan timeElapsedSincePreviousStore = DateTimeOffset.UtcNow - MostRecentStoreTimestamp.GetValueOrDefault(DateTimeOffset.MinValue);
                 int allowedLagMS = 5000;
@@ -385,10 +457,10 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    events.Add(new AnalyticsTrackedEvent(eventName, properties));
                 }
 
-                if(!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
+                if (!SensusContext.Current.CallbackScheduler.ContainsCallback(_pollCallback))
                 {
                     string eventName = TrackedEvent.Error + ":" + GetType().Name;
                     Dictionary<string, string> properties = new Dictionary<string, string>
@@ -398,18 +470,18 @@ namespace Sensus.Probes
 
                     Analytics.TrackEvent(eventName, properties);
 
-                    events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+                    events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-                    restart = true;
+                    result = HealthTestResult.Restart;
                 }
             }
 
-            return restart;
+            return result;
         }
 
-        public override void Reset()
+        public override async Task ResetAsync()
         {
-            base.Reset();
+            await base.ResetAsync();
 
             _isPolling = false;
             _pollCallback = null;

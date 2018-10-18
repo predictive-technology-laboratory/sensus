@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SensusServiceHelper
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -114,7 +116,9 @@
   
   
   <h4 id="Sensus_SensusServiceHelper_APP_CENTER_KEY_ANDROID" data-uid="Sensus.SensusServiceHelper.APP_CENTER_KEY_ANDROID">APP_CENTER_KEY_ANDROID</h4>
-  <div class="markdown level1 summary"><p>App Center key for Android app.</p>
+  <div class="markdown level1 summary"><p>App Center key for Android app. To obtain this key, create a new Xamarin Android app within the Microsoft App Center. This
+is optional. If you do not provide this key, then Sensus will not send Android crash reports and remote health telemetry 
+to the App Center.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -139,7 +143,9 @@
   
   
   <h4 id="Sensus_SensusServiceHelper_APP_CENTER_KEY_IOS" data-uid="Sensus.SensusServiceHelper.APP_CENTER_KEY_IOS">APP_CENTER_KEY_IOS</h4>
-  <div class="markdown level1 summary"><p>App Center key for iOS app.</p>
+  <div class="markdown level1 summary"><p>App Center key for iOS app. To obtain this key, create a new Xamarin iOS app within the Microsoft App Center. This
+is optional. If you do not provide this key, then Sensus will not send iOS crash reports and remote health telemetry 
+to the App Center.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -164,7 +170,7 @@
   
   
   <h4 id="Sensus_SensusServiceHelper_BUILD_ID" data-uid="Sensus.SensusServiceHelper.BUILD_ID">BUILD_ID</h4>
-  <div class="markdown level1 summary"><p>The build ID, used to tag each <a class="xref" href="Sensus.Datum.html">Datum</a>.</p>
+  <div class="markdown level1 summary"><p>The build ID, used to tag each <a class="xref" href="Sensus.Datum.html">Datum</a>. This is an arbitrary string value, and it is optional.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -192,6 +198,7 @@
   <div class="markdown level1 summary"><p>The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:</p>
 <p>openssl enc -aes-256-cbc -k secret -P -md sha1</p>
 <p>The above was adapted from:  <a href="https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html">https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html</a></p>
+<p>This is mandatory.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -281,6 +288,30 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_SensusServiceHelper_PENDING_SURVEY_NOTIFICATION_ID" data-uid="Sensus.SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID">PENDING_SURVEY_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PENDING_SURVEY_NOTIFICATION_ID = &quot;SENSUS-PENDING-SURVEY-NOTIFICATION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -815,13 +846,13 @@
   </h3>
   
   
-  <a id="Sensus_SensusServiceHelper_AddRunningProtocolId_" data-uid="Sensus.SensusServiceHelper.AddRunningProtocolId*"></a>
-  <h4 id="Sensus_SensusServiceHelper_AddRunningProtocolId_System_String_" data-uid="Sensus.SensusServiceHelper.AddRunningProtocolId(System.String)">AddRunningProtocolId(String)</h4>
+  <a id="Sensus_SensusServiceHelper_AddRunningProtocolIdAsync_" data-uid="Sensus.SensusServiceHelper.AddRunningProtocolIdAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_AddRunningProtocolIdAsync_System_String_" data-uid="Sensus.SensusServiceHelper.AddRunningProtocolIdAsync(System.String)">AddRunningProtocolIdAsync(String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddRunningProtocolId(string id)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task AddRunningProtocolIdAsync(string id)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -840,15 +871,30 @@
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_SensusServiceHelper_AddScript_" data-uid="Sensus.SensusServiceHelper.AddScript*"></a>
-  <h4 id="Sensus_SensusServiceHelper_AddScript_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_" data-uid="Sensus.SensusServiceHelper.AddScript(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)">AddScript(Script, RunMode)</h4>
+  <a id="Sensus_SensusServiceHelper_AddScriptAsync_" data-uid="Sensus.SensusServiceHelper.AddScriptAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_AddScriptAsync_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_" data-uid="Sensus.SensusServiceHelper.AddScriptAsync(Sensus.Probes.User.Scripts.Script,Sensus.Probes.User.Scripts.RunMode)">AddScriptAsync(Script, RunMode)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void AddScript(Script script, RunMode runMode)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task AddScriptAsync(Script script, RunMode runMode)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -868,6 +914,21 @@
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.RunMode.html">RunMode</a></td>
         <td><span class="parametername">runMode</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -926,24 +987,39 @@
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_ClearPendingSurveysNotificationAsync_" data-uid="Sensus.SensusServiceHelper.ClearPendingSurveysNotificationAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_ClearPendingSurveysNotificationAsync" data-uid="Sensus.SensusServiceHelper.ClearPendingSurveysNotificationAsync">ClearPendingSurveysNotificationAsync()</h4>
+  <a id="Sensus_SensusServiceHelper_ClearPendingSurveysNotification_" data-uid="Sensus.SensusServiceHelper.ClearPendingSurveysNotification*"></a>
+  <h4 id="Sensus_SensusServiceHelper_ClearPendingSurveysNotification" data-uid="Sensus.SensusServiceHelper.ClearPendingSurveysNotification">ClearPendingSurveysNotification()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ClearPendingSurveysNotificationAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public void ClearPendingSurveysNotification()</code></pre>
   </div>
   
   
-  <a id="Sensus_SensusServiceHelper_ClearScripts_" data-uid="Sensus.SensusServiceHelper.ClearScripts*"></a>
-  <h4 id="Sensus_SensusServiceHelper_ClearScripts" data-uid="Sensus.SensusServiceHelper.ClearScripts">ClearScripts()</h4>
+  <a id="Sensus_SensusServiceHelper_ClearScriptsAsync_" data-uid="Sensus.SensusServiceHelper.ClearScriptsAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_ClearScriptsAsync" data-uid="Sensus.SensusServiceHelper.ClearScriptsAsync">ClearScriptsAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ClearScripts()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ClearScriptsAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_SensusServiceHelper_ClearSingleton_" data-uid="Sensus.SensusServiceHelper.ClearSingleton*"></a>
@@ -1001,13 +1077,13 @@
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_DisableBluetooth_" data-uid="Sensus.SensusServiceHelper.DisableBluetooth*"></a>
-  <h4 id="Sensus_SensusServiceHelper_DisableBluetooth_System_Boolean_System_Boolean_System_String_" data-uid="Sensus.SensusServiceHelper.DisableBluetooth(System.Boolean,System.Boolean,System.String)">DisableBluetooth(Boolean, Boolean, String)</h4>
+  <a id="Sensus_SensusServiceHelper_DisableBluetoothAsync_" data-uid="Sensus.SensusServiceHelper.DisableBluetoothAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_DisableBluetoothAsync_System_Boolean_System_Boolean_System_String_" data-uid="Sensus.SensusServiceHelper.DisableBluetoothAsync(System.Boolean,System.Boolean,System.String)">DisableBluetoothAsync(Boolean, Boolean, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool DisableBluetooth(bool reenable, bool lowEnergy, string rationale)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task&lt;bool&gt; DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1046,20 +1122,20 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_EnableBluetooth_" data-uid="Sensus.SensusServiceHelper.EnableBluetooth*"></a>
-  <h4 id="Sensus_SensusServiceHelper_EnableBluetooth_System_Boolean_System_String_" data-uid="Sensus.SensusServiceHelper.EnableBluetooth(System.Boolean,System.String)">EnableBluetooth(Boolean, String)</h4>
+  <a id="Sensus_SensusServiceHelper_EnableBluetoothAsync_" data-uid="Sensus.SensusServiceHelper.EnableBluetoothAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_EnableBluetoothAsync_System_Boolean_System_String_" data-uid="Sensus.SensusServiceHelper.EnableBluetoothAsync(System.Boolean,System.String)">EnableBluetoothAsync(Boolean, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool EnableBluetooth(bool lowEnergy, string rationale)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task&lt;bool&gt; EnableBluetoothAsync(bool lowEnergy, string rationale)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1093,7 +1169,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1565,7 +1641,7 @@ decide which probes to enable when enabling all probes.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1591,6 +1667,21 @@ decide which probes to enable when enabling all probes.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_SensusServiceHelper_KeepDeviceAwake_" data-uid="Sensus.SensusServiceHelper.KeepDeviceAwake*"></a>
@@ -1611,52 +1702,6 @@ decide which probes to enable when enabling all probes.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract void LetDeviceSleep()</code></pre>
   </div>
-  
-  
-  <a id="Sensus_SensusServiceHelper_ObtainPermission_" data-uid="Sensus.SensusServiceHelper.ObtainPermission*"></a>
-  <h4 id="Sensus_SensusServiceHelper_ObtainPermission_Plugin_Permissions_Abstractions_Permission_" data-uid="Sensus.SensusServiceHelper.ObtainPermission(Plugin.Permissions.Abstractions.Permission)">ObtainPermission(Permission)</h4>
-  <div class="markdown level1 summary"><p>Obtains a permission synchronously. Must not call this method from the UI thread, since it blocks waiting for prompts 
-that run on the UI thread (deadlock). If it is necessary to call from the UI thread, call ObtainPermissionAsync instead.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public PermissionStatus ObtainPermission(Permission permission)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Plugin.Permissions.Abstractions.Permission</span></td>
-        <td><span class="parametername">permission</span></td>
-        <td><p>Permission.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Plugin.Permissions.Abstractions.PermissionStatus</span></td>
-        <td><p>The permission status.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   
   
   <a id="Sensus_SensusServiceHelper_ObtainPermissionAsync_" data-uid="Sensus.SensusServiceHelper.ObtainPermissionAsync*"></a>
@@ -2155,13 +2200,13 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_RegisterWithNotificationHub_" data-uid="Sensus.SensusServiceHelper.RegisterWithNotificationHub*"></a>
-  <h4 id="Sensus_SensusServiceHelper_RegisterWithNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.SensusServiceHelper.RegisterWithNotificationHub(System.Tuple{System.String,System.String})">RegisterWithNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <a id="Sensus_SensusServiceHelper_RegisterWithNotificationHubAsync_" data-uid="Sensus.SensusServiceHelper.RegisterWithNotificationHubAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RegisterWithNotificationHubAsync_System_Tuple_System_String_System_String__" data-uid="Sensus.SensusServiceHelper.RegisterWithNotificationHubAsync(System.Tuple{System.String,System.String})">RegisterWithNotificationHubAsync(Tuple&lt;String, String&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void RegisterWithNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract Task RegisterWithNotificationHubAsync(Tuple&lt;string, string&gt; hubSas)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2180,15 +2225,30 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_SensusServiceHelper_RemoveExpiredScripts_" data-uid="Sensus.SensusServiceHelper.RemoveExpiredScripts*"></a>
-  <h4 id="Sensus_SensusServiceHelper_RemoveExpiredScripts_System_Boolean_" data-uid="Sensus.SensusServiceHelper.RemoveExpiredScripts(System.Boolean)">RemoveExpiredScripts(Boolean)</h4>
+  <a id="Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync_" data-uid="Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync_System_Boolean_" data-uid="Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync(System.Boolean)">RemoveExpiredScriptsAsync(Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RemoveExpiredScripts(bool issueNotification)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RemoveExpiredScriptsAsync(bool issueNotification)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2207,15 +2267,30 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_SensusServiceHelper_RemoveRunningProtocolId_" data-uid="Sensus.SensusServiceHelper.RemoveRunningProtocolId*"></a>
-  <h4 id="Sensus_SensusServiceHelper_RemoveRunningProtocolId_System_String_" data-uid="Sensus.SensusServiceHelper.RemoveRunningProtocolId(System.String)">RemoveRunningProtocolId(String)</h4>
+  <a id="Sensus_SensusServiceHelper_RemoveRunningProtocolIdAsync_" data-uid="Sensus.SensusServiceHelper.RemoveRunningProtocolIdAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RemoveRunningProtocolIdAsync_System_String_" data-uid="Sensus.SensusServiceHelper.RemoveRunningProtocolIdAsync(System.String)">RemoveRunningProtocolIdAsync(String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RemoveRunningProtocolId(string id)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RemoveRunningProtocolIdAsync(string id)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2234,15 +2309,30 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_SensusServiceHelper_RemoveScript_" data-uid="Sensus.SensusServiceHelper.RemoveScript*"></a>
-  <h4 id="Sensus_SensusServiceHelper_RemoveScript_Sensus_Probes_User_Scripts_Script_" data-uid="Sensus.SensusServiceHelper.RemoveScript(Sensus.Probes.User.Scripts.Script)">RemoveScript(Script)</h4>
+  <a id="Sensus_SensusServiceHelper_RemoveScriptAsync_" data-uid="Sensus.SensusServiceHelper.RemoveScriptAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RemoveScriptAsync_Sensus_Probes_User_Scripts_Script_" data-uid="Sensus.SensusServiceHelper.RemoveScriptAsync(Sensus.Probes.User.Scripts.Script)">RemoveScriptAsync(Script)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RemoveScript(Script script)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RemoveScriptAsync(Script script)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2261,15 +2351,30 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_SensusServiceHelper_RemoveScriptsForRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptsForRunner*"></a>
-  <h4 id="Sensus_SensusServiceHelper_RemoveScriptsForRunner_Sensus_Probes_User_Scripts_ScriptRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)">RemoveScriptsForRunner(ScriptRunner)</h4>
+  <a id="Sensus_SensusServiceHelper_RemoveScriptsForRunnerAsync_" data-uid="Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_RemoveScriptsForRunnerAsync_Sensus_Probes_User_Scripts_ScriptRunner_" data-uid="Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync(Sensus.Probes.User.Scripts.ScriptRunner)">RemoveScriptsForRunnerAsync(ScriptRunner)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void RemoveScriptsForRunner(ScriptRunner runner)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task RemoveScriptsForRunnerAsync(ScriptRunner runner)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2284,6 +2389,21 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html">ScriptRunner</a></td>
         <td><span class="parametername">runner</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2345,16 +2465,6 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Sensus_SensusServiceHelper_Save_" data-uid="Sensus.SensusServiceHelper.Save*"></a>
-  <h4 id="Sensus_SensusServiceHelper_Save" data-uid="Sensus.SensusServiceHelper.Save">Save()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Save()</code></pre>
-  </div>
   
   
   <a id="Sensus_SensusServiceHelper_SaveAsync_" data-uid="Sensus.SensusServiceHelper.SaveAsync*"></a>
@@ -2528,20 +2638,10 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_Start_" data-uid="Sensus.SensusServiceHelper.Start*"></a>
-  <h4 id="Sensus_SensusServiceHelper_Start" data-uid="Sensus.SensusServiceHelper.Start">Start()</h4>
-  <div class="markdown level1 summary"><p>Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
-  </div>
-  
-  
   <a id="Sensus_SensusServiceHelper_StartAsync_" data-uid="Sensus.SensusServiceHelper.StartAsync*"></a>
   <h4 id="Sensus_SensusServiceHelper_StartAsync" data-uid="Sensus.SensusServiceHelper.StartAsync">StartAsync()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Starts platform-independent service functionality, including protocols that should be running. Okay to call multiple times, even if the service is already running.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -2564,14 +2664,29 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_StopProtocols_" data-uid="Sensus.SensusServiceHelper.StopProtocols*"></a>
-  <h4 id="Sensus_SensusServiceHelper_StopProtocols" data-uid="Sensus.SensusServiceHelper.StopProtocols">StopProtocols()</h4>
+  <a id="Sensus_SensusServiceHelper_StopProtocolsAsync_" data-uid="Sensus.SensusServiceHelper.StopProtocolsAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_StopProtocolsAsync" data-uid="Sensus.SensusServiceHelper.StopProtocolsAsync">StopProtocolsAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void StopProtocols()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StopProtocolsAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_SensusServiceHelper_TextToSpeechAsync_" data-uid="Sensus.SensusServiceHelper.TextToSpeechAsync*"></a>
@@ -2616,13 +2731,13 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
   </table>
   
   
-  <a id="Sensus_SensusServiceHelper_UnregisterFromNotificationHub_" data-uid="Sensus.SensusServiceHelper.UnregisterFromNotificationHub*"></a>
-  <h4 id="Sensus_SensusServiceHelper_UnregisterFromNotificationHub_System_Tuple_System_String_System_String__" data-uid="Sensus.SensusServiceHelper.UnregisterFromNotificationHub(System.Tuple{System.String,System.String})">UnregisterFromNotificationHub(Tuple&lt;String, String&gt;)</h4>
+  <a id="Sensus_SensusServiceHelper_UnregisterFromNotificationHubAsync_" data-uid="Sensus.SensusServiceHelper.UnregisterFromNotificationHubAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_UnregisterFromNotificationHubAsync_System_Tuple_System_String_System_String__" data-uid="Sensus.SensusServiceHelper.UnregisterFromNotificationHubAsync(System.Tuple{System.String,System.String})">UnregisterFromNotificationHubAsync(Tuple&lt;String, String&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void UnregisterFromNotificationHub(Tuple&lt;string, string&gt; hubSas)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract Task UnregisterFromNotificationHubAsync(Tuple&lt;string, string&gt; hubSas)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2641,15 +2756,30 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_SensusServiceHelper_UnregisterProtocol_" data-uid="Sensus.SensusServiceHelper.UnregisterProtocol*"></a>
-  <h4 id="Sensus_SensusServiceHelper_UnregisterProtocol_Sensus_Protocol_" data-uid="Sensus.SensusServiceHelper.UnregisterProtocol(Sensus.Protocol)">UnregisterProtocol(Protocol)</h4>
+  <a id="Sensus_SensusServiceHelper_UnregisterProtocolAsync_" data-uid="Sensus.SensusServiceHelper.UnregisterProtocolAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_UnregisterProtocolAsync_Sensus_Protocol_" data-uid="Sensus.SensusServiceHelper.UnregisterProtocolAsync(Sensus.Protocol)">UnregisterProtocolAsync(Protocol)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void UnregisterProtocol(Protocol protocol)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task UnregisterProtocolAsync(Protocol protocol)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2664,6 +2794,21 @@ that run on the UI thread (deadlock). If it is necessary to call from the UI thr
       <tr>
         <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
         <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

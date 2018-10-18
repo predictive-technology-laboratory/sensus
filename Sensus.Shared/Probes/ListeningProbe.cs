@@ -15,7 +15,6 @@
 using Sensus.UI.UiProperties;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -31,8 +30,6 @@ namespace Sensus.Probes
         private double? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
         private bool _deviceAwake;
-
-        private readonly object _locker = new object();
 
         /// <summary>
         /// The maximum number of readings that may be stored in one second.
@@ -105,11 +102,15 @@ namespace Sensus.Probes
 
                     if (value && !string.IsNullOrWhiteSpace(DeviceAwakeWarning))
                     {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         SensusServiceHelper.Get().FlashNotificationAsync(DeviceAwakeWarning);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     }
                     else if (!value && !string.IsNullOrWhiteSpace(DeviceAsleepWarning))
                     {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         SensusServiceHelper.Get().FlashNotificationAsync(DeviceAsleepWarning);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     }
                 }
 
@@ -228,7 +229,7 @@ namespace Sensus.Probes
         {
             get
             {
-                return DisplayName + ":  When it changes.";
+                return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.");
             }
         }
 
@@ -239,46 +240,40 @@ namespace Sensus.Probes
             _deviceAwake = false;
         }
 
-        protected sealed override void InternalStart()
+        protected sealed override async Task ProtectedStartAsync()
         {
-            lock (_locker)
+            // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
+            if (!Running && _keepDeviceAwake)
             {
-                // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
-                if (!Running && _keepDeviceAwake)
-                {
-                    SensusServiceHelper.Get().KeepDeviceAwake();
-                    _deviceAwake = true;
-                }
+                SensusServiceHelper.Get().KeepDeviceAwake();
+                _deviceAwake = true;
+            }
 
-                base.InternalStart();
+            await base.ProtectedStartAsync();
 
-                StartListening();
+            await StartListeningAsync();
+        }
+
+        protected abstract Task StartListeningAsync();
+
+        public sealed override async Task StopAsync()
+        {
+            await base.StopAsync();
+
+            await StopListeningAsync();
+
+            if (_deviceAwake)
+            {
+                SensusServiceHelper.Get().LetDeviceSleep();
+                _deviceAwake = false;
             }
         }
 
-        protected abstract void StartListening();
+        protected abstract Task StopListeningAsync();
 
-        public sealed override void Stop()
+        public override async Task ResetAsync()
         {
-            lock (_locker)
-            {
-                base.Stop();
-
-                StopListening();
-
-                if (_deviceAwake)
-                {
-                    SensusServiceHelper.Get().LetDeviceSleep();
-                    _deviceAwake = false;
-                }
-            }
-        }
-
-        protected abstract void StopListening();
-
-        public override void Reset()
-        {
-            base.Reset();
+            await base.ResetAsync();
 
             _deviceAwake = false;
         }

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Probe
    | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.31.0.0">
+    <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -22,7 +22,7 @@
     <meta property="docfx:rel" content="../">
     
   </head>
-  <body data-spy="scroll" data-target="#affix">
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
         
@@ -62,7 +62,9 @@
         
         <div id="search-results">
           <div class="search-list"></div>
-          <div class="sr-items"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
           <ul id="pagination"></ul>
         </div>
       </div>
@@ -570,6 +572,33 @@ protocol&apos;s participation horizon.</p>
   </h3>
   
   
+  <a id="Sensus_Probes_Probe_add_MostRecentDatumChanged_" data-uid="Sensus.Probes.Probe.add_MostRecentDatumChanged*"></a>
+  <h4 id="Sensus_Probes_Probe_add_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_" data-uid="Sensus.Probes.Probe.add_MostRecentDatumChanged(Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync)">add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void add_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync.html">Probe.MostRecentDatumChangedDelegateAsync</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Probe_GetAll_" data-uid="Sensus.Probes.Probe.GetAll*"></a>
   <h4 id="Sensus_Probes_Probe_GetAll" data-uid="Sensus.Probes.Probe.GetAll">GetAll()</h4>
   <div class="markdown level1 summary"></div>
@@ -771,61 +800,131 @@ to trigger scripts but not told to store its data.</p>
   </table>
   
   
-  <a id="Sensus_Probes_Probe_Initialize_" data-uid="Sensus.Probes.Probe.Initialize*"></a>
-  <h4 id="Sensus_Probes_Probe_Initialize" data-uid="Sensus.Probes.Probe.Initialize">Initialize()</h4>
-  <div class="markdown level1 summary"><p>Initializes this probe. Throws an exception if initialization fails. After successful completion the probe is considered to be
-running and a candidate for stopping at some future point.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void Initialize()</code></pre>
-  </div>
-  
-  
-  <a id="Sensus_Probes_Probe_InternalStart_" data-uid="Sensus.Probes.Probe.InternalStart*"></a>
-  <h4 id="Sensus_Probes_Probe_InternalStart" data-uid="Sensus.Probes.Probe.InternalStart">InternalStart()</h4>
-  <div class="markdown level1 summary"><p>Throws an exception if start fails. Should be called first within child-class overrides. This should only be called within Start. This setup
-allows for child-class overrides, but since InternalStart is protected, it cannot be called from the outside. Outsiders only have access to
-Start (perhaps via Enabled), which takes care of any exceptions arising from the entire chain of InternalStart overrides.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual void InternalStart()</code></pre>
-  </div>
-  
-  
-  <a id="Sensus_Probes_Probe_Reset_" data-uid="Sensus.Probes.Probe.Reset*"></a>
-  <h4 id="Sensus_Probes_Probe_Reset" data-uid="Sensus.Probes.Probe.Reset">Reset()</h4>
+  <a id="Sensus_Probes_Probe_InitializeAsync_" data-uid="Sensus.Probes.Probe.InitializeAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_InitializeAsync" data-uid="Sensus.Probes.Probe.InitializeAsync">InitializeAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void Reset()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task InitializeAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_Probe_Restart_" data-uid="Sensus.Probes.Probe.Restart*"></a>
-  <h4 id="Sensus_Probes_Probe_Restart" data-uid="Sensus.Probes.Probe.Restart">Restart()</h4>
+  <a id="Sensus_Probes_Probe_ProtectedStartAsync_" data-uid="Sensus.Probes.Probe.ProtectedStartAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_ProtectedStartAsync" data-uid="Sensus.Probes.Probe.ProtectedStartAsync">ProtectedStartAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Restart()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task ProtectedStartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_Probe_Start_" data-uid="Sensus.Probes.Probe.Start*"></a>
-  <h4 id="Sensus_Probes_Probe_Start" data-uid="Sensus.Probes.Probe.Start">Start()</h4>
-  <div class="markdown level1 summary"><p>Start this instance, throwing an exception if anything goes wrong. If an exception is thrown, the caller can assume that any relevant
-information will have already been logged and displayed. Thus, the caller doesn&apos;t need to do anything with the exception information.</p>
-</div>
+  <a id="Sensus_Probes_Probe_remove_MostRecentDatumChanged_" data-uid="Sensus.Probes.Probe.remove_MostRecentDatumChanged*"></a>
+  <h4 id="Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_" data-uid="Sensus.Probes.Probe.remove_MostRecentDatumChanged(Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync)">remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Start()</code></pre>
+    <pre><code class="lang-csharp hljs">public void remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync value)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync.html">Probe.MostRecentDatumChangedDelegateAsync</a></td>
+        <td><span class="parametername">value</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_ResetAsync_" data-uid="Sensus.Probes.Probe.ResetAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_ResetAsync" data-uid="Sensus.Probes.Probe.ResetAsync">ResetAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Task ResetAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_RestartAsync_" data-uid="Sensus.Probes.Probe.RestartAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_RestartAsync" data-uid="Sensus.Probes.Probe.RestartAsync">RestartAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RestartAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_Probe_StartAsync_" data-uid="Sensus.Probes.Probe.StartAsync*"></a>
@@ -834,19 +933,23 @@ information will have already been logged and displayed. Thus, the caller doesn&
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected void StartAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StartAsync()</code></pre>
   </div>
-  
-  
-  <a id="Sensus_Probes_Probe_Stop_" data-uid="Sensus.Probes.Probe.Stop*"></a>
-  <h4 id="Sensus_Probes_Probe_Stop" data-uid="Sensus.Probes.Probe.Stop">Stop()</h4>
-  <div class="markdown level1 summary"><p>Should be called first within child-class overrides.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual void Stop()</code></pre>
-  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_Probe_StopAsync_" data-uid="Sensus.Probes.Probe.StopAsync*"></a>
@@ -855,18 +958,33 @@ information will have already been logged and displayed. Thus, the caller doesn&
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected void StopAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual Task StopAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_Probe_StoreDatum_" data-uid="Sensus.Probes.Probe.StoreDatum*"></a>
-  <h4 id="Sensus_Probes_Probe_StoreDatum_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.Probe.StoreDatum(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatum(Datum, Nullable&lt;CancellationToken&gt;)</h4>
+  <a id="Sensus_Probes_Probe_StoreDatumAsync_" data-uid="Sensus.Probes.Probe.StoreDatumAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__" data-uid="Sensus.Probes.Probe.StoreDatumAsync(Sensus.Datum,System.Nullable{System.Threading.CancellationToken})">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</h4>
   <div class="markdown level1 summary"><p>Stores a <a class="xref" href="Sensus.Datum.html">Datum</a> within the <span class="xref">System.LocalDataStore</span>. Will not throw an <span class="xref">System.Exception</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void StoreDatum(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StoreDatumAsync(Datum datum, Nullable&lt;CancellationToken&gt; cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -892,15 +1010,30 @@ information will have already been logged and displayed. Thus, the caller doesn&
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_Probe_TestHealth_" data-uid="Sensus.Probes.Probe.TestHealth*"></a>
-  <h4 id="Sensus_Probes_Probe_TestHealth_System_Collections_Generic_List_System_Tuple_System_String_System_Collections_Generic_Dictionary_System_String_System_String_____" data-uid="Sensus.Probes.Probe.TestHealth(System.Collections.Generic.List{System.Tuple{System.String,System.Collections.Generic.Dictionary{System.String,System.String}}}@)">TestHealth(ref List&lt;Tuple&lt;String, Dictionary&lt;String, String&gt;&gt;&gt;)</h4>
+  <a id="Sensus_Probes_Probe_TestHealthAsync_" data-uid="Sensus.Probes.Probe.TestHealthAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.Probes.Probe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual bool TestHealth(ref List&lt;Tuple&lt;string, Dictionary&lt;string, string&gt;&gt;&gt; events)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -913,7 +1046,7 @@ information will have already been logged and displayed. Thus, the caller doesn&
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.String</span>&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
         <td><span class="parametername">events</span></td>
         <td></td>
       </tr>
@@ -929,7 +1062,7 @@ information will have already been logged and displayed. Thus, the caller doesn&
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -944,7 +1077,7 @@ information will have already been logged and displayed. Thus, the caller doesn&
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;Tuple&lt;Datum, Datum&gt;&gt; MostRecentDatumChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public event Probe.MostRecentDatumChangedDelegateAsync MostRecentDatumChanged</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -956,7 +1089,7 @@ information will have already been logged and displayed. Thus, the caller doesn&
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.EventHandler</span>&lt;<span class="xref">System.Tuple</span>&lt;<a class="xref" href="Sensus.Datum.html">Datum</a>, <a class="xref" href="Sensus.Datum.html">Datum</a>&gt;&gt;</td>
+        <td><a class="xref" href="Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync.html">Probe.MostRecentDatumChangedDelegateAsync</a></td>
         <td></td>
       </tr>
     </tbody>

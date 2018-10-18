@@ -67,8 +67,7 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
 #' @param replace.files Whether or not to delete .bin files after they have been decrypted.
 #' @return None
 #' @examples
-#' # data.path = system.file("extdata", "example_data", package="SensusR")
-#' # sensus.decrypt.bin.files(data.path = data.path, 
+#' # sensus.decrypt.bin.files(data.path = "/path/to/bin/files/directory", 
 #' #                          rsa.private.key.path = "/path/to/private.pem", 
 #' #                          replace.files = FALSE)
 sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = TRUE, rsa.private.key.path, rsa.private.key.password = askpass, replace.files = FALSE)
@@ -139,7 +138,8 @@ sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = 
 #' @param remove If TRUE, the input file is removed afterward, otherwise not.
 #' @return None
 #' @examples 
-#' # sensus.decompress.gz.files("~/Desktop/data")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
+#' sensus.decompress.gz.files(data.path)
 sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE, remove = FALSE)
 {
   gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz$")
@@ -161,7 +161,7 @@ sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE
 #' @param local.timezone If converting timestamps to local timesonze, the local timezone to use.
 #' @return All data, listed by type.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
 {
@@ -194,8 +194,32 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       next
     }
     
-    # read and parse JSON
+    # read JSON
     file.text = readChar(path, file.size)
+    
+    # check for incomplete JSON file. this can happen if the app is killed before it has a chance
+    # to properly close of the JSON array. in such cases, the file will abruptly terminate with
+    # an unclosed JSON array, and the fromJSON call below will fail. detect this condition and fix
+    # up the JSON accordingly.
+    if(!endsWith(file.text, "]"))
+    {
+      # replace the final line, which is incomplete, with a closing square brace to 
+      # complete the JSON array. if the final line is preceded by a comma (as it will 
+      # typically be with one JSON object per line) then also include the comma in the 
+      # text to be replaced. the final result should be a valid JSON array.
+      file.text = sub(",?\n[^\n]*$", "\n]", file.text)
+      
+      warning(paste("File", path, "contained an unclosed JSON array. Trimmed off final line."))
+      
+      # if we somehow failed to fix up the array with our regex substitution, let the
+      # user know and ignore the file.
+      if(!endsWith(file.text, "]"))
+      {
+        warning(paste("Failed to fix path", path, ". Ignoring this file."))
+        next
+      }
+    }
+    
     file.json = jsonlite::fromJSON(file.text)
 
     # skip empty JSON
@@ -397,7 +421,7 @@ sensus.get.unique.device.ids = function(data)
 #' @param directory Directory to write CSV files to. Will be created if it does not exist.
 #' @param file.name.prefix Prefix to add to the generated file names.
 #' @examples 
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' # sensus.write.csv.files(data, directory = "/path/to/directory")
 sensus.write.csv.files = function(data, directory, file.name.prefix = "")
@@ -416,7 +440,7 @@ sensus.write.csv.files = function(data, directory, file.name.prefix = "")
 #' @param directory Directory to write CSV files to. Will be created if it does not exist.
 #' @param file.name.prefix Prefix to add to the generated file names.
 #' @examples 
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' # sensus.write.csv.files(data, directory = "/path/to/directory")
 sensus.write.rdata.files = function(data, directory, file.name.prefix = "")
@@ -449,7 +473,7 @@ sensus.list.activities = function(data, phase = "Starting", state = "Active")
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$AccelerometerDatum)
 plot.AccelerometerDatum = function(x, pch = ".", type = "l", ...)
@@ -469,7 +493,7 @@ plot.AccelerometerDatum = function(x, pch = ".", type = "l", ...)
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$AltitudeDatum)
 plot.AltitudeDatum = function(x, pch = ".", type = "l", ...)
@@ -485,7 +509,7 @@ plot.AltitudeDatum = function(x, pch = ".", type = "l", ...)
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$BatteryDatum)
 plot.BatteryDatum = function(x, pch = ".", type = "l", ...)
@@ -499,7 +523,7 @@ plot.BatteryDatum = function(x, pch = ".", type = "l", ...)
 #' @param x Cell tower data.
 #' @param ... Other plotting arguments.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$CellTowerDatum)
 plot.CellTowerDatum = function(x, ...)
@@ -519,7 +543,7 @@ plot.CellTowerDatum = function(x, ...)
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$CompassDatum)
 plot.CompassDatum = function(x, pch = ".", type = "l", ...)
@@ -535,7 +559,7 @@ plot.CompassDatum = function(x, pch = ".", type = "l", ...)
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$LightDatum)
 plot.LightDatum = function(x, pch = ".", type = "l", ...)
@@ -549,9 +573,9 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' @param x Location data.
 #' @param ... Arguments to pass to plotting routines. This can include two special arguments:  qmap.args (passed to \code{\link{qmap}}) and geom.point.args (passed to \code{\link{geom_point}}).
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
-#' #plot(data$LocationDatum)
+#' #plot(data$LocationDatum) -- this line of example code does not play nicely with the CRAN servers.
 plot.LocationDatum = function(x, ...)
 {
   args = list(...)
@@ -595,7 +619,7 @@ plot.LocationDatum = function(x, ...)
 #' @param x Screen data.
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$ScreenDatum)
 plot.ScreenDatum = function(x, ...)
@@ -611,7 +635,7 @@ plot.ScreenDatum = function(x, ...)
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$SoundDatum)
 plot.SoundDatum = function(x, pch = ".", type = "l", ...)
@@ -627,7 +651,7 @@ plot.SoundDatum = function(x, pch = ".", type = "l", ...)
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$SpeedDatum)
 plot.SpeedDatum = function(x, pch = ".", type = "l", ...)
@@ -641,7 +665,7 @@ plot.SpeedDatum = function(x, pch = ".", type = "l", ...)
 #' @param x Telephony data.
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$TelephonyDatum)
 plot.TelephonyDatum = function(x, ...)
@@ -669,7 +693,7 @@ plot.TelephonyDatum = function(x, ...)
 #' @param x WLAN data.
 #' @param ... Other plotting parameters.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$WlanDatum)
 plot.WlanDatum = function(x, ...)
@@ -686,7 +710,7 @@ plot.WlanDatum = function(x, ...)
 #' @param data Data to plot lags for (e.g., the result of \code{read.sensus.json}).
 #' @return List of lags organized by datum type.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' lags = sensus.get.all.timestamp.lags(data)
 #' plot(lags[["AccelerometerDatum"]])
@@ -710,7 +734,7 @@ sensus.get.all.timestamp.lags = function(data)
 #' @param datum One element of a Sensus data frame (e.g., data$CompassDatum).
 #' @return List of lags.
 #' @examples
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(sensus.get.timestamp.lags(data$AccelerometerDatum))
 sensus.get.timestamp.lags = function(datum)
@@ -733,7 +757,7 @@ sensus.get.timestamp.lags = function(datum)
 #' @param ylab Label for y-axis.
 #' @param main Label for plot.
 #' @examples 
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' sensus.plot.lag.cdf(data$AccelerometerDatum)
 sensus.plot.lag.cdf = function(datum, xlim = c(0,1), xlab = "Inter-reading time (seconds)", ylab = "Percentile", main = paste("Inter-reading times (n=", nrow(datum), ")", sep=""))
@@ -750,7 +774,7 @@ sensus.plot.lag.cdf = function(datum, xlim = c(0,1), xlab = "Inter-reading time 
 #' @param device.id Device ID to remove.
 #' @return Data without a particular device ID.
 #' @examples 
-#' data.path = system.file("extdata", "example_data", package="SensusR")
+#' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' filtered.data = sensus.remove.device.id(data$AccelerometerDatum, "a448s0df98f")
 sensus.remove.device.id = function(datum, device.id)

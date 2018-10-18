@@ -28,8 +28,7 @@ None
 Decrypts Sensus .bin files that were encrypted using asymmetric public/private key encryption.
 }
 \examples{
-# data.path = system.file("extdata", "example_data", package="SensusR")
-# sensus.decrypt.bin.files(data.path = data.path, 
+# sensus.decrypt.bin.files(data.path = "/path/to/bin/files/directory", 
 #                          rsa.private.key.path = "/path/to/private.pem", 
 #                          replace.files = FALSE)
 }

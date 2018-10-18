@@ -13,27 +13,28 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Probes;
 using Sensus.Probes.Movement;
 using Sensus.Tests.Classes;
 
-namespace Sensus.Tests.Sensus.Shared.Probes
+namespace Sensus.Tests.Probes
 {
-    [TestFixture]
+    
     public class DataRateCalculatorTests
     {
-        [Test]
+        [Fact]
         public void SampleSizeTest()
         {
-            Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(-1)));
-            Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(0)));
-            Assert.Throws(typeof(ArgumentOutOfRangeException), new TestDelegate(() => new DataRateCalculator(1)));
-            Assert.DoesNotThrow(new TestDelegate(() => new DataRateCalculator(2)));
-            Assert.DoesNotThrow(new TestDelegate(() => new DataRateCalculator(100)));
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => new DataRateCalculator(-1));
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => new DataRateCalculator(0));
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => new DataRateCalculator(1));
+
+            DataRateCalculator drc = new DataRateCalculator(2);
+            drc = new DataRateCalculator(100);
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest1()
         {
             InitServiceHelper();
@@ -41,12 +42,12 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             double nominalDataPerSecond = 10;
             WriteData(2, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {                
-                Assert.AreEqual(calculatedDataPerSecond, nominalDataPerSecond);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                Assert.Equal(calculatedDataPerSecond, nominalDataPerSecond);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest2()
         {
             InitServiceHelper();
@@ -55,11 +56,11 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             WriteData(12, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
                 Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest3()
         {
             InitServiceHelper();
@@ -68,11 +69,11 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             WriteData(14, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
                 Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest4()
         {
             InitServiceHelper();
@@ -81,11 +82,11 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
                 Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest5()
         {
             InitServiceHelper();
@@ -94,24 +95,24 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
                 Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
 
-        [Test]
+        [Fact]
         public void DataRateTest6()
         {
             InitServiceHelper();
 
             double nominalDataPerSecond = 192;
-            WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datu, calculatedDataPerSecond, action) =>
+            WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), null, (datum, calculatedDataPerSecond, action) =>
             {
                 Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
             });
         }
 
-        [Test]
+        [Fact]
         public void NeverKeepWithZeroRateLimitTest()
         {
             InitServiceHelper();
@@ -120,11 +121,11 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             WriteData(100, nominalDataPerSecond, TimeSpan.FromSeconds(100), 0, (datum, calculatedDataPerSecond, action) =>
             {
                 Assert.True(Math.Abs(calculatedDataPerSecond - nominalDataPerSecond) <= 1);
-                Assert.AreEqual(action, DataRateCalculator.SamplingAction.Drop);
+                Assert.Equal(action, DataRateCalculator.SamplingAction.Drop);
             });
         }
 
-        [Test]
+        [Fact]
         public void HasDataRateWithZeroRateLimitTest()
         {
             InitServiceHelper();
@@ -136,10 +137,10 @@ namespace Sensus.Tests.Sensus.Shared.Probes
                 receivedDataRate = true;
             });
 
-            Assert.IsTrue(receivedDataRate);
+            Assert.True(receivedDataRate);
         }
 
-        [Test]
+        [Fact]
         public void SamplingRateTest()
         {
             InitServiceHelper();
@@ -154,22 +155,22 @@ namespace Sensus.Tests.Sensus.Shared.Probes
             {                
                 if (action == DataRateCalculator.SamplingAction.Keep)
                 {
-                    Assert.AreEqual(samplingRateCalculator.Add(datum), DataRateCalculator.SamplingAction.Keep);
+                    Assert.Equal(samplingRateCalculator.Add(datum), DataRateCalculator.SamplingAction.Keep);
                 }
             });
 
             Assert.True(Math.Abs(samplingRateCalculator.GetDataPerSecond().Value - nominalSamplingDataRatePerSecond) <= 1);
         }
 
-        [Test]
+        [Fact]
         public void DropNullDatumTest()
         {
             DataRateCalculator samplingRateCalculator = new DataRateCalculator(100);
             samplingRateCalculator.Start();
-            Assert.AreEqual(samplingRateCalculator.Add(null), DataRateCalculator.SamplingAction.Drop);
+            Assert.Equal(samplingRateCalculator.Add(null), DataRateCalculator.SamplingAction.Drop);
         }
 
-        [Test]
+        [Fact]
         public void ImmediateDataTest()
         {
             InitServiceHelper();
@@ -183,11 +184,11 @@ namespace Sensus.Tests.Sensus.Shared.Probes
 
                 if (i < calculator.SampleSize)
                 {
-                    Assert.AreEqual(action, DataRateCalculator.SamplingAction.Keep);
+                    Assert.Equal(action, DataRateCalculator.SamplingAction.Keep);
                 }
                 else
                 {
-                    Assert.AreEqual(action, DataRateCalculator.SamplingAction.Drop);
+                    Assert.Equal(action, DataRateCalculator.SamplingAction.Drop);
                 }
             }
         }
@@ -210,7 +211,7 @@ namespace Sensus.Tests.Sensus.Shared.Probes
 
                 if (i < sampleSize - 1)
                 {
-                    Assert.IsNull(calculatedDataPerSecond);
+                    Assert.Null(calculatedDataPerSecond);
                 }
                 else
                 {

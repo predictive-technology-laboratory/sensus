@@ -16,6 +16,7 @@ using Sensus.Probes;
 using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.UI
 {
@@ -57,33 +58,33 @@ namespace Sensus.UI
                     chartPage.Content = probe.GetChart();
                 }));
 
-                chartPage.ToolbarItems.Add(new ToolbarItem("+", null, () =>
+                chartPage.ToolbarItems.Add(new ToolbarItem("+", null, async () =>
                 {
                     if (probe.MaxChartDataCount < 200)
                     {
                         probe.MaxChartDataCount += 10;
                     }
 
-                    FlashChartDataCountAsync(probe);
+                    await FlashChartDataCountAsync(probe);
                 }));
 
-                chartPage.ToolbarItems.Add(new ToolbarItem("-", null, () =>
+                chartPage.ToolbarItems.Add(new ToolbarItem("-", null, async () =>
                 {
                     if (probe.MaxChartDataCount > 10)
                     {
                         probe.MaxChartDataCount -= 10;
                     }
 
-                    FlashChartDataCountAsync(probe);
+                    await FlashChartDataCountAsync(probe);
                 }));
 
                 await Navigation.PushAsync(chartPage);
             }
         }
 
-        private void FlashChartDataCountAsync(Probe probe)
+        private async Task FlashChartDataCountAsync(Probe probe)
         {
-            SensusServiceHelper.Get().FlashNotificationAsync("Displaying " + probe.MaxChartDataCount + " point" + (probe.MaxChartDataCount == 1 ? "" : "s") + ".");
+            await SensusServiceHelper.Get().FlashNotificationAsync("Displaying " + probe.MaxChartDataCount + " point" + (probe.MaxChartDataCount == 1 ? "" : "s") + ".");
         }
     }
 }

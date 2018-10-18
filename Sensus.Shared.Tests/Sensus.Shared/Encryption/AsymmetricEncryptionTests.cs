@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using NUnit.Framework;
+using Xunit;
 using Sensus.Encryption;
 using System;
 using System.Security.Cryptography;
@@ -59,21 +59,21 @@ namespace Sensus.Tests.Encryption
                                      "H5dCpc4oV20TBgtW6u2Gyax/zzNMoT6DBzPB5TfMYTUfVdyKv26/LZdt8NDcCeqE" +
                                      "8xVwrTW6nszr32cN2fmNLg==";
 
-        [Test]
+        [Fact]
         public void EncryptionStringEqualsTest()
         {
             var encryption = new AsymmetricEncryption(_publicKey, _privateKey);
 
-            Assert.AreEqual("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
+            Assert.Equal("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
         }
 
-        [Test]
+        [Fact]
         public void EncryptionStringBadPrivateKeyTest()
         {
             Assert.Throws(typeof(FormatException), () => { new AsymmetricEncryption(_publicKey, _privateKey + "93847"); });
         }
 
-        [Test]
+        [Fact]
         public void EncryptWithoutPublicKeyTest()
         {
             var encryption = new AsymmetricEncryption(null, _privateKey);
@@ -81,7 +81,7 @@ namespace Sensus.Tests.Encryption
             Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo"); });
         }
 
-        [Test]
+        [Fact]
         public void DecryptWithoutPrivateKeyTest()
         {
             var encryption = new AsymmetricEncryption(_publicKey, null);
@@ -89,7 +89,7 @@ namespace Sensus.Tests.Encryption
             Assert.Throws(typeof(CryptographicException), () => { encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")); });
         }
 
-        [Test]
+        [Fact]
         public void SymmetricEncryptionEqualsTest()
         {
             string message = "aw3lrifos83fusoi3fjsofisjfo";
@@ -115,7 +115,7 @@ namespace Sensus.Tests.Encryption
 
             SymmetricEncryption symmetricEncryption = new SymmetricEncryption(key, iv);
             string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes); 
-            Assert.AreEqual(message, decryptedMessage);
+            Assert.Equal(message, decryptedMessage);
         }
     }
 }

@@ -113,7 +113,7 @@ namespace Sensus.DataStores.Local
                 lock (_locker)
                 {
                     // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
-                    string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel != CompressionLevel.NoCompression ? GZIP_FILE_EXTENSION : "") + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
+                    string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel == CompressionLevel.NoCompression ? "" : GZIP_FILE_EXTENSION) + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
                     return Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToArray();
                 }
             }
@@ -267,9 +267,9 @@ namespace Sensus.DataStores.Local
             _encrypt = false;
         }
 
-        public override void Start()
+        public override async Task StartAsync()
         {
-            base.Start();
+            await base.StartAsync();
 
             // ensure that we have a valid encryption setup if one is requested
             if (_encrypt)
@@ -596,7 +596,8 @@ namespace Sensus.DataStores.Local
                     return Task.CompletedTask;
                 }
 
-                // if this is the first write or the previous write is finished, run a new task.
+                // if this is the first write or the previous write is finished, run a new task. if a write-to-remote task
+                // is already running, then bail out and let it finish.
                 if (_writeToRemoteTask == null ||
                     _writeToRemoteTask.Status == TaskStatus.Canceled ||
                     _writeToRemoteTask.Status == TaskStatus.Faulted ||
@@ -659,7 +660,7 @@ namespace Sensus.DataStores.Local
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to write file:  " + ex, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to write file to remote data store:  " + ex, LoggingLevel.Normal, GetType());
                             }
                         }
 
@@ -684,6 +685,7 @@ namespace Sensus.DataStores.Local
                         byte[] jsonEndArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
                         _file.Write(jsonEndArrayBytes, 0, jsonEndArrayBytes.Length);
                         _file.Flush();
+                        _file.Close();
                         _file.Dispose();
                         _file = null;
                         _path = null;
@@ -691,7 +693,7 @@ namespace Sensus.DataStores.Local
                     }
                     catch (Exception ex)
                     {
-                        SensusException.Report("Failed to close the local file.", ex);
+                        SensusException.Report("Failed to close and dispose the local file.", ex);
                     }
                 }
             }
@@ -728,19 +730,37 @@ namespace Sensus.DataStores.Local
                         if (_encrypt)
                         {
                             promotedPath += ENCRYPTED_FILE_EXTENSION;
+
+                            // the target promoted path should not currently exist. if it does, then delete it since we're about to write to it.
+                            if (File.Exists(promotedPath))
+                            {
+                                File.Delete(promotedPath);
+                            }
+
                             Protocol.AsymmetricEncryption.EncryptSymmetrically(File.ReadAllBytes(path), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedPath);
-                            File.Delete(path);
                         }
                         else
                         {
-                            File.Move(path, promotedPath);
+                            // the target promoted path should not currently exist. if it does, then delete it since we're about to copy the current file to it.
+                            if (File.Exists(promotedPath))
+                            {
+                                File.Delete(promotedPath);
+                            }
+
+                            // we were previously using File.Move, but we were getting many sharing violation errors
+                            // when doing so. looks like some folks have seen the same problem, and one person fixed 
+                            // the issue by using a copy followed by delete:  https://forums.xamarin.com/discussion/42145/android-sharing-violation-on-file-rename
+                            File.Copy(path, promotedPath);
                         }
+
+                        // file has been promoted. delete the file.
+                        File.Delete(path);
 
                         _filesPromoted++;
                     }
                     catch (Exception ex)
                     {
-                        SensusException.Report("Failed to promote file.", ex);
+                        SensusException.Report("Failed to promote file:  " + ex.Message, ex);
                     }
                 }
 
@@ -753,20 +773,20 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        public override void Stop()
+        public override async Task StopAsync()
         {
             // flush any remaining data to disk.
             Flush();
 
             // stop the data store. it could very well be that someone attempts to add additional data 
             // following the flush and prior to stopping. these data will be lost.
-            base.Stop();
+            await base.StopAsync();
 
             // the data stores state is stopped, but the file write task will still be running if the
             // condition in its while-loop hasn't been checked. to ensure that this condition is checked, 
             // signal the long-running write task to check for data, and wait for the task to finish.
             _checkForBufferedData.Set();
-            _writeToFileTask.Wait();
+            await _writeToFileTask;
 
             lock (_storeBuffer)
             {
@@ -817,9 +837,9 @@ namespace Sensus.DataStores.Local
             _path = null;
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             double storageDirectorySizeMB;
             lock (_locker)
@@ -839,9 +859,9 @@ namespace Sensus.DataStores.Local
 
             Analytics.TrackEvent(eventName, properties);
 
-            events.Add(new Tuple<string, Dictionary<string, string>>(eventName, properties));
+            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            return restart;
+            return result;
         }
     }
 }

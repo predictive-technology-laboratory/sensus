@@ -15,6 +15,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Sensus.Notifications;
 
 namespace Sensus.Callbacks
 {
@@ -43,6 +44,12 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <value>The identifier.</value>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the invocation identifier.
+        /// </summary>
+        /// <value>The invocation identifier.</value>
+        public string InvocationId { get; set; }
 
         /// <summary>
         /// Gets or sets the callback's protocol.
@@ -91,13 +98,6 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <value>The repeat delay.</value>
         public TimeSpan? RepeatDelay { get; set; }
-
-        /// <summary>
-        /// Since a repeating action can take a while to complete, one must decide whether to schedule the next
-        /// delay from the time at which the action started (no lag) or the time at which the action ended (lag).
-        /// </summary>
-        /// <value><c>true</c> to allow lag; otherwise, <c>false</c>.</value>
-        public bool? AllowRepeatLag { get; set; }
 
         /// <summary>
         /// Gets or sets the next execution time for this callback.
@@ -151,7 +151,6 @@ namespace Sensus.Callbacks
         /// <param name="action">Action to execute when callback time arrives.</param>
         /// <param name="initialDelay">How long to delay callback execution.</param>
         /// <param name="repeatDelay">How long to delay repeating callback executions following the first callback.</param>
-        /// <param name="allowRepeatLag">Whether or not to allow lags in repeating callbacks.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
@@ -160,7 +159,6 @@ namespace Sensus.Callbacks
         public ScheduledCallback(ActionDelegate action,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
-                                 bool allowRepeatLag,
                                  string id,
                                  string domain,
                                  Protocol protocol,
@@ -169,7 +167,6 @@ namespace Sensus.Callbacks
             : this(action, initialDelay, id, domain, protocol, callbackTimeout, userNotificationMessage)
         {
             RepeatDelay = repeatDelay;
-            AllowRepeatLag = allowRepeatLag;
         }
     }
 }

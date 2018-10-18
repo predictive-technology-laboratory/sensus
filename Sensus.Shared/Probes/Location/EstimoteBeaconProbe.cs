@@ -23,6 +23,7 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using Sensus.Concurrent;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.Location
 {
@@ -121,9 +122,9 @@ namespace Sensus.Probes.Location
             _beacons = new ConcurrentObservableCollection<EstimoteBeacon>();
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             if (string.IsNullOrWhiteSpace(EstimoteCloudAppId) || string.IsNullOrEmpty(EstimoteCloudAppToken))
             {
@@ -135,28 +136,28 @@ namespace Sensus.Probes.Location
                 throw new Exception("Must add beacons.");
             }
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "Geolocation is not permitted on this device. Cannot start Estimote probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
 
-            if (!SensusServiceHelper.Get().EnableBluetooth(true, "Sensus uses Bluetooth to identify beacons, which are being used in one of your studies."))
+            if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth to identify beacons, which are being used in one of your studies."))
             {
                 throw new Exception("Bluetooth not enabled.");
             }
         }
 
-        public List<string> GetSensusBeaconNamesFromCloud()
+        public List<string> GetBeaconTagsFromCloud()
         {
-            List<string> sensusBeaconNames = new List<string>();
+            List<string> tags = new List<string>();
 
             try
             {
-                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v3/attachments");
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v3/devices");
                 request.ContentType = "application/json";
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
@@ -177,15 +178,16 @@ namespace Sensus.Probes.Location
                             throw new Exception("Received empty response content.");
                         }
 
-                        foreach (JObject attachment in JObject.Parse(content).Value<JArray>("data"))
+                        foreach (JObject device in JObject.Parse(content).Value<JArray>("data"))
                         {
                             try
                             {
-                                string deviceName = attachment.Value<JObject>("payload").Value<JValue>("sensus").ToString();
-
-                                if (!sensusBeaconNames.Contains(deviceName))
+                                foreach (string tag in device.Value<JObject>("shadow").Value<JArray>("tags"))
                                 {
-                                    sensusBeaconNames.Add(deviceName);
+                                    if (!tags.Contains(tag))
+                                    {
+                                        tags.Add(tag);
+                                    }
                                 }
                             }
                             catch (Exception)
@@ -201,27 +203,27 @@ namespace Sensus.Probes.Location
                 throw ex;
             }
 
-            return sensusBeaconNames;
+            return tags;
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override RangeAxisBase GetChartSecondaryAxis()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

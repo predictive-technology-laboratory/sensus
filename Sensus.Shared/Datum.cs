@@ -16,6 +16,7 @@ using System;
 using Newtonsoft.Json;
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
+using Sensus.Exceptions;
 
 namespace Sensus
 {
@@ -205,15 +206,25 @@ namespace Sensus
 
         protected Datum(DateTimeOffset timestamp)
         {
-            _timestamp = timestamp;
-            _deviceId = SensusServiceHelper.Get().DeviceId;
-            _anonymized = false;
-            _buildId = SensusServiceHelper.BUILD_ID;
-            _deviceManufacturer = SensusServiceHelper.Get().DeviceManufacturer;
-            _deviceModel = SensusServiceHelper.Get().DeviceModel;
-            _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
+            // datum objects are often constructed while on the UI thread, so anything bad here has the 
+            // potential to crash the app. catch any exceptions, which should not be possible what
+            // we're actually doing...but nonetheless.
+            try
+            {
+                _timestamp = timestamp;
+                _deviceId = SensusServiceHelper.Get().DeviceId;
+                _anonymized = false;
+                _buildId = SensusServiceHelper.BUILD_ID;
+                _deviceManufacturer = SensusServiceHelper.Get().DeviceManufacturer;
+                _deviceModel = SensusServiceHelper.Get().DeviceModel;
+                _operatingSystem = SensusServiceHelper.Get().OperatingSystem;
 
-            Id = Guid.NewGuid().ToString();
+                Id = Guid.NewGuid().ToString();
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while constructing datum:  " + ex.Message, ex);
+            }
         }
 
         public string GetJSON(AnonymizedJsonContractResolver anonymizationContractResolver, bool indented)

@@ -25,13 +25,11 @@ using Xamarin.Forms;
 using MessageUI;
 using AVFoundation;
 using CoreBluetooth;
-using CoreFoundation;
 using System.Threading.Tasks;
 using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
-using UserNotifications;
 
 namespace Sensus.iOS
 {
@@ -41,8 +39,9 @@ namespace Sensus.iOS
         private const int BLUETOOTH_ENABLE_TIMEOUT_MS = 15000;
         #endregion
 
-        private DateTime _nextToastTime;
-        private readonly object _toastLocker = new object();
+        private readonly string _deviceId;
+        private readonly string _deviceModel;
+        private readonly string _operatingSystem;
         private NSData _pushNotificationTokenData;
 
         public override bool IsCharging
@@ -73,7 +72,7 @@ namespace Sensus.iOS
         {
             get
             {
-                return UIDevice.CurrentDevice.IdentifierForVendor.AsString();
+                return _deviceId;
             }
         }
 
@@ -84,14 +83,14 @@ namespace Sensus.iOS
 
         public override string DeviceModel
         {
-            get { return Xamarin.iOS.DeviceHardware.Version; }
+            get { return _deviceModel; }
         }
 
         public override string OperatingSystem
         {
             get
             {
-                return UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
+                return _operatingSystem;
             }
         }
 
@@ -131,20 +130,54 @@ namespace Sensus.iOS
 
         public iOSSensusServiceHelper()
         {
-            _nextToastTime = DateTime.Now;
+            // we've seen one case of a null reference when getting the identifier.
+            try
+            {
+                _deviceId = UIDevice.CurrentDevice.IdentifierForVendor.AsString();
+
+                if (string.IsNullOrWhiteSpace(_deviceId))
+                {
+                    throw new NullReferenceException("Null device ID.");
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while obtaining device ID:  " + ex.Message, ex);
+
+                // set an arbitrary identifier, since we couldn't get one above. this will change each 
+                // time the app is killed and restarted. but the NRE condition above should be very rare.
+                _deviceId = Guid.NewGuid().ToString();
+            }
+
+            try
+            {
+                _deviceModel = Xamarin.iOS.DeviceHardware.Version;
+            }
+            catch(Exception)
+            {
+
+            }
+
+            try
+            {
+                _operatingSystem = UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)
         {
-            return Task.Run(() =>
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    TTGSnackbar snackbar = new TTGSnackbar(message);
-                    snackbar.Duration = TimeSpan.FromSeconds(5);
-                    snackbar.Show();
-                });
+                TTGSnackbar snackbar = new TTGSnackbar(message);
+                snackbar.Duration = TimeSpan.FromSeconds(5);
+                snackbar.Show();
             });
+
+            return Task.CompletedTask;
         }
 
         public override Task ShareFileAsync(string path, string subject, string mimeType)
@@ -232,10 +265,7 @@ namespace Sensus.iOS
                     {
                         dialogShowWait.Set();
 
-                        if (postDisplayCallback != null)
-                        {
-                            postDisplayCallback();
-                        }
+                        postDisplayCallback?.Invoke();
                     };
 
                     dialog.Clicked += (o, e) =>
@@ -289,28 +319,16 @@ namespace Sensus.iOS
             });
         }
 
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        protected override async Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-
-            bool registered = notificationHub.RegisterNative(_pushNotificationTokenData, new NSSet(), out NSError error);
-
-            if (error != null)
-            {
-                SensusException.Report("Exception while registering from notification hub.", new Exception(error.ToString()));
-            }
+            await notificationHub.RegisterNativeAsyncAsync(_pushNotificationTokenData, new NSSet());
         }
 
-        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        protected override async Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-
-            bool unregistered = notificationHub.UnregisterAll(_pushNotificationTokenData, out NSError error);
-
-            if (error != null)
-            {
-                SensusException.Report("Exception while unregistering from notification hub.", new Exception(error.ToString()));
-            }
+            await notificationHub.UnregisterAllAsyncAsync(_pushNotificationTokenData);
         }
 
         protected override void RequestNewPushNotificationToken()
@@ -324,63 +342,69 @@ namespace Sensus.iOS
         }
 
         /// <summary>
-        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically. Must not be called from the UI thread.
+        /// Enables the Bluetooth adapter, or prompts the user to do so if we cannot do this programmatically.
         /// </summary>
         /// <returns><c>true</c>, if Bluetooth was enabled, <c>false</c> otherwise.</returns>
         /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
         /// <param name="rationale">Rationale.</param>
-        public override bool EnableBluetooth(bool lowEnergy, string rationale)
+        public override async Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
         {
-            base.EnableBluetooth(lowEnergy, rationale);
-
-            bool enabled = false;
-            ManualResetEvent enableWait = new ManualResetEvent(false);
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 try
                 {
-                    CBCentralManager manager = new CBCentralManager(DispatchQueue.MainQueue);
+                    TaskCompletionSource<bool> enableTaskCompletionSource = new TaskCompletionSource<bool>();
+
+                    CBCentralManager manager = new CBCentralManager();
 
                     manager.UpdatedState += (sender, e) =>
                     {
                         if (manager.State == CBCentralManagerState.PoweredOn)
                         {
-                            enabled = true;
-                            enableWait.Set();
+                            enableTaskCompletionSource.TrySetResult(true);
                         }
                     };
 
                     if (manager.State == CBCentralManagerState.PoweredOn)
                     {
-                        enabled = true;
-                        enableWait.Set();
+                        enableTaskCompletionSource.TrySetResult(true);
                     }
+
+                    Task timeoutTask = Task.Delay(BLUETOOTH_ENABLE_TIMEOUT_MS);
+
+                    if (await Task.WhenAny(enableTaskCompletionSource.Task, timeoutTask) == timeoutTask)
+                    {
+                        Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
+                        enableTaskCompletionSource.TrySetResult(false);
+                    }
+
+                    return await enableTaskCompletionSource.Task;
                 }
                 catch (Exception ex)
                 {
                     Logger.Log("Failed while requesting Bluetooth enable:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    enableWait.Set();
+                    return false;
                 }
             });
+        }
 
-            // the base class will ensure that we're not on the main thread, making the following wait okay.
-            if (!enableWait.WaitOne(BLUETOOTH_ENABLE_TIMEOUT_MS))
-            {
-                Logger.Log("Timed out while waiting for user to enable Bluetooth.", LoggingLevel.Normal, GetType());
-            }
-
-            return enabled;
+        /// <summary>
+        /// Not available on iOS. Will always return a completed <see cref="Task"/> with a result of false.
+        /// </summary>
+        /// <returns>False</returns>
+        /// <param name="reenable">If set to <c>true</c> reenable.</param>
+        /// <param name="lowEnergy">If set to <c>true</c> low energy.</param>
+        /// <param name="rationale">Rationale.</param>
+        public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
+        {
+            return Task.FromResult(false);
         }
 
         #region methods not implemented in ios
 
-        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
+        public override async Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
-            return Task.Run(async () =>
-            {
-                await FlashNotificationAsync("This is not supported on iOS.");
-            });
+            await FlashNotificationAsync("This is not supported on iOS.");
         }
 
         public override void KeepDeviceAwake()

@@ -18,32 +18,32 @@ namespace Sensus.Probes.Location
 {
     public class EstimoteBeacon
     {
-        public string Name { get; set; }
+        public string Tag { get; set; }
         public double ProximityMeters { get; set; }
         public string EventName { get; set; }
 
-        public EstimoteBeacon(string name, double proximityMeters, string eventName)
+        public EstimoteBeacon(string tag, double proximityMeters, string eventName)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(tag))
             {
-                throw new ArgumentException("Cannot be null or white space.", nameof(name));
+                throw new ArgumentException("Cannot be null or white space.", nameof(tag));
             }
 
-            name = name.Trim();
+            tag = tag.Trim();
 
             if (eventName == null)
             {
-                eventName = name;
+                eventName = tag;
             }
 
-            Name = name;
+            Tag = tag;
             ProximityMeters = proximityMeters;
             EventName = eventName;
         }
 
         public override string ToString()
         {
-            return "Beacon \"" + Name + "\" @ " + Math.Round(ProximityMeters, 1) + " meters raises event \"" + EventName + "\"";
+            return "Beacon \"" + Tag + "\" @ " + Math.Round(ProximityMeters, 1) + " meters raises event \"" + EventName + "\"";
         }
 
         public override bool Equals(object obj)
@@ -55,7 +55,7 @@ namespace Sensus.Probes.Location
 
             EstimoteBeacon beacon = obj as EstimoteBeacon;
 
-            return Name == beacon.Name && Math.Abs(ProximityMeters - beacon.ProximityMeters) < 0.000001 && EventName == beacon.EventName;
+            return Tag == beacon.Tag && Math.Abs(ProximityMeters - beacon.ProximityMeters) < 0.000001 && EventName == beacon.EventName;
         }
 
         public override int GetHashCode()
