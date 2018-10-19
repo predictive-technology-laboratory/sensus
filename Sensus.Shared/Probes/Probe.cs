@@ -26,6 +26,7 @@ using Sensus.Probes.User.MicrosoftBand;
 using Microsoft.AppCenter.Analytics;
 using System.ComponentModel;
 using Sensus.Extensions;
+using Sensus.Exceptions;
 
 namespace Sensus.Probes
 {
@@ -267,9 +268,15 @@ namespace Sensus.Probes
                         await ProcessDataAsync(_processDataCanceller.Token);
                         SensusServiceHelper.Get().Logger.Log("Probe data processing complete.", LoggingLevel.Normal, GetType());
                     }
+                    catch (TaskCanceledException)
+                    {
+                        // don't report task cancellation exceptions. these are expected whenever the user unplugs the device while processing data.
+                        SensusServiceHelper.Get().Logger.Log("Data processing task was cancelled.", LoggingLevel.Normal, GetType());
+                    }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Exception while processing probe data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        // the data processing actually failed prior to cancellation. this should not happen, so report it.
+                        SensusException.Report("Non-cancellation exception while processing probe data:  " + ex.Message, ex);
                     }
                 }
                 else
