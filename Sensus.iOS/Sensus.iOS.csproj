@@ -14,7 +14,6 @@
     <AssemblyName>SensusiOS</AssemblyName>
     <Description>Endpoint for the Sensus iOS application. This is what gets built and distributed to the iOS App 
 Store. It is possible to run and debug this project on physical and virtual iOS devices.</Description>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +57,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignProvision>
     </CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
-<MtouchFastDev>false</MtouchFastDev>
+    <MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -348,8 +347,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="iOSSensusServiceHelper.cs" />
-    <Compile Include="NetworkConnectivity.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>

@@ -47,6 +47,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\iOSNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UILocalNotificationCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotificationCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkConnectivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
