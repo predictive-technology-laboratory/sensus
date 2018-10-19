@@ -24,6 +24,7 @@ using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Probes.Apps;
 using UIKit;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Apps
 {
@@ -103,14 +104,14 @@ namespace Sensus.iOS.Probes.Apps
             }
         }
 
-        protected override void Initialize()
+        protected override async System.Threading.Tasks.Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
             ObtainAccessToken(GetRequiredPermissionNames());
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override System.Threading.Tasks.Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -118,10 +119,14 @@ namespace Sensus.iOS.Probes.Apps
             {
                 string[] missingPermissions = GetRequiredPermissionNames().Where(p => !AccessToken.CurrentAccessToken.Permissions.Contains(p)).ToArray();
                 if (missingPermissions.Length > 0)
+                {
                     ObtainAccessToken(missingPermissions);
+                }
             }
             else
+            {
                 ObtainAccessToken(GetRequiredPermissionNames());
+            }
 
             if (HasValidAccessToken)
             {
@@ -172,18 +177,24 @@ namespace Sensus.iOS.Probes.Apps
                                                     object value = null;
 
                                                     if (property.PropertyType == typeof(string))
+                                                    {
                                                         value = resultDictionary[resultKey].ToString();
+                                                    }
                                                     else if (property.PropertyType == typeof(bool?))
                                                     {
                                                         int parsedBool;
                                                         if (int.TryParse(resultDictionary[resultKey].ToString(), out parsedBool))
+                                                        {
                                                             value = parsedBool == 1 ? true : false;
+                                                        }
                                                     }
                                                     else if (property.PropertyType == typeof(DateTimeOffset?))
                                                     {
                                                         DateTimeOffset parsedDateTimeOffset;
                                                         if (DateTimeOffset.TryParse(resultDictionary[resultKey].ToString(), out parsedDateTimeOffset))
+                                                        {
                                                             value = parsedDateTimeOffset;
+                                                        }
                                                     }
                                                     else if (property.PropertyType == typeof(List<string>))
                                                     {
@@ -210,7 +221,9 @@ namespace Sensus.iOS.Probes.Apps
                                                 }
                                                 // there are several result keys that we don't yet handle. ignore these.
                                                 else if (resultKey != "data" && resultKey != "paging" && resultKey != "summary")
+                                                {
                                                     SensusServiceHelper.Get().Logger.Log("Unrecognized key in Facebook result dictionary:  " + resultKey, LoggingLevel.Verbose, GetType());
+                                                }
                                             }
                                             #endregion
 
@@ -294,19 +307,19 @@ namespace Sensus.iOS.Probes.Apps
                 throw new Exception("Attempted to poll Facebook probe without a valid access token.");
             }
 
-            return data;
+            return System.Threading.Tasks.Task.FromResult(data);
         }
 
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
-            bool restart = base.TestHealth(ref events);
+            HealthTestResult result = await base.TestHealthAsync(events);
 
             if (!HasValidAccessToken)
             {
-                restart = true;
+                result = HealthTestResult.Restart;
             }
 
-            return restart;
+            return result;
         }
 
         protected override ICollection<string> GetGrantedPermissions()

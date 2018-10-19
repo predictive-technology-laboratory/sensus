@@ -64,6 +64,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\WlanDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\PollingProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Probe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\BodyMassIndexDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\DistanceWalkingRunningDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\FitzpatrickSkinType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\FitzpatrickSkinTypeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\FlightsClimbedDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HeartRateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\NumberOfTimesFallenDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\StepCountDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WeightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WheelchairUse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WheelchairUseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScheduleTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerWindow.cs" />
@@ -212,12 +223,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ICallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\INotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\Notifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\DisplayPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeacon.cs" />
@@ -244,16 +251,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\QrCodeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\UnsetPushNotificationTokenException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\DisplayPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequestFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AnalyticsTrackedEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
   </ItemGroup>
 </Project>

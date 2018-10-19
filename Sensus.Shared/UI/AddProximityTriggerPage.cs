@@ -112,7 +112,7 @@ namespace Sensus.UI
                 Keyboard = Keyboard.Numeric
             };
 
-            distanceThresholdEntry.TextChanged += (o, e) =>
+            distanceThresholdEntry.TextChanged += async (o, e) =>
             {
                 if (!double.TryParse(distanceThresholdEntry.Text, out _distanceThresholdMeters))
                 {
@@ -120,7 +120,7 @@ namespace Sensus.UI
                 }
                 else if (_distanceThresholdMeters < GpsReceiver.Get().MinimumDistanceThreshold)
                 {
-                    SensusServiceHelper.Get().FlashNotificationAsync("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Distance threshold must be at least " + GpsReceiver.Get().MinimumDistanceThreshold + ".");
                 }
             };
 

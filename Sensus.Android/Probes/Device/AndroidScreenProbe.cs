@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using Android.OS;
 using Android.App;
 using Sensus.Probes.Device;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Sensus.Android.Probes.Device
 {
@@ -30,7 +32,7 @@ namespace Sensus.Android.Probes.Device
             _powerManager = Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager;
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             bool screenOn;
 
@@ -49,7 +51,7 @@ namespace Sensus.Android.Probes.Device
 #pragma warning restore 618
             }
 
-            return new Datum[] { new ScreenDatum(DateTimeOffset.UtcNow, screenOn) };
+            return Task.FromResult(new Datum[] { new ScreenDatum(DateTimeOffset.UtcNow, screenOn) }.ToList());
         }
     }
 }

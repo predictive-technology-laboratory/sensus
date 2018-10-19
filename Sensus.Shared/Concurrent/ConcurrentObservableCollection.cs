@@ -51,6 +51,11 @@ namespace Sensus.Concurrent
         #endregion
 
         #region Properties
+        public IConcurrent Concurrent
+        {
+            get { return _concurrent; }
+        }
+
         public int Count => _observableCollection.Count;
 
         bool ICollection<T>.IsReadOnly => (_observableCollection as ICollection<T>).IsReadOnly;

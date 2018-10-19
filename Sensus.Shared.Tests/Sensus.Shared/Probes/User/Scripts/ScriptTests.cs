@@ -13,17 +13,17 @@
 // limitations under the License.
 
 using System;
-using NUnit.Framework;
+using Xunit;
 using Sensus.Probes.User.Scripts;
 using Sensus.UI.Inputs;
 using System.Linq;
 
 namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 {
-    [TestFixture]
+    
     public class ScriptTests
     {
-        [Test]
+        [Fact]
         public void ScriptCopySameIdTest()
         {
             ScriptProbe probe = new ScriptProbe();
@@ -38,15 +38,15 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 
             Script copy = script.Copy(false);
 
-            Assert.AreSame(script.Runner, copy.Runner);
-            Assert.AreEqual(script.Id, copy.Id);
-            Assert.AreEqual(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);
-            Assert.AreEqual(script.InputGroups.Count, copy.InputGroups.Count);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
+            Assert.Same(script.Runner, copy.Runner);
+            Assert.Equal(script.Id, copy.Id);
+            Assert.Equal(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
+            Assert.Equal(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);
+            Assert.Equal(script.InputGroups.Count, copy.InputGroups.Count);
+            Assert.Equal(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
         }
 
-        [Test]
+        [Fact]
         public void ScriptCopyNewIdTest()
         {
             ScriptProbe probe = new ScriptProbe();
@@ -61,12 +61,12 @@ namespace Sensus.Tests.Sensus.Shared.Probes.User.Scripts
 
             Script copy = script.Copy(true);
 
-            Assert.AreSame(script.Runner, copy.Runner);
-            Assert.AreNotEqual(script.Id, copy.Id);
-            Assert.AreEqual(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);    
-            Assert.AreEqual(script.InputGroups.Count, copy.InputGroups.Count);
-            Assert.AreEqual(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
+            Assert.Same(script.Runner, copy.Runner);
+            Assert.NotEqual(script.Id, copy.Id);
+            Assert.Equal(script.InputGroups.Single().Id, copy.InputGroups.Single().Id);
+            Assert.Equal(script.InputGroups.Single().Inputs.First().Id, copy.InputGroups.Single().Inputs.First().Id);    
+            Assert.Equal(script.InputGroups.Count, copy.InputGroups.Count);
+            Assert.Equal(script.InputGroups.Single().Inputs.Count, copy.InputGroups.Single().Inputs.Count);
         }
     }
 }

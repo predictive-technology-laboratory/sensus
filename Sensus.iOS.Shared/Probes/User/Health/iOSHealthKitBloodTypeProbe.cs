@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus;
 using Sensus.Probes.User.Health;
 using Syncfusion.SfChart.XForms;
+using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -54,7 +55,7 @@ namespace Sensus.iOS.Probes.User.Health
         {
         }
 
-        protected override IEnumerable<Datum> Poll(CancellationToken cancellationToken)
+        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
             List<Datum> data = new List<Datum>();
 
@@ -64,38 +65,58 @@ namespace Sensus.iOS.Probes.User.Health
             if (error == null)
             {
                 if (bloodType.BloodType == HKBloodType.ABNegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ABNegative));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.ABNegative));
+                }
                 else if (bloodType.BloodType == HKBloodType.ABPositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ABPositive));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.ABPositive));
+                }
                 else if (bloodType.BloodType == HKBloodType.ANegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ANegative));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.ANegative));
+                }
                 else if (bloodType.BloodType == HKBloodType.APositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.APositive));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.APositive));
+                }
                 else if (bloodType.BloodType == HKBloodType.BNegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.BNegative));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.BNegative));
+                }
                 else if (bloodType.BloodType == HKBloodType.BPositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.BPositive));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.BPositive));
+                }
                 else if (bloodType.BloodType == HKBloodType.ONegative)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.ONegative));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.ONegative));
+                }
                 else if (bloodType.BloodType == HKBloodType.OPositive)
-                    data.Add(new BloodTypeDatum(DateTimeOffset.Now, BloodType.OPositive));
+                {
+                    data.Add(new BloodTypeDatum(DateTimeOffset.UtcNow, BloodType.OPositive));
+                }
                 else
+                {
                     throw new Exception("User has not provided -- or has not allowed access to -- their blood type.");
+                }
             }
             else
+            {
                 throw new Exception("Error reading blood type:  " + error.Description);
+            }
 
-            return data;
+            return Task.FromResult(data);
         }
 
         protected override ChartSeries GetChartSeries()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         protected override ChartAxis GetChartPrimaryAxis()

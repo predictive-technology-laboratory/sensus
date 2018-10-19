@@ -94,6 +94,16 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
+        public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
+        {
+            throw new NotImplementedException();
+        }
+
         public override bool EnableProbeWhenEnablingAll(Probe probe)
         {
             throw new NotImplementedException();
@@ -144,7 +154,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void RegisterWithNotificationHub(Tuple<string, string> hubSas)
+        protected override Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }
@@ -154,7 +164,7 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        protected override void UnregisterFromNotificationHub(Tuple<string, string> hubSas)
+        protected override Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
             throw new NotImplementedException();
         }

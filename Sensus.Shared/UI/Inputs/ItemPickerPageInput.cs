@@ -170,7 +170,7 @@ namespace Sensus.UI.Inputs
                 List<object> itemList = RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
 
                 // an "other" option only makes sense if the item list contains strings, as that's what the user of the input will assume.
-                if (itemList.FirstOrDefault() is string && IncludeOtherOption && !string.IsNullOrWhiteSpace(OtherOptionText))
+                if (itemList.FirstOrDefault() is string && IncludeOtherOption && !string.IsNullOrWhiteSpace(OtherOptionText) && !itemList.Contains(OtherOptionText))
                 {
                     itemList.Add(OtherOptionText);
                 }

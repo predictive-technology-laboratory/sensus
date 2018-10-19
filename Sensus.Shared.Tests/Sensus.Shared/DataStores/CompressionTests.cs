@@ -14,16 +14,16 @@
 
 using System;
 using System.IO;
-using NUnit.Framework;
+using Xunit;
 using Sensus.DataStores;
 using System.Linq;
 
 namespace Sensus.Tests.DataStores
 {
-    [TestFixture]
+    
     public class CompressionTests
     {
-        [Test]
+        [Fact]
         public void GZipCompressDecompressEqualityTest()
         {
             for (int i = 0; i < 100; ++i)

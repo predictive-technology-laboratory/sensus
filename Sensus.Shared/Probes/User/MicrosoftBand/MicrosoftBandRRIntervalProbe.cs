@@ -44,18 +44,11 @@ namespace Sensus.Probes.User.MicrosoftBand
                 return bandClient.SensorManager.RRInterval;
         }
 
-        protected override void StartReadings()
+        protected override async Task StartReadingsAsync()
         {
             if (Sensor.UserConsented == UserConsent.Unspecified)
             {
-                ManualResetEvent consentWait = new ManualResetEvent(false);
-                Task.Run(async () =>
-                {
-                    await Sensor.RequestUserConsent();
-                    consentWait.Set();
-                });
-
-                consentWait.WaitOne();
+                await Sensor.RequestUserConsent();
 
                 if (Sensor.UserConsented != UserConsent.Granted)
                 {
@@ -65,7 +58,7 @@ namespace Sensus.Probes.User.MicrosoftBand
 
             if (Sensor.UserConsented == UserConsent.Granted)
             {
-                base.StartReadings();
+                await base.StartReadingsAsync();
             }
         }
 

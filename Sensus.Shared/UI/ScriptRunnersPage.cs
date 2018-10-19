@@ -49,7 +49,7 @@ namespace Sensus.UI
                 {
                     if (await DisplayAlert("Delete " + selectedScriptRunner.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
-                        selectedScriptRunner.Stop();
+                        await selectedScriptRunner.StopAsync();
                         selectedScriptRunner.Enabled = false;
                         selectedScriptRunner.Triggers.Clear();
 

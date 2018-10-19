@@ -24,6 +24,7 @@ using Sensus.Android.Concurrent;
 using Sensus.Encryption;
 using System.Linq;
 using System.Threading.Tasks;
+using Sensus.Android.Notifications;
 
 namespace Sensus.Android
 {
@@ -268,7 +269,7 @@ namespace Sensus.Android
             }
         }
 
-        public override void OnDestroy()
+        public override async void OnDestroy()
         {
             Console.Error.WriteLine("--------------------------- Destroying Service ---------------------------");
 
@@ -284,7 +285,7 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
                 NotifyBindingsOfStop();
-                serviceHelper.StopProtocols();
+                await serviceHelper.StopProtocolsAsync();
                 serviceHelper.SetService(null);
             }
 

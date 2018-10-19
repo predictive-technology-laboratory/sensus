@@ -15,7 +15,7 @@
 using System;
 using Android.App;
 using Android.Telephony;
-using Sensus;
+using System.Threading.Tasks;
 using Sensus.Probes.Communication;
 using Plugin.Permissions.Abstractions;
 
@@ -29,28 +29,28 @@ namespace Sensus.Android.Probes.Communication
 
         public AndroidSmsProbe()
         {
-            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(Application.Context, outgoingSmsDatum =>
+            _smsOutgoingObserver = new AndroidSmsOutgoingObserver(async outgoingSmsDatum =>
             {
                 // the observer doesn't set the from number (current device)
                 outgoingSmsDatum.FromNumber = _telephonyManager.Line1Number;
 
-                StoreDatum(outgoingSmsDatum);
+                await StoreDatumAsync(outgoingSmsDatum);
             });
 
-            _incomingSmsCallback = (sender, incomingSmsDatum) =>
+            _incomingSmsCallback = async (sender, incomingSmsDatum) =>
             {
                 // the observer doesn't set the destination number (simply the device's primary number)
                 incomingSmsDatum.ToNumber = _telephonyManager.Line1Number;
 
-                StoreDatum(incomingSmsDatum);
+                await StoreDatumAsync(incomingSmsDatum);
             };
         }
 
-        protected override void Initialize()
+        protected override async Task InitializeAsync()
         {
-            base.Initialize();
+            await base.InitializeAsync();
 
-            if (SensusServiceHelper.Get().ObtainPermission(Permission.Sms) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sms) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
                 if (_telephonyManager == null)
@@ -63,21 +63,24 @@ namespace Sensus.Android.Probes.Communication
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable SMS in the future
                 // and we'd like the probe to be restarted at that time.
                 string error = "SMS is not permitted on this device. Cannot start SMS probe.";
-                SensusServiceHelper.Get().FlashNotificationAsync(error);
+                await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override void StartListening()
+        protected override Task StartListeningAsync()
         {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
+            Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://mms-sms"), true, _smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
+            return Task.CompletedTask;
         }
 
-        protected override void StopListening()
+        protected override Task StopListeningAsync()
         {
             Application.Context.ContentResolver.UnregisterContentObserver(_smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS -= _incomingSmsCallback;
+            return Task.CompletedTask;
         }
     }
 }

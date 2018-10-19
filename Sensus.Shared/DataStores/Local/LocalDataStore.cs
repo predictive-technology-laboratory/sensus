@@ -79,64 +79,58 @@ namespace Sensus.DataStores.Local
         /// data.
         /// </summary>
         /// <param name="cancellationToken">Cancellation token.</param>
-        protected Task WriteToRemoteIfTooLargeAsync(CancellationToken cancellationToken)
+        protected async Task WriteToRemoteIfTooLargeAsync(CancellationToken cancellationToken)
         {
-            return Task.Run(async () =>
+            bool write = false;
+
+            lock (_sizeTriggeredRemoteWriteLocker)
             {
-                bool write = false;
-
-                lock (_sizeTriggeredRemoteWriteLocker)
+                if (IsTooLarge() && !_sizeTriggeredRemoteWriteRunning)
                 {
-                    if (IsTooLarge() && !_sizeTriggeredRemoteWriteRunning)
-                    {
-                        _sizeTriggeredRemoteWriteRunning = true;
-                        write = true;
-                    }
+                    _sizeTriggeredRemoteWriteRunning = true;
+                    write = true;
                 }
+            }
 
-                if (write)
-                {
-                    try
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Running size-triggered write to remote.", LoggingLevel.Normal, GetType());
-
-                        Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType().Name, new Dictionary<string, string>
-                        {
-                            { "Write", "Size Triggered" }
-                        });
-
-                        if (!await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken))
-                        {
-                            throw new Exception("Failed to write local data store to remote.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered write to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                    finally
-                    {
-                        _sizeTriggeredRemoteWriteRunning = false;
-                    }
-                }
-            });
-        }
-
-        public Task ShareLocalDataAsync()
-        {
-            return Task.Run(async () =>
+            if (write)
             {
                 try
                 {
-                    string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
-                    CreateTarFromLocalData(tarSharePath);
-                    await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + Protocol.Name, "application/octet-stream");
+                    SensusServiceHelper.Get().Logger.Log("Running size-triggered write to remote.", LoggingLevel.Normal, GetType());
+
+                    Analytics.TrackEvent(TrackedEvent.Health + ":" + GetType().Name, new Dictionary<string, string>
+                    {
+                        { "Write", "Size Triggered" }
+                    });
+
+                    if (!await Protocol.RemoteDataStore.WriteLocalDataStoreAsync(cancellationToken))
+                    {
+                        throw new Exception("Failed to write local data store to remote.");
+                    }
                 }
                 catch (Exception ex)
                 {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
+                    SensusServiceHelper.Get().Logger.Log("Failed to run size-triggered write to remote:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
-            });
+                finally
+                {
+                    _sizeTriggeredRemoteWriteRunning = false;
+                }
+            }
+        }
+
+        public async Task ShareLocalDataAsync()
+        {
+            try
+            {
+                string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
+                CreateTarFromLocalData(tarSharePath);
+                await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + Protocol.Name, "application/octet-stream");
+            }
+            catch (Exception ex)
+            {
+                await SensusServiceHelper.Get().FlashNotificationAsync("Error sharing data:  " + ex.Message);
+            }
         }
 
         protected abstract bool IsTooLarge();

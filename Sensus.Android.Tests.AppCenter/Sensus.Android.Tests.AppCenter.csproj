@@ -24,7 +24,7 @@ to run on the AppCenter cloud.</Description>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
-    <DefineConstants>__ANDROID__</DefineConstants>
+    <DefineConstants>RELEASE;__ANDROID__</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -34,7 +34,7 @@ to run on the AppCenter cloud.</Description>
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.UITest">
-      <HintPath>..\packages\Xamarin.UITest.2.2.4\lib\net45\Xamarin.UITest.dll</HintPath>
+      <HintPath>..\packages\Xamarin.UITest.2.2.5\lib\net45\Xamarin.UITest.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -42,7 +42,7 @@ to run on the AppCenter cloud.</Description>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sensus.Android.Tests\Sensus.Android.Tests.csproj">
-      <Project>{1F5EE54C-7499-4FFA-A088-B1F36A189167}</Project>
+      <Project>{970A8722-C237-42D3-8F1D-4096355CA144}</Project>
       <Name>Sensus.Android.Tests</Name>
       <ReferenceOutputAssembly>False</ReferenceOutputAssembly>
       <Private>False</Private>

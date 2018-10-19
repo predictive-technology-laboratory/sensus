@@ -1,10 +1,11 @@
 {
-  "device":"XXXX",
-  "protocol":"XXXX",
-  "title":"Hello!",
-  "body":"This is another test.",
-  "sound":"default",
-  "command":"test-command",
-  "format":"gcm",
-  "time":0
+  "id": "0ed96702-f316-4d3a-a63f-fd1da511180b",
+  "device": "7D0AB854-6FF4-4DF5-A970-CAFE81E18B30",
+  "protocol": "9870b48d-4a0f-46e9-bda9-bfd52241a913",
+  "title": "",
+  "body": "",
+  "sound": "",
+  "command": "",
+  "format": "apple",
+  "time": 1534831164
 }
