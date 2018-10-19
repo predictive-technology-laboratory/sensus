@@ -118,7 +118,7 @@ namespace Sensus.Android.Probes.Communication
                     }
                 }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 // something is wrong with our implementation
                 SensusException.Report(ex);
