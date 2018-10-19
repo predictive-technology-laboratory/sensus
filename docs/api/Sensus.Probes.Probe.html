@@ -825,6 +825,61 @@ to trigger scripts but not told to store its data.</p>
   </table>
   
   
+  <a id="Sensus_Probes_Probe_ProcessDataAsync_" data-uid="Sensus.Probes.Probe.ProcessDataAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_ProcessDataAsync_System_Threading_CancellationToken_" data-uid="Sensus.Probes.Probe.ProcessDataAsync(System.Threading.CancellationToken)">ProcessDataAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Instructs the current probe to process data that it has collected. This call does not provide the data
+to process. Rather, it is up to each probe to cache data in memory or on disk as appropriate, in such a
+way that they can be processed when this method is called. This method will only be
+called under suitable conditions (e.g., when the device is charging). Any <a class="xref" href="Sensus.Datum.html">Datum</a> objects that
+result from this processing should be stored via calls to <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>. 
+The <span class="xref">System.Threading.CancellationToken</span> passed to this method should be monitored carefully when processing data.
+If the token is cancelled, then the data processing should abort immediately and the method should return as quickly
+as possible. The <span class="xref">System.Threading.CancellationToken</span> passed to this method should also be passed to 
+<a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>, as this ensures that all operations associated 
+with data storage terminate promptly if the token is cancelled. It is up to the overriding implementation to
+handle multiple calls to this method (even in quick succession and/or concurrently) properly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Task ProcessDataAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>The data async.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Probe_ProtectedStartAsync_" data-uid="Sensus.Probes.Probe.ProtectedStartAsync*"></a>
   <h4 id="Sensus_Probes_Probe_ProtectedStartAsync" data-uid="Sensus.Probes.Probe.ProtectedStartAsync">ProtectedStartAsync()</h4>
   <div class="markdown level1 summary"></div>

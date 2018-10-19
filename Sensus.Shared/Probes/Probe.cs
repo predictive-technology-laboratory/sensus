@@ -80,6 +80,8 @@ namespace Sensus.Probes
         private DataRateCalculator _rawRateCalculator;
         private DataRateCalculator _storageRateCalculator;
         private DataRateCalculator _uiUpdateRateCalculator;
+        private EventHandler<bool> _powerConnectionChanged;
+        private CancellationTokenSource _processDataCanceller;
 
         [JsonIgnore]
         public abstract string DisplayName { get; }
@@ -252,6 +254,30 @@ namespace Sensus.Probes
             _successfulHealthTestTimes = new List<DateTime>();
             _maxChartDataCount = 10;
             _chartData = new List<ChartDataPoint>(_maxChartDataCount + 1);
+
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                if (connected)
+                {
+                    // ask the probe to start processing its data
+                    try
+                    {
+                        SensusServiceHelper.Get().Logger.Log("AC power connected. Initiating data processing within probe.", LoggingLevel.Normal, GetType());
+                        _processDataCanceller = new CancellationTokenSource();
+                        await ProcessDataAsync(_processDataCanceller.Token);
+                        SensusServiceHelper.Get().Logger.Log("Probe data processing complete.", LoggingLevel.Normal, GetType());
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while processing probe data:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+                else
+                {
+                    // cancel any previous attempt to process data
+                    _processDataCanceller?.Cancel();
+                }
+            };
         }
 
         protected virtual Task InitializeAsync()
@@ -333,6 +359,9 @@ namespace Sensus.Probes
                 _rawRateCalculator.Start();
                 _storageRateCalculator.Start();
                 _uiUpdateRateCalculator.Start();
+
+                // hook into the AC charge event signal -- add handler to AC broadcast receiver
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
             }
         }
 
@@ -424,6 +453,26 @@ namespace Sensus.Probes
         }
 
         /// <summary>
+        /// Instructs the current probe to process data that it has collected. This call does not provide the data
+        /// to process. Rather, it is up to each probe to cache data in memory or on disk as appropriate, in such a
+        /// way that they can be processed when this method is called. This method will only be
+        /// called under suitable conditions (e.g., when the device is charging). Any <see cref="Datum"/> objects that
+        /// result from this processing should be stored via calls to <see cref="StoreDatumAsync(Datum, CancellationToken?)"/>. 
+        /// The <see cref="CancellationToken"/> passed to this method should be monitored carefully when processing data.
+        /// If the token is cancelled, then the data processing should abort immediately and the method should return as quickly
+        /// as possible. The <see cref="CancellationToken"/> passed to this method should also be passed to 
+        /// <see cref="StoreDatumAsync(Datum, CancellationToken?)"/>, as this ensures that all operations associated 
+        /// with data storage terminate promptly if the token is cancelled. It is up to the overriding implementation to
+        /// handle multiple calls to this method (even in quick succession and/or concurrently) properly.
+        /// </summary>
+        /// <returns>The data async.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public virtual Task ProcessDataAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
         /// Gets the participation level for the current probe. If this probe was originally enabled within the protocol, then
         /// this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
         /// this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
@@ -459,6 +508,9 @@ namespace Sensus.Probes
                     _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
                     _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                 }
+
+                // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
             }
             else
             {

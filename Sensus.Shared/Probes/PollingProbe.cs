@@ -384,7 +384,7 @@ namespace Sensus.Probes
 
             if (_acPowerConnectPoll)
             {
-                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;  //attach to the power connection changed 
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
 
                 if (_acPowerConnectPollOverridesScheduledPolls)
                 {

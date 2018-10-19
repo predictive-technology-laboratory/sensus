@@ -1819,15 +1819,15 @@ references:
   commentId: T:Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver
   fullName: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver
   nameWithType: AndroidSmsOutgoingObserver
-- uid: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.#ctor(Android.Content.Context,System.Action{Sensus.Probes.Communication.SmsDatum})
-  name: AndroidSmsOutgoingObserver(Context, Action<SmsDatum>)
-  href: api/Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.html#Sensus_Android_Probes_Communication_AndroidSmsOutgoingObserver__ctor_Android_Content_Context_System_Action_Sensus_Probes_Communication_SmsDatum__
-  commentId: M:Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.#ctor(Android.Content.Context,System.Action{Sensus.Probes.Communication.SmsDatum})
-  name.vb: AndroidSmsOutgoingObserver(Context, Action(Of SmsDatum))
-  fullName: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(Android.Content.Context, System.Action<Sensus.Probes.Communication.SmsDatum>)
-  fullName.vb: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(Android.Content.Context, System.Action(Of Sensus.Probes.Communication.SmsDatum))
-  nameWithType: AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(Context, Action<SmsDatum>)
-  nameWithType.vb: AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(Context, Action(Of SmsDatum))
+- uid: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.#ctor(System.Action{Sensus.Probes.Communication.SmsDatum})
+  name: AndroidSmsOutgoingObserver(Action<SmsDatum>)
+  href: api/Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.html#Sensus_Android_Probes_Communication_AndroidSmsOutgoingObserver__ctor_System_Action_Sensus_Probes_Communication_SmsDatum__
+  commentId: M:Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.#ctor(System.Action{Sensus.Probes.Communication.SmsDatum})
+  name.vb: AndroidSmsOutgoingObserver(Action(Of SmsDatum))
+  fullName: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(System.Action<Sensus.Probes.Communication.SmsDatum>)
+  fullName.vb: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(System.Action(Of Sensus.Probes.Communication.SmsDatum))
+  nameWithType: AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(Action<SmsDatum>)
+  nameWithType.vb: AndroidSmsOutgoingObserver.AndroidSmsOutgoingObserver(Action(Of SmsDatum))
 - uid: Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.#ctor*
   name: AndroidSmsOutgoingObserver
   href: api/Sensus.Android.Probes.Communication.AndroidSmsOutgoingObserver.html#Sensus_Android_Probes_Communication_AndroidSmsOutgoingObserver__ctor_
@@ -23262,6 +23262,24 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
+  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  name: UnsetPushNotificationTokenException()
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
+  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
+  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -35370,6 +35388,18 @@ references:
   commentId: Overload:Sensus.Probes.Probe.OriginallyEnabled
   fullName: Sensus.Probes.Probe.OriginallyEnabled
   nameWithType: Probe.OriginallyEnabled
+- uid: Sensus.Probes.Probe.ProcessDataAsync(System.Threading.CancellationToken)
+  name: ProcessDataAsync(CancellationToken)
+  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProcessDataAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Probes.Probe.ProcessDataAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Probes.Probe.ProcessDataAsync(System.Threading.CancellationToken)
+  nameWithType: Probe.ProcessDataAsync(CancellationToken)
+- uid: Sensus.Probes.Probe.ProcessDataAsync*
+  name: ProcessDataAsync
+  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProcessDataAsync_
+  commentId: Overload:Sensus.Probes.Probe.ProcessDataAsync
+  fullName: Sensus.Probes.Probe.ProcessDataAsync
+  nameWithType: Probe.ProcessDataAsync
 - uid: Sensus.Probes.Probe.PropertyChanged
   name: PropertyChanged
   href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_PropertyChanged
