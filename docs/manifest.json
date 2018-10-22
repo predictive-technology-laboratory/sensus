@@ -1625,6 +1625,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.Exceptions.UnsetPushNotificationTokenException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.Exceptions.UnsetPushNotificationTokenException.html",
+          "hash": "TMJiLOAFSuidsfyDNf25XA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.Exceptions.yml",
       "output": {
         ".html": {
@@ -3585,7 +3597,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "Qnox08yIQ3ZKRTaMmfAOWg=="
+          "hash": "j5yx8E/vumzlIQJS32ZUiA=="
         }
       },
       "is_incremental": true,
@@ -4701,7 +4713,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationDelegate.html",
-          "hash": "j/4HNouuNveDSJwMAZ1uTw=="
+          "hash": "LUi6zhYZqnC7GcsIXYTvGA=="
         }
       },
       "is_incremental": true,
@@ -4869,7 +4881,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html",
-          "hash": "mTBWFjAS7zbL5Z6peesSqg=="
+          "hash": "+JjCHdXqtyn/Nurl2xU8Hg=="
         }
       },
       "is_incremental": true,
@@ -5333,6 +5345,18 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/local-only-storage.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/local-only-storage.html",
+          "hash": "BnjA5WF7VWf0e2nBIRcBdg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/privacy-policy.md",
       "output": {
         ".html": {
@@ -5373,7 +5397,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/push-notifications.html",
-          "hash": "2uP1i29EOmoDln3CKHkKqg=="
+          "hash": "aesETylH24Qt8uroCJrG1Q=="
         }
       },
       "is_incremental": true,
@@ -5421,7 +5445,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/tagging-mode.html",
-          "hash": "kJ2vZZDMVrZR2dLFIk9Ckw=="
+          "hash": "QuIBAcgRyWjIvHD/YcbPVQ=="
         }
       },
       "is_incremental": true,
@@ -5433,7 +5457,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "umpOoSDaNaPRulzG/xDvbA=="
+          "hash": "WmjANw9+zIp+74LnuDyV/Q=="
         }
       },
       "is_incremental": false,
@@ -5520,17 +5544,17 @@
           "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
-        "ResourceDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
-          "incrementalPhase": "build"
-        },
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }

@@ -3,6 +3,8 @@ uid: push_notifications
 ---
 
 # Push Notifications
+WARNING:  Push notifications are still in beta. It is not clear yet whether anyone but the Sensus
+team will be able to configure push notifications.
 
 ## Introduction
 Sensus uses push notifications to deliver information to users, to let Sensus know when

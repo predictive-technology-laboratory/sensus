@@ -28,6 +28,9 @@ references:
 - uid: intro
   name: Welcome
   href: articles/intro.html
+- uid: local_only_storage
+  name: Local-Only Storage
+  href: articles/local-only-storage.html
 - uid: privacy_policy
   name: Privacy Policy
   href: articles/privacy-policy.html
@@ -23286,6 +23289,24 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
+  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  name: UnsetPushNotificationTokenException()
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
+  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
+  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -42348,6 +42369,42 @@ references:
   commentId: Overload:Sensus.Protocol.TaggedEventTags
   fullName: Sensus.Protocol.TaggedEventTags
   nameWithType: Protocol.TaggedEventTags
+- uid: Sensus.Protocol.TaggingEndTimestamp
+  name: TaggingEndTimestamp
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggingEndTimestamp
+  commentId: P:Sensus.Protocol.TaggingEndTimestamp
+  fullName: Sensus.Protocol.TaggingEndTimestamp
+  nameWithType: Protocol.TaggingEndTimestamp
+- uid: Sensus.Protocol.TaggingEndTimestamp*
+  name: TaggingEndTimestamp
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggingEndTimestamp_
+  commentId: Overload:Sensus.Protocol.TaggingEndTimestamp
+  fullName: Sensus.Protocol.TaggingEndTimestamp
+  nameWithType: Protocol.TaggingEndTimestamp
+- uid: Sensus.Protocol.TaggingStartTimestamp
+  name: TaggingStartTimestamp
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggingStartTimestamp
+  commentId: P:Sensus.Protocol.TaggingStartTimestamp
+  fullName: Sensus.Protocol.TaggingStartTimestamp
+  nameWithType: Protocol.TaggingStartTimestamp
+- uid: Sensus.Protocol.TaggingStartTimestamp*
+  name: TaggingStartTimestamp
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggingStartTimestamp_
+  commentId: Overload:Sensus.Protocol.TaggingStartTimestamp
+  fullName: Sensus.Protocol.TaggingStartTimestamp
+  nameWithType: Protocol.TaggingStartTimestamp
+- uid: Sensus.Protocol.TaggingsToExport
+  name: TaggingsToExport
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggingsToExport
+  commentId: P:Sensus.Protocol.TaggingsToExport
+  fullName: Sensus.Protocol.TaggingsToExport
+  nameWithType: Protocol.TaggingsToExport
+- uid: Sensus.Protocol.TaggingsToExport*
+  name: TaggingsToExport
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggingsToExport_
+  commentId: Overload:Sensus.Protocol.TaggingsToExport
+  fullName: Sensus.Protocol.TaggingsToExport
+  nameWithType: Protocol.TaggingsToExport
 - uid: Sensus.Protocol.TestHealthAsync(System.Boolean,System.Threading.CancellationToken)
   name: TestHealthAsync(Boolean, CancellationToken)
   href: api/Sensus.Protocol.html#Sensus_Protocol_TestHealthAsync_System_Boolean_System_Threading_CancellationToken_

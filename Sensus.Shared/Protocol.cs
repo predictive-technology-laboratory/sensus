@@ -1322,6 +1322,24 @@ namespace Sensus
         public List<string> TaggedEventTags { get; set; }
 
         /// <summary>
+        /// The time at which the current tagging started.
+        /// </summary>
+        /// <value>The tagging start timestamp.</value>
+        public DateTimeOffset? TaggingStartTimestamp { get; set; }
+
+        /// <summary>
+        /// The time at which the current tagging ended.
+        /// </summary>
+        /// <value>The tagging end timestamp.</value>
+        public DateTimeOffset? TaggingEndTimestamp { get; set; }
+
+        /// <summary>
+        /// A list of taggings to export.
+        /// </summary>
+        /// <value>The taggings to export.</value>
+        public List<string> TaggingsToExport { get; } = new List<string>();
+
+        /// <summary>
         /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
         /// for more information.
         /// </summary>

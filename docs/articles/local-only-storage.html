@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Tagging | Sensus Documentation </title>
+    <title>Local-Only Storage | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Tagging | Sensus Documentation ">
+    <meta name="title" content="Local-Only Storage | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -76,47 +76,21 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="tagging_mode">
-<h1 id="tagging">Tagging</h1>
+            <article class="content wrap" id="_content" data-uid="local_only_storage">
+<h1 id="local-only-storage">Local-Only Storage</h1>
 
-<p>Experimenters and researchers often desire to generate manually tagged data to support the creation of supervised
-machine learning models. For example, if one were interested in generating accelerometry data while walking
-in order to create a walking recognition model, then each <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html">AccelerometerDatum</a>
-would need to be tagged with ground truth labels (walking and not walking) in order to be used for supervised machine learning. 
-Furthermore, the experimenter would need many replications of the activity to obtain representative data. Sensus supports this tagging
-process in a straightforward way that alleviates most of the tedious work associated with keeping track of the readings
-taken during such activities. Configure tagging as follows:</p>
+<p>To configure a Sensus study that accumulates data locally on the device rather than 
+transmitting to <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>, proceed as follows:</p>
 <ol>
-<li>Allow tagging for the protocol by enabling <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowTagging">AllowTagging</a>.</li>
-<li>Enter a list of tags in the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AvailableTags">AvailableTags</a> field. These tags should describe the target 
-activities. Ultimately, these tags will likely become the class labels to be predicted using supervised machine learning.</li>
-<li>Start the protocol.</li>
-<li>Tap the protocol and select &quot;Tag Data&quot;.</li>
-<li>Select the tags you wish to apply (optionally adding new tags if desired).</li>
-<li>Press the Start button.</li>
-<li>Engage in the target activity.</li>
-<li>Press the Stop button and confirm the tagging.</li>
+<li>Create a new protocol.</li>
+<li>Enable <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare">AllowLocalDataShare</a>. This will allow you to offload accumulated data.</li>
+<li>Add a local data store and disable <a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote">WriteToRemote</a>. This will prevent 
+data from leaving the device.</li>
+<li>Add a console remote data store. This is a null data store that has no effect.</li>
+<li>Configure probes.</li>
+<li>Start protocol and run as desired.</li>
+<li>Stop protocol and select Share Local Data.</li>
 </ol>
-<p>Immediately upon pressing the Start button, each <a class="xref" href="../api/Sensus.Datum.html">Datum</a> that is stored will have the following
-two fields set:</p>
-<ol>
-<li><a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_TaggedEventId">TaggedEventId</a>:  A unique identifier for the tagging session that begins
-with tapping the Start button and ends with tapping the Stop button. All <a class="xref" href="../api/Sensus.Datum.html">Datum</a> objects collected during 
-this interval will have the same <a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_TaggedEventId">TaggedEventId</a>.</li>
-<li><a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_TaggedEventTags">TaggedEventTags</a>:  The tags selected above.</li>
-</ol>
-<p>Immediately upon pressing the Stop button, data will cease to be tagged and the above two fields will have empty 
-values for all subsequent <a class="xref" href="../api/Sensus.Datum.html">Datum</a> objects. Note that the protocol will continuously collect data before 
-the tagging starts and after the tagging ends. The only effect of tagging is to set the two fields above for all 
-data within the start-stop interval.</p>
-<p>After you have generated one or more taggings, tap the export button to send yourself a CSV file summarizing the tagged data.
-The format of the CSV file is as follows:</p>
-<pre><code>tagged-event-id   start  end     tags
-XXXX              XXXX   XXXX    A|B
-</code></pre><p>The example above shows a single tagged event with placeholder values for the identifier and start/end times. This 
-event indicates that two tags (A and B) were applied to all data generated during this interval. The CSV file does 
-not contain the actual raw data, which will be stored either locally (if you have 
-<a class="xref" href="local-only-storage.html">configured local-only storage</a>) or in your <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>.</p>
 </article>
           </div>
           
@@ -125,7 +99,7 @@ not contain the actual raw data, which will be stored either locally (if you hav
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/feature-tagging/DocFX/articles/tagging-mode.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/feature-tagging/DocFX/articles/local-only-storage.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

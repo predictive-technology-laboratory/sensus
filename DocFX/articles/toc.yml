@@ -9,6 +9,9 @@
 
   - name: Protocol Distribution
     href: protocol-distribution.md
+    
+  - name: Local-Only Storage
+    href:  local-only-storage.md
 
 - name: Data Protection
   items:
