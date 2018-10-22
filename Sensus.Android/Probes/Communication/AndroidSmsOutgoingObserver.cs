@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.IO;
-using System.Text;
 using Android.App;
 using Android.Database;
 using Android.OS;
 using Android.Provider;
 using Sensus.Exceptions;
 using Sensus.Probes.Communication;
+using System;
+using System.IO;
+using System.Text;
 
 namespace Sensus.Android.Probes.Communication
 {
     public class AndroidSmsOutgoingObserver : ContentObserver
     {
-        private Action<SmsDatum> _outgoingSmsCallback;
+        private readonly Action<SmsDatum> _outgoingSmsCallback;
         private string _mostRecentlyObservedSmsURI;
 
         public AndroidSmsOutgoingObserver(Action<SmsDatum> outgoingSmsCallback)
@@ -40,6 +40,7 @@ namespace Sensus.Android.Probes.Communication
         {
             OnChange(selfChange, global::Android.Net.Uri.Parse("content://sms"));
         }
+
 
         public override void OnChange(bool selfChange, global::Android.Net.Uri uri)
         {
@@ -55,87 +56,109 @@ namespace Sensus.Android.Probes.Communication
             ICursor queryResults = null;
             try
             {
+
+
                 // process MMS:  https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
-                if (uri.ToString().StartsWith("content://sms/raw") || uri.ToString().StartsWith("content://mms-sms"))
+
+                var convUri = global::Android.Net.Uri.Parse("content://mms-sms/conversations/");
+                queryResults = Application.Context.ContentResolver.Query(convUri, new string[] { "_id", "ct_t" }, null, null, null);
+                if (queryResults.MoveToFirst())
                 {
-                    queryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms-sms/conversations/"), null, null, null, "_id");
-
-                    if (queryResults.MoveToLast())
+                    var ctt = queryResults.GetString(queryResults.GetColumnIndex("ct_t"));
+                    var isMMS = uri.ToString().StartsWith("content://sms/raw") || uri.ToString().StartsWith("content://mms-sms"); ;
+                    if (isMMS)
                     {
-                        unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date")) * 1000;
+                        // it's MMS
+                        queryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms-sms/conversations/"), null, null, null, "_id");
 
-                        int messageId = queryResults.GetInt(queryResults.GetColumnIndexOrThrow("_id"));
-                        ICursor innerQueryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms/part"), null, "mid=" + messageId, null, null);
-
-                        try
+                        if (queryResults.MoveToLast())
                         {
-                            if (innerQueryResults.MoveToFirst())
+
+                            unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date")) * 1000;
+
+                            int messageId = queryResults.GetInt(queryResults.GetColumnIndexOrThrow("_id"));
+
+                            ICursor innerQueryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms/part"), null, "mid=" + messageId, null, null);
+
+                            try
                             {
-                                if (innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("ct")) == "text/plain")
+                                if (innerQueryResults.MoveToFirst())
                                 {
-                                    string data = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("_data"));
-
-                                    if (data == null)
+                                    var go = true;
+                                    while (go == true) //Note: for some reason a do...while loop doesn't seem to work.
                                     {
-                                        body = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("text"));
-                                    }
-                                    else
-                                    {
-                                        int partId = innerQueryResults.GetInt(innerQueryResults.GetColumnIndexOrThrow("_id"));
-                                        body = GetMmsText(partId);
-                                    }
+                                        if (innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("ct")) == "text/plain")
+                                        {
+                                            string data = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("_data"));
 
-                                    toNumber = GetAddressNumber(messageId, 151); // 137 is the from and 151 is the to
+                                            if (data == null)
+                                            {
+                                                body = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("text"));
+                                            }
+                                            else
+                                            {
+                                                int partId = innerQueryResults.GetInt(innerQueryResults.GetColumnIndexOrThrow("_id"));
+                                                body = GetMmsText(partId);
+                                            }
+
+                                            toNumber = GetAddressNumber(messageId, 151); // 137 is the from and 151 is the to
+                                            go = false;
+                                        }
+                                        else
+                                        {
+                                            go = innerQueryResults.MoveToNext();
+                                        }
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                // always close cursor
+                                try
+                                {
+                                    innerQueryResults.Close();
+                                }
+                                catch
+                                {
                                 }
                             }
                         }
-                        finally
-                        {
-                            // always close cursor
-                            try
-                            {
-                                innerQueryResults.Close();
-                            }
-                            catch
-                            {
-                            }
-                        }
                     }
-                }
-                // proces SMS
-                else
-                {
-                    queryResults = Application.Context.ContentResolver.Query(uri, null, null, null, null);
-
-                    if (queryResults.MoveToNext())
+                    else
                     {
-                        string protocol = queryResults.GetString(queryResults.GetColumnIndexOrThrow("protocol"));
-                        type = queryResults.GetInt(queryResults.GetColumnIndexOrThrow("type"));
+                        queryResults = Application.Context.ContentResolver.Query(uri, null, null, null, null);
 
-                        int sentMessageType;
+                        if (queryResults != null && queryResults.MoveToNext())
+                        {
+                            string protocol = queryResults.GetString(queryResults.GetColumnIndex("protocol"));
+                            type = queryResults.GetInt(queryResults.GetColumnIndex("type"));
 
-                        // see the Backwards Compatibility article for more information
+                            int sentMessageType;
+
+                            // see the Backwards Compatibility article for more information
 #if __ANDROID_19__
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-                        {
-                            sentMessageType = (int)SmsMessageType.Sent;  // API level 19
-                        }
-                        else
+                            if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+                            {
+                                sentMessageType = (int)SmsMessageType.Sent;  // API level 19
+                            }
+                            else
 #endif
-                        {
-                            sentMessageType = 2;
-                        }
+                            {
+                                sentMessageType = 2;
+                            }
 
-                        if (protocol != null || type != sentMessageType)
-                        {
-                            return;
-                        }
+                            if (type != sentMessageType) //note:protocol is never coming in null for me
+                            {
+                                return;
+                            }
 
-                        toNumber = queryResults.GetString(queryResults.GetColumnIndexOrThrow("address"));
-                        unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date"));
-                        body = queryResults.GetString(queryResults.GetColumnIndexOrThrow("body"));
+                            toNumber = queryResults.GetString(queryResults.GetColumnIndexOrThrow("address"));
+                            unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date"));
+                            body = queryResults.GetString(queryResults.GetColumnIndexOrThrow("body"));
+                        }
                     }
                 }
+
 
                 if (!string.IsNullOrWhiteSpace(body))
                 {
@@ -187,7 +210,7 @@ namespace Sensus.Android.Probes.Communication
             return text;
         }
 
-        private String GetAddressNumber(int id, int type)
+        private string GetAddressNumber(int id, int type)
         {
             string number = null;
 
