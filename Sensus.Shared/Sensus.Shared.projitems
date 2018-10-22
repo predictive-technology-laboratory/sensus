@@ -261,6 +261,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AnalyticsTrackedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

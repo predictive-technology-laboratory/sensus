@@ -354,6 +354,34 @@ public bool AllowSubmitData { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowTagging_" data-uid="Sensus.Protocol.AllowTagging*"></a>
+  <h4 id="Sensus_Protocol_AllowTagging" data-uid="Sensus.Protocol.AllowTagging">AllowTagging</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to enter tagging mode. See <a class="xref" href="../articles/tagging-mode.html">this article</a> for more information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Tagging:&quot;, true, 46)]
+public bool AllowTagging { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if allow tagging; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AllowViewData_" data-uid="Sensus.Protocol.AllowViewData*"></a>
   <h4 id="Sensus_Protocol_AllowViewData" data-uid="Sensus.Protocol.AllowViewData">AllowViewData</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to view data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -479,6 +507,34 @@ public string AsymmetricEncryptionPublicKey { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><p>The asymmetric encryption public key.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AvailableTags_" data-uid="Sensus.Protocol.AvailableTags*"></a>
+  <h4 id="Sensus_Protocol_AvailableTags" data-uid="Sensus.Protocol.AvailableTags">AvailableTags</h4>
+  <div class="markdown level1 summary"><p>The tags to make available when in tagging mode. See <a class="xref" href="../articles/tagging-mode.html">this article</a> for more information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EditableListUiProperty(&quot;Available Tags:&quot;, true, 47, false)]
+public List&lt;string&gt; AvailableTags { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>The tags.</p>
 </td>
       </tr>
     </tbody>
@@ -1170,7 +1226,7 @@ value to use here is the name of the hub.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 47, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 49, false)]
 public string PushNotificationsHub { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1200,7 +1256,7 @@ the value directly to this field.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 48, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 50, false)]
 public string PushNotificationsSharedAccessSignature { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1536,6 +1592,60 @@ public TimeSpan StartTime { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_TaggedEventId_" data-uid="Sensus.Protocol.TaggedEventId*"></a>
+  <h4 id="Sensus_Protocol_TaggedEventId" data-uid="Sensus.Protocol.TaggedEventId">TaggedEventId</h4>
+  <div class="markdown level1 summary"><p>The current event identifier for tagging. See <a class="xref" href="../articles/tagging-mode.html">this article</a> for more information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string TaggedEventId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The tag identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_TaggedEventTags_" data-uid="Sensus.Protocol.TaggedEventTags*"></a>
+  <h4 id="Sensus_Protocol_TaggedEventTags" data-uid="Sensus.Protocol.TaggedEventTags">TaggedEventTags</h4>
+  <div class="markdown level1 summary"><p>The current tags applied during event tagging. See <a class="xref" href="../articles/tagging-mode.html">this article</a> for more information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;string&gt; TaggedEventTags { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>The set tags.</p>
+</td>
       </tr>
     </tbody>
   </table>

@@ -394,6 +394,13 @@ namespace Sensus.Probes
                 // set properties that we were unable to set within the datum constructor.
                 datum.ProtocolId = Protocol.Id;
                 datum.ParticipantId = Protocol.ParticipantId;
+
+                // tag the data if we're in tagging mode, indicated with a non-null event id on the protocol.
+                if (Protocol.TaggedEventId != null)
+                {
+                    datum.TaggedEventId = Protocol.TaggedEventId;
+                    datum.TaggedEventTags = Protocol.TaggedEventTags;
+                }
             }
 
             // store non-null data

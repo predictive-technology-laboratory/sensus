@@ -24,6 +24,9 @@
 
     - name: SSL Certificate Pinning
       href: ssl-pinning.md
+      
+- name: Tagging
+  href:  tagging-mode.md
 
 - name: Push Notifications
   href: push-notifications.md

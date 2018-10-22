@@ -22917,6 +22917,30 @@ references:
   commentId: Overload:Sensus.Datum.StringPlaceholderValue
   fullName: Sensus.Datum.StringPlaceholderValue
   nameWithType: Datum.StringPlaceholderValue
+- uid: Sensus.Datum.TaggedEventId
+  name: TaggedEventId
+  href: api/Sensus.Datum.html#Sensus_Datum_TaggedEventId
+  commentId: P:Sensus.Datum.TaggedEventId
+  fullName: Sensus.Datum.TaggedEventId
+  nameWithType: Datum.TaggedEventId
+- uid: Sensus.Datum.TaggedEventId*
+  name: TaggedEventId
+  href: api/Sensus.Datum.html#Sensus_Datum_TaggedEventId_
+  commentId: Overload:Sensus.Datum.TaggedEventId
+  fullName: Sensus.Datum.TaggedEventId
+  nameWithType: Datum.TaggedEventId
+- uid: Sensus.Datum.TaggedEventTags
+  name: TaggedEventTags
+  href: api/Sensus.Datum.html#Sensus_Datum_TaggedEventTags
+  commentId: P:Sensus.Datum.TaggedEventTags
+  fullName: Sensus.Datum.TaggedEventTags
+  nameWithType: Datum.TaggedEventTags
+- uid: Sensus.Datum.TaggedEventTags*
+  name: TaggedEventTags
+  href: api/Sensus.Datum.html#Sensus_Datum_TaggedEventTags_
+  commentId: Overload:Sensus.Datum.TaggedEventTags
+  fullName: Sensus.Datum.TaggedEventTags
+  nameWithType: Datum.TaggedEventTags
 - uid: Sensus.Datum.Timestamp
   name: Timestamp
   href: api/Sensus.Datum.html#Sensus_Datum_Timestamp
@@ -23262,24 +23286,6 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
-  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  name: UnsetPushNotificationTokenException()
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
-  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
-  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -41529,6 +41535,18 @@ references:
   commentId: Overload:Sensus.Protocol.AllowSubmitData
   fullName: Sensus.Protocol.AllowSubmitData
   nameWithType: Protocol.AllowSubmitData
+- uid: Sensus.Protocol.AllowTagging
+  name: AllowTagging
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowTagging
+  commentId: P:Sensus.Protocol.AllowTagging
+  fullName: Sensus.Protocol.AllowTagging
+  nameWithType: Protocol.AllowTagging
+- uid: Sensus.Protocol.AllowTagging*
+  name: AllowTagging
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowTagging_
+  commentId: Overload:Sensus.Protocol.AllowTagging
+  fullName: Sensus.Protocol.AllowTagging
+  nameWithType: Protocol.AllowTagging
 - uid: Sensus.Protocol.AllowViewData
   name: AllowViewData
   href: api/Sensus.Protocol.html#Sensus_Protocol_AllowViewData
@@ -41577,6 +41595,18 @@ references:
   commentId: Overload:Sensus.Protocol.AsymmetricEncryptionPublicKey
   fullName: Sensus.Protocol.AsymmetricEncryptionPublicKey
   nameWithType: Protocol.AsymmetricEncryptionPublicKey
+- uid: Sensus.Protocol.AvailableTags
+  name: AvailableTags
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AvailableTags
+  commentId: P:Sensus.Protocol.AvailableTags
+  fullName: Sensus.Protocol.AvailableTags
+  nameWithType: Protocol.AvailableTags
+- uid: Sensus.Protocol.AvailableTags*
+  name: AvailableTags
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AvailableTags_
+  commentId: Overload:Sensus.Protocol.AvailableTags
+  fullName: Sensus.Protocol.AvailableTags
+  nameWithType: Protocol.AvailableTags
 - uid: Sensus.Protocol.CancelScheduledStartAsync
   name: CancelScheduledStartAsync()
   href: api/Sensus.Protocol.html#Sensus_Protocol_CancelScheduledStartAsync
@@ -42294,6 +42324,30 @@ references:
   commentId: Overload:Sensus.Protocol.SubCaption
   fullName: Sensus.Protocol.SubCaption
   nameWithType: Protocol.SubCaption
+- uid: Sensus.Protocol.TaggedEventId
+  name: TaggedEventId
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggedEventId
+  commentId: P:Sensus.Protocol.TaggedEventId
+  fullName: Sensus.Protocol.TaggedEventId
+  nameWithType: Protocol.TaggedEventId
+- uid: Sensus.Protocol.TaggedEventId*
+  name: TaggedEventId
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggedEventId_
+  commentId: Overload:Sensus.Protocol.TaggedEventId
+  fullName: Sensus.Protocol.TaggedEventId
+  nameWithType: Protocol.TaggedEventId
+- uid: Sensus.Protocol.TaggedEventTags
+  name: TaggedEventTags
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggedEventTags
+  commentId: P:Sensus.Protocol.TaggedEventTags
+  fullName: Sensus.Protocol.TaggedEventTags
+  nameWithType: Protocol.TaggedEventTags
+- uid: Sensus.Protocol.TaggedEventTags*
+  name: TaggedEventTags
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TaggedEventTags_
+  commentId: Overload:Sensus.Protocol.TaggedEventTags
+  fullName: Sensus.Protocol.TaggedEventTags
+  nameWithType: Protocol.TaggedEventTags
 - uid: Sensus.Protocol.TestHealthAsync(System.Boolean,System.Threading.CancellationToken)
   name: TestHealthAsync(Boolean, CancellationToken)
   href: api/Sensus.Protocol.html#Sensus_Protocol_TestHealthAsync_System_Boolean_System_Threading_CancellationToken_
@@ -46173,6 +46227,24 @@ references:
   commentId: Overload:Sensus.UI.SensusMasterPage.MasterPageItemsListView
   fullName: Sensus.UI.SensusMasterPage.MasterPageItemsListView
   nameWithType: SensusMasterPage.MasterPageItemsListView
+- uid: Sensus.UI.TaggingPage
+  name: TaggingPage
+  href: api/Sensus.UI.TaggingPage.html
+  commentId: T:Sensus.UI.TaggingPage
+  fullName: Sensus.UI.TaggingPage
+  nameWithType: TaggingPage
+- uid: Sensus.UI.TaggingPage.#ctor(Sensus.Protocol)
+  name: TaggingPage(Protocol)
+  href: api/Sensus.UI.TaggingPage.html#Sensus_UI_TaggingPage__ctor_Sensus_Protocol_
+  commentId: M:Sensus.UI.TaggingPage.#ctor(Sensus.Protocol)
+  fullName: Sensus.UI.TaggingPage.TaggingPage(Sensus.Protocol)
+  nameWithType: TaggingPage.TaggingPage(Protocol)
+- uid: Sensus.UI.TaggingPage.#ctor*
+  name: TaggingPage
+  href: api/Sensus.UI.TaggingPage.html#Sensus_UI_TaggingPage__ctor_
+  commentId: Overload:Sensus.UI.TaggingPage.#ctor
+  fullName: Sensus.UI.TaggingPage.TaggingPage
+  nameWithType: TaggingPage.TaggingPage
 - uid: Sensus.UI.UiProperties
   name: Sensus.UI.UiProperties
   href: api/Sensus.UI.UiProperties.html
@@ -47082,3 +47154,6 @@ references:
 - uid: ssl_pinning
   name: SSL Certificate Pinning
   href: articles/ssl-pinning.html
+- uid: tagging_mode
+  name: Tagging
+  href: articles/tagging-mode.html

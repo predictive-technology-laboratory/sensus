@@ -1281,7 +1281,6 @@ namespace Sensus
         [OnOffUiProperty("Allow Protocol Share:", true, 43)]
         public bool Shareable { get; set; } = false;
 
-
         /// <summary>
         /// Whether or not to allow the user to share local data collected on the device.
         /// </summary>
@@ -1297,11 +1296,37 @@ namespace Sensus
         public bool AllowParticipantIdReset { get; set; } = false;
 
         /// <summary>
+        /// Whether or not to allow the user to enter tagging mode. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value><c>true</c> if allow tagging; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Tagging:", true, 46)]
+        public bool AllowTagging { get; set; } = false;
+
+        /// <summary>
+        /// The tags to make available when in tagging mode. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value>The tags.</value>
+        [EditableListUiProperty("Available Tags:", true, 47, false)]
+        public List<string> AvailableTags { get; set; } = new List<string>();
+
+        /// <summary>
+        /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value>The tag identifier.</value>
+        public string TaggedEventId { get; set; }
+
+        /// <summary>
+        /// The current tags applied during event tagging. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value>The set tags.</value>
+        public List<string> TaggedEventTags { get; set; }
+
+        /// <summary>
         /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 46, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 48, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1319,7 +1344,7 @@ namespace Sensus
         /// value to use here is the name of the hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 49, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1332,7 +1357,7 @@ namespace Sensus
         /// the value directly to this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 50, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }

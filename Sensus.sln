@@ -47,6 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8
 		DocFX\articles\sensus-r.md = DocFX\articles\sensus-r.md
 		DocFX\articles\ssl-pinning.md = DocFX\articles\ssl-pinning.md
 		DocFX\articles\redeploying-sensus.md = DocFX\articles\redeploying-sensus.md
+		DocFX\articles\tagging-mode.md = DocFX\articles\tagging-mode.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
