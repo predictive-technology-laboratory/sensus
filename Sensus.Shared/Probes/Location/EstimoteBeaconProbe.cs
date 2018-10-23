@@ -29,17 +29,14 @@ namespace Sensus.Probes.Location
 {
     /// <summary>
     /// 
-    /// Sensus uses [Estimote Proximity Beacons](http://estimote.com/#get-beacons) to track fine-grained locations. This Probe is available for 
-    /// Android and iOS and runs while the Sensus app is in the foreground and background. Generates proximity event data in the form 
-    /// of <see cref="EstimoteBeaconDatum"/> readings.
+    /// Sensus uses [Estimote Proximity Beacons](http://estimote.com/#get-beacons) to track fine-grained locations indoors. This 
+    /// Probe is available for Android and iOS and runs while the Sensus app is in the foreground and background. This Probe 
+    /// generates proximity event data in the form of <see cref="EstimoteBeaconDatum"/> readings.
     /// 
     /// # Prerequisites
     /// 
-    ///   * You must purchase Proximity or Location beacons.
-    ///   * The beacons must be configured within the [Estimote Cloud console](https://cloud.estimote.com) to have the following JSON attachment:
-    /// 
-    ///     ```
-    ///     { &quot;attachment&quot;: { &quot;sensus&quot;: &quot;test&quot; } }
+    ///   * Purchase Proximity or Location beacons.
+    ///   * The beacons must be configured within the [Estimote Cloud console](https://cloud.estimote.com) and have tags attached to them.
     ///     ```
     /// 
     /// More details are available [here](http://developer.estimote.com/proximity/android-tutorial).
@@ -47,7 +44,7 @@ namespace Sensus.Probes.Location
     /// * Having entered the App Id and App Token, the list of beacons can be edited via the `Edit Beacons` button in the Estimote Beacon Probe 
     ///   configuration. Each beacon definition contains the following:
     ///   
-    ///   * `Beacon Name`:  Name of the beacon, as specified in the attachment value.
+    ///   * `Beacon Tag`:  Tag of the beacon to detect, as specified above.
     ///   * `Proximity (Meters)`:  Number of meters desired for proximity.
     ///   * `Event Name`:  Name to be given to the proximity event.
     /// 

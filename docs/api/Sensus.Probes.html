@@ -96,7 +96,17 @@
       <h4><a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a></h4>
       <section><p>Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
 <a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. Listening Probes do not generate
-data unless such state changes occur.</p>
+data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
+system (Android or iOS) as well as specific settings.</p>
+<ul>
+<li><p>Android:  If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
+on and delivering readings to the app. If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is disabled on Android, then the CPU will be allowed to sleep typically
+discontinuing the delivery of readings to the app.</p>
+</li>
+<li><p>iOS:  The <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
+background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> for more information about background considerations.</p>
+</li>
+</ul>
 </section>
       <h4><a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a></h4>
       <section><p>Polling Probes are triggered at regular intervals. When triggered, Polling Probes ask the device (and perhaps the user) for some type of 
@@ -119,16 +129,17 @@ by the Apple Push Notification Service. The value of <a class="xref" href="Sensu
 for example no lower than 15-20 minutes.</p>
 </li>
 </ul>
-<p>Beyond these exceptions, all processing within Sensus must be halted when the user backgrounds the app. Sensus does its best to support Polling 
+<p>Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support Polling 
 Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 
 user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, the user 
 might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.Probe.html">Probe</a></h4>
       <section><p>Each Probe collects data of a particular type from the device. Sensus contains Probes for many of the hardware sensors present on many 
-smartphones. Sensus also contains Probes that can prompt the user for information, which the user supplies via speech or textual input.
-Sensus defines a variety of Probes, with platform availability and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, 
-etc.). Availability and reliability of Probes will depend on the device being used.</p>
+smartphones as well as several software events (e.g., receipt of SMS messages). Sensus also contains Probes that can prompt the user 
+for information, which the user supplies via speech or textual input. Sensus defines a variety of Probes, with platform availability 
+and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, etc.). Availability and reliability of Probes will depend 
+on the device being used.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync.html">Probe.MostRecentDatumChangedDelegateAsync</a></h4>
       <section><p>Delegate for methods that handle <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">MostRecentDatumChanged</a> events from <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s.</p>
