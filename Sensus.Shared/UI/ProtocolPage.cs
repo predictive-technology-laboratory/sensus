@@ -286,6 +286,9 @@ namespace Sensus.UI
             views.Add(lockButton);
             #endregion
 
+          
+
+
             _protocolRunningChangedAction = (o, running) =>
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -293,6 +296,7 @@ namespace Sensus.UI
                     editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
                 });
             };
+
 
             StackLayout stack = new StackLayout
             {
@@ -316,6 +320,8 @@ namespace Sensus.UI
             base.OnAppearing();
 
             _protocol.ProtocolRunningChanged += _protocolRunningChangedAction;
+  
+
         }
 
         private async void CreateDataStore(bool local)
@@ -343,6 +349,7 @@ namespace Sensus.UI
             base.OnDisappearing();
 
             _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
+   
         }
     }
 }

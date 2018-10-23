@@ -32,6 +32,10 @@ namespace Sensus.UI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
+        private EventHandler _protocolStartedAction;
+        private EventHandler _protocolCompletedAction;
+        private EventHandler<double> _protocolLoadProgressAction;
+
         public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
             if (protocol.LockPasswordHash == "")
@@ -67,8 +71,8 @@ namespace Sensus.UI
 
         public ProtocolsPage()
         {
-            Title = "Your Studies";
 
+            Title = "Your Studies";
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
@@ -81,7 +85,64 @@ namespace Sensus.UI
                     return;
                 }
 
+                var loadingProgressPage = new ContentPage() { Title = "Loading Protocol..." };
+                var content = new StackLayout()
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.FillAndExpand,
+                    Padding = new Thickness(10, 20, 10, 20),
+                    Children =
+                    {
+                        new Label
+                        {
+                            Text = "Loading Protocol...",
+                            FontSize = 20,
+                            HorizontalOptions = LayoutOptions.CenterAndExpand
+                        },
+                        new Label
+                        {
+                            Text = "Protocol is loading, please do not close app until status bar is complete.",
+                            FontSize = 10,
+                            HorizontalOptions = LayoutOptions.CenterAndExpand
+                        },
+                    }
+
+                };
+
+                var progressBar = new ProgressBar();
+                progressBar.Progress = 0;
+                progressBar.HorizontalOptions = LayoutOptions.FillAndExpand;
+                content.Children.Add(progressBar);
+
+                loadingProgressPage.Content = content;
+
+                _protocolStartedAction = async (sender, eventArgs) =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        await Navigation.PushModalAsync(loadingProgressPage);
+                    });
+
+                };
+
+                _protocolCompletedAction = async (sender, eventArgs) =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        await Navigation.PopModalAsync();
+                    });
+                };
+
+                _protocolLoadProgressAction = async (sender, progress) =>
+                {
+                    await progressBar.ProgressTo(progress, 250, Easing.Linear);
+                };
+
+
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
+                selectedProtocol.ProtocolLoadStarted += _protocolStartedAction;
+                selectedProtocol.ProtocolLoadProgressChanged += _protocolLoadProgressAction;
+                selectedProtocol.ProtocolLoadCompleted += _protocolCompletedAction;
 
                 #region add protocol actions
                 List<string> actions = new List<string>();
@@ -176,7 +237,9 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
+
                     await selectedProtocol.StartWithUserAgreementAsync(null);
+
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
@@ -407,7 +470,7 @@ namespace Sensus.UI
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-                            
+
                         }, null, true, "Group", null, null, null, false);
 
                     if (input == null)
@@ -485,7 +548,7 @@ namespace Sensus.UI
                         {
                             protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
                         }
