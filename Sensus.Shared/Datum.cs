@@ -92,8 +92,12 @@ namespace Sensus
         }
 
         /// <summary>
-        /// An identifier that is unique to the particular device running Sensus. Note that this ID will change if the user performs
-        /// a factory reset on their device.
+        /// An identifier that is unique to the particular device running Sensus. The meaning of this identifier
+        /// and conditions under which it can change are described in the following pages:
+        /// 
+        /// * Android:  See [here](https://developer.android.com/reference/android/provider/Settings.Secure.html#ANDROID_ID).
+        /// * iOS:  See [here](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor).
+        /// 
         /// </summary>
         /// <value>The device identifier.</value>
         [Anonymizable("Device ID:", typeof(StringHashAnonymizer), false)]
@@ -171,30 +175,50 @@ namespace Sensus
             set { _participantId = value; }
         }
 
+        /// <summary>
+        /// The device manufacturer.
+        /// </summary>
+        /// <value>The device manufacturer.</value>
         public string DeviceManufacturer
         {
             get { return _deviceManufacturer; }
             set { _deviceManufacturer = value; }
         }
 
+        /// <summary>
+        /// The device model.
+        /// </summary>
+        /// <value>The device model.</value>
         public string DeviceModel
         {
             get { return _deviceModel; }
             set { _deviceModel = value; }
         }
 
+        /// <summary>
+        /// The operating system.
+        /// </summary>
+        /// <value>The operating system.</value>
         public string OperatingSystem
         {
             get { return _operatingSystem; }
             set { _operatingSystem = value; }
         }
 
+        /// <summary>
+        /// The event identifier, as described [here](xref:tagging_mode).
+        /// </summary>
+        /// <value>The tagged event identifier.</value>
         public string TaggedEventId
         {
             get { return _taggedEventId; }
             set { _taggedEventId = value; }
         }
 
+        /// <summary>
+        /// The event tags, as described [here](xref:tagging_mode).
+        /// </summary>
+        /// <value>The tagged event identifier.</value>
         public List<string> TaggedEventTags
         {
             get { return _taggedEventTags; }
