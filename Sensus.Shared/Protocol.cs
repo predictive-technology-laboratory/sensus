@@ -1319,7 +1319,7 @@ namespace Sensus
         /// The current tags applied during event tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value>The set tags.</value>
-        public List<string> TaggedEventTags { get; set; }
+        public List<string> TaggedEventTags { get; set; } = new List<string>();
 
         /// <summary>
         /// The time at which the current tagging started.
