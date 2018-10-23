@@ -57,6 +57,7 @@ namespace Sensus.Android.Probes.Communication
                 {
                     throw new NotSupportedException("No telephony present.");
                 }
+                _smsOutgoingObserver.Initialize();
             }
             else
             {
