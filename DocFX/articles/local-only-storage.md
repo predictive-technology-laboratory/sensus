@@ -32,11 +32,11 @@ Tap the protocol, select Share Local Data. Then select one of the following opti
   * For large data:  Connect the device to a computer via USB and open iTunes. Next, 
     select your phone icon as shown below:
     
-![image](/sensus/images/itunes-device.jpg)
+![image](/sensus/images/itunes-device.png)
 
 Next, use file sharing to save the folder whose name is that of the study identifier.
 
-![image](/sensus/images/itunes-file-sharing.jpg)
+![image](/sensus/images/itunes-file-sharing.png)
 
 If you do not know your study identifier, then you can view it within Sensus. To view your study
 identifier, tap the protocol and select Edit. The study identifier will be shown at the top of the
