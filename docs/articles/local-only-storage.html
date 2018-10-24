@@ -79,18 +79,42 @@
             <article class="content wrap" id="_content" data-uid="local_only_storage">
 <h1 id="local-only-storage">Local-Only Storage</h1>
 
-<p>To configure a Sensus study that accumulates data locally on the device rather than 
-transmitting to <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>, proceed as follows:</p>
+<p>To configure a Sensus study that stores data locally on the device rather than 
+transmitting data to a <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>, proceed as follows:</p>
 <ol>
 <li>Create a new protocol.</li>
-<li>Enable <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare">AllowLocalDataShare</a>. This will allow you to offload accumulated data.</li>
+<li>If you wish to offload data from devices via email attachment (on iOS or Android) or via Dropbox 
+(Android only), then enable <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowLocalDataShare">AllowLocalDataShare</a>. Email attachments only work
+well for small samples of data. If you will be accumulating large amounts of data on an iOS device, 
+then you should use iTunes file sharing instead (details below).</li>
 <li>Add a local data store and disable <a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_WriteToRemote">WriteToRemote</a>. This will prevent 
 data from leaving the device.</li>
-<li>Add a console remote data store. This is a null data store that has no effect.</li>
-<li>Configure probes.</li>
+<li>Add a console remote data store. This is a placeholder data store that has no effect.</li>
+<li>Configure the protocol probes.</li>
 <li>Start protocol and run as desired.</li>
-<li>Stop protocol and select Share Local Data.</li>
+<li>Stop protocol.</li>
 </ol>
+<h3 id="offloading-data">Offloading Data</h3>
+<p>After stopping the protocol, you can offload data in a few ways depending on whether the 
+device is running Android or iOS and whether you have a little or a lot of data.</p>
+<h4 id="android">Android</h4>
+<p>Tap the protocol, select Share Local Data. Then select one of the following options.</p>
+<ul>
+<li>For small data:  Select your email app</li>
+<li>For large data:  Select Dropbox or another cloud-based file service</li>
+</ul>
+<h4 id="ios">iOS</h4>
+<ul>
+<li>For small data:  Tap the protocol, select Share Local Data, and attach to an email.</li>
+<li>For large data:  Connect the device to a computer via USB and open iTunes. Next, 
+select your phone icon as shown below:</li>
+</ul>
+<p><img src="/sensus/images/itunes-device.jpg" alt="image"></p>
+<p>Next, use file sharing to save the folder whose name is that of the study identifier.</p>
+<p><img src="/sensus/images/itunes-file-sharing.jpg" alt="image"></p>
+<p>If you do not know your study identifier, then you can view it within Sensus. To view your study
+identifier, tap the protocol and select Edit. The study identifier will be shown at the top of the
+screen (the long sequence of numbers, letters, and dashes).</p>
 </article>
           </div>
           
