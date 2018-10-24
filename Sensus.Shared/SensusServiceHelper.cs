@@ -1379,14 +1379,6 @@ namespace Sensus
             });
         }
 
-        public void AssertNotOnMainThread(string actionDescription)
-        {
-            if (IsOnMainThread)
-            {
-                throw SensusException.Report("Attempted to execute on main thread:  " + actionDescription);
-            }
-        }
-
         public async Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)
         {
             // the code we need exclusive access to below has an await statement in it, so we
