@@ -89,30 +89,48 @@ namespace Sensus.UI
                 var content = new StackLayout()
                 {
                     Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.FillAndExpand,
-                    Padding = new Thickness(10, 20, 10, 20),
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    //Margin = new Thickness(10, 0, 10, 0),
                     Children =
                     {
                         new Label
                         {
                             Text = "Loading Protocol...",
                             FontSize = 20,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand
+                            HorizontalOptions = LayoutOptions.CenterAndExpand,
+                            VerticalOptions = LayoutOptions.CenterAndExpand
                         },
+
+#if __IOS__
                         new Label
                         {
                             Text = "Protocol is loading, please do not close app until status bar is complete.",
                             FontSize = 10,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand
+                            HorizontalOptions = LayoutOptions.CenterAndExpand,
+                            VerticalOptions = LayoutOptions.CenterAndExpand
                         },
+ #endif
                     }
 
                 };
 
-                var progressBar = new ProgressBar();
-                progressBar.Progress = 0;
-                progressBar.HorizontalOptions = LayoutOptions.FillAndExpand;
+                var progressBar = new ProgressBar()
+                {
+                    Progress = 0,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
                 content.Children.Add(progressBar);
+
+                var progressBarLabel = new Label()
+                {
+                    Text = $"Progress: {progressBar.Progress}%",
+                    FontSize = 15,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                };
+
+
+                content.Children.Add(progressBarLabel);
 
                 loadingProgressPage.Content = content;
 
@@ -135,14 +153,19 @@ namespace Sensus.UI
 
                 _protocolLoadProgressAction = async (sender, progress) =>
                 {
-                    await progressBar.ProgressTo(progress, 250, Easing.Linear);
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        progressBar.Progress = progress;
+                        progressBarLabel.Text = $"Progress: {progressBar.Progress * 100}%";
+                        await progressBar.ProgressTo(progressBar.Progress, 250, Easing.Linear);
+                        
+                    });
+
                 };
 
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
-                selectedProtocol.ProtocolLoadStarted += _protocolStartedAction;
-                selectedProtocol.ProtocolLoadProgressChanged += _protocolLoadProgressAction;
-                selectedProtocol.ProtocolLoadCompleted += _protocolCompletedAction;
+
 
                 #region add protocol actions
                 List<string> actions = new List<string>();
@@ -237,8 +260,15 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
+                    selectedProtocol.ProtocolLoadStarted += _protocolStartedAction;
+                    selectedProtocol.ProtocolLoadProgressChanged += _protocolLoadProgressAction;
+                    selectedProtocol.ProtocolLoadCompleted += _protocolCompletedAction;
 
                     await selectedProtocol.StartWithUserAgreementAsync(null);
+
+                    selectedProtocol.ProtocolLoadStarted -= _protocolStartedAction;
+                    selectedProtocol.ProtocolLoadProgressChanged -= _protocolLoadProgressAction;
+                    selectedProtocol.ProtocolLoadCompleted -= _protocolCompletedAction;
 
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
@@ -374,55 +404,55 @@ namespace Sensus.UI
 
                             // pop up wait screen while we get the participation reward datum
                             IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(
-                                null,
-                                new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
-                                cancellationTokenSource.Token,
-                                false,
-                                "Cancel",
-                                null,
-                                null,
-                                null,
-                                false,
-                                async () =>
+                            null,
+                            new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
+                            cancellationTokenSource.Token,
+                            false,
+                            "Cancel",
+                            null,
+                            null,
+                            null,
+                            false,
+                            async () =>
+                            {
+                                // after the page shows up, attempt to retrieve the participation reward datum.
+                                try
                                 {
-                                    // after the page shows up, attempt to retrieve the participation reward datum.
-                                    try
-                                    {
-                                        ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult, cancellationTokenSource.Token);
+                                    ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult, cancellationTokenSource.Token);
 
-                                        // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
-                                        if (!cancellationTokenSource.IsCancellationRequested)
-                                        {
-                                            cancellationTokenSource.Cancel();
-                                        }
+                                    // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
+                                    if (!cancellationTokenSource.IsCancellationRequested)
+                                    {
+                                        cancellationTokenSource.Cancel();
+                                    }
 
-                                        // ensure that the participation datum has not expired                                           
-                                        if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
-                                        {
-                                            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                                            {
-                                                await Navigation.PushAsync(new VerifiedParticipationPage(selectedProtocol, participationRewardDatum));
-                                            });
-                                        }
-                                        else
-                                        {
-                                            await SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
-                                        }
-                                    }
-                                    catch (Exception)
+                                    // ensure that the participation datum has not expired                                           
+                                    if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
                                     {
-                                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
-                                    }
-                                    finally
+                                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                                     {
-                                        // cancel the token to close the input above, but only if the token hasn't already been canceled by the user. this will be
-                                        // used if an exception is thrown while getting the participation reward datum.
-                                        if (!cancellationTokenSource.IsCancellationRequested)
-                                        {
-                                            cancellationTokenSource.Cancel();
-                                        }
+                                        await Navigation.PushAsync(new VerifiedParticipationPage(selectedProtocol, participationRewardDatum));
+                                    });
                                     }
-                                });
+                                    else
+                                    {
+                                        await SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    await SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
+                                }
+                                finally
+                                {
+                                    // cancel the token to close the input above, but only if the token hasn't already been canceled by the user. this will be
+                                    // used if an exception is thrown while getting the participation reward datum.
+                                    if (!cancellationTokenSource.IsCancellationRequested)
+                                    {
+                                        cancellationTokenSource.Cancel();
+                                    }
+                                }
+                            });
 
                             // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
                             // to cancel the datum retrieval. if the prompt was closed by the termination of the remote
@@ -597,5 +627,6 @@ namespace Sensus.UI
             }, ToolbarItemOrder.Secondary));
             #endregion
         }
+
     }
 }
