@@ -86,6 +86,9 @@ namespace Sensus.iOS
 
             LoadApplication(new App());
 
+            //allow all invalid (self signed) certs
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true; 
+
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {

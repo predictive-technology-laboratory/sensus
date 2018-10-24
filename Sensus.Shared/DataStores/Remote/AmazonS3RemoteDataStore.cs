@@ -258,17 +258,13 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public string CredentialsExpiration { get; set; }
+        public long CredentialsExpiration { get; set; }
         [JsonIgnore]
         public bool IsCredentialsExpired
         {
             get
             {
-                var expirationDateTime = DateTimeOffset.MinValue;
-                if (string.IsNullOrWhiteSpace(CredentialsExpiration) == false && long.TryParse(CredentialsExpiration, out long milliseconds))
-                {
-                    expirationDateTime = DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(milliseconds);
-                }
+                var expirationDateTime = DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(CredentialsExpiration);
                 return DateTimeOffset.UtcNow > expirationDateTime;
             }
         }
@@ -307,8 +303,8 @@ namespace Sensus.DataStores.Remote
             {
                 try
                 {
-                    _credentialsServiceURL = Protocol.AccountServiceBaseUrl + CREDENTIALS_SERVICE_PAGE;
                     _accountServiceURL = Protocol.AccountServiceBaseUrl + ACCOUNT_SERVICE_PAGE;
+                    _credentialsServiceURL = Protocol.AccountServiceBaseUrl + CREDENTIALS_SERVICE_PAGE;
                     ConfirmCredentials(); //make sure we valid credentials before we initializeS3
                 }
                 catch(Exception exc)
@@ -463,7 +459,7 @@ namespace Sensus.DataStores.Remote
                         AmazonS3Client innerS3 = null;
                         try
                         {
-                            CredentialsExpiration = null; //force a refresh
+                            CredentialsExpiration = long.MinValue; //force a refresh
                             innerS3 = InitializeS3();
                             await Put(innerS3, stream, key, contentType, cancellationToken, false); //don't allow a second retry if this one fails
                         }
@@ -578,6 +574,7 @@ namespace Sensus.DataStores.Remote
                 _participantPassword = account.password;
             }
         }
+
         private void ConfirmCredentials()
         {
             var t = Task.Run(async () =>
@@ -595,31 +592,20 @@ namespace Sensus.DataStores.Remote
                         _iamAccessKey = account.accessKeyId;
                         _iamSecretKey = account.secretAccessKey;
                         _sessionToken = account.sessionToken;
-                        CredentialsExpiration = account.expiration;
+                        CredentialsExpiration = long.TryParse(account.expiration, out long exp) ? exp : 0;
                     }
                 }
             });
             t.Wait();
         }
+
         private async Task<T> GetJsonObjectFromUrl<T>(string url)
         {
 
             T rVal = default(T);
             string response;
 
-            var handler = new HttpClientHandler();
-            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-            handler.ServerCertificateCustomValidationCallback = (httpRequestMessage, cert, cetChain, policyErrors) =>
-            {
-                if (policyErrors == SslPolicyErrors.None)
-                {
-                    return true;
-                }
-                System.Diagnostics.Trace.WriteLine(cert.GetCertHashString()); //TODO:  Right now we allow all cetificate errors to go through.  We should probably talk through if this is ok or if we only want a specific/property certificate error/hash to come through.
-                return true;
-            };
-
-            HttpClient httpClient = new HttpClient(handler);
+            HttpClient httpClient = new HttpClient();
             try
             {
                 response = await httpClient.GetStringAsync(url);

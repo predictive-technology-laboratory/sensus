@@ -128,6 +128,9 @@ namespace Sensus.Android
                 Finish();
             };
 
+            //allow invalid (self signed) ssl certs
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true; 
+
             OpenIntentAsync(Intent);
         }
 
