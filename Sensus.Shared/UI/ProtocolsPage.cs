@@ -35,6 +35,7 @@ namespace Sensus.UI
         private EventHandler _protocolStartedAction;
         private EventHandler _protocolCompletedAction;
         private EventHandler<double> _protocolLoadProgressAction;
+        private bool hasProtocolLoadingPage = false;
 
         public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
@@ -141,14 +142,22 @@ namespace Sensus.UI
                         await Navigation.PushModalAsync(loadingProgressPage);
                     });
 
+                    hasProtocolLoadingPage = true;
                 };
 
                 _protocolCompletedAction = async (sender, eventArgs) =>
                 {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    if(hasProtocolLoadingPage)
                     {
-                        await Navigation.PopModalAsync();
-                    });
+                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {
+                            await Navigation.PopModalAsync();
+                        });
+
+                        hasProtocolLoadingPage = false;
+                    }
+
+              
                 };
 
                 _protocolLoadProgressAction = async (sender, progress) =>
@@ -157,7 +166,7 @@ namespace Sensus.UI
                     {
                         progressBar.Progress = progress;
                         progressBarLabel.Text = $"Progress: {progressBar.Progress * 100}%";
-                        await progressBar.ProgressTo(progressBar.Progress, 250, Easing.Linear);
+                        //await progressBar.ProgressTo(progressBar.Progress, 250, Easing.Linear);
                         
                     });
 

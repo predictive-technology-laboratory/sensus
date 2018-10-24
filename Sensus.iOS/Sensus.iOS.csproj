@@ -45,8 +45,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <CodesignEntitlements>EntitlementsDevelopment.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Derrick Stone (68DRZ59FXS)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
     </IpaPackageName>
@@ -55,8 +54,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <DocumentationFile>bin\iPhone\Debug\SensusiOS.xml</DocumentationFile>
     <NoWarn>1701, 1591</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <CodesignProvision>
-    </CodesignProvision>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
 <MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>

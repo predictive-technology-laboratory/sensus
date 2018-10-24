@@ -1615,7 +1615,7 @@ namespace Sensus
             Exception startException = null;
 
             // start local data store
-            ProtocolLoadProgressChanged?.Invoke(this, .1);
+            ProtocolLoadProgressChanged?.Invoke(this, .05);
             try
             {
 
@@ -1634,7 +1634,7 @@ namespace Sensus
                 startException = localDataStoreException;
             }
 
-            ProtocolLoadProgressChanged?.Invoke(this, .2);
+            ProtocolLoadProgressChanged?.Invoke(this, .1);
             // start remote data store
             if (startException == null)
             {
@@ -1644,9 +1644,8 @@ namespace Sensus
                     {
                         throw new Exception("Remote data store not defined.");
                     }
-                    ProtocolLoadProgressChanged?.Invoke(this, .3);
                     await _remoteDataStore.StartAsync();
-                    ProtocolLoadProgressChanged?.Invoke(this, .4);
+                    ProtocolLoadProgressChanged?.Invoke(this, .15);
                 }
                 catch (Exception remoteDataStoreException)
                 {
@@ -1675,9 +1674,10 @@ namespace Sensus
                                 enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
                             }
                         }
-                        ProtocolLoadProgressChanged?.Invoke(this, .4);
+                        ProtocolLoadProgressChanged?.Invoke(this, .2);
                         if (enabledHealthKitProbes.Count > 0)
                         {
+
                             NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
                             HKHealthStore healthStore = new HKHealthStore();
                             Tuple<bool, NSError> successError = await healthStore.RequestAuthorizationToShareAsync(new NSSet(), objectTypesToRead);
@@ -1692,15 +1692,14 @@ namespace Sensus
 
                     }
 #endif
-                    ProtocolLoadProgressChanged?.Invoke(this, .5);
+
                     SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                     int probesEnabled = 0;
                     bool startMicrosoftBandProbes = true;
-                    ProtocolLoadProgressChanged?.Invoke(this, .6);
+                    ProtocolLoadProgressChanged?.Invoke(this, .25);
+                    var probePercent = (_probes.Count > 0 ? 60 / _probes.Count : 60) * .001;
                     foreach (Probe probe in _probes)
                     {
-
-
                         if (probe.Enabled)
                         {
                             if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
@@ -1710,7 +1709,6 @@ namespace Sensus
 
                             try
                             {
-                                ProtocolLoadProgressChanged?.Invoke(this, .7);
 
                                 await probe.StartAsync();
 
@@ -1732,9 +1730,11 @@ namespace Sensus
                             {
                                 ++probesEnabled;
                             }
+
                         }
+                        ProtocolLoadProgressChanged?.Invoke(this, .25 + (probesEnabled * (probePercent)));
                     }
-                    ProtocolLoadProgressChanged?.Invoke(this, .7);
+                   
                     if (probesEnabled == 0)
                     {
                         throw new Exception("No probes were enabled.");
@@ -1749,7 +1749,7 @@ namespace Sensus
                 }
 
             }
-
+            
             if (startException == null)
             {
                 ProtocolLoadProgressChanged?.Invoke(this, .8);
@@ -1757,8 +1757,7 @@ namespace Sensus
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
                 // save the state of the app in case it crashes or -- on ios -- in case the user terminates
-                // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts.
-                ProtocolLoadProgressChanged?.Invoke(this, .9);
+                // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
                 ProtocolLoadProgressChanged?.Invoke(this, 1);
                 await SensusServiceHelper.Get().SaveAsync();
 
@@ -2138,6 +2137,8 @@ namespace Sensus
 
         public async Task StopAsync()
         {
+            ProtocolLoadCompleted?.Invoke(this, EventArgs.Empty);
+
             if (_running)
             {
                 _running = false;
@@ -2149,7 +2150,7 @@ namespace Sensus
             }
 
             SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
-            ProtocolLoadCompleted?.Invoke(this, EventArgs.Empty);
+           
             ProtocolRunningChanged?.Invoke(this, _running);
 
             // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
