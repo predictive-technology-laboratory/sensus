@@ -299,20 +299,7 @@ namespace Sensus.DataStores.Remote
         public override void Start()
         {
 
-            if (string.IsNullOrWhiteSpace(Protocol.AccountServiceBaseUrl) == false)
-            {
-                try
-                {
-                    _accountServiceURL = Protocol.AccountServiceBaseUrl + ACCOUNT_SERVICE_PAGE;
-                    _credentialsServiceURL = Protocol.AccountServiceBaseUrl + CREDENTIALS_SERVICE_PAGE;
-                    ConfirmCredentials(); //make sure we valid credentials before we initializeS3
-                }
-                catch(Exception exc)
-                {
-                    var e = exc;
-                    throw;
-                }
-            }
+           
 
             if (_pinnedServiceURL != null)
             {
@@ -325,6 +312,21 @@ namespace Sensus.DataStores.Remote
                 else
                 {
                     ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
+                }
+            }
+            else if (string.IsNullOrWhiteSpace(Protocol.AccountServiceBaseUrl) == false)
+            {
+                try
+                {
+                    ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
+                    _accountServiceURL = Protocol.AccountServiceBaseUrl + ACCOUNT_SERVICE_PAGE;
+                    _credentialsServiceURL = Protocol.AccountServiceBaseUrl + CREDENTIALS_SERVICE_PAGE;
+                    ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+                }
+                catch (Exception exc)
+                {
+                    var e = exc;
+                    throw;
                 }
             }
 
@@ -535,7 +537,8 @@ namespace Sensus.DataStores.Remote
             base.Stop();
 
             // remove the callback
-            if (_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey))
+            if ((_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey)) ||
+                string.IsNullOrWhiteSpace(Protocol.AccountServiceBaseUrl) == false)
             {
                 ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
             }
