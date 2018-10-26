@@ -91,6 +91,17 @@ namespace Sensus.Android
                 PowerConnectionChangeListener = new AndroidPowerConnectionChangeListener()
             };
 
+            // promote this service to a foreground service as soon as possible. we use a foreground service for several 
+            // reasons. it's honest and transparent. it lets us work effectively with the android 8.0 restrictions on 
+            // background services. we can run forever without being killed. we receive background location updates, etc.
+            PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(this, 0, new Intent(this, typeof(AndroidMainActivity)), 0);
+            _foregroundServiceNotificationBuilder = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(this, AndroidNotifier.SensusNotificationChannel.ForegroundService)
+                                                                                                       .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                                                                       .SetContentIntent(mainActivityPendingIntent)
+                                                                                                       .SetOngoing(true);
+            UpdateForegroundServiceNotificationBuilder();
+            StartForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotificationBuilder.Build());
+
             // https://developer.android.com/reference/android/content/Intent#ACTION_POWER_CONNECTED
             // This is intended for applications that wish to register specifically to this notification. Unlike ACTION_BATTERY_CHANGED, 
             // applications will be woken for this and so do not have to stay active to receive this notification. This action can be 
@@ -104,7 +115,9 @@ namespace Sensus.Android
             powerConnectFilter.AddCategory(Intent.CategoryDefault);
             RegisterReceiver(_powerBroadcastReceiver, powerConnectFilter);
 
-            // must come after context initialization
+            // must come after context initialization. also, it is here -- below StartForeground -- because it can
+            // take a while to complete and we don't want to run afoul of the short timing requirements on calling
+            // StartForeground.
             SensusServiceHelper.Initialize(() => new AndroidSensusServiceHelper());
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
@@ -132,25 +145,8 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
-                #region foreground service
-                // promote this service to a foreground, for several reasons:  it's honest and transparent. it lets us work effectively with the 
-                // android 8.0 restrictions on background services (we can run forever without being killed, we receive background location 
-                // updates). it's okay to call this multiple times. doing so will simply update the notification.
-                if (_foregroundServiceNotificationBuilder == null)
-                {
-                    PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(this, 0, new Intent(this, typeof(AndroidMainActivity)), 0);
-                    _foregroundServiceNotificationBuilder = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(this, AndroidNotifier.SensusNotificationChannel.ForegroundService)
-                                                                                                               .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                                                                               .SetContentIntent(mainActivityPendingIntent)
-                                                                                                               .SetOngoing(true);
-                    UpdateForegroundServiceNotificationBuilder();
-                    StartForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotificationBuilder.Build());
-                }
-                else
-                {
-                    ReissueForegroundServiceNotification();
-                }
-                #endregion
+                // update the foreground service notification with information about loaded/running studies.
+                ReissueForegroundServiceNotification();
 
                 // if we started from the on-boot signal and there are no running protocols, stop the app now. there is no reason for
                 // the app to be running in this situation, and the user will likely be annoyed at the presence of the foreground
@@ -210,22 +206,34 @@ namespace Sensus.Android
         {
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
-            int numRunningStudies = serviceHelper.RunningProtocolIds.Count;
-            _foregroundServiceNotificationBuilder.SetContentTitle("You are enrolled in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
-
-            string contentText = "";
-
-            // although the number of studies might be greater than 0, the protocols might not yet be started (e.g., after starting sensus).
-            List<Protocol> runningProtocols = serviceHelper.GetRunningProtocols();
-            if (runningProtocols.Count > 0)
+            // the service helper will be null when this method is called from OnCreate. set some generic text until
+            // the service helper has a chance to load, at which time this method will be called again and we'll update
+            // the notification with more detailed information.
+            if (serviceHelper == null)
             {
-                double avgParticipation = runningProtocols.Average(protocol => protocol.Participation) * 100;
-                contentText += "Your overall participation level is " + Math.Round(avgParticipation, 0) + "%. ";
+                _foregroundServiceNotificationBuilder.SetContentTitle("Starting...");
+                _foregroundServiceNotificationBuilder.SetContentText("Tap to Open Sensus.");
             }
+            // after the service helper has been initialized, we'll have more information about the studies.
+            else
+            {
+                int numRunningStudies = serviceHelper.RunningProtocolIds.Count;
+                _foregroundServiceNotificationBuilder.SetContentTitle("You are enrolled in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
 
-            contentText += "Tap to open Sensus.";
+                string contentText = "";
 
-            _foregroundServiceNotificationBuilder.SetContentText(contentText);
+                // although the number of studies might be greater than 0, the protocols might not yet be started (e.g., after starting sensus).
+                List<Protocol> runningProtocols = serviceHelper.GetRunningProtocols();
+                if (runningProtocols.Count > 0)
+                {
+                    double avgParticipation = runningProtocols.Average(protocol => protocol.Participation) * 100;
+                    contentText += "Your overall participation level is " + Math.Round(avgParticipation, 0) + "%. ";
+                }
+
+                contentText += "Tap to open Sensus.";
+
+                _foregroundServiceNotificationBuilder.SetContentText(contentText);
+            }
         }
 
         public void ReissueForegroundServiceNotification()
