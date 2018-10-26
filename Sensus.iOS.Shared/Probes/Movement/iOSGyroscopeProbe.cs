@@ -44,12 +44,10 @@ namespace Sensus.iOS.Probes.Movement
         }
 
         protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
-
+        {          
             _motionManager?.StartGyroUpdates(new NSOperationQueue(), async (data, error) =>
             {
-                if (!Stabilizing && data != null && error == null)
+                if (data != null && error == null)
                 {
                     await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, data.RotationRate.x, data.RotationRate.y, data.RotationRate.z));
                 }

@@ -21,17 +21,11 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Movement
 {
     /// <summary>
-    /// Provides acceleration in x, y, and z directions as <see cref="GyroscopeDatum"/> readings.
+    /// Provides gyroscope in x, y, and z directions as <see cref="GyroscopeDatum"/> readings.
     /// </summary>
     public abstract class GyroscopeProbe : ListeningProbe
     {
-        private bool _stabilizing;
-
-        protected bool Stabilizing
-        {
-            get { return _stabilizing; }
-        }
-
+ 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
@@ -66,34 +60,17 @@ namespace Sensus.Probes.Movement
 
         public sealed override Type DatumType
         {
-            get { return typeof(AccelerometerDatum); }
+            get { return typeof(GyroscopeDatum); }
         }
 
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-
-            _stabilizing = true;
-        }
-
-        protected override async Task StartListeningAsync()
-        {
-            // allow the accelerometer to stabilize...the first few readings can be extremely erratic
-            await Task.Delay(2000);
-            _stabilizing = false;
-
-            // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
-            if (SensusServiceHelper.Get() != null)
-            {
-                SensusServiceHelper.Get().Logger.Log("Gyroscope has finished stabilization period.", LoggingLevel.Normal, GetType());
-            }
         }
 
         public override async Task ResetAsync()
         {
             await base.ResetAsync();
-
-            _stabilizing = false;
         }
 
         protected override ChartSeries GetChartSeries()
