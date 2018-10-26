@@ -11,7 +11,10 @@
     },
     {
       "Effect": "Allow",
-      "Action": "s3:DeleteObject",
+      "Action": [
+        "s3:DeleteObject",
+	"s3:PutObject"
+      ],
       "Resource": "arn:aws:s3:::bucketName/push-notifications/*"
     },
     {
