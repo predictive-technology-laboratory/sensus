@@ -25,7 +25,7 @@ namespace Sensus.Android.Probes.Location
 
         public AndroidAltitudeProbe()
         {
-            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, null, async e =>
+            _altitudeListener = new AndroidSensorListener(SensorType.Pressure, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to

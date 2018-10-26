@@ -25,7 +25,7 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidLightProbe()
         {
-            _lightListener = new AndroidSensorListener(SensorType.Light, null, async e =>
+            _lightListener = new AndroidSensorListener(SensorType.Light, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to

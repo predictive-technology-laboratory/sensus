@@ -30,7 +30,7 @@ namespace Sensus.Android.Probes.Location
 
         public AndroidProximityProbe()
         {
-            _proximityListener = new AndroidSensorListener(SensorType.Proximity, null, async e =>
+            _proximityListener = new AndroidSensorListener(SensorType.Proximity, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to
