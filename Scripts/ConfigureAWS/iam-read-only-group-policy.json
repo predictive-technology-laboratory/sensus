@@ -13,6 +13,11 @@
       "Effect": "Allow",
       "Action": "s3:DeleteObject",
       "Resource": "arn:aws:s3:::bucketName/push-notifications/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::bucketName/adaptive-ema-policies/*"
     }
   ]
 }
