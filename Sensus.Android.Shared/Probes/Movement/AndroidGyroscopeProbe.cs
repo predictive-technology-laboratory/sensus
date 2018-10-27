@@ -31,14 +31,13 @@ namespace Sensus.Android.Probes.Movement
         {
             _gyroScopeListener = new AndroidSensorListener(SensorType.Gyroscope, null, async e =>
             {
-
                 // should get x, y, and z values
                 if (e.Values.Count == 3 && lastCalculatedTime != default(float))
                 {
                     var sensorEventVals = e.Values;
-                    var values = CalculateGyroscope(e, sensorEventVals);
+                    var (x, y, z) = CalculateGyroscope(e, sensorEventVals);
 
-                    await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, values.x,values.y,values.z));
+                    await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, x,y,z));
 
                 }
 
@@ -49,8 +48,7 @@ namespace Sensus.Android.Probes.Movement
 
         private (float x, float y, float z) CalculateGyroscope(SensorEvent e, IList<float> values)
         {
-                    ///calculation from android documentation <see cref="https://developer.android.com/reference/android/hardware/SensorEvent#values"/>.
-
+            //calculation from android documentation https://developer.android.com/reference/android/hardware/SensorEvent#values
 
             float dT = (e.Timestamp - lastCalculatedTime) * NS2S;
 
@@ -77,12 +75,10 @@ namespace Sensus.Android.Probes.Movement
             deltaRotationVector[2] = sinThetaOverTwo * z;
             deltaRotationVector[3] = cosThetaOverTwo;
 
-
             float[] deltaRotationMatrix = new float[9];
 
             SensorManager.GetRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
                         
-
             return (deltaRotationMatrix[0],deltaRotationMatrix[1],deltaRotationMatrix[2]);
         }
 

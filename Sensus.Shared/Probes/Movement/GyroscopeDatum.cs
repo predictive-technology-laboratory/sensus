@@ -19,20 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Movement
 {
-    /// <summary>
-    /// 
-    /// Acceleration in x, y, and z directions according to the following coordinate system:
-    /// 
-    ///   ![Accelerometer Coordiates](/sensus/images/axis_device.png)
-    /// 
-    ///   * Lying flat on its back, the phone will register an acceleration vector of approximately &lt;0,0,-1&gt;.
-    ///   * Lying flat on its face, the phone will register an acceleration vector of approximately &lt;0,0,1&gt;.
-    ///   * Lying upright on its left edge, the phone will register an acceleration vector of approximately &lt;-1,0,0&gt;.
-    ///   * Lying upright on its right edge, the phone will register an acceleration vector of approximately &lt;1,0,0&gt;.
-    ///   * Lying upright on its bottom edge, the phone will register an acceleration vector of approximately &lt;0,-1,0&gt;.
-    ///   * Lying upright on its top edge, the phone will register an acceleration vector of approximately &lt;0,1,0&gt;.
-    /// 
-    /// </summary>
+   
     public class GyroscopeDatum : Datum
     {
         private double _x;
