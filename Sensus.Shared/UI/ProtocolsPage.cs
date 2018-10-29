@@ -137,24 +137,26 @@ namespace Sensus.UI
 
                 _protocolStartedAction = async (sender, eventArgs) =>
                 {
+                    hasProtocolLoadingPage = true;
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         await Navigation.PushModalAsync(loadingProgressPage);
                     });
 
-                    hasProtocolLoadingPage = true;
+               
                 };
 
                 _protocolCompletedAction = async (sender, eventArgs) =>
                 {
                     if(hasProtocolLoadingPage)
                     {
+
+                        hasProtocolLoadingPage = false;
                         await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             await Navigation.PopModalAsync();
                         });
 
-                        hasProtocolLoadingPage = false;
                     }
 
               
