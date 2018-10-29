@@ -171,6 +171,11 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   {
     paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE, pattern = "*.json$")
   }
+  else if(!file.exists(paths[1]))
+  {
+    warning(paste("File does not exist: ", path))
+    return(NULL)
+  }
   
   num.files = length(paths)
   
@@ -264,8 +269,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     # the input files will have JSON objects of different type (e.g., location and acceleration). the resulting file.json variable
     # will a list element for each column across all data types (e.g., latitude and X columns for location and acceleration types).
     # since 1 or more columns for each data type will be specific to that type, these specific columns will have NA values for the
-    # other types (e.g., the X column for location data will be all NAs). the first step in cleaning all of this up is to split
-    # the entries in each column list by type. do this now...
+    # other types (e.g., the X acceleration column for location data will be all NAs). the first step in cleaning all of this up is 
+    # to split the entries in each column list by type. do this now...
     split.file.json = lapply(split(file.json, file.json$Type), function(data.type)
     {
       # the data.type variable is for a specific type (e.g., location data) and it has all columns
@@ -318,7 +323,13 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     
     # pre-allocate vectors for each column in data frame
     datum.type.num.rows = sum(sapply(datum.type.data, nrow))
-    datum.type.col.classes = sapply(datum.type.data[[1]], class)
+    
+    # debugging
+    tuples.1 = mapply(c, names(datum.type.col.classes[[1]]), datum.type.col.classes[[1]], SIMPLIFY = FALSE)
+    tuples.2 = mapply(c, names(datum.type.col.classes[[2]]), datum.type.col.classes[[2]], SIMPLIFY = FALSE)
+    unique(c(unique(tuples.1), unique(tuples.2)))
+    # end debugging
+    
     datum.type.col.classes[["Timestamp"]] = NULL  # cannot directly create vector with mode POSIXlt
     datum.type.col.vectors = lapply(datum.type.col.classes, vector, length = datum.type.num.rows)
     datum.type.col.vectors[["Timestamp"]] = as.POSIXlt(rep(NA, datum.type.num.rows))

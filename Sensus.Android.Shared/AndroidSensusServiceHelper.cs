@@ -40,6 +40,8 @@ using Sensus.Context;
 using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
+using Sensus.UI;
+using Xamarin.Forms;
 
 namespace Sensus.Android
 {
@@ -375,23 +377,35 @@ namespace Sensus.Android
         {
             try
             {
-                Intent intent = new Intent(Intent.ActionSend);
-                intent.SetType(mimeType);
-                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                if (!string.IsNullOrWhiteSpace(subject))
-                {
-                    intent.PutExtra(Intent.ExtraSubject, subject);
-                }
-
-                Java.IO.File file = new Java.IO.File(path);
-                global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
-                intent.PutExtra(Intent.ExtraStream, uri);
-
                 // run from main activity to get a smoother transition back to sensus
-                await RunActionUsingMainActivityAsync(mainActivity =>
+                await RunActionUsingMainActivityAsync(async mainActivity =>
                 {
-                    mainActivity.StartActivity(intent);
+                    // make file available via external storage
+                    Page page = (mainActivity.Application as App).DetailPage;
+                    if (await page.DisplayAlert("USB or App?", "Would you like to share via USB or via another app?", "USB", "Another app"))
+                    {
+                        string externalPath = Path.Combine(global::Android.OS.Environment.ExternalStorageDirectory, Guid.NewGuid().ToString());
+                        File.Move(path, externalPath);
+                        await page.DisplayAlert("Done", "File available via USB:  " + Path.GetFileName(externalPath), "OK");
+                    }
+                    // share via app
+                    else
+                    {
+                        Intent intent = new Intent(Intent.ActionSend);
+                        intent.SetType(mimeType);
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission);
+
+                        if (!string.IsNullOrWhiteSpace(subject))
+                        {
+                            intent.PutExtra(Intent.ExtraSubject, subject);
+                        }
+
+                        Java.IO.File file = new Java.IO.File(path);
+                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                        intent.PutExtra(Intent.ExtraStream, uri);
+
+                        mainActivity.StartActivity(intent);
+                    }
 
                 }, true, false);
             }
