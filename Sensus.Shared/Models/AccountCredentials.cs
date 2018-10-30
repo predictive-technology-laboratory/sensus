@@ -10,6 +10,7 @@ namespace Sensus.Models
         public string secretAccessKey { get; set; }
         public string sessionToken { get; set; }
         public string protocolURL { get; set; }
+        public string protocolId { get; set; }
         public string expiration { get; set; }
         public string cmk { get; set; }
 

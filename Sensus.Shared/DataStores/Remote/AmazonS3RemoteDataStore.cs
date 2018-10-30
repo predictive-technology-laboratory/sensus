@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Models;
 using System.Net.Http;
+using System.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -93,9 +94,6 @@ namespace Sensus.DataStores.Remote
     public class AmazonS3RemoteDataStore : RemoteDataStore
     {
 
-        private const string ACCOUNT_SERVICE_PAGE = "/createaccount?deviceId={0}&participantId={1}";
-        private const string CREDENTIALS_SERVICE_PAGE = "/getcredentials?participantId={0}&password={1}";
-
         private string _region;
         private string _bucket;
         private string _folder;
@@ -106,9 +104,9 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
         private int _putCount;
         private int _successfulPutCount;
-        private string _credentialsServiceURL;
-        private string _participantPassword;
-        private string _accountServiceURL;
+        private AccountService _accountService;
+        private DateTimeOffset? _credentialsExpiration;
+
         /// <summary>
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
@@ -258,14 +256,15 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public long CredentialsExpiration { get; set; }
-        [JsonIgnore]
-        public bool IsCredentialsExpired
+        public DateTimeOffset? CredentialsExpiration
         {
             get
             {
-                var expirationDateTime = DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(CredentialsExpiration);
-                return DateTimeOffset.UtcNow > expirationDateTime;
+                return _credentialsExpiration;
+            }
+            set
+            {
+                _credentialsExpiration = value;
             }
         }
 
@@ -319,8 +318,7 @@ namespace Sensus.DataStores.Remote
                 try
                 {
                     ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-                    _accountServiceURL = Protocol.AccountServiceBaseUrl + ACCOUNT_SERVICE_PAGE;
-                    _credentialsServiceURL = Protocol.AccountServiceBaseUrl + CREDENTIALS_SERVICE_PAGE;
+                    _accountService = new AccountService(Protocol.AccountServiceBaseUrl);
                     ConfirmCredentials(); //make sure we valid credentials before we initializeS3
                 }
                 catch (Exception exc)
@@ -456,14 +454,15 @@ namespace Sensus.DataStores.Remote
                 catch (AmazonS3Exception exc)
                 {
                     if ((exc.ErrorCode == "InvalidAccessKeyId" || exc.ErrorCode == "SignatureDoesNotMatch" || exc.ErrorCode == "InvalidToken") &&
-                         allowRetry == true && string.IsNullOrWhiteSpace(_credentialsServiceURL) == false)
+                         allowRetry == true && _accountService != null)
                     {
                         AmazonS3Client innerS3 = null;
                         try
                         {
-                            CredentialsExpiration = long.MinValue; //force a refresh
+                            _accountService.ClearCredentials(); //force rebuilding the credentials;
                             innerS3 = InitializeS3();
                             await Put(innerS3, stream, key, contentType, cancellationToken, false); //don't allow a second retry if this one fails
+                            await CheckForProtocolChange();
                         }
                         catch (Exception innerEx)
                         {
@@ -496,6 +495,51 @@ namespace Sensus.DataStores.Remote
             });
         }
 
+        private async Task CheckForProtocolChange()
+        {
+            if(string.IsNullOrEmpty(_accountService?.LastProtocolURL) == false && string.IsNullOrEmpty(_accountService?.LastProtocolId) == false)
+            {
+                bool run = false;
+                Protocol updatedProtocol = null;
+                var existingProtocol = SensusServiceHelper.Get().RegisteredProtocols.FirstOrDefault(w => w.Id == _accountService.LastProtocolId);
+                if (existingProtocol != null)
+                {
+                    if (existingProtocol.LastProtocolURL != _accountService.LastProtocolURL)
+                    {
+                        updatedProtocol = await Protocol.DeserializeAsync(new Uri(_accountService.LastProtocolURL));
+                        if (updatedProtocol.Id != _accountService.LastProtocolId)
+                        {
+                            throw new Exception("The Id on the returned protocol does not match the expected Id");
+                        }
+                    }
+                }
+                else
+                {
+                    updatedProtocol = await Protocol.DeserializeAsync(new Uri(_accountService.LastProtocolURL));  //TODO I am assuming that if it is new i don't set the participantId to Protocol.ParticipantId, but i could
+                }
+
+                if(updatedProtocol != null)
+                {
+                    if(existingProtocol != null)
+                    {
+                        if(existingProtocol.Running)
+                        {
+                            run = true;
+                            await existingProtocol.StopAsync(); //TODO:  If there is local data that hasn't been sent will this cause data lose?
+                        }
+                        updatedProtocol.ParticipantId = existingProtocol.ParticipantId;  //TODO: should i set the participantId here?
+
+                        await existingProtocol.DeleteAsync();
+                    }
+                    SensusServiceHelper.Get().RegisterProtocol(updatedProtocol);
+                    if(run)
+                    {
+                        updatedProtocol.Start();
+                    }
+                }
+
+            }
+        }
         public override string GetDatumKey(Datum datum)
         {
             return (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + datum.GetType().Name + "/" + datum.Id + ".json";
@@ -561,20 +605,18 @@ namespace Sensus.DataStores.Remote
 
         private async Task RefreshAccount()
         {
-            if (string.IsNullOrWhiteSpace(_accountServiceURL) == false)
+            if (_accountService != null)
             {
                 var deviceId = SensusServiceHelper.Get().DeviceId;
                 if (string.IsNullOrWhiteSpace(Protocol.ParticipantId))
                 {
                     Protocol.ParticipantId = Guid.NewGuid().ToString("n");
                 }
-                var url = string.Format(_accountServiceURL, deviceId, Protocol.ParticipantId);
-                var account = await GetJsonObjectFromUrl<Account>(url);
+                var account = await _accountService.GetAccount(deviceId, Protocol.ParticipantId);
                 if (Protocol.ParticipantId != account.participantId)
                 {
                     Protocol.ParticipantId = account.participantId;
                 }
-                _participantPassword = account.password;
             }
         }
 
@@ -582,20 +624,19 @@ namespace Sensus.DataStores.Remote
         {
             var t = Task.Run(async () =>
             {
-                if (string.IsNullOrWhiteSpace(_credentialsServiceURL) == false)
+                if (_accountService != null)
                 {
-                    if (string.IsNullOrWhiteSpace(Protocol.ParticipantId) || string.IsNullOrWhiteSpace(_participantPassword))
+                    if (_accountService.HasAccount == false)
                     {
                         await RefreshAccount();
                     }
-                    if (IsCredentialsExpired)
+                    if (_accountService.HasValidCredentials == false || DateTime.UtcNow > CredentialsExpiration.GetValueOrDefault())
                     {
-                        var url = string.Format(_credentialsServiceURL, Protocol.ParticipantId, _participantPassword);
-                        var account = await GetJsonObjectFromUrl<AccountCredentials>(url);
-                        _iamAccessKey = account.accessKeyId;
-                        _iamSecretKey = account.secretAccessKey;
-                        _sessionToken = account.sessionToken;
-                        CredentialsExpiration = long.TryParse(account.expiration, out long exp) ? exp : 0;
+                        var credentials = await _accountService.GetCredentials(true);
+                        _iamAccessKey = credentials.accessKeyId;  //TODO:  I am reusing this setting, but we might want to keep this truely secret?
+                        _iamSecretKey = credentials.secretAccessKey;
+                        _sessionToken = credentials.sessionToken;
+                        CredentialsExpiration = credentials.expirationDateTime;
                     }
                 }
             });

@@ -8,5 +8,7 @@ namespace Sensus.Models
     {
         public string participantId { get; set; }
         public string password { get; set; }
+        public string protocolURL { get; set; }
+        public string protocolId { get; set; }
     }
 }

@@ -569,6 +569,7 @@ namespace Sensus
         private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
         private string _accountServiceBaseUrl;
+        private string _lastProtocolURL;
 
         private readonly object _locker = new object();
 
@@ -709,6 +710,7 @@ namespace Sensus
                 _lockPasswordHash = value;
             }
         }
+        public string LastProtocolURL { get; set; }
 
         public AnonymizedJsonContractResolver JsonAnonymizer
         {
