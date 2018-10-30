@@ -23,11 +23,14 @@ After stopping the protocol, you can offload data in a few ways depending on whe
 device is running Android or iOS and whether you have a little or a lot of data.
 
 #### Android
-Tap the protocol, select Share Local Data. Then select one of the following options.
-  * For small data:  Select your email app
-  * For large data:  Select Dropbox or another cloud-based file service
+Tap the protocol and select Share Local Data. You'll first be asked whether you would like to share
+using USB. This option will allow you to offload data to a computer over a USB cable. You will need
+to install the [Android File Transfer](https://www.android.com/filetransfer/) app on your computer
+in order to access the data. This option works well for large and small data. If you choose not to 
+use USB, then you will be asked to select an app (e.g., Dropbox or GDrive) to share the data.
 
 #### iOS
+Sharing options are more limited on iOS compared to Android.
   * For small data:  Tap the protocol, select Share Local Data, and attach to an email.
   * For large data:  Connect the device to a computer via USB and open iTunes. Next, 
     select your phone icon as shown below:
@@ -41,4 +44,3 @@ Next, use file sharing to save the folder whose name is that of the study identi
 If you do not know your study identifier, then you can view it within Sensus. To view your study
 identifier, tap the protocol and select Edit. The study identifier will be shown at the top of the
 screen (the long sequence of numbers, letters, and dashes).
-
