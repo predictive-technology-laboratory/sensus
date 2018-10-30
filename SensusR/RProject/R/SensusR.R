@@ -288,9 +288,9 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
         return(sum(is.na(data.type.column)) == length(data.type.column))
       })
       
-      # remove list elements for the current data type that have all NAs, except don't
-      # ever remove the TaggedEventId column, which may be all NA but still appropriate
-      # to keep.
+      # remove list elements (columns) for the current data type that have all NAs, as this indicates
+      # that the column actually belongs to some other data type. the only exception to this is the
+      # TaggedEventId column, which will typically be all NAs but is a valid column for all data types.
       data.type[column.is.all.nas & names(data.type) != "TaggedEventId"] = NULL
       
       return(data.type)
@@ -319,12 +319,14 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       
       expected.data.cnt.by.type[[data.type]] = data.type.curr.cnt + sum(!is.na(split.file.json[[data.type]]$Id))
       
-      # keep track of all observed column/types
+      # keep track of all observed columns/types. we'll use this set of columns/types to initialize
+      # the final data frame. we're tracking them here to guard against files that have different
+      # JSON fields (e.g., due to version upgrades or other strangeness).
       column.type = sapply(split.file.json[[data.type]], class)
       for(column in names(column.type))
       {
-        # the timestamp column has classes that cannot be constructed
-        # automatically in subsequent code where the lookup is used.
+        # the timestamp column has classes that cannot be constructed automatically in 
+        # subsequent code where the lookup is used. ignore it here and manually add it later.
         if(column == "Timestamp")
         {
           next
@@ -350,7 +352,9 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   { 
     datum.type.data = data[[datum.type]]
     
-    # pre-allocate vectors for each column in data frame according to each column's type
+    # pre-allocate vectors for each column in data frame according to each column's type, using
+    # length equal to the number of rows. by preallocating everything we'll avoid large reallocations
+    # of memory that tend to crash R.
     datum.type.num.rows = sum(sapply(datum.type.data, nrow))
     datum.type.col.classes = data.type.column.type[[datum.type]]
     datum.type.col.vectors = lapply(datum.type.col.classes, vector, length = datum.type.num.rows)
@@ -358,7 +362,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     # pre-allocate timestamp vector manually. can't do it the same as above.
     datum.type.col.vectors[["Timestamp"]] = as.POSIXlt(rep(NA, datum.type.num.rows))
     
-    # merge files for current datum.type
+    # merge files for current datum.type into the preallocated vectors
     insert.start.row = 1
     num.files = length(datum.type.data)
     datum.type.col.vectors.names = names(datum.type.col.vectors)
@@ -371,6 +375,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       insert.end.row = insert.start.row + file.data.rows - 1
       for(col.name in datum.type.col.vectors.names)
       {
+        # check whether the current file data actually has the desired column. it might
+        # not due to sensus version changes or other anticipated issues.
         if(col.name %in% colnames(file.data))
         {
           datum.type.col.vectors[[col.name]][insert.start.row:insert.end.row] = file.data[ , col.name]
