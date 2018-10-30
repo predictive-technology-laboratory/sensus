@@ -1589,7 +1589,7 @@ namespace Sensus
 
         private async Task PrivateStartAsync()
         {
-            
+
             if (_running)
             {
                 return;
@@ -1615,7 +1615,7 @@ namespace Sensus
             Exception startException = null;
 
             // start local data store
-            ProtocolLoadProgressChanged?.Invoke(this, .05);
+            ProtocolLoadProgressChanged?.Invoke(this, .01);
             try
             {
 
@@ -1623,7 +1623,7 @@ namespace Sensus
                 {
                     throw new Exception("Local data store not defined.");
                 }
-               
+
                 await _localDataStore.StartAsync();
             }
             catch (Exception localDataStoreException)
@@ -1634,7 +1634,7 @@ namespace Sensus
                 startException = localDataStoreException;
             }
 
-            ProtocolLoadProgressChanged?.Invoke(this, .1);
+            ProtocolLoadProgressChanged?.Invoke(this, .04);
             // start remote data store
             if (startException == null)
             {
@@ -1645,7 +1645,7 @@ namespace Sensus
                         throw new Exception("Remote data store not defined.");
                     }
                     await _remoteDataStore.StartAsync();
-                    ProtocolLoadProgressChanged?.Invoke(this, .15);
+                    ProtocolLoadProgressChanged?.Invoke(this, .06);
                 }
                 catch (Exception remoteDataStoreException)
                 {
@@ -1674,7 +1674,7 @@ namespace Sensus
                                 enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
                             }
                         }
-                        ProtocolLoadProgressChanged?.Invoke(this, .2);
+                        ProtocolLoadProgressChanged?.Invoke(this, .08);
                         if (enabledHealthKitProbes.Count > 0)
                         {
 
@@ -1687,7 +1687,7 @@ namespace Sensus
                                 SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + successError.Item2.Description, LoggingLevel.Normal, GetType());
                             }
                         }
-                   
+
 
 
                     }
@@ -1696,8 +1696,9 @@ namespace Sensus
                     SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                     int probesEnabled = 0;
                     bool startMicrosoftBandProbes = true;
-                    ProtocolLoadProgressChanged?.Invoke(this, .25);
-                    var probePercent = (_probes.Count > 0 ? 60 / _probes.Count : 60) * .001;
+                    ProtocolLoadProgressChanged?.Invoke(this, .10);
+                    var enabledProbes = _probes.Count(w => w.Enabled);
+                    var probePercent = Math.Round((_probes.Count > 0 ? 80 / _probes.Count : 80) * .01, 2, MidpointRounding.AwayFromZero);
                     foreach (Probe probe in _probes)
                     {
                         if (probe.Enabled)
@@ -1712,7 +1713,7 @@ namespace Sensus
 
                                 await probe.StartAsync();
 
-                               
+
                             }
                             catch (MicrosoftBandClientConnectException)
                             {
@@ -1729,12 +1730,13 @@ namespace Sensus
                             if (probe.Enabled)
                             {
                                 ++probesEnabled;
+                                ProtocolLoadProgressChanged?.Invoke(this, .10 + (probesEnabled * (probePercent)));
                             }
 
                         }
-                        ProtocolLoadProgressChanged?.Invoke(this, .25 + (probesEnabled * (probePercent)));
+                        
                     }
-                   
+
                     if (probesEnabled == 0)
                     {
                         throw new Exception("No probes were enabled.");
@@ -1749,10 +1751,10 @@ namespace Sensus
                 }
 
             }
-            
+
             if (startException == null)
             {
-                ProtocolLoadProgressChanged?.Invoke(this, .8);
+                ProtocolLoadProgressChanged?.Invoke(this, .9);
                 // we're all good. register with push notification hubs.
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
@@ -1761,7 +1763,7 @@ namespace Sensus
                 ProtocolLoadProgressChanged?.Invoke(this, 1);
                 await SensusServiceHelper.Get().SaveAsync();
 
-                
+
                 ProtocolLoadCompleted?.Invoke(this, EventArgs.Empty);
 
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
@@ -2150,7 +2152,7 @@ namespace Sensus
             }
 
             SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
-           
+
             ProtocolRunningChanged?.Invoke(this, _running);
 
             // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.

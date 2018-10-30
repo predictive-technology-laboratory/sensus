@@ -143,12 +143,12 @@ namespace Sensus.UI
                         await Navigation.PushModalAsync(loadingProgressPage);
                     });
 
-               
+
                 };
 
                 _protocolCompletedAction = async (sender, eventArgs) =>
                 {
-                    if(hasProtocolLoadingPage)
+                    if (hasProtocolLoadingPage)
                     {
 
                         hasProtocolLoadingPage = false;
@@ -159,17 +159,16 @@ namespace Sensus.UI
 
                     }
 
-              
+
                 };
 
                 _protocolLoadProgressAction = async (sender, progress) =>
                 {
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        progressBar.Progress = progress;
-                        progressBarLabel.Text = $"Progress: {progressBar.Progress * 100}%";
-                        //await progressBar.ProgressTo(progressBar.Progress, 250, Easing.Linear);
-                        
+                        progressBarLabel.Text = $"Progress: {progress * 100}%";
+                        await progressBar.ProgressTo(progressBar.Progress, 100, Easing.Linear);
+
                     });
 
                 };
