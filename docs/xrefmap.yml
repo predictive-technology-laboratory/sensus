@@ -1621,15 +1621,15 @@ references:
   commentId: T:Sensus.Android.Probes.AndroidSensorListener
   fullName: Sensus.Android.Probes.AndroidSensorListener
   nameWithType: AndroidSensorListener
-- uid: Sensus.Android.Probes.AndroidSensorListener.#ctor(Android.Hardware.SensorType,System.Action{Android.Hardware.SensorStatus},System.Action{Android.Hardware.SensorEvent})
-  name: AndroidSensorListener(SensorType, Action<SensorStatus>, Action<SensorEvent>)
-  href: api/Sensus.Android.Probes.AndroidSensorListener.html#Sensus_Android_Probes_AndroidSensorListener__ctor_Android_Hardware_SensorType_System_Action_Android_Hardware_SensorStatus__System_Action_Android_Hardware_SensorEvent__
-  commentId: M:Sensus.Android.Probes.AndroidSensorListener.#ctor(Android.Hardware.SensorType,System.Action{Android.Hardware.SensorStatus},System.Action{Android.Hardware.SensorEvent})
-  name.vb: AndroidSensorListener(SensorType, Action(Of SensorStatus), Action(Of SensorEvent))
-  fullName: Sensus.Android.Probes.AndroidSensorListener.AndroidSensorListener(Android.Hardware.SensorType, System.Action<Android.Hardware.SensorStatus>, System.Action<Android.Hardware.SensorEvent>)
-  fullName.vb: Sensus.Android.Probes.AndroidSensorListener.AndroidSensorListener(Android.Hardware.SensorType, System.Action(Of Android.Hardware.SensorStatus), System.Action(Of Android.Hardware.SensorEvent))
-  nameWithType: AndroidSensorListener.AndroidSensorListener(SensorType, Action<SensorStatus>, Action<SensorEvent>)
-  nameWithType.vb: AndroidSensorListener.AndroidSensorListener(SensorType, Action(Of SensorStatus), Action(Of SensorEvent))
+- uid: Sensus.Android.Probes.AndroidSensorListener.#ctor(Android.Hardware.SensorType,System.Func{Android.Hardware.SensorEvent,System.Threading.Tasks.Task})
+  name: AndroidSensorListener(SensorType, Func<SensorEvent, Task>)
+  href: api/Sensus.Android.Probes.AndroidSensorListener.html#Sensus_Android_Probes_AndroidSensorListener__ctor_Android_Hardware_SensorType_System_Func_Android_Hardware_SensorEvent_System_Threading_Tasks_Task__
+  commentId: M:Sensus.Android.Probes.AndroidSensorListener.#ctor(Android.Hardware.SensorType,System.Func{Android.Hardware.SensorEvent,System.Threading.Tasks.Task})
+  name.vb: AndroidSensorListener(SensorType, Func(Of SensorEvent, Task))
+  fullName: Sensus.Android.Probes.AndroidSensorListener.AndroidSensorListener(Android.Hardware.SensorType, System.Func<Android.Hardware.SensorEvent, System.Threading.Tasks.Task>)
+  fullName.vb: Sensus.Android.Probes.AndroidSensorListener.AndroidSensorListener(Android.Hardware.SensorType, System.Func(Of Android.Hardware.SensorEvent, System.Threading.Tasks.Task))
+  nameWithType: AndroidSensorListener.AndroidSensorListener(SensorType, Func<SensorEvent, Task>)
+  nameWithType.vb: AndroidSensorListener.AndroidSensorListener(SensorType, Func(Of SensorEvent, Task))
 - uid: Sensus.Android.Probes.AndroidSensorListener.#ctor*
   name: AndroidSensorListener
   href: api/Sensus.Android.Probes.AndroidSensorListener.html#Sensus_Android_Probes_AndroidSensorListener__ctor_
@@ -23289,6 +23289,24 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
+  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  name: UnsetPushNotificationTokenException()
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
+  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
+- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
+  name: UnsetPushNotificationTokenException
+  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
+  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
+  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
+  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -42573,18 +42591,6 @@ references:
   commentId: F:Sensus.SensusServiceHelper.APP_CENTER_KEY_IOS
   fullName: Sensus.SensusServiceHelper.APP_CENTER_KEY_IOS
   nameWithType: SensusServiceHelper.APP_CENTER_KEY_IOS
-- uid: Sensus.SensusServiceHelper.AssertNotOnMainThread(System.String)
-  name: AssertNotOnMainThread(String)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AssertNotOnMainThread_System_String_
-  commentId: M:Sensus.SensusServiceHelper.AssertNotOnMainThread(System.String)
-  fullName: Sensus.SensusServiceHelper.AssertNotOnMainThread(System.String)
-  nameWithType: SensusServiceHelper.AssertNotOnMainThread(String)
-- uid: Sensus.SensusServiceHelper.AssertNotOnMainThread*
-  name: AssertNotOnMainThread
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AssertNotOnMainThread_
-  commentId: Overload:Sensus.SensusServiceHelper.AssertNotOnMainThread
-  fullName: Sensus.SensusServiceHelper.AssertNotOnMainThread
-  nameWithType: SensusServiceHelper.AssertNotOnMainThread
 - uid: Sensus.SensusServiceHelper.BarcodeWriter
   name: BarcodeWriter
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BarcodeWriter
