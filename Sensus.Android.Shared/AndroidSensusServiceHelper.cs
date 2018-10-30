@@ -41,7 +41,6 @@ using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
 using Sensus.UI;
-using Xamarin.Forms;
 
 namespace Sensus.Android
 {
@@ -377,19 +376,20 @@ namespace Sensus.Android
         {
             try
             {
-                // run from main activity to get a smoother transition back to sensus
-                await RunActionUsingMainActivityAsync(async mainActivity =>
+                // make file available via external storage
+                Xamarin.Forms.Page page = (Xamarin.Forms.Application.Current as App).DetailPage;
+                if (await page.DisplayAlert("USB", "Would you like to share using USB?", "Yes", "No"))
                 {
-                    // make file available via external storage
-                    Page page = (mainActivity.Application as App).DetailPage;
-                    if (await page.DisplayAlert("USB or App?", "Would you like to share via USB or via another app?", "USB", "Another app"))
-                    {
-                        string externalPath = Path.Combine(global::Android.OS.Environment.ExternalStorageDirectory, Guid.NewGuid().ToString());
-                        File.Move(path, externalPath);
-                        await page.DisplayAlert("Done", "File available via USB:  " + Path.GetFileName(externalPath), "OK");
-                    }
-                    // share via app
-                    else
+                    string externalPath = System.IO.Path.Combine(Application.Context.GetExternalFilesDir(null).Path, Guid.NewGuid().ToString()) + System.IO.Path.GetExtension(path);
+                    byte[] bytes = File.ReadAllBytes(path);
+                    File.WriteAllBytes(externalPath, bytes);
+                    await page.DisplayAlert("File Shared", "The following file is available using USB:" + System.Environment.NewLine + System.Environment.NewLine + System.IO.Path.GetFileName(externalPath) + System.Environment.NewLine + System.Environment.NewLine + "You can access this file using the Android File Transfer application (https://www.android.com/filetransfer).", "Close");
+                }
+                // share via app/intent
+                else
+                {
+                    // run from main activity to get a smoother transition back to sensus
+                    await RunActionUsingMainActivityAsync(mainActivity =>
                     {
                         Intent intent = new Intent(Intent.ActionSend);
                         intent.SetType(mimeType);
@@ -405,13 +405,14 @@ namespace Sensus.Android
                         intent.PutExtra(Intent.ExtraStream, uri);
 
                         mainActivity.StartActivity(intent);
-                    }
 
-                }, true, false);
+                    }, true, false);
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                Logger.Log("Failed to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                await FlashNotificationAsync("Failed to share file:  " + ex.Message);
             }
         }
 
