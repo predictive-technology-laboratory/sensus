@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Android.Hardware;
+using Sensus.Exceptions;
 using Sensus.Probes.Movement;
 using System;
 using System.Collections.Generic;
@@ -22,81 +23,37 @@ namespace Sensus.Android.Probes.Movement
 {
     public class AndroidGyroscopeProbe : GyroscopeProbe
     {
-        private AndroidSensorListener _gyroScopeListener;
-        private static float NS2S = 1.0f / 1000000000.0f;
-        private float[] deltaRotationVector = new float[4];
-        private float lastCalculatedTime;
+        private AndroidSensorListener _gyroscopeListener;
 
         public AndroidGyroscopeProbe()
         {
-            _gyroScopeListener = new AndroidSensorListener(SensorType.Gyroscope, null, async e =>
+            _gyroscopeListener = new AndroidSensorListener(SensorType.Gyroscope, async e =>
             {
-                // should get x, y, and z values
-                if (e.Values.Count == 3 && lastCalculatedTime != default(float))
+                if (e.Values.Count >= 3)
                 {
-                    var sensorEventVals = e.Values;
-                    var (x, y, z) = CalculateGyroscope(e, sensorEventVals);
-
-                    await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, x,y,z));
-
+                    await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, e.Values[0], e.Values[1], e.Values[2]));
                 }
-
-                lastCalculatedTime = e.Timestamp;
-
             });
-        }
-
-        private (float x, float y, float z) CalculateGyroscope(SensorEvent e, IList<float> values)
-        {
-            //calculation from android documentation https://developer.android.com/reference/android/hardware/SensorEvent#values
-
-            float dT = (e.Timestamp - lastCalculatedTime) * NS2S;
-
-            float x = values[0];
-            float y = values[1];
-            float z = values[2];
-
-            double axisCalc = (x * x) + (y * y) + (z * z);
-
-            float omegaMagnitude = (float)Math.Sqrt(axisCalc);
-
-            if (omegaMagnitude > float.Epsilon)
-            {
-                x /= omegaMagnitude;
-                y /= omegaMagnitude;
-                z /= omegaMagnitude;
-            }
-
-            float thetaOverTwo = omegaMagnitude * dT / 2.0f;
-            float sinThetaOverTwo = (float)Math.Sin(thetaOverTwo);
-            float cosThetaOverTwo = (float)Math.Cos(thetaOverTwo);
-            deltaRotationVector[0] = sinThetaOverTwo * x;
-            deltaRotationVector[1] = sinThetaOverTwo * y;
-            deltaRotationVector[2] = sinThetaOverTwo * z;
-            deltaRotationVector[3] = cosThetaOverTwo;
-
-            float[] deltaRotationMatrix = new float[9];
-
-            SensorManager.GetRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
-                        
-            return (deltaRotationMatrix[0],deltaRotationMatrix[1],deltaRotationMatrix[2]);
         }
 
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
 
-            _gyroScopeListener.Initialize(MinDataStoreDelay);
+            _gyroscopeListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override async Task StartListeningAsync()
+        protected override Task StartListeningAsync()
         {
-            _gyroScopeListener.Start();
+            _gyroscopeListener.Start();
+
+            return Task.CompletedTask;
         }
 
         protected override Task StopListeningAsync()
         {
-            _gyroScopeListener.Stop();
+            _gyroscopeListener.Stop();
+
             return Task.CompletedTask;
         }
     }

@@ -19,7 +19,6 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Movement
 {
-   
     public class GyroscopeDatum : Datum
     {
         private double _x;
@@ -27,9 +26,9 @@ namespace Sensus.Probes.Movement
         private double _z;
 
         /// <summary>
-        /// Acceleration along the X axis.
+        /// Rotation around the X axis (radians/second).
         /// </summary>
-        [DoubleProbeTriggerProperty("X Acceleration")]
+        [DoubleProbeTriggerProperty("X Rotation")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double X
         {
@@ -38,9 +37,9 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
-        /// Acceleration along the Y axis.
+        /// Rotation around the Y axis (radians/second).
         /// </summary>
-        [DoubleProbeTriggerProperty("Y Acceleration")]
+        [DoubleProbeTriggerProperty("Y Rotation")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Y
         {
@@ -49,9 +48,9 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
-        /// Acceleration along the Z axis.
+        /// Rotation around the Z axis (radians/second).
         /// </summary>
-        [DoubleProbeTriggerProperty("Z Acceleration")]
+        [DoubleProbeTriggerProperty("Z Rotation")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Z
         {
@@ -65,7 +64,7 @@ namespace Sensus.Probes.Movement
         }
 
         /// <summary>
-        /// Gets the string placeholder value, which is the acceleration vector in [x,y,z] format.
+        /// Gets the string placeholder value, which is the rotation vector in [x,y,z] format.
         /// </summary>
         /// <value>The string placeholder value.</value>
         public override object StringPlaceholderValue

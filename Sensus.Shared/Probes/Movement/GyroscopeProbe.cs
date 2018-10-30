@@ -21,11 +21,10 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Movement
 {
     /// <summary>
-    /// Provides gyroscope in x, y, and z directions as <see cref="GyroscopeDatum"/> readings.
+    /// Provides gyroscope rotation in x, y, and z directions as <see cref="GyroscopeDatum"/> readings.
     /// </summary>
     public abstract class GyroscopeProbe : ListeningProbe
-    {
- 
+    { 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
@@ -61,16 +60,6 @@ namespace Sensus.Probes.Movement
         public sealed override Type DatumType
         {
             get { return typeof(GyroscopeDatum); }
-        }
-
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-        }
-
-        public override async Task ResetAsync()
-        {
-            await base.ResetAsync();
         }
 
         protected override ChartSeries GetChartSeries()

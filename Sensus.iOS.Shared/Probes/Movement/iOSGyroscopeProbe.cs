@@ -37,13 +37,13 @@ namespace Sensus.iOS.Probes.Movement
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
+                string error = "This device does not contain an gyroscope, or the user has denied access to it. Cannot start gyroscope probe.";
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
         }
 
-        protected override async Task StartListeningAsync()
+        protected override Task StartListeningAsync()
         {          
             _motionManager?.StartGyroUpdates(new NSOperationQueue(), async (data, error) =>
             {
@@ -52,6 +52,8 @@ namespace Sensus.iOS.Probes.Movement
                     await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, data.RotationRate.x, data.RotationRate.y, data.RotationRate.z));
                 }
             });
+
+            return Task.CompletedTask;
         }
 
         protected override Task StopListeningAsync()
