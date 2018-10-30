@@ -170,8 +170,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   if(is.directory)
   {
     paths = list.files(data.path, recursive = recursive, full.names = TRUE, include.dirs = FALSE, pattern = "*.json$")
-  }
-  else if(!file.exists(paths[1]))
+  } else if(!file.exists(paths[1]))
   {
     warning(paste("File does not exist: ", path))
     return(NULL)
@@ -182,6 +181,9 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   # keep track of the expected data count, both by type and in total.
   expected.data.cnt.by.type = list()
   expected.total.cnt = 0
+  
+  # keep track of columns observed for each data type
+  data.type.column.type = list()
   
   # process each path
   data = list()
@@ -234,8 +236,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     }
     
     # file.json is a list with one entry per column (e.g., for the X coordinates of accelerometer readings). sub-list
-    # the file.json list to include only those columns that are not themselves lists. we column lists in cases like
-    # the survey data, which are currently excluded from this R package.
+    # the file.json list to include only those columns that are not themselves lists. such list columns will be seen
+    # in cases like the survey data.
     file.json = file.json[sapply(file.json, typeof) != "list"]
     
     # add to expected total count of data, which is the length of the Id list entry
@@ -259,6 +261,9 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     # remove the original $type column
     file.json$"$type" = NULL
     
+    # remove the original $Anonymized column
+    file.json$Anonymized = NULL
+    
     # parse timestamps and convert to local time zone if needed
     file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
     if(convert.to.local.timezone)
@@ -276,14 +281,16 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       # the data.type variable is for a specific type (e.g., location data) and it has all columns
       # from all data types. only those columns for location data will have non-NA values. the other
       # columns (e.g., X from acceleration) will be entirely NAs and can be removed. identify these
-      # all-NA columns next.
-      na.elements = sapply(data.type, function(data.type.column)
+      # all-NA columns next. ignore the special case of TaggedEventId columns, which are often all
+      # null within an entire file but should still be retained.
+      column.is.all.nas = sapply(data.type, function(data.type.column)
       {
         return(sum(is.na(data.type.column)) == length(data.type.column))
       })
       
-      # remove list elements for the current data type that have all NAs.
-      data.type[na.elements] = NULL
+      # remove list elements for the current data type that have all NAs, except don't
+      # ever remove the TaggedEventIdColumn.
+      data.type[column.is.all.nas & names(data.type) != "TaggedEventId"] = NULL
       
       return(data.type)
     })
@@ -294,14 +301,13 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     for(data.type in names(split.file.json))
     {
       # add to data by type, putting each file in its own list entry (we'll merge files later)
-      type = split.file.json[[data.type]]$Type[1]
-      if(is.null(data[[type]]))
+      if(is.null(data[[data.type]]))
       {
-        data[[type]] = list()
+        data[[data.type]] = list()
       }
       
-      data.type.file.num = length(data[[type]]) + 1
-      data[[type]][[data.type.file.num]] = split.file.json[[data.type]]
+      data.type.file.num = length(data[[data.type]]) + 1
+      data[[data.type]][[data.type.file.num]] = split.file.json[[data.type]]
       
       # update expected data counts by type (use number of non-null IDs as basis for counting)
       data.type.curr.cnt = 0
@@ -311,6 +317,28 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       }
       
       expected.data.cnt.by.type[[data.type]] = data.type.curr.cnt + sum(!is.na(split.file.json[[data.type]]$Id))
+      
+      # keep track of all observed column/types
+      column.type = sapply(split.file.json[[data.type]], class)
+      for(column in names(column.type))
+      {
+        # the timestamp column has classes that cannot be constructed
+        # automatically in subsequent code where the lookup is used.
+        if(column == "Timestamp")
+        {
+          next
+        }
+        
+        if(is.null(data.type.column.type[[data.type]]))
+        {
+          data.type.column.type[[data.type]] = list()
+        }
+        
+        if(is.null(data.type.column.type[[data.type]][[column]]))
+        {
+          data.type.column.type[[data.type]][[column]] = column.type[[column]]
+        }
+      }
     }
   }
  
@@ -321,17 +349,12 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   { 
     datum.type.data = data[[datum.type]]
     
-    # pre-allocate vectors for each column in data frame
+    # pre-allocate vectors for each column in data frame according to each column's type
     datum.type.num.rows = sum(sapply(datum.type.data, nrow))
-    
-    # debugging
-    tuples.1 = mapply(c, names(datum.type.col.classes[[1]]), datum.type.col.classes[[1]], SIMPLIFY = FALSE)
-    tuples.2 = mapply(c, names(datum.type.col.classes[[2]]), datum.type.col.classes[[2]], SIMPLIFY = FALSE)
-    unique(c(unique(tuples.1), unique(tuples.2)))
-    # end debugging
-    
-    datum.type.col.classes[["Timestamp"]] = NULL  # cannot directly create vector with mode POSIXlt
+    datum.type.col.classes = data.type.column.type[[datum.type]]
     datum.type.col.vectors = lapply(datum.type.col.classes, vector, length = datum.type.num.rows)
+    
+    # pre-allocate timestamp vector manually. can't do it the same as above.
     datum.type.col.vectors[["Timestamp"]] = as.POSIXlt(rep(NA, datum.type.num.rows))
     
     # merge files for current datum.type
