@@ -261,7 +261,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     # remove the original $type column
     file.json$"$type" = NULL
     
-    # remove the original $Anonymized column
+    # remove the original $Anonymized column. not needed.
     file.json$Anonymized = NULL
     
     # parse timestamps and convert to local time zone if needed
@@ -289,7 +289,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       })
       
       # remove list elements for the current data type that have all NAs, except don't
-      # ever remove the TaggedEventIdColumn.
+      # ever remove the TaggedEventId column, which may be all NA but still appropriate
+      # to keep.
       data.type[column.is.all.nas & names(data.type) != "TaggedEventId"] = NULL
       
       return(data.type)
@@ -376,7 +377,7 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
         }
         else
         {
-          warning(paste("Data file is missing column ", col.name, ". There will be null values in this column.", sep=""))
+          warning(paste("Data file for type ", datum.type, " is missing column ", col.name, ". There will be null values in this column.", sep=""))
         }
       }
       
