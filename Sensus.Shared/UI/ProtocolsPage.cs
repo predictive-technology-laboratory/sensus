@@ -167,7 +167,7 @@ namespace Sensus.UI
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         progressBarLabel.Text = $"Progress: {progress * 100}%";
-                        await progressBar.ProgressTo(progressBar.Progress, 100, Easing.Linear);
+                        await progressBar.ProgressTo(progress, 100, Easing.Linear);
 
                     });
 
