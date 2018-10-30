@@ -1698,7 +1698,7 @@ namespace Sensus
                     bool startMicrosoftBandProbes = true;
                     ProtocolLoadProgressChanged?.Invoke(this, .10);
                     var enabledProbes = _probes.Count(w => w.Enabled);
-                    var probePercent = Math.Round((_probes.Count > 0 ? 80 / _probes.Count : 80) * .01, 2, MidpointRounding.AwayFromZero);
+                    var probePercent = Math.Round((enabledProbes > 0 ? 80 / enabledProbes : 80) * .01, 2, MidpointRounding.AwayFromZero);
                     foreach (Probe probe in _probes)
                     {
                         if (probe.Enabled)
@@ -1710,10 +1710,7 @@ namespace Sensus
 
                             try
                             {
-
                                 await probe.StartAsync();
-
-
                             }
                             catch (MicrosoftBandClientConnectException)
                             {
