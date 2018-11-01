@@ -57,6 +57,7 @@ namespace Sensus.Android.Probes.Communication
                 {
                     throw new NotSupportedException("No telephony present.");
                 }
+                _smsOutgoingObserver.Initialize();
             }
             else
             {
@@ -71,6 +72,7 @@ namespace Sensus.Android.Probes.Communication
         protected override Task StartListeningAsync()
         {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
+            Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://mms-sms"), true, _smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
             return Task.CompletedTask;
         }
