@@ -49,6 +49,7 @@ namespace Sensus.Probes.User.Scripts
         private readonly List<ScheduledCallback> _scriptRunCallbacks;
         private readonly ScheduleTrigger _scheduleTrigger;
         private Queue<ScriptTriggerTime> _scriptTriggerTimes;
+        private ScriptRunnerAgent _agent;
 
         private readonly object _locker = new object();
 
