@@ -28,7 +28,7 @@ namespace Sensus.Android.Probes.Communication
     {
         private readonly Action<SmsDatum> _outgoingSmsCallback;
         private string _mostRecentlyObservedSmsURI;
-        private DateTimeOffset? _lastMmsTimestamp;
+        private DateTimeOffset? _mostRecentMmsTimestamp;
 
         public AndroidSmsOutgoingObserver(Action<SmsDatum> outgoingSmsCallback)
             : base(null)
@@ -39,51 +39,52 @@ namespace Sensus.Android.Probes.Communication
         public void Initialize()
         {
             _mostRecentlyObservedSmsURI = null;
-            var msg = GetLatestMms();
-            _lastMmsTimestamp = msg?.Timestamp; //get the last mms on load so we don't duplicate it
+            _mostRecentMmsTimestamp = GetMostRecentMMS()?.Timestamp; // get the most recent mms so we don't duplicate it
         }
 
         public override void OnChange(bool selfChange)
         {
-            OnChange(selfChange, global::Android.Net.Uri.Parse("content://sms"));
+            try
+            {
+                OnChange(selfChange, global::Android.Net.Uri.Parse("content://sms"));
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception in OnChange:  " + ex.Message, ex);
+            }
         }
-
 
         public override void OnChange(bool selfChange, global::Android.Net.Uri uri)
         {
-            // for some reason, we get multiple calls to OnChange for the same outgoing text. ignore repeats.
-            if (_mostRecentlyObservedSmsURI != null && uri.ToString() == _mostRecentlyObservedSmsURI)
-            {
-                return;
-            }
-
-            SmsDatum message = null;
-            bool isMMS = false;
             try
             {
+                // for some reason, we get multiple calls to OnChange for the same outgoing text. ignore repeats.
+                if (_mostRecentlyObservedSmsURI != null && uri.ToString() == _mostRecentlyObservedSmsURI)
+                {
+                    return;
+                }
+
+                SmsDatum datum = null;
 
 
                 // process MMS:  https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
-
-                var convUri = global::Android.Net.Uri.Parse("content://mms-sms/conversations/");
-                isMMS = uri.ToString().StartsWith("content://sms/raw") || uri.ToString().StartsWith("content://mms-sms"); //the method of determining if it was mms wasn't catching all mms messages
+                bool isMMS = uri.ToString().StartsWith("content://sms/raw") || uri.ToString().StartsWith("content://mms-sms");
                 if (isMMS)
                 {
-                    message = GetLatestMms();
-
+                    datum = GetMostRecentMMS();
                 }
                 else
                 {
-                    message = GetSms(uri);
+                    datum = GetSms(uri);
                 }
 
-
-                if (!string.IsNullOrWhiteSpace(message?.Message))
+                if (!string.IsNullOrWhiteSpace(datum?.Message))
                 {
-                    _outgoingSmsCallback(message);
+                    _outgoingSmsCallback?.Invoke(datum);
+
                     if (isMMS)
                     {
-                        _lastMmsTimestamp = message.Timestamp;
+                        _mostRecentMmsTimestamp = datum.Timestamp;
                     }
                     else
                     {
@@ -91,29 +92,26 @@ namespace Sensus.Android.Probes.Communication
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // something is wrong with our implementation
                 SensusException.Report(ex);
             }
-          
         }
 
-        private SmsDatum GetLatestMms()
+        private SmsDatum GetMostRecentMMS()
         {
-            SmsDatum rVal = null;
+            SmsDatum mmsDatum = null;
+
             ICursor queryResults = null;
-            string body = null, toNumber = null;
-            DateTimeOffset timeStamp;
             try
             {
+                // get the most recent conversation
                 queryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms-sms/conversations/"), null, null, null, "_id");
 
                 if (queryResults.MoveToLast())
                 {
-
-                    var unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date")) * 1000;
-
+                    long unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date")) * 1000;
                     int messageId = queryResults.GetInt(queryResults.GetColumnIndexOrThrow("_id"));
 
                     ICursor innerQueryResults = Application.Context.ContentResolver.Query(global::Android.Net.Uri.Parse("content://mms/part"), null, "mid=" + messageId, null, null);
@@ -122,13 +120,16 @@ namespace Sensus.Android.Probes.Communication
                     {
                         if (innerQueryResults.MoveToFirst())
                         {
-                            var go = true;
-                            while (go == true) //Note: for some reason a do...while loop doesn't seem to work.
+                            while (true)
                             {
                                 if (innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("ct")) == "text/plain")
                                 {
-                                    string data = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("_data"));
+                                    string toNumber = GetAddressNumber(messageId, 151); // 137 is the from and 151 is the to
+                                    DateTimeOffset timestamp = DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMS);
 
+                                    // get the message body
+                                    string data = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("_data"));
+                                    string body;
                                     if (data == null)
                                     {
                                         body = innerQueryResults.GetString(innerQueryResults.GetColumnIndexOrThrow("text"));
@@ -139,17 +140,20 @@ namespace Sensus.Android.Probes.Communication
                                         body = GetMmsText(partId);
                                     }
 
-                                    toNumber = GetAddressNumber(messageId, 151); // 137 is the from and 151 is the to
-                                    timeStamp = DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMS);
-                                    if (!string.IsNullOrWhiteSpace(body) && _lastMmsTimestamp != timeStamp)
+                                    // only keep if we have a message body
+                                    if (!string.IsNullOrWhiteSpace(body) && _mostRecentMmsTimestamp != timestamp)
                                     {
-                                        rVal = new SmsDatum(timeStamp, null, toNumber, body, true);
+                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true);
                                     }
-                                    go = false;
+
+                                    break;
                                 }
                                 else
                                 {
-                                    go = innerQueryResults.MoveToNext();
+                                    if (!innerQueryResults.MoveToNext())
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -178,12 +182,13 @@ namespace Sensus.Android.Probes.Communication
                 {
                 }
             }
-            return rVal;
+
+            return mmsDatum;
         }
 
         private SmsDatum GetSms(global::Android.Net.Uri uri)
         {
-            SmsDatum rVal = null;
+            SmsDatum smsDatum = null;
             ICursor queryResults = null;
             try
             {
@@ -213,13 +218,14 @@ namespace Sensus.Android.Probes.Communication
                         return null;
                     }
 
-                    var toNumber = queryResults.GetString(queryResults.GetColumnIndexOrThrow("address"));
-                    var unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date"));
-                    var body = queryResults.GetString(queryResults.GetColumnIndexOrThrow("body"));
-                    var timeStamp = DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMS);
+                    string toNumber = queryResults.GetString(queryResults.GetColumnIndexOrThrow("address"));
+                    long unixTimeMS = queryResults.GetLong(queryResults.GetColumnIndexOrThrow("date"));
+                    string body = queryResults.GetString(queryResults.GetColumnIndexOrThrow("body"));
+                    DateTimeOffset timestamp = DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMS);
+
                     if (!string.IsNullOrWhiteSpace(body))
                     {
-                        rVal = new SmsDatum(timeStamp, null, toNumber, body, true);
+                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true);
                     }
                 }
             }
@@ -234,7 +240,7 @@ namespace Sensus.Android.Probes.Communication
                 {
                 }
             }
-            return rVal;
+            return smsDatum;
         }
 
         private string GetMmsText(int id)
