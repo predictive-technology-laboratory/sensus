@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests.AppCenter"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScriptRunnerAgentExample", "ScriptRunnerAgentExample\ScriptRunnerAgentExample.csproj", "{331210AD-FE16-451C-8531-EBCE60EBB1F0}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.External", "Sensus.Shared.External\Sensus.Shared.External.shproj", "{63FAEAA7-248E-464F-B7E5-771F056ECC36}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13

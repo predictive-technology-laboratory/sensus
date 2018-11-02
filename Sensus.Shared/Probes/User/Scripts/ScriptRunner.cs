@@ -49,13 +49,18 @@ namespace Sensus.Probes.User.Scripts
         private readonly List<ScheduledCallback> _scriptRunCallbacks;
         private readonly ScheduleTrigger _scheduleTrigger;
         private Queue<ScriptTriggerTime> _scriptTriggerTimes;
-        private ScriptRunnerAgent _agent;
 
         private readonly object _locker = new object();
 
         public ScriptProbe Probe { get; set; }
-
         public Script Script { get; set; }
+
+        /// <summary>
+        /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive-surveys) for more information.
+        /// </summary>
+        /// <value>The agent.</value>
+        [JsonIgnore]
+        public ScriptRunnerAgent Agent { get; set; }
 
         /// <summary>
         /// Name of the survey. If you would like to use the value of a 

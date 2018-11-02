@@ -16,8 +16,21 @@ using System.Threading.Tasks;
 
 namespace Sensus.Probes.User.Scripts
 {
+    /// <summary>
+    /// An agent that controls how surveys delivered for a <see cref="ScriptRunner"/> are handled.
+    /// </summary>
     public abstract class ScriptRunnerAgent
     {
+        /// <summary>
+        /// A descriptive name for the agent.
+        /// </summary>
+        /// <value>The name.</value>
+        public abstract string Name { get; }
+
+        /// <summary>
+        /// Checks whether a survey should be delivered.
+        /// </summary>
+        /// <returns>The deliver survey.</returns>
         public abstract Task<bool> ShouldDeliverSurvey();
     }
 }

@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <ReleaseVersion>2.0.0</ReleaseVersion>
   </PropertyGroup>
 
-  <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared\Sensus.Shared.projitems')" />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+  <Import Project="..\Sensus.Shared.External\Sensus.Shared.External.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared.External\Sensus.Shared.External.projitems')" />
 </Project>

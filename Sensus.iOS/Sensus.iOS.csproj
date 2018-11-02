@@ -384,6 +384,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <BundleResource Include="Resources\x.png" />
     <BundleResource Include="Resources\account.png" />
   </ItemGroup>
+  <Import Project="..\Sensus.Shared.External\Sensus.Shared.External.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared.External\Sensus.Shared.External.projitems')" />
   <Import Project="..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems')" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared\Sensus.Shared.projitems')" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
