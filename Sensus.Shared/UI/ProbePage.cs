@@ -24,6 +24,9 @@ using Sensus.Probes.User.Scripts;
 using Sensus.Anonymization.Anonymizers;
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using Sensus.UI.Inputs;
+using System.Net;
+using System;
 
 namespace Sensus.UI
 {
@@ -111,6 +114,83 @@ namespace Sensus.UI
 
                     await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition", "application/json");
                 };
+
+                Button setAgentButton = new Button
+                {
+                    Text = "Set Agent",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                setAgentButton.Clicked += async (o, e) =>
+                {
+                    // prompt for agent URL
+                    QrCodeInput agentUrlQrCodeInput = await SensusServiceHelper.Get().PromptForInputAsync("Survey Agent", new QrCodeInput(QrCodePrefix.SURVEY_AGENT, "URL:", false, "Agent URL:")
+                    {
+                        Required = true
+
+                    }, null, true, "Set", null, null, null, false) as QrCodeInput;
+
+                    string agentURL = agentUrlQrCodeInput?.Value?.ToString();
+
+                    if (string.IsNullOrWhiteSpace(agentURL))
+                    {
+                        return;
+                    }
+
+                    // download agent
+                    string downloadErrorMessage = null;
+                    try
+                    {
+                        // download the assembly and extract agents
+                        byte[] downloadedBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
+                        Assembly assembly = Assembly.Load(downloadedBytes);
+                        List<ScriptRunnerAgent> agents = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ScriptRunnerAgent)) && !t.IsAbstract).Select(Activator.CreateInstance).Cast<ScriptRunnerAgent>().ToList();
+
+                        // let user choose agent if needed
+                        if (agents.Count == 0)
+                        {
+                            downloadErrorMessage = "No agents were present in the specified file.";
+                        }
+                        else if (agents.Count == 1)
+                        {
+                            ScriptRunnerAgent agent = agents[0];
+
+                            if (await DisplayAlert("Survey Agent", "Would you like to use the following agent?" + Environment.NewLine + Environment.NewLine + agent.Name, "Yes", "No"))
+                            {
+                                scriptProbe.Agent = agents[0];
+                            }
+                        }
+                        else
+                        {
+                            ItemPickerPageInput agentPicker = await SensusServiceHelper.Get().PromptForInputAsync("Survey Agent", new ItemPickerPageInput("Select Agent", agents.Cast<object>().ToList(), "Name")
+                            {
+                                Required = true
+
+                            }, null, true, "OK", null, null, null, false) as ItemPickerPageInput;
+
+                            scriptProbe.Agent = agentPicker?.Value as ScriptRunnerAgent;
+                        }
+
+                        if(scriptProbe.Agent != null)
+                        {
+                            scriptProbe.AgentBytes = downloadedBytes;
+                            scriptProbe.AgentId = scriptProbe.Agent.Id;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        downloadErrorMessage = ex.Message;
+                    }
+
+                    if (downloadErrorMessage != null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log(downloadErrorMessage, LoggingLevel.Normal, typeof(Protocol));
+                        await SensusServiceHelper.Get().FlashNotificationAsync(downloadErrorMessage);
+                    }
+                };
+
+                contentLayout.Children.Add(setAgentButton);
             }
             #endregion
 

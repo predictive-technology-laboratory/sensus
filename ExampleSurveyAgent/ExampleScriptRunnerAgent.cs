@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Sensus.Probes.User.Scripts;
 
-namespace ScriptRunnerAgentExample
+namespace ExampleSurveyAgent
 {
     /// <summary>
     /// Example script runner agent. Executes a random policy in which surveys are delivered

@@ -30,6 +30,9 @@
       
 - name: Tagging
   href:  tagging-mode.md
+  
+- name:  Adaptive Surveys
+  href: adaptive-surveys.md
 
 - name: Push Notifications
   href: push-notifications.md

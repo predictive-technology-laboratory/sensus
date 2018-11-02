@@ -56,13 +56,6 @@ namespace Sensus.Probes.User.Scripts
         public Script Script { get; set; }
 
         /// <summary>
-        /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive-surveys) for more information.
-        /// </summary>
-        /// <value>The agent.</value>
-        [JsonIgnore]
-        public ScriptRunnerAgent Agent { get; set; }
-
-        /// <summary>
         /// Name of the survey. If you would like to use the value of a 
         /// survey-triggering <see cref="Script.CurrentDatum"/> within the survey's name, you can do so 
         /// by placing a <c>{0}</c> within <see cref="Name"/> as a placeholder. The placeholder will be replaced with

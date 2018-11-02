@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 
 namespace Sensus.Probes.User.Scripts
 {
     /// <summary>
-    /// An agent that controls how surveys delivered for a <see cref="ScriptRunner"/> are handled.
+    /// An agent that controls how Sensus surveys are delivered.
     /// </summary>
     public abstract class ScriptRunnerAgent
     {
@@ -28,9 +29,19 @@ namespace Sensus.Probes.User.Scripts
         public abstract string Name { get; }
 
         /// <summary>
+        /// A unique identifier for the agent. This only needs to be unique within the library that is implementing
+        /// the various agents. That is, a sequential ordering of <see cref="Id"/> values "1", "2", etc. would be
+        /// acceptable.
+        /// </summary>
+        /// <value>The identifier.</value>
+        public abstract string Id { get; }
+
+        /// <summary>
         /// Checks whether a survey should be delivered.
         /// </summary>
-        /// <returns>The deliver survey.</returns>
-        public abstract Task<bool> ShouldDeliverSurvey();
+        /// <returns>Whether or not to deliver.</returns>
+        public abstract Task<bool> ShouldDeliverSurvey(Script script);
+
+        public abstract void Observe(Datum datum);
     }
 }

@@ -1,6 +1,9 @@
 ### YamlMime:XRefMap
 sorted: true
 references:
+- uid: adaptive_surveys
+  name: Adaptive Surveys
+  href: articles/adaptive-surveys.html
 - uid: anonymization
   name: Anonymization
   href: articles/anonymization.html
@@ -41052,6 +41055,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.#ctor
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunner
   nameWithType: ScriptRunner.ScriptRunner
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.Agent
+  name: Agent
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Agent
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.Agent
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.Agent
+  nameWithType: ScriptRunner.Agent
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.Agent*
+  name: Agent
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Agent_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Agent
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.Agent
+  nameWithType: ScriptRunner.Agent
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.AllowCancel
   name: AllowCancel
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_AllowCancel
@@ -42861,6 +42876,12 @@ references:
   commentId: F:Sensus.QrCodePrefix.SENSUS_PROTOCOL
   fullName: Sensus.QrCodePrefix.SENSUS_PROTOCOL
   nameWithType: QrCodePrefix.SENSUS_PROTOCOL
+- uid: Sensus.QrCodePrefix.SURVEY_AGENT
+  name: SURVEY_AGENT
+  href: api/Sensus.QrCodePrefix.html#Sensus_QrCodePrefix_SURVEY_AGENT
+  commentId: F:Sensus.QrCodePrefix.SURVEY_AGENT
+  fullName: Sensus.QrCodePrefix.SURVEY_AGENT
+  nameWithType: QrCodePrefix.SURVEY_AGENT
 - uid: Sensus.SensusServiceHelper
   name: SensusServiceHelper
   href: api/Sensus.SensusServiceHelper.html

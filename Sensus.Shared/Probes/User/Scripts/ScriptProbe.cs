@@ -21,6 +21,7 @@ using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -32,6 +33,17 @@ namespace Sensus.Probes.User.Scripts
     public class ScriptProbe : Probe
     {
         private ObservableCollection<ScriptRunner> _scriptRunners;
+
+        /// <summary>
+        /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
+        /// </summary>
+        /// <value>The agent.</value>
+        [JsonIgnore]
+        public ScriptRunnerAgent Agent { get; set; }
+
+        public byte[] AgentBytes { get; set; }
+
+        public string AgentId { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {

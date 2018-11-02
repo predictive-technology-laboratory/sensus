@@ -333,6 +333,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Estimote.Android.Proximity">
       <HintPath>..\packages\Estimote.Android.Proximity.1.0.3\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
     </Reference>
+    <Reference Include="Sensus.Shared.NuGet">
+      <HintPath>..\packages\Sensus.1.0.0\lib\portable45-net45+win8+wpa81\Sensus.Shared.NuGet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AndroidMainActivity.cs" />
@@ -385,7 +388,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
   </ItemGroup>
-  <Import Project="..\Sensus.Shared.External\Sensus.Shared.External.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared.External\Sensus.Shared.External.projitems')" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
   <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />

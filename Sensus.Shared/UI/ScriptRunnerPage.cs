@@ -16,12 +16,6 @@ using Xamarin.Forms;
 using Sensus.UI.UiProperties;
 using Sensus.Probes.User.Scripts;
 using System.Linq;
-using Sensus.UI.Inputs;
-using System.Threading.Tasks;
-using System.Net;
-using System.Reflection;
-using System.Collections.Generic;
-using System;
 
 namespace Sensus.UI
 {
@@ -94,95 +88,6 @@ namespace Sensus.UI
             };
 
             contentLayout.Children.Add(viewScheduledTriggersButton);
-
-            Button setAgentButton = new Button
-            {
-                Text = "Set Agent",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            setAgentButton.Clicked += async (o, e) =>
-            {
-                QrCodeInput agentUrlQrCodeInput = await SensusServiceHelper.Get().PromptForInputAsync("Survey Agent", new QrCodeInput(QrCodePrefix.SURVEY_AGENT, "URL:", false, "Agent URL:")
-                {
-                    Required = true
-
-                }, null, true, "Set", null, null, null, false) as QrCodeInput;
-
-                string url = agentUrlQrCodeInput?.Value.ToString();
-                if(string.IsNullOrWhiteSpace(url))
-                {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Agent not set.");
-                    return;
-                }
-
-                TaskCompletionSource<ScriptRunnerAgent> completionSource = new TaskCompletionSource<ScriptRunnerAgent>();
-                WebClient downloadClient = new WebClient();
-                Uri webURI = new Uri(url);
-
-                downloadClient.DownloadDataCompleted += async (downloadSender, downloadEventArgs) =>
-                {
-                    string errorMessage = null;
-
-                    if (downloadEventArgs.Error == null)
-                    {
-                        Assembly assembly = Assembly.Load(downloadEventArgs.Result);
-
-                        List<ScriptRunnerAgent> agents = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ScriptRunnerAgent)) && !t.IsAbstract).Select(Activator.CreateInstance).Cast<ScriptRunnerAgent>().ToList();
-
-                        if (agents.Count == 0)
-                        {
-                            errorMessage = "No agents were present in the specified file.";
-                        }
-                        else if (agents.Count == 1)
-                        {
-                            ScriptRunnerAgent agent = agents[0];
-
-                            if (await DisplayAlert("Survey Agent", "Would you like to use the following agent?" + Environment.NewLine + Environment.NewLine + agent.Name, "Yes", "No"))
-                            {
-                                completionSource.SetResult(agents[0]);
-                            }
-                            else
-                            {
-                                errorMessage = "Declined agent.";
-                            }
-                        }
-                        else
-                        {
-                            ItemPickerPageInput agentPicker = await SensusServiceHelper.Get().PromptForInputAsync("Select Agent", new ItemPickerPageInput("Agents", agents.Cast<object>().ToList(), "Name")
-                            {
-                                Required = true
-
-                            }, null, true, "OK", null, null, null, false) as ItemPickerPageInput;
-
-                            completionSource.SetResult(agentPicker.Value as ScriptRunnerAgent);
-                        }
-                    }
-                    else
-                    {
-                        errorMessage = "Failed to download agent from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + downloadEventArgs.Error.Message;
-                    }
-
-                    if (errorMessage != null)
-                    {
-                        SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                        await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                        completionSource.SetResult(null);
-                    }
-                };
-
-                downloadClient.DownloadDataAsync(webURI);
-
-                ScriptRunnerAgent selectedAgent = await completionSource.Task;
-
-                if (selectedAgent != null)
-                {
-                    scriptRunner.Agent = selectedAgent;
-                }
-            };
-
-            contentLayout.Children.Add(setAgentButton);
 
             Content = new ScrollView
             {

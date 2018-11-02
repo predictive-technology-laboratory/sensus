@@ -5,7 +5,8 @@
         {
           "files": [
             "**/Sensus.Android/bin/Debug/SensusAndroid.dll",
-            "**/Sensus.iOS/bin/iPhone/Debug/SensusiOS.exe"
+            "**/Sensus.iOS/bin/iPhone/Debug/SensusiOS.exe",
+	    "**/Sensus.Shared.NuGet/bin/Debug/Sensus.Shared.NuGet.dll"
           ],
           "src": "./src"
         }
