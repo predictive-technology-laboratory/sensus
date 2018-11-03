@@ -265,7 +265,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptRunnerAgent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

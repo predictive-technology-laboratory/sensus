@@ -331,9 +331,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Estimote.iOS.Proximity">
       <HintPath>..\packages\Estimote.iOS.Proximity.1.2.0\lib\xamarinios10\Estimote.iOS.Proximity.dll</HintPath>
     </Reference>
-    <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.0.0\lib\portable45-net45+win8+wpa81\Sensus.Shared.NuGet.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />

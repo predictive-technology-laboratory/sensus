@@ -145,7 +145,7 @@ namespace Sensus.UI
                         // download the assembly and extract agents
                         byte[] downloadedBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
                         Assembly assembly = Assembly.Load(downloadedBytes);
-                        List<ScriptRunnerAgent> agents = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ScriptRunnerAgent)) && !t.IsAbstract).Select(Activator.CreateInstance).Cast<ScriptRunnerAgent>().ToList();
+                        List<IScriptProbeAgent> agents = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IScriptProbeAgent))).Select(Activator.CreateInstance).Cast<IScriptProbeAgent>().ToList();
 
                         // let user choose agent if needed
                         if (agents.Count == 0)
@@ -154,7 +154,7 @@ namespace Sensus.UI
                         }
                         else if (agents.Count == 1)
                         {
-                            ScriptRunnerAgent agent = agents[0];
+                            IScriptProbeAgent agent = agents[0];
 
                             if (await DisplayAlert("Survey Agent", "Would you like to use the following agent?" + Environment.NewLine + Environment.NewLine + agent.Name, "Yes", "No"))
                             {
@@ -169,7 +169,7 @@ namespace Sensus.UI
 
                             }, null, true, "OK", null, null, null, false) as ItemPickerPageInput;
 
-                            scriptProbe.Agent = agentPicker?.Value as ScriptRunnerAgent;
+                            scriptProbe.Agent = agentPicker?.Value as IScriptProbeAgent;
                         }
 
                         if(scriptProbe.Agent != null)

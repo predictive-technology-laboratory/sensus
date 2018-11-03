@@ -27,7 +27,7 @@ namespace Sensus.Probes.Location
     /// spatial fidelity by approximately 0.04 miles (200 feet).
     /// 
     /// </summary>
-    public class LocationDatum : ImpreciseDatum
+    public class LocationDatum : ImpreciseDatum, ILocationDatum
     {
         private double _latitude;
         private double _longitude;

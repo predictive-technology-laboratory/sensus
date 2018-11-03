@@ -24,7 +24,7 @@ namespace Sensus
     /// <summary>
     /// A single unit of sensed information returned by a probe.
     /// </summary>
-    public abstract class Datum
+    public abstract class Datum : IDatum
     {
         /// <summary>
         /// Settings for serializing Datum objects

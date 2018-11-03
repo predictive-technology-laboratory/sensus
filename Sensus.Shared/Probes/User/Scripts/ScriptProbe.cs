@@ -39,7 +39,7 @@ namespace Sensus.Probes.User.Scripts
         /// </summary>
         /// <value>The agent.</value>
         [JsonIgnore]
-        public ScriptRunnerAgent Agent { get; set; }
+        public IScriptProbeAgent Agent { get; set; }
 
         public byte[] AgentBytes { get; set; }
 

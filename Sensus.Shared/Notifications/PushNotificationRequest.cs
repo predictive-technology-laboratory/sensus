@@ -27,6 +27,8 @@ namespace Sensus.Notifications
             return PushNotificationRequestFormat.FirebaseCloudMessaging;
 #elif __IOS__
             return PushNotificationRequestFormat.ApplePushNotificationService;
+#else
+#error "Unrecognized platform."
 #endif
         }
 

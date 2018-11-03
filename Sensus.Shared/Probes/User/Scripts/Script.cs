@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script : INotifyPropertyChanged, IComparable<Script>
+    public class Script : INotifyPropertyChanged, IComparable<Script>, IScript
     {
         /// <summary>
         /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains

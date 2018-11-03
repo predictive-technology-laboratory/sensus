@@ -53,6 +53,7 @@ namespace Sensus.Probes.User.Scripts
         private readonly object _locker = new object();
 
         public ScriptProbe Probe { get; set; }
+
         public Script Script { get; set; }
 
         /// <summary>
