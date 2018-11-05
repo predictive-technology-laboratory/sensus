@@ -42,10 +42,22 @@ namespace ExampleScriptProbeAgent
         private double _deliveryProbability = 0.5;
         private TimeSpan _deferralInterval = TimeSpan.FromSeconds(30);
 
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>The description.</value>
         public string Description => "p=" + _deliveryProbability + "; deferral=" + _deferralInterval;
 
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
         public string Id => "Adaptive";
 
+        /// <summary>
+        /// Sets the policy.
+        /// </summary>
+        /// <param name="policyJSON">Policy json.</param>
         public void SetPolicy(string policyJSON)
         {
             JObject policyObject = JObject.Parse(policyJSON);
@@ -53,11 +65,20 @@ namespace ExampleScriptProbeAgent
             _deferralInterval = TimeSpan.FromSeconds((int)policyObject.GetValue("deferral"));
         }
 
+        /// <summary>
+        /// Observe the specified datum.
+        /// </summary>
+        /// <param name="datum">Datum.</param>
         public void Observe(IDatum datum)
         {
             Console.Out.WriteLine("Datum observed (" + ++_numDataObserved + " total):  " + datum);
         }
 
+        /// <summary>
+        /// Checks whether or not to deliver/defer a survey.
+        /// </summary>
+        /// <returns>Deliver/defer decision.</returns>
+        /// <param name="script">Script.</param>
         public Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNow(IScript script)
         {
             bool deliver = new Random().NextDouble() < _deliveryProbability;
@@ -71,6 +92,11 @@ namespace ExampleScriptProbeAgent
             return Task.FromResult(new Tuple<bool, DateTimeOffset?>(deliver, deferralTime));
         }
 
+        /// <summary>
+        /// Observe the specified script and state.
+        /// </summary>
+        /// <param name="script">Script.</param>
+        /// <param name="state">State.</param>
         public void Observe(IScript script, ScriptState state)
         {
             if (state == ScriptState.Opened)
@@ -95,12 +121,19 @@ namespace ExampleScriptProbeAgent
             }
         }
 
+        /// <summary>
+        /// Reset this instance.
+        /// </summary>
         public void Reset()
         {
             _numDataObserved = 0;
             _deliveryProbability = 0.5;
         }
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent"/>.
+        /// </summary>
+        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent"/>.</returns>
         public override string ToString()
         {
             return Id + ":  " + Description;

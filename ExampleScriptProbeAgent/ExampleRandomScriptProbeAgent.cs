@@ -27,37 +27,70 @@ namespace ExampleScriptProbeAgent
     {
         private double _deliveryProbability = 0.5;
 
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>The description.</value>
         public string Description => "p=" + _deliveryProbability;
 
+        /// <summary>
+        /// Gets the identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
         public string Id => "Random";
 
+        /// <summary>
+        /// Checks whether or not to deliver/defer a survey.
+        /// </summary>
+        /// <returns>Deliver/defer decision.</returns>
+        /// <param name="script">Script.</param>
         public Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNow(IScript script)
         {
             // do not defer to a future time if survey is not to be delivered
             return Task.FromResult(new Tuple<bool, DateTimeOffset?>(new Random().NextDouble() < _deliveryProbability, null));
         }
 
+        /// <summary>
+        /// Observe the specified datum.
+        /// </summary>
+        /// <param name="datum">Datum.</param>
         public void Observe(IDatum datum)
         {
             Console.Out.WriteLine("Observed datum:  " + datum);
         }
 
+        /// <summary>
+        /// Observe the specified script and state.
+        /// </summary>
+        /// <param name="script">Script.</param>
+        /// <param name="state">State.</param>
         public void Observe(IScript script, ScriptState state)
         {
             Console.Out.WriteLine("Script " + script.IRunner.Name + " state:  " + state);
         }
 
+        /// <summary>
+        /// Reset this instance.
+        /// </summary>
         public void Reset()
         {
             Console.Out.WriteLine("Agent has been reset.");
         }
 
+        /// <summary>
+        /// Sets the policy.
+        /// </summary>
+        /// <param name="policyJSON">Policy json.</param>
         public void SetPolicy(string policyJSON)
         {
             JObject policyObject = JObject.Parse(policyJSON);
             _deliveryProbability = (double)policyObject.GetValue("p");
         }
 
+        /// <summary>
+        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent"/>.
+        /// </summary>
+        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent"/>.</returns>
         public override string ToString()
         {
             return Id + ":  " + Description;

@@ -3,7 +3,8 @@ uid: protocol_creation
 ---
 
 # Protocol Creation
-Follow the steps below to get a basic Sensus Protocol up and running.
+Follow the steps below to get a basic Sensus Protocol up and running using AWS S3 as the storage endpoint. Alternatively,
+consider setting up a [local-only](xref:local_only_storage) protocol.
 
 1. [Configure](xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore) an AWS S3 bucket for data storage.
 1. Within the Sensus app:
@@ -19,4 +20,4 @@ After a period of time, specifically the [AWS S3 write delay](xref:Sensus.DataSt
 you should see data appear in your AWS S3 bucket. You can force data to be written to your bucket on demand by enabling 
 the [write data](xref:Sensus.Protocol.AllowSubmitData) feature.
 
-See [here](xref:protocol_distribution) for more information about distributing Protocols to others.
+See [here](xref:protocol_distribution) for more information about distributing protocols to others.

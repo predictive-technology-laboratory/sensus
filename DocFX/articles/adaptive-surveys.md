@@ -30,18 +30,35 @@ shows the correct selection:
 1. Add a NuGet reference to [the Sensus package](https://www.nuget.org/packages/Sensus).
 
 1. Add a new class that implements the <xref:Sensus.Probes.User.Scripts.IScriptProbeAgent> interface. Implement all
-abstract methods.
+interface methods.
 
 1. Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient
 solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.
 
 1. Generate a QR code that points to your .dll (e.g., using [QR Code Generator](https://www.qr-code-generator.com/)).
 The content of the QR code must be exactly as shown below:
+```
+survey-agent:URL
+```
+where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the QR code
+content will be similar to the one shown below (note the `dl=1` ending of the URL, and note that the following 
+URL is only an example -- it is not actually valid):
+```
+survey-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/ScriptProbeAgent.dll?dl=1
+```
 
-    survey-agent:URL
-    
-where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the URL 
-will be similar to the one shown below (note the `dl=1` ending):
+1. In the protocol settings for your <xref:Sensus.Probes.User.Scripts.ScriptProbe>, tap "Set Agent" and scan
+your QR code. Sensus will fetch your .dll file and extract any agent definitions contained therein. Select
+your desired agent.
 
-    https://www.dropbox.com/s/nxaatmzuufb5qbk/ExampleScriptProbeAgent.dll?dl=1
-    
+1. Continue with [configuration](xref:protocol_creation) and [distribution](xref:protocol_distribution)
+of your protocol.
+
+## Example Survey Agents
+See the following implementations for example agents:
+
+* [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs)):  A 
+survey agent that randomly decides whether or not to deliver surveys.
+
+* [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs)):  A 
+survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.

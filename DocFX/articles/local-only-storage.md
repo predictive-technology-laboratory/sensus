@@ -44,3 +44,5 @@ Next, use file sharing to save the folder whose name is that of the study identi
 If you do not know your study identifier, then you can view it within Sensus. To view your study
 identifier, tap the protocol and select Edit. The study identifier will be shown at the top of the
 screen (the long sequence of numbers, letters, and dashes).
+
+See [here](xref:protocol_distribution) for more information about distributing protocols to others.

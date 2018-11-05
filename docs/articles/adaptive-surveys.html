@@ -104,20 +104,38 @@ shows the correct selection:</li>
 <li><p>Add a NuGet reference to <a href="https://www.nuget.org/packages/Sensus">the Sensus package</a>.</p>
 </li>
 <li><p>Add a new class that implements the <a class="xref" href="../api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a> interface. Implement all
-abstract methods.</p>
+interface methods.</p>
 </li>
 <li><p>Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient
 solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.</p>
 </li>
 <li><p>Generate a QR code that points to your .dll (e.g., using <a href="https://www.qr-code-generator.com/">QR Code Generator</a>).
 The content of the QR code must be exactly as shown below:</p>
-<p> survey-agent:URL</p>
+<pre><code>survey-agent:URL
+</code></pre><p>where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the QR code
+content will be similar to the one shown below (note the <code>dl=1</code> ending of the URL, and note that the following 
+URL is only an example -- it is not actually valid):</p>
+<pre><code>survey-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/ScriptProbeAgent.dll?dl=1
+</code></pre></li>
+<li><p>In the protocol settings for your <a class="xref" href="../api/Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a>, tap &quot;Set Agent&quot; and scan
+your QR code. Sensus will fetch your .dll file and extract any agent definitions contained therein. Select
+your desired agent.</p>
+</li>
+<li><p>Continue with <a class="xref" href="protocol-creation.html">configuration</a> and <a class="xref" href="protocol-distribution.html">distribution</a>
+of your protocol.</p>
 </li>
 </ol>
-<p>where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the URL 
-will be similar to the one shown below (note the <code>dl=1</code> ending):</p>
-<pre><code>https://www.dropbox.com/s/nxaatmzuufb5qbk/ExampleScriptProbeAgent.dll?dl=1
-</code></pre></article>
+<h2 id="example-survey-agents">Example Survey Agents</h2>
+<p>See the following implementations for example agents:</p>
+<ul>
+<li><p><a class="xref" href="../api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html">Random</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs">here</a>):  A 
+survey agent that randomly decides whether or not to deliver surveys.</p>
+</li>
+<li><p><a class="xref" href="../api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html">Adaptive</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs">here</a>):  A 
+survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.</p>
+</li>
+</ul>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
