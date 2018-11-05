@@ -1522,6 +1522,7 @@ namespace Sensus
             _probes.Add(probe);
             _probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
 
+            // track probes by type for quick lookup
             _typeProbe.Add(probe.GetType(), probe);
         }
 

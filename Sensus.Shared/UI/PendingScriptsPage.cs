@@ -56,7 +56,9 @@ namespace Sensus.UI
                 deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
                 deleteMenuItem.Clicked += async (sender, e) =>
                 {
-                    await SensusServiceHelper.Get().RemoveScriptAsync((sender as MenuItem).CommandParameter as Script);
+                    Script scriptToDelete = (sender as MenuItem).CommandParameter as Script;
+                    scriptToDelete.Runner.Probe.Agent?.Observe(scriptToDelete, ScriptState.Deleted);
+                    await SensusServiceHelper.Get().RemoveScriptAsync(scriptToDelete, true);
                 };
 
                 ContextActions.Add(deleteMenuItem);
@@ -86,13 +88,35 @@ namespace Sensus.UI
 
                 Script selectedScript = scriptList.SelectedItem as Script;
 
+                selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Opened);
+
                 selectedScript.Submitting = true;
 
                 IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(selectedScript.RunTime, selectedScript.InputGroups, null, selectedScript.Runner.AllowCancel, null, null, selectedScript.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", selectedScript.Runner.DisplayProgress, null);
 
                 bool canceled = inputGroups == null;
 
-                // process all inputs in the script
+                if (canceled)
+                {
+                    selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Cancelled);
+                }
+                else
+                {
+                    selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Submitted);
+
+                    // track times when script is completely valid and wasn't cancelled by the user
+                    if (selectedScript.Valid)
+                    {
+                        // add completion time and remove all completion times before the participation horizon
+                        lock (selectedScript.Runner.CompletionTimes)
+                        {
+                            selectedScript.Runner.CompletionTimes.Add(DateTime.Now);
+                            selectedScript.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < selectedScript.Runner.Probe.Protocol.ParticipationHorizon);
+                        }
+                    }
+                }
+
+                // process/store all inputs in the script
                 bool inputStored = false;
                 foreach (InputGroup inputGroup in selectedScript.InputGroups)
                 {
@@ -126,17 +150,7 @@ namespace Sensus.UI
                     }
                 }
 
-                // track times when script is completely valid
-                if (selectedScript.Valid)
-                {
-                    // add completion time and remove all completion times before the participation horizon
-                    lock (selectedScript.Runner.CompletionTimes)
-                    {
-                        selectedScript.Runner.CompletionTimes.Add(DateTime.Now);
-                        selectedScript.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < selectedScript.Runner.Probe.Protocol.ParticipationHorizon);
-                    }
-                }
-
+                // update UI to indicate that the script is no longer being submitted
                 selectedScript.Submitting = false;
 
                 if (canceled)
@@ -145,7 +159,8 @@ namespace Sensus.UI
                 }
                 else
                 {
-                    await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript);
+                    // remove the submitted script
+                    await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript, true);
                 }
 
                 SensusServiceHelper.Get().Logger.Log("\"" + selectedScript.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));

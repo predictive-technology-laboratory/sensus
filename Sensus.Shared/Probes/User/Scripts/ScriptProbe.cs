@@ -60,6 +60,7 @@ namespace Sensus.Probes.User.Scripts
         {
             get
             {
+                // attempt to lazy-load the agent if there is none
                 if (_agent == null)
                 {
                     try
@@ -76,11 +77,20 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 _agent = value;
+                AgentId = _agent?.Id;
             }
         }
 
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
         public byte[] AgentAssemblyBytes { get; set; }
 
+        /// <summary>
+        /// Id of the <see cref="Agent"/> to use within <see cref="AgentAssemblyBytes"/>
+        /// </summary>
+        /// <value>The agent identifier.</value>
         public string AgentId { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
@@ -178,6 +188,8 @@ namespace Sensus.Probes.User.Scripts
                     await scriptRunner.InitializeAsync();
                 }
             }
+
+            Agent?.Reset();
         }
 
         protected override async Task ProtectedStartAsync()

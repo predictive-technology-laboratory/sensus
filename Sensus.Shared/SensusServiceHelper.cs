@@ -799,19 +799,26 @@ namespace Sensus
             }
         }
 
-        public async Task RemoveScriptAsync(Script script)
+        public async Task RemoveScriptAsync(Script script, bool issueNotification)
         {
-            await RemoveScriptsAsync(true, script);
+            await RemoveScriptsAsync(issueNotification, script);
         }
 
-        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner)
+        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner, bool issueNotification)
         {
-            await RemoveScriptsAsync(true, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
+            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
         public async Task RemoveExpiredScriptsAsync(bool issueNotification)
         {
-            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(s => s.Expired).ToArray());
+            foreach (Script script in _scriptsToRun)
+            {
+                if (script.Expired)
+                {
+                    await RemoveScriptAsync(script, issueNotification);
+                    script.Runner.Probe.Agent?.Observe(script, ScriptState.Expired);
+                }
+            }
         }
 
         public async Task ClearScriptsAsync()
@@ -1560,7 +1567,7 @@ namespace Sensus
         {
             bool removed = false;
 
-            foreach (var script in scripts)
+            foreach (Script script in scripts)
             {
                 if (_scriptsToRun.Remove(script))
                 {

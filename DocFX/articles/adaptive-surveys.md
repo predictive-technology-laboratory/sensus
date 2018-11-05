@@ -29,7 +29,7 @@ shows the correct selection:
 
 1. Add a NuGet reference to [the Sensus package](https://www.nuget.org/packages/Sensus).
 
-1. Add a new class that implements the `IScriptProbeAgent` interface. Implement all
+1. Add a new class that implements the <xref:Sensus.Probes.User.Scripts.IScriptProbeAgent> interface. Implement all
 abstract methods.
 
 1. Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient

@@ -27,6 +27,7 @@ using Newtonsoft.Json;
 using Sensus.UI.Inputs;
 using System.Net;
 using System;
+using System.Threading.Tasks;
 
 namespace Sensus.UI
 {
@@ -117,79 +118,40 @@ namespace Sensus.UI
 
                 Button setAgentButton = new Button
                 {
-                    Text = "Set Agent",
+                    Text = "Set Agent" + (scriptProbe.Agent == null ? "" : ":  " + scriptProbe.Agent.Id),
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                setAgentButton.Clicked += async (o, e) =>
+                setAgentButton.Clicked += async (sender, e) =>
                 {
-                    // prompt for agent URL
-                    QrCodeInput agentUrlQrCodeInput = await SensusServiceHelper.Get().PromptForInputAsync("Survey Agent", new QrCodeInput(QrCodePrefix.SURVEY_AGENT, "URL:", false, "Agent URL:")
-                    {
-                        Required = true
-
-                    }, null, true, "Set", null, null, null, false) as QrCodeInput;
-
-                    string agentURL = agentUrlQrCodeInput?.Value?.ToString();
-
-                    if (string.IsNullOrWhiteSpace(agentURL))
-                    {
-                        return;
-                    }
-
-                    // download agent
-                    string downloadErrorMessage = null;
-                    try
-                    {
-                        // download the assembly and extract agents
-                        byte[] downloadedBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
-                        List<IScriptProbeAgent> agents = ScriptProbe.GetAgents(downloadedBytes);
-
-                        // let user choose agent if needed
-                        if (agents.Count == 0)
-                        {
-                            downloadErrorMessage = "No agents were present in the specified file.";
-                        }
-                        else if (agents.Count == 1)
-                        {
-                            IScriptProbeAgent agent = agents[0];
-
-                            if (await DisplayAlert("Survey Agent", "Would you like to use the following agent?" + Environment.NewLine + Environment.NewLine + agent.Name, "Yes", "No"))
-                            {
-                                scriptProbe.Agent = agents[0];
-                            }
-                        }
-                        else
-                        {
-                            ItemPickerPageInput agentPicker = await SensusServiceHelper.Get().PromptForInputAsync("Survey Agent", new ItemPickerPageInput("Select Agent", agents.Cast<object>().ToList(), "Name")
-                            {
-                                Required = true
-
-                            }, null, true, "OK", null, null, null, false) as ItemPickerPageInput;
-
-                            scriptProbe.Agent = agentPicker?.Value as IScriptProbeAgent;
-                        }
-
-                        if (scriptProbe.Agent != null)
-                        {
-                            scriptProbe.AgentAssemblyBytes = downloadedBytes;
-                            scriptProbe.AgentId = scriptProbe.Agent.Id;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        downloadErrorMessage = ex.Message;
-                    }
-
-                    if (downloadErrorMessage != null)
-                    {
-                        SensusServiceHelper.Get().Logger.Log(downloadErrorMessage, LoggingLevel.Normal, typeof(Protocol));
-                        await SensusServiceHelper.Get().FlashNotificationAsync(downloadErrorMessage);
-                    }
+                    await SetAgentButton_Clicked(setAgentButton, scriptProbe);
                 };
 
                 contentLayout.Children.Add(setAgentButton);
+
+                Button clearAgentButton = new Button
+                {
+                    Text = "Clear Agent",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                clearAgentButton.Clicked += async (sender, e) =>
+                {
+                    if (scriptProbe.Agent != null)
+                    {
+                        if (await DisplayAlert("Confirm", "Are you sure you wish to clear the survey agent?", "Yes", "No"))
+                        {
+                            scriptProbe.Agent = null;
+                            setAgentButton.Text = "Set Agent";
+                        }
+                    }
+
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Survey agent cleared.");
+                };
+
+                contentLayout.Children.Add(clearAgentButton);
             }
             #endregion
 
@@ -224,7 +186,7 @@ namespace Sensus.UI
 
                 contentLayout.Children.Add(editBeaconsButton);
 
-                editBeaconsButton.Clicked += async (sender, e) => 
+                editBeaconsButton.Clicked += async (sender, e) =>
                 {
                     await Navigation.PushAsync(new EstimoteBeaconProbeBeaconsPage(probe as EstimoteBeaconProbe));
                 };
@@ -314,6 +276,96 @@ namespace Sensus.UI
             {
                 Content = contentLayout
             };
+        }
+
+        private async Task SetAgentButton_Clicked(Button setAgentButton, ScriptProbe scriptProbe)
+        {
+            List<Input> agentSelectionInputs = new List<Input>();
+
+            // show any existing agents from previously selected assembly
+            ItemPickerPageInput currentAgentsPicker = null;
+            if (scriptProbe.AgentAssemblyBytes != null)
+            {
+                try
+                {
+                    List<IScriptProbeAgent> currentAgents = ScriptProbe.GetAgents(scriptProbe.AgentAssemblyBytes);
+
+                    if (currentAgents.Count > 0)
+                    {
+                        currentAgentsPicker = new ItemPickerPageInput("Available:" + (currentAgents.Count > 1 ? "s" : ""), currentAgents.Cast<object>().ToList(), "Id")
+                        {
+                            Required = false
+                        };
+
+                        agentSelectionInputs.Add(currentAgentsPicker);
+                    }
+                }
+                catch (Exception)
+                { }
+            }
+
+            // add option to scan qr code to import a new library
+            QrCodeInput agentAssemblyUrlQrCodeInput = new QrCodeInput(QrCodePrefix.SURVEY_AGENT, "URL:", false, "Agent URL:")
+            {
+                Required = false
+            };
+
+            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Survey Agent", agentSelectionInputs, null, true, "Set", null, null, null, false);
+
+            if (completedInputs == null)
+            {
+                return;
+            }
+
+            // check for QR code. if there is none, check whether the user selected a current agent.
+            string agentURL = agentAssemblyUrlQrCodeInput.Value?.ToString();
+            if (string.IsNullOrWhiteSpace(agentURL))
+            {
+                if (currentAgentsPicker != null)
+                {
+                    scriptProbe.Agent = currentAgentsPicker.Value as IScriptProbeAgent;
+
+                    // update button if agent was selected
+                    if (scriptProbe.Agent != null)
+                    {
+                        setAgentButton.Text = "Set Agent:  " + scriptProbe.Agent.Id;
+                    }
+                }
+            }
+            else
+            {
+                // download agent assembly from scanned QR code
+                byte[] downloadedBytes = null;
+                string downloadErrorMessage = null;
+                try
+                {
+                    // download the assembly and extract agents
+                    downloadedBytes = scriptProbe.AgentAssemblyBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
+                    List<IScriptProbeAgent> qrCodeAgents = ScriptProbe.GetAgents(downloadedBytes);
+
+                    if (qrCodeAgents.Count == 0)
+                    {
+                        throw new Exception("No agents were present in the specified file.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    downloadErrorMessage = ex.Message;
+                }
+
+                // if error message is null, then we have 1 or more agents in the downloaded assembly.
+                if (downloadErrorMessage == null)
+                {
+                    // redisplay the current input prompt including the agents we just downloaded
+                    scriptProbe.AgentAssemblyBytes = downloadedBytes;
+                    await SetAgentButton_Clicked(setAgentButton, scriptProbe);
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log(downloadErrorMessage, LoggingLevel.Normal, typeof(Protocol));
+                    await SensusServiceHelper.Get().FlashNotificationAsync(downloadErrorMessage);
+                }
+            }
         }
     }
 }
