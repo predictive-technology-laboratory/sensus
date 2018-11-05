@@ -74,8 +74,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android.Tests.AppCen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests.AppCenter", "Sensus.iOS.Tests.AppCenter\Sensus.iOS.Tests.AppCenter.csproj", "{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleScriptProbeAgent", "ExampleScriptProbeAgent\ExampleScriptProbeAgent.csproj", "{55EEC946-EC65-4F88-ABFE-6027FE9968CC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Shared.NuGet", "Sensus.Shared.NuGet\Sensus.Shared.NuGet.csproj", "{117104F2-EE3A-4BF1-B617-DE009D6453F7}"
 EndProject
 Global
@@ -176,30 +174,6 @@ Global
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|Android.ActiveCfg = Release|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|Android.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|Android.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|Android.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|iPhone.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|Android.ActiveCfg = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|Android.Build.0 = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|iPhone.Build.0 = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{55EEC946-EC65-4F88-ABFE-6027FE9968CC}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{117104F2-EE3A-4BF1-B617-DE009D6453F7}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
 		{117104F2-EE3A-4BF1-B617-DE009D6453F7}.Ad-Hoc|Android.Build.0 = Debug|Any CPU
 		{117104F2-EE3A-4BF1-B617-DE009D6453F7}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU

@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <PackOnBuild>true</PackOnBuild>
     <PackageId>Sensus</PackageId>
-    <PackageVersion>1.4.0</PackageVersion>
+    <PackageVersion>1.6.0</PackageVersion>
     <Authors>Matthew Gerber</Authors>
-    <Description>Sensus</Description>
+    <Description>Package for developing plug-ins and other code modules that integrate with Sensus.</Description>
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <PackageIconUrl>https://github.com/predictive-technology-laboratory/sensus/raw/develop/Graphics/group-of-members-users-icon.png</PackageIconUrl>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Owners>Matthew Gerber</Owners>
+    <PackageProjectUrl>https://predictive-technology-laboratory.github.io/sensus/</PackageProjectUrl>
+    <Title>Sensus</Title>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Class1.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
   </ItemGroup>
 </Project>
