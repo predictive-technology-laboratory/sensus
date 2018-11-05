@@ -152,7 +152,12 @@
   
   
   <h4 id="Sensus_Probes_User_Scripts_ScriptState_Delivered" data-uid="Sensus.Probes.User.Scripts.ScriptState.Delivered">Delivered</h4>
-  <div class="markdown level1 summary"><p>The script was delivered to the user and made available for taking.</p>
+  <div class="markdown level1 summary"><p>The script was delivered to the user and made available for taking. On Android this will be exactly
+the scheduled/triggered time. On iOS, this will be exactly the triggered time, but when it comes to
+scheduled scripts the timing depends on whether push notifications are enabled. Without push notifications
+the delivery time will be when the user brings the app to the foreground. With push notifications
+enabled, the delivery time will correspond to the arrival of the push notification, which causes the
+script to run.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

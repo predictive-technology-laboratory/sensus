@@ -530,7 +530,7 @@ namespace Sensus.Probes.User.Scripts
         private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
         {
             // don't bother with the script if it's coming too soon.
-            if (triggerTime.ReferenceTillTrigger.TotalMinutes <= 1)
+            if (triggerTime.ReferenceTillTrigger.TotalSeconds <= 5)
             {
                 return;
             }
@@ -702,8 +702,8 @@ namespace Sensus.Probes.User.Scripts
                             expiration = trigger + _maxAge.Value;
                         }
 
-                        // there is no window, so just add a descriptive word in place of the window
-                        ScriptTriggerTime triggerTime = new ScriptTriggerTime(reference, trigger, expiration, "DEFERRED");
+                        // there is no window, so just add a descriptive, unique descriptor in place of the window
+                        ScriptTriggerTime triggerTime = new ScriptTriggerTime(reference, trigger, expiration, "DEFERRED-" + Guid.NewGuid());
 
                         // schedule the trigger
                         await ScheduleScriptRunAsync(triggerTime);

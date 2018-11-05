@@ -27,7 +27,15 @@ namespace ExampleScriptProbeAgent
     /// </summary>
     public class ExampleAdaptiveScriptProbeAgent : IScriptProbeAgent
     {
+        /// <summary>
+        /// How much should the agent be rewarded when the user either opens (positive) or cancels (negative) a survey?
+        /// </summary>
         private readonly double OPEN_CANCEL_REWARD = 0.1;
+
+        /// <summary>
+        /// How much should the agent be rewarded when the user submits (positive), deletes (negative), or allows to 
+        /// expire (negative) the survey?
+        /// </summary>
         private readonly double SUBMIT_DELETE_EXPIRE_REWARD = 0.2;
 
         private long _numDataObserved;

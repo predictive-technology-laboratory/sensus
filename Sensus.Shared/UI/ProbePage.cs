@@ -292,7 +292,7 @@ namespace Sensus.UI
 
                     if (currentAgents.Count > 0)
                     {
-                        currentAgentsPicker = new ItemPickerPageInput("Available:" + (currentAgents.Count > 1 ? "s" : ""), currentAgents.Cast<object>().ToList(), "Id")
+                        currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList(), ".")
                         {
                             Required = false
                         };
@@ -310,6 +310,8 @@ namespace Sensus.UI
                 Required = false
             };
 
+            agentSelectionInputs.Add(agentAssemblyUrlQrCodeInput);
+
             List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Survey Agent", agentSelectionInputs, null, true, "Set", null, null, null, false);
 
             if (completedInputs == null)
@@ -323,12 +325,19 @@ namespace Sensus.UI
             {
                 if (currentAgentsPicker != null)
                 {
-                    scriptProbe.Agent = currentAgentsPicker.Value as IScriptProbeAgent;
+                    IScriptProbeAgent selectedAgent = (currentAgentsPicker.Value as List<object>).FirstOrDefault() as IScriptProbeAgent;
 
-                    // update button if agent was selected
-                    if (scriptProbe.Agent != null)
+                    // set the selected agent, watching out for a null (clearing) selection that needs to be confirmed
+                    if (selectedAgent != null || await DisplayAlert("Confirm", "Are you sure you wish to clear the survey agent?", "Yes", "No"))
                     {
-                        setAgentButton.Text = "Set Agent:  " + scriptProbe.Agent.Id;
+                        scriptProbe.Agent = selectedAgent;
+
+                        setAgentButton.Text = "Set Agent" + (scriptProbe.Agent == null ? "" : ":  " + scriptProbe.Agent.Id);
+
+                        if (scriptProbe.Agent == null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Survey agent cleared.");
+                        }
                     }
                 }
             }

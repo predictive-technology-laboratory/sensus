@@ -25,7 +25,7 @@ namespace ExampleScriptProbeAgent
     /// </summary>
     public class ExampleRandomScriptProbeAgent : IScriptProbeAgent
     {
-        private double _deliveryProbability;
+        private double _deliveryProbability = 0.5;
 
         public string Description => "p=" + _deliveryProbability;
 
