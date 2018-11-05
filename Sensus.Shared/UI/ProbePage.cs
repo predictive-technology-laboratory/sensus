@@ -172,7 +172,7 @@ namespace Sensus.UI
                             scriptProbe.Agent = agentPicker?.Value as IScriptProbeAgent;
                         }
 
-                        if(scriptProbe.Agent != null)
+                        if (scriptProbe.Agent != null)
                         {
                             scriptProbe.AgentBytes = downloadedBytes;
                             scriptProbe.AgentId = scriptProbe.Agent.Id;

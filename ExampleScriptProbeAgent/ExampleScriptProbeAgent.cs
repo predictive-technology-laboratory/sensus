@@ -23,9 +23,9 @@ namespace ExampleScriptProbeAgent
     {
         private double DeliveryProbability => 0.5;
 
-        public string Name => throw new NotImplementedException();
+        public string Name => "Randon (p = " + DeliveryProbability + ")";
 
-        public string Id => throw new NotImplementedException();
+        public string Id => "1";
 
         public void Observe(IDatum datum)
         {

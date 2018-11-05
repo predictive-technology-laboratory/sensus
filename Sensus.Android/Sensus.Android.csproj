@@ -341,7 +341,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="AndroidMainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ExampleScriptProbeAgent.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
