@@ -414,55 +414,72 @@ namespace Sensus.UI
 
                             // pop up wait screen while we get the participation reward datum
                             IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(
-                            null,
-                            new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
-                            cancellationTokenSource.Token,
-                            false,
-                            "Cancel",
-                            null,
-                            null,
-                            null,
-                            false,
-                            async () =>
-                            {
-                                // after the page shows up, attempt to retrieve the participation reward datum.
-                                try
-                                {
-                                    ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult, cancellationTokenSource.Token);
+                                                  null,
+                                                  new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
+                                                  cancellationTokenSource.Token,
+                                                  false,
+                                                  "Cancel",
+                                                  null,
+                                                  null,
+                                                  null,
+                                                  false,
+                                                  async () =>
+                                                  {
 
-                                    // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
-                                    if (!cancellationTokenSource.IsCancellationRequested)
-                                    {
-                                        cancellationTokenSource.Cancel();
-                                    }
+                                                      // after the page shows up, attempt to retrieve the participation reward datum.
+                                                      try
+                                                      {
 
-                                    // ensure that the participation datum has not expired                                           
-                                    if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
-                                    {
-                                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                                    {
-                                        await Navigation.PushAsync(new VerifiedParticipationPage(selectedProtocol, participationRewardDatum));
-                                    });
-                                    }
-                                    else
-                                    {
-                                        await SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    await SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
-                                }
-                                finally
-                                {
-                                    // cancel the token to close the input above, but only if the token hasn't already been canceled by the user. this will be
-                                    // used if an exception is thrown while getting the participation reward datum.
-                                    if (!cancellationTokenSource.IsCancellationRequested)
-                                    {
-                                        cancellationTokenSource.Cancel();
-                                    }
-                                }
-                            });
+                                                          ParticipationRewardDatum participationRewardDatum = await selectedProtocol.RemoteDataStore.GetDatumAsync<ParticipationRewardDatum>(barcodeResult, cancellationTokenSource.Token);
+
+
+                                                          // cancel the token to close the input above, but only if the token hasn't already been canceled by the user.
+                                                          if (!cancellationTokenSource.IsCancellationRequested)
+                                                          {
+
+                                                              cancellationTokenSource.Cancel();
+
+                                                          }
+
+                                                          // ensure that the participation datum has not expired                                           
+                                                          if (participationRewardDatum.Timestamp > DateTimeOffset.UtcNow.AddSeconds(-SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS))
+                                                          {
+
+                                                              await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+
+                                                              {
+
+                                                                  await Navigation.PushAsync(new VerifiedParticipationPage(selectedProtocol, participationRewardDatum));
+
+                                                              });
+
+                                                          }
+                                                          else
+                                                          {
+
+                                                              await SensusServiceHelper.Get().FlashNotificationAsync("Participation barcode has expired. The participant needs to regenerate the barcode.");
+
+                                                          }
+                                                      }
+                                                      catch (Exception)
+                                                      {
+
+                                                          await SensusServiceHelper.Get().FlashNotificationAsync("Failed to retrieve participation information.");
+
+                                                      }
+                                                      finally
+                                                      {
+
+                                                          // cancel the token to close the input above, but only if the token hasn't already been canceled by the user. this will be
+                                                          // used if an exception is thrown while getting the participation reward datum.
+                                                          if (!cancellationTokenSource.IsCancellationRequested)
+                                                          {
+                                                              cancellationTokenSource.Cancel();
+                                                          }
+
+                                                      }
+
+                                                  });
 
                             // if the prompt was closed by the user instead of the cancellation token, cancel the token in order
                             // to cancel the datum retrieval. if the prompt was closed by the termination of the remote
