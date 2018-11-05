@@ -34,7 +34,7 @@
     <DefineConstants>DEBUG;__ANDROID__;UNIT_TEST</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <JavaMaximumHeapSize></JavaMaximumHeapSize>
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <AndroidSupportedAbis>arm64-v8a;armeabi;armeabi-v7a;x86</AndroidSupportedAbis>
     <NoWarn></NoWarn>
   </PropertyGroup>
@@ -52,6 +52,9 @@
     <AndroidSupportedAbis>armeabi-v7a;arm64-v8a;x86</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
     <Reference Include="xunit.assert">
       <HintPath>..\packages\xunit.assert.2.4.0\lib\netstandard2.0\xunit.assert.dll</HintPath>
@@ -328,7 +331,7 @@
       <HintPath>..\packages\Xamarin.Azure.NotificationHubs.Android.0.4.0\lib\MonoAndroid403\Xamarin.Azure.NotificationHubs.Android.dll</HintPath>
     </Reference>
     <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.8.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+      <HintPath>..\packages\Sensus.1.10.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

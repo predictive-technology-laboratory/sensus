@@ -104,10 +104,20 @@ shows the correct selection:</li>
 <li><p>Add a NuGet reference to <a href="https://www.nuget.org/packages/Sensus/1.0.0">the Sensus package</a>.</p>
 </li>
 <li><p>Add a new class to the project that inherits from the <code>ScriptRunnerAgent</code> class. Implement all
-abstract methods.</p>
+abstract methods. You can read more about these methods <a href="">here</a>.</p>
+</li>
+<li><p>Build the class library project, and upload the resulting .dll to a web-accessible URL. A convenient
+solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.</p>
+</li>
+<li><p>Generate a QR code that points to your .dll (e.g., using <a href="https://www.qr-code-generator.com/">QR Code Generator</a>).
+The content of the QR code must be exactly as shown below:</p>
+<p> survey-agent:URL</p>
 </li>
 </ol>
-</article>
+<p>where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, the URL 
+will be similar to the one shown below (note the <code>dl=1</code> ending):</p>
+<pre><code>https://www.dropbox.com/s/nxaatmzuufb5qbk/ExampleSurveyAgent.dll?dl=1
+</code></pre></article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">

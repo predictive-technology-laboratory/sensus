@@ -40,7 +40,7 @@ namespace Sensus
         public const string IAM_CREDENTIALS = "iam-credentials:";
 
         /// <summary>
-        /// Survey agents (see <see cref="Sensus.Probes.User.Scripts.ScriptRunner.Agent"/>). Following this prefix should be an internet-accessible URL from which to download an agent library via HTTPS.
+        /// Survey agents (see <see cref="Sensus.Probes.User.Scripts.ScriptProbe.Agent"/>). Following this prefix should be an internet-accessible URL from which to download an agent library via HTTPS.
         /// </summary>
         public const string SURVEY_AGENT = "survey-agent:";
     }

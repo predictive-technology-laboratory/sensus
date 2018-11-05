@@ -96,6 +96,11 @@ and iOS, so be sure to read the relevant documentation for those probes.</p>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
     <div class="level2"><span class="xref">ProximityDatum</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">Sensus.Probes.Location.IProximityDatum</span></div>
+    <div><span class="xref">Sensus.IDatum</span></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -151,7 +156,7 @@ and iOS, so be sure to read the relevant documentation for those probes.</p>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Location_ProximityDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ProximityDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class ProximityDatum : Datum, IProximityDatum, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -338,6 +343,13 @@ doesn&apos;t report an accurate distance.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">Sensus.Probes.Location.IProximityDatum</span>
+  </div>
+  <div>
+      <span class="xref">Sensus.IDatum</span>
+  </div>
 </article>
           </div>
           

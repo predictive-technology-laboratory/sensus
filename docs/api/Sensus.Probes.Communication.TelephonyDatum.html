@@ -83,10 +83,10 @@
   
   <h1 id="Sensus_Probes_Communication_TelephonyDatum" data-uid="Sensus.Probes.Communication.TelephonyDatum" class="text-break">Class TelephonyDatum
   </h1>
-  <div class="markdown level0 summary"><p>Represents phone call meta-data in terms of the phones <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html">TelephonyState</a>, the other phone number, and -- if
-a call just ended -- the duration of the call. Both <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_IncomingCall">IncomingCall</a> and <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_OutgoingCall">OutgoingCall</a>
+  <div class="markdown level0 summary"><p>Represents phone call meta-data in terms of the phones <span class="xref">Sensus.Probes.Communication.TelephonyState</span>, the other phone number, and -- if
+a call just ended -- the duration of the call. Both <span class="xref">Sensus.Probes.Communication.TelephonyState.IncomingCall</span> and <span class="xref">Sensus.Probes.Communication.TelephonyState.OutgoingCall</span>
 values will be associated with an unspecified <a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html#Sensus_Probes_Communication_TelephonyDatum_CallDurationSeconds">CallDurationSeconds</a>, as the former are recorded to mark the time
-at which the incoming call arrived or went out, respectively. When a call ends and the phone returns to <a class="xref" href="Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_Idle">Idle</a>, then
+at which the incoming call arrived or went out, respectively. When a call ends and the phone returns to <span class="xref">Sensus.Probes.Communication.TelephonyState.Idle</span>, then
 there will be a value for <a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html#Sensus_Probes_Communication_TelephonyDatum_CallDurationSeconds">CallDurationSeconds</a> indicating how long the call lasted.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -95,6 +95,11 @@ there will be a value for <a class="xref" href="Sensus.Probes.Communication.Tele
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
     <div class="level2"><span class="xref">TelephonyDatum</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">Sensus.Probes.Communication.ITelephonyDatum</span></div>
+    <div><span class="xref">Sensus.IDatum</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -151,7 +156,7 @@ there will be a value for <a class="xref" href="Sensus.Probes.Communication.Tele
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Communication_TelephonyDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class TelephonyDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class TelephonyDatum : Datum, ITelephonyDatum, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -181,7 +186,7 @@ there will be a value for <a class="xref" href="Sensus.Probes.Communication.Tele
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Probes.Communication.TelephonyState.html">TelephonyState</a></td>
+        <td><span class="xref">Sensus.Probes.Communication.TelephonyState</span></td>
         <td><span class="parametername">state</span></td>
         <td></td>
       </tr>
@@ -302,7 +307,7 @@ public TelephonyState State { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Probes.Communication.TelephonyState.html">TelephonyState</a></td>
+        <td><span class="xref">Sensus.Probes.Communication.TelephonyState</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -365,6 +370,13 @@ public TelephonyState State { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">Sensus.Probes.Communication.ITelephonyDatum</span>
+  </div>
+  <div>
+      <span class="xref">Sensus.IDatum</span>
+  </div>
 </article>
           </div>
           

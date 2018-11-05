@@ -23346,24 +23346,6 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
-  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  name: UnsetPushNotificationTokenException()
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
-  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
-  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -29700,36 +29682,6 @@ references:
   commentId: Overload:Sensus.Probes.Communication.TelephonyDatum.ToString
   fullName: Sensus.Probes.Communication.TelephonyDatum.ToString
   nameWithType: TelephonyDatum.ToString
-- uid: Sensus.Probes.Communication.TelephonyState
-  name: TelephonyState
-  href: api/Sensus.Probes.Communication.TelephonyState.html
-  commentId: T:Sensus.Probes.Communication.TelephonyState
-  fullName: Sensus.Probes.Communication.TelephonyState
-  nameWithType: TelephonyState
-- uid: Sensus.Probes.Communication.TelephonyState.Idle
-  name: Idle
-  href: api/Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_Idle
-  commentId: F:Sensus.Probes.Communication.TelephonyState.Idle
-  fullName: Sensus.Probes.Communication.TelephonyState.Idle
-  nameWithType: TelephonyState.Idle
-- uid: Sensus.Probes.Communication.TelephonyState.IncomingCall
-  name: IncomingCall
-  href: api/Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_IncomingCall
-  commentId: F:Sensus.Probes.Communication.TelephonyState.IncomingCall
-  fullName: Sensus.Probes.Communication.TelephonyState.IncomingCall
-  nameWithType: TelephonyState.IncomingCall
-- uid: Sensus.Probes.Communication.TelephonyState.OutgoingCall
-  name: OutgoingCall
-  href: api/Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_OutgoingCall
-  commentId: F:Sensus.Probes.Communication.TelephonyState.OutgoingCall
-  fullName: Sensus.Probes.Communication.TelephonyState.OutgoingCall
-  nameWithType: TelephonyState.OutgoingCall
-- uid: Sensus.Probes.Communication.TelephonyState.value__
-  name: value__
-  href: api/Sensus.Probes.Communication.TelephonyState.html#Sensus_Probes_Communication_TelephonyState_value__
-  commentId: F:Sensus.Probes.Communication.TelephonyState.value__
-  fullName: Sensus.Probes.Communication.TelephonyState.value__
-  nameWithType: TelephonyState.value__
 - uid: Sensus.Probes.Context
   name: Sensus.Probes.Context
   href: api/Sensus.Probes.Context.html
@@ -32202,30 +32154,6 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync
   nameWithType: EstimoteBeaconProbe.InitializeAsync
-- uid: Sensus.Probes.Location.EstimoteBeaconProximityEvent
-  name: EstimoteBeaconProximityEvent
-  href: api/Sensus.Probes.Location.EstimoteBeaconProximityEvent.html
-  commentId: T:Sensus.Probes.Location.EstimoteBeaconProximityEvent
-  fullName: Sensus.Probes.Location.EstimoteBeaconProximityEvent
-  nameWithType: EstimoteBeaconProximityEvent
-- uid: Sensus.Probes.Location.EstimoteBeaconProximityEvent.Entered
-  name: Entered
-  href: api/Sensus.Probes.Location.EstimoteBeaconProximityEvent.html#Sensus_Probes_Location_EstimoteBeaconProximityEvent_Entered
-  commentId: F:Sensus.Probes.Location.EstimoteBeaconProximityEvent.Entered
-  fullName: Sensus.Probes.Location.EstimoteBeaconProximityEvent.Entered
-  nameWithType: EstimoteBeaconProximityEvent.Entered
-- uid: Sensus.Probes.Location.EstimoteBeaconProximityEvent.Exited
-  name: Exited
-  href: api/Sensus.Probes.Location.EstimoteBeaconProximityEvent.html#Sensus_Probes_Location_EstimoteBeaconProximityEvent_Exited
-  commentId: F:Sensus.Probes.Location.EstimoteBeaconProximityEvent.Exited
-  fullName: Sensus.Probes.Location.EstimoteBeaconProximityEvent.Exited
-  nameWithType: EstimoteBeaconProximityEvent.Exited
-- uid: Sensus.Probes.Location.EstimoteBeaconProximityEvent.value__
-  name: value__
-  href: api/Sensus.Probes.Location.EstimoteBeaconProximityEvent.html#Sensus_Probes_Location_EstimoteBeaconProximityEvent_value__
-  commentId: F:Sensus.Probes.Location.EstimoteBeaconProximityEvent.value__
-  fullName: Sensus.Probes.Location.EstimoteBeaconProximityEvent.value__
-  nameWithType: EstimoteBeaconProximityEvent.value__
 - uid: Sensus.Probes.Location.GpsReceiver
   name: GpsReceiver
   href: api/Sensus.Probes.Location.GpsReceiver.html
@@ -33534,30 +33462,6 @@ references:
   commentId: Overload:Sensus.Probes.Location.ProximityProbe.GetChartSeries
   fullName: Sensus.Probes.Location.ProximityProbe.GetChartSeries
   nameWithType: ProximityProbe.GetChartSeries
-- uid: Sensus.Probes.Location.ProximityThresholdDirection
-  name: ProximityThresholdDirection
-  href: api/Sensus.Probes.Location.ProximityThresholdDirection.html
-  commentId: T:Sensus.Probes.Location.ProximityThresholdDirection
-  fullName: Sensus.Probes.Location.ProximityThresholdDirection
-  nameWithType: ProximityThresholdDirection
-- uid: Sensus.Probes.Location.ProximityThresholdDirection.Outside
-  name: Outside
-  href: api/Sensus.Probes.Location.ProximityThresholdDirection.html#Sensus_Probes_Location_ProximityThresholdDirection_Outside
-  commentId: F:Sensus.Probes.Location.ProximityThresholdDirection.Outside
-  fullName: Sensus.Probes.Location.ProximityThresholdDirection.Outside
-  nameWithType: ProximityThresholdDirection.Outside
-- uid: Sensus.Probes.Location.ProximityThresholdDirection.value__
-  name: value__
-  href: api/Sensus.Probes.Location.ProximityThresholdDirection.html#Sensus_Probes_Location_ProximityThresholdDirection_value__
-  commentId: F:Sensus.Probes.Location.ProximityThresholdDirection.value__
-  fullName: Sensus.Probes.Location.ProximityThresholdDirection.value__
-  nameWithType: ProximityThresholdDirection.value__
-- uid: Sensus.Probes.Location.ProximityThresholdDirection.Within
-  name: Within
-  href: api/Sensus.Probes.Location.ProximityThresholdDirection.html#Sensus_Probes_Location_ProximityThresholdDirection_Within
-  commentId: F:Sensus.Probes.Location.ProximityThresholdDirection.Within
-  fullName: Sensus.Probes.Location.ProximityThresholdDirection.Within
-  nameWithType: ProximityThresholdDirection.Within
 - uid: Sensus.Probes.Movement
   name: Sensus.Probes.Movement
   href: api/Sensus.Probes.Movement.html
@@ -33828,102 +33732,6 @@ references:
   commentId: Overload:Sensus.Probes.Movement.AccelerometerProbe.StartListeningAsync
   fullName: Sensus.Probes.Movement.AccelerometerProbe.StartListeningAsync
   nameWithType: AccelerometerProbe.StartListeningAsync
-- uid: Sensus.Probes.Movement.Activities
-  name: Activities
-  href: api/Sensus.Probes.Movement.Activities.html
-  commentId: T:Sensus.Probes.Movement.Activities
-  fullName: Sensus.Probes.Movement.Activities
-  nameWithType: Activities
-- uid: Sensus.Probes.Movement.Activities.InVehicle
-  name: InVehicle
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_InVehicle
-  commentId: F:Sensus.Probes.Movement.Activities.InVehicle
-  fullName: Sensus.Probes.Movement.Activities.InVehicle
-  nameWithType: Activities.InVehicle
-- uid: Sensus.Probes.Movement.Activities.OnBicycle
-  name: OnBicycle
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_OnBicycle
-  commentId: F:Sensus.Probes.Movement.Activities.OnBicycle
-  fullName: Sensus.Probes.Movement.Activities.OnBicycle
-  nameWithType: Activities.OnBicycle
-- uid: Sensus.Probes.Movement.Activities.OnFoot
-  name: OnFoot
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_OnFoot
-  commentId: F:Sensus.Probes.Movement.Activities.OnFoot
-  fullName: Sensus.Probes.Movement.Activities.OnFoot
-  nameWithType: Activities.OnFoot
-- uid: Sensus.Probes.Movement.Activities.Running
-  name: Running
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Running
-  commentId: F:Sensus.Probes.Movement.Activities.Running
-  fullName: Sensus.Probes.Movement.Activities.Running
-  nameWithType: Activities.Running
-- uid: Sensus.Probes.Movement.Activities.Still
-  name: Still
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Still
-  commentId: F:Sensus.Probes.Movement.Activities.Still
-  fullName: Sensus.Probes.Movement.Activities.Still
-  nameWithType: Activities.Still
-- uid: Sensus.Probes.Movement.Activities.Tilting
-  name: Tilting
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Tilting
-  commentId: F:Sensus.Probes.Movement.Activities.Tilting
-  fullName: Sensus.Probes.Movement.Activities.Tilting
-  nameWithType: Activities.Tilting
-- uid: Sensus.Probes.Movement.Activities.Unknown
-  name: Unknown
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Unknown
-  commentId: F:Sensus.Probes.Movement.Activities.Unknown
-  fullName: Sensus.Probes.Movement.Activities.Unknown
-  nameWithType: Activities.Unknown
-- uid: Sensus.Probes.Movement.Activities.value__
-  name: value__
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_value__
-  commentId: F:Sensus.Probes.Movement.Activities.value__
-  fullName: Sensus.Probes.Movement.Activities.value__
-  nameWithType: Activities.value__
-- uid: Sensus.Probes.Movement.Activities.Walking
-  name: Walking
-  href: api/Sensus.Probes.Movement.Activities.html#Sensus_Probes_Movement_Activities_Walking
-  commentId: F:Sensus.Probes.Movement.Activities.Walking
-  fullName: Sensus.Probes.Movement.Activities.Walking
-  nameWithType: Activities.Walking
-- uid: Sensus.Probes.Movement.ActivityConfidence
-  name: ActivityConfidence
-  href: api/Sensus.Probes.Movement.ActivityConfidence.html
-  commentId: T:Sensus.Probes.Movement.ActivityConfidence
-  fullName: Sensus.Probes.Movement.ActivityConfidence
-  nameWithType: ActivityConfidence
-- uid: Sensus.Probes.Movement.ActivityConfidence.High
-  name: High
-  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_High
-  commentId: F:Sensus.Probes.Movement.ActivityConfidence.High
-  fullName: Sensus.Probes.Movement.ActivityConfidence.High
-  nameWithType: ActivityConfidence.High
-- uid: Sensus.Probes.Movement.ActivityConfidence.Low
-  name: Low
-  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_Low
-  commentId: F:Sensus.Probes.Movement.ActivityConfidence.Low
-  fullName: Sensus.Probes.Movement.ActivityConfidence.Low
-  nameWithType: ActivityConfidence.Low
-- uid: Sensus.Probes.Movement.ActivityConfidence.Medium
-  name: Medium
-  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_Medium
-  commentId: F:Sensus.Probes.Movement.ActivityConfidence.Medium
-  fullName: Sensus.Probes.Movement.ActivityConfidence.Medium
-  nameWithType: ActivityConfidence.Medium
-- uid: Sensus.Probes.Movement.ActivityConfidence.NotAvailable
-  name: NotAvailable
-  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_NotAvailable
-  commentId: F:Sensus.Probes.Movement.ActivityConfidence.NotAvailable
-  fullName: Sensus.Probes.Movement.ActivityConfidence.NotAvailable
-  nameWithType: ActivityConfidence.NotAvailable
-- uid: Sensus.Probes.Movement.ActivityConfidence.value__
-  name: value__
-  href: api/Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_value__
-  commentId: F:Sensus.Probes.Movement.ActivityConfidence.value__
-  fullName: Sensus.Probes.Movement.ActivityConfidence.value__
-  nameWithType: ActivityConfidence.value__
 - uid: Sensus.Probes.Movement.ActivityDatum
   name: ActivityDatum
   href: api/Sensus.Probes.Movement.ActivityDatum.html
@@ -34062,66 +33870,6 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ActivityDatum.ToString
   fullName: Sensus.Probes.Movement.ActivityDatum.ToString
   nameWithType: ActivityDatum.ToString
-- uid: Sensus.Probes.Movement.ActivityPhase
-  name: ActivityPhase
-  href: api/Sensus.Probes.Movement.ActivityPhase.html
-  commentId: T:Sensus.Probes.Movement.ActivityPhase
-  fullName: Sensus.Probes.Movement.ActivityPhase
-  nameWithType: ActivityPhase
-- uid: Sensus.Probes.Movement.ActivityPhase.During
-  name: During
-  href: api/Sensus.Probes.Movement.ActivityPhase.html#Sensus_Probes_Movement_ActivityPhase_During
-  commentId: F:Sensus.Probes.Movement.ActivityPhase.During
-  fullName: Sensus.Probes.Movement.ActivityPhase.During
-  nameWithType: ActivityPhase.During
-- uid: Sensus.Probes.Movement.ActivityPhase.Starting
-  name: Starting
-  href: api/Sensus.Probes.Movement.ActivityPhase.html#Sensus_Probes_Movement_ActivityPhase_Starting
-  commentId: F:Sensus.Probes.Movement.ActivityPhase.Starting
-  fullName: Sensus.Probes.Movement.ActivityPhase.Starting
-  nameWithType: ActivityPhase.Starting
-- uid: Sensus.Probes.Movement.ActivityPhase.Stopping
-  name: Stopping
-  href: api/Sensus.Probes.Movement.ActivityPhase.html#Sensus_Probes_Movement_ActivityPhase_Stopping
-  commentId: F:Sensus.Probes.Movement.ActivityPhase.Stopping
-  fullName: Sensus.Probes.Movement.ActivityPhase.Stopping
-  nameWithType: ActivityPhase.Stopping
-- uid: Sensus.Probes.Movement.ActivityPhase.value__
-  name: value__
-  href: api/Sensus.Probes.Movement.ActivityPhase.html#Sensus_Probes_Movement_ActivityPhase_value__
-  commentId: F:Sensus.Probes.Movement.ActivityPhase.value__
-  fullName: Sensus.Probes.Movement.ActivityPhase.value__
-  nameWithType: ActivityPhase.value__
-- uid: Sensus.Probes.Movement.ActivityState
-  name: ActivityState
-  href: api/Sensus.Probes.Movement.ActivityState.html
-  commentId: T:Sensus.Probes.Movement.ActivityState
-  fullName: Sensus.Probes.Movement.ActivityState
-  nameWithType: ActivityState
-- uid: Sensus.Probes.Movement.ActivityState.Active
-  name: Active
-  href: api/Sensus.Probes.Movement.ActivityState.html#Sensus_Probes_Movement_ActivityState_Active
-  commentId: F:Sensus.Probes.Movement.ActivityState.Active
-  fullName: Sensus.Probes.Movement.ActivityState.Active
-  nameWithType: ActivityState.Active
-- uid: Sensus.Probes.Movement.ActivityState.Inactive
-  name: Inactive
-  href: api/Sensus.Probes.Movement.ActivityState.html#Sensus_Probes_Movement_ActivityState_Inactive
-  commentId: F:Sensus.Probes.Movement.ActivityState.Inactive
-  fullName: Sensus.Probes.Movement.ActivityState.Inactive
-  nameWithType: ActivityState.Inactive
-- uid: Sensus.Probes.Movement.ActivityState.Unknown
-  name: Unknown
-  href: api/Sensus.Probes.Movement.ActivityState.html#Sensus_Probes_Movement_ActivityState_Unknown
-  commentId: F:Sensus.Probes.Movement.ActivityState.Unknown
-  fullName: Sensus.Probes.Movement.ActivityState.Unknown
-  nameWithType: ActivityState.Unknown
-- uid: Sensus.Probes.Movement.ActivityState.value__
-  name: value__
-  href: api/Sensus.Probes.Movement.ActivityState.html#Sensus_Probes_Movement_ActivityState_value__
-  commentId: F:Sensus.Probes.Movement.ActivityState.value__
-  fullName: Sensus.Probes.Movement.ActivityState.value__
-  nameWithType: ActivityState.value__
 - uid: Sensus.Probes.Movement.GyroscopeDatum
   name: GyroscopeDatum
   href: api/Sensus.Probes.Movement.GyroscopeDatum.html
@@ -40380,6 +40128,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.Script.InputGroups
   fullName: Sensus.Probes.User.Scripts.Script.InputGroups
   nameWithType: Script.InputGroups
+- uid: Sensus.Probes.User.Scripts.Script.IRunner
+  name: IRunner
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_IRunner
+  commentId: P:Sensus.Probes.User.Scripts.Script.IRunner
+  fullName: Sensus.Probes.User.Scripts.Script.IRunner
+  nameWithType: Script.IRunner
+- uid: Sensus.Probes.User.Scripts.Script.IRunner*
+  name: IRunner
+  href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_IRunner_
+  commentId: Overload:Sensus.Probes.User.Scripts.Script.IRunner
+  fullName: Sensus.Probes.User.Scripts.Script.IRunner
+  nameWithType: Script.IRunner
 - uid: Sensus.Probes.User.Scripts.Script.PreviousDatum
   name: PreviousDatum
   href: api/Sensus.Probes.User.Scripts.Script.html#Sensus_Probes_User_Scripts_Script_PreviousDatum
@@ -40701,6 +40461,42 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.#ctor
   fullName: Sensus.Probes.User.Scripts.ScriptProbe.ScriptProbe
   nameWithType: ScriptProbe.ScriptProbe
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.Agent
+  name: Agent
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_Agent
+  commentId: P:Sensus.Probes.User.Scripts.ScriptProbe.Agent
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.Agent
+  nameWithType: ScriptProbe.Agent
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.Agent*
+  name: Agent
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_Agent_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.Agent
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.Agent
+  nameWithType: ScriptProbe.Agent
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes
+  name: AgentAssemblyBytes
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_AgentAssemblyBytes
+  commentId: P:Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes
+  nameWithType: ScriptProbe.AgentAssemblyBytes
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes*
+  name: AgentAssemblyBytes
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_AgentAssemblyBytes_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes
+  nameWithType: ScriptProbe.AgentAssemblyBytes
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.AgentId
+  name: AgentId
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_AgentId
+  commentId: P:Sensus.Probes.User.Scripts.ScriptProbe.AgentId
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.AgentId
+  nameWithType: ScriptProbe.AgentId
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.AgentId*
+  name: AgentId
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_AgentId_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.AgentId
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.AgentId
+  nameWithType: ScriptProbe.AgentId
 - uid: Sensus.Probes.User.Scripts.ScriptProbe.CollectionDescription
   name: CollectionDescription
   href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_CollectionDescription
@@ -40749,6 +40545,36 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.DisplayName
   fullName: Sensus.Probes.User.Scripts.ScriptProbe.DisplayName
   nameWithType: ScriptProbe.DisplayName
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.GetAgent(System.Byte[],System.String)
+  name: GetAgent(Byte[], String)
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_GetAgent_System_Byte___System_String_
+  commentId: M:Sensus.Probes.User.Scripts.ScriptProbe.GetAgent(System.Byte[],System.String)
+  name.vb: GetAgent(Byte(), String)
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.GetAgent(System.Byte[], System.String)
+  fullName.vb: Sensus.Probes.User.Scripts.ScriptProbe.GetAgent(System.Byte(), System.String)
+  nameWithType: ScriptProbe.GetAgent(Byte[], String)
+  nameWithType.vb: ScriptProbe.GetAgent(Byte(), String)
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.GetAgent*
+  name: GetAgent
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_GetAgent_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.GetAgent
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.GetAgent
+  nameWithType: ScriptProbe.GetAgent
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.GetAgents(System.Byte[])
+  name: GetAgents(Byte[])
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_GetAgents_System_Byte___
+  commentId: M:Sensus.Probes.User.Scripts.ScriptProbe.GetAgents(System.Byte[])
+  name.vb: GetAgents(Byte())
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.GetAgents(System.Byte[])
+  fullName.vb: Sensus.Probes.User.Scripts.ScriptProbe.GetAgents(System.Byte())
+  nameWithType: ScriptProbe.GetAgents(Byte[])
+  nameWithType.vb: ScriptProbe.GetAgents(Byte())
+- uid: Sensus.Probes.User.Scripts.ScriptProbe.GetAgents*
+  name: GetAgents
+  href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_GetAgents_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.GetAgents
+  fullName: Sensus.Probes.User.Scripts.ScriptProbe.GetAgents
+  nameWithType: ScriptProbe.GetAgents
 - uid: Sensus.Probes.User.Scripts.ScriptProbe.GetChartDataPointFromDatum(Sensus.Datum)
   name: GetChartDataPointFromDatum(Datum)
   href: api/Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_GetChartDataPointFromDatum_Sensus_Datum_
@@ -41055,18 +40881,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.#ctor
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunner
   nameWithType: ScriptRunner.ScriptRunner
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.Agent
-  name: Agent
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Agent
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.Agent
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.Agent
-  nameWithType: ScriptRunner.Agent
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.Agent*
-  name: Agent
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Agent_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Agent
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.Agent
-  nameWithType: ScriptRunner.Agent
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.AllowCancel
   name: AllowCancel
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_AllowCancel
@@ -42780,6 +42594,18 @@ references:
   commentId: Overload:Sensus.Protocol.ToString
   fullName: Sensus.Protocol.ToString
   nameWithType: Protocol.ToString
+- uid: Sensus.Protocol.TypeProbe
+  name: TypeProbe
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TypeProbe
+  commentId: P:Sensus.Protocol.TypeProbe
+  fullName: Sensus.Protocol.TypeProbe
+  nameWithType: Protocol.TypeProbe
+- uid: Sensus.Protocol.TypeProbe*
+  name: TypeProbe
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TypeProbe_
+  commentId: Overload:Sensus.Protocol.TypeProbe
+  fullName: Sensus.Protocol.TypeProbe
+  nameWithType: Protocol.TypeProbe
 - uid: Sensus.Protocol.VariableValue
   name: VariableValue
   href: api/Sensus.Protocol.html#Sensus_Protocol_VariableValue

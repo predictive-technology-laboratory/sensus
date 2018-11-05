@@ -22,6 +22,7 @@ namespace ExampleScriptProbeAgent
     public class ExampleScriptProbeAgent : IScriptProbeAgent
     {
         private double DeliveryProbability => 0.5;
+
         private TimeSpan DeferralTime = TimeSpan.FromSeconds(30);
 
         public string Name => "Randon (p = " + DeliveryProbability + ")";

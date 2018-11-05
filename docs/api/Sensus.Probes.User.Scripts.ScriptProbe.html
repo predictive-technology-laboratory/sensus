@@ -189,6 +189,83 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
   </h3>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_Agent_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Agent*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_Agent" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.Agent">Agent</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the agent that controls survey delivery. See <a class="xref" href="../articles/adaptive-surveys.html">here</a> for more information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IScriptProbeAgent Agent { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Sensus.Probes.User.Scripts.IScriptProbeAgent</span></td>
+        <td><p>The agent.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_AgentAssemblyBytes_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_AgentAssemblyBytes" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentAssemblyBytes">AgentAssemblyBytes</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] AgentAssemblyBytes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_AgentId_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentId*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_AgentId" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentId">AgentId</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string AgentId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptProbe_CollectionDescription_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.CollectionDescription*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_CollectionDescription" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.CollectionDescription">CollectionDescription</h4>
   <div class="markdown level1 summary"></div>
@@ -376,6 +453,95 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
   </table>
   <h3 id="methods">Methods
   </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_GetAgent_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.GetAgent*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_GetAgent_System_Byte___System_String_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.GetAgent(System.Byte[],System.String)">GetAgent(Byte[], String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">assemblyBytes</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">agentId</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Sensus.Probes.User.Scripts.IScriptProbeAgent</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_GetAgents_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.GetAgents*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_GetAgents_System_Byte___" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.GetAgents(System.Byte[])">GetAgents(Byte[])</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static List&lt;IScriptProbeAgent&gt; GetAgents(byte[] assemblyBytes)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">assemblyBytes</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">Sensus.Probes.User.Scripts.IScriptProbeAgent</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_User_Scripts_ScriptProbe_GetChartDataPointFromDatum_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.GetChartDataPointFromDatum*"></a>

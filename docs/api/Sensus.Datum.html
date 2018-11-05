@@ -144,11 +144,15 @@
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">Sensus.IDatum</span></div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Datum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class Datum : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class Datum : Object, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -764,6 +768,10 @@ public DateTimeOffset Timestamp { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">Sensus.IDatum</span>
+  </div>
 </article>
           </div>
           
