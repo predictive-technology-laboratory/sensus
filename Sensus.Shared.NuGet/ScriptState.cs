@@ -20,7 +20,12 @@ namespace Sensus.Probes.User.Scripts
     public enum ScriptState
     {
         /// <summary>
-        /// The script was delivered to the user and made available for taking.
+        /// The script was delivered to the user and made available for taking. On Android this will be exactly
+        /// the scheduled/triggered time. On iOS, this will be exactly the triggered time, but when it comes to
+        /// scheduled scripts the timing depends on whether push notifications are enabled. Without push notifications
+        /// the delivery time will be when the user brings the app to the foreground. With push notifications
+        /// enabled, the delivery time will correspond to the arrival of the push notification, which causes the
+        /// script to run.
         /// </summary>
         Delivered,
 

@@ -153,13 +153,14 @@ namespace Sensus.UI
                 // update UI to indicate that the script is no longer being submitted
                 selectedScript.Submitting = false;
 
+                // if the user cancelled, deselect the survey.
                 if (canceled)
                 {
                     scriptList.SelectedItem = null;
                 }
                 else
                 {
-                    // remove the submitted script
+                    // otherwise, remove the submitted script.
                     await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript, true);
                 }
 

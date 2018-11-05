@@ -823,7 +823,13 @@ namespace Sensus
 
         public async Task ClearScriptsAsync()
         {
+            foreach (Script script in _scriptsToRun)
+            {
+                script.Runner.Probe.Agent?.Observe(script, ScriptState.Deleted);
+            }
+
             _scriptsToRun.Clear();
+
             await IssuePendingSurveysNotificationAsync(null, false);
         }
 
