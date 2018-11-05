@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -9,6 +10,6 @@ namespace Sensus.Probes.User.Scripts
 
         void Observe(IDatum datum);
 
-        Task<bool> ShouldDeliverSurvey(IScript script);
+        Task<DateTimeOffset?> DeferSurveyDelivery(IScript script);
     }
 }

@@ -144,8 +144,7 @@ namespace Sensus.UI
                     {
                         // download the assembly and extract agents
                         byte[] downloadedBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
-                        Assembly assembly = Assembly.Load(downloadedBytes);
-                        List<IScriptProbeAgent> agents = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IScriptProbeAgent))).Select(Activator.CreateInstance).Cast<IScriptProbeAgent>().ToList();
+                        List<IScriptProbeAgent> agents = ScriptProbe.GetAgents(downloadedBytes);
 
                         // let user choose agent if needed
                         if (agents.Count == 0)
@@ -174,7 +173,7 @@ namespace Sensus.UI
 
                         if (scriptProbe.Agent != null)
                         {
-                            scriptProbe.AgentBytes = downloadedBytes;
+                            scriptProbe.AgentAssemblyBytes = downloadedBytes;
                             scriptProbe.AgentId = scriptProbe.Agent.Id;
                         }
                     }

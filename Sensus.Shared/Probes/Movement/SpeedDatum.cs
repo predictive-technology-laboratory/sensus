@@ -20,7 +20,7 @@ using Plugin.Geolocator.Abstractions;
 
 namespace Sensus.Probes.Movement
 {
-    public class SpeedDatum : ImpreciseDatum
+    public class SpeedDatum : ImpreciseDatum, ISpeedDatum
     {
         #region static members
         /// <summary>

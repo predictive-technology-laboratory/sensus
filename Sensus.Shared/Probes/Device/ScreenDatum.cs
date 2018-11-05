@@ -17,7 +17,7 @@ using System;
 
 namespace Sensus.Probes.Device
 {
-    public class ScreenDatum : Datum
+    public class ScreenDatum : Datum, IScreenDatum
     {
         private bool _on;
 

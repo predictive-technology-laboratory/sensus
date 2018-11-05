@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Context
 {
-    public class BluetoothDeviceProximityDatum : Datum
+    public class BluetoothDeviceProximityDatum : Datum, IBluetoothDeviceProximityDatum
     {
         private string _encounteredDeviceId;
 

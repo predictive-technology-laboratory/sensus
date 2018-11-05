@@ -36,7 +36,7 @@ using Sensus.Notifications;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class ScriptRunner : INotifyPropertyChanged
+    public class ScriptRunner : INotifyPropertyChanged, IScriptRunner
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -674,6 +674,16 @@ namespace Sensus.Probes.User.Scripts
             {
                 SensusServiceHelper.Get().Logger.Log("Not running one-shot script multiple times.", LoggingLevel.Normal, GetType());
                 return;
+            }
+
+            // check with the survey agent if there is one
+            if (Probe.Agent != null)
+            {
+                DateTimeOffset? deferral = await Probe.Agent.DeferSurveyDelivery(script);
+                if (deferral != null)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Deferring script at agent's request.", LoggingLevel.Normal, GetType());
+                }
             }
 
             lock (RunTimes)

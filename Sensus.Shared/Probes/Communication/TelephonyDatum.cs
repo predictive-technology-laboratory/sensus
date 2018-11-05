@@ -28,7 +28,7 @@ namespace Sensus.Probes.Communication
     /// at which the incoming call arrived or went out, respectively. When a call ends and the phone returns to <see cref="TelephonyState.Idle"/>, then
     /// there will be a value for <see cref="CallDurationSeconds"/> indicating how long the call lasted.
     /// </summary>
-    public class TelephonyDatum : Datum
+    public class TelephonyDatum : Datum, ITelephonyDatum
     {
         private TelephonyState _state;
         private string _phoneNumber;

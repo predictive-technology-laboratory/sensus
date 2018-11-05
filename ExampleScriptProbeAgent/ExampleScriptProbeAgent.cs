@@ -22,6 +22,7 @@ namespace ExampleScriptProbeAgent
     public class ExampleScriptProbeAgent : IScriptProbeAgent
     {
         private double DeliveryProbability => 0.5;
+        private TimeSpan DeferralTime = TimeSpan.FromSeconds(30);
 
         public string Name => "Randon (p = " + DeliveryProbability + ")";
 
@@ -29,11 +30,12 @@ namespace ExampleScriptProbeAgent
 
         public void Observe(IDatum datum)
         {
+            Console.Out.WriteLine("Datum observed:  " + datum);
         }
 
-        public Task<bool> ShouldDeliverSurvey(IScript script)
+        public Task<DateTimeOffset?> DeferSurveyDelivery(IScript script)
         {
-            return Task.FromResult(new Random().NextDouble() < DeliveryProbability);
+            return Task.FromResult(new Random().NextDouble() < DeliveryProbability ? default(DateTimeOffset?) : DateTimeOffset.UtcNow + DeferralTime);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Sensus.Probes.Location
     /// some return only near and far values. The behavior of this probe differs on Android
     /// and iOS, so be sure to read the relevant documentation for those probes.
     /// </summary>
-    public class ProximityDatum : Datum
+    public class ProximityDatum : Datum, IProximityDatum
     {
         private double _distance;
         private double _maxDistance;

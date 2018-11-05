@@ -27,6 +27,7 @@ using Microsoft.AppCenter.Analytics;
 using System.ComponentModel;
 using Sensus.Extensions;
 using Sensus.Exceptions;
+using Sensus.Probes.User.Scripts;
 
 namespace Sensus.Probes
 {
@@ -445,7 +446,7 @@ namespace Sensus.Probes
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
                 }
-            } 
+            }
 
             // update the timestamp of the most recent store. this is used to calculate storage latency, so we
             // do not restrict its values to those obtained when non-null data are stored (see above). some
@@ -465,6 +466,13 @@ namespace Sensus.Probes
 
             // notify observers of the stored data and associated UI values
             await (MostRecentDatumChanged?.Invoke(previousDatum, _mostRecentDatum) ?? Task.CompletedTask);
+
+            // let the script probe's agent observe the data, as long as the probe is enabled and there is an agent.
+            ScriptProbe scriptProbe = Protocol.TypeProbe[typeof(ScriptProbe)] as ScriptProbe;
+            if (scriptProbe?.Enabled ?? false)
+            {
+                scriptProbe.Agent?.Observe(datum);
+            }
         }
 
         /// <summary>

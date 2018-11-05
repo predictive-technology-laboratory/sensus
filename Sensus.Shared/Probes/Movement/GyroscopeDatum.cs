@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Movement
 {
-    public class GyroscopeDatum : Datum
+    public class GyroscopeDatum : Datum, IGyroscopeDatum
     {
         private double _x;
         private double _y;

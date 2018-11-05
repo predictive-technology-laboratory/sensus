@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -32,16 +33,53 @@ namespace Sensus.Probes.User.Scripts
     /// </summary>
     public class ScriptProbe : Probe
     {
+        public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
+        {
+            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<IScriptProbeAgent> GetAgents(byte[] assemblyBytes)
+        {
+            return Assembly.Load(assemblyBytes)
+                           .GetTypes()
+                           .Where(t => t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<IScriptProbeAgent>()
+                           .ToList();
+        }
+
         private ObservableCollection<ScriptRunner> _scriptRunners;
+        private IScriptProbeAgent _agent;
 
         /// <summary>
         /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
         /// </summary>
         /// <value>The agent.</value>
         [JsonIgnore]
-        public IScriptProbeAgent Agent { get; set; }
+        public IScriptProbeAgent Agent
+        {
+            get
+            {
+                if (_agent == null)
+                {
+                    try
+                    {
+                        _agent = GetAgent(AgentAssemblyBytes, AgentId);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
 
-        public byte[] AgentBytes { get; set; }
+                return _agent;
+            }
+            set
+            {
+                _agent = value;
+            }
+        }
+
+        public byte[] AgentAssemblyBytes { get; set; }
 
         public string AgentId { get; set; }
 

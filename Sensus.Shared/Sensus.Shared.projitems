@@ -33,7 +33,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothDeviceProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightDatum.cs" />
@@ -107,7 +106,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\ValueOmittingAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingPointsOfInterestProximityProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityThresholdDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\IPointsOfInterestProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityDatum.cs" />
@@ -235,10 +233,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\Activities.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProximityEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
@@ -252,7 +246,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolStartConfirmationMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\QrCodeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />

@@ -529,6 +529,7 @@ namespace Sensus
         private string _pushNotificationsHub;
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
+        private Dictionary<Type, Probe> _typeProbe;
        
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
@@ -1472,6 +1473,8 @@ namespace Sensus
             }
         }
 
+        public Dictionary<Type, Probe> TypeProbe { get => _typeProbe; set => _typeProbe = value; }
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -1497,6 +1500,7 @@ namespace Sensus
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
             _probes = new List<Probe>();
+            _typeProbe = new Dictionary<Type, Probe>();
         }
 
         private Protocol(string name) : this()
@@ -1517,6 +1521,8 @@ namespace Sensus
 
             _probes.Add(probe);
             _probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
+
+            _typeProbe.Add(probe.GetType(), probe);
         }
 
         private async Task ResetAsync(bool resetId)

@@ -22,7 +22,7 @@ namespace Sensus.Probes.Movement
     /// <summary>
     /// Activity the user is engaged in, as inferred from the phone's sensors.
     /// </summary>
-    public class ActivityDatum : Datum
+    public class ActivityDatum : Datum, IActivityDatum
     {
         /// <summary>
         /// The type of activity (see <see cref="Activities"/>).

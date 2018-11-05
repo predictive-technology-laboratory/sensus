@@ -59,6 +59,7 @@ namespace Sensus.Probes.User.Scripts
 
         public string Id { get; set; }
         public ScriptRunner Runner { get; set; }
+        public IScriptRunner IRunner { get => Runner; }  // for NuGet interfacing
         public ObservableCollection<InputGroup> InputGroups { get; }
         public DateTimeOffset? ScheduledRunTime { get; set; }
         public DateTimeOffset? RunTime { get; set; }

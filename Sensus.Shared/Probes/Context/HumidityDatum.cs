@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Context
 {
-    public class HumidityDatum : Datum
+    public class HumidityDatum : Datum, IHumidityDatum
     {
         private double _relativeHumidity;        
 
