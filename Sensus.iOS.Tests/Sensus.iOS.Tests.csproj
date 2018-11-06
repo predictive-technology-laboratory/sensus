@@ -401,6 +401,12 @@
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png</Link>
     </ImageAsset>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExampleScriptProbeAgent\ExampleScriptProbeAgent.csproj">
+      <Project>{E55BA9B0-C696-4D61-AE7A-A9535EF223B5}</Project>
+      <Name>ExampleScriptProbeAgent</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\xunit.core.2.4.0\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.0\build\xunit.core.targets')" />
   <Import Project="..\packages\xunit.runner.devices.2.4.48\build\xamarinios10\xunit.runner.devices.targets" Condition="Exists('..\packages\xunit.runner.devices.2.4.48\build\xamarinios10\xunit.runner.devices.targets')" />
