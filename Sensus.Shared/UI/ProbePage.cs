@@ -285,6 +285,8 @@ namespace Sensus.UI
             // show any existing agents
             List<IScriptProbeAgent> currentAgents = null;
 
+            // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+            // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
 #if __ANDROID__
             // try to extract agents from a previously loaded assembly
             try
@@ -296,6 +298,7 @@ namespace Sensus.UI
 #elif __IOS__
             currentAgents = ScriptProbe.GetAgents();
 
+            // display warning message, as there is no other option to load agents.
             if (currentAgents.Count == 0)
             {
                 await SensusServiceHelper.Get().FlashNotificationAsync("No agents available.");
@@ -303,6 +306,7 @@ namespace Sensus.UI
             }
 #endif
 
+            // let the user pick from currently available agents
             ItemPickerPageInput currentAgentsPicker = null;
             if (currentAgents != null && currentAgents.Count > 0)
             {
@@ -331,7 +335,7 @@ namespace Sensus.UI
                 return;
             }
 
-            // check for QR code on android
+            // check for QR code on android. this doesn't exist on ios.
             string agentURL = null;
 
 #if __ANDROID__
