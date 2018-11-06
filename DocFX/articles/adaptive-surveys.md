@@ -10,8 +10,10 @@ iOS devices is an active area of research. When should a survey be deployed? How
 configured to attract the user's attention? Answers to these questions depend on the goal of the 
 survey and the personal characteristics and contexts of each user.
 
-## Survey Agent Plug-Ins
-Sensus supports a plug-in architecture for modules (or agents) that control the delivery of surveys.
+## Android
+
+### Survey Agents Plug-Ins
+On Android, Sensus supports a plug-in architecture for modules (or agents) that control the delivery of surveys.
 This architecture is intended to support research into adaptive surveys by providing a simple interface
 through which researchers can deploy agents that implement specific adaptation hypotheses. For example,
 one might hypothesize that surveys for a specific user are best delivered at 3pm each day. To test this
@@ -19,7 +21,7 @@ hypothesis, the researcher can implement a simple survey agent that defers deliv
 each day. The resulting response rates across users will provide supporting or opposing information for
 this hypothesis.
 
-## Implementing and Deploying a Survey Agent Plug-In
+### Implementing and Deploying a Survey Agent Plug-In
 Follow the steps below to implement and deploy a survey agent within your Sensus study.
 
 1. Create a new .NET Standard Library project in Visual Studio. In Visual Studio for Mac, the following image
@@ -54,7 +56,7 @@ your desired agent.
 1. Continue with [configuration](xref:protocol_creation) and [distribution](xref:protocol_distribution)
 of your protocol.
 
-## Example Survey Agents
+### Example Survey Agents
 See the following implementations for example agents:
 
 * [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs)):  A 
@@ -62,3 +64,25 @@ survey agent that randomly decides whether or not to deliver surveys.
 
 * [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs)):  A 
 survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.
+
+## iOS
+
+In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
+run time. Thus, adaptive survey agents are more limited on iOS compared with Android. Here are the options:
+
+* The app comes with two example survey agents; however, these are simply for demonstration performance and are unlikely to work
+well in practice. Nonetheless, the examples are:
+
+  * [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs)):  A 
+survey agent that randomly decides whether or not to deliver surveys.
+
+  * [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs)):  A 
+survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.
+
+  You can select either of these agents when configuring the <xref:Sensus.Probes.User.Scripts.ScriptProbe>.
+
+* You can [redeploy](xref:redeploying) Sensus as your own app, to which you can add your own agent implementations.
+
+* You can implement your own agent implementations following the instructions above for Android and email 
+our team (uva.ptl@gmail.com) to include them in a future release.
+

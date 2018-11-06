@@ -1473,8 +1473,6 @@ namespace Sensus
             }
         }
 
-        public Dictionary<Type, Probe> TypeProbe { get => _typeProbe; set => _typeProbe = value; }
-
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -1500,7 +1498,6 @@ namespace Sensus
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
             _probes = new List<Probe>();
-            _typeProbe = new Dictionary<Type, Probe>();
         }
 
         private Protocol(string name) : this()
@@ -1521,9 +1518,21 @@ namespace Sensus
 
             _probes.Add(probe);
             _probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
+        }
 
-            // track probes by type for quick lookup
-            _typeProbe.Add(probe.GetType(), probe);
+        public bool TryGetProbe(Type type, out Probe probe)
+        {
+            if (_typeProbe == null)
+            {
+                _typeProbe = new Dictionary<Type, Probe>();
+
+                foreach (Probe p in _probes)
+                {
+                    _typeProbe.Add(p.GetType(), p);
+                }
+            }
+
+            return _typeProbe.TryGetValue(type, out probe);
         }
 
         private async Task ResetAsync(bool resetId)

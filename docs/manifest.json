@@ -1521,7 +1521,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html",
-          "hash": "1vN94eJ/82TuHAxXhYcoaQ=="
+          "hash": "QTRYAOHElrNAsZK0Z59nMg=="
         }
       },
       "is_incremental": true,
@@ -1533,7 +1533,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html",
-          "hash": "YisFLD10jA5uEkPIlsFCpg=="
+          "hash": "LKjKB8Fr8R8JJyH7qPnJTA=="
         }
       },
       "is_incremental": true,
@@ -1545,7 +1545,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.RemoteDataStore.html",
-          "hash": "fs+awYzlio9ekOVtj+6JRw=="
+          "hash": "QcOZc5dkY2y7VnwVKUuxfw=="
         }
       },
       "is_incremental": true,
@@ -1666,18 +1666,6 @@
         ".html": {
           "relative_path": "api/Sensus.Exceptions.SensusException.html",
           "hash": "4rjMsxu3TI5HzCfj895GBw=="
-        }
-      },
-      "is_incremental": true,
-      "version": ""
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/Sensus.Exceptions.UnsetPushNotificationTokenException.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/Sensus.Exceptions.UnsetPushNotificationTokenException.html",
-          "hash": "TMJiLOAFSuidsfyDNf25XA=="
         }
       },
       "is_incremental": true,
@@ -2841,7 +2829,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Movement.GyroscopeProbe.html",
-          "hash": "4RW1O9XeDmQSfKcwS9y0/Q=="
+          "hash": "R+15HD9MGKuZSUvL8tsmew=="
         }
       },
       "is_incremental": true,
@@ -3861,7 +3849,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.Scripts.ScriptProbe.html",
-          "hash": "6+2Ue1PWdsF71LGgXG+XJQ=="
+          "hash": "UyZdyA2TknKWuamnkWz2CQ=="
         }
       },
       "is_incremental": true,
@@ -3981,7 +3969,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "XpBxDtl0f7iAjG/RfgVrkg=="
+          "hash": "lqL63aTSkuvy3G7jUJJLIg=="
         }
       },
       "is_incremental": true,
@@ -5321,11 +5309,11 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.yml",
+      "source_relative_path": "api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html",
-          "hash": "ArSgzPynj/+hVAXFU/ZJUg=="
+          "relative_path": "api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html",
+          "hash": "vvBh3pbxzyIR9NHXKBIm0A=="
         }
       },
       "is_incremental": true,
@@ -5337,7 +5325,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Movement.html",
-          "hash": "EoA1avhMrEmU9mnjFwplcw=="
+          "hash": "K4UMUSd7CvzQqgYfbOXo7g=="
         }
       },
       "is_incremental": true,
@@ -5577,7 +5565,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.iOSSensusServiceHelper.html",
-          "hash": "CCmDeqXg8vdYgo0i5cwD0w=="
+          "hash": "aVtGmx4X2P0EJfl0N+9FKQ=="
         }
       },
       "is_incremental": true,
@@ -5625,7 +5613,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "T5U6VACGxemG21Ijl5+4wg=="
+          "hash": "ix2qoZotkgQXZ4HMYVfOjg=="
         }
       },
       "is_incremental": false,
@@ -5637,7 +5625,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/adaptive-surveys.html",
-          "hash": "+8wQUfioqmBHf8GTPut0pQ=="
+          "hash": "KefypqbzXd7yKE5RsbxBUA=="
         }
       },
       "is_incremental": true,
@@ -5805,7 +5793,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/push-notifications.html",
-          "hash": "aesETylH24Qt8uroCJrG1Q=="
+          "hash": "NxZP3AKQG4lchDSvx7m9rw=="
         }
       },
       "is_incremental": true,
@@ -5853,7 +5841,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/tagging-mode.html",
-          "hash": "QuIBAcgRyWjIvHD/YcbPVQ=="
+          "hash": "KXQGfDsHLQMLXSxJqjnyCQ=="
         }
       },
       "is_incremental": true,
@@ -5980,6 +5968,11 @@
         "incrementalPhase": "build"
       },
       "processors": {
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
@@ -5991,11 +5984,6 @@
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
-          "incrementalPhase": "build"
-        },
-        "TocDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }

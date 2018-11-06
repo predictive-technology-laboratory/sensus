@@ -282,35 +282,47 @@ namespace Sensus.UI
         {
             List<Input> agentSelectionInputs = new List<Input>();
 
-            // show any existing agents from previously selected assembly
-            ItemPickerPageInput currentAgentsPicker = null;
-            if (scriptProbe.AgentAssemblyBytes != null)
+            // show any existing agents
+            List<IScriptProbeAgent> currentAgents = null;
+
+#if __ANDROID__
+            // try to extract agents from a previously loaded assembly
+            try
             {
-                try
+              currentAgents = ScriptProbe.GetAgents(scriptProbe.AgentAssemblyBytes);
+            }
+            catch (Exception)
+            { }
+#elif __IOS__
+            currentAgents = ScriptProbe.GetAgents();
+
+            if (currentAgents.Count == 0)
+            {
+                await SensusServiceHelper.Get().FlashNotificationAsync("No agents available.");
+                return;
+            }
+#endif
+
+            ItemPickerPageInput currentAgentsPicker = null;
+            if (currentAgents != null && currentAgents.Count > 0)
+            {
+                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList(), ".")
                 {
-                    List<IScriptProbeAgent> currentAgents = ScriptProbe.GetAgents(scriptProbe.AgentAssemblyBytes);
+                    Required = false
+                };
 
-                    if (currentAgents.Count > 0)
-                    {
-                        currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList(), ".")
-                        {
-                            Required = false
-                        };
-
-                        agentSelectionInputs.Add(currentAgentsPicker);
-                    }
-                }
-                catch (Exception)
-                { }
+                agentSelectionInputs.Add(currentAgentsPicker);
             }
 
-            // add option to scan qr code to import a new library
+#if __ANDROID__
+            // add option to scan qr code to import a new assembly
             QrCodeInput agentAssemblyUrlQrCodeInput = new QrCodeInput(QrCodePrefix.SURVEY_AGENT, "URL:", false, "Agent URL:")
             {
                 Required = false
             };
 
             agentSelectionInputs.Add(agentAssemblyUrlQrCodeInput);
+#endif
 
             List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Survey Agent", agentSelectionInputs, null, true, "Set", null, null, null, false);
 
@@ -319,8 +331,14 @@ namespace Sensus.UI
                 return;
             }
 
-            // check for QR code. if there is none, check whether the user selected a current agent.
-            string agentURL = agentAssemblyUrlQrCodeInput.Value?.ToString();
+            // check for QR code on android
+            string agentURL = null;
+
+#if __ANDROID__
+            agentURL = agentAssemblyUrlQrCodeInput.Value?.ToString();
+#endif
+
+            // if there is no URL, check if the user has selected an agent.
             if (string.IsNullOrWhiteSpace(agentURL))
             {
                 if (currentAgentsPicker != null)
@@ -341,6 +359,7 @@ namespace Sensus.UI
                     }
                 }
             }
+#if __ANDROID__
             else
             {
                 // download agent assembly from scanned QR code
@@ -375,6 +394,7 @@ namespace Sensus.UI
                     await SensusServiceHelper.Get().FlashNotificationAsync(downloadErrorMessage);
                 }
             }
+#endif
         }
     }
 }

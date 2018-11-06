@@ -468,7 +468,7 @@ namespace Sensus.Probes
             await (MostRecentDatumChanged?.Invoke(previousDatum, _mostRecentDatum) ?? Task.CompletedTask);
 
             // let the script probe's agent observe the data, as long as the probe is enabled and there is an agent.
-            Protocol.TypeProbe.TryGetValue(typeof(ScriptProbe), out Probe scriptProbe);
+            Protocol.TryGetProbe(typeof(ScriptProbe), out Probe scriptProbe);
             if (scriptProbe?.Enabled ?? false)
             {
                 (scriptProbe as ScriptProbe).Agent?.Observe(datum);

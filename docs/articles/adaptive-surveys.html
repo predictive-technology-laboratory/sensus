@@ -85,15 +85,16 @@ to data coming off <a class="xref" href="../api/Sensus.Probes.Probe.html">Probes
 iOS devices is an active area of research. When should a survey be deployed? How should it be 
 configured to attract the user&#39;s attention? Answers to these questions depend on the goal of the 
 survey and the personal characteristics and contexts of each user.</p>
-<h2 id="survey-agent-plug-ins">Survey Agent Plug-Ins</h2>
-<p>Sensus supports a plug-in architecture for modules (or agents) that control the delivery of surveys.
+<h2 id="android">Android</h2>
+<h3 id="survey-agents-plug-ins">Survey Agents Plug-Ins</h3>
+<p>On Android, Sensus supports a plug-in architecture for modules (or agents) that control the delivery of surveys.
 This architecture is intended to support research into adaptive surveys by providing a simple interface
 through which researchers can deploy agents that implement specific adaptation hypotheses. For example,
 one might hypothesize that surveys for a specific user are best delivered at 3pm each day. To test this
 hypothesis, the researcher can implement a simple survey agent that defers delivery of surveys until 3pm
 each day. The resulting response rates across users will provide supporting or opposing information for
 this hypothesis.</p>
-<h2 id="implementing-and-deploying-a-survey-agent-plug-in">Implementing and Deploying a Survey Agent Plug-In</h2>
+<h3 id="implementing-and-deploying-a-survey-agent-plug-in">Implementing and Deploying a Survey Agent Plug-In</h3>
 <p>Follow the steps below to implement and deploy a survey agent within your Sensus study.</p>
 <ol>
 <li>Create a new .NET Standard Library project in Visual Studio. In Visual Studio for Mac, the following image
@@ -125,7 +126,7 @@ your desired agent.</p>
 of your protocol.</p>
 </li>
 </ol>
-<h2 id="example-survey-agents">Example Survey Agents</h2>
+<h3 id="example-survey-agents">Example Survey Agents</h3>
 <p>See the following implementations for example agents:</p>
 <ul>
 <li><p><a class="xref" href="../api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html">Random</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs">here</a>):  A 
@@ -133,6 +134,28 @@ survey agent that randomly decides whether or not to deliver surveys.</p>
 </li>
 <li><p><a class="xref" href="../api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html">Adaptive</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs">here</a>):  A 
 survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.</p>
+</li>
+</ul>
+<h2 id="ios">iOS</h2>
+<p>In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
+run time. Thus, adaptive survey agents are more limited on iOS compared with Android. Here are the options:</p>
+<ul>
+<li><p>The app comes with two example survey agents; however, these are simply for demonstration performance and are unlikely to work
+well in practice. Nonetheless, the examples are:</p>
+<ul>
+<li><p><a class="xref" href="../api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html">Random</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs">here</a>):  A 
+survey agent that randomly decides whether or not to deliver surveys.</p>
+</li>
+<li><p><a class="xref" href="../api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html">Adaptive</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs">here</a>):  A 
+survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.</p>
+</li>
+</ul>
+<p>You can select either of these agents when configuring the <a class="xref" href="../api/Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a>.</p>
+</li>
+<li><p>You can <a class="xref" href="redeploying-sensus.html">redeploy</a> Sensus as your own app, to which you can add your own agent implementations.</p>
+</li>
+<li><p>You can implement your own agent implementations following the instructions above for Android and email 
+our team (uva.ptl@gmail.com) to include them in a future release.</p>
 </li>
 </ul>
 </article>

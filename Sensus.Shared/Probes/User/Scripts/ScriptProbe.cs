@@ -33,6 +33,8 @@ namespace Sensus.Probes.User.Scripts
     /// </summary>
     public class ScriptProbe : Probe
     {
+#if __ANDROID__
+
         public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
         {
             return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
@@ -42,11 +44,36 @@ namespace Sensus.Probes.User.Scripts
         {
             return Assembly.Load(assemblyBytes)
                            .GetTypes()
-                           .Where(t => t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
                            .Select(Activator.CreateInstance)
                            .Cast<IScriptProbeAgent>()
                            .ToList();
         }
+
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+
+#elif __IOS__
+
+        public static IScriptProbeAgent GetAgent(string agentId)
+        {
+            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<IScriptProbeAgent> GetAgents()
+        {
+            return Assembly.GetAssembly(typeof(ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent))
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<IScriptProbeAgent>()
+                           .ToList();
+        }
+
+#endif
 
         private ObservableCollection<ScriptRunner> _scriptRunners;
         private IScriptProbeAgent _agent;
@@ -65,7 +92,11 @@ namespace Sensus.Probes.User.Scripts
                 {
                     try
                     {
+#if __ANDROID__
                         _agent = GetAgent(AgentAssemblyBytes, AgentId);
+#elif __IOS__
+                        _agent = GetAgent(AgentId);
+#endif
                     }
                     catch (Exception)
                     {
@@ -82,13 +113,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
-        /// </summary>
-        /// <value>The agent assembly bytes.</value>
-        public byte[] AgentAssemblyBytes { get; set; }
-
-        /// <summary>
-        /// Id of the <see cref="Agent"/> to use within <see cref="AgentAssemblyBytes"/>
+        /// Id of the <see cref="Agent"/> to use.
         /// </summary>
         /// <value>The agent identifier.</value>
         public string AgentId { get; set; }

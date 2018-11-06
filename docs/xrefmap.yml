@@ -23568,24 +23568,6 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
-  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  name: UnsetPushNotificationTokenException()
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
-  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
-  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -26397,60 +26379,60 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Movement.iOSActivityProbe.QueryStartTime
   fullName: Sensus.iOS.Probes.Movement.iOSActivityProbe.QueryStartTime
   nameWithType: iOSActivityProbe.QueryStartTime
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe
-  name: iOSGyroScoperProbe
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html
-  commentId: T:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe
-  nameWithType: iOSGyroScoperProbe
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor
-  name: iOSGyroScoperProbe()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe__ctor
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.iOSGyroScoperProbe()
-  nameWithType: iOSGyroScoperProbe.iOSGyroScoperProbe()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor*
-  name: iOSGyroScoperProbe
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe__ctor_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.iOSGyroScoperProbe
-  nameWithType: iOSGyroScoperProbe.iOSGyroScoperProbe
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe
+  name: iOSGyroscopeProbe
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html
+  commentId: T:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe
+  nameWithType: iOSGyroscopeProbe
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.#ctor
+  name: iOSGyroscopeProbe()
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe__ctor
+  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.#ctor
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.iOSGyroscopeProbe()
+  nameWithType: iOSGyroscopeProbe.iOSGyroscopeProbe()
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.#ctor*
+  name: iOSGyroscopeProbe
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe__ctor_
+  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.#ctor
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.iOSGyroscopeProbe
+  nameWithType: iOSGyroscopeProbe.iOSGyroscopeProbe
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.InitializeAsync
   name: InitializeAsync()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_InitializeAsync
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync()
-  nameWithType: iOSGyroScoperProbe.InitializeAsync()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync*
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe_InitializeAsync
+  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.InitializeAsync
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.InitializeAsync()
+  nameWithType: iOSGyroscopeProbe.InitializeAsync()
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.InitializeAsync*
   name: InitializeAsync
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_InitializeAsync_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  nameWithType: iOSGyroScoperProbe.InitializeAsync
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe_InitializeAsync_
+  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.InitializeAsync
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.InitializeAsync
+  nameWithType: iOSGyroscopeProbe.InitializeAsync
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StartListeningAsync
   name: StartListeningAsync()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StartListeningAsync
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync()
-  nameWithType: iOSGyroScoperProbe.StartListeningAsync()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync*
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe_StartListeningAsync
+  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StartListeningAsync
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StartListeningAsync()
+  nameWithType: iOSGyroscopeProbe.StartListeningAsync()
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StartListeningAsync*
   name: StartListeningAsync
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StartListeningAsync_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  nameWithType: iOSGyroScoperProbe.StartListeningAsync
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe_StartListeningAsync_
+  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StartListeningAsync
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StartListeningAsync
+  nameWithType: iOSGyroscopeProbe.StartListeningAsync
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync
   name: StopListeningAsync()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StopListeningAsync
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync()
-  nameWithType: iOSGyroScoperProbe.StopListeningAsync()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync*
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe_StopListeningAsync
+  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync()
+  nameWithType: iOSGyroscopeProbe.StopListeningAsync()
+- uid: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync*
   name: StopListeningAsync
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StopListeningAsync_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  nameWithType: iOSGyroScoperProbe.StopListeningAsync
+  href: api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html#Sensus_iOS_Probes_Movement_iOSGyroscopeProbe_StopListeningAsync_
+  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync
+  fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync
+  nameWithType: iOSGyroscopeProbe.StopListeningAsync
 - uid: Sensus.iOS.Probes.User.Health
   name: Sensus.iOS.Probes.User.Health
   href: api/Sensus.iOS.Probes.User.Health.html
@@ -44160,18 +44142,21 @@ references:
   commentId: Overload:Sensus.Protocol.ToString
   fullName: Sensus.Protocol.ToString
   nameWithType: Protocol.ToString
-- uid: Sensus.Protocol.TypeProbe
-  name: TypeProbe
-  href: api/Sensus.Protocol.html#Sensus_Protocol_TypeProbe
-  commentId: P:Sensus.Protocol.TypeProbe
-  fullName: Sensus.Protocol.TypeProbe
-  nameWithType: Protocol.TypeProbe
-- uid: Sensus.Protocol.TypeProbe*
-  name: TypeProbe
-  href: api/Sensus.Protocol.html#Sensus_Protocol_TypeProbe_
-  commentId: Overload:Sensus.Protocol.TypeProbe
-  fullName: Sensus.Protocol.TypeProbe
-  nameWithType: Protocol.TypeProbe
+- uid: Sensus.Protocol.TryGetProbe(System.Type,Sensus.Probes.Probe@)
+  name: TryGetProbe(Type, out Probe)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TryGetProbe_System_Type_Sensus_Probes_Probe__
+  commentId: M:Sensus.Protocol.TryGetProbe(System.Type,Sensus.Probes.Probe@)
+  name.vb: TryGetProbe(Type, ByRef Probe)
+  fullName: Sensus.Protocol.TryGetProbe(System.Type, out Sensus.Probes.Probe)
+  fullName.vb: Sensus.Protocol.TryGetProbe(System.Type, ByRef Sensus.Probes.Probe)
+  nameWithType: Protocol.TryGetProbe(Type, out Probe)
+  nameWithType.vb: Protocol.TryGetProbe(Type, ByRef Probe)
+- uid: Sensus.Protocol.TryGetProbe*
+  name: TryGetProbe
+  href: api/Sensus.Protocol.html#Sensus_Protocol_TryGetProbe_
+  commentId: Overload:Sensus.Protocol.TryGetProbe
+  fullName: Sensus.Protocol.TryGetProbe
+  nameWithType: Protocol.TryGetProbe
 - uid: Sensus.Protocol.VariableValue
   name: VariableValue
   href: api/Sensus.Protocol.html#Sensus_Protocol_VariableValue

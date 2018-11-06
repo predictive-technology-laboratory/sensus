@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace Sensus.iOS.Probes.Movement
 {
-    public class iOSGyroScoperProbe : GyroscopeProbe
+    public class iOSGyroscopeProbe : GyroscopeProbe
     {
         private CMMotionManager _motionManager;
 
