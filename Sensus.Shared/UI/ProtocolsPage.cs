@@ -69,45 +69,50 @@ namespace Sensus.UI
         }
 
         private ListView _protocolsList;
+        ProgressBar _protocolStartProgressBar;
+        Label _protocolStartProgressBarLabel;
 
         public ProtocolsPage()
         {
             Title = "Your Studies";
 
-            ProgressBar protocolStartProgressBar = new ProgressBar()
+            _protocolStartProgressBar = new ProgressBar()
             {
-                Progress = 0,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            Label protocolStartProgressBarLabel = new Label()
+            _protocolStartProgressBarLabel = new Label()
             {
-                Text = $"Progress:  {protocolStartProgressBar.Progress}%",
-                FontSize = 15,
+                FontSize = 20,
                 HorizontalOptions = LayoutOptions.CenterAndExpand
             };
 
             ContentPage protocolStartPage = new ContentPage
             {
-                Title = "Starting Study",
-
                 Content = new StackLayout
                 {
                     Orientation = StackOrientation.Vertical,
                     VerticalOptions = LayoutOptions.CenterAndExpand,
                     Children =
                     {
+                        new Label
+                        {
+                            Text = "Starting Study...",
+                            FontSize = 30,
+                            HorizontalOptions = LayoutOptions.CenterAndExpand,
+                            VerticalOptions = LayoutOptions.CenterAndExpand
+                        },
+                        _protocolStartProgressBar,
+                        _protocolStartProgressBarLabel,
 #if __IOS__
                         new Label
                         {
                             Text = "Please keep app open until finished.",
-                            FontSize = 10,
+                            FontSize = 15,
                             HorizontalOptions = LayoutOptions.CenterAndExpand,
                             VerticalOptions = LayoutOptions.CenterAndExpand
-                        },
+                        }
  #endif     
-                        protocolStartProgressBar,
-                        protocolStartProgressBarLabel
                     }
                 }
             };
@@ -122,14 +127,9 @@ namespace Sensus.UI
                 });
             };
 
-            _protocolStartAddProgressAction = async (sender, progress) =>
+            _protocolStartAddProgressAction = async (sender, additionalProgress) =>
             {
-                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                {
-                    double newProgress = protocolStartProgressBar.Progress + progress;
-                    protocolStartProgressBarLabel.Text = $"Progress:  {newProgress * 100}%";
-                    await protocolStartProgressBar.ProgressTo(newProgress, 100, Easing.Linear);
-                });
+                await SetProgressAsync(_protocolStartProgressBar.Progress + additionalProgress);
             };
 
             _protocolStartCompletedSuccessfullyAction = async (sender, success) =>
@@ -265,6 +265,8 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
+                    await SetProgressAsync(0);
+
                     selectedProtocol.ProtocolStartInitiated += _protocolStartInitiatedAction;
                     selectedProtocol.ProtocolStartAddProgress += _protocolStartAddProgressAction;
                     selectedProtocol.ProtocolStartCompletedSuccessfully += _protocolStartCompletedSuccessfullyAction;
@@ -653,6 +655,15 @@ namespace Sensus.UI
 
             }, ToolbarItemOrder.Secondary));
             #endregion
+        }
+
+        private async Task SetProgressAsync(double progress)
+        {
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            {
+                _protocolStartProgressBarLabel.Text = $"Progress:  {Math.Round(progress * 100)}%";
+                await _protocolStartProgressBar.ProgressTo(progress, 100, Easing.Linear);
+            });
         }
     }
 }
