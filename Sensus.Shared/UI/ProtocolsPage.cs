@@ -32,10 +32,10 @@ namespace Sensus.UI
     /// </summary>
     public class ProtocolsPage : ContentPage
     {
-        private EventHandler _protocolStartedAction;
-        private EventHandler _protocolCompletedAction;
-        private EventHandler<double> _protocolLoadProgressAction;
-        private bool hasProtocolLoadingPage = false;
+        private EventHandler _protocolStartInitiatedAction;
+        private EventHandler<double> _protocolStartAddProgressAction;
+        private EventHandler<bool> _protocolStartCompletedSuccessfullyAction;
+        private bool _pushedModalStartProgressPage = false;
 
         public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
@@ -86,92 +86,84 @@ namespace Sensus.UI
                     return;
                 }
 
-                var loadingProgressPage = new ContentPage() { Title = "Loading Protocol..." };
-                var content = new StackLayout()
-                {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    Children =
-                    {
-                        new Label
-                        {
-                            Text = "Loading Protocol...",
-                            FontSize = 20,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand,
-                            VerticalOptions = LayoutOptions.CenterAndExpand
-                        },
-
-#if __IOS__
-                        new Label
-                        {
-                            Text = "Protocol is loading, please do not close app until status bar is complete.",
-                            FontSize = 10,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand,
-                            VerticalOptions = LayoutOptions.CenterAndExpand
-                        },
- #endif
-                    }
-
-                };
-
-                var progressBar = new ProgressBar()
+                ProgressBar progressBar = new ProgressBar()
                 {
                     Progress = 0,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
 
-                content.Children.Add(progressBar);
-
-                var progressBarLabel = new Label()
+                Label progressBarLabel = new Label()
                 {
-                    Text = $"Progress: {progressBar.Progress}%",
+                    Text = $"Progress:  {progressBar.Progress}%",
                     FontSize = 15,
                     HorizontalOptions = LayoutOptions.CenterAndExpand
                 };
 
-
-                content.Children.Add(progressBarLabel);
-
-                loadingProgressPage.Content = content;
-
-                _protocolStartedAction = async (sender, eventArgs) =>
+                ContentPage protocolStartPage = new ContentPage
                 {
-                    hasProtocolLoadingPage = true;
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    Title = "Starting Study",
+
+                    Content = new StackLayout
                     {
-                        await Navigation.PushModalAsync(loadingProgressPage);
-                    });
-
-
+                        Orientation = StackOrientation.Vertical,
+                        VerticalOptions = LayoutOptions.CenterAndExpand,
+                        Children =
+                        {
+#if __IOS__
+                            new Label
+                            {
+                                Text = "Please keep app open until finished.",
+                                FontSize = 10,
+                                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                                VerticalOptions = LayoutOptions.CenterAndExpand
+                            },
+ #endif     
+                            progressBar,
+                            progressBarLabel
+                        }
+                    }
                 };
 
-                _protocolCompletedAction = async (sender, eventArgs) =>
+                _protocolStartInitiatedAction = async (sender, eventArgs) =>
                 {
-                    if (hasProtocolLoadingPage)
-                    {
+                    _pushedModalStartProgressPage = true;
 
-                        hasProtocolLoadingPage = false;
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        await Navigation.PushModalAsync(protocolStartPage);
+                    });
+                };
+
+                _protocolStartAddProgressAction = async (sender, progress) =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        double newProgress = progressBar.Progress + progress;
+                        progressBarLabel.Text = $"Progress:  {newProgress * 100}%";
+                        await progressBar.ProgressTo(newProgress, 100, Easing.Linear);
+                    });
+                };
+
+                _protocolStartCompletedSuccessfullyAction = async (sender, success) =>
+                {
+                    if (_pushedModalStartProgressPage)
+                    {
+                        _pushedModalStartProgressPage = false;
+
                         await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                         {
                             await Navigation.PopModalAsync();
                         });
-
                     }
 
-
-                };
-
-                _protocolLoadProgressAction = async (sender, progress) =>
-                {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    // if we started successfully on ios, warn the user not to terminate the app.
+#if __IOS__
+                    if (success)
                     {
-                        progressBarLabel.Text = $"Progress: {progress * 100}%";
-                        await progressBar.ProgressTo(progress, 100, Easing.Linear);
-
-                    });
-
+                        await DisplayAlert("Caution", "Please be careful not to terminate the app by swiping it away, as doing this will discontinue your participation in the study. Instead, move the app to the background by tapping the home button.", "OK");
+                    }
+#endif
                 };
-
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
@@ -180,7 +172,7 @@ namespace Sensus.UI
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
 
-                if(selectedProtocol.AllowTagging)
+                if (selectedProtocol.AllowTagging)
                 {
                     actions.Add("Tag Data");
                 }
@@ -273,16 +265,15 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
-                    selectedProtocol.ProtocolLoadStarted += _protocolStartedAction;
-                    selectedProtocol.ProtocolLoadProgressChanged += _protocolLoadProgressAction;
-                    selectedProtocol.ProtocolLoadCompleted += _protocolCompletedAction;
+                    selectedProtocol.ProtocolStartInitiated += _protocolStartInitiatedAction;
+                    selectedProtocol.ProtocolStartAddProgress += _protocolStartAddProgressAction;
+                    selectedProtocol.ProtocolStartCompletedSuccessfully += _protocolStartCompletedSuccessfullyAction;
 
                     await selectedProtocol.StartWithUserAgreementAsync(null);
 
-                    selectedProtocol.ProtocolLoadStarted -= _protocolStartedAction;
-                    selectedProtocol.ProtocolLoadProgressChanged -= _protocolLoadProgressAction;
-                    selectedProtocol.ProtocolLoadCompleted -= _protocolCompletedAction;
-
+                    selectedProtocol.ProtocolStartInitiated -= _protocolStartInitiatedAction;
+                    selectedProtocol.ProtocolStartAddProgress -= _protocolStartAddProgressAction;
+                    selectedProtocol.ProtocolStartCompletedSuccessfully -= _protocolStartCompletedSuccessfullyAction;
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
