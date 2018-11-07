@@ -493,9 +493,9 @@ namespace Sensus
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
-        public event EventHandler ProtocolLoadStarted;
-        public event EventHandler ProtocolLoadCompleted;
-        public event EventHandler<double> ProtocolLoadProgressChanged;
+        public event EventHandler ProtocolStartInitiated;
+        public event EventHandler<double> ProtocolStartAddProgress;
+        public event EventHandler<bool> ProtocolStartCompletedSuccessfully;
 
         private string _id;
         private string _name;
@@ -1648,7 +1648,6 @@ namespace Sensus
 
         private async Task PrivateStartAsync()
         {
-
             if (_running)
             {
                 return;
@@ -1658,7 +1657,7 @@ namespace Sensus
                 _running = true;
             }
 
-            ProtocolLoadStarted?.Invoke(this, EventArgs.Empty);
+            ProtocolStartInitiated?.Invoke(this, EventArgs.Empty);
 
             // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
             _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
@@ -1671,19 +1670,31 @@ namespace Sensus
 
             await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
 
+            // there are five steps to starting a protocol
+            //
+            // 1) local data store
+            // 2) remote data store
+            // 3) probes
+            // 4) push notification registrations
+            // 5) saving the protocol
+            //
+            // give each step 20 percent
+            double perStepPercent = 0.2;
+            ProtocolStartAddProgress?.Invoke(this, 0);
+
             Exception startException = null;
 
             // start local data store
-            ProtocolLoadProgressChanged?.Invoke(this, .01);
             try
             {
-
                 if (_localDataStore == null)
                 {
                     throw new Exception("Local data store not defined.");
                 }
 
                 await _localDataStore.StartAsync();
+
+                ProtocolStartAddProgress?.Invoke(this, perStepPercent);
             }
             catch (Exception localDataStoreException)
             {
@@ -1693,7 +1704,6 @@ namespace Sensus
                 startException = localDataStoreException;
             }
 
-            ProtocolLoadProgressChanged?.Invoke(this, .04);
             // start remote data store
             if (startException == null)
             {
@@ -1703,8 +1713,10 @@ namespace Sensus
                     {
                         throw new Exception("Remote data store not defined.");
                     }
+
                     await _remoteDataStore.StartAsync();
-                    ProtocolLoadProgressChanged?.Invoke(this, .06);
+
+                    ProtocolStartAddProgress?.Invoke(this, perStepPercent);
                 }
                 catch (Exception remoteDataStoreException)
                 {
@@ -1720,7 +1732,6 @@ namespace Sensus
             {
                 try
                 {
-
                     // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
 #if __IOS__
                     if (HKHealthStore.IsHealthDataAvailable)
@@ -1733,10 +1744,9 @@ namespace Sensus
                                 enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
                             }
                         }
-                        ProtocolLoadProgressChanged?.Invoke(this, .08);
+
                         if (enabledHealthKitProbes.Count > 0)
                         {
-
                             NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
                             HKHealthStore healthStore = new HKHealthStore();
                             Tuple<bool, NSError> successError = await healthStore.RequestAuthorizationToShareAsync(new NSSet(), objectTypesToRead);
@@ -1746,24 +1756,21 @@ namespace Sensus
                                 SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + successError.Item2.Description, LoggingLevel.Normal, GetType());
                             }
                         }
-
-
-
                     }
 #endif
 
                     SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                     int probesEnabled = 0;
                     bool startMicrosoftBandProbes = true;
-                    ProtocolLoadProgressChanged?.Invoke(this, .10);
-                    var enabledProbes = _probes.Count(w => w.Enabled);
-                    var probePercent = Math.Round((enabledProbes > 0 ? 80 / enabledProbes : 80) * .01, 2, MidpointRounding.AwayFromZero);
+                    int numProbesToStart = _probes.Count(p => p.Enabled);
+                    double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                     foreach (Probe probe in _probes)
                     {
                         if (probe.Enabled)
                         {
                             if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                             {
+                                ProtocolStartAddProgress?.Invoke(this, perProbeStartProgressPercent);
                                 continue;
                             }
 
@@ -1786,11 +1793,10 @@ namespace Sensus
                             if (probe.Enabled)
                             {
                                 ++probesEnabled;
-                                ProtocolLoadProgressChanged?.Invoke(this, .10 + (probesEnabled * (probePercent)));
                             }
 
+                            ProtocolStartAddProgress?.Invoke(this, perProbeStartProgressPercent);
                         }
-                        
                     }
 
                     if (probesEnabled == 0)
@@ -1805,28 +1811,30 @@ namespace Sensus
                     SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 }
-
             }
 
             if (startException == null)
             {
-                ProtocolLoadProgressChanged?.Invoke(this, .9);
                 // we're all good. register with push notification hubs.
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
+                ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+
                 // save the state of the app in case it crashes or -- on ios -- in case the user terminates
                 // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
-                ProtocolLoadProgressChanged?.Invoke(this, 1);
                 await SensusServiceHelper.Get().SaveAsync();
 
-
-                ProtocolLoadCompleted?.Invoke(this, EventArgs.Empty);
+                ProtocolStartAddProgress?.Invoke(this, perStepPercent);
 
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
+
+                ProtocolStartCompletedSuccessfully?.Invoke(this, true);
             }
             else
             {
                 await StopAsync();
+
+                ProtocolStartCompletedSuccessfully?.Invoke(this, false);
             }
         }
 
@@ -2195,8 +2203,6 @@ namespace Sensus
 
         public async Task StopAsync()
         {
-            ProtocolLoadCompleted?.Invoke(this, EventArgs.Empty);
-
             if (_running)
             {
                 _running = false;
