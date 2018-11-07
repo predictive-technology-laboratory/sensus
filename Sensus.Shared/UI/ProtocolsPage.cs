@@ -35,6 +35,7 @@ namespace Sensus.UI
         private EventHandler _protocolStartInitiatedAction;
         private EventHandler<double> _protocolStartAddProgressAction;
         private EventHandler<bool> _protocolStartCompletedSuccessfullyAction;
+        private CancellationTokenSource _cancellationTokenSource;
         private bool _pushedModalStartProgressPage = false;
 
         public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
@@ -71,9 +72,12 @@ namespace Sensus.UI
         private ListView _protocolsList;
         ProgressBar _protocolStartProgressBar;
         Label _protocolStartProgressBarLabel;
+        Button _cancelProtocolStartButton;
 
         public ProtocolsPage()
         {
+            _cancellationTokenSource = new CancellationTokenSource();
+
             Title = "Your Studies";
 
             _protocolStartProgressBar = new ProgressBar()
@@ -85,6 +89,18 @@ namespace Sensus.UI
             {
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.CenterAndExpand
+            };
+
+            _cancelProtocolStartButton = new Button()
+            {
+                Text = "Cancel",
+                FontSize = 30,
+                HorizontalOptions = LayoutOptions.CenterAndExpand
+            };
+
+            _cancelProtocolStartButton.Clicked += (o, e) =>
+            {
+                _cancellationTokenSource.Cancel();
             };
 
             ContentPage protocolStartPage = new ContentPage
@@ -111,8 +127,9 @@ namespace Sensus.UI
                             FontSize = 15,
                             HorizontalOptions = LayoutOptions.CenterAndExpand,
                             VerticalOptions = LayoutOptions.CenterAndExpand
-                        }
+                        },
  #endif     
+                        _cancelProtocolStartButton
                     }
                 }
             };
@@ -271,7 +288,7 @@ namespace Sensus.UI
                     selectedProtocol.ProtocolStartAddProgress += _protocolStartAddProgressAction;
                     selectedProtocol.ProtocolStartCompletedSuccessfully += _protocolStartCompletedSuccessfullyAction;
 
-                    await selectedProtocol.StartWithUserAgreementAsync(null);
+                    await selectedProtocol.StartWithUserAgreementAsync(null, _cancellationTokenSource.Token);
 
                     selectedProtocol.ProtocolStartInitiated -= _protocolStartInitiatedAction;
                     selectedProtocol.ProtocolStartAddProgress -= _protocolStartAddProgressAction;
