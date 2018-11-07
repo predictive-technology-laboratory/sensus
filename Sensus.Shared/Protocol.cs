@@ -532,6 +532,7 @@ namespace Sensus
         private string _pushNotificationsHub;
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
+        private Dictionary<Type, Probe> _typeProbe;
 
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
@@ -1284,7 +1285,6 @@ namespace Sensus
         [OnOffUiProperty("Allow Protocol Share:", true, 43)]
         public bool Shareable { get; set; } = false;
 
-
         /// <summary>
         /// Whether or not to allow the user to share local data collected on the device.
         /// </summary>
@@ -1300,11 +1300,55 @@ namespace Sensus
         public bool AllowParticipantIdReset { get; set; } = false;
 
         /// <summary>
+        /// Whether or not to allow the user to enter tagging mode. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value><c>true</c> if allow tagging; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Tagging:", true, 46)]
+        public bool AllowTagging { get; set; } = false;
+
+        /// <summary>
+        /// The tags to make available when in tagging mode. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value>The tags.</value>
+        [EditableListUiProperty("Available Tags:", true, 47, false)]
+        public List<string> AvailableTags { get; set; } = new List<string>();
+
+        /// <summary>
+        /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value>The tag identifier.</value>
+        public string TaggedEventId { get; set; }
+
+        /// <summary>
+        /// The current tags applied during event tagging. See [this article](xref:tagging_mode) for more information.
+        /// </summary>
+        /// <value>The set tags.</value>
+        public List<string> TaggedEventTags { get; set; } = new List<string>();
+
+        /// <summary>
+        /// The time at which the current tagging started.
+        /// </summary>
+        /// <value>The tagging start timestamp.</value>
+        public DateTimeOffset? TaggingStartTimestamp { get; set; }
+
+        /// <summary>
+        /// The time at which the current tagging ended.
+        /// </summary>
+        /// <value>The tagging end timestamp.</value>
+        public DateTimeOffset? TaggingEndTimestamp { get; set; }
+
+        /// <summary>
+        /// A list of taggings to export.
+        /// </summary>
+        /// <value>The taggings to export.</value>
+        public List<string> TaggingsToExport { get; } = new List<string>();
+
+        /// <summary>
         /// The user can be asked to confirm starting the <see cref="Protocol"/> in serveral ways. See <see cref="ProtocolStartConfirmationMode"/>
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 46, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 48, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1322,7 +1366,7 @@ namespace Sensus
         /// value to use here is the name of the hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 47, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 49, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1335,7 +1379,7 @@ namespace Sensus
         /// the value directly to this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 48, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 50, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1477,6 +1521,21 @@ namespace Sensus
 
             _probes.Add(probe);
             _probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
+        }
+
+        public bool TryGetProbe(Type type, out Probe probe)
+        {
+            if (_typeProbe == null)
+            {
+                _typeProbe = new Dictionary<Type, Probe>();
+
+                foreach (Probe p in _probes)
+                {
+                    _typeProbe.Add(p.GetType(), p);
+                }
+            }
+
+            return _typeProbe.TryGetValue(type, out probe);
         }
 
         private async Task ResetAsync(bool resetId)

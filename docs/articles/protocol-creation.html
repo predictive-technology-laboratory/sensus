@@ -79,7 +79,8 @@
             <article class="content wrap" id="_content" data-uid="protocol_creation">
 <h1 id="protocol-creation">Protocol Creation</h1>
 
-<p>Follow the steps below to get a basic Sensus Protocol up and running.</p>
+<p>Follow the steps below to get a basic Sensus Protocol up and running using AWS S3 as the storage endpoint. Alternatively,
+consider setting up a <a class="xref" href="local-only-storage.html">local-only</a> protocol.</p>
 <ol>
 <li><a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">Configure</a> an AWS S3 bucket for data storage.</li>
 <li>Within the Sensus app:<ol>
@@ -96,6 +97,7 @@ based on the information provided by the S3 configuration script that you ran ab
 <p>After a period of time, specifically the <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS">AWS S3 write delay</a>,
 you should see data appear in your AWS S3 bucket. You can force data to be written to your bucket on demand by enabling 
 the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowSubmitData">write data</a> feature.</p>
+<p>See <a class="xref" href="protocol-distribution.html">here</a> for more information about distributing protocols to others.</p>
 </article>
           </div>
           
@@ -104,7 +106,7 @@ the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowSubmi
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/protocol-creation.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/adaptive-ema/DocFX/articles/protocol-creation.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

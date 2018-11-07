@@ -53,7 +53,7 @@ namespace Sensus.Probes
     ///     by the Apple Push Notification Service. The value of <see cref="PollingSleepDurationMS"/> should be set conservatively for all probes,
     ///     for example no lower than 15-20 minutes.
     /// 
-    /// Beyond these exceptions, all processing within Sensus must be halted when the user backgrounds the app. Sensus does its best to support Polling 
+    /// Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support Polling 
     /// Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 
     /// user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, the user 
     /// might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
@@ -384,7 +384,7 @@ namespace Sensus.Probes
 
             if (_acPowerConnectPoll)
             {
-                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;  //attach to the power connection changed 
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
 
                 if (_acPowerConnectPollOverridesScheduledPolls)
                 {

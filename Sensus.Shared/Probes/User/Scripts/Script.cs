@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script : INotifyPropertyChanged, IComparable<Script>
+    public class Script : INotifyPropertyChanged, IComparable<Script>, IScript
     {
         /// <summary>
         /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
@@ -59,6 +59,7 @@ namespace Sensus.Probes.User.Scripts
 
         public string Id { get; set; }
         public ScriptRunner Runner { get; set; }
+        public IScriptRunner IRunner { get => Runner; }  // for NuGet interfacing
         public ObservableCollection<InputGroup> InputGroups { get; }
         public DateTimeOffset? ScheduledRunTime { get; set; }
         public DateTimeOffset? RunTime { get; set; }

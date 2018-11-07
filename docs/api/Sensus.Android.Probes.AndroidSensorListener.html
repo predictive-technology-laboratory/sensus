@@ -107,12 +107,12 @@
   
   
   <a id="Sensus_Android_Probes_AndroidSensorListener__ctor_" data-uid="Sensus.Android.Probes.AndroidSensorListener.#ctor*"></a>
-  <h4 id="Sensus_Android_Probes_AndroidSensorListener__ctor_Android_Hardware_SensorType_System_Action_Android_Hardware_SensorStatus__System_Action_Android_Hardware_SensorEvent__" data-uid="Sensus.Android.Probes.AndroidSensorListener.#ctor(Android.Hardware.SensorType,System.Action{Android.Hardware.SensorStatus},System.Action{Android.Hardware.SensorEvent})">AndroidSensorListener(SensorType, Action&lt;SensorStatus&gt;, Action&lt;SensorEvent&gt;)</h4>
+  <h4 id="Sensus_Android_Probes_AndroidSensorListener__ctor_Android_Hardware_SensorType_System_Func_Android_Hardware_SensorEvent_System_Threading_Tasks_Task__" data-uid="Sensus.Android.Probes.AndroidSensorListener.#ctor(Android.Hardware.SensorType,System.Func{Android.Hardware.SensorEvent,System.Threading.Tasks.Task})">AndroidSensorListener(SensorType, Func&lt;SensorEvent, Task&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AndroidSensorListener(SensorType sensorType, Action&lt;SensorStatus&gt; sensorAccuracyChangedCallback, Action&lt;SensorEvent&gt; sensorValueChangedCallback)</code></pre>
+    <pre><code class="lang-csharp hljs">public AndroidSensorListener(SensorType sensorType, Func&lt;SensorEvent, Task&gt; sensorValueChangedCallback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -130,12 +130,7 @@
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">Android.Hardware.SensorStatus</span>&gt;</td>
-        <td><span class="parametername">sensorAccuracyChangedCallback</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">Android.Hardware.SensorEvent</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">Android.Hardware.SensorEvent</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
         <td><span class="parametername">sensorValueChangedCallback</span></td>
         <td></td>
       </tr>

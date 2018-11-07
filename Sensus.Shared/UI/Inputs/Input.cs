@@ -190,15 +190,18 @@ namespace Sensus.UI.Inputs
                     {
                         Protocol protocolForInput = GetProtocolForInput();
 
-                        // if the input is complete, set the variable on the protocol
-                        if (_complete)
+                        if (protocolForInput != null)
                         {
-                            protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
-                        }
-                        // if the input is incomplete, set the value to null on the protocol
-                        else
-                        {
-                            protocolForInput.VariableValue[definedVariable] = null;
+                            // if the input is complete, set the variable on the protocol
+                            if (_complete)
+                            {
+                                protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
+                            }
+                            // if the input is incomplete, set the value to null on the protocol
+                            else
+                            {
+                                protocolForInput.VariableValue[definedVariable] = null;
+                            }
                         }
                     }
                 }
@@ -518,12 +521,23 @@ namespace Sensus.UI.Inputs
 
         private Protocol GetProtocolForInput()
         {
-            return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
-                                                                                             .Single()                                         // must be only 1
-                                                                                             .ScriptRunners                                    // get runners
-                                                                                             .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
-                                                                                             .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
-                                                                                             .Any(input => input.Id == _id));                  // check if any inputs are the current one
+            try
+            {
+                return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
+                                                                                                 .Single()                                         // must be only 1
+                                                                                                 .ScriptRunners                                    // get runners
+                                                                                                 .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
+                                                                                                 .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
+                                                                                                 .Any(input => input.Id == _id));                  // check if any inputs are the current one
+            }
+            catch (Exception ex)
+            {
+                // for some reason, we are seeing crashes caused by different protocols having inputs with the same id. this
+                // should not be possible as one cannot load the same protocol twice, nor can one copy a protocol without
+                // resetting the input ids. so just report the exception for now and return null.
+                SensusException.Report("Exception while getting protocol for input:  " + ex.Message, ex);
+                return null;
+            }
         }
 
         public virtual View GetView(int index)

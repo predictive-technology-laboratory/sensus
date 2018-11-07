@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Context
 {
-    public class LightDatum : Datum
+    public class LightDatum : Datum, ILightDatum
     {
         private double _brightness;
 

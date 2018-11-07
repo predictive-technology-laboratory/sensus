@@ -24,6 +24,10 @@ using Sensus.Probes.User.Scripts;
 using Sensus.Anonymization.Anonymizers;
 using Xamarin.Forms;
 using Newtonsoft.Json;
+using Sensus.UI.Inputs;
+using System.Net;
+using System;
+using System.Threading.Tasks;
 
 namespace Sensus.UI
 {
@@ -111,6 +115,43 @@ namespace Sensus.UI
 
                     await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Probe Definition", "application/json");
                 };
+
+                Button setAgentButton = new Button
+                {
+                    Text = "Set Agent" + (scriptProbe.Agent == null ? "" : ":  " + scriptProbe.Agent.Id),
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                setAgentButton.Clicked += async (sender, e) =>
+                {
+                    await SetAgentButton_Clicked(setAgentButton, scriptProbe);
+                };
+
+                contentLayout.Children.Add(setAgentButton);
+
+                Button clearAgentButton = new Button
+                {
+                    Text = "Clear Agent",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                clearAgentButton.Clicked += async (sender, e) =>
+                {
+                    if (scriptProbe.Agent != null)
+                    {
+                        if (await DisplayAlert("Confirm", "Are you sure you wish to clear the survey agent?", "Yes", "No"))
+                        {
+                            scriptProbe.Agent = null;
+                            setAgentButton.Text = "Set Agent";
+                        }
+                    }
+
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Survey agent cleared.");
+                };
+
+                contentLayout.Children.Add(clearAgentButton);
             }
             #endregion
 
@@ -145,7 +186,7 @@ namespace Sensus.UI
 
                 contentLayout.Children.Add(editBeaconsButton);
 
-                editBeaconsButton.Clicked += async (sender, e) => 
+                editBeaconsButton.Clicked += async (sender, e) =>
                 {
                     await Navigation.PushAsync(new EstimoteBeaconProbeBeaconsPage(probe as EstimoteBeaconProbe));
                 };
@@ -235,6 +276,129 @@ namespace Sensus.UI
             {
                 Content = contentLayout
             };
+        }
+
+        private async Task SetAgentButton_Clicked(Button setAgentButton, ScriptProbe scriptProbe)
+        {
+            List<Input> agentSelectionInputs = new List<Input>();
+
+            // show any existing agents
+            List<IScriptProbeAgent> currentAgents = null;
+
+            // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+            // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
+#if __ANDROID__
+            // try to extract agents from a previously loaded assembly
+            try
+            {
+              currentAgents = ScriptProbe.GetAgents(scriptProbe.AgentAssemblyBytes);
+            }
+            catch (Exception)
+            { }
+#elif __IOS__
+            currentAgents = ScriptProbe.GetAgents();
+
+            // display warning message, as there is no other option to load agents.
+            if (currentAgents.Count == 0)
+            {
+                await SensusServiceHelper.Get().FlashNotificationAsync("No agents available.");
+                return;
+            }
+#endif
+
+            // let the user pick from currently available agents
+            ItemPickerPageInput currentAgentsPicker = null;
+            if (currentAgents != null && currentAgents.Count > 0)
+            {
+                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList(), ".")
+                {
+                    Required = false
+                };
+
+                agentSelectionInputs.Add(currentAgentsPicker);
+            }
+
+#if __ANDROID__
+            // add option to scan qr code to import a new assembly
+            QrCodeInput agentAssemblyUrlQrCodeInput = new QrCodeInput(QrCodePrefix.SURVEY_AGENT, "URL:", false, "Agent URL:")
+            {
+                Required = false
+            };
+
+            agentSelectionInputs.Add(agentAssemblyUrlQrCodeInput);
+#endif
+
+            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Survey Agent", agentSelectionInputs, null, true, "Set", null, null, null, false);
+
+            if (completedInputs == null)
+            {
+                return;
+            }
+
+            // check for QR code on android. this doesn't exist on ios.
+            string agentURL = null;
+
+#if __ANDROID__
+            agentURL = agentAssemblyUrlQrCodeInput.Value?.ToString();
+#endif
+
+            // if there is no URL, check if the user has selected an agent.
+            if (string.IsNullOrWhiteSpace(agentURL))
+            {
+                if (currentAgentsPicker != null)
+                {
+                    IScriptProbeAgent selectedAgent = (currentAgentsPicker.Value as List<object>).FirstOrDefault() as IScriptProbeAgent;
+
+                    // set the selected agent, watching out for a null (clearing) selection that needs to be confirmed
+                    if (selectedAgent != null || await DisplayAlert("Confirm", "Are you sure you wish to clear the survey agent?", "Yes", "No"))
+                    {
+                        scriptProbe.Agent = selectedAgent;
+
+                        setAgentButton.Text = "Set Agent" + (scriptProbe.Agent == null ? "" : ":  " + scriptProbe.Agent.Id);
+
+                        if (scriptProbe.Agent == null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Survey agent cleared.");
+                        }
+                    }
+                }
+            }
+#if __ANDROID__
+            else
+            {
+                // download agent assembly from scanned QR code
+                byte[] downloadedBytes = null;
+                string downloadErrorMessage = null;
+                try
+                {
+                    // download the assembly and extract agents
+                    downloadedBytes = scriptProbe.AgentAssemblyBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
+                    List<IScriptProbeAgent> qrCodeAgents = ScriptProbe.GetAgents(downloadedBytes);
+
+                    if (qrCodeAgents.Count == 0)
+                    {
+                        throw new Exception("No agents were present in the specified file.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    downloadErrorMessage = ex.Message;
+                }
+
+                // if error message is null, then we have 1 or more agents in the downloaded assembly.
+                if (downloadErrorMessage == null)
+                {
+                    // redisplay the current input prompt including the agents we just downloaded
+                    scriptProbe.AgentAssemblyBytes = downloadedBytes;
+                    await SetAgentButton_Clicked(setAgentButton, scriptProbe);
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log(downloadErrorMessage, LoggingLevel.Normal, typeof(Protocol));
+                    await SensusServiceHelper.Get().FlashNotificationAsync(downloadErrorMessage);
+                }
+            }
+#endif
         }
     }
 }

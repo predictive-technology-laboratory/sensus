@@ -90,8 +90,8 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Whether to initiate data upload when the device is plugged in to external 
-        /// power. This will still respect the other settings (e.g., <see cref="RequireWiFi"/>).
+        /// Whether to initiate an additional data upload each time the device is plugged in to external 
+        /// power. These additional uploads will respect the other settings (e.g., <see cref="RequireWiFi"/>).
         /// </summary>
         /// <value><c>true</c> to upload when plugged in, otherwise <c>false</c>.</value>
         [OnOffUiProperty("Write on Power Connect:", true, 52)]

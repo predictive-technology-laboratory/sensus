@@ -36,7 +36,7 @@ using Sensus.Notifications;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class ScriptRunner : INotifyPropertyChanged
+    public class ScriptRunner : INotifyPropertyChanged, IScriptRunner
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -452,7 +452,7 @@ namespace Sensus.Probes.User.Scripts
         public async Task StopAsync()
         {
             await UnscheduleCallbacksAsync();
-            await SensusServiceHelper.Get().RemoveScriptsForRunnerAsync(this);
+            await SensusServiceHelper.Get().RemoveScriptsForRunnerAsync(this, true);
         }
 
         public async Task ScheduleScriptRunsAsync()
@@ -530,7 +530,7 @@ namespace Sensus.Probes.User.Scripts
         private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
         {
             // don't bother with the script if it's coming too soon.
-            if (triggerTime.ReferenceTillTrigger.TotalMinutes <= 1)
+            if (triggerTime.ReferenceTillTrigger.TotalSeconds <= 5)
             {
                 return;
             }
@@ -676,6 +676,48 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
+            // check with the survey agent if there is one
+            if (Probe.Agent != null)
+            {
+                Tuple<bool, DateTimeOffset?> deliverFutureTime = await Probe.Agent.DeliverSurveyNow(script);
+
+                if (!deliverFutureTime.Item1)
+                {
+                    if (deliverFutureTime.Item2 == null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Cancelling survey at agent's request.", LoggingLevel.Normal, GetType());
+                    }
+                    else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Rescheduling survey for " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+
+                        // get reschedule parameters
+                        DateTime reference = DateTime.Now;
+                        DateTime trigger = deliverFutureTime.Item2.Value.LocalDateTime;
+
+                        // check whether we need to expire the rescheduled script at some future point
+                        DateTime? expiration = null;
+                        if (_maxAge.HasValue)
+                        {
+                            expiration = trigger + _maxAge.Value;
+                        }
+
+                        // there is no window, so just add a descriptive, unique descriptor in place of the window
+                        ScriptTriggerTime triggerTime = new ScriptTriggerTime(reference, trigger, expiration, "DEFERRED-" + Guid.NewGuid());
+
+                        // schedule the trigger
+                        await ScheduleScriptRunAsync(triggerTime);
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Warning:  Survey reschedule time is in the past:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+                    }
+
+                    // do not proceed. the calling method (if scheduler-based) will take care of removing the current script.
+                    return;
+                }
+            }
+
             lock (RunTimes)
             {
                 // track participation by recording the current time. use this instead of the script's run timestamp, since
@@ -685,6 +727,8 @@ namespace Sensus.Probes.User.Scripts
             }
 
             await SensusServiceHelper.Get().AddScriptAsync(script, RunMode);
+
+            Probe.Agent?.Observe(script, ScriptState.Delivered);
 
             // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
             // it wouldn't make sense to gather location data from a user.

@@ -21,7 +21,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Location
 {
-    public class PointOfInterestProximityDatum : Datum
+    public class PointOfInterestProximityDatum : Datum, IPointOfInterestProximityDatum
     {
         private string _poiName;
         private string _poiType;

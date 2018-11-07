@@ -182,6 +182,11 @@ namespace Sensus.UI
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
 
+                if(selectedProtocol.AllowTagging)
+                {
+                    actions.Add("Tag Data");
+                }
+
                 if (!selectedProtocol.Running && selectedProtocol.AllowParticipantIdReset)
                 {
                     actions.Add("Reset ID");
@@ -294,6 +299,10 @@ namespace Sensus.UI
                     {
                         await selectedProtocol.StopAsync();
                     }
+                }
+                else if (selectedAction == "Tag Data")
+                {
+                    await Navigation.PushAsync(new TaggingPage(selectedProtocol));
                 }
                 else if (selectedAction == "Reset ID")
                 {

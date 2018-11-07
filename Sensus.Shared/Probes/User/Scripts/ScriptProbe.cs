@@ -21,6 +21,8 @@ using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -31,7 +33,94 @@ namespace Sensus.Probes.User.Scripts
     /// </summary>
     public class ScriptProbe : Probe
     {
+
+        // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+        // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
+#if __ANDROID__
+
+        public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
+        {
+            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<IScriptProbeAgent> GetAgents(byte[] assemblyBytes)
+        {
+            return Assembly.Load(assemblyBytes)
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<IScriptProbeAgent>()
+                           .ToList();
+        }
+
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+
+#elif __IOS__
+
+        public static IScriptProbeAgent GetAgent(string agentId)
+        {
+            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<IScriptProbeAgent> GetAgents()
+        {
+            // get agents from the current assembly. they must be linked at compile time.
+            return Assembly.GetAssembly(typeof(ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent))
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<IScriptProbeAgent>()
+                           .ToList();
+        }
+
+#endif
+
         private ObservableCollection<ScriptRunner> _scriptRunners;
+        private IScriptProbeAgent _agent;
+
+        /// <summary>
+        /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
+        /// </summary>
+        /// <value>The agent.</value>
+        [JsonIgnore]
+        public IScriptProbeAgent Agent
+        {
+            get
+            {
+                // attempt to lazy-load the agent if there is none
+                if (_agent == null)
+                {
+                    try
+                    {
+#if __ANDROID__
+                        _agent = GetAgent(AgentAssemblyBytes, AgentId);
+#elif __IOS__
+                        _agent = GetAgent(AgentId);
+#endif
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
+                return _agent;
+            }
+            set
+            {
+                _agent = value;
+                AgentId = _agent?.Id;
+            }
+        }
+
+        /// <summary>
+        /// Id of the <see cref="Agent"/> to use.
+        /// </summary>
+        /// <value>The agent identifier.</value>
+        public string AgentId { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {
@@ -128,6 +217,8 @@ namespace Sensus.Probes.User.Scripts
                     await scriptRunner.InitializeAsync();
                 }
             }
+
+            Agent?.Reset();
         }
 
         protected override async Task ProtectedStartAsync()

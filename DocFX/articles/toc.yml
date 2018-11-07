@@ -9,6 +9,9 @@
 
   - name: Protocol Distribution
     href: protocol-distribution.md
+    
+  - name: Local-Only Storage
+    href:  local-only-storage.md
 
 - name: Data Protection
   items:
@@ -24,6 +27,12 @@
 
     - name: SSL Certificate Pinning
       href: ssl-pinning.md
+      
+- name: Tagging
+  href:  tagging-mode.md
+  
+- name:  Adaptive Surveys
+  href: adaptive-surveys.md
 
 - name: Push Notifications
   href: push-notifications.md

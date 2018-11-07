@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Device
 {
-    public class BatteryDatum : Datum
+    public class BatteryDatum : Datum, IBatteryDatum
     {
         private double _level;
 

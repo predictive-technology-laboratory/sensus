@@ -40,6 +40,7 @@ using Sensus.Context;
 using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
+using Sensus.UI;
 
 namespace Sensus.Android
 {
@@ -375,29 +376,43 @@ namespace Sensus.Android
         {
             try
             {
-                Intent intent = new Intent(Intent.ActionSend);
-                intent.SetType(mimeType);
-                intent.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                if (!string.IsNullOrWhiteSpace(subject))
+                // make file available via external storage
+                Xamarin.Forms.Page page = (Xamarin.Forms.Application.Current as App).DetailPage;
+                if (await page.DisplayAlert("USB", "Would you like to share using USB?", "Yes", "No"))
                 {
-                    intent.PutExtra(Intent.ExtraSubject, subject);
+                    string externalPath = System.IO.Path.Combine(Application.Context.GetExternalFilesDir(null).Path, Guid.NewGuid().ToString()) + System.IO.Path.GetExtension(path);
+                    byte[] bytes = File.ReadAllBytes(path);
+                    File.WriteAllBytes(externalPath, bytes);
+                    await page.DisplayAlert("File Shared", "The following file is available using USB:" + System.Environment.NewLine + System.Environment.NewLine + System.IO.Path.GetFileName(externalPath) + System.Environment.NewLine + System.Environment.NewLine + "You can access this file using the Android File Transfer application (https://www.android.com/filetransfer).", "Close");
                 }
-
-                Java.IO.File file = new Java.IO.File(path);
-                global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
-                intent.PutExtra(Intent.ExtraStream, uri);
-
-                // run from main activity to get a smoother transition back to sensus
-                await RunActionUsingMainActivityAsync(mainActivity =>
+                // share via app/intent
+                else
                 {
-                    mainActivity.StartActivity(intent);
+                    // run from main activity to get a smoother transition back to sensus
+                    await RunActionUsingMainActivityAsync(mainActivity =>
+                    {
+                        Intent intent = new Intent(Intent.ActionSend);
+                        intent.SetType(mimeType);
+                        intent.AddFlags(ActivityFlags.GrantReadUriPermission);
 
-                }, true, false);
+                        if (!string.IsNullOrWhiteSpace(subject))
+                        {
+                            intent.PutExtra(Intent.ExtraSubject, subject);
+                        }
+
+                        Java.IO.File file = new Java.IO.File(path);
+                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                        intent.PutExtra(Intent.ExtraStream, uri);
+
+                        mainActivity.StartActivity(intent);
+
+                    }, true, false);
+                }
             }
             catch (Exception ex)
             {
-                Logger.Log("Failed to start intent to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                Logger.Log("Failed to share file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+                await FlashNotificationAsync("Failed to share file:  " + ex.Message);
             }
         }
 

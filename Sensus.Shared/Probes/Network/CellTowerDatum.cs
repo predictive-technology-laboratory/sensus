@@ -20,7 +20,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Network
 {
-    public class CellTowerDatum : Datum
+    public class CellTowerDatum : Datum, ICellTowerDatum
     {
         private string _cellTower;
 

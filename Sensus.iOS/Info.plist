@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>CFBundleDisplayName</key>
 	<string>Sensus</string>
 	<key>CFBundleIdentifier</key>
@@ -165,7 +169,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>15.10.0</string>
+	<string>15.12.0</string>
 	<key>CFBundleVersion</key>
 	<string>1.1.1</string>
 </dict>

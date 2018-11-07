@@ -14,7 +14,6 @@
     <AssemblyName>SensusiOS</AssemblyName>
     <Description>Endpoint for the Sensus iOS application. This is what gets built and distributed to the iOS App 
 Store. It is possible to run and debug this project on physical and virtual iOS devices.</Description>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +57,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignProvision>
     </CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
-<MtouchFastDev>false</MtouchFastDev>
+    <MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -332,6 +331,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Estimote.iOS.Proximity">
       <HintPath>..\packages\Estimote.iOS.Proximity.1.2.0\lib\xamarinios10\Estimote.iOS.Proximity.dll</HintPath>
     </Reference>
+    <Reference Include="Sensus.Shared.NuGet">
+      <HintPath>..\packages\Sensus.1.13.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -348,8 +350,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="iOSSensusServiceHelper.cs" />
-    <Compile Include="NetworkConnectivity.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -386,6 +386,12 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <BundleResource Include="Resources\surveys%402x.png" />
     <BundleResource Include="Resources\x.png" />
     <BundleResource Include="Resources\account.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExampleScriptProbeAgent\ExampleScriptProbeAgent.csproj">
+      <Project>{E55BA9B0-C696-4D61-AE7A-A9535EF223B5}</Project>
+      <Name>ExampleScriptProbeAgent</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems')" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared\Sensus.Shared.projitems')" />

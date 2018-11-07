@@ -29,6 +29,8 @@ Sensus's key features include the following:
 * **In-app configuration of sensing plans** There is only one app to install. You use Sensus to configure a plan for 
   sensors and surveys. This plan can be immediately distributed to participants for execution. No programming experience 
   is needed, and you do not need to release your own version of Sensus to the Android and iOS stores.
+* **In-app ground truth collection** It is easy to configure Sensus to [generate labeled data](xref:tagging_mode)
+  in support of supervised machine learning models (e.g., for activity recognition).
 * **Randomized controlled trials of sensing plans** Multiple sensing plans can be combined into a bundle, which is then 
   delivered to participants. Upon receipt, participants are randomly assigned to one of the plans. This supports 
   randomized controlled trials of plan variations.

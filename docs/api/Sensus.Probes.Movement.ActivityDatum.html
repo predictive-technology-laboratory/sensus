@@ -92,6 +92,11 @@
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
     <div class="level2"><span class="xref">ActivityDatum</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.Probes.Movement.IActivityDatum.html">IActivityDatum</a></div>
+    <div><a class="xref" href="Sensus.IDatum.html">IDatum</a></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -136,12 +141,18 @@
     <div>
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_OperatingSystem">Datum.OperatingSystem</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_TaggedEventId">Datum.TaggedEventId</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_TaggedEventTags">Datum.TaggedEventTags</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Movement.html">Sensus.Probes.Movement</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Movement_ActivityDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ActivityDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class ActivityDatum : Datum, IActivityDatum, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -476,6 +487,13 @@ should not be the case that all of these have values of <a class="xref" href="Se
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.Probes.Movement.IActivityDatum.html">IActivityDatum</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.IDatum.html">IDatum</a>
+  </div>
 </article>
           </div>
           

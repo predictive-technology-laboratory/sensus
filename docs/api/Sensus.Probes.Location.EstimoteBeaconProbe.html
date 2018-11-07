@@ -83,21 +83,21 @@
   
   <h1 id="Sensus_Probes_Location_EstimoteBeaconProbe" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe" class="text-break">Class EstimoteBeaconProbe
   </h1>
-  <div class="markdown level0 summary"><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Proximity Beacons</a> to track fine-grained locations. This Probe is available for 
-Android and iOS and runs while the Sensus app is in the foreground and background. Generates proximity event data in the form 
-of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> readings.</p>
+  <div class="markdown level0 summary"><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Proximity Beacons</a> to track fine-grained locations indoors. This 
+Probe is available for Android and iOS and runs while the Sensus app is in the foreground and background. This Probe 
+generates proximity event data in the form of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> readings.</p>
 <h1 id="prerequisites">Prerequisites</h1>
 <ul>
-<li>You must purchase Proximity or Location beacons.</li>
-<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a> to have the following JSON attachment:</li>
+<li>Purchase Proximity or Location beacons.</li>
+<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a> and have tags attached to them.
+```</li>
 </ul>
-<pre><code>{ &amp;quot;attachment&amp;quot;: { &amp;quot;sensus&amp;quot;: &amp;quot;test&amp;quot; } }
-</code></pre><p>More details are available <a href="http://developer.estimote.com/proximity/android-tutorial">here</a>.</p>
+<p>More details are available <a href="http://developer.estimote.com/proximity/android-tutorial">here</a>.</p>
 <ul>
 <li><p>Having entered the App Id and App Token, the list of beacons can be edited via the <code>Edit Beacons</code> button in the Estimote Beacon Probe 
 configuration. Each beacon definition contains the following:</p>
 </li>
-<li><p><code>Beacon Name</code>:  Name of the beacon, as specified in the attachment value.</p>
+<li><p><code>Beacon Tag</code>:  Tag of the beacon to detect, as specified above.</p>
 </li>
 <li><code>Proximity (Meters)</code>:  Number of meters desired for proximity.</li>
 <li><code>Event Name</code>:  Name to be given to the proximity event.</li>
@@ -166,6 +166,9 @@ configuration. Each beacon definition contains the following:</p>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProcessDataAsync_System_Threading_CancellationToken_">Probe.ProcessDataAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>

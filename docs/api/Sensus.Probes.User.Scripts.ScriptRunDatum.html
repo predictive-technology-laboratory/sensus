@@ -94,6 +94,10 @@ submitted by the user.</p>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
     <div class="level2"><span class="xref">ScriptRunDatum</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.IDatum.html">IDatum</a></div>
+  </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
@@ -141,12 +145,18 @@ submitted by the user.</p>
     <div>
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_OperatingSystem">Datum.OperatingSystem</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_TaggedEventId">Datum.TaggedEventId</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_TaggedEventTags">Datum.TaggedEventTags</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_Scripts_ScriptRunDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ScriptRunDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class ScriptRunDatum : Datum, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -492,6 +502,10 @@ this field indicates when the script was scheduled to run.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.IDatum.html">IDatum</a>
+  </div>
 </article>
           </div>
           

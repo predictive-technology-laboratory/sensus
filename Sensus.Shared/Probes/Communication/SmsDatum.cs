@@ -20,7 +20,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Communication
 {
-    public class SmsDatum : Datum
+    public class SmsDatum : Datum, ISmsDatum
     {
         private string _fromNumber;
         private string _toNumber;

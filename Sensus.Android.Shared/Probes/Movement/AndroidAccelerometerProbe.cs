@@ -26,7 +26,7 @@ namespace Sensus.Android.Probes.Movement
 
         public AndroidAccelerometerProbe()
         {
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, async e =>
             {
                 // should get x, y, and z values
                 if (e.Values.Count != 3 || Stabilizing)

@@ -139,11 +139,11 @@ namespace Sensus.Android.Callbacks
                     // schedule a new alarm for the same callback at the desired time.
                     () =>
                     {
-                            // update the intent with the new invocation ID.
-                            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
+                        // update the intent with the new invocation ID.
+                        intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
 
-                            // reschedule the alarm. the alarm date will already have been set on the callback.
-                            ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
+                        // reschedule the alarm. the alarm date will already have been set on the callback.
+                        ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
 
                         return Task.CompletedTask;
                     },
