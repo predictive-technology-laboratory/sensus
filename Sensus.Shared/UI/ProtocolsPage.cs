@@ -74,6 +74,85 @@ namespace Sensus.UI
         {
             Title = "Your Studies";
 
+            ProgressBar protocolStartProgressBar = new ProgressBar()
+            {
+                Progress = 0,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            Label protocolStartProgressBarLabel = new Label()
+            {
+                Text = $"Progress:  {protocolStartProgressBar.Progress}%",
+                FontSize = 15,
+                HorizontalOptions = LayoutOptions.CenterAndExpand
+            };
+
+            ContentPage protocolStartPage = new ContentPage
+            {
+                Title = "Starting Study",
+
+                Content = new StackLayout
+                {
+                    Orientation = StackOrientation.Vertical,
+                    VerticalOptions = LayoutOptions.CenterAndExpand,
+                    Children =
+                    {
+#if __IOS__
+                        new Label
+                        {
+                            Text = "Please keep app open until finished.",
+                            FontSize = 10,
+                            HorizontalOptions = LayoutOptions.CenterAndExpand,
+                            VerticalOptions = LayoutOptions.CenterAndExpand
+                        },
+ #endif     
+                        protocolStartProgressBar,
+                        protocolStartProgressBarLabel
+                    }
+                }
+            };
+
+            _protocolStartInitiatedAction = async (sender, eventArgs) =>
+            {
+                _pushedModalStartProgressPage = true;
+
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    await Navigation.PushModalAsync(protocolStartPage);
+                });
+            };
+
+            _protocolStartAddProgressAction = async (sender, progress) =>
+            {
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    double newProgress = protocolStartProgressBar.Progress + progress;
+                    protocolStartProgressBarLabel.Text = $"Progress:  {newProgress * 100}%";
+                    await protocolStartProgressBar.ProgressTo(newProgress, 100, Easing.Linear);
+                });
+            };
+
+            _protocolStartCompletedSuccessfullyAction = async (sender, success) =>
+            {
+                if (_pushedModalStartProgressPage)
+                {
+                    _pushedModalStartProgressPage = false;
+
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        await Navigation.PopModalAsync();
+                    });
+                }
+
+                // if we started successfully on ios, warn the user not to terminate the app.
+#if __IOS__
+                if (success)
+                {
+                    await DisplayAlert("Caution", "Please be careful not to terminate the app by swiping it away, as doing this will discontinue your participation in the study. Instead, move the app to the background by tapping the home button.", "OK");
+                }
+#endif
+            };
+
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
@@ -85,85 +164,6 @@ namespace Sensus.UI
                 {
                     return;
                 }
-
-                ProgressBar progressBar = new ProgressBar()
-                {
-                    Progress = 0,
-                    HorizontalOptions = LayoutOptions.FillAndExpand
-                };
-
-                Label progressBarLabel = new Label()
-                {
-                    Text = $"Progress:  {progressBar.Progress}%",
-                    FontSize = 15,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand
-                };
-
-                ContentPage protocolStartPage = new ContentPage
-                {
-                    Title = "Starting Study",
-
-                    Content = new StackLayout
-                    {
-                        Orientation = StackOrientation.Vertical,
-                        VerticalOptions = LayoutOptions.CenterAndExpand,
-                        Children =
-                        {
-#if __IOS__
-                            new Label
-                            {
-                                Text = "Please keep app open until finished.",
-                                FontSize = 10,
-                                HorizontalOptions = LayoutOptions.CenterAndExpand,
-                                VerticalOptions = LayoutOptions.CenterAndExpand
-                            },
- #endif     
-                            progressBar,
-                            progressBarLabel
-                        }
-                    }
-                };
-
-                _protocolStartInitiatedAction = async (sender, eventArgs) =>
-                {
-                    _pushedModalStartProgressPage = true;
-
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        await Navigation.PushModalAsync(protocolStartPage);
-                    });
-                };
-
-                _protocolStartAddProgressAction = async (sender, progress) =>
-                {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        double newProgress = progressBar.Progress + progress;
-                        progressBarLabel.Text = $"Progress:  {newProgress * 100}%";
-                        await progressBar.ProgressTo(newProgress, 100, Easing.Linear);
-                    });
-                };
-
-                _protocolStartCompletedSuccessfullyAction = async (sender, success) =>
-                {
-                    if (_pushedModalStartProgressPage)
-                    {
-                        _pushedModalStartProgressPage = false;
-
-                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            await Navigation.PopModalAsync();
-                        });
-                    }
-
-                    // if we started successfully on ios, warn the user not to terminate the app.
-#if __IOS__
-                    if (success)
-                    {
-                        await DisplayAlert("Caution", "Please be careful not to terminate the app by swiping it away, as doing this will discontinue your participation in the study. Instead, move the app to the background by tapping the home button.", "OK");
-                    }
-#endif
-                };
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
 
