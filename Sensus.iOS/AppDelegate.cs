@@ -96,6 +96,7 @@ namespace Sensus.iOS
             // load the app, which starts crash reporting and analytics telemetry.
             LoadApplication(new App());
 
+
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {

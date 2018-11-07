@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeStudyOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeParticipantOffsetGpsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AccountService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -31,6 +32,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\AccountCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />
