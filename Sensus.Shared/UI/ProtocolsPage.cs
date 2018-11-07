@@ -72,8 +72,8 @@ namespace Sensus.UI
 
         public ProtocolsPage()
         {
-
             Title = "Your Studies";
+
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
@@ -91,7 +91,6 @@ namespace Sensus.UI
                 {
                     Orientation = StackOrientation.Vertical,
                     VerticalOptions = LayoutOptions.CenterAndExpand,
-                    //Margin = new Thickness(10, 0, 10, 0),
                     Children =
                     {
                         new Label
@@ -175,7 +174,6 @@ namespace Sensus.UI
 
 
                 Protocol selectedProtocol = _protocolsList.SelectedItem as Protocol;
-
 
                 #region add protocol actions
                 List<string> actions = new List<string>();
@@ -366,9 +364,11 @@ namespace Sensus.UI
                         false,
                         async () =>
                         {
-                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                            participationRewardDatum.ProtocolId = selectedProtocol.Id;
-                            participationRewardDatum.ParticipantId = selectedProtocol.ParticipantId;
+                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation)
+                            {
+                                ProtocolId = selectedProtocol.Id,
+                                ParticipantId = selectedProtocol.ParticipantId
+                            };
 
                             bool writeFailed = false;
                             try
@@ -663,6 +663,5 @@ namespace Sensus.UI
             }, ToolbarItemOrder.Secondary));
             #endregion
         }
-
     }
 }

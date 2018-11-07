@@ -1648,7 +1648,6 @@ namespace Sensus
 
         private async Task PrivateStartAsync()
         {
-
             if (_running)
             {
                 return;
@@ -1671,13 +1670,13 @@ namespace Sensus
 
             await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
 
+            ProtocolLoadProgressChanged?.Invoke(this, 0);
+
             Exception startException = null;
 
             // start local data store
-            ProtocolLoadProgressChanged?.Invoke(this, .01);
             try
             {
-
                 if (_localDataStore == null)
                 {
                     throw new Exception("Local data store not defined.");
@@ -1720,7 +1719,6 @@ namespace Sensus
             {
                 try
                 {
-
                     // if we're on iOS, gather up all of the health-kit probes so that we can request their permissions in one batch
 #if __IOS__
                     if (HKHealthStore.IsHealthDataAvailable)
@@ -1733,10 +1731,11 @@ namespace Sensus
                                 enabledHealthKitProbes.Add(probe as iOSHealthKitProbe);
                             }
                         }
+
                         ProtocolLoadProgressChanged?.Invoke(this, .08);
+
                         if (enabledHealthKitProbes.Count > 0)
                         {
-
                             NSSet objectTypesToRead = NSSet.MakeNSObjectSet<HKObjectType>(enabledHealthKitProbes.Select(probe => probe.ObjectType).Distinct().ToArray());
                             HKHealthStore healthStore = new HKHealthStore();
                             Tuple<bool, NSError> successError = await healthStore.RequestAuthorizationToShareAsync(new NSSet(), objectTypesToRead);
@@ -1746,9 +1745,6 @@ namespace Sensus
                                 SensusServiceHelper.Get().Logger.Log("Error while requesting HealthKit authorization:  " + successError.Item2.Description, LoggingLevel.Normal, GetType());
                             }
                         }
-
-
-
                     }
 #endif
 
@@ -1788,9 +1784,7 @@ namespace Sensus
                                 ++probesEnabled;
                                 ProtocolLoadProgressChanged?.Invoke(this, .10 + (probesEnabled * (probePercent)));
                             }
-
-                        }
-                        
+                        }                        
                     }
 
                     if (probesEnabled == 0)
@@ -1810,15 +1804,16 @@ namespace Sensus
 
             if (startException == null)
             {
-                ProtocolLoadProgressChanged?.Invoke(this, .9);
+                ProtocolLoadProgressChanged?.Invoke(this, 0.9);
+
                 // we're all good. register with push notification hubs.
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
                 // save the state of the app in case it crashes or -- on ios -- in case the user terminates
                 // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
-                ProtocolLoadProgressChanged?.Invoke(this, 1);
                 await SensusServiceHelper.Get().SaveAsync();
 
+                ProtocolLoadProgressChanged?.Invoke(this, 1);
 
                 ProtocolLoadCompleted?.Invoke(this, EventArgs.Empty);
 
