@@ -20,6 +20,7 @@ using Xamarin.Forms;
 using Sensus.Context;
 using Sensus.UI.Inputs;
 using System.Threading.Tasks;
+using Sensus.Authentication;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -461,104 +462,79 @@ namespace Sensus.UI
             #region add toolbar items
             ToolbarItems.Add(new ToolbarItem(null, "plus.png", async () =>
             {
-                List<string> buttons = new string[] { "From QR Code", "From Account QR Code", "From URL", "New" }.ToList();
+                string action = await DisplayActionSheet("Add Study", "Back", null, new[] { "From QR Code", "From URL", "New" });
 
-                string action = await DisplayActionSheet("Add Study", "Back", null, buttons.ToArray());
-                string protocolId = null;
-                Protocol protocol = null;
+                if (action == "New")
+                {
+                    await Protocol.CreateAsync("New Protocol");
+                    return;
+                }
+
+                string url = null;
 
                 if (action == "From QR Code")
                 {
-                    string result = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
-
-                    if (result != null)
-                    {
-                        try
-                        {
-                            protocol = await Protocol.DeserializeAsync(new Uri(result));
-                            protocol.LastProtocolURL = result;
-                        }
-                        catch (Exception ex)
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from QR code:  " + ex.Message);
-                        }
-                    }
-                }
-                if (action == "From Account QR Code")
-                {
-                    string result = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.IAM_CREDENTIALS);
-
-                    if (result != null)
-                    {
-                        try
-                        {
-                            var split = result.Contains(":") ? result.Split(':') : new[] { result };
-                            var baseUrl = split[0];
-                            var participantId = split.Length > 1 ? split[1] : null;
-                            var deviceId = SensusServiceHelper.Get().DeviceId;
-                            var accountService = new AccountService(baseUrl);
-                            var account = await accountService.GetAccount(deviceId, participantId);
-                            if(string.IsNullOrWhiteSpace(account?.protocolURL))
-                            {
-                                throw new Exception("Account did not return a valid Protocol URL");
-                            }
-                            protocolId = account.protocolId;
-                            protocol = await Protocol.DeserializeAsync(new Uri(account.protocolURL));
-                            protocol.ParticipantId = participantId;
-                            protocol.LastProtocolURL = account?.protocolURL;
-                            if (string.IsNullOrWhiteSpace(protocolId) == false && protocolId != protocol.Id)
-                            {
-                                throw new Exception("The Id on the returned protocol does not match the expected Id");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from Account QR code:  " + ex.Message);
-                        }
-                    }
+                    url = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
                 }
                 else if (action == "From URL")
                 {
                     Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, false);
 
                     // input might be null (user cancelled), or the value might be null (blank input submitted)
-                    if (!string.IsNullOrEmpty(input?.Value?.ToString()))
+                    url = input?.Value?.ToString();
+                }
+
+                Protocol protocol = null;
+
+                if (url != null)
+                {
+                    // handle managed studies...handshake with account manager
+                    if (url.StartsWith("MANAGED"))
                     {
                         try
                         {
-                            protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
-                            protocol.LastProtocolURL = input.Value.ToString();
+                            // should have the following parts (participant is optional):  MANAGED:URL:PARTICIPANT_ID
+                            string[] parts = url.Split(':');
+                            string baseUrl = parts[1];
+                            string participantId = parts.Length > 2 ? parts[2] : null;
+
+                            // get account
+                            AccountService accountService = new AccountService(baseUrl);
+                            Account account = await accountService.GetAccount(SensusServiceHelper.Get().DeviceId, participantId);
+
+                            // get protocol
+                            protocol = await Protocol.DeserializeAsync(account.protocolURL);
+                            protocol.ParticipantId = account.participantId;
+                            protocol.MostRecentProtocolURL = account.protocolURL;
+
+                            // make sure protocol has the same id as we expected
+                            if (protocol.Id != account.protocolId)
+                            {
+                                throw new Exception("The identifier of the returned protocol does not match the expected identifier.");
+                            }
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
                         }
                     }
-                }
-                else if (action == "New")
-                {
-                    await Protocol.CreateAsync("New Protocol");
+                    // handle unmanaged studies...direct download from URL
+                    else
+                    {
+                        try
+                        {
+                            protocol = await Protocol.DeserializeAsync(url);
+                        }
+                        catch (Exception ex)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
+                        }
+                    }
                 }
 
                 if (protocol != null)
                 {
-                    var existingProtocol = SensusServiceHelper.Get()?.RegisteredProtocols.FirstOrDefault(w => w.Id == protocol.Id);
-                    if(existingProtocol != null)
-                    {
-                        if (existingProtocol.Running)
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync($"The new study is the same as {protocol.Name} which is running.  Please stop the {protocol.Name} study and try again. ");
-                            protocol = null;  //don't replace a running protocol
-                        }
-                        else
-                        {
-                            await existingProtocol.DeleteAsync(); //remove the existing protocol before we add it back
-                        }
-                    }
-                }
-                if(protocol != null)
-                {
-                    await Protocol.DisplayAndStartAsync(protocol); //TODO:  I am not seeing where, but this must add add the protocol to the registered list
+                    await Protocol.DisplayAndStartAsync(protocol);
                 }
             }));
 

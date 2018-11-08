@@ -11,7 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeStudyOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeParticipantOffsetGpsAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AccountService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
@@ -32,8 +31,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\Account.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\AccountCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />
@@ -261,11 +258,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\AccountCredentials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\AccountService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Authentication\" />
   </ItemGroup>
 </Project>

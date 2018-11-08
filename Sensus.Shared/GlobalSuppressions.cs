@@ -6,3 +6,5 @@
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0019:Use pattern matching", Justification = "<Pending>", Scope = "member", Target = "~M:Sensus.UI.TaggingPage.#ctor(Sensus.Protocol)")]
 
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Common Practices and Code Improvements", "RECS0061:Warns when a culture-aware 'EndsWith' call is used by default.", Justification = "<Pending>", Scope = "member", Target = "~M:Sensus.Protocol.DeserializeAsync(System.Uri)~System.Threading.Tasks.Task{Sensus.Protocol}")]
+

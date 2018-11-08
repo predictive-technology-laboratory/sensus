@@ -30,9 +30,9 @@ using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
-using Sensus.Models;
 using System.Net.Http;
 using System.Linq;
+using Sensus.Authentication;
 
 namespace Sensus.DataStores.Remote
 {
@@ -181,9 +181,9 @@ namespace Sensus.DataStores.Remote
             get
             {
                 string val = _iamAccessKey + ":" + _iamSecretKey;
-                if(!string.IsNullOrWhiteSpace(_sessionToken))
+                if (!string.IsNullOrWhiteSpace(_sessionToken))
                 {
-                    val += ":" + _sessionToken; 
+                    val += ":" + _sessionToken;
                 }
                 return val;
             }
@@ -307,9 +307,6 @@ namespace Sensus.DataStores.Remote
 
         public override async Task StartAsync()
         {
-
-           
-
             if (_pinnedServiceURL != null)
             {
                 // ensure that we have a pinned public key if we're pinning the service URL
@@ -366,7 +363,6 @@ namespace Sensus.DataStores.Remote
 
         private AmazonS3Client InitializeS3()
         {
-
             if (string.IsNullOrWhiteSpace(Protocol.AccountServiceBaseUrl) == false)
             {
                 ConfirmCredentials(); //make sure we valid credentials before we initializeS3
@@ -522,68 +518,56 @@ namespace Sensus.DataStores.Remote
             return PUSH_NOTIFICATIONS_DIRECTORY + "/" + pushNotificationRequestId + ".json";
         }
 
-        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken, bool allowRetry = true)
         {
             try
             {
-                try
+                _putCount++;
+
+                ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+
+                PutObjectRequest putRequest = new PutObjectRequest
                 {
-                    _putCount++;
-                    ConfirmCredentials(); //make sure we valid credentials before we initializeS3
+                    BucketName = _bucket,
+                    CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
+                    InputStream = stream,
+                    Key = key,
+                    ContentType = contentType
+                };
 
-                    PutObjectRequest putRequest = new PutObjectRequest
-                    {
-                        BucketName = _bucket,
-                        CannedACL = S3CannedACL.BucketOwnerFullControl,  // without this, the bucket owner will not have access to the uploaded data
-                        InputStream = stream,
-                        Key = key,
-                        ContentType = contentType
-                    };
+                HttpStatusCode putStatus = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
 
-                    HttpStatusCode putStatus = (await s3.PutObjectAsync(putRequest, cancellationToken)).HttpStatusCode;
-
-		    if (putStatus == HttpStatusCode.OK)
-		    {
-			_successfulPutCount++;
-                    }
-                    else
-                    {
-                        throw new Exception("Bad status code:  " + putStatus);
-                    }
-		}
-                catch (AmazonS3Exception exc)
+                if (putStatus == HttpStatusCode.OK)
                 {
-                    if ((exc.ErrorCode == "InvalidAccessKeyId" || exc.ErrorCode == "SignatureDoesNotMatch" || exc.ErrorCode == "InvalidToken") &&
-                         allowRetry == true && _accountService != null)
-                    {
-                        AmazonS3Client innerS3 = null;
-                        try
-                        {
-                            _accountService.ClearCredentials(); //force rebuilding the credentials;
-                            innerS3 = InitializeS3();
-                            await Put(innerS3, stream, key, contentType, cancellationToken, false); //don't allow a second retry if this one fails
-                            await CheckForProtocolChange();
-                        }
-                        catch (Exception innerEx)
-                        {
-                            string message = "The credentials from the S3 credentials service failed.";
-                            SensusException.Report(message, innerEx);
-                        }
-                        finally
-                        {
-                            DisposeS3(innerS3);
-                        }
-                    }
+                    _successfulPutCount++;
                 }
-                catch (WebException ex)
+                else
                 {
-                    if (ex.Status == WebExceptionStatus.TrustFailure)
+                    throw new Exception("Bad status code:  " + putStatus);
+                }
+            }
+            catch (AmazonS3Exception exc)
+            {
+                if ((exc.ErrorCode == "InvalidAccessKeyId" || exc.ErrorCode == "SignatureDoesNotMatch" || exc.ErrorCode == "InvalidToken") &&
+                     allowRetry == true && _accountService != null)
+                {
+                    AmazonS3Client innerS3 = null;
+                    try
                     {
-                        string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
-                        SensusException.Report(message, ex);
+                        _accountService.ClearCredentials(); //force rebuilding the credentials;
+                        innerS3 = InitializeS3();
+                        await PutAsync(innerS3, stream, key, contentType, cancellationToken, false); //don't allow a second retry if this one fails
+                        await CheckForProtocolChange();
                     }
-
-                    throw ex;
+                    catch (Exception innerEx)
+                    {
+                        string message = "The credentials from the S3 credentials service failed.";
+                        SensusException.Report(message, innerEx);
+                    }
+                    finally
+                    {
+                        DisposeS3(innerS3);
+                    }
                 }
             }
             catch (WebException ex)
@@ -606,16 +590,17 @@ namespace Sensus.DataStores.Remote
 
         private async Task CheckForProtocolChange()
         {
-            if(string.IsNullOrEmpty(_accountService?.LastProtocolURL) == false && string.IsNullOrEmpty(_accountService?.LastProtocolId) == false)
+            if (string.IsNullOrEmpty(_accountService?.LastProtocolURL) == false && string.IsNullOrEmpty(_accountService?.LastProtocolId) == false)
             {
                 bool run = false;
                 Protocol updatedProtocol = null;
                 var existingProtocol = SensusServiceHelper.Get().RegisteredProtocols.FirstOrDefault(w => w.Id == _accountService.LastProtocolId);
                 if (existingProtocol != null)
                 {
-                    if (existingProtocol.LastProtocolURL != _accountService.LastProtocolURL)
+                    if (existingProtocol.MostRecentProtocolURL != _accountService.LastProtocolURL)
                     {
-                        updatedProtocol = await Protocol.DeserializeAsync(new Uri(_accountService.LastProtocolURL));
+                        updatedProtocol = await Protocol.DeserializeAsync(_accountService.LastProtocolURL);
+
                         if (updatedProtocol.Id != _accountService.LastProtocolId)
                         {
                             throw new Exception("The Id on the returned protocol does not match the expected Id");
@@ -624,14 +609,14 @@ namespace Sensus.DataStores.Remote
                 }
                 else
                 {
-                    updatedProtocol = await Protocol.DeserializeAsync(new Uri(_accountService.LastProtocolURL));  //TODO I am assuming that if it is new i don't set the participantId to Protocol.ParticipantId, but i could
+                    updatedProtocol = await Protocol.DeserializeAsync(_accountService.LastProtocolURL);  //TODO I am assuming that if it is new i don't set the participantId to Protocol.ParticipantId, but i could
                 }
 
-                if(updatedProtocol != null)
+                if (updatedProtocol != null)
                 {
-                    if(existingProtocol != null)
+                    if (existingProtocol != null)
                     {
-                        if(existingProtocol.Running)
+                        if (existingProtocol.Running)
                         {
                             run = true;
                             await existingProtocol.StopAsync(); //TODO:  If there is local data that hasn't been sent will this cause data lose?
@@ -640,10 +625,12 @@ namespace Sensus.DataStores.Remote
 
                         await existingProtocol.DeleteAsync();
                     }
+
                     SensusServiceHelper.Get().RegisterProtocol(updatedProtocol);
-                    if(run)
+
+                    if (run)
                     {
-                        updatedProtocol.Start();
+                        await updatedProtocol.StartAsync();
                     }
                 }
 
@@ -742,47 +729,19 @@ namespace Sensus.DataStores.Remote
                     }
                     if (_accountService.HasValidCredentials == false || DateTime.UtcNow > CredentialsExpiration.GetValueOrDefault())
                     {
-                        var credentials = await _accountService.GetCredentials(true);
-                        _iamAccessKey = credentials.accessKeyId;  //TODO:  I am reusing this setting, but we might want to keep this truely secret?
+                        var credentials = await _accountService.GetCredentials();
+                        _iamAccessKey = credentials.accessKeyId;
                         _iamSecretKey = credentials.secretAccessKey;
                         _sessionToken = credentials.sessionToken;
                         CredentialsExpiration = credentials.expirationDateTime;
                     }
                 }
             });
+
             t.Wait();
         }
 
-        private async Task<T> GetJsonObjectFromUrl<T>(string url)
-        {
-
-            T rVal = default(T);
-            string response;
-
-            HttpClient httpClient = new HttpClient();
-            try
-            {
-                response = await httpClient.GetStringAsync(url);
-                if (string.IsNullOrWhiteSpace(response))
-                {
-                    throw new Exception("Response was empty");
-                }
-                rVal = await Sensus.Protocol.DeserializeAsync<T>(response);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log($"Error getting json object {typeof(T).Name} from {url}:  {ex.Message}", LoggingLevel.Normal, GetType());
-                throw;
-            }
-            finally
-            {
-                httpClient.Dispose();
-                httpClient = null;
-            }
-            return rVal;
-        }
-
-        public override bool TestHealth(ref List<Tuple<string, Dictionary<string, string>>> events)
+        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 

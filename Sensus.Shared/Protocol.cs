@@ -47,6 +47,8 @@ using Amazon;
 using Amazon.S3.Model;
 using Sensus.Extensions;
 using Sensus.Anonymization.Anonymizers;
+using System.Net.Http;
+using Sensus.Authentication;
 
 #if __IOS__
 using HealthKit;
@@ -89,7 +91,7 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(Uri webURI)
+        public static async Task<Protocol> DeserializeAsync(string webURI)
         {
             Protocol protocol = null;
 
@@ -99,7 +101,7 @@ namespace Sensus
                 AmazonS3Uri s3URI = null;
                 try
                 {
-                    s3URI = new AmazonS3Uri(webURI);
+                    s3URI = new AmazonS3Uri(new Uri(webURI));
                 }
                 catch (Exception)
                 {
@@ -107,27 +109,21 @@ namespace Sensus
 
                 if (s3URI == null)
                 {
-                    TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();
-                    WebClient downloadClient = new WebClient();
-
-                    downloadClient.DownloadDataCompleted += async (o, e) =>
+                    // download protocol bytes and deserialize
+                    try
                     {
-                        if (e.Error == null)
+                        using (HttpClient client = new HttpClient())
                         {
-                            completionSource.SetResult(await DeserializeAsync(e.Result));
+                            byte[] protocolBytes = await client.GetByteArrayAsync(webURI);
+                            protocol = await DeserializeAsync(protocolBytes);
                         }
-                        else
-                        {
-                            string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + e.Error.Message;
-                            SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                            await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                            completionSource.SetResult(null);
-                        }
-                    };
-
-                    downloadClient.DownloadDataAsync(webURI);
-
-                    protocol = await completionSource.Task;
+                    }
+                    catch (Exception downloadException)
+                    {
+                        string errorMessage = "Failed to download protocol:  " + downloadException.Message;
+                        SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
+                        await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                    }
                 }
                 else
                 {
@@ -184,7 +180,7 @@ namespace Sensus
             Protocol protocol;
             try
             {
-                protocol = await DeserializeAsync(json);
+                protocol = await json.DeserializeJsonAsync<Protocol>();
             }
             catch (Exception ex)
             {
@@ -364,46 +360,6 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(string json)
-        {
-            Protocol protocol = null;
-
-            try
-            {
-                // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
-                // flash notifications so we don't get any messages that result from properties being set within the protocol.
-                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                protocol = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    try
-                    {
-                        return JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                        return null;
-                    }
-                });
-
-                if (protocol == null)
-                {
-                    throw new Exception("Failed to deserialize protocol from JSON.");
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
-            }
-            finally
-            {
-                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
-            }
-
-            return protocol;
-        }
-
         public static async Task DisplayAndStartAsync(Protocol protocol)
         {
             if (protocol == null)
@@ -530,7 +486,8 @@ namespace Sensus
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
         private Dictionary<Type, Probe> _typeProbe;
-       
+        private string _accountServiceBaseUrl;
+
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
         /// like the <see cref="Probes.Context.BluetoothDeviceProximityProbe"/> rely on the study identifiers to be the same
@@ -667,6 +624,8 @@ namespace Sensus
                 _lockPasswordHash = value;
             }
         }
+
+        public string MostRecentProtocolURL { get; set; }
 
         public AnonymizedJsonContractResolver JsonAnonymizer
         {
@@ -1381,6 +1340,18 @@ namespace Sensus
         {
             get { return _pushNotificationsSharedAccessSignature; }
             set { _pushNotificationsSharedAccessSignature = value; }
+        }
+
+        /// <summary>
+        /// This is the base url for the S3 Account Service.  We will add 'createaccount?participantId=<see cref="ParticipantId"/>&amp;deviceId=<see cref="SensusServiceHelper.DeviceId"/>' 
+        /// to create an account and 'getcredentials?participantId=<see cref="ParticipantId"/>&amp;password={Provived by service}' to get current Service Url credentials.
+        /// </summary>
+        /// <value>The base url for the account service URL.</value>
+        [EntryStringUiProperty("Account Service URL:", true, 51, false)]
+        public string AccountServiceBaseUrl
+        {
+            get { return _accountServiceBaseUrl; }
+            set { _accountServiceBaseUrl = value?.TrimEnd('/'); }
         }
 
         /// <summary>
@@ -2238,7 +2209,7 @@ namespace Sensus
         }
 
         public async Task DeleteAsync()
-        {            
+        {
             await SensusServiceHelper.Get().UnregisterProtocolAsync(this);
 
             try

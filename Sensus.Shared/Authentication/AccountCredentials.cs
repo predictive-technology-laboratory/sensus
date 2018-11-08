@@ -1,8 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-namespace Sensus.Models
+using System;
+
+namespace Sensus.Authentication
 {
     public class AccountCredentials
     {
@@ -18,11 +30,13 @@ namespace Sensus.Models
         {
             get
             {
-                var rVal = DateTimeOffset.MinValue;
+                DateTimeOffset rVal = DateTimeOffset.MinValue;
+
                 if (string.IsNullOrWhiteSpace(expiration) == false && long.TryParse(expiration, out long milliseconds))
                 {
                     rVal = DateTime.SpecifyKind(new DateTime(1970, 1, 1), DateTimeKind.Utc).AddMilliseconds(milliseconds);
                 }
+
                 return rVal;
             }
         }
