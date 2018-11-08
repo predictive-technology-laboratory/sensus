@@ -176,29 +176,23 @@ namespace Sensus.DataStores.Remote
         {
             get
             {
-                string val = _iamAccessKey + ":" + _iamSecretKey;
-                if (!string.IsNullOrWhiteSpace(_sessionToken))
-                {
-                    val += ":" + _sessionToken;
-                }
-                return val;
+                return _iamAccessKey + ":" + _iamSecretKey + (string.IsNullOrWhiteSpace(_sessionToken) ? "" : ":" + _sessionToken);
             }
             set
             {
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     string[] parts = value.Split(':');
-                    if (parts.Length == 2)
+
+                    if (parts.Length == 2 || parts.Length == 3)
                     {
                         _iamAccessKey = parts[0].Trim();
                         _iamSecretKey = parts[1].Trim();
-                        _sessionToken = null;
-                    }
-                    if (parts.Length == 3)
-                    {
-                        _iamAccessKey = parts[0].Trim();
-                        _iamSecretKey = parts[1].Trim();
-                        _sessionToken = parts[2].Trim();
+
+                        if (parts.Length == 3)
+                        {
+                            _sessionToken = parts[2].Trim();
+                        }
                     }
                 }
             }
@@ -304,7 +298,7 @@ namespace Sensus.DataStores.Remote
                     ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
                 }
             }
-            else if (Protocol.ManagementService != null)
+            else if (Protocol.AuthenticationService != null)
             {
                 ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
                 await ConfirmCredentialsAsync();
@@ -338,7 +332,7 @@ namespace Sensus.DataStores.Remote
 
         private async Task<AmazonS3Client> InitializeS3Async()
         {
-            if (Protocol.ManagementService != null)
+            if (Protocol.AuthenticationService != null)
             {
                 await ConfirmCredentialsAsync();
             }
@@ -536,12 +530,12 @@ namespace Sensus.DataStores.Remote
                 // retry the put if the credentials were invalid
                 if ((s3Exception.ErrorCode == "InvalidAccessKeyId" || 
                      s3Exception.ErrorCode == "SignatureDoesNotMatch" || 
-                     s3Exception.ErrorCode == "InvalidToken") && allowRetry && Protocol.ManagementService != null)
+                     s3Exception.ErrorCode == "InvalidToken") && allowRetry && Protocol.AuthenticationService != null)
                 {
                     AmazonS3Client retryS3 = null;
                     try
                     {
-                        Protocol.ManagementService.ClearCredentials();
+                        Protocol.AuthenticationService.ClearCredentials();
                         retryS3 = await InitializeS3Async();
                         await PutAsync(retryS3, stream, key, contentType, cancellationToken, false);
                         await CheckForProtocolChangeAsync();
@@ -616,7 +610,7 @@ namespace Sensus.DataStores.Remote
             await base.StopAsync();
 
             // remove the callback
-            if ((_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey)) || Protocol.ManagementService != null)
+            if ((_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey)) || Protocol.AuthenticationService != null)
             {
                 ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
             }
@@ -639,16 +633,16 @@ namespace Sensus.DataStores.Remote
 
         private async Task ConfirmCredentialsAsync()
         {
-            if (Protocol.ManagementService != null)
+            if (Protocol.AuthenticationService != null)
             {
-                if (Protocol.ManagementService.Account == null)
+                if (Protocol.AuthenticationService.Account == null)
                 {
-                    await Protocol.ManagementService.CreateAccount();
+                    await Protocol.AuthenticationService.CreateAccount();
                 }
 
-                if (Protocol.ManagementService.UploadCredentials == null || !Protocol.ManagementService.UploadCredentials.Valid)
+                if (Protocol.AuthenticationService.UploadCredentials == null || !Protocol.AuthenticationService.UploadCredentials.Valid)
                 {
-                    UploadCredentials uploadCredentials = await Protocol.ManagementService.GetCredentials();
+                    UploadCredentials uploadCredentials = await Protocol.AuthenticationService.GetCredentials();
                     _iamAccessKey = uploadCredentials.AccessKeyId;
                     _iamSecretKey = uploadCredentials.SecretAccessKey;
                     _sessionToken = uploadCredentials.SessionToken;
@@ -658,15 +652,15 @@ namespace Sensus.DataStores.Remote
 
         private async Task CheckForProtocolChangeAsync()
         {
-            if (Protocol.ManagementService.Account.ProtocolId != Protocol.Id)
+            if (Protocol.AuthenticationService.Account.ProtocolId != Protocol.Id)
             {
                 bool startUpdatedProtocol = Protocol.Running;
 
                 await Protocol.StopAsync();
                 await Protocol.DeleteAsync();
 
-                Protocol updatedProtocol = await Protocol.DeserializeAsync(Protocol.ManagementService.Account.ProtocolURL);
-                updatedProtocol.ParticipantId = Protocol.ManagementService.Account.ParticipantId;
+                Protocol updatedProtocol = await Protocol.DeserializeAsync(Protocol.AuthenticationService.Account.ProtocolURL);
+                updatedProtocol.ParticipantId = Protocol.AuthenticationService.Account.ParticipantId;
 
                 if (startUpdatedProtocol)
                 {

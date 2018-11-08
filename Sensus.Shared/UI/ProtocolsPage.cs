@@ -489,11 +489,11 @@ namespace Sensus.UI
                 if (url != null)
                 {
                     // handle managed studies...handshake with account manager
-                    if (url.StartsWith("MANAGED"))
+                    if (url.StartsWith("managed"))
                     {
                         try
                         {
-                            // should have the following parts (participant is optional):  MANAGED:URL:PARTICIPANT_ID
+                            // should have the following parts (participant is optional):  managed:BASEURL:PARTICIPANT_ID
                             string[] parts = url.Split(':');
                             string baseUrl = parts[1];
                             string participantId = parts.Length > 2 ? parts[2] : null;

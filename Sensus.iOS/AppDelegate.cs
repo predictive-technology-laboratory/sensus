@@ -125,7 +125,7 @@ namespace Sensus.iOS
                         {
                             try
                             {
-                                protocol = await Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()));
+                                protocol = await Protocol.DeserializeAsync("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim());
                             }
                             catch (Exception ex)
                             {

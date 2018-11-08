@@ -1340,10 +1340,10 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The authentication management service.
+        /// The authentication service.
         /// </summary>
         /// <value>The management service.</value>
-        public AuthenticationService ManagementService { get; set; }
+        public AuthenticationService AuthenticationService { get; set; }
 
         /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 
