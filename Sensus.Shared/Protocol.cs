@@ -48,7 +48,7 @@ using Amazon.S3.Model;
 using Sensus.Extensions;
 using Sensus.Anonymization.Anonymizers;
 using System.Net.Http;
-using Sensus.Authentication;
+using Sensus.ManagedAuthentication;
 
 #if __IOS__
 using HealthKit;
@@ -486,7 +486,6 @@ namespace Sensus
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
         private Dictionary<Type, Probe> _typeProbe;
-        private string _accountServiceBaseUrl;
 
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
@@ -624,8 +623,6 @@ namespace Sensus
                 _lockPasswordHash = value;
             }
         }
-
-        public string MostRecentProtocolURL { get; set; }
 
         public AnonymizedJsonContractResolver JsonAnonymizer
         {
@@ -1343,16 +1340,10 @@ namespace Sensus
         }
 
         /// <summary>
-        /// This is the base url for the S3 Account Service.  We will add 'createaccount?participantId=<see cref="ParticipantId"/>&amp;deviceId=<see cref="SensusServiceHelper.DeviceId"/>' 
-        /// to create an account and 'getcredentials?participantId=<see cref="ParticipantId"/>&amp;password={Provived by service}' to get current Service Url credentials.
+        /// The authentication management service.
         /// </summary>
-        /// <value>The base url for the account service URL.</value>
-        [EntryStringUiProperty("Account Service URL:", true, 51, false)]
-        public string AccountServiceBaseUrl
-        {
-            get { return _accountServiceBaseUrl; }
-            set { _accountServiceBaseUrl = value?.TrimEnd('/'); }
-        }
+        /// <value>The management service.</value>
+        public AuthenticationService ManagementService { get; set; }
 
         /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 

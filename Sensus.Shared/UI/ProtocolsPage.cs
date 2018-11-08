@@ -20,7 +20,7 @@ using Xamarin.Forms;
 using Sensus.Context;
 using Sensus.UI.Inputs;
 using System.Threading.Tasks;
-using Sensus.Authentication;
+using Sensus.ManagedAuthentication;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -499,16 +499,15 @@ namespace Sensus.UI
                             string participantId = parts.Length > 2 ? parts[2] : null;
 
                             // get account
-                            AccountService accountService = new AccountService(baseUrl);
-                            Account account = await accountService.GetAccount(SensusServiceHelper.Get().DeviceId, participantId);
+                            AuthenticationService accountService = new AuthenticationService(baseUrl);
+                            Account account = await accountService.CreateAccount(participantId);
 
                             // get protocol
-                            protocol = await Protocol.DeserializeAsync(account.protocolURL);
-                            protocol.ParticipantId = account.participantId;
-                            protocol.MostRecentProtocolURL = account.protocolURL;
+                            protocol = await Protocol.DeserializeAsync(account.ProtocolURL);
+                            protocol.ParticipantId = account.ParticipantId;
 
                             // make sure protocol has the same id as we expected
-                            if (protocol.Id != account.protocolId)
+                            if (protocol.Id != account.ProtocolId)
                             {
                                 throw new Exception("The identifier of the returned protocol does not match the expected identifier.");
                             }
