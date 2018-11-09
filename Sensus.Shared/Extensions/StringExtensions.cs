@@ -29,12 +29,22 @@ namespace Sensus.Extensions
             {
                 try
                 {
+                    // disable flash notifications when deserializing so we don't get any messages that result from properties 
+                    // being set. this is particularly likely when deserializing protocols, which have several property settings
+                    // that may trigger flash notifications.
+                    SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+
                     return JsonConvert.DeserializeObject<T>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                 }
                 catch (Exception ex)
                 {
                     deserializeException = ex;
                     return null;
+                }
+                finally
+                {
+                    // ensure that flash notifications get reenabled
+                    SensusServiceHelper.Get().FlashNotificationsEnabled = true;
                 }
             });
 

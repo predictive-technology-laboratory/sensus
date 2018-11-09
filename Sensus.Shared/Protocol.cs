@@ -190,27 +190,15 @@ namespace Sensus
 
             // deserialize JSON to protocol object
             Protocol protocol = null;
-            string exceptionMessage = null;
             try
             {
-                // disable flash notifications so we don't get any messages that result from properties being set.
-                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
                 protocol = json.DeserializeJson<Protocol>();
             }
             catch (Exception ex)
             {
-                exceptionMessage = "Failed to deserialize protocol:  " + ex.Message;
-            }
-            finally
-            {
-                // ensure that flash notifications get reenabled
-                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
-            }
-
-            if (exceptionMessage != null)
-            {
-                SensusServiceHelper.Get().Logger.Log(exceptionMessage, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(exceptionMessage);
+                string message = "Failed to deserialize protocol:  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
+                await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 return null;
             }
 

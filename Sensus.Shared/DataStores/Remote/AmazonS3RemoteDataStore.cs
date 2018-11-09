@@ -302,8 +302,7 @@ namespace Sensus.DataStores.Remote
             {
                 ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
 
-                // ensure that credentials are current valid
-                await ConfirmCredentialValidityAsync();
+                await EnsureCredentialValidityAsync();
             }
 
             // credentials must have been set, either directly in the protocol or via the authentication service.
@@ -337,9 +336,8 @@ namespace Sensus.DataStores.Remote
         {
             if (Protocol.AuthenticationService != null)
             {
-                // ensure that auth service credentials will be valid for a bit, in order to give us time to
-                // initiate the connection to s3.
-                await ConfirmCredentialValidityAsync(TimeSpan.FromSeconds(30));
+                // ensure that auth service credentials will be valid for a bit, until we initiate the s3 upload
+                await EnsureCredentialValidityAsync(TimeSpan.FromSeconds(30));
             }
 
             AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3 related to logging metrics
@@ -645,11 +643,11 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private async Task ConfirmCredentialValidityAsync(TimeSpan? duration = default(TimeSpan?))
+        private async Task EnsureCredentialValidityAsync(TimeSpan? duration = default(TimeSpan?))
         {
             if (Protocol.AuthenticationService == null)
             {
-                SensusException.Report(nameof(ConfirmCredentialValidityAsync) + " called without an authentication service.");
+                SensusException.Report(nameof(EnsureCredentialValidityAsync) + " called without an authentication service.");
             }
             else
             {
@@ -660,6 +658,10 @@ namespace Sensus.DataStores.Remote
 
                 if (Protocol.AuthenticationService.UploadCredentials == null || !Protocol.AuthenticationService.UploadCredentials.WillBeValidFor(duration))
                 {
+                    // get new credentials
+
+                    _iamAccessKey = _iamSecretKey = _sessionToken = null;
+
                     UploadCredentials uploadCredentials = await Protocol.AuthenticationService.GetCredentialsAsync();
 
                     if (!uploadCredentials.WillBeValidFor(duration))
