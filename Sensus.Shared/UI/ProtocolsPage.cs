@@ -499,12 +499,13 @@ namespace Sensus.UI
                             string participantId = parts.Length > 2 ? parts[2] : null;
 
                             // get account
-                            AuthenticationService accountService = new AuthenticationService(baseUrl);
-                            Account account = await accountService.CreateAccount(participantId);
+                            AuthenticationService authenticationService = new AuthenticationService(baseUrl);
+                            Account account = await authenticationService.CreateAccountAsync(participantId);
 
                             // get protocol
-                            protocol = await Protocol.DeserializeAsync(account.ProtocolURL);
+                            protocol = await Protocol.DeserializeAsync(account.ProtocolURL, authenticationService);
                             protocol.ParticipantId = account.ParticipantId;
+                            protocol.AuthenticationService = authenticationService;
 
                             // make sure protocol has the same id as we expected
                             if (protocol.Id != account.ProtocolId)

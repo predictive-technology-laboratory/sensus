@@ -26,15 +26,10 @@ namespace Sensus.Extensions
         {
             byte[] downloadedBytes = null;
 
-            try
+            using (HttpClient client = new HttpClient())
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    downloadedBytes = await client.GetByteArrayAsync(uri);
-                }
+                downloadedBytes = await client.GetByteArrayAsync(uri);
             }
-            catch (Exception)
-            { }
 
             return downloadedBytes;
         }
@@ -43,55 +38,35 @@ namespace Sensus.Extensions
         {
             string downloadedString = null;
 
-            try
+            using (HttpClient client = new HttpClient())
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    downloadedString = await client.GetStringAsync(uri);
-                }
+                downloadedString = await client.GetStringAsync(uri);
             }
-            catch (Exception)
-            { }
 
             return downloadedString;
         }
 
-        public static async Task<T> DeserializeJsonAsync<T>(this string json) where T : class
+        public static T DeserializeJson<T>(this string json) where T : class
         {
-            T deserializedObject = null;
+            Exception deserializeException = null;
 
-            try
+            // deserialize objects on the main thread, since a looper is required to deserialize protocols on android.
+            T deserializedObject = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                // always deserialize objects on the main thread (e.g., since a looper is required to deserialize protocols
-                // on android). also, disable flash notifications so we don't get any messages that result from properties 
-                // being set.
-                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                deserializedObject = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                try
                 {
-                    try
-                    {
-                        return JsonConvert.DeserializeObject<T>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Error while deserializing " + typeof(T).Name + "from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(T));
-                        return null;
-                    }
-                });
-
-                if (deserializedObject == null)
-                {
-                    throw new Exception("Failed to deserialize " + typeof(T).Name + " from JSON.");
+                    return JsonConvert.DeserializeObject<T>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                 }
-            }
-            catch (Exception ex)
+                catch (Exception ex)
+                {
+                    deserializeException = ex;
+                    return null;
+                }
+            });
+
+            if (deserializeException != null)
             {
-                SensusServiceHelper.Get().Logger.Log("Failed to deserialize " + typeof(T).Name + " from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(T));
-                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack " + typeof(T).Name + " from JSON:  " + ex.Message);
-            }
-            finally
-            {
-                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+                throw deserializeException;
             }
 
             return deserializedObject;

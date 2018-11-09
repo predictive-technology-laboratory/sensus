@@ -53,18 +53,18 @@ namespace Sensus.ManagedAuthentication
             _uploadCredentialsServiceURL = baseServiceUrl + CREDENTIALS_SERVICE_PAGE;
         }
 
-        public async Task<Account> CreateAccount(string participantId = null)
+        public async Task<Account> CreateAccountAsync(string participantId = null)
         {
             string accountJSON = await string.Format(_accountServiceURL, SensusServiceHelper.Get().DeviceId, participantId).DownloadString();
-            Account = await accountJSON.DeserializeJsonAsync<Account>();
+            Account = accountJSON.DeserializeJson<Account>();
 
             return Account;
         }
 
-        public async Task<UploadCredentials> GetCredentials()
+        public async Task<UploadCredentials> GetCredentialsAsync()
         {
             string credentialsJSON = await string.Format(_uploadCredentialsServiceURL, Account.ParticipantId, Account.Password).DownloadString();
-            UploadCredentials = await credentialsJSON.DeserializeJsonAsync<UploadCredentials>();
+            UploadCredentials = credentialsJSON.DeserializeJson<UploadCredentials>();
 
             return UploadCredentials;
         }

@@ -91,7 +91,7 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(string webURI)
+        public static async Task<Protocol> DeserializeAsync(string webURI, AuthenticationService authenticationService = null)
         {
             Protocol protocol = null;
 
@@ -107,28 +107,40 @@ namespace Sensus
                 {
                 }
 
+                // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
                 if (s3URI == null)
                 {
-                    // download protocol bytes and deserialize
-                    try
-                    {
-                        using (HttpClient client = new HttpClient())
-                        {
-                            byte[] protocolBytes = await client.GetByteArrayAsync(webURI);
-                            protocol = await DeserializeAsync(protocolBytes);
-                        }
-                    }
-                    catch (Exception downloadException)
-                    {
-                        string errorMessage = "Failed to download protocol:  " + downloadException.Message;
-                        SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                        await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                    }
+                    byte[] protocolBytes = await webURI.DownloadBytes();
+                    protocol = await DeserializeAsync(protocolBytes);
                 }
+                // download protocol bytes from s3 and deserialize
                 else
                 {
-                    AmazonS3Client s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
+                    AmazonS3Client s3Client = null;
+
+                    // use app-level S3 authentication if we don't have an authentication service
+                    if (authenticationService == null)
+                    {
+                        if (SensusContext.Current.IamAccessKey == null ||
+                            SensusContext.Current.IamAccessKeySecret == null |
+                            SensusContext.Current.IamRegion == null)
+                        {
+                            throw new ArgumentNullException("IAM credential is empty.");
+                        }
+                        else
+                        {
+                            s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
+                        }
+                    }
+                    // use authentication service S3 credentials if we have them
+                    else
+                    {
+                        UploadCredentials credentials = await authenticationService.GetCredentialsAsync();
+                        s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken);
+                    }
+
                     GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
+
                     if (response.HttpStatusCode == HttpStatusCode.OK)
                     {
                         MemoryStream byteStream = new MemoryStream();
@@ -139,7 +151,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + ex.Message;
+                string errorMessage = "Failed to download protocol from \"" + webURI + "\":  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
                 await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
             }
@@ -180,14 +192,21 @@ namespace Sensus
             Protocol protocol;
             try
             {
-                protocol = await json.DeserializeJsonAsync<Protocol>();
+                // disable flash notifications so we don't get any messages that result from properties being set.
+                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+                protocol = json.DeserializeJson<Protocol>();
+                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
             }
             catch (Exception ex)
             {
-                string message = "Failed to deserialize protocol JSON:  " + ex.Message;
+                string message = "Failed to deserialize protocol:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
                 await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 return null;
+            }
+            finally
+            {
+                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
             }
 
             // set up protocol

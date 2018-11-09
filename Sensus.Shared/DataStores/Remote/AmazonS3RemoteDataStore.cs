@@ -637,12 +637,12 @@ namespace Sensus.DataStores.Remote
             {
                 if (Protocol.AuthenticationService.Account == null)
                 {
-                    await Protocol.AuthenticationService.CreateAccount();
+                    await Protocol.AuthenticationService.CreateAccountAsync();
                 }
 
                 if (Protocol.AuthenticationService.UploadCredentials == null || !Protocol.AuthenticationService.UploadCredentials.Valid)
                 {
-                    UploadCredentials uploadCredentials = await Protocol.AuthenticationService.GetCredentials();
+                    UploadCredentials uploadCredentials = await Protocol.AuthenticationService.GetCredentialsAsync();
                     _iamAccessKey = uploadCredentials.AccessKeyId;
                     _iamSecretKey = uploadCredentials.SecretAccessKey;
                     _sessionToken = uploadCredentials.SessionToken;
