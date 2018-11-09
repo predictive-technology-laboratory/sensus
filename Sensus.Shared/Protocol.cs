@@ -134,7 +134,7 @@ namespace Sensus
                     // use authentication service S3 credentials if we have them
                     else
                     {
-                        UploadCredentials credentials = await authenticationService.GetCredentialsAsync();
+                        AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
                         s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken);
                     }
 

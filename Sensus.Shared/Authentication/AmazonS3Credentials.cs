@@ -17,7 +17,7 @@ using Newtonsoft.Json;
 
 namespace Sensus.Authentication
 {
-    public class UploadCredentials
+    public class AmazonS3Credentials
     {
         [JsonProperty(PropertyName = "accessKeyId")]
         public string AccessKeyId { get; set; }
@@ -35,18 +35,20 @@ namespace Sensus.Authentication
         public string ProtocolId { get; set; }
 
         [JsonProperty(PropertyName = "expiration")]
-        public string Expiration { get; set; }
+        public string ExpirationUnixTimeMilliseconds { get; set; }
 
         [JsonProperty(PropertyName = "cmk")]
         public string CMK { get; set; }
 
-        public DateTimeOffset ExpirationDateTime
+        public DateTimeOffset AcquisitionTimestamp { get; } = DateTimeOffset.UtcNow;
+
+        public DateTimeOffset ExpirationTimestamp
         {
             get
             {
-                if (long.TryParse(Expiration, out long unixTimeMilliseconds))
+                if (long.TryParse(ExpirationUnixTimeMilliseconds, out long expirationUnixTimeMilliseconds))
                 {
-                    return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMilliseconds);
+                    return DateTimeOffset.FromUnixTimeMilliseconds(expirationUnixTimeMilliseconds);
                 }
                 else
                 {
@@ -55,9 +57,11 @@ namespace Sensus.Authentication
             }
         }
 
+        public TimeSpan ValidityTimeSpan => ExpirationTimestamp - AcquisitionTimestamp;
+
         public bool WillBeValidFor(TimeSpan? duration)
         {
-            return DateTimeOffset.UtcNow + (duration ?? TimeSpan.Zero) < ExpirationDateTime;
+            return DateTimeOffset.UtcNow + (duration ?? TimeSpan.Zero) < ExpirationTimestamp;
         }
     }
 }

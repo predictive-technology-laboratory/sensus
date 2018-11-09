@@ -336,8 +336,8 @@ namespace Sensus.DataStores.Remote
         {
             if (Protocol.AuthenticationService != null)
             {
-                // ensure that auth service credentials will be valid for a bit, until we initiate the s3 upload
-                await EnsureCredentialValidityAsync(TimeSpan.FromSeconds(30));
+                // ensure that auth service credentials will be valid for as long as we might be writing data
+                await EnsureCredentialValidityAsync(TimeSpan.FromMinutes(WriteTimeoutMinutes));
             }
 
             AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3 related to logging metrics
@@ -656,24 +656,23 @@ namespace Sensus.DataStores.Remote
                     await Protocol.AuthenticationService.CreateAccountAsync();
                 }
 
-                if (Protocol.AuthenticationService.UploadCredentials == null || !Protocol.AuthenticationService.UploadCredentials.WillBeValidFor(duration))
+                if (Protocol.AuthenticationService.AmazonS3Credentials == null || !Protocol.AuthenticationService.AmazonS3Credentials.WillBeValidFor(duration))
                 {
                     // get new credentials
 
                     _iamAccessKey = _iamSecretKey = _sessionToken = null;
 
-                    UploadCredentials uploadCredentials = await Protocol.AuthenticationService.GetCredentialsAsync();
+                    AmazonS3Credentials amazonS3PutCredentials = await Protocol.AuthenticationService.GetCredentialsAsync();
 
-                    if (!uploadCredentials.WillBeValidFor(duration))
+                    // the server is not providing credentials that are valid for long enough. report the error and proceed anyway.
+                    if (!amazonS3PutCredentials.WillBeValidFor(duration))
                     {
-                        Exception credentialValidityException = new Exception("Obtained new upload credentials, but they were not valid for required duration (" + duration + ").");
-                        SensusException.Report(credentialValidityException);
-                        throw credentialValidityException;
+                        SensusException.Report("Obtained new AWS S3 put credentials, but they were not valid for required duration (" + duration + "). The returned expiration duration is " + amazonS3PutCredentials.ValidityTimeSpan + ".");
                     }
 
-                    _iamAccessKey = uploadCredentials.AccessKeyId;
-                    _iamSecretKey = uploadCredentials.SecretAccessKey;
-                    _sessionToken = uploadCredentials.SessionToken;
+                    _iamAccessKey = amazonS3PutCredentials.AccessKeyId;
+                    _iamSecretKey = amazonS3PutCredentials.SecretAccessKey;
+                    _sessionToken = amazonS3PutCredentials.SessionToken;
                 }
             }
         }

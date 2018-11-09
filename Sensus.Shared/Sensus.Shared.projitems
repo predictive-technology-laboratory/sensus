@@ -259,7 +259,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Authentication\Account.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Authentication\UploadCredentials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\AmazonS3Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Authentication\AuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />

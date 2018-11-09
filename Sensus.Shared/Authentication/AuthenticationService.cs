@@ -21,11 +21,11 @@ namespace Sensus.Authentication
 {
     public class AuthenticationService
     {
-        private const string ACCOUNT_SERVICE_PAGE = "/createaccount?deviceId={0}&participantId={1}";
-        private const string CREDENTIALS_SERVICE_PAGE = "/getcredentials?participantId={0}&password={1}";
+        private const string CREATE_ACCOUNT_PATH = "/createaccount?deviceId={0}&participantId={1}";
+        private const string GET_CREDENTIALS_PATH = "/getcredentials?participantId={0}&password={1}";
 
-        private readonly string _accountServiceURL;
-        private readonly string _uploadCredentialsServiceURL;
+        private readonly string _createAccountURL;
+        private readonly string _getCredentialsURL;
         
         /// <summary>
         /// Gets or sets the base service URL. Serialized so that the app can refresh information.
@@ -41,25 +41,25 @@ namespace Sensus.Authentication
         public Account Account { get; set; }
 
         /// <summary>
-        /// Gets or sets the upload credentials. Not serialized to prevent storage of sensitive information.
+        /// Gets or sets the AWS S3 credentials. Not serialized to prevent storage of sensitive information.
         /// </summary>
-        /// <value>The upload credentials.</value>
+        /// <value>The credentials.</value>
         [JsonIgnore]
-        public UploadCredentials UploadCredentials { get; set; }
+        public AmazonS3Credentials AmazonS3Credentials { get; set; }
 
         public Protocol Protocol { get; set; }
 
-        public AuthenticationService(string baseServiceUrl)
+        public AuthenticationService(string baseServiceURL)
         {
-            BaseServiceURL = baseServiceUrl.Trim('/');
+            BaseServiceURL = baseServiceURL.Trim('/');
 
-            _accountServiceURL = baseServiceUrl + ACCOUNT_SERVICE_PAGE;
-            _uploadCredentialsServiceURL = baseServiceUrl + CREDENTIALS_SERVICE_PAGE;
+            _createAccountURL = BaseServiceURL + CREATE_ACCOUNT_PATH;
+            _getCredentialsURL = BaseServiceURL + GET_CREDENTIALS_PATH;
         }
 
         public async Task<Account> CreateAccountAsync(string participantId = null)
         {
-            string accountJSON = await new Uri(string.Format(_accountServiceURL, SensusServiceHelper.Get().DeviceId, participantId)).DownloadString();
+            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId)).DownloadString();
 
             Account = accountJSON.DeserializeJson<Account>();
 
@@ -68,15 +68,15 @@ namespace Sensus.Authentication
             return Account;
         }
 
-        public async Task<UploadCredentials> GetCredentialsAsync()
+        public async Task<AmazonS3Credentials> GetCredentialsAsync()
         {
-            string credentialsJSON = await new Uri(string.Format(_uploadCredentialsServiceURL, Account.ParticipantId, Account.Password)).DownloadString();
+            string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
 
-            UploadCredentials = credentialsJSON.DeserializeJson<UploadCredentials>();
+            AmazonS3Credentials = credentialsJSON.DeserializeJson<AmazonS3Credentials>();
 
             await CheckForProtocolChangeAsync(Account.ProtocolId, new Uri(Account.ProtocolURL), Account.ParticipantId);
 
-            return UploadCredentials;
+            return AmazonS3Credentials;
         }
 
         private async Task CheckForProtocolChangeAsync(string desiredProtocolId, Uri desiredProtocolURI, string participantId)
@@ -104,7 +104,7 @@ namespace Sensus.Authentication
 
         public void ClearCredentials()
         {
-            UploadCredentials = null;
+            AmazonS3Credentials = null;
         }
     }
 }
