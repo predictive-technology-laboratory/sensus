@@ -189,7 +189,7 @@ namespace Sensus
             }
 
             // deserialize JSON to protocol object
-            Protocol protocol = null;
+            Protocol protocol;
             try
             {
                 protocol = json.DeserializeJson<Protocol>();
