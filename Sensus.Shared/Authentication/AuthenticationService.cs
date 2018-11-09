@@ -51,7 +51,7 @@ namespace Sensus.Authentication
 
         public AuthenticationService(string baseServiceUrl)
         {
-            BaseServiceURL = baseServiceUrl;
+            BaseServiceURL = baseServiceUrl.Trim('/');
 
             _accountServiceURL = baseServiceUrl + ACCOUNT_SERVICE_PAGE;
             _uploadCredentialsServiceURL = baseServiceUrl + CREDENTIALS_SERVICE_PAGE;
