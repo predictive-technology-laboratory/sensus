@@ -20,7 +20,7 @@ using Xamarin.Forms;
 using Sensus.Context;
 using Sensus.UI.Inputs;
 using System.Threading.Tasks;
-using Sensus.ManagedAuthentication;
+using Sensus.Authentication;
 
 #if __ANDROID__
 using Sensus.Android;

@@ -30,7 +30,7 @@ using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
-using Sensus.ManagedAuthentication;
+using Sensus.Authentication;
 
 namespace Sensus.DataStores.Remote
 {

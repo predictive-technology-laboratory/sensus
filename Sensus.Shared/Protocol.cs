@@ -47,8 +47,7 @@ using Amazon;
 using Amazon.S3.Model;
 using Sensus.Extensions;
 using Sensus.Anonymization.Anonymizers;
-using System.Net.Http;
-using Sensus.ManagedAuthentication;
+using Sensus.Authentication;
 
 #if __IOS__
 using HealthKit;

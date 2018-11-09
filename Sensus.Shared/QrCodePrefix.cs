@@ -33,8 +33,8 @@ namespace Sensus
         /// ```
         /// managed:BASEURL:PARTICIPANT_ID
         /// ```
-        ///   where BASEURL is the URL to a Sensus authentication management server, and PARTICIPANT_ID is an (optional) participant ID. Read
-        ///   more about Sensus authentication management servers [here](xref:authentication_management_server).
+        ///   where BASEURL is the URL to a Sensus authentication server, and PARTICIPANT_ID is an (optional) participant ID. Read
+        ///   more about Sensus authentication servers [here](xref:authentication_server).
         /// </summary>
         public const string SENSUS_PROTOCOL = "sensus-protocol:";
 

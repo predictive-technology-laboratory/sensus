@@ -258,9 +258,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ManagedAuthentication\Account.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ManagedAuthentication\UploadCredentials.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ManagedAuthentication\AuthenticationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\UploadCredentials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\AuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
   </ItemGroup>
@@ -269,6 +269,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
-    <Folder Include="$(MSBuildThisFileDirectory)ManagedAuthentication\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Authentication\" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Sensus.Extensions;
 
-namespace Sensus.ManagedAuthentication
+namespace Sensus.Authentication
 {
     public class AuthenticationService
     {

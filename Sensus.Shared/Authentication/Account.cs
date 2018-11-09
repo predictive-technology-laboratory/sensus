@@ -14,7 +14,7 @@
 
 using Newtonsoft.Json;
 
-namespace Sensus.ManagedAuthentication
+namespace Sensus.Authentication
 {
     public class Account
     {
