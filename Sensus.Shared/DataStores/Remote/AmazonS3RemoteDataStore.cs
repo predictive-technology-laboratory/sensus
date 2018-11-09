@@ -662,17 +662,17 @@ namespace Sensus.DataStores.Remote
 
                     _iamAccessKey = _iamSecretKey = _sessionToken = null;
 
-                    AmazonS3Credentials amazonS3PutCredentials = await Protocol.AuthenticationService.GetCredentialsAsync();
+                    AmazonS3Credentials amazonS3Credentials = await Protocol.AuthenticationService.GetCredentialsAsync();
 
                     // the server is not providing credentials that are valid for long enough. report the error and proceed anyway.
-                    if (!amazonS3PutCredentials.WillBeValidFor(duration))
+                    if (!amazonS3Credentials.WillBeValidFor(duration))
                     {
-                        SensusException.Report("Obtained new AWS S3 put credentials, but they were not valid for required duration (" + duration + "). The returned expiration duration is " + amazonS3PutCredentials.ValidityTimeSpan + ".");
+                        SensusException.Report("Obtained new AWS S3 credentials, but they were not valid for required duration (" + duration + "). The returned expiration duration is " + amazonS3Credentials.ValidityTimeSpan + ".");
                     }
 
-                    _iamAccessKey = amazonS3PutCredentials.AccessKeyId;
-                    _iamSecretKey = amazonS3PutCredentials.SecretAccessKey;
-                    _sessionToken = amazonS3PutCredentials.SessionToken;
+                    _iamAccessKey = amazonS3Credentials.AccessKeyId;
+                    _iamSecretKey = amazonS3Credentials.SecretAccessKey;
+                    _sessionToken = amazonS3Credentials.SessionToken;
                 }
             }
         }
