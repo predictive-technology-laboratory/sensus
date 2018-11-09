@@ -44,9 +44,9 @@ namespace Sensus.ManagedAuthentication
         {
             get
             {
-                if (long.TryParse(Expiration, out long unixMilliseconds))
+                if (long.TryParse(Expiration, out long unixTimeMilliseconds))
                 {
-                    return DateTimeOffset.FromUnixTimeMilliseconds(unixMilliseconds);
+                    return DateTimeOffset.FromUnixTimeMilliseconds(unixTimeMilliseconds);
                 }
                 else
                 {
@@ -55,12 +55,9 @@ namespace Sensus.ManagedAuthentication
             }
         }
 
-        public bool Valid
+        public bool WillBeValidFor(TimeSpan? duration)
         {
-            get
-            {
-                return DateTimeOffset.UtcNow < ExpirationDateTime;
-            }
+            return DateTimeOffset.UtcNow + (duration ?? TimeSpan.Zero) < ExpirationDateTime;
         }
     }
 }

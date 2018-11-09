@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Sensus.Context;
 
@@ -22,30 +20,6 @@ namespace Sensus.Extensions
 {
     public static class StringExtensions
     {
-        public static async Task<byte[]> DownloadBytes(this string uri)
-        {
-            byte[] downloadedBytes = null;
-
-            using (HttpClient client = new HttpClient())
-            {
-                downloadedBytes = await client.GetByteArrayAsync(uri);
-            }
-
-            return downloadedBytes;
-        }
-
-        public static async Task<string> DownloadString(this string uri)
-        {
-            string downloadedString = null;
-
-            using (HttpClient client = new HttpClient())
-            {
-                downloadedString = await client.GetStringAsync(uri);
-            }
-
-            return downloadedString;
-        }
-
         public static T DeserializeJson<T>(this string json) where T : class
         {
             Exception deserializeException = null;

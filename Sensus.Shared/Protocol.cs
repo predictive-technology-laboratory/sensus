@@ -91,7 +91,7 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(string webURI, AuthenticationService authenticationService = null)
+        public static async Task<Protocol> DeserializeAsync(Uri uri, AuthenticationService authenticationService = null)
         {
             Protocol protocol = null;
 
@@ -101,7 +101,7 @@ namespace Sensus
                 AmazonS3Uri s3URI = null;
                 try
                 {
-                    s3URI = new AmazonS3Uri(new Uri(webURI));
+                    s3URI = new AmazonS3Uri(uri);
                 }
                 catch (Exception)
                 {
@@ -110,7 +110,7 @@ namespace Sensus
                 // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
                 if (s3URI == null)
                 {
-                    byte[] protocolBytes = await webURI.DownloadBytes();
+                    byte[] protocolBytes = await uri.DownloadBytes();
                     protocol = await DeserializeAsync(protocolBytes);
                 }
                 // download protocol bytes from s3 and deserialize
@@ -125,7 +125,7 @@ namespace Sensus
                             SensusContext.Current.IamAccessKeySecret == null |
                             SensusContext.Current.IamRegion == null)
                         {
-                            throw new ArgumentNullException("IAM credential is empty.");
+                            throw new NullReferenceException("IAM credential is empty.");
                         }
                         else
                         {
@@ -151,7 +151,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                string errorMessage = "Failed to download protocol from \"" + webURI + "\":  " + ex.Message;
+                string errorMessage = "Failed to download protocol:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
                 await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
             }
@@ -189,24 +189,29 @@ namespace Sensus
             }
 
             // deserialize JSON to protocol object
-            Protocol protocol;
+            Protocol protocol = null;
+            string exceptionMessage = null;
             try
             {
                 // disable flash notifications so we don't get any messages that result from properties being set.
                 SensusServiceHelper.Get().FlashNotificationsEnabled = false;
                 protocol = json.DeserializeJson<Protocol>();
-                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
             }
             catch (Exception ex)
             {
-                string message = "Failed to deserialize protocol:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                return null;
+                exceptionMessage = "Failed to deserialize protocol:  " + ex.Message;
             }
             finally
             {
+                // ensure that flash notifications get reenabled
                 SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+            }
+
+            if (exceptionMessage != null)
+            {
+                SensusServiceHelper.Get().Logger.Log(exceptionMessage, LoggingLevel.Normal, typeof(Protocol));
+                await SensusServiceHelper.Get().FlashNotificationAsync(exceptionMessage);
+                return null;
             }
 
             // set up protocol
@@ -412,7 +417,7 @@ namespace Sensus
                 {
                     uiTestingProtocolFile.CopyTo(protocolStream);
                     string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray()));
-                    Protocol protocol = await DeserializeAsync(protocolJSON);
+                    Protocol protocol = protocolJSON.DeserializeJson<Protocol>();
 
                     if (protocol == null)
                     {
@@ -1359,7 +1364,9 @@ namespace Sensus
         }
 
         /// <summary>
-        /// The authentication service.
+        /// The authentication service. This is serialized to JSON; however, the only thing that is retained in the
+        /// serialized JSON is the service base URL. No account or credential information is serialized; rather, 
+        /// this information is refreshed when needed.
         /// </summary>
         /// <value>The management service.</value>
         public AuthenticationService AuthenticationService { get; set; }
@@ -1599,7 +1606,7 @@ namespace Sensus
 
         public async Task<Protocol> CopyAsync(bool resetId, bool register)
         {
-            Protocol protocol = await DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+            Protocol protocol = JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS).DeserializeJson<Protocol>();
 
             await protocol.ResetAsync(resetId);
 

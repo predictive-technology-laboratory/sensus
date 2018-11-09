@@ -310,7 +310,7 @@ namespace Sensus.Android
 
                     if (intent.Scheme == "https")
                     {
-                        protocol = await Protocol.DeserializeAsync(dataURI.ToString());
+                        protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()));
                     }
                     else if (intent.Scheme == "content" || intent.Scheme == "file")
                     {

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Sensus.Extensions;
@@ -46,27 +47,59 @@ namespace Sensus.ManagedAuthentication
         [JsonIgnore]
         public UploadCredentials UploadCredentials { get; set; }
 
+        public Protocol Protocol { get; set; }
+
         public AuthenticationService(string baseServiceUrl)
         {
             BaseServiceURL = baseServiceUrl;
+
             _accountServiceURL = baseServiceUrl + ACCOUNT_SERVICE_PAGE;
             _uploadCredentialsServiceURL = baseServiceUrl + CREDENTIALS_SERVICE_PAGE;
         }
 
         public async Task<Account> CreateAccountAsync(string participantId = null)
         {
-            string accountJSON = await string.Format(_accountServiceURL, SensusServiceHelper.Get().DeviceId, participantId).DownloadString();
+            string accountJSON = await new Uri(string.Format(_accountServiceURL, SensusServiceHelper.Get().DeviceId, participantId)).DownloadString();
+
             Account = accountJSON.DeserializeJson<Account>();
+
+            await CheckForProtocolChangeAsync(Account.ProtocolId, new Uri(Account.ProtocolURL), Account.ParticipantId);
 
             return Account;
         }
 
         public async Task<UploadCredentials> GetCredentialsAsync()
         {
-            string credentialsJSON = await string.Format(_uploadCredentialsServiceURL, Account.ParticipantId, Account.Password).DownloadString();
+            string credentialsJSON = await new Uri(string.Format(_uploadCredentialsServiceURL, Account.ParticipantId, Account.Password)).DownloadString();
+
             UploadCredentials = credentialsJSON.DeserializeJson<UploadCredentials>();
 
+            await CheckForProtocolChangeAsync(Account.ProtocolId, new Uri(Account.ProtocolURL), Account.ParticipantId);
+
             return UploadCredentials;
+        }
+
+        private async Task CheckForProtocolChangeAsync(string desiredProtocolId, Uri desiredProtocolURI, string participantId)
+        {
+            if (Protocol.Id != desiredProtocolId)
+            {
+                bool startDesiredProtocol = Protocol.Running;
+
+                await Protocol.StopAsync();
+                await Protocol.DeleteAsync();
+
+                // get desired protocol and wire it up with the current authentication service
+                Protocol desiredProtocol = await Protocol.DeserializeAsync(desiredProtocolURI);
+                desiredProtocol.ParticipantId = participantId;
+                desiredProtocol.AuthenticationService = this;
+                Protocol = desiredProtocol;
+
+                // start the new protocol
+                if (startDesiredProtocol)
+                {
+                    await desiredProtocol.StartAsync();
+                }
+            }
         }
 
         public void ClearCredentials()

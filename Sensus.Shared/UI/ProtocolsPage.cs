@@ -467,74 +467,77 @@ namespace Sensus.UI
                 if (action == "New")
                 {
                     await Protocol.CreateAsync("New Protocol");
-                    return;
                 }
-
-                string url = null;
-
-                if (action == "From QR Code")
+                else
                 {
-                    url = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
-                }
-                else if (action == "From URL")
-                {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, false);
+                    string url = null;
 
-                    // input might be null (user cancelled), or the value might be null (blank input submitted)
-                    url = input?.Value?.ToString();
-                }
-
-                Protocol protocol = null;
-
-                if (url != null)
-                {
-                    // handle managed studies...handshake with account manager
-                    if (url.StartsWith("managed"))
+                    if (action == "From QR Code")
                     {
-                        try
+                        url = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
+                    }
+                    else if (action == "From URL")
+                    {
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, false);
+
+                        // input might be null (user cancelled), or the value might be null (blank input submitted)
+                        url = input?.Value?.ToString();
+                    }
+
+                    Protocol protocol = null;
+
+                    if (url != null)
+                    {
+                        // handle managed studies...handshake with account manager
+                        if (url.StartsWith("managed"))
                         {
-                            // should have the following parts (participant is optional):  managed:BASEURL:PARTICIPANT_ID
-                            string[] parts = url.Split(':');
-                            string baseUrl = parts[1];
-                            string participantId = parts.Length > 2 ? parts[2] : null;
-
-                            // get account
-                            AuthenticationService authenticationService = new AuthenticationService(baseUrl);
-                            Account account = await authenticationService.CreateAccountAsync(participantId);
-
-                            // get protocol
-                            protocol = await Protocol.DeserializeAsync(account.ProtocolURL, authenticationService);
-                            protocol.ParticipantId = account.ParticipantId;
-                            protocol.AuthenticationService = authenticationService;
-
-                            // make sure protocol has the same id as we expected
-                            if (protocol.Id != account.ProtocolId)
+                            try
                             {
-                                throw new Exception("The identifier of the returned protocol does not match the expected identifier.");
+                                // should have the following parts (participant is optional):  managed:BASEURL:PARTICIPANT_ID
+                                string[] parts = url.Split(':');
+                                string baseUrl = parts[1];
+                                string participantId = parts.Length > 2 ? parts[2] : null;
+
+                                // get account
+                                AuthenticationService authenticationService = new AuthenticationService(baseUrl);
+                                Account account = await authenticationService.CreateAccountAsync(participantId);
+
+                                // get protocol and wire it up with the authentication service
+                                protocol = await Protocol.DeserializeAsync(new Uri(account.ProtocolURL), authenticationService);
+
+                                // make sure protocol has the same id as we expected
+                                if (protocol.Id != account.ProtocolId)
+                                {
+                                    throw new Exception("The identifier of the returned protocol does not match the expected identifier.");
+                                }
+
+                                protocol.ParticipantId = account.ParticipantId;
+                                protocol.AuthenticationService = authenticationService;
+                                authenticationService.Protocol = protocol;
+                            }
+                            catch (Exception ex)
+                            {
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
                             }
                         }
-                        catch (Exception ex)
+                        // handle unmanaged studies...direct download from URL
+                        else
                         {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(new Uri(url));
+                            }
+                            catch (Exception ex)
+                            {
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
+                            }
                         }
                     }
-                    // handle unmanaged studies...direct download from URL
-                    else
-                    {
-                        try
-                        {
-                            protocol = await Protocol.DeserializeAsync(url);
-                        }
-                        catch (Exception ex)
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
-                        }
-                    }
-                }
 
-                if (protocol != null)
-                {
-                    await Protocol.DisplayAndStartAsync(protocol);
+                    if (protocol != null)
+                    {
+                        await Protocol.DisplayAndStartAsync(protocol);
+                    }
                 }
             }));
 

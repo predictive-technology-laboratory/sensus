@@ -262,6 +262,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ManagedAuthentication\UploadCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ManagedAuthentication\AuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
