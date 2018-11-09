@@ -38,7 +38,7 @@ namespace Sensus.Authentication
         public string ExpirationUnixTimeMilliseconds { get; set; }
 
         [JsonProperty(PropertyName = "cmk")]
-        public string CMK { get; set; }
+        public string CustomerMasterKey { get; set; }
 
         public DateTimeOffset AcquisitionTimestamp { get; } = DateTimeOffset.UtcNow;
 
