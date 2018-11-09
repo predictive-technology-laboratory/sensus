@@ -649,7 +649,7 @@ namespace Sensus.DataStores.Remote
         {
             if (Protocol.AuthenticationService == null)
             {
-                SensusException.Report("ConfirmCredentialsAsync called without an authentication service.");
+                SensusException.Report(nameof(ConfirmCredentialValidityAsync) + " called without an authentication service.");
             }
             else
             {
@@ -661,6 +661,13 @@ namespace Sensus.DataStores.Remote
                 if (Protocol.AuthenticationService.UploadCredentials == null || !Protocol.AuthenticationService.UploadCredentials.WillBeValidFor(duration))
                 {
                     UploadCredentials uploadCredentials = await Protocol.AuthenticationService.GetCredentialsAsync();
+
+                    if (!uploadCredentials.WillBeValidFor(duration))
+                    {
+                        Exception credentialValidityException = new Exception("Obtained new upload credentials, but they were not valid for required duration (" + duration + ").");
+                        SensusException.Report(credentialValidityException);
+                        throw credentialValidityException;
+                    }
 
                     _iamAccessKey = uploadCredentials.AccessKeyId;
                     _iamSecretKey = uploadCredentials.SecretAccessKey;
