@@ -124,7 +124,7 @@ namespace Sensus
                             SensusContext.Current.IamAccessKeySecret == null |
                             SensusContext.Current.IamRegion == null)
                         {
-                            throw new NullReferenceException("IAM credential is empty.");
+                            throw new Exception("You must first authenticate.");
                         }
                         else
                         {

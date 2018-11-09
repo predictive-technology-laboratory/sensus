@@ -493,10 +493,15 @@ namespace Sensus.UI
                         {
                             try
                             {
-                                // should have the following parts (participant is optional):  managed:BASEURL:PARTICIPANT_ID
-                                string[] parts = url.Split(':');
-                                string baseUrl = parts[1];
-                                string participantId = parts.Length > 2 ? parts[2] : null;
+                                // should have the following parts (participant is optional but the last colon is still required):  managed:BASEURL:PARTICIPANT_ID
+                                int firstColon = url.IndexOf(':');
+                                int lastColon = url.LastIndexOf(':');
+                                string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
+                                string participantId = null;
+                                if (url.Length > lastColon + 1)
+                                {
+                                    participantId = baseUrl.Substring(lastColon + 1);
+                                }
 
                                 // get account
                                 AuthenticationService authenticationService = new AuthenticationService(baseUrl);
