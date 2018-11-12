@@ -31,19 +31,5 @@ namespace Sensus.Authentication
         /// <value>The password.</value>
         [JsonProperty(PropertyName = "password")]
         public string Password { get; set; }
-
-        /// <summary>
-        /// Gets or sets the protocol URL.
-        /// </summary>
-        /// <value>The protocol URL.</value>
-        [JsonProperty(PropertyName = "protocolURL")]
-        public string ProtocolURL { get; set; }
-
-        /// <summary>
-        /// Gets or sets the protocol identifier.
-        /// </summary>
-        /// <value>The protocol identifier.</value>
-        [JsonProperty(PropertyName = "protocolId")]
-        public string ProtocolId { get; set; }
     }
 }

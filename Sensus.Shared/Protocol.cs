@@ -90,35 +90,19 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(Uri uri, AuthenticationService authenticationService = null)
+        public static async Task<Protocol> DeserializeAsync(Uri uri, AmazonS3Credentials credentials = null)
         {
             Protocol protocol = null;
 
             try
             {
                 // check if the URI points to an S3 bucket
-                AmazonS3Uri s3URI = null;
-                try
-                {
-                    s3URI = new AmazonS3Uri(uri);
-                }
-                catch (Exception)
-                {
-                }
-
-                // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
-                if (s3URI == null)
-                {
-                    byte[] protocolBytes = await uri.DownloadBytes();
-                    protocol = await DeserializeAsync(protocolBytes);
-                }
-                // download protocol bytes from s3 and deserialize
-                else
+                if (AmazonS3Uri.IsAmazonS3Endpoint(uri))
                 {
                     AmazonS3Client s3Client = null;
 
                     // use app-level S3 authentication if we don't have an authentication service
-                    if (authenticationService == null)
+                    if (credentials == null)
                     {
                         if (SensusContext.Current.IamAccessKey == null ||
                             SensusContext.Current.IamAccessKeySecret == null |
@@ -131,12 +115,13 @@ namespace Sensus
                             s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
                         }
                     }
-                    // use authentication service S3 credentials if we have them
+                    // use authentication service S3 credentials
                     else
                     {
-                        AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
                         s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken);
                     }
+
+                    AmazonS3Uri s3URI = new AmazonS3Uri(uri);
 
                     GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
 
@@ -146,6 +131,12 @@ namespace Sensus
                         response.ResponseStream.CopyTo(byteStream);
                         protocol = await DeserializeAsync(byteStream.ToArray());
                     }
+                }
+                // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
+                else
+                {
+                    byte[] protocolBytes = await uri.DownloadBytes();
+                    protocol = await DeserializeAsync(protocolBytes);
                 }
             }
             catch (Exception ex)

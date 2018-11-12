@@ -659,21 +659,19 @@ namespace Sensus.DataStores.Remote
                 if (Protocol.AuthenticationService.AmazonS3Credentials == null || !Protocol.AuthenticationService.AmazonS3Credentials.WillBeValidFor(duration))
                 {
                     // get new credentials
-
-                    _iamAccessKey = _iamSecretKey = _sessionToken = null;
-
                     AmazonS3Credentials amazonS3Credentials = await Protocol.AuthenticationService.GetCredentialsAsync();
 
                     // the server is not providing credentials that are valid for long enough. report the error and proceed anyway.
                     if (!amazonS3Credentials.WillBeValidFor(duration))
                     {
-                        SensusException.Report("Obtained new AWS S3 credentials, but they were not valid for required duration (" + duration + "). The returned expiration duration is " + amazonS3Credentials.ValidityTimeSpan + ".");
+                        SensusException.Report("Obtained new AWS S3 credentials, but they are not valid for required duration (" + duration + "). The returned expiration duration is " + amazonS3Credentials.ValidityTimeSpan + ".");
                     }
-
-                    _iamAccessKey = amazonS3Credentials.AccessKeyId;
-                    _iamSecretKey = amazonS3Credentials.SecretAccessKey;
-                    _sessionToken = amazonS3Credentials.SessionToken;
                 }
+
+                // set keys/token for use in the data store
+                _iamAccessKey = Protocol.AuthenticationService.AmazonS3Credentials.AccessKeyId;
+                _iamSecretKey = Protocol.AuthenticationService.AmazonS3Credentials.SecretAccessKey;
+                _sessionToken = Protocol.AuthenticationService.AmazonS3Credentials.SessionToken;
             }
         }
 

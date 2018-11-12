@@ -496,24 +496,33 @@ namespace Sensus.UI
                                 // should have the following parts (participant is optional but the last colon is still required):  managed:BASEURL:PARTICIPANT_ID
                                 int firstColon = url.IndexOf(':');
                                 int lastColon = url.LastIndexOf(':');
-                                string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
-                                string participantId = null;
-                                if (url.Length > lastColon + 1)
+
+                                if (firstColon == lastColon)
                                 {
-                                    participantId = baseUrl.Substring(lastColon + 1);
+                                    throw new Exception("Invalid managed study URL.");
                                 }
 
-                                // get account
+                                string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
+
+                                // get participant id if one follows the last colon
+                                string participantId = null;
+                                if (lastColon < url.Length - 1)
+                                {
+                                    participantId = url.Substring(lastColon + 1);
+                                }
+
+                                // get account and credentials
                                 AuthenticationService authenticationService = new AuthenticationService(baseUrl);
                                 Account account = await authenticationService.CreateAccountAsync(participantId);
+                                AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
 
                                 // get protocol and wire it up with the authentication service
-                                protocol = await Protocol.DeserializeAsync(new Uri(account.ProtocolURL), authenticationService);
+                                protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
 
-                                // make sure protocol has the same id as we expected
-                                if (protocol.Id != account.ProtocolId)
+                                // make sure protocol has the id that we expect
+                                if (protocol.Id != credentials.ProtocolId)
                                 {
-                                    throw new Exception("The identifier of the returned protocol does not match the expected identifier.");
+                                    throw new Exception("The identifier of the study does not match that of the credentials.");
                                 }
 
                                 protocol.ParticipantId = account.ParticipantId;

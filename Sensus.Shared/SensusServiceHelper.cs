@@ -41,6 +41,7 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
+using Sensus.Authentication;
 
 namespace Sensus
 {
@@ -619,7 +620,38 @@ namespace Sensus
 
                         _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
-                        await protocolToTest.TestHealthAsync(false, cancellationToken);
+                        // if we're using an authentication service, check if the desired protocol has changed as indicated by 
+                        // the protocol id returned with credentials.
+                        if (protocolToTest.AuthenticationService != null)
+                        {
+                            try
+                            {
+                                // get fresh credentials and check the protocol ID
+                                AmazonS3Credentials credentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
+
+                                if (protocolToTest.Id != credentials.ProtocolId)
+                                {
+                                    await protocolToTest.StopAsync();
+                                    await protocolToTest.DeleteAsync();
+
+                                    // get the desired protocol and wire it up with the current authentication service
+                                    Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                    desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+                                    desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                    desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
+
+                                    await desiredProtocol.StartAsync();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
+                            }
+                        }
+                        else
+                        {
+                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                        }
                     }
 
                     // test the callback scheduler
