@@ -59,7 +59,7 @@ namespace Sensus.DataStores
         public abstract string DisplayName { get; }
 
         protected DataStore()
-        {            
+        {
             _running = false;
         }
 

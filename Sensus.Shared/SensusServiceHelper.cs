@@ -259,9 +259,9 @@ namespace Sensus
             return directorySizeMB;
         }
 
-        public static double GetFileSizeMB(string path)
+        public static double GetFileSizeMB(params string[] paths)
         {
-            return new FileInfo(path).Length / Math.Pow(1024d, 2);
+            return paths.Sum(path => new FileInfo(path).Length / Math.Pow(1024d, 2));
         }
 
         /// <remarks>
