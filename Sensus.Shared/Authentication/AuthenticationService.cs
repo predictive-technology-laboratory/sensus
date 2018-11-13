@@ -106,7 +106,7 @@ namespace Sensus.Authentication
 
             string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
 
-            // create a new account if the password was bad. this also should not be possible.
+            // try creating a new account if an exception was generated.
             if (IsExceptionResponse(credentialsJSON))
             {
                 await CreateAccountAsync();
@@ -198,12 +198,12 @@ namespace Sensus.Authentication
             {
                 if (symmetricKeySizeBits != 256)
                 {
-                    throw new Exception("Invalid value " + symmetricKeySizeBits + ". Only 256-bit AES is supported.");
+                    throw new ArgumentOutOfRangeException(nameof(symmetricKeySizeBits), "Invalid value " + symmetricKeySizeBits + ". Only 256-bit keys are supported.");
                 }
 
                 if (symmetricInitializationVectorSizeBits != 128)
                 {
-                    throw new Exception("Invalid value " + symmetricInitializationVectorSizeBits + ". Only 128-bit IV is supported.");
+                    throw new ArgumentOutOfRangeException(nameof(symmetricInitializationVectorSizeBits), "Invalid value " + symmetricInitializationVectorSizeBits + ". Only 128-bit initialization vectors are supported.");
                 }
 
                 AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(AmazonS3Credentials.AccessKeyId, AmazonS3Credentials.SecretAccessKey, AmazonS3Credentials.SessionToken);

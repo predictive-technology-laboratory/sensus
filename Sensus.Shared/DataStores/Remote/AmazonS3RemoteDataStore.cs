@@ -534,6 +534,7 @@ namespace Sensus.DataStores.Remote
                      s3Exception.ErrorCode == "InvalidToken") && allowRetry && Protocol.AuthenticationService != null)
                 {
                     AmazonS3Client retryS3 = null;
+
                     try
                     {
                         // force refresh of credentials and retry the put
