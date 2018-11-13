@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using System;
 
 namespace Sensus.Encryption
 {
-    public class SymmetricEncryption : IEncryption
+    public class SymmetricEncryption : IEncryptor
     {
         private readonly byte[] _encryptionKeyBytes;
         private readonly byte[] _initializationVectorBytes;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses zero-valued initialization vector.
+        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses a zero-valued initialization vector.
         /// 
         /// </summary>
         /// <param name="encryptionKeyHexString">A 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Can be generated with the following:
@@ -72,7 +71,7 @@ namespace Sensus.Encryption
 
         public byte[] Encrypt(string unencryptedValue)
         {
-            return Encrypt(Encoding.Unicode.GetBytes(unencryptedValue));
+            return Encrypt(Encoding.UTF8.GetBytes(unencryptedValue));
         }
 
         public byte[] Encrypt(byte[] unencryptedBytes)
@@ -98,7 +97,7 @@ namespace Sensus.Encryption
 
                 using (ICryptoTransform transform = aes.CreateDecryptor(_encryptionKeyBytes, _initializationVectorBytes))
                 {
-                    return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
+                    return Encoding.UTF8.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
         }

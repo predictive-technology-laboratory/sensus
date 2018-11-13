@@ -18,10 +18,12 @@ using Org.BouncyCastle.Crypto.Parameters;
 using System.Security.Cryptography;
 using System.Text;
 using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Sensus.Encryption
 {
-    public class AsymmetricEncryption : IEncryption
+    public class AsymmetricEncryption : IEncryptor, IEnvelopeEncryptor
     {
         private RSAParameters _rsaPublicParameters;
         private RSAParameters _rsaPrivateParameters;
@@ -88,7 +90,7 @@ namespace Sensus.Encryption
 
         public byte[] Encrypt(string unencryptedValue)
         {
-            return Encrypt(Encoding.Unicode.GetBytes(unencryptedValue));
+            return Encrypt(Encoding.UTF8.GetBytes(unencryptedValue));
         }
 
         public byte[] Encrypt(byte[] unencryptedBytes)
@@ -111,19 +113,20 @@ namespace Sensus.Encryption
 
         public string DecryptToString(byte[] encryptedBytes)
         {
-            return Encoding.Unicode.GetString(DecryptToBytes(encryptedBytes));
+            return Encoding.UTF8.GetString(DecryptToBytes(encryptedBytes));
         }
 
         /// <summary>
         /// Encrypts bytes asymmetrically via symmetric encryption. Since asymmetric encryption does not support large data sizes, the approach
         /// is to generate a symmetric encryption key that is designed for large data sizes, encrypt the data with the symmetric key, encrypt
-        /// the symmetric key with the asymmetric key, and send the encrypted symmetric key and encrypted data to the same file.
+        /// the symmetric key with the asymmetric key, and send everything to output.
         /// </summary>
         /// <param name="unencryptedBytes">Unencrypted bytes.</param>
         /// <param name="symmetricKeySizeBits">Symmetric key size in bits.</param>
         /// <param name="symmetricInitializationVectorSizeBits">Symmetric initialization vector size in bits.</param>
-        /// <param name="encryptedOutputPath">Encrypted output path.</param>
-        public void EncryptSymmetrically(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, string encryptedOutputPath)
+        /// <param name="encryptedOutputStream">Encrypted output stream.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)
         {
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
@@ -141,23 +144,23 @@ namespace Sensus.Encryption
                 byte[] encryptedKeyBytes = Encrypt(aes.Key);
                 byte[] encryptedIVBytes = Encrypt(aes.IV);
 
-                // write the encrypted output file
-                using (FileStream encryptedOutputFile = new FileStream(encryptedOutputPath, FileMode.Create, FileAccess.Write))
-                {
-                    // ...encrypted symmetric key length and bytes
-                    byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
-                    encryptedOutputFile.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
-                    encryptedOutputFile.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
+                // write the encrypted output stream
 
-                    // ...encrypted initialization vector length and bytes
-                    byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
-                    encryptedOutputFile.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
-                    encryptedOutputFile.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
+                // ...encrypted symmetric key length and bytes
+                byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
+                encryptedOutputStream.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
+                encryptedOutputStream.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
 
-                    // ...encrypted bytes
-                    encryptedOutputFile.Write(encryptedBytes, 0, encryptedBytes.Length);
-                }
+                // ...encrypted initialization vector length and bytes
+                byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
+                encryptedOutputStream.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
+                encryptedOutputStream.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
+
+                // ...encrypted bytes
+                encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
+
+            return Task.CompletedTask;
         }
     }
 }

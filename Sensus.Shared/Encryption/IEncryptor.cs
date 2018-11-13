@@ -14,7 +14,7 @@
 
 namespace Sensus.Encryption
 {
-    public interface IEncryption
+    public interface IEncryptor
     {
         byte[] Encrypt(string unencryptedValue);
         byte[] Encrypt(byte[] unencryptedBytes);

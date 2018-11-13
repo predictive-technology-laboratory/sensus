@@ -13,8 +13,13 @@
 // limitations under the License.
 
 using System;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Amazon.KeyManagementService;
+using Amazon.KeyManagementService.Model;
+using Newtonsoft.Json.Linq;
+using Sensus.Encryption;
 using Sensus.Exceptions;
 using Sensus.Extensions;
 
@@ -23,7 +28,7 @@ namespace Sensus.Authentication
     /// <summary>
     /// Handles all interactions with an [authentication server](xref:authentication_servers).
     /// </summary>
-    public class AuthenticationService
+    public class AuthenticationService : IEnvelopeEncryptor
     {
         private const string CREATE_ACCOUNT_PATH = "/createaccount?deviceId={0}&participantId={1}";
         private const string GET_CREDENTIALS_PATH = "/getcredentials?participantId={0}&password={1}";
@@ -102,13 +107,13 @@ namespace Sensus.Authentication
             string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
 
             // create a new account if the password was bad. this also should not be possible.
-            if (IsBadPasswordResponse(credentialsJSON))
+            if (IsExceptionResponse(credentialsJSON))
             {
                 await CreateAccountAsync();
 
                 credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
 
-                if (IsBadPasswordResponse(credentialsJSON))
+                if (IsExceptionResponse(credentialsJSON))
                 {
                     SensusException.Report("Received bad password response when getting credentials with newly created account.");
                     throw new NotImplementedException();
@@ -169,14 +174,88 @@ namespace Sensus.Authentication
             return AmazonS3Credentials;
         }
 
-        private bool IsBadPasswordResponse(string json)
+        private bool IsExceptionResponse(string json)
         {
-            return true;
+            try
+            {
+                JObject response = JObject.Parse(json);
+                return response.ContainsKey("Exception");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void ClearCredentials()
         {
             AmazonS3Credentials = null;
+        }
+
+        public async Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (symmetricKeySizeBits != 256)
+                {
+                    throw new Exception("Invalid value " + symmetricKeySizeBits + ". Only 256-bit AES is supported.");
+                }
+
+                if (symmetricInitializationVectorSizeBits != 128)
+                {
+                    throw new Exception("Invalid value " + symmetricInitializationVectorSizeBits + ". Only 128-bit IV is supported.");
+                }
+
+                AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(AmazonS3Credentials.AccessKeyId, AmazonS3Credentials.SecretAccessKey, AmazonS3Credentials.SessionToken);
+
+                kmsClient.ExceptionEvent += (sender, e) =>
+                {
+                    SensusException.Report("Exception from KMS client:  " + e);
+                };
+
+                // generate a symmetric data key
+                GenerateDataKeyResponse dataKeyResponse = await kmsClient.GenerateDataKeyAsync(new GenerateDataKeyRequest
+                {
+                    KeyId = AmazonS3Credentials.CustomerMasterKey,
+                    KeySpec = DataKeySpec.AES_256
+
+                }, cancellationToken);
+
+                // write encrypted payload
+
+                // write encrypted data key length and bytes
+                byte[] encryptedDataKeyBytes = dataKeyResponse.CiphertextBlob.ToArray();
+                byte[] encryptedDataKeyBytesLength = BitConverter.GetBytes(encryptedDataKeyBytes.Length);
+                encryptedOutputStream.Write(encryptedDataKeyBytesLength, 0, encryptedDataKeyBytesLength.Length);
+                encryptedOutputStream.Write(encryptedDataKeyBytes, 0, encryptedDataKeyBytes.Length);
+
+                // write encrypted random initialization vector length and bytes
+                Random random = new Random();
+                byte[] initializationVectorBytes = new byte[16];
+                random.NextBytes(initializationVectorBytes);
+
+                byte[] encryptedInitializationVectorBytes = (await kmsClient.EncryptAsync(new EncryptRequest
+                {
+                    KeyId = AmazonS3Credentials.CustomerMasterKey,
+                    Plaintext = new MemoryStream(initializationVectorBytes)
+
+                }, cancellationToken)).CiphertextBlob.ToArray();
+
+                byte[] encryptedInitializationVectorBytesLength = BitConverter.GetBytes(encryptedInitializationVectorBytes.Length);
+                encryptedOutputStream.Write(encryptedInitializationVectorBytesLength, 0, encryptedInitializationVectorBytesLength.Length);
+                encryptedOutputStream.Write(encryptedInitializationVectorBytes, 0, encryptedInitializationVectorBytes.Length);
+
+                // write symmetrically encrypted bytes
+                byte[] dataKeyBytes = dataKeyResponse.Plaintext.ToArray();
+                SymmetricEncryption symmetricEncryption = new SymmetricEncryption(dataKeyBytes, initializationVectorBytes);
+                byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
+                encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while running envelope encryption with authentication service:  " + ex.Message, ex);
+                throw ex;
+            }
         }
     }
 }

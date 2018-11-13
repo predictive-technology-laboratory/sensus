@@ -250,7 +250,7 @@ namespace Sensus.Tests.DataStores.Local
 
             // write the tar file
             string tarPath = Path.Combine(localDataStore.Protocol.StorageDirectory, Guid.NewGuid().ToString());
-            localDataStore.CreateTarFromLocalData(tarPath);
+            await localDataStore.CreateTarFromLocalDataAsync(tarPath);
 
             // untar
             FileStream tarFile = new FileStream(tarPath, FileMode.Open, FileAccess.Read);

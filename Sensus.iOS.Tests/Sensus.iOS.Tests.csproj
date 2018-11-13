@@ -178,9 +178,6 @@
     <Reference Include="PCLCrypto">
       <HintPath>..\packages\PCLCrypto.2.0.147\lib\xamarinios10\PCLCrypto.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.25.4\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.24.1\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
     </Reference>
@@ -323,6 +320,12 @@
       <HintPath>..\packages\Sensus.1.13.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.3.29.8\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.KeyManagementService">
+      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.22\lib\Xamarin.iOS10\AWSSDK.KeyManagementService.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />

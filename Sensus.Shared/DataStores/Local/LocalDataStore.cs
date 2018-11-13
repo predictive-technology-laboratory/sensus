@@ -124,7 +124,7 @@ namespace Sensus.DataStores.Local
             try
             {
                 string tarSharePath = SensusServiceHelper.Get().GetSharePath(".tar");
-                CreateTarFromLocalData(tarSharePath);
+                await CreateTarFromLocalDataAsync(tarSharePath);
                 await SensusServiceHelper.Get().ShareFileAsync(tarSharePath, "Data:  " + Protocol.Name, "application/octet-stream");
             }
             catch (Exception ex)
@@ -137,6 +137,6 @@ namespace Sensus.DataStores.Local
 
         public abstract Task WriteToRemoteAsync(CancellationToken cancellationToken);
 
-        public abstract void CreateTarFromLocalData(string outputPath);
+        public abstract Task CreateTarFromLocalDataAsync(string outputPath);
     }
 }

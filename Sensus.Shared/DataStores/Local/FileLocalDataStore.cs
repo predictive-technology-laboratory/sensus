@@ -276,11 +276,14 @@ namespace Sensus.DataStores.Local
             {
                 try
                 {
-                    Protocol.AsymmetricEncryption.Encrypt("testing");
+                    using (MemoryStream testStream = new MemoryStream())
+                    {
+                        await Protocol.EnvelopeEncryptor.EnvelopeAsync(Encoding.UTF8.GetBytes("testing"), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, testStream, CancellationToken.None);
+                    }
                 }
                 catch (Exception)
                 {
-                    throw new Exception("Ensure that a valid public key is set on the Protocol.");
+                    throw new Exception("Envelope encryption test failed.");
                 }
             }
 
@@ -531,40 +534,37 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        public override void CreateTarFromLocalData(string outputPath)
+        public override async Task CreateTarFromLocalDataAsync(string outputPath)
         {
-            lock (_locker)
+            await PromoteFilesAsync(CancellationToken.None);
+
+            string[] promotedPaths = PromotedPaths;
+
+            if (promotedPaths.Length == 0)
             {
-                PromoteFiles();
+                throw new Exception("No data available.");
+            }
 
-                string[] promotedPaths = PromotedPaths;
-
-                if (promotedPaths.Length == 0)
+            using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+            {
+                using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
                 {
-                    throw new Exception("No data available.");
-                }
-
-                using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
-                {
-                    using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
+                    foreach (string promotedPath in promotedPaths)
                     {
-                        foreach (string promotedPath in promotedPaths)
+                        using (FileStream promotedFile = File.OpenRead(promotedPath))
                         {
-                            using (FileStream promotedFile = File.OpenRead(promotedPath))
-                            {
-                                TarEntry tarEntry = TarEntry.CreateEntryFromFile(promotedPath);
-                                tarEntry.Name = "data/" + System.IO.Path.GetFileName(promotedPath);
-                                tarArchive.WriteEntry(tarEntry, false);
+                            TarEntry tarEntry = TarEntry.CreateEntryFromFile(promotedPath);
+                            tarEntry.Name = "data/" + System.IO.Path.GetFileName(promotedPath);
+                            tarArchive.WriteEntry(tarEntry, false);
 
-                                promotedFile.Close();
-                            }
+                            promotedFile.Close();
                         }
-
-                        tarArchive.Close();
                     }
 
-                    outputFile.Close();
+                    tarArchive.Close();
                 }
+
+                outputFile.Close();
             }
         }
 
@@ -586,16 +586,6 @@ namespace Sensus.DataStores.Local
                     return Task.CompletedTask;
                 }
 
-                PromoteFiles();
-
-                string[] promotedPaths = PromotedPaths;
-
-                // if no paths were promoted, then we have nothing to do.
-                if (promotedPaths.Length == 0)
-                {
-                    return Task.CompletedTask;
-                }
-
                 // if this is the first write or the previous write is finished, run a new task. if a write-to-remote task
                 // is already running, then bail out and let it finish.
                 if (_writeToRemoteTask == null ||
@@ -605,6 +595,16 @@ namespace Sensus.DataStores.Local
                 {
                     _writeToRemoteTask = Task.Run(async () =>
                     {
+                        await PromoteFilesAsync(cancellationToken);
+
+                        string[] promotedPaths = PromotedPaths;
+
+                        // if no paths were promoted, then we have nothing to do.
+                        if (promotedPaths.Length == 0)
+                        {
+                            return;
+                        }
+
                         // write each promoted file
                         for (int i = 0; i < promotedPaths.Length; ++i)
                         {
@@ -699,8 +699,10 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        private void PromoteFiles()
+        private async Task PromoteFilesAsync(CancellationToken cancellationToken)
         {
+            string[] paths;
+
             lock (_locker)
             {
                 // close the current file, as we're about to delete/move all files in the storage directory
@@ -709,66 +711,71 @@ namespace Sensus.DataStores.Local
                 // this will have no effect.
                 CloseFile();
 
-                // process each file in the storage directory
-                foreach (string path in Directory.GetFiles(StorageDirectory))
-                {
-                    try
-                    {
-                        // promotion applies to files that don't yet have a file extension
-                        if (!string.IsNullOrWhiteSpace(System.IO.Path.GetExtension(path)))
-                        {
-                            continue;
-                        }
-
-                        string promotedPath = path + JSON_FILE_EXTENSION;
-
-                        if (_compressionLevel != CompressionLevel.NoCompression)
-                        {
-                            promotedPath += GZIP_FILE_EXTENSION;
-                        }
-
-                        if (_encrypt)
-                        {
-                            promotedPath += ENCRYPTED_FILE_EXTENSION;
-
-                            // the target promoted path should not currently exist. if it does, then delete it since we're about to write to it.
-                            if (File.Exists(promotedPath))
-                            {
-                                File.Delete(promotedPath);
-                            }
-
-                            Protocol.AsymmetricEncryption.EncryptSymmetrically(File.ReadAllBytes(path), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedPath);
-                        }
-                        else
-                        {
-                            // the target promoted path should not currently exist. if it does, then delete it since we're about to copy the current file to it.
-                            if (File.Exists(promotedPath))
-                            {
-                                File.Delete(promotedPath);
-                            }
-
-                            // we were previously using File.Move, but we were getting many sharing violation errors
-                            // when doing so. looks like some folks have seen the same problem, and one person fixed 
-                            // the issue by using a copy followed by delete:  https://forums.xamarin.com/discussion/42145/android-sharing-violation-on-file-rename
-                            File.Copy(path, promotedPath);
-                        }
-
-                        // file has been promoted. delete the file.
-                        File.Delete(path);
-
-                        _filesPromoted++;
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusException.Report("Failed to promote file:  " + ex.Message, ex);
-                    }
-                }
+                paths = Directory.GetFiles(StorageDirectory);
 
                 // open a new file for writing if the data store is currently running. if it is not
                 // running, then we shouldn't open a new file as it will likely never be closed.
                 if (Running)
                 {
                     OpenFile();
+                }
+            }
+
+            // process each path
+            foreach (string path in paths)
+            {
+                try
+                {
+                    // promotion applies to files that don't yet have a file extension
+                    if (!string.IsNullOrWhiteSpace(System.IO.Path.GetExtension(path)))
+                    {
+                        continue;
+                    }
+
+                    string promotedPath = path + JSON_FILE_EXTENSION;
+
+                    if (_compressionLevel != CompressionLevel.NoCompression)
+                    {
+                        promotedPath += GZIP_FILE_EXTENSION;
+                    }
+
+                    if (_encrypt)
+                    {
+                        promotedPath += ENCRYPTED_FILE_EXTENSION;
+
+                        // the target promoted path should not currently exist. if it does, then delete it since we're about to write to it.
+                        if (File.Exists(promotedPath))
+                        {
+                            File.Delete(promotedPath);
+                        }
+
+                        using (FileStream promotedFile = new FileStream(promotedPath, FileMode.CreateNew, FileAccess.Write))
+                        {
+                            await Protocol.EnvelopeEncryptor.EnvelopeAsync(File.ReadAllBytes(path), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedFile, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        // the target promoted path should not currently exist. if it does, then delete it since we're about to copy the current file to it.
+                        if (File.Exists(promotedPath))
+                        {
+                            File.Delete(promotedPath);
+                        }
+
+                        // we were previously using File.Move, but we were getting many sharing violation errors
+                        // when doing so. looks like some folks have seen the same problem, and one person fixed 
+                        // the issue by using a copy followed by delete:  https://forums.xamarin.com/discussion/42145/android-sharing-violation-on-file-rename
+                        File.Copy(path, promotedPath);
+                    }
+
+                    // file has been promoted. delete the file.
+                    File.Delete(path);
+
+                    _filesPromoted++;
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Failed to promote file:  " + ex.Message, ex);
                 }
             }
         }
@@ -798,15 +805,12 @@ namespace Sensus.DataStores.Local
                 _toWriteBuffer.Clear();
             }
 
-            lock (_locker)
-            {
-                // promote any existing files. this will encrypt any files if needed and ready them
-                // for local sharing. a new file will not be opened because the data store has already
-                // been stopped above.
-                PromoteFiles();
+            // promote any existing files. this will encrypt any files if needed and ready them
+            // for local sharing. a new file will not be opened because the data store has already
+            // been stopped above.
+            await PromoteFilesAsync(CancellationToken.None);
 
-                _dataWrittenToCurrentFile = 0;
-            }
+            _dataWrittenToCurrentFile = 0;
         }
 
         public void Clear()

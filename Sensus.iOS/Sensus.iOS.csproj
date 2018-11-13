@@ -211,9 +211,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.1.0.0\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.25.4\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
-    </Reference>
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.24.1\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
     </Reference>
@@ -333,6 +330,12 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Sensus.Shared.NuGet">
       <HintPath>..\packages\Sensus.1.13.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.Core">
+      <HintPath>..\packages\AWSSDK.Core.3.3.29.8\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.KeyManagementService">
+      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.22\lib\Xamarin.iOS10\AWSSDK.KeyManagementService.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

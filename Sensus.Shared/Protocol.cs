@@ -1188,11 +1188,18 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public AsymmetricEncryption AsymmetricEncryption
+        public IEnvelopeEncryptor EnvelopeEncryptor
         {
             get
             {
-                return new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
+                if (AuthenticationService == null)
+                {
+                    return new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
+                }
+                else
+                {
+                    return AuthenticationService;
+                }
             }
         }
 
