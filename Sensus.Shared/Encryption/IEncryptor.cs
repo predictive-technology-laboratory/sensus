@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Text;
+
 namespace Sensus.Encryption
 {
     public interface IEncryptor
     {
-        byte[] Encrypt(string unencryptedValue);
+        byte[] Encrypt(string unencryptedValue, Encoding encoding);
         byte[] Encrypt(byte[] unencryptedBytes);
-        string DecryptToString(byte[] encryptedBytes);
+        string DecryptToString(byte[] encryptedBytes, Encoding encoding);
     }
 }

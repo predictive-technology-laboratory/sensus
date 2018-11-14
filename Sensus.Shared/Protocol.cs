@@ -155,7 +155,8 @@ namespace Sensus
             string json;
             try
             {
-                json = SensusContext.Current.SymmetricEncryption.DecryptToString(bytes);
+                // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                json = SensusContext.Current.SymmetricEncryption.DecryptToString(bytes, Encoding.Unicode);
             }
             catch (Exception ex)
             {
@@ -394,7 +395,9 @@ namespace Sensus
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
                     uiTestingProtocolFile.CopyTo(protocolStream);
-                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray()));
+
+                    // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray(), Encoding.Unicode));
                     Protocol protocol = protocolJSON.DeserializeJson<Protocol>();
 
                     if (protocol == null)
@@ -1584,7 +1587,8 @@ namespace Sensus
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), Encoding.Unicode);
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
         }

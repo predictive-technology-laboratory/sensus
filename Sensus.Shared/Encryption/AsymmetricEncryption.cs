@@ -88,9 +88,9 @@ namespace Sensus.Encryption
             }
         }
 
-        public byte[] Encrypt(string unencryptedValue)
+        public byte[] Encrypt(string unencryptedValue, Encoding encoding)
         {
-            return Encrypt(Encoding.UTF8.GetBytes(unencryptedValue));
+            return Encrypt(encoding.GetBytes(unencryptedValue));
         }
 
         public byte[] Encrypt(byte[] unencryptedBytes)
@@ -111,9 +111,9 @@ namespace Sensus.Encryption
             }
         }
 
-        public string DecryptToString(byte[] encryptedBytes)
+        public string DecryptToString(byte[] encryptedBytes, Encoding encoding)
         {
-            return Encoding.UTF8.GetString(DecryptToBytes(encryptedBytes));
+            return encoding.GetString(DecryptToBytes(encryptedBytes));
         }
 
         /// <summary>

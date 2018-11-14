@@ -124,7 +124,6 @@ namespace Sensus.DataStores.Local
 
         private readonly object _writeToRemoteTaskLocker = new object();
 
-
         public override bool HasDataToShare
         {
             get
@@ -931,6 +930,8 @@ namespace Sensus.DataStores.Local
                 { "Percent Closed", Convert.ToString(_filesClosed.RoundToWholePercentageOf(_filesOpened, 5)) },
                 { "Percent Promoted", Convert.ToString(_filesPromoted.RoundToWholePercentageOf(_filesClosed, 5)) },
                 { "Percent Written", Convert.ToString(_filesWrittenToRemote.RoundToWholePercentageOf(_filesPromoted, 5)) },
+                { "Unpromoted Count", Convert.ToString(_unpromotedPaths == null ? 0 : _unpromotedPaths.Count) },
+                { "Promoted Count", Convert.ToString(_promotedPaths == null ? 0 : _promotedPaths.Count) },
                 { "Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
             };
 

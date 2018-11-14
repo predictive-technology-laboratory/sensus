@@ -69,9 +69,9 @@ namespace Sensus.Encryption
             return bytes;
         }
 
-        public byte[] Encrypt(string unencryptedValue)
+        public byte[] Encrypt(string unencryptedValue, Encoding encoding)
         {
-            return Encrypt(Encoding.UTF8.GetBytes(unencryptedValue));
+            return Encrypt(encoding.GetBytes(unencryptedValue));
         }
 
         public byte[] Encrypt(byte[] unencryptedBytes)
@@ -88,7 +88,7 @@ namespace Sensus.Encryption
             }
         }
 
-        public string DecryptToString(byte[] encryptedBytes)
+        public string DecryptToString(byte[] encryptedBytes, Encoding encoding)
         {
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
@@ -97,7 +97,7 @@ namespace Sensus.Encryption
 
                 using (ICryptoTransform transform = aes.CreateDecryptor(_encryptionKeyBytes, _initializationVectorBytes))
                 {
-                    return Encoding.UTF8.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
+                    return encoding.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
         }

@@ -16,6 +16,7 @@ using Xunit;
 using Sensus.Encryption;
 using System.Security.Cryptography;
 using System;
+using System.Text;
 
 namespace Sensus.Tests.Encryption
 {
@@ -27,7 +28,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new SymmetricEncryption("123123");
 
-            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("A"); });
+            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("A", Encoding.UTF8); });
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace Sensus.Tests.Encryption
             Assert.Throws(typeof(ArgumentOutOfRangeException), () =>
             {
                 var encryption = new SymmetricEncryption("12312");
-                encryption.Encrypt("A");
+                encryption.Encrypt("A", Encoding.UTF8);
             });
         }
 
@@ -45,7 +46,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new SymmetricEncryption("21759BBC6FD5F9AB7012F8BF6C998080F3C5A5A168C3ADCE13CB872F28598A44");
 
-            Assert.Equal("asl3j3lkfjwlkj3lwk3jflwk3j", encryption.DecryptToString(encryption.Encrypt("asl3j3lkfjwlkj3lwk3jflwk3j")));
+            Assert.Equal("asl3j3lkfjwlkj3lwk3jflwk3j", encryption.DecryptToString(encryption.Encrypt("asl3j3lkfjwlkj3lwk3jflwk3j", Encoding.UTF8), Encoding.UTF8));
         }
     }
 }

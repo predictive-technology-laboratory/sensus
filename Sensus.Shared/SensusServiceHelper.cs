@@ -162,7 +162,7 @@ namespace Sensus
                     throw exceptionToReport;
                 }
 
-                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + (deserializeException?.Message ?? "No exception"), LoggingLevel.Normal, SINGLETON.GetType());
                 SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
             }
         }
@@ -185,7 +185,8 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes);
+                    // once upon a time, we made the poor decision to encode the helper as unicode (UTF-16). can't switch to UTF-8 now...
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes, Encoding.Unicode);
                 }
                 catch (Exception exception)
                 {
@@ -261,7 +262,18 @@ namespace Sensus
 
         public static double GetFileSizeMB(params string[] paths)
         {
-            return paths.Sum(path => new FileInfo(path).Length / Math.Pow(1024d, 2));
+            return paths.Sum(path =>
+            {
+                // files have a habit of racing to deletion...
+                try
+                {
+                    return new FileInfo(path).Length / Math.Pow(1024d, 2);
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            });
         }
 
         /// <remarks>
@@ -718,7 +730,9 @@ namespace Sensus
                     try
                     {
                         string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
+
+                        // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
                         File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
                         _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());

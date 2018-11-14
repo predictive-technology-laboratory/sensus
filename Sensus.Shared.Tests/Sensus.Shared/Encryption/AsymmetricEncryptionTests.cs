@@ -66,7 +66,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, _privateKey);
 
-            Assert.Equal("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
+            Assert.Equal("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo", Encoding.UTF8), Encoding.UTF8));
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(null, _privateKey);
 
-            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo"); });
+            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo", Encoding.UTF8); });
         }
 
         [Fact]
@@ -88,7 +88,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, null);
 
-            Assert.Throws(typeof(CryptographicException), () => { encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")); });
+            Assert.Throws(typeof(CryptographicException), () => { encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo", Encoding.UTF8), Encoding.UTF8); });
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace Sensus.Tests.Encryption
             byte[] encryptedMessageBytes = encryptedBytes.Skip(4 + keyLen + 4 + ivLen).ToArray();
 
             SymmetricEncryption symmetricEncryption = new SymmetricEncryption(key, iv);
-            string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes); 
+            string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes, Encoding.UTF8); 
             Assert.Equal(message, decryptedMessage);
         }
     }
