@@ -118,7 +118,7 @@ namespace Sensus
                     // use authentication service S3 credentials
                     else
                     {
-                        s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken);
+                        s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken, credentials.RegionEndpoint);
                     }
 
                     AmazonS3Uri s3URI = new AmazonS3Uri(uri);

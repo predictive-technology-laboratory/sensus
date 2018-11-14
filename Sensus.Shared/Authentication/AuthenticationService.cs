@@ -14,6 +14,9 @@
 
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.KeyManagementService;
@@ -66,7 +69,9 @@ namespace Sensus.Authentication
 
         public async Task<Account> CreateAccountAsync(string participantId = null)
         {
+            ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
             string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId)).DownloadString();
+            ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
             try
             {
@@ -95,6 +100,11 @@ namespace Sensus.Authentication
             return Account;
         }
 
+        private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sllPolicyErrors)
+        {
+            return true;
+        }
+
         public async Task<AmazonS3Credentials> GetCredentialsAsync()
         {
             // create account if we don't have one for some reason. under normal conditions we can expect to always have an account, 
@@ -104,14 +114,18 @@ namespace Sensus.Authentication
                 await CreateAccountAsync();
             }
 
+            ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
             string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
+            ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
             // try creating a new account if an exception was generated.
             if (IsExceptionResponse(credentialsJSON))
             {
                 await CreateAccountAsync();
 
+                ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
                 credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
+                ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
                 if (IsExceptionResponse(credentialsJSON))
                 {
@@ -156,6 +170,11 @@ namespace Sensus.Authentication
             if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL))
             {
                 SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolURL) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+            }
+
+            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region))
+            {
+                SensusException.Report("Empty " + nameof(AmazonS3Credentials.Region) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
             }
 
             if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey))
@@ -206,7 +225,7 @@ namespace Sensus.Authentication
                     throw new ArgumentOutOfRangeException(nameof(symmetricInitializationVectorSizeBits), "Invalid value " + symmetricInitializationVectorSizeBits + ". Only 128-bit initialization vectors are supported.");
                 }
 
-                AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(AmazonS3Credentials.AccessKeyId, AmazonS3Credentials.SecretAccessKey, AmazonS3Credentials.SessionToken);
+                AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(AmazonS3Credentials.AccessKeyId, AmazonS3Credentials.SecretAccessKey, AmazonS3Credentials.SessionToken, AmazonS3Credentials.RegionEndpoint);
 
                 kmsClient.ExceptionEvent += (sender, e) =>
                 {

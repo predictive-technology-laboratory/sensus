@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Amazon;
 using Newtonsoft.Json;
 
 namespace Sensus.Authentication
@@ -27,6 +28,11 @@ namespace Sensus.Authentication
 
         [JsonProperty(PropertyName = "sessionToken")]
         public string SessionToken { get; set; }
+
+        [JsonProperty(PropertyName = "region")]
+        public string Region { get; set; }
+
+        public RegionEndpoint RegionEndpoint => RegionEndpoint.GetBySystemName(Region);
 
         [JsonProperty(PropertyName = "protocolURL")]
         public string ProtocolURL { get; set; }

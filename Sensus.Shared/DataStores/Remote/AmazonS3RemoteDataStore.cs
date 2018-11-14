@@ -673,6 +673,7 @@ namespace Sensus.DataStores.Remote
                 _iamAccessKey = Protocol.AuthenticationService.AmazonS3Credentials.AccessKeyId;
                 _iamSecretKey = Protocol.AuthenticationService.AmazonS3Credentials.SecretAccessKey;
                 _sessionToken = Protocol.AuthenticationService.AmazonS3Credentials.SessionToken;
+                _region = Protocol.AuthenticationService.AmazonS3Credentials.Region;
             }
         }
 
