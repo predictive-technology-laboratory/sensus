@@ -201,7 +201,7 @@ namespace Sensus.Notifications
                 else if (SensusServiceHelper.Get().RunningProtocolIds.Contains(protocol.Id))
                 {
                     SensusServiceHelper.Get().Logger.Log("Push notification targets a protocol that is not running but should be. Starting protocol.", LoggingLevel.Normal, GetType());
-                    await protocol.StartAsync();
+                    await protocol.StartAsync(cancellationToken);
                 }
                 else
                 {

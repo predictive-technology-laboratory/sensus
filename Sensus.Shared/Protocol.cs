@@ -417,7 +417,7 @@ namespace Sensus
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
+                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", CancellationToken.None);
                 });
             }
         }
@@ -1888,7 +1888,7 @@ namespace Sensus
             }
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             if (_startImmediately || (DateTime.Now > _startTimestamp))
             {
@@ -1911,7 +1911,7 @@ namespace Sensus
 
             _scheduledStartCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                await PrivateStartAsync(cancellationToken); //TODO: figure out the source of this cancellation token
+                await PrivateStartAsync(cancellationToken);
                 _scheduledStartCallback = null;
 
             }, timeUntilStart, "START", _id, this, null,
@@ -1972,7 +1972,7 @@ namespace Sensus
             _scheduledStopCallback = null;
         }
 
-        public async Task StartWithUserAgreementAsync(string startupMessage, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task StartWithUserAgreementAsync(string startupMessage, CancellationToken cancellationToken)
         {
             if (!_probes.Any(probe => probe.Enabled))
             {
@@ -2148,7 +2148,7 @@ namespace Sensus
             return _alertExclusionWindows.Any(window => window.Encompasses(time));
         }
 
-        public async Task<List<AnalyticsTrackedEvent>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<List<AnalyticsTrackedEvent>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken)
         {
             List<AnalyticsTrackedEvent> events = new List<AnalyticsTrackedEvent>();
             string eventName;
@@ -2169,7 +2169,7 @@ namespace Sensus
                 try
                 {
                     await StopAsync();
-                    await StartAsync();
+                    await StartAsync(cancellationToken);
                 }
                 catch (Exception)
                 {

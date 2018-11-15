@@ -713,7 +713,7 @@ namespace Sensus
             {
                 if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    await registeredProtocol.StartAsync();
+                    await registeredProtocol.StartAsync(CancellationToken.None);
                 }
             }
         }
