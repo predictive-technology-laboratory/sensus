@@ -34,8 +34,8 @@ namespace Sensus.UI
     {
         private EventHandler _protocolStartInitiatedAction;
         private EventHandler<double> _protocolStartAddProgressAction;
-        private EventHandler<bool> _protocolStartCompletedSuccessfullyAction;
-        private bool _pushedModalStartProgressPage = false;
+        private EventHandler<bool> _protocolStartFinishedAction;
+        private bool _pushedProtocolStartPage = false;
 
         public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
         {
@@ -107,7 +107,7 @@ namespace Sensus.UI
 #if __IOS__
                         new Label
                         {
-                            Text = "Please keep app open until finished.",
+                            Text = "Please keep app open.",
                             FontSize = 15,
                             HorizontalOptions = LayoutOptions.CenterAndExpand,
                             VerticalOptions = LayoutOptions.CenterAndExpand
@@ -119,7 +119,7 @@ namespace Sensus.UI
 
             _protocolStartInitiatedAction = async (sender, eventArgs) =>
             {
-                _pushedModalStartProgressPage = true;
+                _pushedProtocolStartPage = true;
 
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
@@ -132,11 +132,11 @@ namespace Sensus.UI
                 await SetProgressAsync(_protocolStartProgressBar.Progress + additionalProgress);
             };
 
-            _protocolStartCompletedSuccessfullyAction = async (sender, success) =>
+            _protocolStartFinishedAction = async (sender, success) =>
             {
-                if (_pushedModalStartProgressPage)
+                if (_pushedProtocolStartPage)
                 {
-                    _pushedModalStartProgressPage = false;
+                    _pushedProtocolStartPage = false;
 
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
@@ -269,13 +269,13 @@ namespace Sensus.UI
 
                     selectedProtocol.ProtocolStartInitiated += _protocolStartInitiatedAction;
                     selectedProtocol.ProtocolStartAddProgress += _protocolStartAddProgressAction;
-                    selectedProtocol.ProtocolStartCompletedSuccessfully += _protocolStartCompletedSuccessfullyAction;
+                    selectedProtocol.ProtocolStartFinished += _protocolStartFinishedAction;
 
                     await selectedProtocol.StartWithUserAgreementAsync(null);
 
                     selectedProtocol.ProtocolStartInitiated -= _protocolStartInitiatedAction;
                     selectedProtocol.ProtocolStartAddProgress -= _protocolStartAddProgressAction;
-                    selectedProtocol.ProtocolStartCompletedSuccessfully -= _protocolStartCompletedSuccessfullyAction;
+                    selectedProtocol.ProtocolStartFinished -= _protocolStartFinishedAction;
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {

@@ -45,7 +45,6 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
-using Sensus.Extensions;
 using Sensus.Anonymization.Anonymizers;
 
 #if __IOS__
@@ -491,11 +490,11 @@ namespace Sensus
 
         #endregion
 
-        public event EventHandler<bool> ProtocolRunningChanged;
-        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler ProtocolStartInitiated;
         public event EventHandler<double> ProtocolStartAddProgress;
-        public event EventHandler<bool> ProtocolStartCompletedSuccessfully;
+        public event EventHandler<bool> ProtocolStartFinished;
+        public event EventHandler<bool> ProtocolRunningChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private string _id;
         private string _name;
@@ -1828,13 +1827,13 @@ namespace Sensus
 
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
 
-                ProtocolStartCompletedSuccessfully?.Invoke(this, true);
+                ProtocolStartFinished?.Invoke(this, true);
             }
             else
             {
                 await StopAsync();
 
-                ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                ProtocolStartFinished?.Invoke(this, false);
             }
         }
 
