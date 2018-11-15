@@ -693,7 +693,9 @@ namespace Sensus
                     }
                     catch (Exception ex)
                     {
-                        _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        string message = "Exception while serializing service helper:  " + ex;
+                        SensusException.Report(message, ex);
+                        _logger.Log(message, LoggingLevel.Normal, GetType());
                     }
 
                     // ensure that all logged messages make it into the file.

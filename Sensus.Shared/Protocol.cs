@@ -493,6 +493,7 @@ namespace Sensus
         public event EventHandler ProtocolStartInitiated;
         public event EventHandler<double> ProtocolStartAddProgress;
         public event EventHandler<bool> ProtocolStartFinished;
+
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -1680,15 +1681,6 @@ namespace Sensus
             // give each step 20 percent
             double perStepPercent = 0.2;
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                await StopAsync();
-                ProtocolStartCompletedSuccessfully?.Invoke(this, false);
-                return;
-            }
-
-            ProtocolStartAddProgress?.Invoke(this, 0);
-
             Exception startException = null;
 
             // start local data store
@@ -1699,23 +1691,15 @@ namespace Sensus
                     throw new Exception("Local data store not defined.");
                 }
 
-                await _localDataStore.StartAsync();
+                cancellationToken.ThrowIfCancellationRequested();
 
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    await StopAsync();
-                    ProtocolStartCompletedSuccessfully?.Invoke(this, false);
-                    return;
-                }
+                await _localDataStore.StartAsync();
 
                 ProtocolStartAddProgress?.Invoke(this, perStepPercent);
             }
-            catch (Exception localDataStoreException)
+            catch (Exception ex)
             {
-                string message = "Local data store failed to start:  " + localDataStoreException.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                startException = localDataStoreException;
+                startException = ex;
             }
 
             // start remote data store
@@ -1728,23 +1712,15 @@ namespace Sensus
                         throw new Exception("Remote data store not defined.");
                     }
 
-                    await _remoteDataStore.StartAsync();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        await StopAsync();
-                        ProtocolStartCompletedSuccessfully?.Invoke(this, false);
-                        return;
-                    }
+                    await _remoteDataStore.StartAsync();
 
                     ProtocolStartAddProgress?.Invoke(this, perStepPercent);
                 }
-                catch (Exception remoteDataStoreException)
+                catch (Exception ex)
                 {
-                    string message = "Remote data store failed to start:  " + remoteDataStoreException.Message;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                    startException = remoteDataStoreException;
+                    startException = ex;
                 }
             }
 
@@ -1795,6 +1771,8 @@ namespace Sensus
                                 continue;
                             }
 
+                            cancellationToken.ThrowIfCancellationRequested();
+
                             try
                             {
                                 await probe.StartAsync();
@@ -1816,13 +1794,6 @@ namespace Sensus
                                 ++probesEnabled;
                             }
 
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                await StopAsync();
-                                ProtocolStartCompletedSuccessfully?.Invoke(this, false);
-                                return;
-                            }
-
                             ProtocolStartAddProgress?.Invoke(this, perProbeStartProgressPercent);
                         }
                     }
@@ -1832,49 +1803,86 @@ namespace Sensus
                         throw new Exception("No probes were enabled.");
                     }
                 }
+                catch (OperationCanceledException cancellationException)
+                {
+                    startException = cancellationException;
+                }
                 catch (Exception probeException)
                 {
-                    // don't stop the protocol if we get an exception while starting probes. we might recover.
+                    // don't stop the protocol if we get an exception while starting probes. we might recover from a failed probe (e.g., permission denied).
                     string message = "Failure while starting probes:  " + probeException.Message;
                     SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 }
             }
 
+            // register with push notification hubs
             if (startException == null)
             {
-                // we're all good. register with push notification hubs.
-                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
-
-                if (cancellationToken.IsCancellationRequested)
+                try
                 {
-                    await StopAsync();
-                    ProtocolStartCompletedSuccessfully?.Invoke(this, false);
-                    return;
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(cancellationToken);
+
+                    ProtocolStartAddProgress?.Invoke(this, perStepPercent);
                 }
-
-                ProtocolStartAddProgress?.Invoke(this, perStepPercent);
-
-                // save the state of the app in case it crashes or -- on ios -- in case the user terminates
-                // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
-                await SensusServiceHelper.Get().SaveAsync();
-
-                if (cancellationToken.IsCancellationRequested)
+                catch (TaskCanceledException cancellationException)
                 {
-                    await StopAsync();
-                    ProtocolStartCompletedSuccessfully?.Invoke(this, false);
-                    return;
+                    startException = cancellationException;
                 }
+                catch (Exception registrationException)
+                {
+                    // don't stop the protocol if we weren't able to update push notification registrations. we might recover.
+                    SensusServiceHelper.Get().Logger.Log("Exception while updating push notification registrations:  " + registrationException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
 
-                ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+            // save app state
+            if (startException == null)
+            {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
+                    // save the state of the app in case it crashes or -- on ios -- in case the user terminates
+                    // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
+                    await SensusServiceHelper.Get().SaveAsync();
+
+                    ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+                }
+                catch (TaskCanceledException cancellationException)
+                {
+                    startException = cancellationException;
+                }
+                catch (Exception saveException)
+                {
+                    // don't stop the protocol if we weren't able to save. we might recover.
+                    SensusServiceHelper.Get().Logger.Log("Failure while saving app state:  " + saveException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            // wrap up
+            if (startException == null)
+            {
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
-
                 ProtocolStartFinished?.Invoke(this, true);
             }
             else
             {
-                await StopAsync();
+                string message = "Error while starting study:  " + startException.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                await SensusServiceHelper.Get().FlashNotificationAsync(message);
+
+                // stop the study
+                try
+                {
+                    await StopAsync();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping study after failing to start it:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
 
                 ProtocolStartFinished?.Invoke(this, false);
             }

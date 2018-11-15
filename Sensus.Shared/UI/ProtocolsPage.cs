@@ -140,13 +140,17 @@ namespace Sensus.UI
 
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
+                    await SetProgressAsync(0);
                     await Navigation.PushModalAsync(protocolStartPage);
                 });
             };
 
             _protocolStartAddProgressAction = async (sender, additionalProgress) =>
             {
-                await SetProgressAsync(_protocolStartProgressBar.Progress + additionalProgress);
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    await SetProgressAsync(_protocolStartProgressBar.Progress + additionalProgress);
+                });
             };
 
             _protocolStartFinishedAction = async (sender, success) =>
@@ -282,8 +286,6 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
-                    await SetProgressAsync(0);
-
                     selectedProtocol.ProtocolStartInitiated += _protocolStartInitiatedAction;
                     selectedProtocol.ProtocolStartAddProgress += _protocolStartAddProgressAction;
                     selectedProtocol.ProtocolStartFinished += _protocolStartFinishedAction;
