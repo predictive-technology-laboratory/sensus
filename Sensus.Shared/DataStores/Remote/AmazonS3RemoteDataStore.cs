@@ -93,6 +93,7 @@ namespace Sensus.DataStores.Remote
     {
         private const string DATA_DIRECTORY = "data";
         private const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
+        private const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
 
         private string _region;
         private string _bucket;
@@ -541,6 +542,30 @@ namespace Sensus.DataStores.Remote
                 string message = "Failed to get datum from Amazon S3:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
+        }
+
+        public override async Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                s3 = InitializeS3();
+
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, ADAPTIVE_EMA_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+
+                string policyJSON;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    policyJSON = reader.ReadToEnd().Trim();
+                }
+
+                return policyJSON;
             }
             finally
             {

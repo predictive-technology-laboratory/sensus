@@ -97,5 +97,10 @@ namespace Sensus.DataStores.Remote
         {
             throw new NotImplementedException();
         }
+
+        public override Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
