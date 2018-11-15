@@ -1645,7 +1645,7 @@ namespace Sensus
             await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + protocolCopy.Name, "application/json");
         }
 
-        private async Task PrivateStartAsync()
+        private async Task PrivateStartAsync(CancellationToken cancellationToken)
         {
             if (_running)
             {
@@ -1679,6 +1679,14 @@ namespace Sensus
             //
             // give each step 20 percent
             double perStepPercent = 0.2;
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                await StopAsync();
+                ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                return;
+            }
+
             ProtocolStartAddProgress?.Invoke(this, 0);
 
             Exception startException = null;
@@ -1692,6 +1700,13 @@ namespace Sensus
                 }
 
                 await _localDataStore.StartAsync();
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await StopAsync();
+                    ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                    return;
+                }
 
                 ProtocolStartAddProgress?.Invoke(this, perStepPercent);
             }
@@ -1714,6 +1729,13 @@ namespace Sensus
                     }
 
                     await _remoteDataStore.StartAsync();
+
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        await StopAsync();
+                        ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                        return;
+                    }
 
                     ProtocolStartAddProgress?.Invoke(this, perStepPercent);
                 }
@@ -1794,6 +1816,13 @@ namespace Sensus
                                 ++probesEnabled;
                             }
 
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                await StopAsync();
+                                ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                                return;
+                            }
+
                             ProtocolStartAddProgress?.Invoke(this, perProbeStartProgressPercent);
                         }
                     }
@@ -1817,11 +1846,25 @@ namespace Sensus
                 // we're all good. register with push notification hubs.
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
 
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await StopAsync();
+                    ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                    return;
+                }
+
                 ProtocolStartAddProgress?.Invoke(this, perStepPercent);
 
                 // save the state of the app in case it crashes or -- on ios -- in case the user terminates
                 // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
                 await SensusServiceHelper.Get().SaveAsync();
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await StopAsync();
+                    ProtocolStartCompletedSuccessfully?.Invoke(this, false);
+                    return;
+                }
 
                 ProtocolStartAddProgress?.Invoke(this, perStepPercent);
 
@@ -1837,11 +1880,11 @@ namespace Sensus
             }
         }
 
-        public async Task StartAsync()
+        public async Task StartAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             if (_startImmediately || (DateTime.Now > _startTimestamp))
             {
-                await PrivateStartAsync();
+                await PrivateStartAsync(cancellationToken);
             }
             else
             {
@@ -1860,7 +1903,7 @@ namespace Sensus
 
             _scheduledStartCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                await PrivateStartAsync();
+                await PrivateStartAsync(cancellationToken); //TODO: figure out the source of this cancellation token
                 _scheduledStartCallback = null;
 
             }, timeUntilStart, "START", _id, this, null,
@@ -1921,7 +1964,7 @@ namespace Sensus
             _scheduledStopCallback = null;
         }
 
-        public async Task StartWithUserAgreementAsync(string startupMessage)
+        public async Task StartWithUserAgreementAsync(string startupMessage, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (!_probes.Any(probe => probe.Enabled))
             {
@@ -2088,7 +2131,7 @@ namespace Sensus
 
             if (start)
             {
-                await StartAsync();
+                await StartAsync(cancellationToken);
             }
         }
 
