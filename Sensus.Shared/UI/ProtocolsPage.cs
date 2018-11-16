@@ -65,9 +65,56 @@ namespace Sensus.UI
 
         private ListView _protocolsList;
 
+        ProtocolStartPage _protocolStartPage;
+        private bool _pushedProtocolStartPage;
+        private Func<Task> _protocolStartInitiatedAsync;
+        private Func<double, Task> _protocolStartAddProgressAsync;
+        private Func<bool, Task> _protocolStartFinishedAsync;
+
         public ProtocolsPage()
         {
             Title = "Your Studies";
+
+            _protocolStartInitiatedAsync = async () =>
+            {
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    await Navigation.PushModalAsync(_protocolStartPage);
+                    _pushedProtocolStartPage = true;
+                    await _protocolStartPage.SetProgressAsync(0);
+                });
+            };
+
+            _protocolStartAddProgressAsync = async (additionalProgress) =>
+            {
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress);
+                });
+            };
+
+            _protocolStartFinishedAsync = async (success) =>
+            {
+                if (_pushedProtocolStartPage)
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        if (Navigation.ModalStack.First() == _protocolStartPage)
+                        {
+                            await Navigation.PopModalAsync();
+                            _pushedProtocolStartPage = false;
+                        }
+                    });
+                }
+
+                // if we started successfully on ios, warn the user not to terminate the app.
+#if __IOS__
+                if (success)
+                {
+                    await DisplayAlert("Caution", "Please be careful not to terminate the app by swiping it away, as doing this will discontinue your participation in the study. Instead, move the app to the background by tapping the home button.", "OK");
+                }
+#endif
+            };
 
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
             _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -88,7 +135,7 @@ namespace Sensus.UI
 
                 actions.Add(selectedProtocol.Running ? "Stop" : "Start");
 
-                if(selectedProtocol.AllowTagging)
+                if (selectedProtocol.AllowTagging)
                 {
                     actions.Add("Tag Data");
                 }
@@ -181,7 +228,18 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
-                    await selectedProtocol.StartWithUserAgreementAsync(null);
+                    CancellationTokenSource startCancellationTokenSource = new CancellationTokenSource();
+                    _protocolStartPage = new ProtocolStartPage(startCancellationTokenSource);
+
+                    selectedProtocol.ProtocolStartInitiatedAsync += _protocolStartInitiatedAsync;
+                    selectedProtocol.ProtocolStartAddProgressAsync += _protocolStartAddProgressAsync;
+                    selectedProtocol.ProtocolStartFinishedAsync += _protocolStartFinishedAsync;
+
+                    await selectedProtocol.StartWithUserAgreementAsync(null, startCancellationTokenSource.Token);
+
+                    selectedProtocol.ProtocolStartInitiatedAsync -= _protocolStartInitiatedAsync;
+                    selectedProtocol.ProtocolStartAddProgressAsync -= _protocolStartAddProgressAsync;
+                    selectedProtocol.ProtocolStartFinishedAsync -= _protocolStartFinishedAsync;
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
@@ -208,7 +266,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Status")
                 {
-                    List<AnalyticsTrackedEvent> trackedEvents = await selectedProtocol.TestHealthAsync(true);
+                    List<AnalyticsTrackedEvent> trackedEvents = await selectedProtocol.TestHealthAsync(true, CancellationToken.None);
                     await Navigation.PushAsync(new ViewTextLinesPage("Status", trackedEvents.SelectMany(trackedEvent =>
                     {
                         return trackedEvent.Properties.Select(propertyValue => trackedEvent.Name + ":  " + propertyValue.Key + "=" + propertyValue.Value);
@@ -263,9 +321,11 @@ namespace Sensus.UI
                         false,
                         async () =>
                         {
-                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                            participationRewardDatum.ProtocolId = selectedProtocol.Id;
-                            participationRewardDatum.ParticipantId = selectedProtocol.ParticipantId;
+                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation)
+                            {
+                                ProtocolId = selectedProtocol.Id,
+                                ParticipantId = selectedProtocol.ParticipantId
+                            };
 
                             bool writeFailed = false;
                             try
@@ -416,7 +476,7 @@ namespace Sensus.UI
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-                            
+
                         }, null, true, "Group", null, null, null, false);
 
                     if (input == null)
@@ -494,7 +554,7 @@ namespace Sensus.UI
                         {
                             protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
                         }

@@ -45,7 +45,6 @@ using Amazon.S3;
 using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
-using Sensus.Extensions;
 using Sensus.Anonymization.Anonymizers;
 
 #if __IOS__
@@ -418,7 +417,7 @@ namespace Sensus
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
+                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", CancellationToken.None);
                 });
             }
         }
@@ -491,6 +490,10 @@ namespace Sensus
 
         #endregion
 
+        public event Func<Task> ProtocolStartInitiatedAsync;
+        public event Func<double, Task> ProtocolStartAddProgressAsync;
+        public event Func<bool, Task> ProtocolStartFinishedAsync;
+
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -530,7 +533,7 @@ namespace Sensus
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
         private Dictionary<Type, Probe> _typeProbe;
-       
+
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
         /// like the <see cref="Probes.Context.BluetoothDeviceProximityProbe"/> rely on the study identifiers to be the same
@@ -1643,7 +1646,7 @@ namespace Sensus
             await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + protocolCopy.Name, "application/json");
         }
 
-        private async Task PrivateStartAsync()
+        private async Task PrivateStartAsync(CancellationToken cancellationToken)
         {
             if (_running)
             {
@@ -1653,6 +1656,8 @@ namespace Sensus
             {
                 _running = true;
             }
+
+            await (ProtocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
             // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
             _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
@@ -1665,6 +1670,17 @@ namespace Sensus
 
             await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
 
+            // there are five steps to starting a protocol
+            //
+            // 1) local data store
+            // 2) remote data store
+            // 3) probes
+            // 4) push notification registrations
+            // 5) saving the protocol
+            //
+            // give each step 20 percent
+            double perStepPercent = 0.2;
+
             Exception startException = null;
 
             // start local data store
@@ -1675,14 +1691,15 @@ namespace Sensus
                     throw new Exception("Local data store not defined.");
                 }
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 await _localDataStore.StartAsync();
+
+                await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
             }
-            catch (Exception localDataStoreException)
+            catch (Exception ex)
             {
-                string message = "Local data store failed to start:  " + localDataStoreException.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                startException = localDataStoreException;
+                startException = ex;
             }
 
             // start remote data store
@@ -1695,14 +1712,15 @@ namespace Sensus
                         throw new Exception("Remote data store not defined.");
                     }
 
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     await _remoteDataStore.StartAsync();
+
+                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
-                catch (Exception remoteDataStoreException)
+                catch (Exception ex)
                 {
-                    string message = "Remote data store failed to start:  " + remoteDataStoreException.Message;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                    startException = remoteDataStoreException;
+                    startException = ex;
                 }
             }
 
@@ -1741,14 +1759,19 @@ namespace Sensus
                     SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                     int probesEnabled = 0;
                     bool startMicrosoftBandProbes = true;
+                    int numProbesToStart = _probes.Count(p => p.Enabled);
+                    double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                     foreach (Probe probe in _probes)
                     {
                         if (probe.Enabled)
                         {
                             if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                             {
+                                await (ProtocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
                                 continue;
                             }
+
+                            cancellationToken.ThrowIfCancellationRequested();
 
                             try
                             {
@@ -1770,6 +1793,8 @@ namespace Sensus
                             {
                                 ++probesEnabled;
                             }
+
+                            await (ProtocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
                         }
                     }
 
@@ -1778,37 +1803,96 @@ namespace Sensus
                         throw new Exception("No probes were enabled.");
                     }
                 }
+                catch (OperationCanceledException cancellationException)
+                {
+                    startException = cancellationException;
+                }
                 catch (Exception probeException)
                 {
-                    // don't stop the protocol if we get an exception while starting probes. we might recover.
+                    // don't stop the protocol if we get an exception while starting probes. we might recover from a failed probe (e.g., permission denied).
                     string message = "Failure while starting probes:  " + probeException.Message;
                     SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 }
             }
 
+            // register with push notification hubs
             if (startException == null)
             {
-                // we're all good. register with push notification hubs.
-                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                // save the state of the app in case it crashes or -- on ios -- in case the user terminates
-                // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts.
-                await SensusServiceHelper.Get().SaveAsync();
+                    await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(cancellationToken);
 
+                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
+                }
+                catch (TaskCanceledException cancellationException)
+                {
+                    startException = cancellationException;
+                }
+                catch (Exception registrationException)
+                {
+                    // don't stop the protocol if we weren't able to update push notification registrations. we might recover.
+                    SensusServiceHelper.Get().Logger.Log("Exception while updating push notification registrations:  " + registrationException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            // save app state
+            if (startException == null)
+            {
+                try
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    // save the state of the app in case it crashes or -- on ios -- in case the user terminates
+                    // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
+                    await SensusServiceHelper.Get().SaveAsync();
+
+                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
+                }
+                catch (TaskCanceledException cancellationException)
+                {
+                    startException = cancellationException;
+                }
+                catch (Exception saveException)
+                {
+                    // don't stop the protocol if we weren't able to save. we might recover.
+                    SensusServiceHelper.Get().Logger.Log("Failure while saving app state:  " + saveException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            // wrap up
+            if (startException == null)
+            {
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
+                await (ProtocolStartFinishedAsync?.Invoke(true) ?? Task.CompletedTask);
             }
             else
             {
-                await StopAsync();
+                string message = "Error while starting study:  " + startException.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                await SensusServiceHelper.Get().FlashNotificationAsync(message);
+
+                // stop the study
+                try
+                {
+                    await StopAsync();
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while stopping study after failing to start it:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+
+                await (ProtocolStartFinishedAsync?.Invoke(false) ?? Task.CompletedTask);
             }
         }
 
-        public async Task StartAsync()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             if (_startImmediately || (DateTime.Now > _startTimestamp))
             {
-                await PrivateStartAsync();
+                await PrivateStartAsync(cancellationToken);
             }
             else
             {
@@ -1827,7 +1911,7 @@ namespace Sensus
 
             _scheduledStartCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
-                await PrivateStartAsync();
+                await PrivateStartAsync(cancellationToken);
                 _scheduledStartCallback = null;
 
             }, timeUntilStart, "START", _id, this, null,
@@ -1888,7 +1972,7 @@ namespace Sensus
             _scheduledStopCallback = null;
         }
 
-        public async Task StartWithUserAgreementAsync(string startupMessage)
+        public async Task StartWithUserAgreementAsync(string startupMessage, CancellationToken cancellationToken)
         {
             if (!_probes.Any(probe => probe.Enabled))
             {
@@ -2055,7 +2139,7 @@ namespace Sensus
 
             if (start)
             {
-                await StartAsync();
+                await StartAsync(cancellationToken);
             }
         }
 
@@ -2064,7 +2148,7 @@ namespace Sensus
             return _alertExclusionWindows.Any(window => window.Encompasses(time));
         }
 
-        public async Task<List<AnalyticsTrackedEvent>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<List<AnalyticsTrackedEvent>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken)
         {
             List<AnalyticsTrackedEvent> events = new List<AnalyticsTrackedEvent>();
             string eventName;
@@ -2085,7 +2169,7 @@ namespace Sensus
                 try
                 {
                     await StopAsync();
-                    await StartAsync();
+                    await StartAsync(cancellationToken);
                 }
                 catch (Exception)
                 {
@@ -2238,7 +2322,7 @@ namespace Sensus
         }
 
         public async Task DeleteAsync()
-        {            
+        {
             await SensusServiceHelper.Get().UnregisterProtocolAsync(this);
 
             try

@@ -42783,6 +42783,123 @@ references:
   commentId: F:Sensus.Probes.User.Scripts.ScriptState.value__
   fullName: Sensus.Probes.User.Scripts.ScriptState.value__
   nameWithType: ScriptState.value__
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum
+  name: ScriptStateDatum
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html
+  commentId: T:Sensus.Probes.User.Scripts.ScriptStateDatum
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum
+  nameWithType: ScriptStateDatum
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor(Sensus.Probes.User.Scripts.ScriptState,System.DateTimeOffset,System.String,System.String,System.String,System.Nullable{System.DateTimeOffset},System.String)
+  name: ScriptStateDatum(ScriptState, DateTimeOffset, String, String, String, Nullable<DateTimeOffset>, String)
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum__ctor_Sensus_Probes_User_Scripts_ScriptState_System_DateTimeOffset_System_String_System_String_System_String_System_Nullable_System_DateTimeOffset__System_String_
+  commentId: M:Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor(Sensus.Probes.User.Scripts.ScriptState,System.DateTimeOffset,System.String,System.String,System.String,System.Nullable{System.DateTimeOffset},System.String)
+  name.vb: ScriptStateDatum(ScriptState, DateTimeOffset, String, String, String, Nullable(Of DateTimeOffset), String)
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptStateDatum(Sensus.Probes.User.Scripts.ScriptState, System.DateTimeOffset, System.String, System.String, System.String, System.Nullable<System.DateTimeOffset>, System.String)
+  fullName.vb: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptStateDatum(Sensus.Probes.User.Scripts.ScriptState, System.DateTimeOffset, System.String, System.String, System.String, System.Nullable(Of System.DateTimeOffset), System.String)
+  nameWithType: ScriptStateDatum.ScriptStateDatum(ScriptState, DateTimeOffset, String, String, String, Nullable<DateTimeOffset>, String)
+  nameWithType.vb: ScriptStateDatum.ScriptStateDatum(ScriptState, DateTimeOffset, String, String, String, Nullable(Of DateTimeOffset), String)
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor*
+  name: ScriptStateDatum
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum__ctor_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptStateDatum
+  nameWithType: ScriptStateDatum.ScriptStateDatum
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_DisplayDetail
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.DisplayDetail
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.DisplayDetail
+  nameWithType: ScriptStateDatum.DisplayDetail
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_DisplayDetail_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.DisplayDetail
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.DisplayDetail
+  nameWithType: ScriptStateDatum.DisplayDetail
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.RunId
+  name: RunId
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_RunId
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.RunId
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.RunId
+  nameWithType: ScriptStateDatum.RunId
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.RunId*
+  name: RunId
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_RunId_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.RunId
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.RunId
+  nameWithType: ScriptStateDatum.RunId
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.ScheduledTimestamp
+  name: ScheduledTimestamp
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_ScheduledTimestamp
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.ScheduledTimestamp
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScheduledTimestamp
+  nameWithType: ScriptStateDatum.ScheduledTimestamp
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.ScheduledTimestamp*
+  name: ScheduledTimestamp
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_ScheduledTimestamp_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.ScheduledTimestamp
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScheduledTimestamp
+  nameWithType: ScriptStateDatum.ScheduledTimestamp
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptId
+  name: ScriptId
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_ScriptId
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptId
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptId
+  nameWithType: ScriptStateDatum.ScriptId
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptId*
+  name: ScriptId
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_ScriptId_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptId
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptId
+  nameWithType: ScriptStateDatum.ScriptId
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptName
+  name: ScriptName
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_ScriptName
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptName
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptName
+  nameWithType: ScriptStateDatum.ScriptName
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptName*
+  name: ScriptName
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_ScriptName_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptName
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.ScriptName
+  nameWithType: ScriptStateDatum.ScriptName
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.State
+  name: State
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_State
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.State
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.State
+  nameWithType: ScriptStateDatum.State
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.State*
+  name: State
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_State_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.State
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.State
+  nameWithType: ScriptStateDatum.State
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.StringPlaceholderValue
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_StringPlaceholderValue
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.StringPlaceholderValue
+  nameWithType: ScriptStateDatum.StringPlaceholderValue
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.StringPlaceholderValue*
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_StringPlaceholderValue_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.StringPlaceholderValue
+  nameWithType: ScriptStateDatum.StringPlaceholderValue
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.TriggerDatumId
+  name: TriggerDatumId
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_TriggerDatumId
+  commentId: P:Sensus.Probes.User.Scripts.ScriptStateDatum.TriggerDatumId
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.TriggerDatumId
+  nameWithType: ScriptStateDatum.TriggerDatumId
+- uid: Sensus.Probes.User.Scripts.ScriptStateDatum.TriggerDatumId*
+  name: TriggerDatumId
+  href: api/Sensus.Probes.User.Scripts.ScriptStateDatum.html#Sensus_Probes_User_Scripts_ScriptStateDatum_TriggerDatumId_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptStateDatum.TriggerDatumId
+  fullName: Sensus.Probes.User.Scripts.ScriptStateDatum.TriggerDatumId
+  nameWithType: ScriptStateDatum.TriggerDatumId
 - uid: Sensus.Probes.User.Scripts.ScriptTriggerTime
   name: ScriptTriggerTime
   href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html
@@ -43782,6 +43899,24 @@ references:
   commentId: E:Sensus.Protocol.ProtocolRunningChanged
   fullName: Sensus.Protocol.ProtocolRunningChanged
   nameWithType: Protocol.ProtocolRunningChanged
+- uid: Sensus.Protocol.ProtocolStartAddProgressAsync
+  name: ProtocolStartAddProgressAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ProtocolStartAddProgressAsync
+  commentId: E:Sensus.Protocol.ProtocolStartAddProgressAsync
+  fullName: Sensus.Protocol.ProtocolStartAddProgressAsync
+  nameWithType: Protocol.ProtocolStartAddProgressAsync
+- uid: Sensus.Protocol.ProtocolStartFinishedAsync
+  name: ProtocolStartFinishedAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ProtocolStartFinishedAsync
+  commentId: E:Sensus.Protocol.ProtocolStartFinishedAsync
+  fullName: Sensus.Protocol.ProtocolStartFinishedAsync
+  nameWithType: Protocol.ProtocolStartFinishedAsync
+- uid: Sensus.Protocol.ProtocolStartInitiatedAsync
+  name: ProtocolStartInitiatedAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ProtocolStartInitiatedAsync
+  commentId: E:Sensus.Protocol.ProtocolStartInitiatedAsync
+  fullName: Sensus.Protocol.ProtocolStartInitiatedAsync
+  nameWithType: Protocol.ProtocolStartInitiatedAsync
 - uid: Sensus.Protocol.PushNotificationsHub
   name: PushNotificationsHub
   href: api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub
@@ -43926,12 +44061,12 @@ references:
   commentId: Overload:Sensus.Protocol.ShareAsync
   fullName: Sensus.Protocol.ShareAsync
   nameWithType: Protocol.ShareAsync
-- uid: Sensus.Protocol.StartAsync
-  name: StartAsync()
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StartAsync
-  commentId: M:Sensus.Protocol.StartAsync
-  fullName: Sensus.Protocol.StartAsync()
-  nameWithType: Protocol.StartAsync()
+- uid: Sensus.Protocol.StartAsync(System.Threading.CancellationToken)
+  name: StartAsync(CancellationToken)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StartAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Protocol.StartAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Protocol.StartAsync(System.Threading.CancellationToken)
+  nameWithType: Protocol.StartAsync(CancellationToken)
 - uid: Sensus.Protocol.StartAsync*
   name: StartAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_StartAsync_
@@ -43998,12 +44133,12 @@ references:
   commentId: Overload:Sensus.Protocol.StartTime
   fullName: Sensus.Protocol.StartTime
   nameWithType: Protocol.StartTime
-- uid: Sensus.Protocol.StartWithUserAgreementAsync(System.String)
-  name: StartWithUserAgreementAsync(String)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_System_String_
-  commentId: M:Sensus.Protocol.StartWithUserAgreementAsync(System.String)
-  fullName: Sensus.Protocol.StartWithUserAgreementAsync(System.String)
-  nameWithType: Protocol.StartWithUserAgreementAsync(String)
+- uid: Sensus.Protocol.StartWithUserAgreementAsync(System.String,System.Threading.CancellationToken)
+  name: StartWithUserAgreementAsync(String, CancellationToken)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.Protocol.StartWithUserAgreementAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.Protocol.StartWithUserAgreementAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: Protocol.StartWithUserAgreementAsync(String, CancellationToken)
 - uid: Sensus.Protocol.StartWithUserAgreementAsync*
   name: StartWithUserAgreementAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_
@@ -47724,6 +47859,60 @@ references:
   commentId: Overload:Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync
   fullName: Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync
   nameWithType: ProtocolsPage.AuthenticateProtocolAsync
+- uid: Sensus.UI.ProtocolStartPage
+  name: ProtocolStartPage
+  href: api/Sensus.UI.ProtocolStartPage.html
+  commentId: T:Sensus.UI.ProtocolStartPage
+  fullName: Sensus.UI.ProtocolStartPage
+  nameWithType: ProtocolStartPage
+- uid: Sensus.UI.ProtocolStartPage.#ctor(System.Threading.CancellationTokenSource)
+  name: ProtocolStartPage(CancellationTokenSource)
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage__ctor_System_Threading_CancellationTokenSource_
+  commentId: M:Sensus.UI.ProtocolStartPage.#ctor(System.Threading.CancellationTokenSource)
+  fullName: Sensus.UI.ProtocolStartPage.ProtocolStartPage(System.Threading.CancellationTokenSource)
+  nameWithType: ProtocolStartPage.ProtocolStartPage(CancellationTokenSource)
+- uid: Sensus.UI.ProtocolStartPage.#ctor*
+  name: ProtocolStartPage
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage__ctor_
+  commentId: Overload:Sensus.UI.ProtocolStartPage.#ctor
+  fullName: Sensus.UI.ProtocolStartPage.ProtocolStartPage
+  nameWithType: ProtocolStartPage.ProtocolStartPage
+- uid: Sensus.UI.ProtocolStartPage.GetProgress
+  name: GetProgress()
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_GetProgress
+  commentId: M:Sensus.UI.ProtocolStartPage.GetProgress
+  fullName: Sensus.UI.ProtocolStartPage.GetProgress()
+  nameWithType: ProtocolStartPage.GetProgress()
+- uid: Sensus.UI.ProtocolStartPage.GetProgress*
+  name: GetProgress
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_GetProgress_
+  commentId: Overload:Sensus.UI.ProtocolStartPage.GetProgress
+  fullName: Sensus.UI.ProtocolStartPage.GetProgress
+  nameWithType: ProtocolStartPage.GetProgress
+- uid: Sensus.UI.ProtocolStartPage.OnBackButtonPressed
+  name: OnBackButtonPressed()
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_OnBackButtonPressed
+  commentId: M:Sensus.UI.ProtocolStartPage.OnBackButtonPressed
+  fullName: Sensus.UI.ProtocolStartPage.OnBackButtonPressed()
+  nameWithType: ProtocolStartPage.OnBackButtonPressed()
+- uid: Sensus.UI.ProtocolStartPage.OnBackButtonPressed*
+  name: OnBackButtonPressed
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_OnBackButtonPressed_
+  commentId: Overload:Sensus.UI.ProtocolStartPage.OnBackButtonPressed
+  fullName: Sensus.UI.ProtocolStartPage.OnBackButtonPressed
+  nameWithType: ProtocolStartPage.OnBackButtonPressed
+- uid: Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)
+  name: SetProgressAsync(Double)
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_SetProgressAsync_System_Double_
+  commentId: M:Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)
+  fullName: Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)
+  nameWithType: ProtocolStartPage.SetProgressAsync(Double)
+- uid: Sensus.UI.ProtocolStartPage.SetProgressAsync*
+  name: SetProgressAsync
+  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_SetProgressAsync_
+  commentId: Overload:Sensus.UI.ProtocolStartPage.SetProgressAsync
+  fullName: Sensus.UI.ProtocolStartPage.SetProgressAsync
+  nameWithType: ProtocolStartPage.SetProgressAsync
 - uid: Sensus.UI.ProximityTriggersPage
   name: ProximityTriggersPage
   href: api/Sensus.UI.ProximityTriggersPage.html
