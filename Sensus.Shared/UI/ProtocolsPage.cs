@@ -64,100 +64,46 @@ namespace Sensus.UI
         }
 
         private ListView _protocolsList;
-        private ProgressBar _protocolStartProgressBar;
-        private Label _protocolStartProgressBarLabel;
+
+        ProtocolStartPage _protocolStartPage;
         private bool _pushedProtocolStartPage;
-        private EventHandler _protocolStartInitiatedAction;
-        private EventHandler<double> _protocolStartAddProgressAction;
-        private EventHandler<bool> _protocolStartFinishedAction;
-        private CancellationTokenSource _protocolStartCancellationTokenSource;
+        private Func<Task> _protocolStartInitiatedAsync;
+        private Func<double, Task> _protocolStartAddProgressAsync;
+        private Func<bool, Task> _protocolStartFinishedAsync;
 
         public ProtocolsPage()
         {
             Title = "Your Studies";
 
-            _protocolStartProgressBar = new ProgressBar()
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-
-            _protocolStartProgressBarLabel = new Label()
-            {
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.CenterAndExpand
-            };
-
-            Button cancelProtocolStartButton = new Button()
-            {
-                Text = "Cancel",
-                FontSize = 30,
-                HorizontalOptions = LayoutOptions.CenterAndExpand
-            };
-
-            cancelProtocolStartButton.Clicked += (o, e) =>
-            {
-                _protocolStartCancellationTokenSource.Cancel();
-            };
-
-            ContentPage protocolStartPage = new ContentPage
-            {
-                Content = new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    Children =
-                    {
-                        new Label
-                        {
-                            Text = "Starting Study...",
-                            FontSize = 30,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand,
-                            VerticalOptions = LayoutOptions.CenterAndExpand
-                        },
-                        _protocolStartProgressBar,
-                        _protocolStartProgressBarLabel,
-#if __IOS__
-                        new Label
-                        {
-                            Text = "Please keep app open.",
-                            FontSize = 15,
-                            HorizontalOptions = LayoutOptions.CenterAndExpand,
-                            VerticalOptions = LayoutOptions.CenterAndExpand
-                        },
- #endif     
-                        cancelProtocolStartButton
-                    }
-                }
-            };
-
-            _protocolStartInitiatedAction = async (sender, eventArgs) =>
-            {
-                _pushedProtocolStartPage = true;
-
-                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                {
-                    await SetProgressAsync(0);
-                    await Navigation.PushModalAsync(protocolStartPage);
-                });
-            };
-
-            _protocolStartAddProgressAction = async (sender, additionalProgress) =>
+            _protocolStartInitiatedAsync = async () =>
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    await SetProgressAsync(_protocolStartProgressBar.Progress + additionalProgress);
+                    await Navigation.PushModalAsync(_protocolStartPage);
+                    _pushedProtocolStartPage = true;
+                    await _protocolStartPage.SetProgressAsync(0);
                 });
             };
 
-            _protocolStartFinishedAction = async (sender, success) =>
+            _protocolStartAddProgressAsync = async (additionalProgress) =>
+            {
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress);
+                });
+            };
+
+            _protocolStartFinishedAsync = async (success) =>
             {
                 if (_pushedProtocolStartPage)
                 {
-                    _pushedProtocolStartPage = false;
-
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        await Navigation.PopModalAsync();
+                        if (Navigation.ModalStack.First() == _protocolStartPage)
+                        {
+                            await Navigation.PopModalAsync();
+                            _pushedProtocolStartPage = false;
+                        }
                     });
                 }
 
@@ -282,17 +228,18 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
-                    selectedProtocol.ProtocolStartInitiated += _protocolStartInitiatedAction;
-                    selectedProtocol.ProtocolStartAddProgress += _protocolStartAddProgressAction;
-                    selectedProtocol.ProtocolStartFinished += _protocolStartFinishedAction;
+                    CancellationTokenSource startCancellationTokenSource = new CancellationTokenSource();
+                    _protocolStartPage = new ProtocolStartPage(startCancellationTokenSource);
 
-                    _protocolStartCancellationTokenSource = new CancellationTokenSource();
+                    selectedProtocol.ProtocolStartInitiatedAsync += _protocolStartInitiatedAsync;
+                    selectedProtocol.ProtocolStartAddProgressAsync += _protocolStartAddProgressAsync;
+                    selectedProtocol.ProtocolStartFinishedAsync += _protocolStartFinishedAsync;
 
-                    await selectedProtocol.StartWithUserAgreementAsync(null, _protocolStartCancellationTokenSource.Token);
+                    await selectedProtocol.StartWithUserAgreementAsync(null, startCancellationTokenSource.Token);
 
-                    selectedProtocol.ProtocolStartInitiated -= _protocolStartInitiatedAction;
-                    selectedProtocol.ProtocolStartAddProgress -= _protocolStartAddProgressAction;
-                    selectedProtocol.ProtocolStartFinished -= _protocolStartFinishedAction;
+                    selectedProtocol.ProtocolStartInitiatedAsync -= _protocolStartInitiatedAsync;
+                    selectedProtocol.ProtocolStartAddProgressAsync -= _protocolStartAddProgressAsync;
+                    selectedProtocol.ProtocolStartFinishedAsync -= _protocolStartFinishedAsync;
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
@@ -655,15 +602,6 @@ namespace Sensus.UI
 
             }, ToolbarItemOrder.Secondary));
             #endregion
-        }
-
-        private async Task SetProgressAsync(double progress)
-        {
-            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-            {
-                _protocolStartProgressBarLabel.Text = $"Progress:  {Math.Round(progress * 100)}%";
-                await _protocolStartProgressBar.ProgressTo(progress, 100, Easing.Linear);
-            });
         }
     }
 }

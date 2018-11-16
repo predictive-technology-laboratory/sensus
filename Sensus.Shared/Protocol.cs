@@ -490,9 +490,9 @@ namespace Sensus
 
         #endregion
 
-        public event EventHandler ProtocolStartInitiated;
-        public event EventHandler<double> ProtocolStartAddProgress;
-        public event EventHandler<bool> ProtocolStartFinished;
+        public event Func<Task> ProtocolStartInitiatedAsync;
+        public event Func<double, Task> ProtocolStartAddProgressAsync;
+        public event Func<bool, Task> ProtocolStartFinishedAsync;
 
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
@@ -1657,7 +1657,7 @@ namespace Sensus
                 _running = true;
             }
 
-            ProtocolStartInitiated?.Invoke(this, EventArgs.Empty);
+            await (ProtocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
             // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
             _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
@@ -1695,7 +1695,7 @@ namespace Sensus
 
                 await _localDataStore.StartAsync();
 
-                ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+                await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
             }
             catch (Exception ex)
             {
@@ -1716,7 +1716,7 @@ namespace Sensus
 
                     await _remoteDataStore.StartAsync();
 
-                    ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
                 catch (Exception ex)
                 {
@@ -1767,7 +1767,7 @@ namespace Sensus
                         {
                             if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                             {
-                                ProtocolStartAddProgress?.Invoke(this, perProbeStartProgressPercent);
+                                await (ProtocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
                                 continue;
                             }
 
@@ -1794,7 +1794,7 @@ namespace Sensus
                                 ++probesEnabled;
                             }
 
-                            ProtocolStartAddProgress?.Invoke(this, perProbeStartProgressPercent);
+                            await (ProtocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
                         }
                     }
 
@@ -1825,7 +1825,7 @@ namespace Sensus
 
                     await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(cancellationToken);
 
-                    ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
                 catch (TaskCanceledException cancellationException)
                 {
@@ -1849,7 +1849,7 @@ namespace Sensus
                     // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
                     await SensusServiceHelper.Get().SaveAsync();
 
-                    ProtocolStartAddProgress?.Invoke(this, perStepPercent);
+                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
                 catch (TaskCanceledException cancellationException)
                 {
@@ -1866,7 +1866,7 @@ namespace Sensus
             if (startException == null)
             {
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
-                ProtocolStartFinished?.Invoke(this, true);
+                await (ProtocolStartFinishedAsync?.Invoke(true) ?? Task.CompletedTask);
             }
             else
             {
@@ -1884,7 +1884,7 @@ namespace Sensus
                     SensusServiceHelper.Get().Logger.Log("Exception while stopping study after failing to start it:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
 
-                ProtocolStartFinished?.Invoke(this, false);
+                await (ProtocolStartFinishedAsync?.Invoke(false) ?? Task.CompletedTask);
             }
         }
 
