@@ -693,7 +693,9 @@ namespace Sensus
                     }
                     catch (Exception ex)
                     {
-                        _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        string message = "Exception while serializing service helper:  " + ex;
+                        SensusException.Report(message, ex);
+                        _logger.Log(message, LoggingLevel.Normal, GetType());
                     }
 
                     // ensure that all logged messages make it into the file.
@@ -711,7 +713,7 @@ namespace Sensus
             {
                 if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    await registeredProtocol.StartAsync();
+                    await registeredProtocol.StartAsync(CancellationToken.None);
                 }
             }
         }
