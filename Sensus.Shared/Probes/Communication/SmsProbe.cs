@@ -59,7 +59,7 @@ namespace Sensus.Probes.Communication
         {
             get
             {
-                return DisplayName + ":  Upon receipt.";
+                return DisplayName + ":  Upon sending and receipt.";
             }
         }
 

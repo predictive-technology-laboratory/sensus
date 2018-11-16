@@ -28,7 +28,7 @@ namespace Sensus.Probes.Communication
         private bool _participantIsSender;
 
         [StringProbeTriggerProperty("From #")]
-        [Anonymizable("From #", typeof(StringHashAnonymizer), false)]
+        [Anonymizable("From #:", typeof(StringHashAnonymizer), false)]
         public string FromNumber
         {
             get { return _fromNumber; }
@@ -36,7 +36,7 @@ namespace Sensus.Probes.Communication
         }
 
         [StringProbeTriggerProperty("To #")]
-        [Anonymizable("To #", typeof(StringHashAnonymizer), false)]
+        [Anonymizable("To #:", typeof(StringHashAnonymizer), false)]
         public string ToNumber
         {
             get { return _toNumber; }
