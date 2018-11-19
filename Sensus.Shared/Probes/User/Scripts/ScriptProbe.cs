@@ -101,6 +101,12 @@ namespace Sensus.Probes.User.Scripts
 #elif __IOS__
                         _agent = GetAgent(AgentId);
 #endif
+
+                        // set the agent's policy if we previously received one (e.g., via push notification)
+                        if (!string.IsNullOrWhiteSpace(AgentPolicyJSON))
+                        {
+                            _agent.SetPolicy(AgentPolicyJSON);
+                        }
                     }
                     catch (Exception)
                     {
@@ -121,6 +127,12 @@ namespace Sensus.Probes.User.Scripts
         /// </summary>
         /// <value>The agent identifier.</value>
         public string AgentId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the agent policy JSON.
+        /// </summary>
+        /// <value>The agent policy JSON.</value>
+        public string AgentPolicyJSON { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {

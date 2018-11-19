@@ -61,7 +61,7 @@ namespace Sensus.Anonymization
                     // if we're processing the Anonymized property, return true so that the output JSON properly reflects the fact that the datum has 
                     // been passed through an anonymizer (this regardless of whether an anonymization transformation was actually applied). this also
                     // ensures that, if the JSON is deserialized and then reserialized, we won't attempt to anonymize the JSON again (see checks below).
-                    if (_property.DeclaringType == typeof(Datum) && _property.Name == "Anonymized")
+                    if (_property.DeclaringType == typeof(Datum) && _property.Name == nameof(Datum.Anonymized))
                     {
                         return true;
                     }
