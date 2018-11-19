@@ -259,6 +259,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolStartPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

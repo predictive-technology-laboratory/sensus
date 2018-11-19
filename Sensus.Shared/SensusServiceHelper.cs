@@ -89,11 +89,15 @@ namespace Sensus
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
 #if DEBUG || UI_TESTING
-        // test every 30 seconds in debug
+        /// <summary>
+        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// </summary>
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
-        // test every 60 minutes in release
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
+        /// <summary>
+        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// </summary>
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(6);
 #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
@@ -620,6 +624,9 @@ namespace Sensus
                         _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
                         await protocolToTest.TestHealthAsync(false, cancellationToken);
+
+                        // write a heartbeat datum to let the backend know we're alive
+                        protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
                     }
 
                     // test the callback scheduler
