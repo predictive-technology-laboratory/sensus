@@ -83,9 +83,7 @@
   
   <h1 id="Sensus_Probes_User_Scripts_ScriptStateDatum" data-uid="Sensus.Probes.User.Scripts.ScriptStateDatum" class="text-break">Class ScriptStateDatum
   </h1>
-  <div class="markdown level0 summary"><p>Note:  The <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> field indicates the time when the script survey was made available to the user for 
-completion. It will equal <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> for any <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>  objects that end up being 
-submitted by the user.</p>
+  <div class="markdown level0 summary"><p>Records state updates for each <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> as it progresses from delivery through removal from the system.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -153,7 +151,7 @@ submitted by the user.</p>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
-  <h6><strong>Assembly</strong>: SensusiOS.dll</h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_Scripts_ScriptStateDatum_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class ScriptStateDatum : Datum, IDatum</code></pre>
@@ -163,12 +161,12 @@ submitted by the user.</p>
   
   
   <a id="Sensus_Probes_User_Scripts_ScriptStateDatum__ctor_" data-uid="Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptStateDatum__ctor_Sensus_Probes_User_Scripts_ScriptState_System_DateTimeOffset_System_String_System_String_System_String_System_Nullable_System_DateTimeOffset__System_String_" data-uid="Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor(Sensus.Probes.User.Scripts.ScriptState,System.DateTimeOffset,System.String,System.String,System.String,System.Nullable{System.DateTimeOffset},System.String)">ScriptStateDatum(ScriptState, DateTimeOffset, String, String, String, Nullable&lt;DateTimeOffset&gt;, String)</h4>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptStateDatum__ctor_Sensus_Probes_User_Scripts_ScriptState_System_DateTimeOffset_Sensus_Probes_User_Scripts_Script_" data-uid="Sensus.Probes.User.Scripts.ScriptStateDatum.#ctor(Sensus.Probes.User.Scripts.ScriptState,System.DateTimeOffset,Sensus.Probes.User.Scripts.Script)">ScriptStateDatum(ScriptState, DateTimeOffset, Script)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScriptStateDatum(ScriptState state, DateTimeOffset timestamp, string scriptId, string scriptName, string runId, Nullable&lt;DateTimeOffset&gt; scheduledTimestamp, string triggerDatumId)</code></pre>
+    <pre><code class="lang-csharp hljs">public ScriptStateDatum(ScriptState state, DateTimeOffset timestamp, Script script)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -191,28 +189,8 @@ submitted by the user.</p>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">scriptId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">scriptName</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">runId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;</td>
-        <td><span class="parametername">scheduledTimestamp</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">triggerDatumId</span></td>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
+        <td><span class="parametername">script</span></td>
         <td></td>
       </tr>
     </tbody>
