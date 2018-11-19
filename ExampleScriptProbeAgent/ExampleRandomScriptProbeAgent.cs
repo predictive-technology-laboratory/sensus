@@ -85,6 +85,8 @@ namespace ExampleScriptProbeAgent
         {
             JObject policyObject = JObject.Parse(policyJSON);
             _deliveryProbability = (double)policyObject.GetValue("p");
+
+            Console.Out.WriteLine("Script agent policy set:  p=" + _deliveryProbability);
         }
 
         /// <summary>

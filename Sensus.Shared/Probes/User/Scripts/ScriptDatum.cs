@@ -28,8 +28,7 @@ namespace Sensus.Probes.User.Scripts
     /// 
     /// When a user submits a survey, a <see cref="ScriptDatum"/> object is submitted for each input in the survey (e.g., each text entry, 
     /// multiple-choice item, etc.). However, if the user does not submit the survey, no such objects will be submitted. As a means of tracking 
-    /// the deployment and response/non-response of surveys, Sensus also submits an additional <see cref="ScriptRunDatum"/>  object each time 
-    /// the survey is displayed to the user, regardless of whether the user ends up submitting their survey answers.
+    /// the deployment and response/non-response of surveys, Sensus also submits additional <see cref="ScriptStateDatum"/>  objects.
     /// 
     /// </summary>
     public class ScriptDatum : Datum

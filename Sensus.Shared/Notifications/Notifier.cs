@@ -23,6 +23,8 @@ using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using System.Linq;
 using Sensus.Callbacks;
+using Sensus.Probes.User.Scripts;
+using Sensus.Probes;
 
 namespace Sensus.Notifications
 {
@@ -32,6 +34,7 @@ namespace Sensus.Notifications
     public abstract class Notifier
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
+        private const string UPDATE_SCRIPT_AGENT_POLICY_COMMAND = "UPDATE-EMA-POLICY";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
@@ -86,8 +89,8 @@ namespace Sensus.Notifications
                 return;
             }
 
-            // if the PNR targets the current device and the protocol isn't listening, don't send the request. this will 
-            // eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
+            // if the PNR targets the current device and the protocol isn't listening, the don't send the request. this 
+            // will eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
             if (request.DeviceId == SensusServiceHelper.Get().DeviceId)
             {
                 if (string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsHub) || string.IsNullOrWhiteSpace(request.Protocol.PushNotificationsSharedAccessSignature))
@@ -262,6 +265,24 @@ namespace Sensus.Notifications
 
                         await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
                     }
+                    else if (commandParts.First() == UPDATE_SCRIPT_AGENT_POLICY_COMMAND)
+                    {
+                        if (protocol.TryGetProbe(typeof(ScriptProbe), out Probe probe))
+                        {
+                            ScriptProbe scriptProbe = probe as ScriptProbe;
+
+                            if (scriptProbe?.Agent != null)
+                            {
+                                // retrieve and set the policy
+                                string policyJSON = await protocol.RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
+                                scriptProbe.Agent.SetPolicy(policyJSON);
+
+                                // save policy within app state (agent itself is not serialized)
+                                scriptProbe.AgentPolicyJSON = policyJSON;
+                                await SensusServiceHelper.Get().SaveAsync();
+                            }
+                        }
+                    }
                     else
                     {
                         throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
@@ -270,7 +291,7 @@ namespace Sensus.Notifications
             }
             catch (Exception pushNotificationCommandException)
             {
-                SensusException.Report("Exception while running push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
+                SensusException.Report("Exception while processing push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
             }
         }
 

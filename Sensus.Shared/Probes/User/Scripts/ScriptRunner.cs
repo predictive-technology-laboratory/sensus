@@ -728,35 +728,9 @@ namespace Sensus.Probes.User.Scripts
 
             await SensusServiceHelper.Get().AddScriptAsync(script, RunMode);
 
+            // let the script agent know and store a datum to record the event
             Probe.Agent?.Observe(script, ScriptState.Delivered);
-
-            // geotag the script-run datum if any of the input groups are also geotagged. if none of the groups are geotagged, then
-            // it wouldn't make sense to gather location data from a user.
-            double? latitude = null;
-            double? longitude = null;
-            DateTimeOffset? locationTimestamp = null;
-            if (script.InputGroups.Any(inputGroup => inputGroup.Geotag))
-            {
-                try
-                {
-                    Position currentPosition = await GpsReceiver.Get().GetReadingAsync(new CancellationToken(), false);
-
-                    if (currentPosition == null)
-                    {
-                        throw new Exception("GPS receiver returned null position.");
-                    }
-
-                    latitude = currentPosition.Latitude;
-                    longitude = currentPosition.Longitude;
-                    locationTimestamp = currentPosition.Timestamp;
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to get position for script-run datum:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            }
-
-            await Probe.StoreDatumAsync(new ScriptRunDatum(script.RunTime.Value, Script.Id, Name, script.Id, script.ScheduledRunTime, script.CurrentDatum?.Id, latitude, longitude, locationTimestamp), default(CancellationToken));
+            await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), default(CancellationToken));
         }
     }
 }

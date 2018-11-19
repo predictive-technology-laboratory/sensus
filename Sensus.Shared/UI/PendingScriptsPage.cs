@@ -57,8 +57,12 @@ namespace Sensus.UI
                 deleteMenuItem.Clicked += async (sender, e) =>
                 {
                     Script scriptToDelete = (sender as MenuItem).CommandParameter as Script;
-                    scriptToDelete.Runner.Probe.Agent?.Observe(scriptToDelete, ScriptState.Deleted);
+
                     await SensusServiceHelper.Get().RemoveScriptAsync(scriptToDelete, true);
+
+                    // let the script agent know and store a datum to record the event
+                    scriptToDelete.Runner.Probe.Agent?.Observe(scriptToDelete, ScriptState.Deleted);
+                    await scriptToDelete.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete), default(CancellationToken));
                 };
 
                 ContextActions.Add(deleteMenuItem);
@@ -88,7 +92,9 @@ namespace Sensus.UI
 
                 Script selectedScript = scriptList.SelectedItem as Script;
 
+                // let the script agent know and store a datum to record the event
                 selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Opened);
+                await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));
 
                 selectedScript.Submitting = true;
 
@@ -98,11 +104,15 @@ namespace Sensus.UI
 
                 if (canceled)
                 {
+                    // let the script agent know and store a datum to record the event
                     selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Cancelled);
+                    await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));
                 }
                 else
                 {
+                    // let the script agent know and store a datum to record the event
                     selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Submitted);
+                    await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));
 
                     // track times when script is completely valid and wasn't cancelled by the user
                     if (selectedScript.Valid)

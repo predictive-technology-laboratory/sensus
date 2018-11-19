@@ -22,7 +22,9 @@
 				<category android:name="${applicationId}" />
 			</intent-filter>
 		</receiver>
-	</application>
+        <!-- Android 9 removed support for Apache HTTP, but some packages (e.g., Azure Messaging) rely on it. Use the following line to include Apache HTTP. This should be fixed when this issue gets resolved:  https://github.com/xamarin/XamarinComponents/issues/480 -->
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+	</application>    
 	<!-- Google Maps for Android v2 requires OpenGL ES v2 -->
 	<uses-feature android:glEsVersion="0x00020000" android:required="true" />
 	<!-- Allow the application to access Google web-based services. -->

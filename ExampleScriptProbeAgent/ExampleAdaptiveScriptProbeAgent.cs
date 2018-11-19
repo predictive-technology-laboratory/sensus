@@ -63,6 +63,8 @@ namespace ExampleScriptProbeAgent
             JObject policyObject = JObject.Parse(policyJSON);
             _deliveryProbability = (double)policyObject.GetValue("p");
             _deferralInterval = TimeSpan.FromSeconds((int)policyObject.GetValue("deferral"));
+
+            Console.Out.WriteLine("Script agent policy set:  p=" + _deliveryProbability + "; deferral=" + _deferralInterval);
         }
 
         /// <summary>

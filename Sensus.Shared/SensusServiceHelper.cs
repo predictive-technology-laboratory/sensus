@@ -818,7 +818,10 @@ namespace Sensus
                 if (script.Expired)
                 {
                     await RemoveScriptAsync(script, issueNotification);
+
+                    // let the script agent know and store a datum to record the event
                     script.Runner.Probe.Agent?.Observe(script, ScriptState.Expired);
+                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), default(CancellationToken));
                 }
             }
         }
@@ -827,7 +830,9 @@ namespace Sensus
         {
             foreach (Script script in _scriptsToRun)
             {
+                // let the script agent know and store a datum to record the event
                 script.Runner.Probe.Agent?.Observe(script, ScriptState.Deleted);
+                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), default(CancellationToken));
             }
 
             _scriptsToRun.Clear();

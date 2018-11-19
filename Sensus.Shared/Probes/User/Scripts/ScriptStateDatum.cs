@@ -17,20 +17,26 @@ using System;
 namespace Sensus.Probes.User.Scripts
 {
     /// <summary>
-    /// Note:  The <see cref="Datum.Timestamp"/> field indicates the time when the script survey was made available to the user for 
-    /// completion. It will equal <see cref="Datum.Timestamp"/> for any <see cref="ScriptDatum"/>  objects that end up being 
-    /// submitted by the user.
+    /// Records state updates for each <see cref="Script"/> as it progresses from delivery through removal from the system.
     /// </summary>
-    public class ScriptRunDatum : Datum
+    public class ScriptStateDatum : Datum
     {
+        private ScriptState _state;
         private string _scriptId;
         private string _scriptName;
         private string _runId;
         private DateTimeOffset? _scheduledTimestamp;
         private string _triggerDatumId;
-        private double? _latitude;
-        private double? _longitude;
-        private DateTimeOffset? _locationTimestamp;
+
+        /// <summary>
+        /// Gets or sets the state.
+        /// </summary>
+        /// <value>The state.</value>
+        public ScriptState State
+        {
+            get { return _state; }
+            set { _state = value; }
+        }
 
         /// <summary>
         /// Identifier for a script. This does not change across invocations of the script.
@@ -107,47 +113,11 @@ namespace Sensus.Probes.User.Scripts
             set { _triggerDatumId = value; }
         }
 
-        /// <summary>
-        /// Latitude of GPS reading taken when the survey was displayed to the user (if enabled).
-        /// </summary>
-        /// <value>The latitude.</value>
-        public double? Latitude
-        {
-            get { return _latitude; }
-            set { _latitude = value; }
-        }
-
-        /// <summary>
-        /// Longitude of GPS reading taken when the survey was displayed to the user (if enabled).
-        /// </summary>
-        /// <value>The longitude.</value>
-        public double? Longitude
-        {
-            get { return _longitude; }
-            set { _longitude = value; }
-        }
-
-        /// <summary>
-        /// Timestamp of GPS reading (if enabled).
-        /// </summary>
-        /// <value>The location timestamp.</value>
-        public DateTimeOffset? LocationTimestamp
-        {
-            get
-            {
-                return _locationTimestamp;
-            }
-            set
-            {
-                _locationTimestamp = value;
-            }
-        }
-
         public override string DisplayDetail
         {
             get
             {
-                return "Script ran.";
+                return "State:  " + _state;
             }
         }
 
@@ -163,17 +133,15 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public ScriptRunDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string runId, DateTimeOffset? scheduledTimestamp, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp)
+        public ScriptStateDatum(ScriptState state, DateTimeOffset timestamp, Script script)
             : base(timestamp)
         {
-            _scriptId = scriptId;
-            _scriptName = scriptName;
-            _runId = runId;
-            _scheduledTimestamp = scheduledTimestamp;
-            _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
-            _latitude = latitude;
-            _longitude = longitude;
-            _locationTimestamp = locationTimestamp;
+            _state = state;
+            _scriptId = script.Runner.Script.Id;
+            _scriptName = script.Runner.Name;
+            _runId = script.Id;
+            _scheduledTimestamp = script.ScheduledRunTime;
+            _triggerDatumId = script.CurrentDatum?.Id ?? "";
         }
     }
 }
