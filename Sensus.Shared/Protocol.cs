@@ -46,6 +46,7 @@ using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
 using Sensus.Anonymization.Anonymizers;
+using Sensus.UI;
 
 #if __IOS__
 using HealthKit;
@@ -444,7 +445,7 @@ namespace Sensus
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.", CancellationToken.None);
+                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
                 });
             }
         }
@@ -517,10 +518,6 @@ namespace Sensus
 
         #endregion
 
-        public event Func<Task> ProtocolStartInitiatedAsync;
-        public event Func<double, Task> ProtocolStartAddProgressAsync;
-        public event Func<bool, Task> ProtocolStartFinishedAsync;
-
         public event EventHandler<bool> ProtocolRunningChanged;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -560,6 +557,13 @@ namespace Sensus
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
         private Dictionary<Type, Probe> _typeProbe;
+
+        // members for displaying protocol start-up
+        private ProtocolStartPage _protocolStartPage;
+        private bool _pushedProtocolStartPage;
+        private Func<Task> _protocolStartInitiatedAsync;
+        private Func<double, Task> _protocolStartAddProgressAsync;
+        private Func<bool, Task> _protocolStartFinishedAsync;
 
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
@@ -1692,7 +1696,7 @@ namespace Sensus
                 _running = true;
             }
 
-            await (ProtocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
+            await (_protocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
             // generate the participant-specific longitude offset. as long as the participant identifier does not change, neither will this offset.
             _gpsLongitudeAnonymizationParticipantOffset = LongitudeOffsetGpsAnonymizer.GetOffset(LongitudeOffsetParticipantSeededRandom);
@@ -1730,7 +1734,7 @@ namespace Sensus
 
                 await _localDataStore.StartAsync();
 
-                await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
+                await (_protocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
             }
             catch (Exception ex)
             {
@@ -1751,7 +1755,7 @@ namespace Sensus
 
                     await _remoteDataStore.StartAsync();
 
-                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
+                    await (_protocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
                 catch (Exception ex)
                 {
@@ -1802,7 +1806,7 @@ namespace Sensus
                         {
                             if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                             {
-                                await (ProtocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
+                                await (_protocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
                                 continue;
                             }
 
@@ -1829,7 +1833,7 @@ namespace Sensus
                                 ++probesEnabled;
                             }
 
-                            await (ProtocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
+                            await (_protocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
                         }
                     }
 
@@ -1860,7 +1864,7 @@ namespace Sensus
 
                     await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(cancellationToken);
 
-                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
+                    await (_protocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
                 catch (TaskCanceledException cancellationException)
                 {
@@ -1884,7 +1888,7 @@ namespace Sensus
                     // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
                     await SensusServiceHelper.Get().SaveAsync();
 
-                    await (ProtocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
+                    await (_protocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
                 }
                 catch (TaskCanceledException cancellationException)
                 {
@@ -1901,7 +1905,7 @@ namespace Sensus
             if (startException == null)
             {
                 await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
-                await (ProtocolStartFinishedAsync?.Invoke(true) ?? Task.CompletedTask);
+                await (_protocolStartFinishedAsync?.Invoke(true) ?? Task.CompletedTask);
             }
             else
             {
@@ -1919,7 +1923,7 @@ namespace Sensus
                     SensusServiceHelper.Get().Logger.Log("Exception while stopping study after failing to start it:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
 
-                await (ProtocolStartFinishedAsync?.Invoke(false) ?? Task.CompletedTask);
+                await (_protocolStartFinishedAsync?.Invoke(false) ?? Task.CompletedTask);
             }
         }
 
@@ -2007,7 +2011,7 @@ namespace Sensus
             _scheduledStopCallback = null;
         }
 
-        public async Task StartWithUserAgreementAsync(string startupMessage, CancellationToken cancellationToken)
+        public async Task StartWithUserAgreementAsync(string startupMessage)
         {
             if (!_probes.Any(probe => probe.Enabled))
             {
@@ -2174,7 +2178,67 @@ namespace Sensus
 
             if (start)
             {
-                await StartAsync(cancellationToken);
+                // create startup page, passing cancellation token that will be used for the startup.
+                CancellationTokenSource startCancellationTokenSource = new CancellationTokenSource();
+                _protocolStartPage = new ProtocolStartPage(startCancellationTokenSource);
+
+                // wire up startup events
+
+                _protocolStartInitiatedAsync = async () =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+                        await navigation.PushModalAsync(_protocolStartPage);
+                        _pushedProtocolStartPage = true;
+                        await _protocolStartPage.SetProgressAsync(0);
+                    });
+                };
+
+                _protocolStartAddProgressAsync = async (additionalProgress) =>
+                {
+                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    {
+                        await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress);
+                    });
+                };
+
+                _protocolStartFinishedAsync = async (success) =>
+                {
+                    if (_pushedProtocolStartPage)
+                    {
+                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                        {
+                            INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+                            if (navigation.ModalStack.First() == _protocolStartPage)
+                            {
+                                await navigation.PopModalAsync();
+                            }
+
+                            _pushedProtocolStartPage = false;
+                        });
+                    }
+
+                    // if we started successfully on ios, warn the user not to terminate the app.
+#if __IOS__
+                    if (success)
+                    {
+                        await (Application.Current as App).DetailPage.DisplayAlert("Caution", "Please be careful not to terminate the app by swiping it away, as doing this will discontinue your participation in the study. Instead, move the app to the background by tapping the home button.", "OK");
+                    }
+#endif
+                };
+
+                try
+                {
+                    await StartAsync(startCancellationTokenSource.Token);
+                }
+                finally
+                {
+                    // ensure that startup callback events are unwired. don't want subsequent calls to StartAsync (e.g., on health test) to call them.
+                    _protocolStartInitiatedAsync = null;
+                    _protocolStartAddProgressAsync = null;
+                    _protocolStartFinishedAsync = null;
+                }
             }
         }
 
