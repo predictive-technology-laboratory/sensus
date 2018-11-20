@@ -73,7 +73,7 @@ namespace Sensus
         /// 
         ///     openssl enc -aes-256-cbc -k secret -P -md sha1
         /// 
-        /// The above was adapted from:  https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html
+        /// The above was adapted from [this](https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html) guide.
         /// 
         /// This is mandatory.
         /// </summary>

@@ -43398,6 +43398,18 @@ references:
   commentId: Overload:Sensus.Protocol.Caption
   fullName: Sensus.Protocol.Caption
   nameWithType: Protocol.Caption
+- uid: Sensus.Protocol.CompatibilityMode
+  name: CompatibilityMode
+  href: api/Sensus.Protocol.html#Sensus_Protocol_CompatibilityMode
+  commentId: P:Sensus.Protocol.CompatibilityMode
+  fullName: Sensus.Protocol.CompatibilityMode
+  nameWithType: Protocol.CompatibilityMode
+- uid: Sensus.Protocol.CompatibilityMode*
+  name: CompatibilityMode
+  href: api/Sensus.Protocol.html#Sensus_Protocol_CompatibilityMode_
+  commentId: Overload:Sensus.Protocol.CompatibilityMode
+  fullName: Sensus.Protocol.CompatibilityMode
+  nameWithType: Protocol.CompatibilityMode
 - uid: Sensus.Protocol.ContactEmail
   name: ContactEmail
   href: api/Sensus.Protocol.html#Sensus_Protocol_ContactEmail
@@ -44232,6 +44244,36 @@ references:
   commentId: Overload:Sensus.Protocol.VariableValueUiProperty
   fullName: Sensus.Protocol.VariableValueUiProperty
   nameWithType: Protocol.VariableValueUiProperty
+- uid: Sensus.ProtocolCompatibilityMode
+  name: ProtocolCompatibilityMode
+  href: api/Sensus.ProtocolCompatibilityMode.html
+  commentId: T:Sensus.ProtocolCompatibilityMode
+  fullName: Sensus.ProtocolCompatibilityMode
+  nameWithType: ProtocolCompatibilityMode
+- uid: Sensus.ProtocolCompatibilityMode.AndroidOnly
+  name: AndroidOnly
+  href: api/Sensus.ProtocolCompatibilityMode.html#Sensus_ProtocolCompatibilityMode_AndroidOnly
+  commentId: F:Sensus.ProtocolCompatibilityMode.AndroidOnly
+  fullName: Sensus.ProtocolCompatibilityMode.AndroidOnly
+  nameWithType: ProtocolCompatibilityMode.AndroidOnly
+- uid: Sensus.ProtocolCompatibilityMode.CrossPlatform
+  name: CrossPlatform
+  href: api/Sensus.ProtocolCompatibilityMode.html#Sensus_ProtocolCompatibilityMode_CrossPlatform
+  commentId: F:Sensus.ProtocolCompatibilityMode.CrossPlatform
+  fullName: Sensus.ProtocolCompatibilityMode.CrossPlatform
+  nameWithType: ProtocolCompatibilityMode.CrossPlatform
+- uid: Sensus.ProtocolCompatibilityMode.iOSOnly
+  name: iOSOnly
+  href: api/Sensus.ProtocolCompatibilityMode.html#Sensus_ProtocolCompatibilityMode_iOSOnly
+  commentId: F:Sensus.ProtocolCompatibilityMode.iOSOnly
+  fullName: Sensus.ProtocolCompatibilityMode.iOSOnly
+  nameWithType: ProtocolCompatibilityMode.iOSOnly
+- uid: Sensus.ProtocolCompatibilityMode.value__
+  name: value__
+  href: api/Sensus.ProtocolCompatibilityMode.html#Sensus_ProtocolCompatibilityMode_value__
+  commentId: F:Sensus.ProtocolCompatibilityMode.value__
+  fullName: Sensus.ProtocolCompatibilityMode.value__
+  nameWithType: ProtocolCompatibilityMode.value__
 - uid: Sensus.ProtocolStartConfirmationMode
   name: ProtocolStartConfirmationMode
   href: api/Sensus.ProtocolStartConfirmationMode.html

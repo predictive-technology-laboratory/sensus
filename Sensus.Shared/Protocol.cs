@@ -166,7 +166,7 @@ namespace Sensus
                 return null;
             }
 
-            // make any necessary platform conversions
+            // make any necessary platform conversions to type names to allow the JSON to deserialize
             try
             {
                 json = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(json);
@@ -188,6 +188,33 @@ namespace Sensus
             catch (Exception ex)
             {
                 string message = "Failed to deserialize protocol JSON:  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
+                await SensusServiceHelper.Get().FlashNotificationAsync(message);
+                return null;
+            }
+
+            // check whether protocol is compatible with the current device
+            if (protocol.CompatibilityMode == ProtocolCompatibilityMode.CrossPlatform ||
+                protocol.CompatibilityMode == ProtocolCompatibilityMode.AndroidOnly && SensusContext.Current.Platform == Platform.Android ||
+                protocol.CompatibilityMode == ProtocolCompatibilityMode.iOSOnly && SensusContext.Current.Platform == Platform.iOS)
+            {
+                SensusServiceHelper.Get().Logger.Log("Protocol is compatible with current device.", LoggingLevel.Normal, typeof(Protocol));
+            }
+            else
+            {
+                string message = "The study you loaded is only compatible with ";
+
+                if (protocol.CompatibilityMode == ProtocolCompatibilityMode.AndroidOnly)
+                {
+                    message += "Android";
+                }
+                else if (protocol.CompatibilityMode == ProtocolCompatibilityMode.iOSOnly)
+                {
+                    message += "iOS";
+                }
+
+                message += " devices.";
+
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
                 await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 return null;
@@ -407,7 +434,7 @@ namespace Sensus
         {
             if (protocol == null)
             {
-                await SensusServiceHelper.Get().FlashNotificationAsync("Protocol is empty. Cannot display or start it.");
+                return;
             }
             else if (protocol.Running)
             {
@@ -1386,6 +1413,13 @@ namespace Sensus
             get { return _pushNotificationsSharedAccessSignature; }
             set { _pushNotificationsSharedAccessSignature = value; }
         }
+
+        /// <summary>
+        /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
+        /// </summary>
+        /// <value>The protocol compatibility mode.</value>
+        [ListUiProperty("Compatibility:", true, 51, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 
