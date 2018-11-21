@@ -108,8 +108,9 @@ namespace Sensus.Probes.User.Scripts
                             _agent.SetPolicy(AgentPolicyJSON);
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        SensusServiceHelper.Get()?.Logger.Log("Exception while loading agent:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
@@ -230,7 +231,7 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
 
-            Agent?.Reset();
+            Agent?.Reset(SensusServiceHelper.Get());
         }
 
         protected override async Task ProtectedStartAsync()

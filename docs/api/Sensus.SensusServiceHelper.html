@@ -93,11 +93,15 @@
       <div class="level2"><a class="xref" href="Sensus.Android.AndroidSensusServiceHelper.html">AndroidSensusServiceHelper</a></div>
       <div class="level2"><a class="xref" href="Sensus.iOS.iOSSensusServiceHelper.html">iOSSensusServiceHelper</a></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a></div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_SensusServiceHelper_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class SensusServiceHelper : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class SensusServiceHelper : Object, ISensusServiceHelper</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -203,7 +207,7 @@ to the App Center.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string ENCRYPTION_KEY = &quot;D9783F9A437CD47912A2CD8ACDE2B96CDFD9E9F7DA304108AFB9AFF4BFAF519A&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public const string ENCRYPTION_KEY = &quot;54AFEEE09C5817D1AD6F2464F305823B3E37DE5A3D0B9F707B23D984D002838F&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -223,7 +227,8 @@ to the App Center.</p>
   
   
   <h4 id="Sensus_SensusServiceHelper_HEALTH_TEST_DELAY" data-uid="Sensus.SensusServiceHelper.HEALTH_TEST_DELAY">HEALTH_TEST_DELAY</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -625,7 +630,7 @@ to the App Center.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Logger Logger { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ILogger Logger { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -637,7 +642,7 @@ to the App Center.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Logger.html">Logger</a></td>
+        <td><a class="xref" href="Sensus.ILogger.html">ILogger</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2838,6 +2843,10 @@ decide which probes to enable when enabling all probes.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a>
+  </div>
 </article>
           </div>
           

@@ -521,7 +521,8 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
             {
-                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
+                Logger logger = SensusServiceHelper.Get().Logger as Logger;
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", logger.Read(200, true), logger.Clear));
 
             }, ToolbarItemOrder.Secondary));
 

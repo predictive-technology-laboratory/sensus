@@ -41,6 +41,7 @@ namespace ExampleScriptProbeAgent
         private long _numDataObserved;
         private double _deliveryProbability = 0.5;
         private TimeSpan _deferralInterval = TimeSpan.FromSeconds(30);
+        private ISensusServiceHelper _sensusServiceHelper;
 
         /// <summary>
         /// Gets the description.
@@ -64,7 +65,7 @@ namespace ExampleScriptProbeAgent
             _deliveryProbability = (double)policyObject.GetValue("p");
             _deferralInterval = TimeSpan.FromSeconds((int)policyObject.GetValue("deferral"));
 
-            Console.Out.WriteLine("Script agent policy set:  p=" + _deliveryProbability + "; deferral=" + _deferralInterval);
+            _sensusServiceHelper?.Logger.Log("Script agent policy set:  p=" + _deliveryProbability + "; deferral=" + _deferralInterval, LoggingLevel.Normal, GetType());
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace ExampleScriptProbeAgent
         /// <param name="datum">Datum.</param>
         public void Observe(IDatum datum)
         {
-            Console.Out.WriteLine("Datum observed (" + ++_numDataObserved + " total):  " + datum);
+            _sensusServiceHelper?.Logger.Log("Datum observed (" + ++_numDataObserved + " total):  " + datum, LoggingLevel.Normal, GetType());
         }
 
         /// <summary>
@@ -81,7 +82,7 @@ namespace ExampleScriptProbeAgent
         /// </summary>
         /// <returns>Deliver/defer decision.</returns>
         /// <param name="script">Script.</param>
-        public Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNow(IScript script)
+        public async Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNow(IScript script)
         {
             bool deliver = new Random().NextDouble() < _deliveryProbability;
 
@@ -91,7 +92,9 @@ namespace ExampleScriptProbeAgent
                 deferralTime = DateTimeOffset.UtcNow + _deferralInterval;
             }
 
-            return Task.FromResult(new Tuple<bool, DateTimeOffset?>(deliver, deferralTime));
+            await (_sensusServiceHelper?.FlashNotificationAsync("Delivery decision:  " + deliver) ?? Task.CompletedTask);
+
+            return new Tuple<bool, DateTimeOffset?>(deliver, deferralTime);
         }
 
         /// <summary>
@@ -126,10 +129,15 @@ namespace ExampleScriptProbeAgent
         /// <summary>
         /// Reset this instance.
         /// </summary>
-        public void Reset()
+        /// <param name="sensusServiceHelper">A reference to the Sensus helper.</param>
+        public void Reset(ISensusServiceHelper sensusServiceHelper)
         {
+            _sensusServiceHelper = sensusServiceHelper;
+
             _numDataObserved = 0;
             _deliveryProbability = 0.5;
+
+            _sensusServiceHelper?.Logger.Log("Agent has been reset.", LoggingLevel.Normal, GetType());
         }
 
         /// <summary>

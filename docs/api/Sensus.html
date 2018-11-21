@@ -96,6 +96,12 @@
       <section></section>
       <h4><a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a></h4>
       <section></section>
+      <h4><a class="xref" href="Sensus.HeartbeatDatum.html">HeartbeatDatum</a></h4>
+      <section><p>Provides information on the alive status of the app. Will be submitted to the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> on an interval specified
+by <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_HEALTH_TEST_DELAY">HEALTH_TEST_DELAY</a>. The <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> should contain a sequence of heartbeats
+with <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> values according to this interval. For example, if the interval is 6 hours, then there should be a sequence of
+4 <a class="xref" href="Sensus.HeartbeatDatum.html">HeartbeatDatum</a> readings in the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> each day.</p>
+</section>
       <h4><a class="xref" href="Sensus.ImpreciseDatum.html">ImpreciseDatum</a></h4>
       <section><p>Represents a Datum that could be imprecisely measured.</p>
 </section>
@@ -143,6 +149,10 @@ participant would indeed like to start the protocol</p>
     <h3 id="interfaces">Interfaces
   </h3>
       <h4><a class="xref" href="Sensus.IDatum.html">IDatum</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.ILogger.html">ILogger</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a></h4>
       <section></section>
 </article>
           </div>

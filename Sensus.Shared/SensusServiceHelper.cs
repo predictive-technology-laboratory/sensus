@@ -47,7 +47,7 @@ namespace Sensus
     /// <summary>
     /// Provides platform-independent functionality.
     /// </summary>
-    public abstract class SensusServiceHelper
+    public abstract class SensusServiceHelper : ISensusServiceHelper
     {
         #region static members
         private static SensusServiceHelper SINGLETON;
@@ -293,7 +293,7 @@ namespace Sensus
         private readonly object _updatePushNotificationRegistrationsLocker = new object();
 
         [JsonIgnore]
-        public Logger Logger
+        public ILogger Logger
         {
             get { return _logger; }
         }
