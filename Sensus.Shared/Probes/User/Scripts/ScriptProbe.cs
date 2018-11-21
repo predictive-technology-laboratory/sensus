@@ -91,14 +91,19 @@ namespace Sensus.Probes.User.Scripts
         {
             get
             {
-                // attempt to lazy-load the agent if there is none
-                if (_agent == null)
+                // attempt to lazy-load the agent if there is none and we an agent id
+                if (_agent == null && !string.IsNullOrWhiteSpace(AgentId))
                 {
                     try
                     {
 #if __ANDROID__
-                        _agent = GetAgent(AgentAssemblyBytes, AgentId);
+                        // also require an assembly on android, which is where we get the agents from.
+                        if (AgentAssemblyBytes != null)
+                        {
+                            _agent = GetAgent(AgentAssemblyBytes, AgentId);
+                        }
 #elif __IOS__
+                        // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
                         _agent = GetAgent(AgentId);
 #endif
 
