@@ -1580,17 +1580,20 @@ namespace Sensus
 
         public bool TryGetProbe(Type type, out Probe probe)
         {
-            if (_typeProbe == null)
+            lock (this)
             {
-                _typeProbe = new Dictionary<Type, Probe>();
-
-                foreach (Probe p in _probes)
+                if (_typeProbe == null)
                 {
-                    _typeProbe.Add(p.GetType(), p);
-                }
-            }
+                    _typeProbe = new Dictionary<Type, Probe>();
 
-            return _typeProbe.TryGetValue(type, out probe);
+                    foreach (Probe p in _probes)
+                    {
+                        _typeProbe.Add(p.GetType(), p);
+                    }
+                }
+
+                return _typeProbe.TryGetValue(type, out probe);
+            }
         }
 
         private async Task ResetAsync(bool resetId)
