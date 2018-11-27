@@ -244,9 +244,6 @@
     <Reference Include="PInvoke.NCrypt">
       <HintPath>..\packages\PInvoke.NCrypt.0.5.155\lib\portable-net45+win8+wpa81\PInvoke.NCrypt.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.S3">
-      <HintPath>..\packages\AWSSDK.S3.3.3.24.1\lib\MonoAndroid10\AWSSDK.S3.dll</HintPath>
-    </Reference>
     <Reference Include="FormsViewGroup">
       <HintPath>..\packages\Xamarin.Forms.3.2.0.839982\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
     </Reference>
@@ -333,10 +330,13 @@
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.29.8\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.Core.3.3.29.12\lib\MonoAndroid10\AWSSDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="AWSSDK.KeyManagementService">
-      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.22\lib\MonoAndroid10\AWSSDK.KeyManagementService.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.26\lib\MonoAndroid10\AWSSDK.KeyManagementService.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>..\packages\AWSSDK.S3.3.3.28\lib\MonoAndroid10\AWSSDK.S3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -299,9 +299,9 @@ namespace Sensus.DataStores.Local
                         await Protocol.EnvelopeEncryptor.EnvelopeAsync(Encoding.UTF8.GetBytes("testing"), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, testStream, CancellationToken.None);
                     }
                 }
-                catch (Exception)
+                catch (Exception encryptionTestException)
                 {
-                    throw new Exception("Envelope encryption test failed.");
+                    throw new Exception("Envelope encryption test failed:  " + encryptionTestException.Message);
                 }
             }
 

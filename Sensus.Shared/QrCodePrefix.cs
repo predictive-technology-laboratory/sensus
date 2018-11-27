@@ -30,9 +30,9 @@ namespace Sensus
         /// * Direct URL:  Following the prefix should be an internet-accessible URL from which to download a protocol file directly via HTTPS.
         /// 
         /// * Managed URL:  Following the prefix should be the following:
-        /// ```
-        /// managed:BASEURL:PARTICIPANT_ID
-        /// ```
+        ///   ```
+        ///   managed:BASEURL:PARTICIPANT_ID
+        ///   ```
         ///   where BASEURL is the URL to a Sensus authentication server (e.g., https://some.host.com or https://some.host.com:12345), and 
         ///   PARTICIPANT_ID is an (optional) participant ID. Read more about Sensus authentication servers [here](xref:authentication_server).
         /// </summary>

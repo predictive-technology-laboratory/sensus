@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Amazon.KeyManagementService;
 using Amazon.KeyManagementService.Model;
 using Newtonsoft.Json.Linq;
+using Sensus.Context;
 using Sensus.Encryption;
 using Sensus.Exceptions;
 using Sensus.Extensions;
@@ -33,8 +34,8 @@ namespace Sensus.Authentication
     /// </summary>
     public class AuthenticationService : IEnvelopeEncryptor
     {
-        private const string CREATE_ACCOUNT_PATH = "/createaccount?deviceId={0}&participantId={1}";
-        private const string GET_CREDENTIALS_PATH = "/getcredentials?participantId={0}&password={1}";
+        private const string CREATE_ACCOUNT_PATH = "/createaccount?deviceId={0}&participantId={1}&deviceType={2}";
+        private const string GET_CREDENTIALS_PATH = "/getcredentials?participantId={0}&password={1}&deviceId={2}";
 
         private readonly string _createAccountURL;
         private readonly string _getCredentialsURL;
@@ -69,8 +70,22 @@ namespace Sensus.Authentication
 
         public async Task<Account> CreateAccountAsync(string participantId = null)
         {
+            string deviceType = "";
+            if (SensusContext.Current.Platform == Platform.Android)
+            {
+                deviceType = "android";
+            }
+            else if (SensusContext.Current.Platform == Platform.iOS)
+            {
+                deviceType = "ios";
+            }
+            else
+            {
+                SensusException.Report("Unrecognized platform:  " + SensusContext.Current.Platform);
+            }
+
             ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId)).DownloadString();
+            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId, deviceType)).DownloadString();
             ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
             try
@@ -115,7 +130,7 @@ namespace Sensus.Authentication
             }
 
             ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-            string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
+            string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
             ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
             // try creating a new account if an exception was generated.
@@ -124,7 +139,7 @@ namespace Sensus.Authentication
                 await CreateAccountAsync();
 
                 ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-                credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password)).DownloadString();
+                credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
                 ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
                 if (IsExceptionResponse(credentialsJSON))

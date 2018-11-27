@@ -179,9 +179,6 @@
     <Reference Include="PCLCrypto">
       <HintPath>..\packages\PCLCrypto.2.0.147\lib\xamarinios10\PCLCrypto.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK.S3">
-      <HintPath>..\packages\AWSSDK.S3.3.3.24.1\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
-    </Reference>
     <Reference Include="Facebook.CoreKit">
       <HintPath>..\packages\Xamarin.Facebook.CoreKit.iOS.4.35.0\lib\Xamarin.iOS10\Facebook.CoreKit.dll</HintPath>
     </Reference>
@@ -322,10 +319,13 @@
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.29.8\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.Core.3.3.29.12\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="AWSSDK.KeyManagementService">
-      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.22\lib\Xamarin.iOS10\AWSSDK.KeyManagementService.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.26\lib\Xamarin.iOS10\AWSSDK.KeyManagementService.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.S3">
+      <HintPath>..\packages\AWSSDK.S3.3.3.28\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
