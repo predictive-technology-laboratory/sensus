@@ -37,7 +37,7 @@ namespace Sensus.UI
     public class ProtocolPage : ContentPage
     {
         private Protocol _protocol;
-        private EventHandler<bool> _protocolRunningChangedAction;
+        private EventHandler<ProtocolState> _protocolStateChangedAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProtocolPage"/> class.
@@ -118,7 +118,7 @@ namespace Sensus.UI
                 Text = "Local Data Store" + (localDataStoreSize == null ? "" : " (" + localDataStoreSize + ")"),
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             editLocalDataStoreButton.Clicked += async (o, e) =>
@@ -143,7 +143,7 @@ namespace Sensus.UI
                 Text = "+",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             createLocalDataStoreButton.Clicked += (o, e) => CreateDataStore(true);
@@ -162,7 +162,7 @@ namespace Sensus.UI
                 Text = "Remote Data Store",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             editRemoteDataStoreButton.Clicked += async (o, e) =>
@@ -187,7 +187,7 @@ namespace Sensus.UI
                 Text = "+",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             createRemoteDataStoreButton.Clicked += (o, e) => CreateDataStore(false);
@@ -333,11 +333,11 @@ namespace Sensus.UI
             views.Add(lockButton);
             #endregion
 
-            _protocolRunningChangedAction = (o, running) =>
+            _protocolStateChangedAction = (o, state) =>
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
+                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = state == ProtocolState.Stopped;
                 });
             };
 
@@ -362,7 +362,7 @@ namespace Sensus.UI
         {
             base.OnAppearing();
 
-            _protocol.ProtocolRunningChanged += _protocolRunningChangedAction;
+            _protocol.StateChanged += _protocolStateChangedAction;
         }
 
         private async void CreateDataStore(bool local)
@@ -389,7 +389,7 @@ namespace Sensus.UI
         {
             base.OnDisappearing();
 
-            _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
+            _protocol.StateChanged -= _protocolStateChangedAction;
         }
     }
 }

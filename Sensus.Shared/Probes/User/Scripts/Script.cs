@@ -75,7 +75,7 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 _currentDatum = value;
-                CaptionChanged();
+                FireCaptionChanged();
 
                 // update the triggering datum on all inputs
                 foreach (InputGroup inputGroup in InputGroups)
@@ -98,7 +98,7 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 _submitting = value;
-                CaptionChanged();
+                FireCaptionChanged();
             }
         }
 
@@ -173,7 +173,7 @@ namespace Sensus.Probes.User.Scripts
             Runner = runner;
         }
 
-        private void CaptionChanged()
+        private void FireCaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
         }

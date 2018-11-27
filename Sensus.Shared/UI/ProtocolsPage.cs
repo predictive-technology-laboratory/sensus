@@ -86,14 +86,14 @@ namespace Sensus.UI
                 #region add protocol actions
                 List<string> actions = new List<string>();
 
-                actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+                actions.Add(selectedProtocol.State == ProtocolState.Running ? "Stop" : "Start");
 
                 if (selectedProtocol.AllowTagging)
                 {
                     actions.Add("Tag Data");
                 }
 
-                if (!selectedProtocol.Running && selectedProtocol.AllowParticipantIdReset)
+                if (selectedProtocol.State == ProtocolState.Stopped && selectedProtocol.AllowParticipantIdReset)
                 {
                     actions.Add("Reset ID");
                 }
@@ -103,7 +103,7 @@ namespace Sensus.UI
                     actions.Add("Email Study Manager for Help");
                 }
 
-                if (selectedProtocol.Running && selectedProtocol.AllowViewStatus)
+                if (selectedProtocol.State == ProtocolState.Running && selectedProtocol.AllowViewStatus)
                 {
                     actions.Add("Status");
                 }
@@ -113,7 +113,7 @@ namespace Sensus.UI
                     actions.Add("View Data");
                 }
 
-                if (selectedProtocol.Running)
+                if (selectedProtocol.State == ProtocolState.Running)
                 {
                     if (selectedProtocol.AllowSubmitData)
                     {
@@ -161,7 +161,7 @@ namespace Sensus.UI
                     }
                 }
 
-                if (!selectedProtocol.Running && selectedProtocol.StartIsScheduled)
+                if (selectedProtocol.State == ProtocolState.Stopped && selectedProtocol.StartIsScheduled)
                 {
                     actions.Remove("Start");
                     actions.Insert(0, "Cancel Scheduled Start");
@@ -181,7 +181,7 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
-                    await selectedProtocol.StartWithUserAgreementAsync(null);
+                    await selectedProtocol.StartWithUserAgreementAsync();
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {

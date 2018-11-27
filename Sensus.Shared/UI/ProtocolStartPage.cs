@@ -50,6 +50,7 @@ namespace Sensus.UI
 
             cancelButton.Clicked += (o, e) =>
             {
+                cancelButton.Text = "Cancelling...";
                 _cancellationTokenSource.Cancel();
             };
 

@@ -188,8 +188,8 @@ namespace Sensus.Notifications
                 SensusException.Report("Failed to delete push notification from backend:  " + ex.Message, ex);
             }
 
-            // if the targeted protocol is not running, do some digging.
-            if (!protocol.Running)
+            // if the targeted protocol is stopped, do some digging.
+            if (protocol.State == ProtocolState.Stopped)
             {
                 // the protocol is scheduled to start in the future. as the push notification should be the start command itself, 
                 // we should allow the push notification processing to continue.

@@ -92,6 +92,37 @@ namespace Sensus.UI
 
                 Script selectedScript = scriptList.SelectedItem as Script;
 
+                // the script might be saved from a previous run of the app, and the protocol might not yet be running.
+                if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Starting)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("The study associated with this survey is currently starting up. Please try again shortly or check the Studies page.");
+                    return;
+                }
+                else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Stopping)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("You cannot take this survey because the associated study is currently shutting down.");
+                    return;
+                }
+                else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Stopped)
+                {
+                    // ask the user to start the protocol associated with the script, if it is not already running.
+                    if (await DisplayAlert("Start Study?", "The study associated with this survey is not running. You cannot take this survey unless you start the study. Would you like to start the study now?", "Yes", "No"))
+                    {
+                        await selectedScript.Runner.Probe.Protocol.StartWithUserAgreementAsync();
+
+                        // if the protocol failed to start, or the user cancelled the start, then bail.
+                        if (selectedScript.Runner.Probe.Protocol.State != ProtocolState.Running)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Study was not started.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
                 // let the script agent know and store a datum to record the event
                 selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Opened);
                 await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));

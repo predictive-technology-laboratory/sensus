@@ -260,6 +260,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolStartPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

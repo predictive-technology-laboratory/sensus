@@ -529,7 +529,7 @@ namespace Sensus.iOS
             // we won't call stop until after the service helper has been saved.
             foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
             {
-                if (protocol.Running)
+                if (protocol.State == ProtocolState.Running)
                 {
                     foreach (Probe probe in protocol.Probes)
                     {

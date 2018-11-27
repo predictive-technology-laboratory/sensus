@@ -677,7 +677,7 @@ namespace Sensus
 
         public List<Protocol> GetRunningProtocols()
         {
-            return _registeredProtocols.Where(p => p.Running).ToList();
+            return _registeredProtocols.Where(p => p.State == ProtocolState.Running).ToList();
         }
 
         #endregion
@@ -718,8 +718,9 @@ namespace Sensus
         {
             foreach (Protocol registeredProtocol in _registeredProtocols)
             {
-                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
+                if (registeredProtocol.State == ProtocolState.Stopped && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
+                    // don't present the user with an interface. just start up in the background.
                     await registeredProtocol.StartAsync(CancellationToken.None);
                 }
             }
@@ -1504,7 +1505,7 @@ namespace Sensus
                             // catch any exceptions, as we might just be lacking an internet connection.
                             try
                             {
-                                if (protocol.Running || protocol.StartIsScheduled)
+                                if (protocol.State == ProtocolState.Running || protocol.StartIsScheduled)
                                 {
                                     atLeastOneProtocolRunning = true;
 
@@ -1569,15 +1570,15 @@ namespace Sensus
         {
             _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            foreach (var protocol in _registeredProtocols.ToArray().Where(p => p.Running))
+            foreach (Protocol runningProtocol in _registeredProtocols.ToArray().Where(p => p.State == ProtocolState.Running))
             {
                 try
                 {
-                    await protocol.StopAsync();
+                    await runningProtocol.StopAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"Failed to stop protocol \"{protocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
+                    _logger.Log($"Failed to stop protocol \"{runningProtocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
                 }
             }
         }

@@ -457,7 +457,11 @@ namespace Sensus.Probes.User.Scripts
 
         public async Task ScheduleScriptRunsAsync()
         {
-            if (_scheduleTrigger.WindowCount == 0 || SensusServiceHelper.Get() == null || Probe == null || !Probe.Protocol.Running || !_enabled)
+            if (_scheduleTrigger.WindowCount == 0 || 
+                SensusServiceHelper.Get() == null || 
+                Probe == null || 
+                Probe.Protocol.State != ProtocolState.Running || 
+                !_enabled)
             {
                 return;
             }
