@@ -5,6 +5,42 @@
   "files": [
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html",
+          "hash": "2g8zdmQoUIlpakuoBbAiPw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html",
+          "hash": "F2LL+zCswG2ZRNhA3HuKYA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ExampleScriptProbeAgent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ExampleScriptProbeAgent.html",
+          "hash": "vwPj2xGez2vewwH+j7Vl0w=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.AnalyticsTrackedEvent.yml",
       "output": {
         ".html": {
@@ -3969,7 +4005,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "jCFUJ5F+o2Wg8vDyCP/VgA=="
+          "hash": "DbA2wtSKt+yAU6bOdbykvw=="
         }
       },
       "is_incremental": false,
@@ -4001,6 +4037,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.ProtocolState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.ProtocolState.html",
+          "hash": "CyHB1WXZTGGzaCNXkXvdpA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.QrCodePrefix.yml",
       "output": {
         ".html": {
@@ -4017,7 +4065,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.SensusServiceHelper.html",
-          "hash": "sUSLqsiqUY3JW6AdcS032g=="
+          "hash": "NkrsYqHircCD+6JCwLx1oQ=="
         }
       },
       "is_incremental": false,
@@ -5589,7 +5637,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.iOSSensusServiceHelper.html",
-          "hash": "aVtGmx4X2P0EJfl0N+9FKQ=="
+          "hash": "B3ifcgdbAsMb25kI5qpxPA=="
         }
       },
       "is_incremental": false,
@@ -5613,7 +5661,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.html",
-          "hash": "qQHjDHPm9Wp8wHL7xY2ExQ=="
+          "hash": "EDwrfb0l8P02EU/TtMTe1Q=="
         }
       },
       "is_incremental": false,
@@ -5637,7 +5685,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "X0wHMbKq9zsEvLTDt+B4tw=="
+          "hash": "+q9wg93g1SZCKr+ZrurEcA=="
         }
       },
       "is_incremental": false,
@@ -5649,7 +5697,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/adaptive-surveys.html",
-          "hash": "DYNQ0mOlB9Brt75JaKVZbg=="
+          "hash": "KefypqbzXd7yKE5RsbxBUA=="
         }
       },
       "is_incremental": false,
@@ -5992,21 +6040,21 @@
         "incrementalPhase": "build"
       },
       "processors": {
-        "ResourceDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
-          "incrementalPhase": "build"
-        },
         "TocDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": true,
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
         "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         }

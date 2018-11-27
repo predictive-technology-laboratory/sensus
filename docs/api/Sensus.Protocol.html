@@ -1384,31 +1384,6 @@ public Nullable&lt;float&gt; RewardThreshold { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_Running_" data-uid="Sensus.Protocol.Running*"></a>
-  <h4 id="Sensus_Protocol_Running" data-uid="Sensus.Protocol.Running">Running</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Running { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Protocol_Shareable_" data-uid="Sensus.Protocol.Shareable*"></a>
   <h4 id="Sensus_Protocol_Shareable" data-uid="Sensus.Protocol.Shareable">Shareable</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to share the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -1571,6 +1546,31 @@ public TimeSpan StartTime { get; set; }</code></pre>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><p>The start time.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_State_" data-uid="Sensus.Protocol.State*"></a>
+  <h4 id="Sensus_Protocol_State" data-uid="Sensus.Protocol.State">State</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ProtocolState State { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -2407,11 +2407,15 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_StartWithUserAgreementAsync_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync*"></a>
   <h4 id="Sensus_Protocol_StartWithUserAgreementAsync_System_String_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync(System.String)">StartWithUserAgreementAsync(String)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Starts the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> after displaying a message to the user indicating what is about to happen. This is
+also the place where the user&apos;s agreement to the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is obtained through the various 
+<a class="xref" href="Sensus.ProtocolStartConfirmationMode.html">ProtocolStartConfirmationMode</a> options. After obtaining agreement, a <a class="xref" href="Sensus.UI.ProtocolStartPage.html">ProtocolStartPage</a> is displayed
+to show progress and prevent the user from interacting with the app until the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is fully started.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task StartWithUserAgreementAsync(string startupMessage)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StartWithUserAgreementAsync(string startupMessage = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2426,7 +2430,8 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">startupMessage</span></td>
-        <td></td>
+        <td><p>Startup message to display, along with the standard information.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2441,7 +2446,8 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>The with user agreement async.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2659,12 +2665,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </table>
   
   
-  <h4 id="Sensus_Protocol_ProtocolRunningChanged" data-uid="Sensus.Protocol.ProtocolRunningChanged">ProtocolRunningChanged</h4>
+  <h4 id="Sensus_Protocol_StateChanged" data-uid="Sensus.Protocol.StateChanged">StateChanged</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;bool&gt; ProtocolRunningChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;ProtocolState&gt; StateChanged</code></pre>
   </div>
   <h5 class="eventType">Event Type</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2676,7 +2682,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.EventHandler</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><span class="xref">System.EventHandler</span>&lt;<a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
