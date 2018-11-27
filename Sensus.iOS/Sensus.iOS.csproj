@@ -26,13 +26,14 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <ConsolePause>false</ConsolePause>
     <MtouchArch>i386, x86_64</MtouchArch>
     <MtouchDebug>true</MtouchDebug>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Matthew Gerber (48P2N8226W)</CodesignKey>
     <MtouchLink>SdkOnly</MtouchLink>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <CodesignEntitlements>EntitlementsDevelopment.plist</CodesignEntitlements>
     <MtouchFastDev>false</MtouchFastDev>
+    <CodesignProvision>Sensus Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +46,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>EntitlementsDevelopment.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Developer: Matthew Gerber (48P2N8226W)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
     </IpaPackageName>
@@ -54,8 +55,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <DocumentationFile>bin\iPhone\Debug\SensusiOS.xml</DocumentationFile>
     <NoWarn>1701, 1591</NoWarn>
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
-    <CodesignProvision>
-    </CodesignProvision>
+    <CodesignProvision>Sensus Development</CodesignProvision>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchFastDev>false</MtouchFastDev>
   </PropertyGroup>
@@ -67,11 +67,11 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignEntitlements>EntitlementsProduction.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignKey>iPhone Distribution: UVA Apps, LLC (L8C6JE7MP8)</CodesignKey>
     <IpaPackageName>
     </IpaPackageName>
     <DefineConstants>RELEASE</DefineConstants>
-    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignProvision>Sensus App Store</CodesignProvision>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
 <MtouchUseLlvm>true</MtouchUseLlvm>
@@ -84,13 +84,16 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignEntitlements>EntitlementsProduction.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignKey>iPhone Distribution: UVA Apps, LLC (L8C6JE7MP8)</CodesignKey>
     <IpaPackageName></IpaPackageName>
     <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;RELEASE</DefineConstants>
-    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <CodesignProvision>Sensus Ad-Hoc</CodesignProvision>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchUseLlvm>true</MtouchUseLlvm>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Band.iOS">
