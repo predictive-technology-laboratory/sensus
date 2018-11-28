@@ -1505,7 +1505,9 @@ namespace Sensus
                             // catch any exceptions, as we might just be lacking an internet connection.
                             try
                             {
-                                if (protocol.State == ProtocolState.Running || protocol.StartIsScheduled)
+                                if (protocol.State == ProtocolState.Starting ||  // the current method is called when starting the protocol. send token immediately.
+                                    protocol.State == ProtocolState.Running ||   // send token if running
+                                    protocol.StartIsScheduled)                   // send token if scheduled to run, so that we receive the PN for startup.
                                 {
                                     atLeastOneProtocolRunning = true;
 
