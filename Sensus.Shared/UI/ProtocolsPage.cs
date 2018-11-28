@@ -86,7 +86,14 @@ namespace Sensus.UI
                 #region add protocol actions
                 List<string> actions = new List<string>();
 
-                actions.Add(selectedProtocol.State == ProtocolState.Running ? "Stop" : "Start");
+                if (selectedProtocol.State == ProtocolState.Running)
+                {
+                    actions.Add("Stop");
+                }
+                else if (selectedProtocol.State == ProtocolState.Stopped)
+                {
+                    actions.Add("Start");
+                }
 
                 if (selectedProtocol.AllowTagging)
                 {
