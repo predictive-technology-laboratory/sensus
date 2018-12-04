@@ -23,6 +23,8 @@ using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Reflection;
+using Sensus.Callbacks;
+using Sensus.Exceptions;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -256,15 +258,26 @@ namespace Sensus.Probes.User.Scripts
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            // ensure that each window-based script runner that is enabled has scheduled surveys
+            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(s => s.Enabled && !string.IsNullOrWhiteSpace(s.TriggerWindowsString)))
             {
-                // ensure that surveys are scheduled to date
+                // update scheduled surveys
                 await scriptRunner.ScheduleScriptRunsAsync();
+
+                // ensure that at least 1 callback is scheduled
+                int triggersScheduled = scriptRunner.ScriptRunCallbacks.Count(scheduledCallback => scheduledCallback.State == ScheduledCallbackState.Scheduled &&
+                                                                                                   scheduledCallback.NextExecution != null &&
+                                                                                                   (scheduledCallback.NextExecution.Value - DateTime.Now).Ticks > 0);
+
+                if (triggersScheduled <= 0)
+                {
+                    SensusException.Report("Script runner \"" + scriptRunner.Name + "\" is enabled with a window trigger, but it has no scheduled callbacks.");
+                }
 
                 string eventName = TrackedEvent.Health + ":" + GetType().Name;
                 Dictionary<string, string> properties = new Dictionary<string, string>
                 {
-                    { "Triggers Scheduled", scriptRunner.ScriptRunCallbacks.Count.ToString() }
+                    { "Triggers Scheduled", triggersScheduled.ToString() }
                 };
 
                 Analytics.TrackEvent(eventName, properties);

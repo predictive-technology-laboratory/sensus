@@ -42,7 +42,6 @@ namespace Sensus.UI.Inputs
         private View _view;
         private bool _displayNumber;
         private bool _complete;
-        private bool _needsToBeStored;
         private double? _latitude;
         private double? _longitude;
         private DateTimeOffset? _locationUpdateTimestamp;
@@ -209,9 +208,10 @@ namespace Sensus.UI.Inputs
         }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="Input"/> is valid. A valid input is one that
-        /// is complete, one that has been viewed but is not required, or one that isn't displayed. It is 
-        /// an input in a state that should not prevent the user from proceeding through an input request.
+        /// Gets a value indicating whether this <see cref="Input"/> is valid. A valid <see cref="Input"/> 
+        /// is one that is complete, one that has been viewed but is not required, or one that isn't 
+        /// displayed. It is an <see cref="Input"/> in a state that should not prevent the user from 
+        /// proceeding through an <see cref="Input"/> request.
         /// </summary>
         /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
         [JsonIgnore]
@@ -223,17 +223,11 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        public bool NeedsToBeStored
-        {
-            get
-            {
-                return _needsToBeStored;
-            }
-            set
-            {
-                _needsToBeStored = value;
-            }
-        }
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:Sensus.UI.Inputs.Input"/> should be stored in the <see cref="LocalDataStore"/>.
+        /// </summary>
+        /// <value><c>true</c> if store; otherwise, <c>false</c>.</value>
+        public virtual bool Store => true;
 
         public double? Latitude
         {
@@ -426,7 +420,6 @@ namespace Sensus.UI.Inputs
             _id = Guid.NewGuid().ToString();
             _displayNumber = true;
             _complete = false;
-            _needsToBeStored = true;
             _required = true;
             _viewed = false;
             _completionTimestamp = null;
@@ -569,7 +562,6 @@ namespace Sensus.UI.Inputs
         {
             _view = null;
             _complete = false;
-            _needsToBeStored = true;
             _latitude = null;
             _longitude = null;
             _locationUpdateTimestamp = null;
