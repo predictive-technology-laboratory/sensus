@@ -504,20 +504,16 @@ namespace Sensus.Probes.User.Scripts
 
                         foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(startDate, _maxAge))
                         {
-                            // trigger time could be in the past if the schedule trigger has a time window before the current time
-                            if (triggerTime.TimeTillTrigger.Ticks > 0)
-                            {
-                                _maxTriggerDate = _maxTriggerDate.Max(triggerTime.Trigger);
+                            _maxTriggerDate = _maxTriggerDate.Max(triggerTime.Trigger);
 
-                                // don't schedule scripts past the end of the protocol if there's a scheduled end date.
-                                if (!Probe.Protocol.ContinueIndefinitely && triggerTime.Trigger > Probe.Protocol.EndDate)
-                                {
-                                    break;
-                                }
-                                else
-                                {
-                                    _scriptTriggerTimes.Enqueue(triggerTime);
-                                }
+                            // don't schedule scripts past the end of the protocol if there's a scheduled end date.
+                            if (!Probe.Protocol.ContinueIndefinitely && triggerTime.Trigger > Probe.Protocol.EndDate)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                _scriptTriggerTimes.Enqueue(triggerTime);
                             }
                         }
                     }
@@ -542,12 +538,6 @@ namespace Sensus.Probes.User.Scripts
 
         private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
         {
-            // don't bother with the script if it's coming too soon.
-            if (triggerTime.TimeTillTrigger.TotalSeconds <= 5)
-            {
-                return;
-            }
-
             ScheduledCallback callback = CreateScriptRunCallback(triggerTime);
 
             // there is a race condition, so far only seen in ios, in which multiple script runner notifications

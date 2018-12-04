@@ -264,7 +264,7 @@ namespace Sensus.Probes.User.Scripts
                 // update scheduled surveys
                 await scriptRunner.ScheduleScriptRunsAsync();
 
-                // ensure that at least 1 callback is scheduled
+                // ensure that at least 1 callback is scheduled for the future
                 int triggersScheduled = scriptRunner.ScriptRunCallbacks.Count(scheduledCallback => scheduledCallback.State == ScheduledCallbackState.Scheduled &&
                                                                                                    scheduledCallback.NextExecution != null &&
                                                                                                    (scheduledCallback.NextExecution.Value - DateTime.Now).Ticks > 0);
