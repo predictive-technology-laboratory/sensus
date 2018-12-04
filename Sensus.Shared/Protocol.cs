@@ -1730,8 +1730,6 @@ namespace Sensus
                 _scheduledStartCallback = null;
                 FireCaptionChanged();
 
-                await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
-
                 // there are five steps to starting a protocol
                 //
                 // 1) local data store
@@ -1902,6 +1900,20 @@ namespace Sensus
                     }
                 }
 
+                // add running protocol, which starts the health test callback.
+                if (cancelStartException == null)
+                {
+                    try
+                    {
+                        await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
+                    }
+                    catch (Exception addRunningProtocolException)
+                    {
+                        // don't stop the protocol if we weren't able to add. we might recover.
+                        SensusServiceHelper.Get().Logger.Log("Exception while adding running protocol:  " + addRunningProtocolException.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+
                 // save app state
                 if (cancelStartException == null)
                 {
@@ -1929,10 +1941,10 @@ namespace Sensus
                 // wrap up if there was no start-cancelling exception
                 if (cancelStartException == null)
                 {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
-
                     _state = ProtocolState.Running;
                     FireStateChanged();
+
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
                 }
                 else
                 {
@@ -2314,11 +2326,18 @@ namespace Sensus
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            if (_state != ProtocolState.Running)
+            if (_state != ProtocolState.Starting && _state != ProtocolState.Running)
             {
                 try
                 {
                     await StopAsync();
+                }
+                catch (Exception)
+                {
+                }
+
+                try
+                {
                     await StartAsync(cancellationToken);
                 }
                 catch (Exception)

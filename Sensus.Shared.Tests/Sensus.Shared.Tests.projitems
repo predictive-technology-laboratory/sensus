@@ -23,7 +23,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\UI\Inputs\InputGroupTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Encryption\AsymmetricEncryptionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\WindowTests.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Probes\User\Scripts\TriggerWindowTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\CompressionTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\DataStores\Local\FileLocalDataStoreTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Sensus.Shared\Extensions\NumericExtensionsTests.cs" />

@@ -102,6 +102,11 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:Sensus.Probes.User.Scripts.Script"/> is valid. A valid <see cref="Script"/> is
+        /// one in which each <see cref="InputGroup"/> is <see cref="InputGroup.Valid"/>.
+        /// </summary>
+        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
         [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
 

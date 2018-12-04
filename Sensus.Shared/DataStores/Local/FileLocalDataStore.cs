@@ -786,7 +786,7 @@ namespace Sensus.DataStores.Local
             // condition in its while-loop hasn't been checked. to ensure that this condition is checked, 
             // signal the long-running write task to check for data, and wait for the task to finish.
             _checkForBufferedData.Set();
-            await _writeToFileTask;
+            await (_writeToFileTask ?? Task.CompletedTask);  // if no data have been written, then there will not yet be a task.
 
             lock (_storeBuffer)
             {

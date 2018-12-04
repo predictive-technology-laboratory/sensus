@@ -47,6 +47,8 @@ namespace Sensus.UI.Inputs
             }
         }
 
+        public override bool Store => false;
+
         public LabelOnlyInput()
         {
             Construct(true);
@@ -86,7 +88,6 @@ namespace Sensus.UI.Inputs
             Complete = complete;
             Required = false;
             DisplayNumber = false;
-            NeedsToBeStored = false;
             Frame = false;
         }
 

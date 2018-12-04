@@ -584,11 +584,6 @@ namespace Sensus
 
             lock (_runningProtocolIds)
             {
-                if (_runningProtocolIds.Count == 0)
-                {
-                    scheduleHealthTestCallback = true;
-                }
-
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
@@ -597,52 +592,60 @@ namespace Sensus
                     (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
                 }
+
+                // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
+                // callback, initialize if needed, and request that the callback be scheduled.
+                if (_healthTestCallback == null)
+                {
+                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    {
+                        // get protocols to test (those that should be running)
+                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
+                        {
+                            lock (_runningProtocolIds)
+                            {
+                                return _runningProtocolIds.Contains(protocol.Id);
+                            }
+
+                        }).ToList();
+
+                        // test protocols
+                        foreach (Protocol protocolToTest in protocolsToTest)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+
+                            // write a heartbeat datum to let the backend know we're alive
+                            protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
+                        }
+
+                        // test the callback scheduler
+                        SensusContext.Current.CallbackScheduler.TestHealth();
+
+                        // update push notification registrations
+                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
+                        {
+                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                        }
+
+                        // test the notifier, which checks the push notification requests.
+                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+
+                    scheduleHealthTestCallback = true;
+                }
             }
 
+            // schedule the callback outside of the lock, as we're async.
             if (scheduleHealthTestCallback)
             {
-                _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
-                {
-                    // get protocols to test (those that should be running)
-                    List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
-                    {
-                        lock (_runningProtocolIds)
-                        {
-                            return _runningProtocolIds.Contains(protocol.Id);
-                        }
-
-                    }).ToList();
-
-                    // test protocols
-                    foreach (Protocol protocolToTest in protocolsToTest)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                        await protocolToTest.TestHealthAsync(false, cancellationToken);
-
-                        // write a heartbeat datum to let the backend know we're alive
-                        protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
-                    }
-
-                    // test the callback scheduler
-                    SensusContext.Current.CallbackScheduler.TestHealth();
-
-                    // update push notification registrations
-                    if (_updatePushNotificationRegistrationsOnNextHealthTest)
-                    {
-                        await UpdatePushNotificationRegistrationsAsync(cancellationToken);
-                    }
-
-                    // test the notifier, which checks the push notification requests.
-                    await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
-
-                }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
-
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
         }
