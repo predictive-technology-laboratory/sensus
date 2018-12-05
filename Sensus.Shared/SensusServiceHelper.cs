@@ -809,6 +809,16 @@ namespace Sensus
             if (modifiedScriptsToRun)
             {
                 await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+
+                // save the app state. if the app crashes we want to keep the surveys around so they can be taken.
+                try
+                {
+                    await SaveAsync();
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while saving app state after adding survey:  " + ex.Message, ex);
+                }
             }
         }
 

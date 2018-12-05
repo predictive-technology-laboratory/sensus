@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -32,6 +34,7 @@ namespace Sensus.Probes.User.Scripts
         /// Gets or sets the state.
         /// </summary>
         /// <value>The state.</value>
+        [JsonConverter(typeof(StringEnumConverter))]
         public ScriptState State
         {
             get { return _state; }
