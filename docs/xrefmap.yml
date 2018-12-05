@@ -247,42 +247,6 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ToString
   fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ToString
   nameWithType: ExampleRandomScriptProbeAgent.ToString
-- uid: ExampleScriptProbeAgent.Resource
-  name: Resource
-  href: api/ExampleScriptProbeAgent.Resource.html
-  commentId: T:ExampleScriptProbeAgent.Resource
-  fullName: ExampleScriptProbeAgent.Resource
-  nameWithType: Resource
-- uid: ExampleScriptProbeAgent.Resource.#ctor
-  name: Resource()
-  href: api/ExampleScriptProbeAgent.Resource.html#ExampleScriptProbeAgent_Resource__ctor
-  commentId: M:ExampleScriptProbeAgent.Resource.#ctor
-  fullName: ExampleScriptProbeAgent.Resource.Resource()
-  nameWithType: Resource.Resource()
-- uid: ExampleScriptProbeAgent.Resource.#ctor*
-  name: Resource
-  href: api/ExampleScriptProbeAgent.Resource.html#ExampleScriptProbeAgent_Resource__ctor_
-  commentId: Overload:ExampleScriptProbeAgent.Resource.#ctor
-  fullName: ExampleScriptProbeAgent.Resource.Resource
-  nameWithType: Resource.Resource
-- uid: ExampleScriptProbeAgent.Resource.Attribute
-  name: Resource.Attribute
-  href: api/ExampleScriptProbeAgent.Resource.Attribute.html
-  commentId: T:ExampleScriptProbeAgent.Resource.Attribute
-  fullName: ExampleScriptProbeAgent.Resource.Attribute
-  nameWithType: Resource.Attribute
-- uid: ExampleScriptProbeAgent.Resource.String
-  name: Resource.String
-  href: api/ExampleScriptProbeAgent.Resource.String.html
-  commentId: T:ExampleScriptProbeAgent.Resource.String
-  fullName: ExampleScriptProbeAgent.Resource.String
-  nameWithType: Resource.String
-- uid: ExampleScriptProbeAgent.Resource.String.library_name
-  name: library_name
-  href: api/ExampleScriptProbeAgent.Resource.String.html#ExampleScriptProbeAgent_Resource_String_library_name
-  commentId: F:ExampleScriptProbeAgent.Resource.String.library_name
-  fullName: ExampleScriptProbeAgent.Resource.String.library_name
-  nameWithType: Resource.String.library_name
 - uid: github
   name: Configuring GitHub
   href: articles/github.html
@@ -23652,24 +23616,6 @@ references:
   commentId: Overload:Sensus.Exceptions.SensusException.Report
   fullName: Sensus.Exceptions.SensusException.Report
   nameWithType: SensusException.Report
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html
-  commentId: T:Sensus.Exceptions.UnsetPushNotificationTokenException
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  name: UnsetPushNotificationTokenException()
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor
-  commentId: M:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException()
-- uid: Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor*
-  name: UnsetPushNotificationTokenException
-  href: api/Sensus.Exceptions.UnsetPushNotificationTokenException.html#Sensus_Exceptions_UnsetPushNotificationTokenException__ctor_
-  commentId: Overload:Sensus.Exceptions.UnsetPushNotificationTokenException.#ctor
-  fullName: Sensus.Exceptions.UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
-  nameWithType: UnsetPushNotificationTokenException.UnsetPushNotificationTokenException
 - uid: Sensus.ExtensionMethods
   name: ExtensionMethods
   href: api/Sensus.ExtensionMethods.html
@@ -26607,60 +26553,6 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync
   fullName: Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.StopListeningAsync
   nameWithType: iOSGyroscopeProbe.StopListeningAsync
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe
-  name: iOSGyroScoperProbe
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html
-  commentId: T:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe
-  nameWithType: iOSGyroScoperProbe
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor
-  name: iOSGyroScoperProbe()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe__ctor
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.iOSGyroScoperProbe()
-  nameWithType: iOSGyroScoperProbe.iOSGyroScoperProbe()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor*
-  name: iOSGyroScoperProbe
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe__ctor_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.#ctor
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.iOSGyroScoperProbe
-  nameWithType: iOSGyroScoperProbe.iOSGyroScoperProbe
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  name: InitializeAsync()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_InitializeAsync
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync()
-  nameWithType: iOSGyroScoperProbe.InitializeAsync()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync*
-  name: InitializeAsync
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_InitializeAsync_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.InitializeAsync
-  nameWithType: iOSGyroScoperProbe.InitializeAsync
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  name: StartListeningAsync()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StartListeningAsync
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync()
-  nameWithType: iOSGyroScoperProbe.StartListeningAsync()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync*
-  name: StartListeningAsync
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StartListeningAsync_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StartListeningAsync
-  nameWithType: iOSGyroScoperProbe.StartListeningAsync
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  name: StopListeningAsync()
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StopListeningAsync
-  commentId: M:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync()
-  nameWithType: iOSGyroScoperProbe.StopListeningAsync()
-- uid: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync*
-  name: StopListeningAsync
-  href: api/Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.html#Sensus_iOS_Probes_Movement_iOSGyroScoperProbe_StopListeningAsync_
-  commentId: Overload:Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  fullName: Sensus.iOS.Probes.Movement.iOSGyroScoperProbe.StopListeningAsync
-  nameWithType: iOSGyroScoperProbe.StopListeningAsync
 - uid: Sensus.iOS.Probes.User.Health
   name: Sensus.iOS.Probes.User.Health
   href: api/Sensus.iOS.Probes.User.Health.html
@@ -41673,15 +41565,15 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScheduleTrigger.#ctor
   fullName: Sensus.Probes.User.Scripts.ScheduleTrigger.ScheduleTrigger
   nameWithType: ScheduleTrigger.ScheduleTrigger
-- uid: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime,System.DateTime,System.Nullable{System.TimeSpan})
-  name: GetTriggerTimes(DateTime, DateTime, Nullable<TimeSpan>)
-  href: api/Sensus.Probes.User.Scripts.ScheduleTrigger.html#Sensus_Probes_User_Scripts_ScheduleTrigger_GetTriggerTimes_System_DateTime_System_DateTime_System_Nullable_System_TimeSpan__
-  commentId: M:Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime,System.DateTime,System.Nullable{System.TimeSpan})
-  name.vb: GetTriggerTimes(DateTime, DateTime, Nullable(Of TimeSpan))
-  fullName: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime, System.DateTime, System.Nullable<System.TimeSpan>)
-  fullName.vb: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime, System.DateTime, System.Nullable(Of System.TimeSpan))
-  nameWithType: ScheduleTrigger.GetTriggerTimes(DateTime, DateTime, Nullable<TimeSpan>)
-  nameWithType.vb: ScheduleTrigger.GetTriggerTimes(DateTime, DateTime, Nullable(Of TimeSpan))
+- uid: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime,System.Nullable{System.TimeSpan})
+  name: GetTriggerTimes(DateTime, Nullable<TimeSpan>)
+  href: api/Sensus.Probes.User.Scripts.ScheduleTrigger.html#Sensus_Probes_User_Scripts_ScheduleTrigger_GetTriggerTimes_System_DateTime_System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime,System.Nullable{System.TimeSpan})
+  name.vb: GetTriggerTimes(DateTime, Nullable(Of TimeSpan))
+  fullName: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime, System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime, System.Nullable(Of System.TimeSpan))
+  nameWithType: ScheduleTrigger.GetTriggerTimes(DateTime, Nullable<TimeSpan>)
+  nameWithType.vb: ScheduleTrigger.GetTriggerTimes(DateTime, Nullable(Of TimeSpan))
 - uid: Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes*
   name: GetTriggerTimes
   href: api/Sensus.Probes.User.Scripts.ScheduleTrigger.html#Sensus_Probes_User_Scripts_ScheduleTrigger_GetTriggerTimes_
@@ -42492,147 +42384,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptProbe.TestHealthAsync
   fullName: Sensus.Probes.User.Scripts.ScriptProbe.TestHealthAsync
   nameWithType: ScriptProbe.TestHealthAsync
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum
-  name: ScriptRunDatum
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html
-  commentId: T:Sensus.Probes.User.Scripts.ScriptRunDatum
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum
-  nameWithType: ScriptRunDatum
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.Nullable{System.DateTimeOffset},System.String,System.Nullable{System.Double},System.Nullable{System.Double},System.Nullable{System.DateTimeOffset})
-  name: ScriptRunDatum(DateTimeOffset, String, String, String, Nullable<DateTimeOffset>, String, Nullable<Double>, Nullable<Double>, Nullable<DateTimeOffset>)
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum__ctor_System_DateTimeOffset_System_String_System_String_System_String_System_Nullable_System_DateTimeOffset__System_String_System_Nullable_System_Double__System_Nullable_System_Double__System_Nullable_System_DateTimeOffset__
-  commentId: M:Sensus.Probes.User.Scripts.ScriptRunDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.Nullable{System.DateTimeOffset},System.String,System.Nullable{System.Double},System.Nullable{System.Double},System.Nullable{System.DateTimeOffset})
-  name.vb: ScriptRunDatum(DateTimeOffset, String, String, String, Nullable(Of DateTimeOffset), String, Nullable(Of Double), Nullable(Of Double), Nullable(Of DateTimeOffset))
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptRunDatum(System.DateTimeOffset, System.String, System.String, System.String, System.Nullable<System.DateTimeOffset>, System.String, System.Nullable<System.Double>, System.Nullable<System.Double>, System.Nullable<System.DateTimeOffset>)
-  fullName.vb: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptRunDatum(System.DateTimeOffset, System.String, System.String, System.String, System.Nullable(Of System.DateTimeOffset), System.String, System.Nullable(Of System.Double), System.Nullable(Of System.Double), System.Nullable(Of System.DateTimeOffset))
-  nameWithType: ScriptRunDatum.ScriptRunDatum(DateTimeOffset, String, String, String, Nullable<DateTimeOffset>, String, Nullable<Double>, Nullable<Double>, Nullable<DateTimeOffset>)
-  nameWithType.vb: ScriptRunDatum.ScriptRunDatum(DateTimeOffset, String, String, String, Nullable(Of DateTimeOffset), String, Nullable(Of Double), Nullable(Of Double), Nullable(Of DateTimeOffset))
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.#ctor*
-  name: ScriptRunDatum
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum__ctor_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.#ctor
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptRunDatum
-  nameWithType: ScriptRunDatum.ScriptRunDatum
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.DisplayDetail
-  name: DisplayDetail
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_DisplayDetail
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.DisplayDetail
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.DisplayDetail
-  nameWithType: ScriptRunDatum.DisplayDetail
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.DisplayDetail*
-  name: DisplayDetail
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_DisplayDetail_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.DisplayDetail
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.DisplayDetail
-  nameWithType: ScriptRunDatum.DisplayDetail
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.Latitude
-  name: Latitude
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_Latitude
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.Latitude
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.Latitude
-  nameWithType: ScriptRunDatum.Latitude
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.Latitude*
-  name: Latitude
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_Latitude_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.Latitude
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.Latitude
-  nameWithType: ScriptRunDatum.Latitude
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.LocationTimestamp
-  name: LocationTimestamp
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_LocationTimestamp
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.LocationTimestamp
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.LocationTimestamp
-  nameWithType: ScriptRunDatum.LocationTimestamp
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.LocationTimestamp*
-  name: LocationTimestamp
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_LocationTimestamp_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.LocationTimestamp
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.LocationTimestamp
-  nameWithType: ScriptRunDatum.LocationTimestamp
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.Longitude
-  name: Longitude
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_Longitude
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.Longitude
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.Longitude
-  nameWithType: ScriptRunDatum.Longitude
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.Longitude*
-  name: Longitude
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_Longitude_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.Longitude
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.Longitude
-  nameWithType: ScriptRunDatum.Longitude
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.RunId
-  name: RunId
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_RunId
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.RunId
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.RunId
-  nameWithType: ScriptRunDatum.RunId
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.RunId*
-  name: RunId
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_RunId_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.RunId
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.RunId
-  nameWithType: ScriptRunDatum.RunId
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.ScheduledTimestamp
-  name: ScheduledTimestamp
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_ScheduledTimestamp
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.ScheduledTimestamp
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScheduledTimestamp
-  nameWithType: ScriptRunDatum.ScheduledTimestamp
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.ScheduledTimestamp*
-  name: ScheduledTimestamp
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_ScheduledTimestamp_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.ScheduledTimestamp
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScheduledTimestamp
-  nameWithType: ScriptRunDatum.ScheduledTimestamp
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptId
-  name: ScriptId
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_ScriptId
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptId
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptId
-  nameWithType: ScriptRunDatum.ScriptId
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptId*
-  name: ScriptId
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_ScriptId_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptId
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptId
-  nameWithType: ScriptRunDatum.ScriptId
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptName
-  name: ScriptName
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_ScriptName
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptName
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptName
-  nameWithType: ScriptRunDatum.ScriptName
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptName*
-  name: ScriptName
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_ScriptName_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptName
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.ScriptName
-  nameWithType: ScriptRunDatum.ScriptName
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.StringPlaceholderValue
-  name: StringPlaceholderValue
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_StringPlaceholderValue
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.StringPlaceholderValue
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.StringPlaceholderValue
-  nameWithType: ScriptRunDatum.StringPlaceholderValue
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.StringPlaceholderValue*
-  name: StringPlaceholderValue
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_StringPlaceholderValue_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.StringPlaceholderValue
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.StringPlaceholderValue
-  nameWithType: ScriptRunDatum.StringPlaceholderValue
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.TriggerDatumId
-  name: TriggerDatumId
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_TriggerDatumId
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunDatum.TriggerDatumId
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.TriggerDatumId
-  nameWithType: ScriptRunDatum.TriggerDatumId
-- uid: Sensus.Probes.User.Scripts.ScriptRunDatum.TriggerDatumId*
-  name: TriggerDatumId
-  href: api/Sensus.Probes.User.Scripts.ScriptRunDatum.html#Sensus_Probes_User_Scripts_ScriptRunDatum_TriggerDatumId_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunDatum.TriggerDatumId
-  fullName: Sensus.Probes.User.Scripts.ScriptRunDatum.TriggerDatumId
-  nameWithType: ScriptRunDatum.TriggerDatumId
 - uid: Sensus.Probes.User.Scripts.ScriptRunner
   name: ScriptRunner
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html
@@ -43173,15 +42924,15 @@ references:
   commentId: T:Sensus.Probes.User.Scripts.ScriptTriggerTime
   fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime
   nameWithType: ScriptTriggerTime
-- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.#ctor(System.DateTime,System.DateTime,System.Nullable{System.DateTime},System.String)
-  name: ScriptTriggerTime(DateTime, DateTime, Nullable<DateTime>, String)
-  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime__ctor_System_DateTime_System_DateTime_System_Nullable_System_DateTime__System_String_
-  commentId: M:Sensus.Probes.User.Scripts.ScriptTriggerTime.#ctor(System.DateTime,System.DateTime,System.Nullable{System.DateTime},System.String)
-  name.vb: ScriptTriggerTime(DateTime, DateTime, Nullable(Of DateTime), String)
-  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.ScriptTriggerTime(System.DateTime, System.DateTime, System.Nullable<System.DateTime>, System.String)
-  fullName.vb: Sensus.Probes.User.Scripts.ScriptTriggerTime.ScriptTriggerTime(System.DateTime, System.DateTime, System.Nullable(Of System.DateTime), System.String)
-  nameWithType: ScriptTriggerTime.ScriptTriggerTime(DateTime, DateTime, Nullable<DateTime>, String)
-  nameWithType.vb: ScriptTriggerTime.ScriptTriggerTime(DateTime, DateTime, Nullable(Of DateTime), String)
+- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.#ctor(System.DateTime,System.Nullable{System.DateTime},System.String)
+  name: ScriptTriggerTime(DateTime, Nullable<DateTime>, String)
+  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime__ctor_System_DateTime_System_Nullable_System_DateTime__System_String_
+  commentId: M:Sensus.Probes.User.Scripts.ScriptTriggerTime.#ctor(System.DateTime,System.Nullable{System.DateTime},System.String)
+  name.vb: ScriptTriggerTime(DateTime, Nullable(Of DateTime), String)
+  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.ScriptTriggerTime(System.DateTime, System.Nullable<System.DateTime>, System.String)
+  fullName.vb: Sensus.Probes.User.Scripts.ScriptTriggerTime.ScriptTriggerTime(System.DateTime, System.Nullable(Of System.DateTime), System.String)
+  nameWithType: ScriptTriggerTime.ScriptTriggerTime(DateTime, Nullable<DateTime>, String)
+  nameWithType.vb: ScriptTriggerTime.ScriptTriggerTime(DateTime, Nullable(Of DateTime), String)
 - uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.#ctor*
   name: ScriptTriggerTime
   href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime__ctor_
@@ -43200,30 +42951,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptTriggerTime.Expiration
   fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.Expiration
   nameWithType: ScriptTriggerTime.Expiration
-- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.Reference
-  name: Reference
-  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_Reference
-  commentId: P:Sensus.Probes.User.Scripts.ScriptTriggerTime.Reference
-  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.Reference
-  nameWithType: ScriptTriggerTime.Reference
-- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.Reference*
-  name: Reference
-  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_Reference_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptTriggerTime.Reference
-  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.Reference
-  nameWithType: ScriptTriggerTime.Reference
-- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.ReferenceTillTrigger
-  name: ReferenceTillTrigger
-  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_ReferenceTillTrigger
-  commentId: P:Sensus.Probes.User.Scripts.ScriptTriggerTime.ReferenceTillTrigger
-  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.ReferenceTillTrigger
-  nameWithType: ScriptTriggerTime.ReferenceTillTrigger
-- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.ReferenceTillTrigger*
-  name: ReferenceTillTrigger
-  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_ReferenceTillTrigger_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptTriggerTime.ReferenceTillTrigger
-  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.ReferenceTillTrigger
-  nameWithType: ScriptTriggerTime.ReferenceTillTrigger
+- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.TimeTillTrigger
+  name: TimeTillTrigger
+  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_TimeTillTrigger
+  commentId: P:Sensus.Probes.User.Scripts.ScriptTriggerTime.TimeTillTrigger
+  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.TimeTillTrigger
+  nameWithType: ScriptTriggerTime.TimeTillTrigger
+- uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.TimeTillTrigger*
+  name: TimeTillTrigger
+  href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_TimeTillTrigger_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptTriggerTime.TimeTillTrigger
+  fullName: Sensus.Probes.User.Scripts.ScriptTriggerTime.TimeTillTrigger
+  nameWithType: ScriptTriggerTime.TimeTillTrigger
 - uid: Sensus.Probes.User.Scripts.ScriptTriggerTime.Trigger
   name: Trigger
   href: api/Sensus.Probes.User.Scripts.ScriptTriggerTime.html#Sensus_Probes_User_Scripts_ScriptTriggerTime_Trigger
@@ -43536,15 +43275,15 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.TriggerWindow.#ctor
   fullName: Sensus.Probes.User.Scripts.TriggerWindow.TriggerWindow
   nameWithType: TriggerWindow.TriggerWindow
-- uid: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime,System.DateTime,System.Boolean,System.Nullable{System.TimeSpan})
-  name: GetNextTriggerTime(DateTime, DateTime, Boolean, Nullable<TimeSpan>)
-  href: api/Sensus.Probes.User.Scripts.TriggerWindow.html#Sensus_Probes_User_Scripts_TriggerWindow_GetNextTriggerTime_System_DateTime_System_DateTime_System_Boolean_System_Nullable_System_TimeSpan__
-  commentId: M:Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime,System.DateTime,System.Boolean,System.Nullable{System.TimeSpan})
-  name.vb: GetNextTriggerTime(DateTime, DateTime, Boolean, Nullable(Of TimeSpan))
-  fullName: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime, System.DateTime, System.Boolean, System.Nullable<System.TimeSpan>)
-  fullName.vb: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime, System.DateTime, System.Boolean, System.Nullable(Of System.TimeSpan))
-  nameWithType: TriggerWindow.GetNextTriggerTime(DateTime, DateTime, Boolean, Nullable<TimeSpan>)
-  nameWithType.vb: TriggerWindow.GetNextTriggerTime(DateTime, DateTime, Boolean, Nullable(Of TimeSpan))
+- uid: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime,System.Boolean,System.Nullable{System.TimeSpan})
+  name: GetNextTriggerTime(DateTime, Boolean, Nullable<TimeSpan>)
+  href: api/Sensus.Probes.User.Scripts.TriggerWindow.html#Sensus_Probes_User_Scripts_TriggerWindow_GetNextTriggerTime_System_DateTime_System_Boolean_System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime,System.Boolean,System.Nullable{System.TimeSpan})
+  name.vb: GetNextTriggerTime(DateTime, Boolean, Nullable(Of TimeSpan))
+  fullName: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime, System.Boolean, System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime, System.Boolean, System.Nullable(Of System.TimeSpan))
+  nameWithType: TriggerWindow.GetNextTriggerTime(DateTime, Boolean, Nullable<TimeSpan>)
+  nameWithType.vb: TriggerWindow.GetNextTriggerTime(DateTime, Boolean, Nullable(Of TimeSpan))
 - uid: Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime*
   name: GetNextTriggerTime
   href: api/Sensus.Probes.User.Scripts.TriggerWindow.html#Sensus_Probes_User_Scripts_TriggerWindow_GetNextTriggerTime_
@@ -46233,18 +45972,6 @@ references:
   commentId: Overload:Sensus.UI.Inputs.Input.Name
   fullName: Sensus.UI.Inputs.Input.Name
   nameWithType: Input.Name
-- uid: Sensus.UI.Inputs.Input.NeedsToBeStored
-  name: NeedsToBeStored
-  href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_NeedsToBeStored
-  commentId: P:Sensus.UI.Inputs.Input.NeedsToBeStored
-  fullName: Sensus.UI.Inputs.Input.NeedsToBeStored
-  nameWithType: Input.NeedsToBeStored
-- uid: Sensus.UI.Inputs.Input.NeedsToBeStored*
-  name: NeedsToBeStored
-  href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_NeedsToBeStored_
-  commentId: Overload:Sensus.UI.Inputs.Input.NeedsToBeStored
-  fullName: Sensus.UI.Inputs.Input.NeedsToBeStored
-  nameWithType: Input.NeedsToBeStored
 - uid: Sensus.UI.Inputs.Input.Padding
   name: Padding
   href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Padding
@@ -46299,6 +46026,18 @@ references:
   commentId: Overload:Sensus.UI.Inputs.Input.SetView
   fullName: Sensus.UI.Inputs.Input.SetView
   nameWithType: Input.SetView
+- uid: Sensus.UI.Inputs.Input.Store
+  name: Store
+  href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Store
+  commentId: P:Sensus.UI.Inputs.Input.Store
+  fullName: Sensus.UI.Inputs.Input.Store
+  nameWithType: Input.Store
+- uid: Sensus.UI.Inputs.Input.Store*
+  name: Store
+  href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Store_
+  commentId: Overload:Sensus.UI.Inputs.Input.Store
+  fullName: Sensus.UI.Inputs.Input.Store
+  nameWithType: Input.Store
 - uid: Sensus.UI.Inputs.Input.StoreCompletionRecords
   name: StoreCompletionRecords
   href: api/Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_StoreCompletionRecords
@@ -47130,6 +46869,18 @@ references:
   commentId: Overload:Sensus.UI.Inputs.LabelOnlyInput.GetView
   fullName: Sensus.UI.Inputs.LabelOnlyInput.GetView
   nameWithType: LabelOnlyInput.GetView
+- uid: Sensus.UI.Inputs.LabelOnlyInput.Store
+  name: Store
+  href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_Store
+  commentId: P:Sensus.UI.Inputs.LabelOnlyInput.Store
+  fullName: Sensus.UI.Inputs.LabelOnlyInput.Store
+  nameWithType: LabelOnlyInput.Store
+- uid: Sensus.UI.Inputs.LabelOnlyInput.Store*
+  name: Store
+  href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_Store_
+  commentId: Overload:Sensus.UI.Inputs.LabelOnlyInput.Store
+  fullName: Sensus.UI.Inputs.LabelOnlyInput.Store
+  nameWithType: LabelOnlyInput.Store
 - uid: Sensus.UI.Inputs.LabelOnlyInput.Value
   name: Value
   href: api/Sensus.UI.Inputs.LabelOnlyInput.html#Sensus_UI_Inputs_LabelOnlyInput_Value

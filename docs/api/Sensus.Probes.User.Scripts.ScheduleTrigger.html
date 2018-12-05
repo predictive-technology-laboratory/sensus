@@ -240,13 +240,14 @@
   
   
   <a id="Sensus_Probes_User_Scripts_ScheduleTrigger_GetTriggerTimes_" data-uid="Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScheduleTrigger_GetTriggerTimes_System_DateTime_System_DateTime_System_Nullable_System_TimeSpan__" data-uid="Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime,System.DateTime,System.Nullable{System.TimeSpan})">GetTriggerTimes(DateTime, DateTime, Nullable&lt;TimeSpan&gt;)</h4>
-  <div class="markdown level1 summary"><p>Gets trigger times relative to a given reference, starting on a particular date.</p>
+  <h4 id="Sensus_Probes_User_Scripts_ScheduleTrigger_GetTriggerTimes_System_DateTime_System_Nullable_System_TimeSpan__" data-uid="Sensus.Probes.User.Scripts.ScheduleTrigger.GetTriggerTimes(System.DateTime,System.Nullable{System.TimeSpan})">GetTriggerTimes(DateTime, Nullable&lt;TimeSpan&gt;)</h4>
+  <div class="markdown level1 summary"><p>Gets trigger times relative to a given reference, starting on a particular date and having a maximum age until
+expiration.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;ScriptTriggerTime&gt; GetTriggerTimes(DateTime reference, DateTime startDate, Nullable&lt;TimeSpan&gt; maxAge = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public List&lt;ScriptTriggerTime&gt; GetTriggerTimes(DateTime startDate, Nullable&lt;TimeSpan&gt; maxAge = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -260,14 +261,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
-        <td><span class="parametername">reference</span></td>
-        <td><p>The reference time, from which the next time should be computed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.DateTime</span></td>
         <td><span class="parametername">startDate</span></td>
-        <td><p>The date on which the scheduled triggers should start.</p>
+        <td><p>The date on which the scheduled triggers should start. Only the year, month, and day elements will be considered.</p>
 </td>
       </tr>
       <tr>

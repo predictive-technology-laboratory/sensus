@@ -731,31 +731,6 @@ public string Name { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_UI_Inputs_Input_NeedsToBeStored_" data-uid="Sensus.UI.Inputs.Input.NeedsToBeStored*"></a>
-  <h4 id="Sensus_UI_Inputs_Input_NeedsToBeStored" data-uid="Sensus.UI.Inputs.Input.NeedsToBeStored">NeedsToBeStored</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool NeedsToBeStored { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_UI_Inputs_Input_Padding_" data-uid="Sensus.UI.Inputs.Input.Padding*"></a>
   <h4 id="Sensus_UI_Inputs_Input_Padding" data-uid="Sensus.UI.Inputs.Input.Padding">Padding</h4>
   <div class="markdown level1 summary"></div>
@@ -803,6 +778,33 @@ public bool Required { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><p><code>true</code> if required; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_UI_Inputs_Input_Store_" data-uid="Sensus.UI.Inputs.Input.Store*"></a>
+  <h4 id="Sensus_UI_Inputs_Input_Store" data-uid="Sensus.UI.Inputs.Input.Store">Store</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether this <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> should be stored in the <span class="xref">System.LocalDataStore</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Store { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if store; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -892,9 +894,10 @@ is what will be used when formatting placeholder text in the input <a class="xre
   
   <a id="Sensus_UI_Inputs_Input_Valid_" data-uid="Sensus.UI.Inputs.Input.Valid*"></a>
   <h4 id="Sensus_UI_Inputs_Input_Valid" data-uid="Sensus.UI.Inputs.Input.Valid">Valid</h4>
-  <div class="markdown level1 summary"><p>Gets a value indicating whether this <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> is valid. A valid input is one that
-is complete, one that has been viewed but is not required, or one that isn&apos;t displayed. It is 
-an input in a state that should not prevent the user from proceeding through an input request.</p>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether this <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> is valid. A valid <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> 
+is one that is complete, one that has been viewed but is not required, or one that isn&apos;t 
+displayed. It is an <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> in a state that should not prevent the user from 
+proceeding through an <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> request.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
