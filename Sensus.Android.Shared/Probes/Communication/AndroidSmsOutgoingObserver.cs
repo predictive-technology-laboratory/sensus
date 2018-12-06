@@ -66,7 +66,6 @@ namespace Sensus.Android.Probes.Communication
 
                 SmsDatum datum = null;
 
-
                 // process MMS:  https://stackoverflow.com/questions/3012287/how-to-read-mms-data-in-android
                 bool isMMS = uri.ToString().StartsWith("content://sms/raw") || uri.ToString().StartsWith("content://mms-sms");
                 if (isMMS)
@@ -94,8 +93,8 @@ namespace Sensus.Android.Probes.Communication
             }
             catch (Exception ex)
             {
-                // something is wrong with our implementation
-                SensusException.Report(ex);
+                // something is probably wrong with our implementation. each manufacturer does things a bit different.
+                SensusServiceHelper.Get().Logger.Log("Exception in " + nameof(OnChange) + ":  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 
@@ -170,6 +169,13 @@ namespace Sensus.Android.Probes.Communication
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while getting MMS:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                // throw back to caller
+                throw ex;
             }
             finally
             {

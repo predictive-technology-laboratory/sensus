@@ -1845,8 +1845,9 @@ namespace Sensus
                                     // succeeds, all band probes will then be started.
                                     startMicrosoftBandProbes = false;
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
+                                    SensusServiceHelper.Get().Logger.Log("Exception while starting probe:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
 
                                 // probe might become disabled during Start due to a NotSupportedException
