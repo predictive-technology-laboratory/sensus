@@ -19,7 +19,7 @@ using Sensus.Anonymization.Anonymizers;
 
 namespace Sensus.Probes.Location
 {
-    public class AltitudeDatum : Datum
+    public class AltitudeDatum : Datum, IAltitudeDatum
     {
         private double _altitude;
 

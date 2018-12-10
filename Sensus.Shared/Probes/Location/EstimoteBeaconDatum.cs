@@ -24,7 +24,7 @@ namespace Sensus.Probes.Location
     /// <summary>
     /// Event proximity for named beacons at specified distance thresholds.
     /// </summary>
-    public class EstimoteBeaconDatum : Datum
+    public class EstimoteBeaconDatum : Datum, IEstimoteBeaconDatum
     {
         /// <summary>
         /// The tag assigned to the beacon.

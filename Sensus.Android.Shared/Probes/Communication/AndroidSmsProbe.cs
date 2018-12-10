@@ -53,10 +53,13 @@ namespace Sensus.Android.Probes.Communication
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sms) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+
                 if (_telephonyManager == null)
                 {
                     throw new NotSupportedException("No telephony present.");
                 }
+
+                _smsOutgoingObserver.Initialize();
             }
             else
             {
@@ -71,7 +74,10 @@ namespace Sensus.Android.Probes.Communication
         protected override Task StartListeningAsync()
         {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
+            Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://mms-sms"), true, _smsOutgoingObserver);
+
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
+
             return Task.CompletedTask;
         }
 

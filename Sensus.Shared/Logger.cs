@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 
 namespace Sensus
 {
-    public class Logger
+    public class Logger : ILogger
     {
         private const int MAX_LOG_SIZE_MEGABYTES = 20;
 

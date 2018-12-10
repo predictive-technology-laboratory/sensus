@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>Sensus</PackageId>
+    <PackageVersion>1.15.0</PackageVersion>
+    <Authors>Matthew Gerber</Authors>
+    <Description>Package for developing plug-ins and other code modules that integrate with Sensus.</Description>
+    <ReleaseVersion>2.0.0</ReleaseVersion>
+    <PackageIconUrl>https://github.com/predictive-technology-laboratory/sensus/raw/develop/Graphics/group-of-members-users-icon.png</PackageIconUrl>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Owners>Matthew Gerber</Owners>
+    <PackageProjectUrl>https://predictive-technology-laboratory.github.io/sensus/</PackageProjectUrl>
+    <Title>Sensus</Title>
+    <RootNamespace>Sensus</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\netstandard2.0\Sensus.Shared.NuGet.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Class1.cs" />
+  </ItemGroup>
+</Project>

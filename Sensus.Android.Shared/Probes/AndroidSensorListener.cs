@@ -15,6 +15,7 @@
 using Sensus;
 using System;
 using Android.Hardware;
+using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes
 {
@@ -22,18 +23,16 @@ namespace Sensus.Android.Probes
     {
         private SensorType _sensorType;
         private TimeSpan? _sensorDelay;
-        private Action<SensorStatus> _sensorAccuracyChangedCallback;
-        private Action<SensorEvent> _sensorValueChangedCallback;
+        private Func<SensorEvent, Task> _sensorValueChangedCallback;
         private SensorManager _sensorManager;
         private Sensor _sensor;
         private bool _listening;
 
         private readonly object _locker = new object();
 
-        public AndroidSensorListener(SensorType sensorType, Action<SensorStatus> sensorAccuracyChangedCallback, Action<SensorEvent> sensorValueChangedCallback)
+        public AndroidSensorListener(SensorType sensorType, Func<SensorEvent, Task> sensorValueChangedCallback)
         {
             _sensorType = sensorType;
-            _sensorAccuracyChangedCallback = sensorAccuracyChangedCallback;
             _sensorValueChangedCallback = sensorValueChangedCallback;
             _listening = false;
         }
@@ -113,17 +112,16 @@ namespace Sensus.Android.Probes
             _sensorManager.UnregisterListener(this);
         }
 
-        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
+        public async void OnSensorChanged(SensorEvent e)
         {
-            _sensorAccuracyChangedCallback?.Invoke(accuracy);
+            if (e != null && e.Values != null && e.Values.Count > 0 && _sensorValueChangedCallback != null)
+            {
+                await _sensorValueChangedCallback.Invoke(e);
+            }
         }
 
-        public void OnSensorChanged(SensorEvent e)
+        public void OnAccuracyChanged(Sensor sensor, SensorStatus accuracy)
         {
-            if (e != null && e.Values != null && e.Values.Count > 0)
-            {
-                _sensorValueChangedCallback?.Invoke(e);
-            }
         }
     }
 }

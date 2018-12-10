@@ -168,13 +168,13 @@
   
   
   <a id="Sensus_Probes_User_Scripts_TriggerWindow_GetNextTriggerTime_" data-uid="Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_TriggerWindow_GetNextTriggerTime_System_DateTime_System_DateTime_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime,System.DateTime,System.Boolean,System.Nullable{System.TimeSpan})">GetNextTriggerTime(DateTime, DateTime, Boolean, Nullable&lt;TimeSpan&gt;)</h4>
+  <h4 id="Sensus_Probes_User_Scripts_TriggerWindow_GetNextTriggerTime_System_DateTime_System_Boolean_System_Nullable_System_TimeSpan__" data-uid="Sensus.Probes.User.Scripts.TriggerWindow.GetNextTriggerTime(System.DateTime,System.Boolean,System.Nullable{System.TimeSpan})">GetNextTriggerTime(DateTime, Boolean, Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"><p>Gets the next trigger time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScriptTriggerTime GetNextTriggerTime(DateTime reference, DateTime after, bool windowExpiration, Nullable&lt;TimeSpan&gt; maxAge)</code></pre>
+    <pre><code class="lang-csharp hljs">public ScriptTriggerTime GetNextTriggerTime(DateTime after, bool windowExpiration, Nullable&lt;TimeSpan&gt; maxAge)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -186,12 +186,6 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><span class="xref">System.DateTime</span></td>
-        <td><span class="parametername">reference</span></td>
-        <td><p>The reference time, from which the next time should be computed.</p>
-</td>
-      </tr>
       <tr>
         <td><span class="xref">System.DateTime</span></td>
         <td><span class="parametername">after</span></td>

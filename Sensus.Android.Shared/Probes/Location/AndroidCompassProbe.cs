@@ -33,7 +33,7 @@ namespace Sensus.Android.Probes.Location
         public AndroidCompassProbe()
         {
             _magneticFieldValues = new float[3];
-            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, null, async e =>
+            _magnetometerListener = new AndroidSensorListener(SensorType.MagneticField, async e =>
             {
                 if (e.Values != null && e.Values.Count == 3)
                 {
@@ -42,7 +42,7 @@ namespace Sensus.Android.Probes.Location
             });
 
             _accelerometerValues = new float[3];
-            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, null, async e =>
+            _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, async e =>
             {
                 if (e.Values != null && e.Values.Count == 3)
                 {

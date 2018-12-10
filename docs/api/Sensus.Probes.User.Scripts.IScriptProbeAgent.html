@@ -1,0 +1,362 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IScriptProbeAgent
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IScriptProbeAgent
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent">
+  
+  
+  <h1 id="Sensus_Probes_User_Scripts_IScriptProbeAgent" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent" class="text-break">Interface IScriptProbeAgent
+  </h1>
+  <div class="markdown level0 summary"><p>Interface for all agents that control survey delivery within Sensus.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
+  <h6><strong>Assembly</strong>: Sensus.Shared.NuGet.dll</h6>
+  <h5 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IScriptProbeAgent</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Description_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Description*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Description" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Description">Description</h4>
+  <div class="markdown level1 summary"><p>Readable description of the agent.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string Description { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Id_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Id*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Id" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Identifier of the agent (unique within the project).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string Id { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliverSurveyNow_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliverSurveyNow*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliverSurveyNow_Sensus_Probes_User_Scripts_IScript_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliverSurveyNow(Sensus.Probes.User.Scripts.IScript)">DeliverSurveyNow(IScript)</h4>
+  <div class="markdown level1 summary"><p>Asks the agent whether an <a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a> should be delivered at the present time as scheduled/triggered, or
+if the delivery should instead be deferred to a later date.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task&lt;Tuple&lt;bool, Nullable&lt;DateTimeOffset&gt;&gt;&gt; DeliverSurveyNow(IScript script)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></td>
+        <td><span class="parametername">script</span></td>
+        <td><p>Script.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.Boolean</span>, <span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;&gt;&gt;</td>
+        <td><p>A tuple indicating (bool) whether the survey should be delivered at the present time, and (DateTimeOffset?) 
+if not, what time instead it should be delivered. For example:</p>
+<ul>
+<li>true, null:  Deliver survey now.</li>
+<li>false, null:  Do not deliver now and never deliver.</li>
+<li>false, DateTimeOffset.UtcNow + TimeSpan.FromMinutes(5):  Reschedule survey to come back in 5 minutes</li>
+</ul>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_Sensus_IDatum_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe(Sensus.IDatum)">Observe(IDatum)</h4>
+  <div class="markdown level1 summary"><p>Asks the agent to observe an <a class="xref" href="Sensus.IDatum.html">IDatum</a> object that was just generated by Sensus.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Observe(IDatum datum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.IDatum.html">IDatum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td><p>Datum.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_Sensus_Probes_User_Scripts_IScript_Sensus_Probes_User_Scripts_ScriptState_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe(Sensus.Probes.User.Scripts.IScript,Sensus.Probes.User.Scripts.ScriptState)">Observe(IScript, ScriptState)</h4>
+  <div class="markdown level1 summary"><p>Asks the agent to observe a new state for an <a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Observe(IScript script, ScriptState state)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></td>
+        <td><span class="parametername">script</span></td>
+        <td><p>Script.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptState.html">ScriptState</a></td>
+        <td><span class="parametername">state</span></td>
+        <td><p>State.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Reset_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Reset*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Reset_Sensus_ISensusServiceHelper_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Reset(Sensus.ISensusServiceHelper)">Reset(ISensusServiceHelper)</h4>
+  <div class="markdown level1 summary"><p>Asks the agent to reset itself</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Reset(ISensusServiceHelper sensusServiceHelper)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a></td>
+        <td><span class="parametername">sensusServiceHelper</span></td>
+        <td><p>A reference to the service helper, which provides access to the app&apos;s core functionality.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicy_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicy*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicy_System_String_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicy(System.String)">SetPolicy(String)</h4>
+  <div class="markdown level1 summary"><p>Sets the policy of the agent</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetPolicy(string policyJSON)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">policyJSON</span></td>
+        <td><p>Policy JSON.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

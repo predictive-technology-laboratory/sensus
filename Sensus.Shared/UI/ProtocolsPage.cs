@@ -86,9 +86,21 @@ namespace Sensus.UI
                 #region add protocol actions
                 List<string> actions = new List<string>();
 
-                actions.Add(selectedProtocol.Running ? "Stop" : "Start");
+                if (selectedProtocol.State == ProtocolState.Running)
+                {
+                    actions.Add("Stop");
+                }
+                else if (selectedProtocol.State == ProtocolState.Stopped)
+                {
+                    actions.Add("Start");
+                }
 
-                if (!selectedProtocol.Running && selectedProtocol.AllowParticipantIdReset)
+                if (selectedProtocol.AllowTagging)
+                {
+                    actions.Add("Tag Data");
+                }
+
+                if (selectedProtocol.State == ProtocolState.Stopped && selectedProtocol.AllowParticipantIdReset)
                 {
                     actions.Add("Reset ID");
                 }
@@ -98,7 +110,7 @@ namespace Sensus.UI
                     actions.Add("Email Study Manager for Help");
                 }
 
-                if (selectedProtocol.Running && selectedProtocol.AllowViewStatus)
+                if (selectedProtocol.State == ProtocolState.Running && selectedProtocol.AllowViewStatus)
                 {
                     actions.Add("Status");
                 }
@@ -108,7 +120,7 @@ namespace Sensus.UI
                     actions.Add("View Data");
                 }
 
-                if (selectedProtocol.Running)
+                if (selectedProtocol.State == ProtocolState.Running)
                 {
                     if (selectedProtocol.AllowSubmitData)
                     {
@@ -156,7 +168,7 @@ namespace Sensus.UI
                     }
                 }
 
-                if (!selectedProtocol.Running && selectedProtocol.StartIsScheduled)
+                if (selectedProtocol.State == ProtocolState.Stopped && selectedProtocol.StartIsScheduled)
                 {
                     actions.Remove("Start");
                     actions.Insert(0, "Cancel Scheduled Start");
@@ -176,7 +188,7 @@ namespace Sensus.UI
 
                 if (selectedAction == "Start")
                 {
-                    await selectedProtocol.StartWithUserAgreementAsync(null);
+                    await selectedProtocol.StartWithUserAgreementAsync();
                 }
                 else if (selectedAction == "Cancel Scheduled Start")
                 {
@@ -192,6 +204,10 @@ namespace Sensus.UI
                         await selectedProtocol.StopAsync();
                     }
                 }
+                else if (selectedAction == "Tag Data")
+                {
+                    await Navigation.PushAsync(new TaggingPage(selectedProtocol));
+                }
                 else if (selectedAction == "Reset ID")
                 {
                     selectedProtocol.ParticipantId = null;
@@ -199,7 +215,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Status")
                 {
-                    List<AnalyticsTrackedEvent> trackedEvents = await selectedProtocol.TestHealthAsync(true);
+                    List<AnalyticsTrackedEvent> trackedEvents = await selectedProtocol.TestHealthAsync(true, CancellationToken.None);
                     await Navigation.PushAsync(new ViewTextLinesPage("Status", trackedEvents.SelectMany(trackedEvent =>
                     {
                         return trackedEvent.Properties.Select(propertyValue => trackedEvent.Name + ":  " + propertyValue.Key + "=" + propertyValue.Value);
@@ -254,9 +270,11 @@ namespace Sensus.UI
                         false,
                         async () =>
                         {
-                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation);
-                            participationRewardDatum.ProtocolId = selectedProtocol.Id;
-                            participationRewardDatum.ParticipantId = selectedProtocol.ParticipantId;
+                            ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation)
+                            {
+                                ProtocolId = selectedProtocol.Id,
+                                ParticipantId = selectedProtocol.ParticipantId
+                            };
 
                             bool writeFailed = false;
                             try
@@ -407,7 +425,7 @@ namespace Sensus.UI
                         new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
                         {
                             Multiselect = true
-                            
+
                         }, null, true, "Group", null, null, null, false);
 
                     if (input == null)
@@ -485,7 +503,7 @@ namespace Sensus.UI
                         {
                             protocol = await Protocol.DeserializeAsync(new Uri(input.Value.ToString()));
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study from URL:  " + ex.Message);
                         }
@@ -510,7 +528,8 @@ namespace Sensus.UI
 
             ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
             {
-                await Navigation.PushAsync(new ViewTextLinesPage("Log", SensusServiceHelper.Get().Logger.Read(200, true), () => SensusServiceHelper.Get().Logger.Clear()));
+                Logger logger = SensusServiceHelper.Get().Logger as Logger;
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", logger.Read(200, true), logger.Clear));
 
             }, ToolbarItemOrder.Secondary));
 

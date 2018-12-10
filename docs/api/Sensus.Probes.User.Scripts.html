@@ -99,21 +99,21 @@
 completed by the user. Compare this with <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_LocationTimestamp">LocationTimestamp</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp">RunTimestamp</a>, and <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_SubmissionTimestamp">SubmissionTimestamp</a>.</p>
 <p>When a user submits a survey, a <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> object is submitted for each input in the survey (e.g., each text entry, 
 multiple-choice item, etc.). However, if the user does not submit the survey, no such objects will be submitted. As a means of tracking 
-the deployment and response/non-response of surveys, Sensus also submits an additional <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a>  object each time 
-the survey is displayed to the user, regardless of whether the user ends up submitting their survey answers.</p>
+the deployment and response/non-response of surveys, Sensus also submits additional <a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a>  objects.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></h4>
       <section><p>The Script Probe allows Sensus to deliver custom surveys to the user in response to either a schedule or the data coming off other probes. For 
 example, one could configure a survey to display at particular times or randomly within particular time blocks. One could also configure a survey 
 to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from another probe meets particular criteria.</p>
 </section>
-      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a></h4>
-      <section><p>Note:  The <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> field indicates the time when the script survey was made available to the user for 
-completion. It will equal <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Timestamp">Timestamp</a> for any <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>  objects that end up being 
-submitted by the user.</p>
-</section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html">ScriptRunner</a></h4>
       <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptState.html">ScriptState</a></h4>
+      <section><p>Status of scripts within Sensus</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a></h4>
+      <section><p>Records state updates for each <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> as it progresses from delivery through removal from the system.</p>
+</section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptTriggerTime.html">ScriptTriggerTime</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.Trigger.html">Trigger</a></h4>
@@ -122,6 +122,15 @@ submitted by the user.</p>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.TriggerValueCondition.html">TriggerValueCondition</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.TriggerWindow.html">TriggerWindow</a></h4>
+      <section></section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a></h4>
+      <section><p>Interface for all agents that control survey delivery within Sensus.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.User.Scripts.IScriptRunner.html">IScriptRunner</a></h4>
       <section></section>
 </article>
           </div>

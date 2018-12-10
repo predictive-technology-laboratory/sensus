@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ExampleAdaptiveScriptProbeAgent
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ExampleAdaptiveScriptProbeAgent
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent">
+  
+  
+  <h1 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent" class="text-break">Class ExampleAdaptiveScriptProbeAgent
+  </h1>
+  <div class="markdown level0 summary"><p>Example adaptive script probe agent. Increases/decreases probability of survey delivery based on whether
+surveys are completed (increase) or deleted (decrease). Will defer delivery of surveys that are not
+selected for delivery.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ExampleAdaptiveScriptProbeAgent</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="ExampleScriptProbeAgent.html">ExampleScriptProbeAgent</a></h6>
+  <h6><strong>Assembly</strong>: SensusiOS.dll</h6>
+  <h5 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ExampleAdaptiveScriptProbeAgent : Object, IScriptProbeAgent</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent__ctor_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.#ctor*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent__ctor" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.#ctor">ExampleAdaptiveScriptProbeAgent()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExampleAdaptiveScriptProbeAgent()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Description_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Description*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Description" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Description">Description</h4>
+  <div class="markdown level1 summary"><p>Gets the description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Description { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Id_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Id*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Id" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Gets the identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Id { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliverSurveyNow_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliverSurveyNow*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliverSurveyNow_Sensus_Probes_User_Scripts_IScript_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliverSurveyNow(Sensus.Probes.User.Scripts.IScript)">DeliverSurveyNow(IScript)</h4>
+  <div class="markdown level1 summary"><p>Checks whether or not to deliver/defer a survey.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;Tuple&lt;bool, Nullable&lt;DateTimeOffset&gt;&gt;&gt; DeliverSurveyNow(IScript script)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></td>
+        <td><span class="parametername">script</span></td>
+        <td><p>Script.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.Boolean</span>, <span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTimeOffset</span>&gt;&gt;&gt;</td>
+        <td><p>Deliver/defer decision.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_Sensus_IDatum_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe(Sensus.IDatum)">Observe(IDatum)</h4>
+  <div class="markdown level1 summary"><p>Observe the specified datum.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Observe(IDatum datum)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.IDatum.html">IDatum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td><p>Datum.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_Sensus_Probes_User_Scripts_IScript_Sensus_Probes_User_Scripts_ScriptState_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe(Sensus.Probes.User.Scripts.IScript,Sensus.Probes.User.Scripts.ScriptState)">Observe(IScript, ScriptState)</h4>
+  <div class="markdown level1 summary"><p>Observe the specified script and state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Observe(IScript script, ScriptState state)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></td>
+        <td><span class="parametername">script</span></td>
+        <td><p>Script.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptState.html">ScriptState</a></td>
+        <td><span class="parametername">state</span></td>
+        <td><p>State.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Reset_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Reset*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Reset_Sensus_ISensusServiceHelper_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Reset(Sensus.ISensusServiceHelper)">Reset(ISensusServiceHelper)</h4>
+  <div class="markdown level1 summary"><p>Reset this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reset(ISensusServiceHelper sensusServiceHelper)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a></td>
+        <td><span class="parametername">sensusServiceHelper</span></td>
+        <td><p>A reference to the Sensus helper.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicy_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicy*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicy_System_String_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicy(System.String)">SetPolicy(String)</h4>
+  <div class="markdown level1 summary"><p>Sets the policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetPolicy(string policyJSON)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">policyJSON</span></td>
+        <td><p>Policy json.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ToString_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ToString*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ToString" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.String</span> that represents the current <a class="xref" href="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html">ExampleAdaptiveScriptProbeAgent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>A <span class="xref">System.String</span> that represents the current <a class="xref" href="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html">ExampleAdaptiveScriptProbeAgent</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

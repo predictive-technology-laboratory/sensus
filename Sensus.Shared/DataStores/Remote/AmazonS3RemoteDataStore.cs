@@ -93,6 +93,7 @@ namespace Sensus.DataStores.Remote
     {
         private const string DATA_DIRECTORY = "data";
         private const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
+        private const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
 
         private string _region;
         private string _bucket;
@@ -360,9 +361,7 @@ namespace Sensus.DataStores.Remote
                 s3 = InitializeS3();
                 string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
                 byte[] datumJsonBytes = Encoding.UTF8.GetBytes(datumJSON);
-                MemoryStream dataStream = new MemoryStream();
-                dataStream.Write(datumJsonBytes, 0, datumJsonBytes.Length);
-                dataStream.Position = 0;
+                MemoryStream dataStream = new MemoryStream(datumJsonBytes);
 
                 await PutAsync(s3, dataStream, GetDatumKey(datum), "application/json", cancellationToken);
             }
@@ -381,9 +380,7 @@ namespace Sensus.DataStores.Remote
                 // send the token
                 s3 = InitializeS3();
                 byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
-                MemoryStream dataStream = new MemoryStream();
-                dataStream.Write(tokenBytes, 0, tokenBytes.Length);
-                dataStream.Position = 0;
+                MemoryStream dataStream = new MemoryStream(tokenBytes);
 
                 await PutAsync(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
             }
@@ -424,9 +421,7 @@ namespace Sensus.DataStores.Remote
             {
                 s3 = InitializeS3();
                 byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
-                MemoryStream dataStream = new MemoryStream();
-                dataStream.Write(requestJsonBytes, 0, requestJsonBytes.Length);
-                dataStream.Position = 0;
+                MemoryStream dataStream = new MemoryStream(requestJsonBytes);
 
                 await PutAsync(s3, dataStream, GetPushNotificationRequestKey(request), "application/json", cancellationToken);
             }
@@ -541,6 +536,30 @@ namespace Sensus.DataStores.Remote
                 string message = "Failed to get datum from Amazon S3:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message);
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
+        }
+
+        public override async Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                s3 = InitializeS3();
+
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, ADAPTIVE_EMA_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+
+                string policyJSON;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    policyJSON = reader.ReadToEnd().Trim();
+                }
+
+                return policyJSON;
             }
             finally
             {

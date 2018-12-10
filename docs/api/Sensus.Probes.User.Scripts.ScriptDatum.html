@@ -87,8 +87,7 @@
 completed by the user. Compare this with <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_LocationTimestamp">LocationTimestamp</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp">RunTimestamp</a>, and <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_SubmissionTimestamp">SubmissionTimestamp</a>.</p>
 <p>When a user submits a survey, a <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> object is submitted for each input in the survey (e.g., each text entry, 
 multiple-choice item, etc.). However, if the user does not submit the survey, no such objects will be submitted. As a means of tracking 
-the deployment and response/non-response of surveys, Sensus also submits an additional <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a>  object each time 
-the survey is displayed to the user, regardless of whether the user ends up submitting their survey answers.</p>
+the deployment and response/non-response of surveys, Sensus also submits additional <a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a>  objects.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -96,6 +95,10 @@ the survey is displayed to the user, regardless of whether the user ends up subm
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
     <div class="level2"><span class="xref">ScriptDatum</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.IDatum.html">IDatum</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -141,12 +144,18 @@ the survey is displayed to the user, regardless of whether the user ends up subm
     <div>
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_OperatingSystem">Datum.OperatingSystem</a>
     </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_TaggedEventId">Datum.TaggedEventId</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_TaggedEventTags">Datum.TaggedEventTags</a>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_Scripts_ScriptDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ScriptDatum : Datum</code></pre>
+    <pre><code class="lang-csharp hljs">public class ScriptDatum : Datum, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -685,6 +694,10 @@ public string TriggerDatumId { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.IDatum.html">IDatum</a>
+  </div>
 </article>
           </div>
           

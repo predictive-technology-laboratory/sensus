@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Network
 {
-    public class WlanDatum : Datum
+    public class WlanDatum : Datum, IWlanDatum
     {
         private string _accessPointBSSID;
 

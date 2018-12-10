@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Context
 {
-    public class AmbientTemperatureDatum : Datum
+    public class AmbientTemperatureDatum : Datum, IAmbientTemperatureDatum
     {
         private double _degreesCelsius;
 

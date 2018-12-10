@@ -25,20 +25,22 @@ namespace Sensus.Exceptions
         /// <summary>
         /// Report the specified exception to the app center error tracker.
         /// </summary>
-        /// <param name="exceptionToReport">Exception to report.</param>
-        public static void Report(Exception exceptionToReport)
+        /// <param name="exception">Exception to report.</param>
+        public static void Report(Exception exception)
         {
             // the service helper isn't always initialized (e.g., upon startup), so make sure to catch any exceptions.
+            string deviceId = null;
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Reporting Sensus exception:  " + exceptionToReport.Message, LoggingLevel.Normal, typeof(SensusException));
+                SensusServiceHelper.Get().Logger.Log("Reporting Sensus exception:  " + exception.Message, LoggingLevel.Normal, typeof(SensusException));
+                deviceId = SensusServiceHelper.Get().DeviceId;
             }
             catch (Exception)
             { }
 
             try
             {
-                Crashes.TrackError(exceptionToReport);
+                Crashes.TrackError(new SensusException("Device " + (deviceId ?? "[no ID]") + ":  " + exception.Message, exception));
             }
             catch (Exception ex)
             {
@@ -60,18 +62,21 @@ namespace Sensus.Exceptions
         /// <param name="innerException">Inner exception.</param>
         public static SensusException Report(string message, Exception innerException = null)
         {
-            SensusException exceptionToReport = new SensusException(message, innerException);
-
             // the service helper isn't always initialized (e.g., upon startup), so make sure to catch any exceptions.
+            string deviceId = null;
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Reporting Sensus exception:  " + exceptionToReport.Message, LoggingLevel.Normal, typeof(SensusException));
+                SensusServiceHelper.Get().Logger.Log("Reporting Sensus exception:  " + message, LoggingLevel.Normal, typeof(SensusException));
+                deviceId = SensusServiceHelper.Get().DeviceId;
             }
             catch (Exception)
             { }
 
+            SensusException exceptionToReport = null;
+
             try
             {
+                exceptionToReport = new SensusException("Device " + (deviceId ?? "[no ID]") + ":  " + message, innerException);
                 Crashes.TrackError(exceptionToReport);
             }
             catch (Exception ex)
@@ -89,7 +94,7 @@ namespace Sensus.Exceptions
 
         protected SensusException(string message, Exception innerException = null)
             : base(message, innerException)
-        {            
+        {
         }
     }
 }

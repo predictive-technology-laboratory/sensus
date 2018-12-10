@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Location
 {
-    public class CompassDatum : Datum
+    public class CompassDatum : Datum, ICompassDatum
     {
         private double _heading;
 

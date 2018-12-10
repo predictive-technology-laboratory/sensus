@@ -38,5 +38,10 @@ namespace Sensus
         /// IAM credentials. Following this prefix should be REGION:ACCESSKEY:SECRET, denoting an IAM user.
         /// </summary>
         public const string IAM_CREDENTIALS = "iam-credentials:";
+
+        /// <summary>
+        /// Survey agents (see <see cref="Sensus.Probes.User.Scripts.ScriptProbe.Agent"/>). Following this prefix should be an internet-accessible URL from which to download an agent library via HTTPS.
+        /// </summary>
+        public const string SURVEY_AGENT = "survey-agent:";
     }
 }

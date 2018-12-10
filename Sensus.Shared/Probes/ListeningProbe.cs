@@ -23,7 +23,15 @@ namespace Sensus.Probes
     /// <summary>
     /// Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
     /// <see cref="Movement.AccelerometerProbe"/> is provided with information about device movement in each direction. Listening Probes do not generate
-    /// data unless such state changes occur.
+    /// data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
+    /// system (Android or iOS) as well as specific settings.
+    /// 
+    /// * Android:  If <see cref="KeepDeviceAwake"/> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
+    /// on and delivering readings to the app. If <see cref="KeepDeviceAwake"/> is disabled on Android, then the CPU will be allowed to sleep typically
+    /// discontinuing the delivery of readings to the app.
+    /// 
+    /// * iOS:  The <see cref="KeepDeviceAwake"/> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
+    /// background. See <see cref="PollingProbe"/> for more information about background considerations.
     /// </summary>
     public abstract class ListeningProbe : Probe
     {

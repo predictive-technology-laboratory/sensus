@@ -30,10 +30,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothDeviceProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\LightDatum.cs" />
@@ -58,6 +56,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
@@ -105,7 +105,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\ValueOmittingAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingPointsOfInterestProximityProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityThresholdDirection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\IPointsOfInterestProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterestProximityDatum.cs" />
@@ -160,7 +159,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptRunDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptStateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Trigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerValueCondition.cs" />
@@ -233,10 +232,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\Activities.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityState.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProximityEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
@@ -250,7 +245,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolStartConfirmationMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\QrCodeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
@@ -261,6 +255,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AnalyticsTrackedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolStartPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

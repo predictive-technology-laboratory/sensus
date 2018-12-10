@@ -29,24 +29,21 @@ namespace Sensus.Probes.User.Scripts
         /// Gets the next trigger time.
         /// </summary>
         /// <returns>The next trigger time.</returns>
-        /// <param name="reference">The reference time, from which the next time should be computed.</param>
         /// <param name="after">The time after which the trigger time should occur.</param>
         /// <param name="windowExpiration">Whether or not to expire at the current window's end.</param>
         /// <param name="maxAge">Maximum age of the triggered script.</param>
-        public ScriptTriggerTime GetNextTriggerTime(DateTime reference, DateTime after, bool windowExpiration, TimeSpan? maxAge)
+        public ScriptTriggerTime GetNextTriggerTime(DateTime after, bool windowExpiration, TimeSpan? maxAge)
         {
             double zeroToOne = new Random((int)DateTime.Now.Ticks).NextDouble();
             TimeSpan randomIntervalIntoWindow = TimeSpan.FromTicks((long)(Duration.Ticks * zeroToOne));
-            TimeSpan timeTillTrigger = TimeBetween(reference, after) + TimeTillFutureStart(after.TimeOfDay) + randomIntervalIntoWindow;
-            DateTime triggerDateTime = reference.Add(timeTillTrigger);
+            DateTime triggerDateTime = after + TimeTillFutureStart(after.TimeOfDay) + randomIntervalIntoWindow; 
             
             // it only makes sense to do window expiration when the window timespan is not zero. if we did window expiration with
             // a zero-length window the script would expire immediately.
             DateTime? windowExpirationDateTime = default(DateTime?);
             if (windowExpiration && Start != End)
             {
-                TimeSpan timeTillTriggerWindowEnd = TimeBetween(reference, after) + TimeTillFutureEnd(after.TimeOfDay);
-                windowExpirationDateTime = reference.Add(timeTillTriggerWindowEnd);
+                windowExpirationDateTime = after + TimeTillFutureEnd(after.TimeOfDay);
             }
 
             DateTime? ageExpirationDateTime = default(DateTime?);
@@ -55,7 +52,7 @@ namespace Sensus.Probes.User.Scripts
                 ageExpirationDateTime = triggerDateTime.Add(maxAge.Value);
             }
 
-            return new ScriptTriggerTime(reference, triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime), ToString());
+            return new ScriptTriggerTime(triggerDateTime, windowExpirationDateTime.Min(ageExpirationDateTime), ToString());
         }
 
         public string GetReadableDescription(int nonDowTriggerIntervalDays)

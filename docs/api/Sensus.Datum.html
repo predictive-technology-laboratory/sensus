@@ -90,6 +90,7 @@
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">Datum</span></div>
+      <div class="level2"><a class="xref" href="Sensus.HeartbeatDatum.html">HeartbeatDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ImpreciseDatum.html">ImpreciseDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ParticipationReportDatum.html">ParticipationReportDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ParticipationRewardDatum.html">ParticipationRewardDatum</a></div>
@@ -110,6 +111,7 @@
       <div class="level2"><a class="xref" href="Sensus.Probes.Location.ProximityDatum.html">ProximityDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Movement.AccelerometerDatum.html">AccelerometerDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.Movement.GyroscopeDatum.html">GyroscopeDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Network.CellTowerDatum.html">CellTowerDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Network.WlanDatum.html">WlanDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.BiologicalSexDatum.html">BiologicalSexDatum</a></div>
@@ -141,13 +143,17 @@
       <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandStepDatum.html">MicrosoftBandStepDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandUltravioletLightDatum.html">MicrosoftBandUltravioletLightDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunDatum.html">ScriptRunDatum</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.IDatum.html">IDatum</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Datum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class Datum : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class Datum : Object, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -249,8 +255,12 @@
   
   <a id="Sensus_Datum_DeviceId_" data-uid="Sensus.Datum.DeviceId*"></a>
   <h4 id="Sensus_Datum_DeviceId" data-uid="Sensus.Datum.DeviceId">DeviceId</h4>
-  <div class="markdown level1 summary"><p>An identifier that is unique to the particular device running Sensus. Note that this ID will change if the user performs
-a factory reset on their device.</p>
+  <div class="markdown level1 summary"><p>An identifier that is unique to the particular device running Sensus. The meaning of this identifier
+and conditions under which it can change are described in the following pages:</p>
+<ul>
+<li>Android:  See <a href="https://developer.android.com/reference/android/provider/Settings.Secure.html#ANDROID_ID">here</a>.</li>
+<li>iOS:  See <a href="https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor">here</a>.</li>
+</ul>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -278,7 +288,8 @@ public string DeviceId { get; set; }</code></pre>
   
   <a id="Sensus_Datum_DeviceManufacturer_" data-uid="Sensus.Datum.DeviceManufacturer*"></a>
   <h4 id="Sensus_Datum_DeviceManufacturer" data-uid="Sensus.Datum.DeviceManufacturer">DeviceManufacturer</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The device manufacturer.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -295,7 +306,8 @@ public string DeviceId { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The device manufacturer.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -303,7 +315,8 @@ public string DeviceId { get; set; }</code></pre>
   
   <a id="Sensus_Datum_DeviceModel_" data-uid="Sensus.Datum.DeviceModel*"></a>
   <h4 id="Sensus_Datum_DeviceModel" data-uid="Sensus.Datum.DeviceModel">DeviceModel</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The device model.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -320,7 +333,8 @@ public string DeviceId { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The device model.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -380,7 +394,8 @@ public string DeviceId { get; set; }</code></pre>
   
   <a id="Sensus_Datum_OperatingSystem_" data-uid="Sensus.Datum.OperatingSystem*"></a>
   <h4 id="Sensus_Datum_OperatingSystem" data-uid="Sensus.Datum.OperatingSystem">OperatingSystem</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The operating system.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -397,7 +412,8 @@ public string DeviceId { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The operating system.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -484,6 +500,60 @@ such as <a class="xref" href="Sensus.Probes.User.Scripts.Script.html#Sensus_Prob
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><p>The string placeholder value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_TaggedEventId_" data-uid="Sensus.Datum.TaggedEventId*"></a>
+  <h4 id="Sensus_Datum_TaggedEventId" data-uid="Sensus.Datum.TaggedEventId">TaggedEventId</h4>
+  <div class="markdown level1 summary"><p>The event identifier, as described <a class="xref" href="../articles/tagging-mode.html">here</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string TaggedEventId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The tagged event identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_TaggedEventTags_" data-uid="Sensus.Datum.TaggedEventTags*"></a>
+  <h4 id="Sensus_Datum_TaggedEventTags" data-uid="Sensus.Datum.TaggedEventTags">TaggedEventTags</h4>
+  <div class="markdown level1 summary"><p>The event tags, as described <a class="xref" href="../articles/tagging-mode.html">here</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;string&gt; TaggedEventTags { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>The tagged event identifier.</p>
 </td>
       </tr>
     </tbody>
@@ -699,6 +769,10 @@ public DateTimeOffset Timestamp { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.IDatum.html">IDatum</a>
+  </div>
 </article>
           </div>
           

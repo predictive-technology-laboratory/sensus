@@ -26,14 +26,17 @@ using Sensus.Probes.User.MicrosoftBand;
 using Microsoft.AppCenter.Analytics;
 using System.ComponentModel;
 using Sensus.Extensions;
+using Sensus.Exceptions;
+using Sensus.Probes.User.Scripts;
 
 namespace Sensus.Probes
 {
     /// <summary>
     /// Each Probe collects data of a particular type from the device. Sensus contains Probes for many of the hardware sensors present on many 
-    /// smartphones. Sensus also contains Probes that can prompt the user for information, which the user supplies via speech or textual input.
-    /// Sensus defines a variety of Probes, with platform availability and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, 
-    /// etc.). Availability and reliability of Probes will depend on the device being used.
+    /// smartphones as well as several software events (e.g., receipt of SMS messages). Sensus also contains Probes that can prompt the user 
+    /// for information, which the user supplies via speech or textual input. Sensus defines a variety of Probes, with platform availability 
+    /// and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, etc.). Availability and reliability of Probes will depend 
+    /// on the device being used.
     /// </summary>
     public abstract class Probe : INotifyPropertyChanged
     {
@@ -80,6 +83,8 @@ namespace Sensus.Probes
         private DataRateCalculator _rawRateCalculator;
         private DataRateCalculator _storageRateCalculator;
         private DataRateCalculator _uiUpdateRateCalculator;
+        private EventHandler<bool> _powerConnectionChanged;
+        private CancellationTokenSource _processDataCanceller;
 
         [JsonIgnore]
         public abstract string DisplayName { get; }
@@ -252,6 +257,36 @@ namespace Sensus.Probes
             _successfulHealthTestTimes = new List<DateTime>();
             _maxChartDataCount = 10;
             _chartData = new List<ChartDataPoint>(_maxChartDataCount + 1);
+
+            _powerConnectionChanged = async (sender, connected) =>
+            {
+                if (connected)
+                {
+                    // ask the probe to start processing its data
+                    try
+                    {
+                        SensusServiceHelper.Get().Logger.Log("AC power connected. Initiating data processing within probe.", LoggingLevel.Normal, GetType());
+                        _processDataCanceller = new CancellationTokenSource();
+                        await ProcessDataAsync(_processDataCanceller.Token);
+                        SensusServiceHelper.Get().Logger.Log("Probe data processing complete.", LoggingLevel.Normal, GetType());
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // don't report task cancellation exceptions. these are expected whenever the user unplugs the device while processing data.
+                        SensusServiceHelper.Get().Logger.Log("Data processing task was cancelled.", LoggingLevel.Normal, GetType());
+                    }
+                    catch (Exception ex)
+                    {
+                        // the data processing actually failed prior to cancellation. this should not happen, so report it.
+                        SensusException.Report("Non-cancellation exception while processing probe data:  " + ex.Message, ex);
+                    }
+                }
+                else
+                {
+                    // cancel any previous attempt to process data
+                    _processDataCanceller?.Cancel();
+                }
+            };
         }
 
         protected virtual Task InitializeAsync()
@@ -321,9 +356,6 @@ namespace Sensus.Probes
 
                 await InitializeAsync();
 
-                // the probe has successfully initialized and can now be considered started/running.
-                _running = true;
-
                 lock (_startStopTimes)
                 {
                     _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
@@ -333,6 +365,14 @@ namespace Sensus.Probes
                 _rawRateCalculator.Start();
                 _storageRateCalculator.Start();
                 _uiUpdateRateCalculator.Start();
+
+                // hook into the AC charge event signal -- add handler to AC broadcast receiver
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+
+                // the probe has successfully initialized and can now be considered started/running. derived classes might
+                // still have work to do upon return from the current method, but that's okay as far as code in this class
+                // is concerned.
+                _running = true;
             }
         }
 
@@ -343,10 +383,20 @@ namespace Sensus.Probes
         /// <param name="cancellationToken">Cancellation token.</param>
         public async Task StoreDatumAsync(Datum datum, CancellationToken? cancellationToken = null)
         {
+            // it's possible for the current method to be called when the protocol is not running. we try to prevent
+            // this (e.g., by forcing the user to start the protocol before taking a survey saved from a previous run of
+            // the app), but there are probably corner cases we haven't accounted for. at the very least, there are race
+            // conditions (e.g., taking a survey when a protocol is about to stop) that could cause data to be stored 
+            // without a running protocol.
+            if (_protocol.State != ProtocolState.Running)
+            {
+                return;
+            }
+
             // track/limit the raw rate of non-null data. all null data will pass this test, and this is 
             // fine given such data are generated by polling probes when no data were retrieved. such 
             // return values from polling probes are used to indicate that the poll was completed, which
-            // will be reflect in the _mostRecentStoreTimestamp below.
+            // will be reflected in the _mostRecentStoreTimestamp below.
             if (datum != null)
             {
                 // impose a limit on the raw data rate
@@ -358,6 +408,13 @@ namespace Sensus.Probes
                 // set properties that we were unable to set within the datum constructor.
                 datum.ProtocolId = Protocol.Id;
                 datum.ParticipantId = Protocol.ParticipantId;
+
+                // tag the data if we're in tagging mode, indicated with a non-null event id on the protocol.
+                if (Protocol.TaggedEventId != null)
+                {
+                    datum.TaggedEventId = Protocol.TaggedEventId;
+                    datum.TaggedEventTags = Protocol.TaggedEventTags;
+                }
             }
 
             // store non-null data
@@ -401,7 +458,7 @@ namespace Sensus.Probes
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to write datum:  " + ex, LoggingLevel.Normal, GetType());
                 }
-            } 
+            }
 
             // update the timestamp of the most recent store. this is used to calculate storage latency, so we
             // do not restrict its values to those obtained when non-null data are stored (see above). some
@@ -421,6 +478,33 @@ namespace Sensus.Probes
 
             // notify observers of the stored data and associated UI values
             await (MostRecentDatumChanged?.Invoke(previousDatum, _mostRecentDatum) ?? Task.CompletedTask);
+
+            // let the script probe's agent observe the data, as long as the probe is enabled and there is an agent.
+            Protocol.TryGetProbe(typeof(ScriptProbe), out Probe scriptProbe);
+            if (scriptProbe?.Enabled ?? false)
+            {
+                (scriptProbe as ScriptProbe).Agent?.Observe(datum);
+            }
+        }
+
+        /// <summary>
+        /// Instructs the current probe to process data that it has collected. This call does not provide the data
+        /// to process. Rather, it is up to each probe to cache data in memory or on disk as appropriate, in such a
+        /// way that they can be processed when this method is called. This method will only be
+        /// called under suitable conditions (e.g., when the device is charging). Any <see cref="Datum"/> objects that
+        /// result from this processing should be stored via calls to <see cref="StoreDatumAsync(Datum, CancellationToken?)"/>. 
+        /// The <see cref="CancellationToken"/> passed to this method should be monitored carefully when processing data.
+        /// If the token is cancelled, then the data processing should abort immediately and the method should return as quickly
+        /// as possible. The <see cref="CancellationToken"/> passed to this method should also be passed to 
+        /// <see cref="StoreDatumAsync(Datum, CancellationToken?)"/>, as this ensures that all operations associated 
+        /// with data storage terminate promptly if the token is cancelled. It is up to the overriding implementation to
+        /// handle multiple calls to this method (even in quick succession and/or concurrently) properly.
+        /// </summary>
+        /// <returns>The data async.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public virtual Task ProcessDataAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -459,6 +543,9 @@ namespace Sensus.Probes
                     _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
                     _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                 }
+
+                // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
             }
             else
             {

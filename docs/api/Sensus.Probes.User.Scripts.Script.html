@@ -94,12 +94,13 @@
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
     <div><span class="xref">System.IComparable</span>&lt;<a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>&gt;</div>
+    <div><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.User.Scripts.html">Sensus.Probes.User.Scripts</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_Scripts_Script_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Script : Object, INotifyPropertyChanged, IComparable&lt;Script&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public class Script : Object, INotifyPropertyChanged, IComparable&lt;Script&gt;, IScript</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -343,6 +344,31 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_Script_IRunner_" data-uid="Sensus.Probes.User.Scripts.Script.IRunner*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_Script_IRunner" data-uid="Sensus.Probes.User.Scripts.Script.IRunner">IRunner</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IScriptRunner IRunner { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScriptRunner.html">IScriptRunner</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_Script_PreviousDatum_" data-uid="Sensus.Probes.User.Scripts.Script.PreviousDatum*"></a>
   <h4 id="Sensus_Probes_User_Scripts_Script_PreviousDatum" data-uid="Sensus.Probes.User.Scripts.Script.PreviousDatum">PreviousDatum</h4>
   <div class="markdown level1 summary"></div>
@@ -495,7 +521,9 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
   
   <a id="Sensus_Probes_User_Scripts_Script_Valid_" data-uid="Sensus.Probes.User.Scripts.Script.Valid*"></a>
   <h4 id="Sensus_Probes_User_Scripts_Script_Valid" data-uid="Sensus.Probes.User.Scripts.Script.Valid">Valid</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether this <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> is valid. A valid <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> is
+one in which each <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a> is <a class="xref" href="Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_Valid">Valid</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -512,7 +540,8 @@ that are triggered by other probes). For such scripts the only thing we&apos;ll 
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td></td>
+        <td><p><code>true</code> if valid; otherwise, <code>false</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -638,6 +667,9 @@ the <a class="xref" href="Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_Inpu
   </div>
   <div>
       <span class="xref">System.IComparable&lt;&gt;</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a>
   </div>
 </article>
           </div>

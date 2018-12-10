@@ -25,6 +25,9 @@ using Sensus.UI.Inputs;
 using Xamarin.Forms;
 using System.Threading;
 using Plugin.Clipboard;
+using Newtonsoft.Json;
+using Sensus.Encryption;
+using System.IO;
 
 namespace Sensus.UI
 {
@@ -34,7 +37,7 @@ namespace Sensus.UI
     public class ProtocolPage : ContentPage
     {
         private Protocol _protocol;
-        private EventHandler<bool> _protocolRunningChangedAction;
+        private EventHandler<ProtocolState> _protocolStateChangedAction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProtocolPage"/> class.
@@ -66,20 +69,20 @@ namespace Sensus.UI
 
             views.Add(copyIdButton);
 
-            Button editIdButton = new Button
+            Button setIdButton = new Button
             {
                 Text = "Set Study Identifier",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
             };
 
-            editIdButton.Clicked += async (o, e) =>
+            setIdButton.Clicked += async (o, e) =>
             {
                 Input input = await SensusServiceHelper.Get().PromptForInputAsync("Set Study Identifier", new SingleLineTextInput("Identifier:", "id", Keyboard.Text)
                 {
                     Required = true
 
-                }, CancellationToken.None, true, "Set", null, null, "Are you sure you wish to set the study identifier?", false);
+                }, CancellationToken.None, true, "Set", null, null, "Are you sure you wish to set the study identifier? This should not be necessary under normal circumstances. Proceed only if you understand the implications.", false);
 
                 if (string.IsNullOrWhiteSpace(input?.Value?.ToString()))
                 {
@@ -104,7 +107,7 @@ namespace Sensus.UI
                 }
             };
 
-            views.Add(editIdButton);
+            views.Add(setIdButton);
             #endregion  
 
             #region data stores
@@ -115,7 +118,7 @@ namespace Sensus.UI
                 Text = "Local Data Store" + (localDataStoreSize == null ? "" : " (" + localDataStoreSize + ")"),
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             editLocalDataStoreButton.Clicked += async (o, e) =>
@@ -140,7 +143,7 @@ namespace Sensus.UI
                 Text = "+",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             createLocalDataStoreButton.Clicked += (o, e) => CreateDataStore(true);
@@ -159,7 +162,7 @@ namespace Sensus.UI
                 Text = "Remote Data Store",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             editRemoteDataStoreButton.Clicked += async (o, e) =>
@@ -184,7 +187,7 @@ namespace Sensus.UI
                 Text = "+",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.End,
-                IsEnabled = !_protocol.Running
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             createRemoteDataStoreButton.Clicked += (o, e) => CreateDataStore(false);
@@ -245,6 +248,50 @@ namespace Sensus.UI
             views.Add(shareButton);
             #endregion
 
+            #region change encryption key
+            Button changeEncryptionKeyButton = new Button
+            {
+                Text = "Change Encryption Key",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+            };
+
+            changeEncryptionKeyButton.Clicked += async (o, e) =>
+            {
+                Input input = await SensusServiceHelper.Get().PromptForInputAsync("Change Encryption Key", new SingleLineTextInput("Key:", "key", Keyboard.Text)
+                {
+                    Required = true
+
+                }, CancellationToken.None, true, null, null, null, null, false);
+
+                string key = input?.Value?.ToString().Trim();
+
+                // disallow an empty (i.e., "") key. all sensus apps should have a key.
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Encryption key unchanged.");
+                }
+                else
+                {
+                    try
+                    {
+                        string protocolJSON = JsonConvert.SerializeObject(_protocol, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+                        SymmetricEncryption encryptor = new SymmetricEncryption(key);
+                        byte[] encryptedBytes = encryptor.Encrypt(protocolJSON);
+                        string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
+                        File.WriteAllBytes(sharePath, encryptedBytes);
+                        await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + _protocol.Name, "application/json");
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while changing encryption key:  " + ex, LoggingLevel.Normal, GetType());
+                    }
+                }
+            };
+
+            views.Add(changeEncryptionKeyButton);
+            #endregion
+
             #region lock
             Button lockButton = new Button
             {
@@ -286,11 +333,11 @@ namespace Sensus.UI
             views.Add(lockButton);
             #endregion
 
-            _protocolRunningChangedAction = (o, running) =>
+            _protocolStateChangedAction = (o, state) =>
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = !running;
+                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = state == ProtocolState.Stopped;
                 });
             };
 
@@ -315,7 +362,7 @@ namespace Sensus.UI
         {
             base.OnAppearing();
 
-            _protocol.ProtocolRunningChanged += _protocolRunningChangedAction;
+            _protocol.StateChanged += _protocolStateChangedAction;
         }
 
         private async void CreateDataStore(bool local)
@@ -342,7 +389,7 @@ namespace Sensus.UI
         {
             base.OnDisappearing();
 
-            _protocol.ProtocolRunningChanged -= _protocolRunningChangedAction;
+            _protocol.StateChanged -= _protocolStateChangedAction;
         }
     }
 }

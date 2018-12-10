@@ -19,7 +19,7 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Context
 {
-    public class SoundDatum : Datum
+    public class SoundDatum : Datum, ISoundDatum
     {
         private double _decibels;
 

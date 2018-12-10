@@ -25,7 +25,7 @@ namespace Sensus.Android.Probes.Context
 
         public AndroidAmbientTemperatureProbe()
         {
-            _temperatureListener = new AndroidSensorListener(SensorType.AmbientTemperature, null, async e =>
+            _temperatureListener = new AndroidSensorListener(SensorType.AmbientTemperature, async e =>
             {
                 // looks like it's very risky to use e.Timestamp as the basis for timestamping our Datum objects. depending on the phone
                 // manufacturer and android version, e.Timestamp will be set relative to different anchors. this makes it impossible to

@@ -33,7 +33,7 @@ namespace Sensus.Probes.Movement
     ///   * Lying upright on its top edge, the phone will register an acceleration vector of approximately &lt;0,1,0&gt;.
     /// 
     /// </summary>
-    public class AccelerometerDatum : Datum
+    public class AccelerometerDatum : Datum, IAccelerometerDatum
     {
         private double _x;
         private double _y;

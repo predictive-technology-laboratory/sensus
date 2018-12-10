@@ -85,7 +85,17 @@
   </h1>
   <div class="markdown level0 summary"><p>Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
 <a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. Listening Probes do not generate
-data unless such state changes occur.</p>
+data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
+system (Android or iOS) as well as specific settings.</p>
+<ul>
+<li><p>Android:  If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
+on and delivering readings to the app. If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is disabled on Android, then the CPU will be allowed to sleep typically
+discontinuing the delivery of readings to the app.</p>
+</li>
+<li><p>iOS:  The <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
+background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> for more information about background considerations.</p>
+</li>
+</ul>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -106,6 +116,7 @@ data unless such state changes occur.</p>
       <div class="level3"><a class="xref" href="Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.html">ListeningPointsOfInterestProximityProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Location.ProximityProbe.html">ProximityProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a></div>
+      <div class="level3"><a class="xref" href="Sensus.Probes.Movement.GyroscopeProbe.html">GyroscopeProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Movement.ListeningSpeedProbe.html">ListeningSpeedProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Network.CellTowerProbe.html">CellTowerProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Network.ListeningWlanProbe.html">ListeningWlanProbe</a></div>
@@ -134,6 +145,9 @@ data unless such state changes occur.</p>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreDatumAsync_Sensus_Datum_System_Nullable_System_Threading_CancellationToken__">Probe.StoreDatumAsync(Datum, Nullable&lt;CancellationToken&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProcessDataAsync_System_Threading_CancellationToken_">Probe.ProcessDataAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>

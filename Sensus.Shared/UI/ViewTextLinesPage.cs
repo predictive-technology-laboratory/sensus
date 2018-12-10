@@ -40,6 +40,10 @@ namespace Sensus.UI
             messageList.ItemTemplate = new DataTemplate(typeof(TextCell));
             messageList.ItemTemplate.SetBinding(TextCell.TextProperty, ".");
             messageList.ItemsSource = new ObservableCollection<string>(lines);
+            messageList.ItemTapped += async (sender, e) =>
+            {
+                await DisplayAlert("Message", e.Item.ToString(), "Close");
+            };
 
             StackLayout buttonStack = new StackLayout
             {

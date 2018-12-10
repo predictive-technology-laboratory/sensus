@@ -21,6 +21,10 @@ using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Reflection;
+using Sensus.Callbacks;
+using Sensus.Exceptions;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -31,7 +35,112 @@ namespace Sensus.Probes.User.Scripts
     /// </summary>
     public class ScriptProbe : Probe
     {
+
+        // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+        // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
+#if __ANDROID__
+
+        public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
+        {
+            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<IScriptProbeAgent> GetAgents(byte[] assemblyBytes)
+        {
+            return Assembly.Load(assemblyBytes)
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<IScriptProbeAgent>()
+                           .ToList();
+        }
+
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+
+#elif __IOS__
+
+        public static IScriptProbeAgent GetAgent(string agentId)
+        {
+            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<IScriptProbeAgent> GetAgents()
+        {
+            // get agents from the current assembly. they must be linked at compile time.
+            return Assembly.GetAssembly(typeof(ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent))
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<IScriptProbeAgent>()
+                           .ToList();
+        }
+
+#endif
+
         private ObservableCollection<ScriptRunner> _scriptRunners;
+        private IScriptProbeAgent _agent;
+
+        /// <summary>
+        /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
+        /// </summary>
+        /// <value>The agent.</value>
+        [JsonIgnore]
+        public IScriptProbeAgent Agent
+        {
+            get
+            {
+                // attempt to lazy-load the agent if there is none and we an agent id
+                if (_agent == null && !string.IsNullOrWhiteSpace(AgentId))
+                {
+                    try
+                    {
+#if __ANDROID__
+                        // also require an assembly on android, which is where we get the agents from.
+                        if (AgentAssemblyBytes != null)
+                        {
+                            _agent = GetAgent(AgentAssemblyBytes, AgentId);
+                        }
+#elif __IOS__
+                        // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
+                        _agent = GetAgent(AgentId);
+#endif
+
+                        // set the agent's policy if we previously received one (e.g., via push notification)
+                        if (!string.IsNullOrWhiteSpace(AgentPolicyJSON))
+                        {
+                            _agent.SetPolicy(AgentPolicyJSON);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get()?.Logger.Log("Exception while loading agent:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+
+                return _agent;
+            }
+            set
+            {
+                _agent = value;
+                AgentId = _agent?.Id;
+            }
+        }
+
+        /// <summary>
+        /// Id of the <see cref="Agent"/> to use.
+        /// </summary>
+        /// <value>The agent identifier.</value>
+        public string AgentId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the agent policy JSON.
+        /// </summary>
+        /// <value>The agent policy JSON.</value>
+        public string AgentPolicyJSON { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {
@@ -128,6 +237,8 @@ namespace Sensus.Probes.User.Scripts
                     await scriptRunner.InitializeAsync();
                 }
             }
+
+            Agent?.Reset(SensusServiceHelper.Get());
         }
 
         protected override async Task ProtectedStartAsync()
@@ -147,15 +258,26 @@ namespace Sensus.Probes.User.Scripts
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            // ensure that each window-based script runner that is enabled has scheduled surveys
+            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(s => s.Enabled && !string.IsNullOrWhiteSpace(s.TriggerWindowsString)))
             {
-                // ensure that surveys are scheduled to date
+                // update scheduled surveys
                 await scriptRunner.ScheduleScriptRunsAsync();
+
+                // ensure that at least 1 callback is scheduled for the future
+                int triggersScheduled = scriptRunner.ScriptRunCallbacks.Count(scheduledCallback => scheduledCallback.State == ScheduledCallbackState.Scheduled &&
+                                                                                                   scheduledCallback.NextExecution != null &&
+                                                                                                   (scheduledCallback.NextExecution.Value - DateTime.Now).Ticks > 0);
+
+                if (triggersScheduled <= 0)
+                {
+                    SensusException.Report("Script runner \"" + scriptRunner.Name + "\" is enabled with a window trigger, but it has no scheduled callbacks.");
+                }
 
                 string eventName = TrackedEvent.Health + ":" + GetType().Name;
                 Dictionary<string, string> properties = new Dictionary<string, string>
                 {
-                    { "Triggers Scheduled", scriptRunner.ScriptRunCallbacks.Count.ToString() }
+                    { "Triggers Scheduled", triggersScheduled.ToString() }
                 };
 
                 Analytics.TrackEvent(eventName, properties);

@@ -80,7 +80,7 @@ namespace Sensus.UI.Inputs
         /// An input group with no inputs is deemed valid by default.
         /// </summary>
         [JsonIgnore]
-        public bool Valid => Inputs.All(i => i?.Valid ?? true);
+        public bool Valid => Inputs.All(input => input?.Valid ?? true);
 
         public InputGroup()
         {
