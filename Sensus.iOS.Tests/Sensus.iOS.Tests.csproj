@@ -37,14 +37,16 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchVerbosity></MtouchVerbosity>
+    <MtouchVerbosity>
+    </MtouchVerbosity>
     <CodesignProvision>Sensus Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhone\Release</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodesignKey>iPhone Developer</CodesignKey>
@@ -54,7 +56,8 @@
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchVerbosity></MtouchVerbosity>
+    <MtouchVerbosity>
+    </MtouchVerbosity>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,7 +77,8 @@
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchArch>ARM64</MtouchArch>
     <MtouchHttpClientHandler>NSUrlSessionHandler</MtouchHttpClientHandler>
-    <MtouchVerbosity></MtouchVerbosity>
+    <MtouchVerbosity>
+    </MtouchVerbosity>
     <CodesignProvision>Sensus Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
@@ -348,60 +352,79 @@
   <ItemGroup>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Contents.json</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-1024x1024%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-1024x1024%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%403x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%403x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%403x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%403x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-57x57%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-57x57%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-57x57%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-57x57%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-60x60%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-60x60%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-60x60%403x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-60x60%403x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-72x72%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-72x72%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-72x72%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-72x72%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-76x76%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-76x76%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-76x76%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-76x76%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-App-83.5x83.5%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-App-83.5x83.5%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%401x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%401x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png</Link>
+      <Visible>false</Visible>
     </ImageAsset>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
