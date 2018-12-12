@@ -179,6 +179,8 @@ namespace Sensus.DataStores.Remote
             }
             set
             {
+                bool validValue = false;
+
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     string[] parts = value.Split(':');
@@ -186,7 +188,13 @@ namespace Sensus.DataStores.Remote
                     {
                         _iamAccessKey = parts[0].Trim();
                         _iamSecretKey = parts[1].Trim();
+                        validValue = true;
                     }
+                }
+
+                if (!validValue)
+                {
+                    _iamAccessKey = _iamSecretKey = null;
                 }
             }
         }
