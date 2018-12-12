@@ -561,6 +561,7 @@ namespace Sensus
         private string _pushNotificationsHub;
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
+        private bool _allowProbeDisableOnStartUp;
         private Dictionary<Type, Probe> _typeProbe;
 
         // members for displaying protocol start-up
@@ -1349,6 +1350,25 @@ namespace Sensus
         [EditableListUiProperty("Available Tags:", true, 47, false)]
         public List<string> AvailableTags { get; set; } = new List<string>();
 
+
+        /// <summary>
+        /// Sets wether to allow the user to disable specific protocol probes on start up
+        /// </summary>
+        /// <value>Allow user to disable probes on start up</value>
+        [OnOffUiProperty("Allow Probe Disable on startup:", true, 48)]
+        public bool AllowProbeDisableOnStartUp
+        {
+            get
+            {
+                return _allowProbeDisableOnStartUp;
+            }
+            set
+            {
+                _allowProbeDisableOnStartUp = value;
+            }
+        }
+
+
         /// <summary>
         /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
@@ -1555,6 +1575,7 @@ namespace Sensus
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
+            _allowProbeDisableOnStartUp = false;
             _probes = new List<Probe>();
         }
 
