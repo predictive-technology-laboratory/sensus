@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Xamarin.Forms;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using System.Linq;
-using Sensus.UI.UiProperties;
-using Xamarin;
 using Sensus.Exceptions;
+using Sensus.UI.UiProperties;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
@@ -32,13 +31,7 @@ namespace Sensus.UI.Inputs
         private List<Label> _itemLabels;
         private Label _label;
 
-        public List<object> Items
-        {
-            get
-            {
-                return _items;
-            }
-        }
+        public List<object> Items => _items;
 
         /// <summary>
         /// These are the items that the user will have to select from.
@@ -48,36 +41,24 @@ namespace Sensus.UI.Inputs
         [JsonIgnore]
         public List<string> StringItems
         {
-            get
-            {
-                return _items.Select(item => item.ToString()).ToList();
-            }
+            get => _items.Select(item => item.ToString()).ToList();
             // need set method so that binding can set the list via the EditableListUiProperty
-            set
-            {
-                _items = value.Cast<object>().ToList();
-            }
+            set => _items = value.Cast<object>().ToList();
         }
 
         public string TextBindingPropertyPath
         {
-            get
-            {
-                return _textBindingPropertyPath;
-            }
-            set
-            {
-                _textBindingPropertyPath = value;
-            }
+            get => _textBindingPropertyPath;
+            set => _textBindingPropertyPath = value;
         }
 
-        public override object Value
+        public List<object> SelectedItems
         {
-            get
-            {
-                return _selectedItems;
-            }
+            get => _selectedItems;
+            set => _selectedItems = value;
         }
+
+        public override object Value => _selectedItems;
 
         /// <summary>
         /// Whether or not to allow the user to select multiple items simultaneously.
@@ -86,23 +67,14 @@ namespace Sensus.UI.Inputs
         [OnOffUiProperty(null, true, 11)]
         public bool Multiselect
         {
-            get
-            {
-                return _multiselect;
-            }
-            set
-            {
-                _multiselect = value;
-            }
+            get => _multiselect;
+            set => _multiselect = value;
         }
 
         [JsonIgnore]
         public override bool Enabled
         {
-            get
-            {
-                return _itemLabels.Count == 0 ? true : _itemLabels[0].IsEnabled;
-            }
+            get => _itemLabels.Count == 0 ? true : _itemLabels[0].IsEnabled;
             set
             {
                 foreach (Label itemLabel in _itemLabels)
@@ -112,13 +84,7 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        public override string DefaultName
-        {
-            get
-            {
-                return "Picker (Page)";
-            }
-        }
+        public override string DefaultName => "Picker (Page)";
 
         public ItemPickerPageInput()
         {
@@ -149,14 +115,14 @@ namespace Sensus.UI.Inputs
 
         public override View GetView(int index)
         {
-            if(_items.Count == 0)
+            if (_items.Count == 0)
             {
                 return null;
             }
 
             if (base.GetView(index) == null)
             {
-                _selectedItems.Clear();
+                //_selectedItems.Clear();
                 _itemLabels.Clear();
 
                 StackLayout itemLabelStack = new StackLayout
@@ -179,10 +145,12 @@ namespace Sensus.UI.Inputs
                 {
                     object item = itemList[i];
 
+                    Color defaultBackgroundColor = new Label().BackgroundColor;
                     Label itemLabel = new Label
                     {
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
+                        BackgroundColor = _selectedItems.Contains(item) ? Color.Accent : defaultBackgroundColor,
                         BindingContext = item
 
                         // set the style ID on the view so that we can retrieve it when UI testing
@@ -200,7 +168,7 @@ namespace Sensus.UI.Inputs
                         NumberOfTapsRequired = 1
                     };
 
-                    Color defaultBackgroundColor = itemLabel.BackgroundColor;
+
 
                     tapRecognizer.Tapped += (o, e) =>
                     {

@@ -438,7 +438,7 @@ namespace Sensus
             {
                 return;
             }
-            else if(protocol.State == ProtocolState.Starting)
+            else if (protocol.State == ProtocolState.Starting)
             {
                 await SensusServiceHelper.Get().FlashNotificationAsync("The study \"" + protocol.Name + "\" is starting.");
             }
@@ -538,7 +538,7 @@ namespace Sensus
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _randomTimeAnchor;
-        private ConcurrentObservableCollection<PointOfInterest> _pointsOfInterest;
+        private readonly ConcurrentObservableCollection<PointOfInterest> _pointsOfInterest;
         private string _description;
         private DateTime _startTimestamp;
         private bool _startImmediately;
@@ -580,7 +580,7 @@ namespace Sensus
         [EntryStringUiProperty(null, false, 0, true)]
         public string Id
         {
-            get { return _id; }
+            get => _id;
             set
             {
                 _id = value;
@@ -595,7 +595,7 @@ namespace Sensus
         [EntryStringUiProperty("Name:", true, 1, true)]
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;
@@ -605,19 +605,16 @@ namespace Sensus
 
         public List<Probe> Probes
         {
-            get { return _probes; }
-            set { _probes = value; }
+            get => _probes;
+            set => _probes = value;
         }
 
         [JsonIgnore]
-        public ProtocolState State
-        {
-            get { return _state; }
-        }
+        public ProtocolState State => _state;
 
         public LocalDataStore LocalDataStore
         {
-            get { return _localDataStore; }
+            get => _localDataStore;
             set
             {
                 if (value != _localDataStore)
@@ -635,7 +632,7 @@ namespace Sensus
 
         public RemoteDataStore RemoteDataStore
         {
-            get { return _remoteDataStore; }
+            get => _remoteDataStore;
             set
             {
                 if (value != _remoteDataStore)
@@ -698,38 +695,23 @@ namespace Sensus
 
         public string LockPasswordHash
         {
-            get
-            {
-                return _lockPasswordHash;
-            }
-            set
-            {
-                _lockPasswordHash = value;
-            }
+            get => _lockPasswordHash;
+            set => _lockPasswordHash = value;
         }
 
         public AnonymizedJsonContractResolver JsonAnonymizer
         {
-            get { return _jsonAnonymizer; }
-            set { _jsonAnonymizer = value; }
+            get => _jsonAnonymizer;
+            set => _jsonAnonymizer = value;
         }
 
         public DateTimeOffset RandomTimeAnchor
         {
-            get
-            {
-                return _randomTimeAnchor;
-            }
-            set
-            {
-                _randomTimeAnchor = value;
-            }
+            get => _randomTimeAnchor;
+            set => _randomTimeAnchor = value;
         }
 
-        public ConcurrentObservableCollection<PointOfInterest> PointsOfInterest
-        {
-            get { return _pointsOfInterest; }
-        }
+        public ConcurrentObservableCollection<PointOfInterest> PointsOfInterest => _pointsOfInterest;
 
         /// <summary>
         /// A detailed description of the <see cref="Protocol"/> (e.g., what it does, who it is intended for, etc.).
@@ -738,14 +720,8 @@ namespace Sensus
         [EditorUiProperty(null, true, 15, false)]
         public string Description
         {
-            get
-            {
-                return _description;
-            }
-            set
-            {
-                _description = value;
-            }
+            get => _description;
+            set => _description = value;
         }
 
         /// <summary>
@@ -755,14 +731,8 @@ namespace Sensus
         [OnOffUiProperty("Start Immediately:", true, 16)]
         public bool StartImmediately
         {
-            get
-            {
-                return _startImmediately;
-            }
-            set
-            {
-                _startImmediately = value;
-            }
+            get => _startImmediately;
+            set => _startImmediately = value;
         }
 
         /// <summary>
@@ -773,10 +743,7 @@ namespace Sensus
         [DateUiProperty("Start Date:", true, 17, false)]
         public DateTime StartDate
         {
-            get
-            {
-                return _startTimestamp;
-            }
+            get => _startTimestamp;
             set
             {
                 _startTimestamp = new DateTime(value.Year, value.Month, value.Day, _startTimestamp.Hour, _startTimestamp.Minute, _startTimestamp.Second);
@@ -792,10 +759,7 @@ namespace Sensus
         [TimeUiProperty("Start Time:", true, 18, false)]
         public TimeSpan StartTime
         {
-            get
-            {
-                return _startTimestamp.TimeOfDay;
-            }
+            get => _startTimestamp.TimeOfDay;
             set
             {
                 _startTimestamp = new DateTime(_startTimestamp.Year, _startTimestamp.Month, _startTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
@@ -811,14 +775,8 @@ namespace Sensus
         [OnOffUiProperty("Continue Indefinitely:", true, 19)]
         public bool ContinueIndefinitely
         {
-            get
-            {
-                return _continueIndefinitely;
-            }
-            set
-            {
-                _continueIndefinitely = value;
-            }
+            get => _continueIndefinitely;
+            set => _continueIndefinitely = value;
         }
 
         /// <summary>
@@ -828,14 +786,8 @@ namespace Sensus
         [DateUiProperty("End Date:", true, 20, false)]
         public DateTime EndDate
         {
-            get
-            {
-                return _endTimestamp;
-            }
-            set
-            {
-                _endTimestamp = new DateTime(value.Year, value.Month, value.Day, _endTimestamp.Hour, _endTimestamp.Minute, _endTimestamp.Second);
-            }
+            get => _endTimestamp;
+            set => _endTimestamp = new DateTime(value.Year, value.Month, value.Day, _endTimestamp.Hour, _endTimestamp.Minute, _endTimestamp.Second);
         }
 
         /// <summary>
@@ -845,14 +797,8 @@ namespace Sensus
         [TimeUiProperty("End Time:", true, 21, false)]
         public TimeSpan EndTime
         {
-            get
-            {
-                return _endTimestamp.TimeOfDay;
-            }
-            set
-            {
-                _endTimestamp = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
-            }
+            get => _endTimestamp.TimeOfDay;
+            set => _endTimestamp = new DateTime(_endTimestamp.Year, _endTimestamp.Month, _endTimestamp.Day, value.Hours, value.Minutes, value.Seconds);
         }
 
         /// <summary>
@@ -865,10 +811,7 @@ namespace Sensus
         [EntryIntegerUiProperty("Participation Horizon (Days):", true, 23, true)]
         public int ParticipationHorizonDays
         {
-            get
-            {
-                return _participationHorizonDays;
-            }
+            get => _participationHorizonDays;
             set
             {
                 if (value >= 1)
@@ -879,10 +822,7 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public DateTime ParticipationHorizon
-        {
-            get { return DateTime.Now.AddDays(-_participationHorizonDays); }
-        }
+        public DateTime ParticipationHorizon => DateTime.Now.AddDays(-_participationHorizonDays);
 
         /// <summary>
         /// An email address for the individual who is responsible for handling questions
@@ -892,14 +832,8 @@ namespace Sensus
         [EntryStringUiProperty("Contact Email:", true, 24, false)]
         public string ContactEmail
         {
-            get
-            {
-                return _contactEmail;
-            }
-            set
-            {
-                _contactEmail = value;
-            }
+            get => _contactEmail;
+            set => _contactEmail = value;
         }
 
         /// <summary>
@@ -910,26 +844,14 @@ namespace Sensus
         [OnOffUiProperty(null, true, 25)]
         public bool Groupable
         {
-            get
-            {
-                return _groupable;
-            }
-            set
-            {
-                _groupable = value;
-            }
+            get => _groupable;
+            set => _groupable = value;
         }
 
         public List<Protocol> GroupedProtocols
         {
-            get
-            {
-                return _groupedProtocols;
-            }
-            set
-            {
-                _groupedProtocols = value;
-            }
+            get => _groupedProtocols;
+            set => _groupedProtocols = value;
         }
 
         /// <summary>
@@ -939,10 +861,7 @@ namespace Sensus
         [EntryFloatUiProperty("Reward Threshold:", true, 26, false)]
         public float? RewardThreshold
         {
-            get
-            {
-                return _rewardThreshold;
-            }
+            get => _rewardThreshold;
             set
             {
                 if (value != null)
@@ -991,7 +910,7 @@ namespace Sensus
         [EntryFloatUiProperty("GPS - Desired Accuracy (Meters):", true, 27, true)]
         public float GpsDesiredAccuracyMeters
         {
-            get { return _gpsDesiredAccuracyMeters; }
+            get => _gpsDesiredAccuracyMeters;
             set
             {
                 if (value <= 0)
@@ -1010,7 +929,7 @@ namespace Sensus
         [EntryIntegerUiProperty("GPS - Minimum Time Delay (MS):", true, 28, true)]
         public int GpsMinTimeDelayMS
         {
-            get { return _gpsMinTimeDelayMS; }
+            get => _gpsMinTimeDelayMS;
             set
             {
                 if (value < 0)
@@ -1029,10 +948,7 @@ namespace Sensus
         [EntryFloatUiProperty("GPS - Minimum Distance Delay (Meters):", true, 29, true)]
         public float GpsMinDistanceDelayMeters
         {
-            get
-            {
-                return _gpsMinDistanceDelayMeters;
-            }
+            get => _gpsMinDistanceDelayMeters;
             set
             {
                 if (value < 0)
@@ -1046,14 +962,8 @@ namespace Sensus
 
         public Dictionary<string, string> VariableValue
         {
-            get
-            {
-                return _variableValue;
-            }
-            set
-            {
-                _variableValue = value;
-            }
+            get => _variableValue;
+            set => _variableValue = value;
         }
 
         /// <summary>
@@ -1068,10 +978,7 @@ namespace Sensus
         [JsonIgnore]
         public List<string> VariableValueUiProperty
         {
-            get
-            {
-                return _variableValue.Select(kvp => kvp.Key + ": " + kvp.Value).ToList();
-            }
+            get => _variableValue.Select(kvp => kvp.Key + ": " + kvp.Value).ToList();
             set
             {
                 _variableValue = new Dictionary<string, string>();
@@ -1118,14 +1025,8 @@ namespace Sensus
         /// <value>The participant identifier.</value>
         public string ParticipantId
         {
-            get
-            {
-                return _participantId;
-            }
-            set
-            {
-                _participantId = value;
-            }
+            get => _participantId;
+            set => _participantId = value;
         }
 
         #region iOS-specific protocol properties
@@ -1148,10 +1049,7 @@ namespace Sensus
         [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34, false)]
         public float GpsDeferralDistanceMeters
         {
-            get
-            {
-                return _gpsDeferralDistanceMeters;
-            }
+            get => _gpsDeferralDistanceMeters;
             set
             {
                 if (value < 0)
@@ -1168,7 +1066,7 @@ namespace Sensus
         [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35, false)]
         public float GpsDeferralTimeMinutes
         {
-            get { return _gpsDeferralTimeMinutes; }
+            get => _gpsDeferralTimeMinutes;
             set
             {
                 if (value < 0)
@@ -1259,24 +1157,12 @@ namespace Sensus
         [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37, false)]
         public string AsymmetricEncryptionPublicKey
         {
-            get
-            {
-                return _asymmetricEncryptionPublicKey;
-            }
-            set
-            {
-                _asymmetricEncryptionPublicKey = value?.Trim().Replace("\n", "").Replace(" ", "");
-            }
+            get => _asymmetricEncryptionPublicKey;
+            set => _asymmetricEncryptionPublicKey = value?.Trim().Replace("\n", "").Replace(" ", "");
         }
 
         [JsonIgnore]
-        public AsymmetricEncryption AsymmetricEncryption
-        {
-            get
-            {
-                return new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
-            }
-        }
+        public AsymmetricEncryption AsymmetricEncryption => new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
 
         #endregion
 
@@ -1350,25 +1236,6 @@ namespace Sensus
         [EditableListUiProperty("Available Tags:", true, 47, false)]
         public List<string> AvailableTags { get; set; } = new List<string>();
 
-
-        /// <summary>
-        /// Sets wether to allow the user to disable specific protocol probes on start up
-        /// </summary>
-        /// <value>Allow user to disable probes on start up</value>
-        [OnOffUiProperty("Allow Probe Disable on startup:", true, 48)]
-        public bool AllowProbeDisableOnStartUp
-        {
-            get
-            {
-                return _allowProbeDisableOnStartUp;
-            }
-            set
-            {
-                _allowProbeDisableOnStartUp = value;
-            }
-        }
-
-
         /// <summary>
         /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
@@ -1407,14 +1274,8 @@ namespace Sensus
         [ListUiProperty("Start Confirmation Mode:", true, 48, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
-            get
-            {
-                return _startConfirmationMode;
-            }
-            set
-            {
-                _startConfirmationMode = value;
-            }
+            get => _startConfirmationMode;
+            set => _startConfirmationMode = value;
         }
 
         /// <summary>
@@ -1426,8 +1287,8 @@ namespace Sensus
         [EntryStringUiProperty("Push Notification Hub:", true, 49, false)]
         public string PushNotificationsHub
         {
-            get { return _pushNotificationsHub; }
-            set { _pushNotificationsHub = value; }
+            get => _pushNotificationsHub;
+            set => _pushNotificationsHub = value;
         }
 
         /// <summary>
@@ -1439,8 +1300,8 @@ namespace Sensus
         [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 50, false)]
         public string PushNotificationsSharedAccessSignature
         {
-            get { return _pushNotificationsSharedAccessSignature; }
-            set { _pushNotificationsSharedAccessSignature = value; }
+            get => _pushNotificationsSharedAccessSignature;
+            set => _pushNotificationsSharedAccessSignature = value;
         }
 
         /// <summary>
@@ -1451,6 +1312,19 @@ namespace Sensus
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
+        /// Sets wether to allow the user to disable specific protocol probes on start up
+        /// </summary>
+        /// <value>Allow user to disable probes on start up</value>
+        [OnOffUiProperty("Allow Probe Disable on startup:", true, 52)]
+        public bool AllowProbeDisableOnStartUp
+        {
+            get => _allowProbeDisableOnStartUp;
+            set => _allowProbeDisableOnStartUp = value;
+        }
+
+
+
+        /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 
         /// no need to serialize it. Furthermore, we never want the offset
         /// to be shared.
@@ -1459,26 +1333,14 @@ namespace Sensus
         [JsonIgnore]
         public double GpsLongitudeAnonymizationParticipantOffset
         {
-            get
-            {
-                return _gpsLongitudeAnonymizationParticipantOffset;
-            }
-            set
-            {
-                _gpsLongitudeAnonymizationParticipantOffset = value;
-            }
+            get => _gpsLongitudeAnonymizationParticipantOffset;
+            set => _gpsLongitudeAnonymizationParticipantOffset = value;
         }
 
         public double GpsLongitudeAnonymizationStudyOffset
         {
-            get
-            {
-                return _gpsLongitudeAnonymizationStudyOffset;
-            }
-            set
-            {
-                _gpsLongitudeAnonymizationStudyOffset = value;
-            }
+            get => _gpsLongitudeAnonymizationStudyOffset;
+            set => _gpsLongitudeAnonymizationStudyOffset = value;
         }
 
         [JsonIgnore]
@@ -1543,13 +1405,7 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public string SubCaption
-        {
-            get
-            {
-                return _localDataStore?.CaptionText;
-            }
-        }
+        public string SubCaption => _localDataStore?.CaptionText;
 
         /// <summary>
         /// For JSON deserialization
@@ -2126,32 +1982,46 @@ namespace Sensus
                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
                                           " The following data will be collected:"));
 
-            StringBuilder collectionDescription = new StringBuilder();
-            foreach (Probe probe in _probes.OrderBy(probe => probe.DisplayName))
+            var enabledProbes = _probes.Where(w => w.Enabled && w.StoreData).OrderBy(o => o.DisplayName).ToList();
+            int collectionDescriptionFontSize = 15;
+
+            if (AllowProbeDisableOnStartUp == false)
             {
-                if (probe.Enabled && probe.StoreData)
+                StringBuilder collectionDescription = new StringBuilder();
+                foreach (Probe probe in enabledProbes)
                 {
+
                     string probeCollectionDescription = probe.CollectionDescription;
                     if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
                     {
                         collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probeCollectionDescription);
                     }
                 }
-            }
 
-            LabelOnlyInput collectionDescriptionLabel = null;
-            int collectionDescriptionFontSize = 15;
-            if (collectionDescription.Length == 0)
-            {
-                collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
+                LabelOnlyInput collectionDescriptionLabel = null;
+                if (collectionDescription.Length == 0)
+                {
+                    collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
+                }
+                else
+                {
+                    collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
+                }
+
+                collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
+                inputs.Add(collectionDescriptionLabel);
             }
             else
             {
-                collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
+                ItemPickerPageInput probeSelectionPage = new ItemPickerPageInput("Load the following probes", enabledProbes.Select(s=>s.DisplayName).Cast<object>().ToList())
+                {
+                    DisplayNumber = false,
+                    RandomizeItemOrder = false,
+                    Multiselect = true,
+                    SelectedItems = enabledProbes.Select(s => s.DisplayName).Cast<object>().ToList()
+                };
+                inputs.Add(probeSelectionPage);
             }
-
-            collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
-            inputs.Add(collectionDescriptionLabel);
 
             // describe remote data storage
             if (_remoteDataStore != null)
@@ -2206,6 +2076,26 @@ namespace Sensus
 
             if (completedInputs != null)
             {
+
+                if(AllowProbeDisableOnStartUp == true)
+                {
+                    var l = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault();
+                    var selectedProbeObjs = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault()?.Value as List<object>;
+                    var selectedProbeNames = (selectedProbeObjs?.Select(s => s.ToString())?.ToList() ?? new List<string>());
+                    foreach (var probe in enabledProbes)
+                    {
+                        if(selectedProbeNames.Contains(probe.DisplayName) == false)
+                        {
+                            probe.Enabled = false;
+                        }
+                    }
+                    if (!enabledProbes.Any(probe => probe.Enabled))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("You must select at least one probe to include in this study.  Cannot Start.");
+                        start = false;
+                    }
+                }
+
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
                 {
                     start = true;
