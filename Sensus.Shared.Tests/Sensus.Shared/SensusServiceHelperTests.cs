@@ -54,8 +54,9 @@ namespace Sensus.Tests
         [Fact]
         public async Task RegisteredOneProtocolTest()
         {
-            TestSensusServiceHelper service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            SensusServiceHelper service1 = SensusServiceHelper.Get();
 
             service1.RegisteredProtocols.Clear();
 
@@ -78,8 +79,9 @@ namespace Sensus.Tests
         [Fact]
         public async Task RegisteredTwoProtocolsTest()
         {
-            TestSensusServiceHelper service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            SensusServiceHelper service1 = SensusServiceHelper.Get();
 
             service1.RegisteredProtocols.Clear();
 
@@ -106,8 +108,9 @@ namespace Sensus.Tests
         [Fact]
         public async Task RunningProtocolIdsTest()
         {
-            var service1 = new TestSensusServiceHelper();
-            SensusServiceHelper.Initialize(() => service1);
+            SensusServiceHelper.Initialize(() => new TestSensusServiceHelper());
+
+            SensusServiceHelper service1 = SensusServiceHelper.Get();
 
             await Protocol.CreateAsync("Test");
 

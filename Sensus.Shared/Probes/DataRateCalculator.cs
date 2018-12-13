@@ -140,7 +140,8 @@ namespace Sensus.Probes
                     }
                 }
 
-                // update the most recent timestamp (samples might come out of order)
+                // update the most recent timestamp (samples might come out of order). we use this to
+                // calculate the data rate.
                 if (_mostRecentTimestamp == null)
                 {
                     _mostRecentTimestamp = datum.Timestamp;
@@ -166,7 +167,7 @@ namespace Sensus.Probes
                         // overage always negative and keeping all data.
                         double overagePerSecond = _dataPerSecond.Value - maxSamplesToKeepPerSecond;
 
-                        // if we're not over the limit then keep all future data
+                        // if we're not over the limit then keep all future data until the next sample is complete.
                         if (overagePerSecond <= 0)
                         {
                             _samplingModulus = 1;
