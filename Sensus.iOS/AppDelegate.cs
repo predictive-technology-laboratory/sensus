@@ -406,7 +406,12 @@ namespace Sensus.iOS
             {
                 // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
                 // be on the conservative side and only run for 25 seconds.
-                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(25));
+                TimeSpan processingTimeLimit = TimeSpan.FromSeconds(25);
+                cancellationTokenSource.CancelAfter(processingTimeLimit);
+                cancellationTokenSource.Token.Register(() =>
+                {
+                    SensusServiceHelper.Get().Logger.Log("Cancelled token for remote notification processing due to iOS background time limit:  " + processingTimeLimit, LoggingLevel.Normal, GetType());
+                });
 
                 string protocolId;
                 string id;
@@ -529,7 +534,7 @@ namespace Sensus.iOS
             // we won't call stop until after the service helper has been saved.
             foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
             {
-                if (protocol.Running)
+                if (protocol.State == ProtocolState.Running)
                 {
                     foreach (Probe probe in protocol.Probes)
                     {

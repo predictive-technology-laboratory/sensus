@@ -64,8 +64,7 @@ namespace Sensus.Android.Probes.Communication
 #pragma warning restore 618
                             }
 
-                            DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(message.TimestampMillis);
-                            INCOMING_SMS(this, new SmsDatum(timestamp, message.OriginatingAddress, null, message.MessageBody, false));
+                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false));
                         }
 
                     }

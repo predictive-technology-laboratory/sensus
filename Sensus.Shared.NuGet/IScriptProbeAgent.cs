@@ -56,6 +56,7 @@ namespace Sensus.Probes.User.Scripts
         /// <summary>
         /// Asks the agent to reset itself
         /// </summary>
-        void Reset();
+        /// <param name="sensusServiceHelper">A reference to the service helper, which provides access to the app's core functionality.</param>
+        void Reset(ISensusServiceHelper sensusServiceHelper);
     }
 }

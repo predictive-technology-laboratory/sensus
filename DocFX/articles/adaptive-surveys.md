@@ -24,7 +24,7 @@ this hypothesis.
 ### Implementing and Deploying a Survey Agent Plug-In
 Follow the steps below to implement and deploy a survey agent within your Sensus study.
 
-1. Create a new .NET Standard Library project in Visual Studio. In Visual Studio for Mac, the following image
+1. Create a new Android Class Library project in Visual Studio. In Visual Studio for Mac, the following image
 shows the correct selection:
 
 ![image](/sensus/images/survey-agent-project.png)

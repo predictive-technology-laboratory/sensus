@@ -48,7 +48,7 @@ namespace Sensus
     /// <summary>
     /// Provides platform-independent functionality.
     /// </summary>
-    public abstract class SensusServiceHelper
+    public abstract class SensusServiceHelper : ISensusServiceHelper
     {
         #region static members
         private static SensusServiceHelper SINGLETON;
@@ -74,7 +74,7 @@ namespace Sensus
         /// 
         ///     openssl enc -aes-256-cbc -k secret -P -md sha1
         /// 
-        /// The above was adapted from:  https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html
+        /// The above was adapted from [this](https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html) guide.
         /// 
         /// This is mandatory.
         /// </summary>
@@ -90,11 +90,15 @@ namespace Sensus
         private static readonly string SERIALIZATION_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_service_helper.json");
 
 #if DEBUG || UI_TESTING
-        // test every 30 seconds in debug
+        /// <summary>
+        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// </summary>
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
-        // test every 60 minutes in release
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromMinutes(60);
+        /// <summary>
+        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// </summary>
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(6);
 #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
@@ -302,7 +306,7 @@ namespace Sensus
         private readonly object _updatePushNotificationRegistrationsLocker = new object();
 
         [JsonIgnore]
-        public Logger Logger
+        public ILogger Logger
         {
             get { return _logger; }
         }
@@ -593,11 +597,6 @@ namespace Sensus
 
             lock (_runningProtocolIds)
             {
-                if (_runningProtocolIds.Count == 0)
-                {
-                    scheduleHealthTestCallback = true;
-                }
-
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
@@ -606,80 +605,91 @@ namespace Sensus
                     (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
 #endif
                 }
-            }
 
-            if (scheduleHealthTestCallback)
-            {
-                _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
+                // callback, initialize if needed, and request that the callback be scheduled.
+                if (_healthTestCallback == null)
                 {
-                    // get protocols to test (those that should be running)
-                    List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
+                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
-                        lock (_runningProtocolIds)
+                        // get protocols to test (those that should be running)
+                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
                         {
-                            return _runningProtocolIds.Contains(protocol.Id);
-                        }
-
-                    }).ToList();
-
-                    // test protocols
-                    foreach (Protocol protocolToTest in protocolsToTest)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                        // if we're using an authentication service, check if the desired protocol has changed as indicated by 
-                        // the protocol id returned with credentials.
-                        if (protocolToTest.AuthenticationService != null)
-                        {
-                            try
+                            lock (_runningProtocolIds)
                             {
-                                // get fresh credentials and check the protocol ID
-                                AmazonS3Credentials credentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
+                                return _runningProtocolIds.Contains(protocol.Id);
+                            }
 
-                                if (protocolToTest.Id != credentials.ProtocolId)
+                        }).ToList();
+
+                        // test protocols
+                        foreach (Protocol protocolToTest in protocolsToTest)
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
+                            // the protocol id returned with credentials.
+                            if (protocolToTest.AuthenticationService != null)
+                            {
+                                try
                                 {
-                                    await protocolToTest.StopAsync();
-                                    await protocolToTest.DeleteAsync();
+                                    // get fresh credentials and check the protocol ID
+                                    AmazonS3Credentials credentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
 
-                                    // get the desired protocol and wire it up with the current authentication service
-                                    Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
-                                    desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
-                                    desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
-                                    desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
+                                    if (protocolToTest.Id != credentials.ProtocolId)
+                                    {
+                                        await protocolToTest.StopAsync();
+                                        await protocolToTest.DeleteAsync();
 
-                                    await desiredProtocol.StartAsync();
+                                        // get the desired protocol and wire it up with the current authentication service
+                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                        desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+                                        desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                        desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
+
+                                        await desiredProtocol.StartAsync();
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
                                 }
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
+                                await protocolToTest.TestHealthAsync(false, cancellationToken);
                             }
+                            
+                            // write a heartbeat datum to let the backend know we're alive
+                            protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
                         }
-                        else
+
+                        // test the callback scheduler
+                        SensusContext.Current.CallbackScheduler.TestHealth();
+
+                        // update push notification registrations
+                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
                         {
-                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
                         }
-                    }
 
-                    // test the callback scheduler
-                    SensusContext.Current.CallbackScheduler.TestHealth();
+                        // test the notifier, which checks the push notification requests.
+                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
-                    // update push notification registrations
-                    if (_updatePushNotificationRegistrationsOnNextHealthTest)
-                    {
-                        await UpdatePushNotificationRegistrationsAsync(cancellationToken);
-                    }
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
 
-                    // test the notifier, which checks the push notification requests.
-                    await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+                    scheduleHealthTestCallback = true;
+                }
+            }
 
-                }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
-
+            // schedule the callback outside of the lock, as we're async.
+            if (scheduleHealthTestCallback)
+            {
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
         }
@@ -714,7 +724,7 @@ namespace Sensus
 
         public List<Protocol> GetRunningProtocols()
         {
-            return _registeredProtocols.Where(p => p.Running).ToList();
+            return _registeredProtocols.Where(p => p.State == ProtocolState.Running).ToList();
         }
 
         #endregion
@@ -739,7 +749,9 @@ namespace Sensus
                     }
                     catch (Exception ex)
                     {
-                        _logger.Log("Failed to serialize Sensus service helper:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        string message = "Exception while serializing service helper:  " + ex;
+                        SensusException.Report(message, ex);
+                        _logger.Log(message, LoggingLevel.Normal, GetType());
                     }
 
                     // ensure that all logged messages make it into the file.
@@ -755,9 +767,10 @@ namespace Sensus
         {
             foreach (Protocol registeredProtocol in _registeredProtocols)
             {
-                if (!registeredProtocol.Running && _runningProtocolIds.Contains(registeredProtocol.Id))
+                if (registeredProtocol.State == ProtocolState.Stopped && _runningProtocolIds.Contains(registeredProtocol.Id))
                 {
-                    await registeredProtocol.StartAsync();
+                    // don't present the user with an interface. just start up in the background.
+                    await registeredProtocol.StartAsync(CancellationToken.None);
                 }
             }
         }
@@ -842,6 +855,16 @@ namespace Sensus
             if (modifiedScriptsToRun)
             {
                 await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+
+                // save the app state. if the app crashes we want to keep the surveys around so they can be taken.
+                try
+                {
+                    await SaveAsync();
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while saving app state after adding survey:  " + ex.Message, ex);
+                }
             }
         }
 
@@ -862,7 +885,10 @@ namespace Sensus
                 if (script.Expired)
                 {
                     await RemoveScriptAsync(script, issueNotification);
+
+                    // let the script agent know and store a datum to record the event
                     script.Runner.Probe.Agent?.Observe(script, ScriptState.Expired);
+                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), default(CancellationToken));
                 }
             }
         }
@@ -871,7 +897,9 @@ namespace Sensus
         {
             foreach (Script script in _scriptsToRun)
             {
+                // let the script agent know and store a datum to record the event
                 script.Runner.Probe.Agent?.Observe(script, ScriptState.Deleted);
+                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), default(CancellationToken));
             }
 
             _scriptsToRun.Clear();
@@ -1536,7 +1564,9 @@ namespace Sensus
                             // catch any exceptions, as we might just be lacking an internet connection.
                             try
                             {
-                                if (protocol.Running || protocol.StartIsScheduled)
+                                if (protocol.State == ProtocolState.Starting ||  // the current method is called when starting the protocol. send token immediately.
+                                    protocol.State == ProtocolState.Running ||   // send token if running
+                                    protocol.StartIsScheduled)                   // send token if scheduled to run, so that we receive the PN for startup.
                                 {
                                     atLeastOneProtocolRunning = true;
 
@@ -1601,15 +1631,15 @@ namespace Sensus
         {
             _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            foreach (var protocol in _registeredProtocols.ToArray().Where(p => p.Running))
+            foreach (Protocol runningProtocol in _registeredProtocols.ToArray().Where(p => p.State == ProtocolState.Running))
             {
                 try
                 {
-                    await protocol.StopAsync();
+                    await runningProtocol.StopAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"Failed to stop protocol \"{protocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
+                    _logger.Log($"Failed to stop protocol \"{runningProtocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
                 }
             }
         }

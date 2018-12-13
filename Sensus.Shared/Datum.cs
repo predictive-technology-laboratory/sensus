@@ -138,6 +138,7 @@ namespace Sensus
         /// Whether or not this <see cref="Datum"/> has been run through an anonymizer.
         /// </summary>
         /// <value><c>true</c> if anonymized; otherwise, <c>false</c>.</value>
+        [JsonIgnore]
         public bool Anonymized
         {
             get

@@ -75,7 +75,7 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 _currentDatum = value;
-                CaptionChanged();
+                FireCaptionChanged();
 
                 // update the triggering datum on all inputs
                 foreach (InputGroup inputGroup in InputGroups)
@@ -98,10 +98,15 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 _submitting = value;
-                CaptionChanged();
+                FireCaptionChanged();
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:Sensus.Probes.User.Scripts.Script"/> is valid. A valid <see cref="Script"/> is
+        /// one in which each <see cref="InputGroup"/> is <see cref="InputGroup.Valid"/>.
+        /// </summary>
+        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
         [JsonIgnore]
         public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
 
@@ -173,7 +178,7 @@ namespace Sensus.Probes.User.Scripts
             Runner = runner;
         }
 
-        private void CaptionChanged()
+        private void FireCaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
         }

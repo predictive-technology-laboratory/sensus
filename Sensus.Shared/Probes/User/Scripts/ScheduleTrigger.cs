@@ -105,13 +105,13 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Gets trigger times relative to a given reference, starting on a particular date.
+        /// Gets trigger times relative to a given reference, starting on a particular date and having a maximum age until
+        /// expiration.
         /// </summary>
         /// <returns>Trigger times.</returns>
-        /// <param name="reference">The reference time, from which the next time should be computed.</param>
-        /// <param name="startDate">The date on which the scheduled triggers should start.</param>
+        /// <param name="startDate">The date on which the scheduled triggers should start. Only the year, month, and day elements will be considered.</param>
         /// <param name="maxAge">Maximum age of the triggers, during which they should be valid.</param>
-        public List<ScriptTriggerTime> GetTriggerTimes(DateTime reference, DateTime startDate, TimeSpan? maxAge = null)
+        public List<ScriptTriggerTime> GetTriggerTimes(DateTime startDate, TimeSpan? maxAge = null)
         {
             lock (_windows)
             {
@@ -160,7 +160,7 @@ namespace Sensus.Probes.User.Scripts
 
                         if (scheduleWindowForCurrentDate)
                         {
-                            ScriptTriggerTime triggerTime = window.GetNextTriggerTime(reference, triggerDate, WindowExpiration, maxAge);
+                            ScriptTriggerTime triggerTime = window.GetNextTriggerTime(triggerDate, WindowExpiration, maxAge);
                             triggerTimes.Add(triggerTime);
                         }
                     }

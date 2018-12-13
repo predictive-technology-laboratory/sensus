@@ -265,7 +265,13 @@ namespace Sensus.Callbacks
 
         private async Task RequestPushNotificationAsync(ScheduledCallback callback)
         {
+            // push notification requests for scheduled callbacks do not make sense on android, as the callback will reliably 
+            // come back to the app through the alarm system.
+#if __IOS__
             await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+#else
+            await Task.CompletedTask;
+#endif
         }
 
         public void TestHealth()

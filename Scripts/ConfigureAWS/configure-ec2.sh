@@ -118,7 +118,7 @@ ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.c
 sed "s/BUCKET/$bucket/" push-notification-crontab > tmp
 sed "s/NAMESPACE/$5/" tmp > tmp2
 sed "s/HUB/$6/" tmp2 > tmp
-sed "s/KEY/$7/" tmp > tmp2
+sed "s#KEY#$7#" tmp > tmp2
 mv tmp2 tmp
 scp -i $pemFileName tmp ec2-user@$publicIP:~/push-notification-crontab
 ssh -i $pemFileName ec2-user@$publicIP "crontab push-notification-crontab"

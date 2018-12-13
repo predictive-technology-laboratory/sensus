@@ -30,7 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />
@@ -160,7 +159,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptRunDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptStateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\Trigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerValueCondition.cs" />
@@ -264,6 +263,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEnvelopeEncryptor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolStartPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

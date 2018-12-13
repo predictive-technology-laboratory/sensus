@@ -15,6 +15,13 @@
                 "s3:GetObject"
             ],
             "Resource": "arn:aws:s3:::bucketName/*ParticipationRewardDatum/*"
+        },
+	{
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": "arn:aws:s3:::bucketName/adaptive-ema-policies/*"
         }
     ]
 }

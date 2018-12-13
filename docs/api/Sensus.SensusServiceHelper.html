@@ -93,11 +93,15 @@
       <div class="level2"><a class="xref" href="Sensus.Android.AndroidSensusServiceHelper.html">AndroidSensusServiceHelper</a></div>
       <div class="level2"><a class="xref" href="Sensus.iOS.iOSSensusServiceHelper.html">iOSSensusServiceHelper</a></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a></div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_SensusServiceHelper_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class SensusServiceHelper : Object</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class SensusServiceHelper : Object, ISensusServiceHelper</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -197,7 +201,7 @@ to the App Center.</p>
   <h4 id="Sensus_SensusServiceHelper_ENCRYPTION_KEY" data-uid="Sensus.SensusServiceHelper.ENCRYPTION_KEY">ENCRYPTION_KEY</h4>
   <div class="markdown level1 summary"><p>The 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Used to secure protocols for distribution. Can be generated with the following command:</p>
 <p>openssl enc -aes-256-cbc -k secret -P -md sha1</p>
-<p>The above was adapted from:  <a href="https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html">https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html</a></p>
+<p>The above was adapted from <a href="https://www.ibm.com/support/knowledgecenter/SSLVY3_9.7.0/com.ibm.einstall.doc/topics/t_einstall_GenerateAESkey.html">this</a> guide.</p>
 <p>This is mandatory.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -223,7 +227,8 @@ to the App Center.</p>
   
   
   <h4 id="Sensus_SensusServiceHelper_HEALTH_TEST_DELAY" data-uid="Sensus.SensusServiceHelper.HEALTH_TEST_DELAY">HEALTH_TEST_DELAY</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -625,7 +630,7 @@ to the App Center.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Logger Logger { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ILogger Logger { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -637,7 +642,7 @@ to the App Center.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Logger.html">Logger</a></td>
+        <td><a class="xref" href="Sensus.ILogger.html">ILogger</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2838,6 +2843,10 @@ decide which probes to enable when enabling all probes.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a>
+  </div>
 </article>
           </div>
           
