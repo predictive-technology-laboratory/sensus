@@ -17,6 +17,7 @@ using System.IO;
 using Xunit;
 using Sensus.DataStores;
 using System.Linq;
+using System.IO.Compression;
 
 namespace Sensus.Tests.DataStores
 {
@@ -34,7 +35,7 @@ namespace Sensus.Tests.DataStores
                 new Random().NextBytes(bytes);
 
                 MemoryStream compressedStream = new MemoryStream();
-                compressor.Compress(bytes, compressedStream);
+                compressor.Compress(bytes, compressedStream, CompressionLevel.Optimal);
                 compressedStream.Position = 0;
 
                 byte[] decompressedBytes = compressor.Decompress(compressedStream);

@@ -32,11 +32,11 @@ namespace Sensus.DataStores
             _method = method;
         }
 
-        public void Compress(byte[] bytesToCompress, Stream destinationStream)
+        public void Compress(byte[] bytesToCompress, Stream destinationStream, CompressionLevel compressionLevel)
         {
             if (_method == CompressionMethod.GZip)
             {
-                using (GZipStream zip = new GZipStream(destinationStream, CompressionMode.Compress, true))
+                using (GZipStream zip = new GZipStream(destinationStream, compressionLevel, true))
                 {
                     zip.Write(bytesToCompress, 0, bytesToCompress.Length);
                     zip.Flush();

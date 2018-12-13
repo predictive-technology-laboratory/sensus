@@ -341,16 +341,7 @@ namespace Sensus.DataStores.Local
                     try
                     {
                         _currentPath = Path.Combine(StorageDirectory, Guid.NewGuid().ToString());
-                        Stream file = new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write);
-
-                        // add gzip stream if doing compression
-                        if (_compressionLevel != CompressionLevel.NoCompression)
-                        {
-                            file = new GZipStream(file, _compressionLevel, false);
-                        }
-
-                        // use buffering for compression and runtime performance
-                        _currentFile = new BufferedStream(file, _bufferSizeBytes);
+                        _currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _bufferSizeBytes);
                         _dataWrittenToCurrentFile = 0;
                         _filesOpened++;
                     }
@@ -798,11 +789,18 @@ namespace Sensus.DataStores.Local
                         {
                             try
                             {
+                                byte[] unpromotedBytes = File.ReadAllBytes(unpromotedPath);
+
                                 string promotedPath = unpromotedPath + JSON_FILE_EXTENSION;
 
                                 if (_compressionLevel != CompressionLevel.NoCompression)
                                 {
                                     promotedPath += GZIP_FILE_EXTENSION;
+
+                                    Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
+                                    MemoryStream compressedStream = new MemoryStream();
+                                    compressor.Compress(unpromotedBytes, compressedStream, _compressionLevel);
+                                    unpromotedBytes = compressedStream.ToArray();
                                 }
 
                                 if (_encrypt)
@@ -817,7 +815,7 @@ namespace Sensus.DataStores.Local
 
                                     using (FileStream promotedFile = new FileStream(promotedPath, FileMode.CreateNew, FileAccess.Write))
                                     {
-                                        await Protocol.EnvelopeEncryptor.EnvelopeAsync(File.ReadAllBytes(unpromotedPath), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedFile, cancellationToken);
+                                        await Protocol.EnvelopeEncryptor.EnvelopeAsync(unpromotedBytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedFile, cancellationToken);
                                     }
                                 }
                                 else
@@ -828,10 +826,7 @@ namespace Sensus.DataStores.Local
                                         File.Delete(promotedPath);
                                     }
 
-                                    // we were previously using File.Move, but we were getting many sharing violation errors
-                                    // when doing so. looks like some folks have seen the same problem, and one person fixed 
-                                    // the issue by using a copy followed by delete:  https://forums.xamarin.com/discussion/42145/android-sharing-violation-on-file-rename
-                                    File.Copy(unpromotedPath, promotedPath);
+                                    File.WriteAllBytes(promotedPath, unpromotedBytes);
                                 }
 
                                 // file has been promoted. delete the file and remove it from the list.
