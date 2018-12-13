@@ -18,7 +18,7 @@ using Sensus.Exceptions;
 namespace Sensus.Probes
 {
     /// <summary>
-    /// A memoryless data rate calculator.
+    /// A memoryless data rate calculator and rate limiter.
     /// </summary>
     public class DataRateCalculator
     {
@@ -44,7 +44,8 @@ namespace Sensus.Probes
         private readonly long _originalSampleSize;
         private readonly double? _maxSamplesToKeepPerSecond;
         private DateTimeOffset? _sampleStartTimestamp;
-        private long _sampleDataCount;
+        private long _sampleCount;
+        private long _totalCount;
         private DateTimeOffset? _mostRecentTimestamp;
         private double? _dataPerSecond;
         private long _samplingModulus;
@@ -79,7 +80,8 @@ namespace Sensus.Probes
                 _sampleStartTimestamp = startTimestamp ?? DateTimeOffset.UtcNow;
 
                 _sampleSize = _originalSampleSize;
-                _sampleDataCount = 0;
+                _sampleCount = 0;
+                _totalCount = 0;
                 _mostRecentTimestamp = null;
                 _dataPerSecond = null;
 
@@ -118,8 +120,14 @@ namespace Sensus.Probes
                     return SamplingAction.Keep;
                 }
 
-                // the datum applies to the current sample. update the count.
-                _sampleDataCount++;
+                // the datum applies to the current sample. update the counts. the total count is used to 
+                // track the data indices, and the sample count is used to track progress toward gathering
+                // a new full sample from which to calculate the data rate. we keep separate counts, as
+                // a full sample triggers recalculation of the sampling modulus and match action, and this
+                // recalculation should not reset the data index. previously, we only kept a single index
+                // and lost data when the data index was reset.
+                _sampleCount++;
+                _totalCount++;
 
                 // if no maximum is specified, use the maximum possible.
                 double maxSamplesToKeepPerSecond = _maxSamplesToKeepPerSecond.GetValueOrDefault(double.MaxValue);
@@ -131,7 +139,7 @@ namespace Sensus.Probes
                 SamplingAction samplingAction = SamplingAction.Drop;
                 if (maxSamplesToKeepPerSecond > DATA_RATE_EPSILON)
                 {
-                    bool isModulusMatch = (_sampleDataCount % _samplingModulus) == 0;
+                    bool isModulusMatch = (_totalCount % _samplingModulus) == 0;
 
                     if ((isModulusMatch && _samplingModulusMatchAction == SamplingAction.Keep) ||
                         (!isModulusMatch && _samplingModulusMatchAction == SamplingAction.Drop))
@@ -152,10 +160,10 @@ namespace Sensus.Probes
                 }
 
                 // the sample is complete. update data per second and sampling parameters.
-                if (_sampleDataCount >= _sampleSize)
+                if (_sampleCount >= _sampleSize)
                 {
                     // recalculate data per second based on current count and most recent timestamp
-                    _dataPerSecond = _sampleDataCount / (_mostRecentTimestamp.Value - _sampleStartTimestamp.Value).TotalSeconds;
+                    _dataPerSecond = _sampleCount / (_mostRecentTimestamp.Value - _sampleStartTimestamp.Value).TotalSeconds;
 
                     #region recalculate the sampling modulus/action for the new sampling rate
                     // in theory, the following code should work fine if a data rate of 0. however, the sampling
@@ -214,7 +222,7 @@ namespace Sensus.Probes
                     _sampleSize = Math.Max(_originalSampleSize, _samplingModulus);
 
                     // start a new sample from the most recent timestamp
-                    _sampleDataCount = 0;
+                    _sampleCount = 0;
                     _sampleStartTimestamp = _mostRecentTimestamp.Value;
                 }
 
