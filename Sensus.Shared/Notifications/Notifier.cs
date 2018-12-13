@@ -197,7 +197,7 @@ namespace Sensus.Notifications
                 {
                     SensusServiceHelper.Get().Logger.Log("Push notification targets protocol that has not started but is scheduled to do so. Allowing.", LoggingLevel.Normal, GetType());
                 }
-                // the protocol should be running but is not. this can happen if the app dies while 
+                 // the protocol should be running but is not. this can happen if the app dies while 
                 // the protocol is running (e.g., due to system killing it or an exception) and 
                 // is subsequently restarted (e.g., due to resource pressure alleviation or the 
                 // arrival of a push notification). attempt to start the protocol.
