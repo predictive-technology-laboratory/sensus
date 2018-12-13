@@ -88,7 +88,7 @@ namespace Sensus.Tests.DataStores.Local
             await WriteLocalDataStoreAsync(data, CompressionLevel.NoCompression, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
-                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
+                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.CurrentPath);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
@@ -107,7 +107,7 @@ namespace Sensus.Tests.DataStores.Local
             await WriteLocalDataStoreAsync(data, CompressionLevel.Fastest, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
-                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
+                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.CurrentPath);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
@@ -126,7 +126,7 @@ namespace Sensus.Tests.DataStores.Local
             await WriteLocalDataStoreAsync(data, CompressionLevel.Optimal, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
-                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
+                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.CurrentPath);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
@@ -250,7 +250,7 @@ namespace Sensus.Tests.DataStores.Local
 
             // write the tar file
             string tarPath = Path.Combine(localDataStore.Protocol.StorageDirectory, Guid.NewGuid().ToString());
-            localDataStore.CreateTarFromLocalData(tarPath);
+            await localDataStore.CreateTarFromLocalDataAsync(tarPath);
 
             // untar
             FileStream tarFile = new FileStream(tarPath, FileMode.Open, FileAccess.Read);
@@ -329,7 +329,7 @@ namespace Sensus.Tests.DataStores.Local
             {
                 await localDataStore.StartAsync();
                 WriteData(data, localDataStore, postWriteAction);
-                string path = localDataStore.Path + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
+                string path = localDataStore.CurrentPath + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
                 paths.Add(path);
                 await localDataStore.StopAsync();
                 Assert.True(File.Exists(path));

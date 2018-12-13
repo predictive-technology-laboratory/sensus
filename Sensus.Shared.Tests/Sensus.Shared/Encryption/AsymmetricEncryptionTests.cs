@@ -19,6 +19,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Sensus.Tests.Encryption
 {
@@ -64,7 +66,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, _privateKey);
 
-            Assert.Equal("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")));
+            Assert.Equal("aw3lrifos83fusoi3fjsofisjfo", encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo", Encoding.UTF8), Encoding.UTF8));
         }
 
         [Fact]
@@ -78,7 +80,7 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(null, _privateKey);
 
-            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo"); });
+            Assert.Throws(typeof(CryptographicException), () => { encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo", Encoding.UTF8); });
         }
 
         [Fact]
@@ -86,21 +88,21 @@ namespace Sensus.Tests.Encryption
         {
             var encryption = new AsymmetricEncryption(_publicKey, null);
 
-            Assert.Throws(typeof(CryptographicException), () => { encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo")); });
+            Assert.Throws(typeof(CryptographicException), () => { encryption.DecryptToString(encryption.Encrypt("aw3lrifos83fusoi3fjsofisjfo", Encoding.UTF8), Encoding.UTF8); });
         }
 
         [Fact]
-        public void SymmetricEncryptionEqualsTest()
+        public async Task SymmetricEncryptionEqualsTest()
         {
             string message = "aw3lrifos83fusoi3fjsofisjfo";
-            byte[] messageBytes = Encoding.Unicode.GetBytes(message);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
 
             var asymmetricEncryption = new AsymmetricEncryption(_publicKey, _privateKey);
             string path = Path.GetTempFileName();
-            string outputPath = Path.GetTempFileName();
-            asymmetricEncryption.EncryptSymmetrically(messageBytes, 256, 128, outputPath);
+            MemoryStream encryptedStream = new MemoryStream();
+            await asymmetricEncryption.EnvelopeAsync(messageBytes, 256, 128, encryptedStream, CancellationToken.None);
 
-            byte[] encryptedBytes = File.ReadAllBytes(outputPath);
+            byte[] encryptedBytes = encryptedStream.ToArray();
 
             int keyLen = BitConverter.ToInt32(encryptedBytes.Take(4).ToArray(), 0);
             byte[] key = encryptedBytes.Skip(4).Take(keyLen).ToArray();
@@ -114,7 +116,7 @@ namespace Sensus.Tests.Encryption
             byte[] encryptedMessageBytes = encryptedBytes.Skip(4 + keyLen + 4 + ivLen).ToArray();
 
             SymmetricEncryption symmetricEncryption = new SymmetricEncryption(key, iv);
-            string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes); 
+            string decryptedMessage = symmetricEncryption.DecryptToString(encryptedMessageBytes, Encoding.UTF8); 
             Assert.Equal(message, decryptedMessage);
         }
     }

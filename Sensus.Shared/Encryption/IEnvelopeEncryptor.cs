@@ -12,31 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Probes.Movement
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Sensus.Encryption
 {
-    /// <summary>
-    /// Confidence of the inferred activity. Note that, on Android, only <see cref="NotAvailable"/> will be reported.
-    /// </summary>
-    public enum ActivityConfidence
+    public interface IEnvelopeEncryptor
     {
-        /// <summary>
-        /// Confidence is not available.
-        /// </summary>
-        NotAvailable,
-
-        /// <summary>
-        /// Low confidence.
-        /// </summary>
-        Low,
-
-        /// <summary>
-        /// Medium confidence.
-        /// </summary>
-        Medium,
-
-        /// <summary>
-        /// High confidence.
-        /// </summary>
-        High
+        Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken);
     }
 }

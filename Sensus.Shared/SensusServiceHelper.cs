@@ -41,6 +41,7 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
+using Sensus.Authentication;
 
 namespace Sensus
 {
@@ -165,7 +166,7 @@ namespace Sensus
                     throw exceptionToReport;
                 }
 
-                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + (deserializeException?.Message ?? "No exception"), LoggingLevel.Normal, SINGLETON.GetType());
                 SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
             }
         }
@@ -188,7 +189,8 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes);
+                    // once upon a time, we made the poor decision to encode the helper as unicode (UTF-16). can't switch to UTF-8 now...
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes, Encoding.Unicode);
                 }
                 catch (Exception exception)
                 {
@@ -262,9 +264,20 @@ namespace Sensus
             return directorySizeMB;
         }
 
-        public static double GetFileSizeMB(string path)
+        public static double GetFileSizeMB(params string[] paths)
         {
-            return new FileInfo(path).Length / Math.Pow(1024d, 2);
+            return paths.Sum(path =>
+            {
+                // files have a habit of racing to deletion...
+                try
+                {
+                    return new FileInfo(path).Length / Math.Pow(1024d, 2);
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            });
         }
 
         /// <remarks>
@@ -619,8 +632,39 @@ namespace Sensus
 
                             _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
-                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
+                            // the protocol id returned with credentials.
+                            if (protocolToTest.AuthenticationService != null)
+                            {
+                                try
+                                {
+                                    // get fresh credentials and check the protocol ID
+                                    AmazonS3Credentials credentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
 
+                                    if (protocolToTest.Id != credentials.ProtocolId)
+                                    {
+                                        await protocolToTest.StopAsync();
+                                        await protocolToTest.DeleteAsync();
+
+                                        // get the desired protocol and wire it up with the current authentication service
+                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                        desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+                                        desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                        desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
+
+                                        await desiredProtocol.StartAsync(cancellationToken);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
+                                }
+                            }
+                            else
+                            {
+                                await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            }
+                            
                             // write a heartbeat datum to let the backend know we're alive
                             protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
                         }
@@ -696,7 +740,9 @@ namespace Sensus
                     try
                     {
                         string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
+
+                        // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
                         File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
                         _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
@@ -969,16 +1015,16 @@ namespace Sensus
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    resultCompletionSource.TrySetResult(null);
-
                     await closeScannerPageAsync();
                 };
+
+                string result = null;
 
                 barcodeScannerPage.OnScanResult += async r =>
                 {
                     if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
                     {
-                        resultCompletionSource.TrySetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
+                        result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
 
                         await closeScannerPageAsync();
                     }
@@ -986,9 +1032,7 @@ namespace Sensus
 
                 barcodeScannerPage.Disappearing += (sender, e) =>
                 {
-                    // use TrySetResult to account for the cases where the cancel button was pressed or 
-                    // we scanned a barcode. if either of these happens the result will already be set.
-                    resultCompletionSource.TrySetResult(null);
+                    resultCompletionSource.TrySetResult(result);
                 };
 
                 await navigation.PushModalAsync(barcodeScannerPage);

@@ -28,6 +28,7 @@ using Plugin.Clipboard;
 using Newtonsoft.Json;
 using Sensus.Encryption;
 using System.IO;
+using System.Text;
 
 namespace Sensus.UI
 {
@@ -277,7 +278,7 @@ namespace Sensus.UI
                     {
                         string protocolJSON = JsonConvert.SerializeObject(_protocol, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
                         SymmetricEncryption encryptor = new SymmetricEncryption(key);
-                        byte[] encryptedBytes = encryptor.Encrypt(protocolJSON);
+                        byte[] encryptedBytes = encryptor.Encrypt(protocolJSON, Encoding.Unicode);  // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
                         string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
                         File.WriteAllBytes(sharePath, encryptedBytes);
                         await SensusServiceHelper.Get().ShareFileAsync(sharePath, "Sensus Protocol:  " + _protocol.Name, "application/json");

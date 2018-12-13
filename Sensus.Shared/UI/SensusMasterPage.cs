@@ -58,63 +58,52 @@ namespace Sensus.UI
 
             SensusDetailPageItem accountItem = new SensusDetailPageItem
             {
-                Title = "Log In",
+                Title = "Authenticate",
                 IconSource = "account.png"
             };
 
             accountItem.Action = () =>
             {
-                if (accountItem.Title == "Log Out")
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    SensusContext.Current.IamRegion = null;
-                    SensusContext.Current.IamAccessKey = null;
-                    SensusContext.Current.IamAccessKeySecret = null;
-                    accountItem.Title = "Log In";
-                }
-                else
-                {
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
+
+                    if (input == null)
                     {
-                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Log In", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
+                        return;
+                    }
 
-                        if (input == null)
+                    string error = null;
+
+                    string credentials = input.Value?.ToString();
+                    if (string.IsNullOrWhiteSpace(credentials))
+                    {
+                        error = "Empty credentials barcode.";
+                    }
+                    else
+                    {
+                        string[] parts = credentials.Split(':');
+                        if (parts.Length == 3)
                         {
-                            return;
-                        }
-
-                        string error = null;
-
-                        string credentials = input.Value?.ToString();
-                        if (string.IsNullOrWhiteSpace(credentials))
-                        {
-                            error = "Empty credentials barcode.";
+                            SensusContext.Current.IamRegion = parts[0];
+                            SensusContext.Current.IamAccessKey = parts[1];
+                            SensusContext.Current.IamAccessKeySecret = parts[2];
                         }
                         else
                         {
-                            string[] parts = credentials.Split(':');
-                            if (parts.Length == 3)
-                            {
-                                SensusContext.Current.IamRegion = parts[0];
-                                SensusContext.Current.IamAccessKey = parts[1];
-                                SensusContext.Current.IamAccessKeySecret = parts[2];
-                            }
-                            else
-                            {
-                                error = "Invalid credentials barcode.";
-                            }
+                            error = "Invalid credentials barcode.";
                         }
+                    }
 
-                        if (error == null)
-                        {
-                            accountItem.Title = "Log Out";
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Logged in.");
-                        }
-                        else
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                        }
-                    });
-                }
+                    if (error == null)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Successfully authenticated.");
+                    }
+                    else
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync(error);
+                    }
+                });
             };
 
             detailPageItems.Add(accountItem);

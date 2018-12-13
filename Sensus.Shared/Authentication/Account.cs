@@ -12,31 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Probes.Movement
+using Newtonsoft.Json;
+
+namespace Sensus.Authentication
 {
-    /// <summary>
-    /// Confidence of the inferred activity. Note that, on Android, only <see cref="NotAvailable"/> will be reported.
-    /// </summary>
-    public enum ActivityConfidence
+    public class Account
     {
         /// <summary>
-        /// Confidence is not available.
+        /// Gets or sets the participant identifier.
         /// </summary>
-        NotAvailable,
+        /// <value>The participant identifier.</value>
+        [JsonProperty(PropertyName = "participantId")]
+        public string ParticipantId { get; set; }
 
         /// <summary>
-        /// Low confidence.
+        /// Gets or sets the password.
         /// </summary>
-        Low,
-
-        /// <summary>
-        /// Medium confidence.
-        /// </summary>
-        Medium,
-
-        /// <summary>
-        /// High confidence.
-        /// </summary>
-        High
+        /// <value>The password.</value>
+        [JsonProperty(PropertyName = "password")]
+        public string Password { get; set; }
     }
 }
