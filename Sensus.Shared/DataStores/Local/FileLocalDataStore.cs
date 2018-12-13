@@ -807,29 +807,17 @@ namespace Sensus.DataStores.Local
                                 {
                                     promotedPath += ENCRYPTED_FILE_EXTENSION;
 
-                                    // the target promoted path should not currently exist. if it does, then delete it since we're about to write to it.
-                                    if (File.Exists(promotedPath))
-                                    {
-                                        File.Delete(promotedPath);
-                                    }
-
-                                    using (FileStream promotedFile = new FileStream(promotedPath, FileMode.CreateNew, FileAccess.Write))
+                                    using (FileStream promotedFile = new FileStream(promotedPath, FileMode.Create, FileAccess.Write))
                                     {
                                         await Protocol.EnvelopeEncryptor.EnvelopeAsync(unpromotedBytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedFile, cancellationToken);
                                     }
                                 }
                                 else
                                 {
-                                    // the target promoted path should not currently exist. if it does, then delete it since we're about to copy the current file to it.
-                                    if (File.Exists(promotedPath))
-                                    {
-                                        File.Delete(promotedPath);
-                                    }
-
                                     File.WriteAllBytes(promotedPath, unpromotedBytes);
                                 }
 
-                                // file has been promoted. delete the file and remove it from the list.
+                                // file has been promoted. delete the unpromoted file and remove it from the list.
                                 lock (_unpromotedPaths)
                                 {
                                     File.Delete(unpromotedPath);
