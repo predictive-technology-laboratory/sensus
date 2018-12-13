@@ -247,6 +247,42 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ToString
   fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ToString
   nameWithType: ExampleRandomScriptProbeAgent.ToString
+- uid: ExampleScriptProbeAgent.Resource
+  name: Resource
+  href: api/ExampleScriptProbeAgent.Resource.html
+  commentId: T:ExampleScriptProbeAgent.Resource
+  fullName: ExampleScriptProbeAgent.Resource
+  nameWithType: Resource
+- uid: ExampleScriptProbeAgent.Resource.#ctor
+  name: Resource()
+  href: api/ExampleScriptProbeAgent.Resource.html#ExampleScriptProbeAgent_Resource__ctor
+  commentId: M:ExampleScriptProbeAgent.Resource.#ctor
+  fullName: ExampleScriptProbeAgent.Resource.Resource()
+  nameWithType: Resource.Resource()
+- uid: ExampleScriptProbeAgent.Resource.#ctor*
+  name: Resource
+  href: api/ExampleScriptProbeAgent.Resource.html#ExampleScriptProbeAgent_Resource__ctor_
+  commentId: Overload:ExampleScriptProbeAgent.Resource.#ctor
+  fullName: ExampleScriptProbeAgent.Resource.Resource
+  nameWithType: Resource.Resource
+- uid: ExampleScriptProbeAgent.Resource.Attribute
+  name: Resource.Attribute
+  href: api/ExampleScriptProbeAgent.Resource.Attribute.html
+  commentId: T:ExampleScriptProbeAgent.Resource.Attribute
+  fullName: ExampleScriptProbeAgent.Resource.Attribute
+  nameWithType: Resource.Attribute
+- uid: ExampleScriptProbeAgent.Resource.String
+  name: Resource.String
+  href: api/ExampleScriptProbeAgent.Resource.String.html
+  commentId: T:ExampleScriptProbeAgent.Resource.String
+  fullName: ExampleScriptProbeAgent.Resource.String
+  nameWithType: Resource.String
+- uid: ExampleScriptProbeAgent.Resource.String.library_name
+  name: library_name
+  href: api/ExampleScriptProbeAgent.Resource.String.html#ExampleScriptProbeAgent_Resource_String_library_name
+  commentId: F:ExampleScriptProbeAgent.Resource.String.library_name
+  fullName: ExampleScriptProbeAgent.Resource.String.library_name
+  nameWithType: Resource.String.library_name
 - uid: github
   name: Configuring GitHub
   href: articles/github.html

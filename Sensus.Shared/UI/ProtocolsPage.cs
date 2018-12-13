@@ -529,7 +529,7 @@ namespace Sensus.UI
             ToolbarItems.Add(new ToolbarItem("Log", null, async () =>
             {
                 Logger logger = SensusServiceHelper.Get().Logger as Logger;
-                await Navigation.PushAsync(new ViewTextLinesPage("Log", logger.Read(200, true), logger.Clear));
+                await Navigation.PushAsync(new ViewTextLinesPage("Log", logger.Read(500, true), logger.Clear));
 
             }, ToolbarItemOrder.Secondary));
 
@@ -540,7 +540,7 @@ namespace Sensus.UI
                 {
                     await SensusServiceHelper.Get().StopProtocolsAsync();
 
-                    (SensusServiceHelper.Get() as Android.AndroidSensusServiceHelper)?.StopAndroidSensusService();
+                    (SensusServiceHelper.Get() as AndroidSensusServiceHelper)?.StopAndroidSensusService();
                 }
 
             }, ToolbarItemOrder.Secondary));
