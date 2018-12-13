@@ -87,7 +87,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected static async Task ConnectClientAsync(CancellationToken cancellationToken = CancellationToken.None)
+        protected static async Task ConnectClientAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
             {

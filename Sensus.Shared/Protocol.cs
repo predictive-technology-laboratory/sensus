@@ -1402,6 +1402,7 @@ namespace Sensus
         /// <value>The management service.</value>
         public AuthenticationService AuthenticationService { get; set; }
 
+        /// <summary>
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
