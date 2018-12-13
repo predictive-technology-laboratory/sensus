@@ -2077,17 +2077,6 @@ namespace Sensus
 
             if (completedInputs != null)
             {
-                var selectedProbeObjs = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault()?.Value as List<object>;
-                _probesSelectedOnStartUp = selectedProbeObjs?.Select(s => s.ToString())?.ToList() ?? new List<string>();
-                if (AllowProbeDisableOnStartUp == true)
-                {
-                    if (selectedProbeObjs.Count == 0)
-                    {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("You must select at least one probe to include in this study.  Cannot Start.");
-                        start = false;
-                    }
-                }
-                enabledProbes.ForEach(e => e.Selected = _probesSelectedOnStartUp == null || _probesSelectedOnStartUp.Contains(e.DisplayName));
 
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
                 {
@@ -2142,6 +2131,19 @@ namespace Sensus
                         start = true;
                     }
                 }
+
+                var selectedProbeObjs = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault()?.Value as List<object>;
+                _probesSelectedOnStartUp = selectedProbeObjs?.Select(s => s.ToString())?.ToList();
+                if (AllowProbeDisableOnStartUp == true)
+                {
+                    if (selectedProbeObjs.Count == 0)
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("You must select at least one probe to include in this study.  Cannot Start.");
+                        start = false;
+                    }
+                }
+                enabledProbes.ForEach(e => e.Selected = _probesSelectedOnStartUp == null || _probesSelectedOnStartUp.Contains(e.DisplayName));
+
             }
 
             if (start)
