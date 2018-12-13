@@ -628,7 +628,7 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
 
                 Stream responseStream = (await s3.GetObjectAsync(_bucket, ADAPTIVE_EMA_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
 

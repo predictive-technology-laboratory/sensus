@@ -652,7 +652,7 @@ namespace Sensus
                                         desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
                                         desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
 
-                                        await desiredProtocol.StartAsync();
+                                        await desiredProtocol.StartAsync(cancellationToken);
                                     }
                                 }
                                 catch (Exception ex)

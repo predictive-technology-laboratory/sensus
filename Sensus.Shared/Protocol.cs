@@ -49,6 +49,7 @@ using Sensus.Anonymization.Anonymizers;
 using Sensus.Authentication;
 using Sensus.UI;
 using Sensus.Exceptions;
+using Sensus.Extensions;
 
 #if __IOS__
 using HealthKit;
