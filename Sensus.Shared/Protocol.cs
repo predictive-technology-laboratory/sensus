@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -2000,7 +2000,7 @@ namespace Sensus
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
             // add the token to the backend, as the push notification for the schedule start needs to be active.
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
         }
@@ -2011,7 +2011,7 @@ namespace Sensus
             _scheduledStartCallback = null;
 
             // remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
 
@@ -2443,7 +2443,7 @@ namespace Sensus
                     }
                 }
 
-                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
                 // save the state of the app, so that if it terminates unexpectedly (e.g., if the user swipes it away)
                 // we won't attempt to restart the protocol if/when the app restarts.

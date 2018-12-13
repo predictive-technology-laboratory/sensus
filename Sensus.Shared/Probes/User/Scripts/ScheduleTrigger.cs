@@ -125,7 +125,7 @@ namespace Sensus.Probes.User.Scripts
                 startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 0);
 
                 // schedule enough days to ensure that all windows get at least one trigger. for DOW windows, this
-                // means that we must schedule enough days to cover all days of the week (10 will suffice).  for
+                // means that we must schedule enough days to cover all days of the week (7 will suffice).  for
                 // time-of-day-winows, this means that we must schedule at least the number of days specified in the
                 // interval. the reason this is important is that, if the number of days that we schedule does not
                 // include any trigger windows, then no surveys will be scheduled and we run the risk of losing
@@ -133,7 +133,7 @@ namespace Sensus.Probes.User.Scripts
                 // be scheduled, so it should not be the case that we lose the user entirely. however, on ios it is
                 // more likely that the user will ignore surveys without bringing the app to the foreground and giving 
                 // an opportunity to schedule additional surveys.
-                int numDays = Math.Max(10, _nonDowTriggerIntervalDays);
+                int numDays = Math.Max(7, _nonDowTriggerIntervalDays);
 
                 for (int dayOffset = 0; dayOffset < numDays; ++dayOffset)
                 {

@@ -39,7 +39,7 @@ namespace Sensus.Android.Notifications
                 string command = message.Data["command"];
 
                 // wait for the push notification to be processed
-                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, default(CancellationToken));
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, CancellationToken.None);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        protected static async Task ConnectClientAsync(CancellationToken cancellationToken = default(CancellationToken))
+        protected static async Task ConnectClientAsync(CancellationToken cancellationToken = CancellationToken.None)
         {
             if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth to collect data from your Microsoft Band, which is being used in one of your studies."))
             {

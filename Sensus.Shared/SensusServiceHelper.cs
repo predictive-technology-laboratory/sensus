@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -888,7 +888,7 @@ namespace Sensus
 
                     // let the script agent know and store a datum to record the event
                     script.Runner.Probe.Agent?.Observe(script, ScriptState.Expired);
-                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), default(CancellationToken));
+                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
                 }
             }
         }
@@ -899,7 +899,7 @@ namespace Sensus
             {
                 // let the script agent know and store a datum to record the event
                 script.Runner.Probe.Agent?.Observe(script, ScriptState.Deleted);
-                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), default(CancellationToken));
+                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
             _scriptsToRun.Clear();
