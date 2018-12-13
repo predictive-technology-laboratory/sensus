@@ -562,6 +562,7 @@ namespace Sensus
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
         private bool _allowProbeDisableOnStartUp;
+        private List<string> _probesSelectedOnStartUp;
         private Dictionary<Type, Probe> _typeProbe;
 
         // members for displaying protocol start-up
@@ -1697,11 +1698,11 @@ namespace Sensus
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                         int probesEnabled = 0;
                         bool startMicrosoftBandProbes = true;
-                        int numProbesToStart = _probes.Count(p => p.Enabled);
+                        int numProbesToStart = _probes.Count(p => p.Enabled && p.Selected);
                         double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                         foreach (Probe probe in _probes)
                         {
-                            if (probe.Enabled)
+                            if (probe.Enabled && probe.Selected == true)
                             {
                                 if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                                 {
@@ -1990,7 +1991,7 @@ namespace Sensus
                 StringBuilder collectionDescription = new StringBuilder();
                 foreach (Probe probe in enabledProbes)
                 {
-
+                    probe.Selected = true;
                     string probeCollectionDescription = probe.CollectionDescription;
                     if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
                     {
@@ -2018,7 +2019,7 @@ namespace Sensus
                     DisplayNumber = false,
                     RandomizeItemOrder = false,
                     Multiselect = true,
-                    SelectedItems = enabledProbes.Select(s => s.DisplayName).Cast<object>().ToList()
+                    SelectedItems = enabledProbes.Where(w=>w.Selected == true).Select(s => s.DisplayName).Cast<object>().ToList()
                 };
                 inputs.Add(probeSelectionPage);
             }
@@ -2076,25 +2077,17 @@ namespace Sensus
 
             if (completedInputs != null)
             {
-
-                if(AllowProbeDisableOnStartUp == true)
+                var selectedProbeObjs = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault()?.Value as List<object>;
+                _probesSelectedOnStartUp = selectedProbeObjs?.Select(s => s.ToString())?.ToList() ?? new List<string>();
+                if (AllowProbeDisableOnStartUp == true)
                 {
-                    var l = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault();
-                    var selectedProbeObjs = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault()?.Value as List<object>;
-                    var selectedProbeNames = (selectedProbeObjs?.Select(s => s.ToString())?.ToList() ?? new List<string>());
-                    foreach (var probe in enabledProbes)
-                    {
-                        if(selectedProbeNames.Contains(probe.DisplayName) == false)
-                        {
-                            probe.Enabled = false;
-                        }
-                    }
-                    if (!enabledProbes.Any(probe => probe.Enabled))
+                    if (selectedProbeObjs.Count == 0)
                     {
                         await SensusServiceHelper.Get().FlashNotificationAsync("You must select at least one probe to include in this study.  Cannot Start.");
                         start = false;
                     }
                 }
+                enabledProbes.ForEach(e => e.Selected = _probesSelectedOnStartUp == null || _probesSelectedOnStartUp.Contains(e.DisplayName));
 
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
                 {
@@ -2283,7 +2276,7 @@ namespace Sensus
 
                 foreach (Probe probe in _probes)
                 {
-                    if (probe.Enabled)
+                    if (probe.Enabled && probe.Selected)
                     {
                         if (await probe.TestHealthAsync(events) == HealthTestResult.Restart)
                         {
