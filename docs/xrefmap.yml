@@ -7,6 +7,9 @@ references:
 - uid: anonymization
   name: Anonymization
   href: articles/anonymization.html
+- uid: authentication_servers
+  name: Authentication Servers
+  href: articles/authentication-servers.html
 - uid: backwards_compat
   name: Backwards Compatibility
   href: articles/backwards-compatibility.html
@@ -20800,6 +20803,348 @@ references:
   commentId: Overload:Sensus.Anonymization.Anonymizers.ValueOmittingAnonymizer.DisplayText
   fullName: Sensus.Anonymization.Anonymizers.ValueOmittingAnonymizer.DisplayText
   nameWithType: ValueOmittingAnonymizer.DisplayText
+- uid: Sensus.Authentication
+  name: Sensus.Authentication
+  href: api/Sensus.Authentication.html
+  commentId: N:Sensus.Authentication
+  fullName: Sensus.Authentication
+  nameWithType: Sensus.Authentication
+- uid: Sensus.Authentication.Account
+  name: Account
+  href: api/Sensus.Authentication.Account.html
+  commentId: T:Sensus.Authentication.Account
+  fullName: Sensus.Authentication.Account
+  nameWithType: Account
+- uid: Sensus.Authentication.Account.#ctor
+  name: Account()
+  href: api/Sensus.Authentication.Account.html#Sensus_Authentication_Account__ctor
+  commentId: M:Sensus.Authentication.Account.#ctor
+  fullName: Sensus.Authentication.Account.Account()
+  nameWithType: Account.Account()
+- uid: Sensus.Authentication.Account.#ctor*
+  name: Account
+  href: api/Sensus.Authentication.Account.html#Sensus_Authentication_Account__ctor_
+  commentId: Overload:Sensus.Authentication.Account.#ctor
+  fullName: Sensus.Authentication.Account.Account
+  nameWithType: Account.Account
+- uid: Sensus.Authentication.Account.ParticipantId
+  name: ParticipantId
+  href: api/Sensus.Authentication.Account.html#Sensus_Authentication_Account_ParticipantId
+  commentId: P:Sensus.Authentication.Account.ParticipantId
+  fullName: Sensus.Authentication.Account.ParticipantId
+  nameWithType: Account.ParticipantId
+- uid: Sensus.Authentication.Account.ParticipantId*
+  name: ParticipantId
+  href: api/Sensus.Authentication.Account.html#Sensus_Authentication_Account_ParticipantId_
+  commentId: Overload:Sensus.Authentication.Account.ParticipantId
+  fullName: Sensus.Authentication.Account.ParticipantId
+  nameWithType: Account.ParticipantId
+- uid: Sensus.Authentication.Account.Password
+  name: Password
+  href: api/Sensus.Authentication.Account.html#Sensus_Authentication_Account_Password
+  commentId: P:Sensus.Authentication.Account.Password
+  fullName: Sensus.Authentication.Account.Password
+  nameWithType: Account.Password
+- uid: Sensus.Authentication.Account.Password*
+  name: Password
+  href: api/Sensus.Authentication.Account.html#Sensus_Authentication_Account_Password_
+  commentId: Overload:Sensus.Authentication.Account.Password
+  fullName: Sensus.Authentication.Account.Password
+  nameWithType: Account.Password
+- uid: Sensus.Authentication.AmazonS3Credentials
+  name: AmazonS3Credentials
+  href: api/Sensus.Authentication.AmazonS3Credentials.html
+  commentId: T:Sensus.Authentication.AmazonS3Credentials
+  fullName: Sensus.Authentication.AmazonS3Credentials
+  nameWithType: AmazonS3Credentials
+- uid: Sensus.Authentication.AmazonS3Credentials.#ctor
+  name: AmazonS3Credentials()
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials__ctor
+  commentId: M:Sensus.Authentication.AmazonS3Credentials.#ctor
+  fullName: Sensus.Authentication.AmazonS3Credentials.AmazonS3Credentials()
+  nameWithType: AmazonS3Credentials.AmazonS3Credentials()
+- uid: Sensus.Authentication.AmazonS3Credentials.#ctor*
+  name: AmazonS3Credentials
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials__ctor_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.#ctor
+  fullName: Sensus.Authentication.AmazonS3Credentials.AmazonS3Credentials
+  nameWithType: AmazonS3Credentials.AmazonS3Credentials
+- uid: Sensus.Authentication.AmazonS3Credentials.AccessKeyId
+  name: AccessKeyId
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_AccessKeyId
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.AccessKeyId
+  fullName: Sensus.Authentication.AmazonS3Credentials.AccessKeyId
+  nameWithType: AmazonS3Credentials.AccessKeyId
+- uid: Sensus.Authentication.AmazonS3Credentials.AccessKeyId*
+  name: AccessKeyId
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_AccessKeyId_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.AccessKeyId
+  fullName: Sensus.Authentication.AmazonS3Credentials.AccessKeyId
+  nameWithType: AmazonS3Credentials.AccessKeyId
+- uid: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
+  name: AcquisitionTimestamp
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_AcquisitionTimestamp
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
+  fullName: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
+  nameWithType: AmazonS3Credentials.AcquisitionTimestamp
+- uid: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp*
+  name: AcquisitionTimestamp
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_AcquisitionTimestamp_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
+  fullName: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
+  nameWithType: AmazonS3Credentials.AcquisitionTimestamp
+- uid: Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey
+  name: CustomerMasterKey
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_CustomerMasterKey
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey
+  fullName: Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey
+  nameWithType: AmazonS3Credentials.CustomerMasterKey
+- uid: Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey*
+  name: CustomerMasterKey
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_CustomerMasterKey_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey
+  fullName: Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey
+  nameWithType: AmazonS3Credentials.CustomerMasterKey
+- uid: Sensus.Authentication.AmazonS3Credentials.ExpirationTimestamp
+  name: ExpirationTimestamp
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ExpirationTimestamp
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.ExpirationTimestamp
+  fullName: Sensus.Authentication.AmazonS3Credentials.ExpirationTimestamp
+  nameWithType: AmazonS3Credentials.ExpirationTimestamp
+- uid: Sensus.Authentication.AmazonS3Credentials.ExpirationTimestamp*
+  name: ExpirationTimestamp
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ExpirationTimestamp_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.ExpirationTimestamp
+  fullName: Sensus.Authentication.AmazonS3Credentials.ExpirationTimestamp
+  nameWithType: AmazonS3Credentials.ExpirationTimestamp
+- uid: Sensus.Authentication.AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+  name: ExpirationUnixTimeMilliseconds
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ExpirationUnixTimeMilliseconds
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+  fullName: Sensus.Authentication.AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+  nameWithType: AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+- uid: Sensus.Authentication.AmazonS3Credentials.ExpirationUnixTimeMilliseconds*
+  name: ExpirationUnixTimeMilliseconds
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ExpirationUnixTimeMilliseconds_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+  fullName: Sensus.Authentication.AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+  nameWithType: AmazonS3Credentials.ExpirationUnixTimeMilliseconds
+- uid: Sensus.Authentication.AmazonS3Credentials.ProtocolId
+  name: ProtocolId
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ProtocolId
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.ProtocolId
+  fullName: Sensus.Authentication.AmazonS3Credentials.ProtocolId
+  nameWithType: AmazonS3Credentials.ProtocolId
+- uid: Sensus.Authentication.AmazonS3Credentials.ProtocolId*
+  name: ProtocolId
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ProtocolId_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.ProtocolId
+  fullName: Sensus.Authentication.AmazonS3Credentials.ProtocolId
+  nameWithType: AmazonS3Credentials.ProtocolId
+- uid: Sensus.Authentication.AmazonS3Credentials.ProtocolURL
+  name: ProtocolURL
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ProtocolURL
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.ProtocolURL
+  fullName: Sensus.Authentication.AmazonS3Credentials.ProtocolURL
+  nameWithType: AmazonS3Credentials.ProtocolURL
+- uid: Sensus.Authentication.AmazonS3Credentials.ProtocolURL*
+  name: ProtocolURL
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ProtocolURL_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.ProtocolURL
+  fullName: Sensus.Authentication.AmazonS3Credentials.ProtocolURL
+  nameWithType: AmazonS3Credentials.ProtocolURL
+- uid: Sensus.Authentication.AmazonS3Credentials.Region
+  name: Region
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_Region
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.Region
+  fullName: Sensus.Authentication.AmazonS3Credentials.Region
+  nameWithType: AmazonS3Credentials.Region
+- uid: Sensus.Authentication.AmazonS3Credentials.Region*
+  name: Region
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_Region_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.Region
+  fullName: Sensus.Authentication.AmazonS3Credentials.Region
+  nameWithType: AmazonS3Credentials.Region
+- uid: Sensus.Authentication.AmazonS3Credentials.RegionEndpoint
+  name: RegionEndpoint
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_RegionEndpoint
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.RegionEndpoint
+  fullName: Sensus.Authentication.AmazonS3Credentials.RegionEndpoint
+  nameWithType: AmazonS3Credentials.RegionEndpoint
+- uid: Sensus.Authentication.AmazonS3Credentials.RegionEndpoint*
+  name: RegionEndpoint
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_RegionEndpoint_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.RegionEndpoint
+  fullName: Sensus.Authentication.AmazonS3Credentials.RegionEndpoint
+  nameWithType: AmazonS3Credentials.RegionEndpoint
+- uid: Sensus.Authentication.AmazonS3Credentials.SecretAccessKey
+  name: SecretAccessKey
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_SecretAccessKey
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.SecretAccessKey
+  fullName: Sensus.Authentication.AmazonS3Credentials.SecretAccessKey
+  nameWithType: AmazonS3Credentials.SecretAccessKey
+- uid: Sensus.Authentication.AmazonS3Credentials.SecretAccessKey*
+  name: SecretAccessKey
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_SecretAccessKey_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.SecretAccessKey
+  fullName: Sensus.Authentication.AmazonS3Credentials.SecretAccessKey
+  nameWithType: AmazonS3Credentials.SecretAccessKey
+- uid: Sensus.Authentication.AmazonS3Credentials.SessionToken
+  name: SessionToken
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_SessionToken
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.SessionToken
+  fullName: Sensus.Authentication.AmazonS3Credentials.SessionToken
+  nameWithType: AmazonS3Credentials.SessionToken
+- uid: Sensus.Authentication.AmazonS3Credentials.SessionToken*
+  name: SessionToken
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_SessionToken_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.SessionToken
+  fullName: Sensus.Authentication.AmazonS3Credentials.SessionToken
+  nameWithType: AmazonS3Credentials.SessionToken
+- uid: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
+  name: ValidityTimeSpan
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ValidityTimeSpan
+  commentId: P:Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
+  fullName: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
+  nameWithType: AmazonS3Credentials.ValidityTimeSpan
+- uid: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan*
+  name: ValidityTimeSpan
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ValidityTimeSpan_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
+  fullName: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
+  nameWithType: AmazonS3Credentials.ValidityTimeSpan
+- uid: Sensus.Authentication.AmazonS3Credentials.WillBeValidFor(System.Nullable{System.TimeSpan})
+  name: WillBeValidFor(Nullable<TimeSpan>)
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_WillBeValidFor_System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Authentication.AmazonS3Credentials.WillBeValidFor(System.Nullable{System.TimeSpan})
+  name.vb: WillBeValidFor(Nullable(Of TimeSpan))
+  fullName: Sensus.Authentication.AmazonS3Credentials.WillBeValidFor(System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Authentication.AmazonS3Credentials.WillBeValidFor(System.Nullable(Of System.TimeSpan))
+  nameWithType: AmazonS3Credentials.WillBeValidFor(Nullable<TimeSpan>)
+  nameWithType.vb: AmazonS3Credentials.WillBeValidFor(Nullable(Of TimeSpan))
+- uid: Sensus.Authentication.AmazonS3Credentials.WillBeValidFor*
+  name: WillBeValidFor
+  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_WillBeValidFor_
+  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.WillBeValidFor
+  fullName: Sensus.Authentication.AmazonS3Credentials.WillBeValidFor
+  nameWithType: AmazonS3Credentials.WillBeValidFor
+- uid: Sensus.Authentication.AuthenticationService
+  name: AuthenticationService
+  href: api/Sensus.Authentication.AuthenticationService.html
+  commentId: T:Sensus.Authentication.AuthenticationService
+  fullName: Sensus.Authentication.AuthenticationService
+  nameWithType: AuthenticationService
+- uid: Sensus.Authentication.AuthenticationService.#ctor(System.String)
+  name: AuthenticationService(String)
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService__ctor_System_String_
+  commentId: M:Sensus.Authentication.AuthenticationService.#ctor(System.String)
+  fullName: Sensus.Authentication.AuthenticationService.AuthenticationService(System.String)
+  nameWithType: AuthenticationService.AuthenticationService(String)
+- uid: Sensus.Authentication.AuthenticationService.#ctor*
+  name: AuthenticationService
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService__ctor_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.#ctor
+  fullName: Sensus.Authentication.AuthenticationService.AuthenticationService
+  nameWithType: AuthenticationService.AuthenticationService
+- uid: Sensus.Authentication.AuthenticationService.Account
+  name: Account
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_Account
+  commentId: P:Sensus.Authentication.AuthenticationService.Account
+  fullName: Sensus.Authentication.AuthenticationService.Account
+  nameWithType: AuthenticationService.Account
+- uid: Sensus.Authentication.AuthenticationService.Account*
+  name: Account
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_Account_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.Account
+  fullName: Sensus.Authentication.AuthenticationService.Account
+  nameWithType: AuthenticationService.Account
+- uid: Sensus.Authentication.AuthenticationService.AmazonS3Credentials
+  name: AmazonS3Credentials
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_AmazonS3Credentials
+  commentId: P:Sensus.Authentication.AuthenticationService.AmazonS3Credentials
+  fullName: Sensus.Authentication.AuthenticationService.AmazonS3Credentials
+  nameWithType: AuthenticationService.AmazonS3Credentials
+- uid: Sensus.Authentication.AuthenticationService.AmazonS3Credentials*
+  name: AmazonS3Credentials
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_AmazonS3Credentials_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.AmazonS3Credentials
+  fullName: Sensus.Authentication.AuthenticationService.AmazonS3Credentials
+  nameWithType: AuthenticationService.AmazonS3Credentials
+- uid: Sensus.Authentication.AuthenticationService.BaseServiceURL
+  name: BaseServiceURL
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_BaseServiceURL
+  commentId: P:Sensus.Authentication.AuthenticationService.BaseServiceURL
+  fullName: Sensus.Authentication.AuthenticationService.BaseServiceURL
+  nameWithType: AuthenticationService.BaseServiceURL
+- uid: Sensus.Authentication.AuthenticationService.BaseServiceURL*
+  name: BaseServiceURL
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_BaseServiceURL_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.BaseServiceURL
+  fullName: Sensus.Authentication.AuthenticationService.BaseServiceURL
+  nameWithType: AuthenticationService.BaseServiceURL
+- uid: Sensus.Authentication.AuthenticationService.ClearCredentials
+  name: ClearCredentials()
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_ClearCredentials
+  commentId: M:Sensus.Authentication.AuthenticationService.ClearCredentials
+  fullName: Sensus.Authentication.AuthenticationService.ClearCredentials()
+  nameWithType: AuthenticationService.ClearCredentials()
+- uid: Sensus.Authentication.AuthenticationService.ClearCredentials*
+  name: ClearCredentials
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_ClearCredentials_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.ClearCredentials
+  fullName: Sensus.Authentication.AuthenticationService.ClearCredentials
+  nameWithType: AuthenticationService.ClearCredentials
+- uid: Sensus.Authentication.AuthenticationService.CreateAccountAsync(System.String)
+  name: CreateAccountAsync(String)
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_CreateAccountAsync_System_String_
+  commentId: M:Sensus.Authentication.AuthenticationService.CreateAccountAsync(System.String)
+  fullName: Sensus.Authentication.AuthenticationService.CreateAccountAsync(System.String)
+  nameWithType: AuthenticationService.CreateAccountAsync(String)
+- uid: Sensus.Authentication.AuthenticationService.CreateAccountAsync*
+  name: CreateAccountAsync
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_CreateAccountAsync_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.CreateAccountAsync
+  fullName: Sensus.Authentication.AuthenticationService.CreateAccountAsync
+  nameWithType: AuthenticationService.CreateAccountAsync
+- uid: Sensus.Authentication.AuthenticationService.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)
+  name: EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_EnvelopeAsync_System_Byte___System_Int32_System_Int32_System_IO_Stream_System_Threading_CancellationToken_
+  commentId: M:Sensus.Authentication.AuthenticationService.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)
+  name.vb: EnvelopeAsync(Byte(), Int32, Int32, Stream, CancellationToken)
+  fullName: Sensus.Authentication.AuthenticationService.EnvelopeAsync(System.Byte[], System.Int32, System.Int32, System.IO.Stream, System.Threading.CancellationToken)
+  fullName.vb: Sensus.Authentication.AuthenticationService.EnvelopeAsync(System.Byte(), System.Int32, System.Int32, System.IO.Stream, System.Threading.CancellationToken)
+  nameWithType: AuthenticationService.EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)
+  nameWithType.vb: AuthenticationService.EnvelopeAsync(Byte(), Int32, Int32, Stream, CancellationToken)
+- uid: Sensus.Authentication.AuthenticationService.EnvelopeAsync*
+  name: EnvelopeAsync
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_EnvelopeAsync_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.EnvelopeAsync
+  fullName: Sensus.Authentication.AuthenticationService.EnvelopeAsync
+  nameWithType: AuthenticationService.EnvelopeAsync
+- uid: Sensus.Authentication.AuthenticationService.GetCredentialsAsync
+  name: GetCredentialsAsync()
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_GetCredentialsAsync
+  commentId: M:Sensus.Authentication.AuthenticationService.GetCredentialsAsync
+  fullName: Sensus.Authentication.AuthenticationService.GetCredentialsAsync()
+  nameWithType: AuthenticationService.GetCredentialsAsync()
+- uid: Sensus.Authentication.AuthenticationService.GetCredentialsAsync*
+  name: GetCredentialsAsync
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_GetCredentialsAsync_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.GetCredentialsAsync
+  fullName: Sensus.Authentication.AuthenticationService.GetCredentialsAsync
+  nameWithType: AuthenticationService.GetCredentialsAsync
+- uid: Sensus.Authentication.AuthenticationService.Protocol
+  name: Protocol
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_Protocol
+  commentId: P:Sensus.Authentication.AuthenticationService.Protocol
+  fullName: Sensus.Authentication.AuthenticationService.Protocol
+  nameWithType: AuthenticationService.Protocol
+- uid: Sensus.Authentication.AuthenticationService.Protocol*
+  name: Protocol
+  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_Protocol_
+  commentId: Overload:Sensus.Authentication.AuthenticationService.Protocol
+  fullName: Sensus.Authentication.AuthenticationService.Protocol
+  nameWithType: AuthenticationService.Protocol
 - uid: Sensus.Callbacks
   name: Sensus.Callbacks
   href: api/Sensus.Callbacks.html
@@ -21699,15 +22044,15 @@ references:
   commentId: Overload:Sensus.DataStores.Compressor.#ctor
   fullName: Sensus.DataStores.Compressor.Compressor
   nameWithType: Compressor.Compressor
-- uid: Sensus.DataStores.Compressor.Compress(System.Byte[],System.IO.Stream)
-  name: Compress(Byte[], Stream)
-  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Compress_System_Byte___System_IO_Stream_
-  commentId: M:Sensus.DataStores.Compressor.Compress(System.Byte[],System.IO.Stream)
-  name.vb: Compress(Byte(), Stream)
-  fullName: Sensus.DataStores.Compressor.Compress(System.Byte[], System.IO.Stream)
-  fullName.vb: Sensus.DataStores.Compressor.Compress(System.Byte(), System.IO.Stream)
-  nameWithType: Compressor.Compress(Byte[], Stream)
-  nameWithType.vb: Compressor.Compress(Byte(), Stream)
+- uid: Sensus.DataStores.Compressor.Compress(System.Byte[],System.IO.Stream,System.IO.Compression.CompressionLevel)
+  name: Compress(Byte[], Stream, CompressionLevel)
+  href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Compress_System_Byte___System_IO_Stream_System_IO_Compression_CompressionLevel_
+  commentId: M:Sensus.DataStores.Compressor.Compress(System.Byte[],System.IO.Stream,System.IO.Compression.CompressionLevel)
+  name.vb: Compress(Byte(), Stream, CompressionLevel)
+  fullName: Sensus.DataStores.Compressor.Compress(System.Byte[], System.IO.Stream, System.IO.Compression.CompressionLevel)
+  fullName.vb: Sensus.DataStores.Compressor.Compress(System.Byte(), System.IO.Stream, System.IO.Compression.CompressionLevel)
+  nameWithType: Compressor.Compress(Byte[], Stream, CompressionLevel)
+  nameWithType.vb: Compressor.Compress(Byte(), Stream, CompressionLevel)
 - uid: Sensus.DataStores.Compressor.Compress*
   name: Compress
   href: api/Sensus.DataStores.Compressor.html#Sensus_DataStores_Compressor_Compress_
@@ -21969,18 +22314,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
   fullName: Sensus.DataStores.Local.FileLocalDataStore.CompressionLevel
   nameWithType: FileLocalDataStore.CompressionLevel
-- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
-  name: CreateTarFromLocalData(String)
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_System_String_
-  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)
-  nameWithType: FileLocalDataStore.CreateTarFromLocalData(String)
-- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData*
-  name: CreateTarFromLocalData
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData
-  nameWithType: FileLocalDataStore.CreateTarFromLocalData
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync(System.String)
+  name: CreateTarFromLocalDataAsync(String)
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalDataAsync_System_String_
+  commentId: M:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync(System.String)
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync(System.String)
+  nameWithType: FileLocalDataStore.CreateTarFromLocalDataAsync(String)
+- uid: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync*
+  name: CreateTarFromLocalDataAsync
+  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalDataAsync_
+  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync
+  fullName: Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync
+  nameWithType: FileLocalDataStore.CreateTarFromLocalDataAsync
 - uid: Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile
   name: DataWrittenToCurrentFile
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile
@@ -22053,18 +22398,6 @@ references:
   commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
   fullName: Sensus.DataStores.Local.FileLocalDataStore.IsTooLarge
   nameWithType: FileLocalDataStore.IsTooLarge
-- uid: Sensus.DataStores.Local.FileLocalDataStore.Path
-  name: Path
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Path
-  commentId: P:Sensus.DataStores.Local.FileLocalDataStore.Path
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.Path
-  nameWithType: FileLocalDataStore.Path
-- uid: Sensus.DataStores.Local.FileLocalDataStore.Path*
-  name: Path
-  href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Path_
-  commentId: Overload:Sensus.DataStores.Local.FileLocalDataStore.Path
-  fullName: Sensus.DataStores.Local.FileLocalDataStore.Path
-  nameWithType: FileLocalDataStore.Path
 - uid: Sensus.DataStores.Local.FileLocalDataStore.Reset
   name: Reset()
   href: api/Sensus.DataStores.Local.FileLocalDataStore.html#Sensus_DataStores_Local_FileLocalDataStore_Reset
@@ -22206,18 +22539,18 @@ references:
   commentId: Overload:Sensus.DataStores.Local.LocalDataStore.#ctor
   fullName: Sensus.DataStores.Local.LocalDataStore.LocalDataStore
   nameWithType: LocalDataStore.LocalDataStore
-- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
-  name: CreateTarFromLocalData(String)
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_System_String_
-  commentId: M:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
-  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData(System.String)
-  nameWithType: LocalDataStore.CreateTarFromLocalData(String)
-- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData*
-  name: CreateTarFromLocalData
-  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_
-  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
-  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalData
-  nameWithType: LocalDataStore.CreateTarFromLocalData
+- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalDataAsync(System.String)
+  name: CreateTarFromLocalDataAsync(String)
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalDataAsync_System_String_
+  commentId: M:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalDataAsync(System.String)
+  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalDataAsync(System.String)
+  nameWithType: LocalDataStore.CreateTarFromLocalDataAsync(String)
+- uid: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalDataAsync*
+  name: CreateTarFromLocalDataAsync
+  href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalDataAsync_
+  commentId: Overload:Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalDataAsync
+  fullName: Sensus.DataStores.Local.LocalDataStore.CreateTarFromLocalDataAsync
+  nameWithType: LocalDataStore.CreateTarFromLocalDataAsync
 - uid: Sensus.DataStores.Local.LocalDataStore.HasDataToShare
   name: HasDataToShare
   href: api/Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare
@@ -23442,15 +23775,15 @@ references:
   commentId: Overload:Sensus.Encryption.AsymmetricEncryption.DecryptToBytes
   fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToBytes
   nameWithType: AsymmetricEncryption.DecryptToBytes
-- uid: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])
-  name: DecryptToString(Byte[])
-  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToString_System_Byte___
-  commentId: M:Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])
-  name.vb: DecryptToString(Byte())
-  fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])
-  fullName.vb: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte())
-  nameWithType: AsymmetricEncryption.DecryptToString(Byte[])
-  nameWithType.vb: AsymmetricEncryption.DecryptToString(Byte())
+- uid: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[],System.Text.Encoding)
+  name: DecryptToString(Byte[], Encoding)
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToString_System_Byte___System_Text_Encoding_
+  commentId: M:Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[],System.Text.Encoding)
+  name.vb: DecryptToString(Byte(), Encoding)
+  fullName: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[], System.Text.Encoding)
+  fullName.vb: Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte(), System.Text.Encoding)
+  nameWithType: AsymmetricEncryption.DecryptToString(Byte[], Encoding)
+  nameWithType.vb: AsymmetricEncryption.DecryptToString(Byte(), Encoding)
 - uid: Sensus.Encryption.AsymmetricEncryption.DecryptToString*
   name: DecryptToString
   href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_DecryptToString_
@@ -23466,75 +23799,96 @@ references:
   fullName.vb: Sensus.Encryption.AsymmetricEncryption.Encrypt(System.Byte())
   nameWithType: AsymmetricEncryption.Encrypt(Byte[])
   nameWithType.vb: AsymmetricEncryption.Encrypt(Byte())
-- uid: Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String)
-  name: Encrypt(String)
-  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_Encrypt_System_String_
-  commentId: M:Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String)
-  fullName: Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String)
-  nameWithType: AsymmetricEncryption.Encrypt(String)
+- uid: Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String,System.Text.Encoding)
+  name: Encrypt(String, Encoding)
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_Encrypt_System_String_System_Text_Encoding_
+  commentId: M:Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String,System.Text.Encoding)
+  fullName: Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String, System.Text.Encoding)
+  nameWithType: AsymmetricEncryption.Encrypt(String, Encoding)
 - uid: Sensus.Encryption.AsymmetricEncryption.Encrypt*
   name: Encrypt
   href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_Encrypt_
   commentId: Overload:Sensus.Encryption.AsymmetricEncryption.Encrypt
   fullName: Sensus.Encryption.AsymmetricEncryption.Encrypt
   nameWithType: AsymmetricEncryption.Encrypt
-- uid: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[],System.Int32,System.Int32,System.String)
-  name: EncryptSymmetrically(Byte[], Int32, Int32, String)
-  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_System_Byte___System_Int32_System_Int32_System_String_
-  commentId: M:Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[],System.Int32,System.Int32,System.String)
-  name.vb: EncryptSymmetrically(Byte(), Int32, Int32, String)
-  fullName: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[], System.Int32, System.Int32, System.String)
-  fullName.vb: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte(), System.Int32, System.Int32, System.String)
-  nameWithType: AsymmetricEncryption.EncryptSymmetrically(Byte[], Int32, Int32, String)
-  nameWithType.vb: AsymmetricEncryption.EncryptSymmetrically(Byte(), Int32, Int32, String)
-- uid: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically*
-  name: EncryptSymmetrically
-  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_
-  commentId: Overload:Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically
-  fullName: Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically
-  nameWithType: AsymmetricEncryption.EncryptSymmetrically
-- uid: Sensus.Encryption.IEncryption
-  name: IEncryption
-  href: api/Sensus.Encryption.IEncryption.html
-  commentId: T:Sensus.Encryption.IEncryption
-  fullName: Sensus.Encryption.IEncryption
-  nameWithType: IEncryption
-- uid: Sensus.Encryption.IEncryption.DecryptToString(System.Byte[])
-  name: DecryptToString(Byte[])
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_DecryptToString_System_Byte___
-  commentId: M:Sensus.Encryption.IEncryption.DecryptToString(System.Byte[])
-  name.vb: DecryptToString(Byte())
-  fullName: Sensus.Encryption.IEncryption.DecryptToString(System.Byte[])
-  fullName.vb: Sensus.Encryption.IEncryption.DecryptToString(System.Byte())
-  nameWithType: IEncryption.DecryptToString(Byte[])
-  nameWithType.vb: IEncryption.DecryptToString(Byte())
-- uid: Sensus.Encryption.IEncryption.DecryptToString*
+- uid: Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)
+  name: EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_EnvelopeAsync_System_Byte___System_Int32_System_Int32_System_IO_Stream_System_Threading_CancellationToken_
+  commentId: M:Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)
+  name.vb: EnvelopeAsync(Byte(), Int32, Int32, Stream, CancellationToken)
+  fullName: Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync(System.Byte[], System.Int32, System.Int32, System.IO.Stream, System.Threading.CancellationToken)
+  fullName.vb: Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync(System.Byte(), System.Int32, System.Int32, System.IO.Stream, System.Threading.CancellationToken)
+  nameWithType: AsymmetricEncryption.EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)
+  nameWithType.vb: AsymmetricEncryption.EnvelopeAsync(Byte(), Int32, Int32, Stream, CancellationToken)
+- uid: Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync*
+  name: EnvelopeAsync
+  href: api/Sensus.Encryption.AsymmetricEncryption.html#Sensus_Encryption_AsymmetricEncryption_EnvelopeAsync_
+  commentId: Overload:Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync
+  fullName: Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync
+  nameWithType: AsymmetricEncryption.EnvelopeAsync
+- uid: Sensus.Encryption.IEncryptor
+  name: IEncryptor
+  href: api/Sensus.Encryption.IEncryptor.html
+  commentId: T:Sensus.Encryption.IEncryptor
+  fullName: Sensus.Encryption.IEncryptor
+  nameWithType: IEncryptor
+- uid: Sensus.Encryption.IEncryptor.DecryptToString(System.Byte[],System.Text.Encoding)
+  name: DecryptToString(Byte[], Encoding)
+  href: api/Sensus.Encryption.IEncryptor.html#Sensus_Encryption_IEncryptor_DecryptToString_System_Byte___System_Text_Encoding_
+  commentId: M:Sensus.Encryption.IEncryptor.DecryptToString(System.Byte[],System.Text.Encoding)
+  name.vb: DecryptToString(Byte(), Encoding)
+  fullName: Sensus.Encryption.IEncryptor.DecryptToString(System.Byte[], System.Text.Encoding)
+  fullName.vb: Sensus.Encryption.IEncryptor.DecryptToString(System.Byte(), System.Text.Encoding)
+  nameWithType: IEncryptor.DecryptToString(Byte[], Encoding)
+  nameWithType.vb: IEncryptor.DecryptToString(Byte(), Encoding)
+- uid: Sensus.Encryption.IEncryptor.DecryptToString*
   name: DecryptToString
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_DecryptToString_
-  commentId: Overload:Sensus.Encryption.IEncryption.DecryptToString
-  fullName: Sensus.Encryption.IEncryption.DecryptToString
-  nameWithType: IEncryption.DecryptToString
-- uid: Sensus.Encryption.IEncryption.Encrypt(System.Byte[])
+  href: api/Sensus.Encryption.IEncryptor.html#Sensus_Encryption_IEncryptor_DecryptToString_
+  commentId: Overload:Sensus.Encryption.IEncryptor.DecryptToString
+  fullName: Sensus.Encryption.IEncryptor.DecryptToString
+  nameWithType: IEncryptor.DecryptToString
+- uid: Sensus.Encryption.IEncryptor.Encrypt(System.Byte[])
   name: Encrypt(Byte[])
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_Encrypt_System_Byte___
-  commentId: M:Sensus.Encryption.IEncryption.Encrypt(System.Byte[])
+  href: api/Sensus.Encryption.IEncryptor.html#Sensus_Encryption_IEncryptor_Encrypt_System_Byte___
+  commentId: M:Sensus.Encryption.IEncryptor.Encrypt(System.Byte[])
   name.vb: Encrypt(Byte())
-  fullName: Sensus.Encryption.IEncryption.Encrypt(System.Byte[])
-  fullName.vb: Sensus.Encryption.IEncryption.Encrypt(System.Byte())
-  nameWithType: IEncryption.Encrypt(Byte[])
-  nameWithType.vb: IEncryption.Encrypt(Byte())
-- uid: Sensus.Encryption.IEncryption.Encrypt(System.String)
-  name: Encrypt(String)
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_Encrypt_System_String_
-  commentId: M:Sensus.Encryption.IEncryption.Encrypt(System.String)
-  fullName: Sensus.Encryption.IEncryption.Encrypt(System.String)
-  nameWithType: IEncryption.Encrypt(String)
-- uid: Sensus.Encryption.IEncryption.Encrypt*
+  fullName: Sensus.Encryption.IEncryptor.Encrypt(System.Byte[])
+  fullName.vb: Sensus.Encryption.IEncryptor.Encrypt(System.Byte())
+  nameWithType: IEncryptor.Encrypt(Byte[])
+  nameWithType.vb: IEncryptor.Encrypt(Byte())
+- uid: Sensus.Encryption.IEncryptor.Encrypt(System.String,System.Text.Encoding)
+  name: Encrypt(String, Encoding)
+  href: api/Sensus.Encryption.IEncryptor.html#Sensus_Encryption_IEncryptor_Encrypt_System_String_System_Text_Encoding_
+  commentId: M:Sensus.Encryption.IEncryptor.Encrypt(System.String,System.Text.Encoding)
+  fullName: Sensus.Encryption.IEncryptor.Encrypt(System.String, System.Text.Encoding)
+  nameWithType: IEncryptor.Encrypt(String, Encoding)
+- uid: Sensus.Encryption.IEncryptor.Encrypt*
   name: Encrypt
-  href: api/Sensus.Encryption.IEncryption.html#Sensus_Encryption_IEncryption_Encrypt_
-  commentId: Overload:Sensus.Encryption.IEncryption.Encrypt
-  fullName: Sensus.Encryption.IEncryption.Encrypt
-  nameWithType: IEncryption.Encrypt
+  href: api/Sensus.Encryption.IEncryptor.html#Sensus_Encryption_IEncryptor_Encrypt_
+  commentId: Overload:Sensus.Encryption.IEncryptor.Encrypt
+  fullName: Sensus.Encryption.IEncryptor.Encrypt
+  nameWithType: IEncryptor.Encrypt
+- uid: Sensus.Encryption.IEnvelopeEncryptor
+  name: IEnvelopeEncryptor
+  href: api/Sensus.Encryption.IEnvelopeEncryptor.html
+  commentId: T:Sensus.Encryption.IEnvelopeEncryptor
+  fullName: Sensus.Encryption.IEnvelopeEncryptor
+  nameWithType: IEnvelopeEncryptor
+- uid: Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)
+  name: EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)
+  href: api/Sensus.Encryption.IEnvelopeEncryptor.html#Sensus_Encryption_IEnvelopeEncryptor_EnvelopeAsync_System_Byte___System_Int32_System_Int32_System_IO_Stream_System_Threading_CancellationToken_
+  commentId: M:Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)
+  name.vb: EnvelopeAsync(Byte(), Int32, Int32, Stream, CancellationToken)
+  fullName: Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync(System.Byte[], System.Int32, System.Int32, System.IO.Stream, System.Threading.CancellationToken)
+  fullName.vb: Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync(System.Byte(), System.Int32, System.Int32, System.IO.Stream, System.Threading.CancellationToken)
+  nameWithType: IEnvelopeEncryptor.EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)
+  nameWithType.vb: IEnvelopeEncryptor.EnvelopeAsync(Byte(), Int32, Int32, Stream, CancellationToken)
+- uid: Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync*
+  name: EnvelopeAsync
+  href: api/Sensus.Encryption.IEnvelopeEncryptor.html#Sensus_Encryption_IEnvelopeEncryptor_EnvelopeAsync_
+  commentId: Overload:Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync
+  fullName: Sensus.Encryption.IEnvelopeEncryptor.EnvelopeAsync
+  nameWithType: IEnvelopeEncryptor.EnvelopeAsync
 - uid: Sensus.Encryption.SymmetricEncryption
   name: SymmetricEncryption
   href: api/Sensus.Encryption.SymmetricEncryption.html
@@ -23574,15 +23928,15 @@ references:
   commentId: Overload:Sensus.Encryption.SymmetricEncryption.ConvertHexStringToByteArray
   fullName: Sensus.Encryption.SymmetricEncryption.ConvertHexStringToByteArray
   nameWithType: SymmetricEncryption.ConvertHexStringToByteArray
-- uid: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])
-  name: DecryptToString(Byte[])
-  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_DecryptToString_System_Byte___
-  commentId: M:Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])
-  name.vb: DecryptToString(Byte())
-  fullName: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])
-  fullName.vb: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte())
-  nameWithType: SymmetricEncryption.DecryptToString(Byte[])
-  nameWithType.vb: SymmetricEncryption.DecryptToString(Byte())
+- uid: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[],System.Text.Encoding)
+  name: DecryptToString(Byte[], Encoding)
+  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_DecryptToString_System_Byte___System_Text_Encoding_
+  commentId: M:Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[],System.Text.Encoding)
+  name.vb: DecryptToString(Byte(), Encoding)
+  fullName: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[], System.Text.Encoding)
+  fullName.vb: Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte(), System.Text.Encoding)
+  nameWithType: SymmetricEncryption.DecryptToString(Byte[], Encoding)
+  nameWithType.vb: SymmetricEncryption.DecryptToString(Byte(), Encoding)
 - uid: Sensus.Encryption.SymmetricEncryption.DecryptToString*
   name: DecryptToString
   href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_DecryptToString_
@@ -23598,12 +23952,12 @@ references:
   fullName.vb: Sensus.Encryption.SymmetricEncryption.Encrypt(System.Byte())
   nameWithType: SymmetricEncryption.Encrypt(Byte[])
   nameWithType.vb: SymmetricEncryption.Encrypt(Byte())
-- uid: Sensus.Encryption.SymmetricEncryption.Encrypt(System.String)
-  name: Encrypt(String)
-  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_Encrypt_System_String_
-  commentId: M:Sensus.Encryption.SymmetricEncryption.Encrypt(System.String)
-  fullName: Sensus.Encryption.SymmetricEncryption.Encrypt(System.String)
-  nameWithType: SymmetricEncryption.Encrypt(String)
+- uid: Sensus.Encryption.SymmetricEncryption.Encrypt(System.String,System.Text.Encoding)
+  name: Encrypt(String, Encoding)
+  href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_Encrypt_System_String_System_Text_Encoding_
+  commentId: M:Sensus.Encryption.SymmetricEncryption.Encrypt(System.String,System.Text.Encoding)
+  fullName: Sensus.Encryption.SymmetricEncryption.Encrypt(System.String, System.Text.Encoding)
+  nameWithType: SymmetricEncryption.Encrypt(String, Encoding)
 - uid: Sensus.Encryption.SymmetricEncryption.Encrypt*
   name: Encrypt
   href: api/Sensus.Encryption.SymmetricEncryption.html#Sensus_Encryption_SymmetricEncryption_Encrypt_
@@ -23880,6 +24234,27 @@ references:
   commentId: Overload:Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf
   fullName: Sensus.Extensions.NumericExtensions.RoundToWholePercentageOf
   nameWithType: NumericExtensions.RoundToWholePercentageOf
+- uid: Sensus.Extensions.StringExtensions
+  name: StringExtensions
+  href: api/Sensus.Extensions.StringExtensions.html
+  commentId: T:Sensus.Extensions.StringExtensions
+  fullName: Sensus.Extensions.StringExtensions
+  nameWithType: StringExtensions
+- uid: Sensus.Extensions.StringExtensions.DeserializeJson*
+  name: DeserializeJson
+  href: api/Sensus.Extensions.StringExtensions.html#Sensus_Extensions_StringExtensions_DeserializeJson_
+  commentId: Overload:Sensus.Extensions.StringExtensions.DeserializeJson
+  fullName: Sensus.Extensions.StringExtensions.DeserializeJson
+  nameWithType: StringExtensions.DeserializeJson
+- uid: Sensus.Extensions.StringExtensions.DeserializeJson``1(System.String)
+  name: DeserializeJson<T>(String)
+  href: api/Sensus.Extensions.StringExtensions.html#Sensus_Extensions_StringExtensions_DeserializeJson__1_System_String_
+  commentId: M:Sensus.Extensions.StringExtensions.DeserializeJson``1(System.String)
+  name.vb: DeserializeJson(Of T)(String)
+  fullName: Sensus.Extensions.StringExtensions.DeserializeJson<T>(System.String)
+  fullName.vb: Sensus.Extensions.StringExtensions.DeserializeJson(Of T)(System.String)
+  nameWithType: StringExtensions.DeserializeJson<T>(String)
+  nameWithType.vb: StringExtensions.DeserializeJson(Of T)(String)
 - uid: Sensus.Extensions.TimeSpanExtensions
   name: TimeSpanExtensions
   href: api/Sensus.Extensions.TimeSpanExtensions.html
@@ -23898,6 +24273,36 @@ references:
   commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetIntervalString
   fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString
   nameWithType: TimeSpanExtensions.GetIntervalString
+- uid: Sensus.Extensions.UriExtensions
+  name: UriExtensions
+  href: api/Sensus.Extensions.UriExtensions.html
+  commentId: T:Sensus.Extensions.UriExtensions
+  fullName: Sensus.Extensions.UriExtensions
+  nameWithType: UriExtensions
+- uid: Sensus.Extensions.UriExtensions.DownloadBytes(System.Uri)
+  name: DownloadBytes(Uri)
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadBytes_System_Uri_
+  commentId: M:Sensus.Extensions.UriExtensions.DownloadBytes(System.Uri)
+  fullName: Sensus.Extensions.UriExtensions.DownloadBytes(System.Uri)
+  nameWithType: UriExtensions.DownloadBytes(Uri)
+- uid: Sensus.Extensions.UriExtensions.DownloadBytes*
+  name: DownloadBytes
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadBytes_
+  commentId: Overload:Sensus.Extensions.UriExtensions.DownloadBytes
+  fullName: Sensus.Extensions.UriExtensions.DownloadBytes
+  nameWithType: UriExtensions.DownloadBytes
+- uid: Sensus.Extensions.UriExtensions.DownloadString(System.Uri)
+  name: DownloadString(Uri)
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadString_System_Uri_
+  commentId: M:Sensus.Extensions.UriExtensions.DownloadString(System.Uri)
+  fullName: Sensus.Extensions.UriExtensions.DownloadString(System.Uri)
+  nameWithType: UriExtensions.DownloadString(Uri)
+- uid: Sensus.Extensions.UriExtensions.DownloadString*
+  name: DownloadString
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadString_
+  commentId: Overload:Sensus.Extensions.UriExtensions.DownloadString
+  fullName: Sensus.Extensions.UriExtensions.DownloadString
+  nameWithType: UriExtensions.DownloadString
 - uid: Sensus.HealthTestResult
   name: HealthTestResult
   href: api/Sensus.HealthTestResult.html
@@ -43452,18 +43857,6 @@ references:
   commentId: Overload:Sensus.Protocol.AllowViewStatus
   fullName: Sensus.Protocol.AllowViewStatus
   nameWithType: Protocol.AllowViewStatus
-- uid: Sensus.Protocol.AsymmetricEncryption
-  name: AsymmetricEncryption
-  href: api/Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryption
-  commentId: P:Sensus.Protocol.AsymmetricEncryption
-  fullName: Sensus.Protocol.AsymmetricEncryption
-  nameWithType: Protocol.AsymmetricEncryption
-- uid: Sensus.Protocol.AsymmetricEncryption*
-  name: AsymmetricEncryption
-  href: api/Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryption_
-  commentId: Overload:Sensus.Protocol.AsymmetricEncryption
-  fullName: Sensus.Protocol.AsymmetricEncryption
-  nameWithType: Protocol.AsymmetricEncryption
 - uid: Sensus.Protocol.AsymmetricEncryptionPublicKey
   name: AsymmetricEncryptionPublicKey
   href: api/Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey
@@ -43476,6 +43869,18 @@ references:
   commentId: Overload:Sensus.Protocol.AsymmetricEncryptionPublicKey
   fullName: Sensus.Protocol.AsymmetricEncryptionPublicKey
   nameWithType: Protocol.AsymmetricEncryptionPublicKey
+- uid: Sensus.Protocol.AuthenticationService
+  name: AuthenticationService
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AuthenticationService
+  commentId: P:Sensus.Protocol.AuthenticationService
+  fullName: Sensus.Protocol.AuthenticationService
+  nameWithType: Protocol.AuthenticationService
+- uid: Sensus.Protocol.AuthenticationService*
+  name: AuthenticationService
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AuthenticationService_
+  commentId: Overload:Sensus.Protocol.AuthenticationService
+  fullName: Sensus.Protocol.AuthenticationService
+  nameWithType: Protocol.AuthenticationService
 - uid: Sensus.Protocol.AvailableTags
   name: AvailableTags
   href: api/Sensus.Protocol.html#Sensus_Protocol_AvailableTags
@@ -43617,18 +44022,12 @@ references:
   fullName.vb: Sensus.Protocol.DeserializeAsync(System.Byte())
   nameWithType: Protocol.DeserializeAsync(Byte[])
   nameWithType.vb: Protocol.DeserializeAsync(Byte())
-- uid: Sensus.Protocol.DeserializeAsync(System.String)
-  name: DeserializeAsync(String)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_String_
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.String)
-  fullName: Sensus.Protocol.DeserializeAsync(System.String)
-  nameWithType: Protocol.DeserializeAsync(String)
-- uid: Sensus.Protocol.DeserializeAsync(System.Uri)
-  name: DeserializeAsync(Uri)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Uri_
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.Uri)
-  fullName: Sensus.Protocol.DeserializeAsync(System.Uri)
-  nameWithType: Protocol.DeserializeAsync(Uri)
+- uid: Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)
+  name: DeserializeAsync(Uri, AmazonS3Credentials)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Uri_Sensus_Authentication_AmazonS3Credentials_
+  commentId: M:Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)
+  fullName: Sensus.Protocol.DeserializeAsync(System.Uri, Sensus.Authentication.AmazonS3Credentials)
+  nameWithType: Protocol.DeserializeAsync(Uri, AmazonS3Credentials)
 - uid: Sensus.Protocol.DeserializeAsync*
   name: DeserializeAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_
@@ -43671,6 +44070,18 @@ references:
   commentId: Overload:Sensus.Protocol.EndTime
   fullName: Sensus.Protocol.EndTime
   nameWithType: Protocol.EndTime
+- uid: Sensus.Protocol.EnvelopeEncryptor
+  name: EnvelopeEncryptor
+  href: api/Sensus.Protocol.html#Sensus_Protocol_EnvelopeEncryptor
+  commentId: P:Sensus.Protocol.EnvelopeEncryptor
+  fullName: Sensus.Protocol.EnvelopeEncryptor
+  nameWithType: Protocol.EnvelopeEncryptor
+- uid: Sensus.Protocol.EnvelopeEncryptor*
+  name: EnvelopeEncryptor
+  href: api/Sensus.Protocol.html#Sensus_Protocol_EnvelopeEncryptor_
+  commentId: Overload:Sensus.Protocol.EnvelopeEncryptor
+  fullName: Sensus.Protocol.EnvelopeEncryptor
+  nameWithType: Protocol.EnvelopeEncryptor
 - uid: Sensus.Protocol.Equals(System.Object)
   name: Equals(Object)
   href: api/Sensus.Protocol.html#Sensus_Protocol_Equals_System_Object_
@@ -44766,12 +45177,15 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.GetDirectorySizeMB
   fullName: Sensus.SensusServiceHelper.GetDirectorySizeMB
   nameWithType: SensusServiceHelper.GetDirectorySizeMB
-- uid: Sensus.SensusServiceHelper.GetFileSizeMB(System.String)
-  name: GetFileSizeMB(String)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetFileSizeMB_System_String_
-  commentId: M:Sensus.SensusServiceHelper.GetFileSizeMB(System.String)
-  fullName: Sensus.SensusServiceHelper.GetFileSizeMB(System.String)
-  nameWithType: SensusServiceHelper.GetFileSizeMB(String)
+- uid: Sensus.SensusServiceHelper.GetFileSizeMB(System.String[])
+  name: GetFileSizeMB(String[])
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetFileSizeMB_System_String___
+  commentId: M:Sensus.SensusServiceHelper.GetFileSizeMB(System.String[])
+  name.vb: GetFileSizeMB(String())
+  fullName: Sensus.SensusServiceHelper.GetFileSizeMB(System.String[])
+  fullName.vb: Sensus.SensusServiceHelper.GetFileSizeMB(System.String())
+  nameWithType: SensusServiceHelper.GetFileSizeMB(String[])
+  nameWithType.vb: SensusServiceHelper.GetFileSizeMB(String())
 - uid: Sensus.SensusServiceHelper.GetFileSizeMB*
   name: GetFileSizeMB
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_GetFileSizeMB_
@@ -47901,6 +48315,84 @@ references:
   commentId: Overload:Sensus.UI.ProbesViewPage.ProbeTapped
   fullName: Sensus.UI.ProbesViewPage.ProbeTapped
   nameWithType: ProbesViewPage.ProbeTapped
+- uid: Sensus.UI.ProgressPage
+  name: ProgressPage
+  href: api/Sensus.UI.ProgressPage.html
+  commentId: T:Sensus.UI.ProgressPage
+  fullName: Sensus.UI.ProgressPage
+  nameWithType: ProgressPage
+- uid: Sensus.UI.ProgressPage.#ctor(System.String,System.Threading.CancellationTokenSource)
+  name: ProgressPage(String, CancellationTokenSource)
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage__ctor_System_String_System_Threading_CancellationTokenSource_
+  commentId: M:Sensus.UI.ProgressPage.#ctor(System.String,System.Threading.CancellationTokenSource)
+  fullName: Sensus.UI.ProgressPage.ProgressPage(System.String, System.Threading.CancellationTokenSource)
+  nameWithType: ProgressPage.ProgressPage(String, CancellationTokenSource)
+- uid: Sensus.UI.ProgressPage.#ctor*
+  name: ProgressPage
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage__ctor_
+  commentId: Overload:Sensus.UI.ProgressPage.#ctor
+  fullName: Sensus.UI.ProgressPage.ProgressPage
+  nameWithType: ProgressPage.ProgressPage
+- uid: Sensus.UI.ProgressPage.CloseAsync
+  name: CloseAsync()
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_CloseAsync
+  commentId: M:Sensus.UI.ProgressPage.CloseAsync
+  fullName: Sensus.UI.ProgressPage.CloseAsync()
+  nameWithType: ProgressPage.CloseAsync()
+- uid: Sensus.UI.ProgressPage.CloseAsync*
+  name: CloseAsync
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_CloseAsync_
+  commentId: Overload:Sensus.UI.ProgressPage.CloseAsync
+  fullName: Sensus.UI.ProgressPage.CloseAsync
+  nameWithType: ProgressPage.CloseAsync
+- uid: Sensus.UI.ProgressPage.DisplayAsync(Xamarin.Forms.INavigation)
+  name: DisplayAsync(INavigation)
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_DisplayAsync_Xamarin_Forms_INavigation_
+  commentId: M:Sensus.UI.ProgressPage.DisplayAsync(Xamarin.Forms.INavigation)
+  fullName: Sensus.UI.ProgressPage.DisplayAsync(Xamarin.Forms.INavigation)
+  nameWithType: ProgressPage.DisplayAsync(INavigation)
+- uid: Sensus.UI.ProgressPage.DisplayAsync*
+  name: DisplayAsync
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_DisplayAsync_
+  commentId: Overload:Sensus.UI.ProgressPage.DisplayAsync
+  fullName: Sensus.UI.ProgressPage.DisplayAsync
+  nameWithType: ProgressPage.DisplayAsync
+- uid: Sensus.UI.ProgressPage.GetProgress
+  name: GetProgress()
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_GetProgress
+  commentId: M:Sensus.UI.ProgressPage.GetProgress
+  fullName: Sensus.UI.ProgressPage.GetProgress()
+  nameWithType: ProgressPage.GetProgress()
+- uid: Sensus.UI.ProgressPage.GetProgress*
+  name: GetProgress
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_GetProgress_
+  commentId: Overload:Sensus.UI.ProgressPage.GetProgress
+  fullName: Sensus.UI.ProgressPage.GetProgress
+  nameWithType: ProgressPage.GetProgress
+- uid: Sensus.UI.ProgressPage.OnBackButtonPressed
+  name: OnBackButtonPressed()
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_OnBackButtonPressed
+  commentId: M:Sensus.UI.ProgressPage.OnBackButtonPressed
+  fullName: Sensus.UI.ProgressPage.OnBackButtonPressed()
+  nameWithType: ProgressPage.OnBackButtonPressed()
+- uid: Sensus.UI.ProgressPage.OnBackButtonPressed*
+  name: OnBackButtonPressed
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_OnBackButtonPressed_
+  commentId: Overload:Sensus.UI.ProgressPage.OnBackButtonPressed
+  fullName: Sensus.UI.ProgressPage.OnBackButtonPressed
+  nameWithType: ProgressPage.OnBackButtonPressed
+- uid: Sensus.UI.ProgressPage.SetProgressAsync(System.Double,System.String)
+  name: SetProgressAsync(Double, String)
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_SetProgressAsync_System_Double_System_String_
+  commentId: M:Sensus.UI.ProgressPage.SetProgressAsync(System.Double,System.String)
+  fullName: Sensus.UI.ProgressPage.SetProgressAsync(System.Double, System.String)
+  nameWithType: ProgressPage.SetProgressAsync(Double, String)
+- uid: Sensus.UI.ProgressPage.SetProgressAsync*
+  name: SetProgressAsync
+  href: api/Sensus.UI.ProgressPage.html#Sensus_UI_ProgressPage_SetProgressAsync_
+  commentId: Overload:Sensus.UI.ProgressPage.SetProgressAsync
+  fullName: Sensus.UI.ProgressPage.SetProgressAsync
+  nameWithType: ProgressPage.SetProgressAsync
 - uid: Sensus.UI.ProtocolPage
   name: ProtocolPage
   href: api/Sensus.UI.ProtocolPage.html
@@ -47973,60 +48465,6 @@ references:
   commentId: Overload:Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync
   fullName: Sensus.UI.ProtocolsPage.AuthenticateProtocolAsync
   nameWithType: ProtocolsPage.AuthenticateProtocolAsync
-- uid: Sensus.UI.ProtocolStartPage
-  name: ProtocolStartPage
-  href: api/Sensus.UI.ProtocolStartPage.html
-  commentId: T:Sensus.UI.ProtocolStartPage
-  fullName: Sensus.UI.ProtocolStartPage
-  nameWithType: ProtocolStartPage
-- uid: Sensus.UI.ProtocolStartPage.#ctor(System.Threading.CancellationTokenSource)
-  name: ProtocolStartPage(CancellationTokenSource)
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage__ctor_System_Threading_CancellationTokenSource_
-  commentId: M:Sensus.UI.ProtocolStartPage.#ctor(System.Threading.CancellationTokenSource)
-  fullName: Sensus.UI.ProtocolStartPage.ProtocolStartPage(System.Threading.CancellationTokenSource)
-  nameWithType: ProtocolStartPage.ProtocolStartPage(CancellationTokenSource)
-- uid: Sensus.UI.ProtocolStartPage.#ctor*
-  name: ProtocolStartPage
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage__ctor_
-  commentId: Overload:Sensus.UI.ProtocolStartPage.#ctor
-  fullName: Sensus.UI.ProtocolStartPage.ProtocolStartPage
-  nameWithType: ProtocolStartPage.ProtocolStartPage
-- uid: Sensus.UI.ProtocolStartPage.GetProgress
-  name: GetProgress()
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_GetProgress
-  commentId: M:Sensus.UI.ProtocolStartPage.GetProgress
-  fullName: Sensus.UI.ProtocolStartPage.GetProgress()
-  nameWithType: ProtocolStartPage.GetProgress()
-- uid: Sensus.UI.ProtocolStartPage.GetProgress*
-  name: GetProgress
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_GetProgress_
-  commentId: Overload:Sensus.UI.ProtocolStartPage.GetProgress
-  fullName: Sensus.UI.ProtocolStartPage.GetProgress
-  nameWithType: ProtocolStartPage.GetProgress
-- uid: Sensus.UI.ProtocolStartPage.OnBackButtonPressed
-  name: OnBackButtonPressed()
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_OnBackButtonPressed
-  commentId: M:Sensus.UI.ProtocolStartPage.OnBackButtonPressed
-  fullName: Sensus.UI.ProtocolStartPage.OnBackButtonPressed()
-  nameWithType: ProtocolStartPage.OnBackButtonPressed()
-- uid: Sensus.UI.ProtocolStartPage.OnBackButtonPressed*
-  name: OnBackButtonPressed
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_OnBackButtonPressed_
-  commentId: Overload:Sensus.UI.ProtocolStartPage.OnBackButtonPressed
-  fullName: Sensus.UI.ProtocolStartPage.OnBackButtonPressed
-  nameWithType: ProtocolStartPage.OnBackButtonPressed
-- uid: Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)
-  name: SetProgressAsync(Double)
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_SetProgressAsync_System_Double_
-  commentId: M:Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)
-  fullName: Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)
-  nameWithType: ProtocolStartPage.SetProgressAsync(Double)
-- uid: Sensus.UI.ProtocolStartPage.SetProgressAsync*
-  name: SetProgressAsync
-  href: api/Sensus.UI.ProtocolStartPage.html#Sensus_UI_ProtocolStartPage_SetProgressAsync_
-  commentId: Overload:Sensus.UI.ProtocolStartPage.SetProgressAsync
-  fullName: Sensus.UI.ProtocolStartPage.SetProgressAsync
-  nameWithType: ProtocolStartPage.SetProgressAsync
 - uid: Sensus.UI.ProximityTriggersPage
   name: ProximityTriggersPage
   href: api/Sensus.UI.ProximityTriggersPage.html

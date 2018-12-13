@@ -84,7 +84,7 @@
   <h1 id="Sensus_DataStores_Local_FileLocalDataStore" data-uid="Sensus.DataStores.Local.FileLocalDataStore" class="text-break">Class FileLocalDataStore
   </h1>
   <div class="markdown level0 summary"><p>Stores each <a class="xref" href="Sensus.Datum.html">Datum</a> as plain-text JSON in a gzip-compressed file on the device&apos;s local storage media. Also
-supports encryption.</p>
+supports encryption prior to transmission to a <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -320,33 +320,6 @@ public bool Encrypt { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare">LocalDataStore.HasDataToShare</a></div>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_Path_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Path*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Path" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Path">Path</h4>
-  <div class="markdown level1 summary"><p>Gets the path.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Path { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><p>The path.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_DataStores_Local_FileLocalDataStore_SizeDescription_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.SizeDescription*"></a>
   <h4 id="Sensus_DataStores_Local_FileLocalDataStore_SizeDescription" data-uid="Sensus.DataStores.Local.FileLocalDataStore.SizeDescription">SizeDescription</h4>
   <div class="markdown level1 summary"></div>
@@ -461,13 +434,13 @@ public bool Encrypt { get; set; }</code></pre>
   </div>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalData_System_String_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalData(System.String)">CreateTarFromLocalData(String)</h4>
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalDataAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_CreateTarFromLocalDataAsync_System_String_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.CreateTarFromLocalDataAsync(System.String)">CreateTarFromLocalDataAsync(String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void CreateTarFromLocalData(string outputPath)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task CreateTarFromLocalDataAsync(string outputPath)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -486,8 +459,23 @@ public bool Encrypt { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalData_System_String_">LocalDataStore.CreateTarFromLocalData(String)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_CreateTarFromLocalDataAsync_System_String_">LocalDataStore.CreateTarFromLocalDataAsync(String)</a></div>
   
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_Flush_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Flush*"></a>

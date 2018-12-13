@@ -92,13 +92,14 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="Sensus.Encryption.IEncryption.html">IEncryption</a></div>
+    <div><a class="xref" href="Sensus.Encryption.IEncryptor.html">IEncryptor</a></div>
+    <div><a class="xref" href="Sensus.Encryption.IEnvelopeEncryptor.html">IEnvelopeEncryptor</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Encryption.html">Sensus.Encryption</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Encryption_AsymmetricEncryption_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AsymmetricEncryption : Object, IEncryption</code></pre>
+    <pre><code class="lang-csharp hljs">public class AsymmetricEncryption : Object, IEncryptor, IEnvelopeEncryptor</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -220,12 +221,12 @@ be generated with the following commands:</p>
   
   
   <a id="Sensus_Encryption_AsymmetricEncryption_DecryptToString_" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToString*"></a>
-  <h4 id="Sensus_Encryption_AsymmetricEncryption_DecryptToString_System_Byte___" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[])">DecryptToString(Byte[])</h4>
+  <h4 id="Sensus_Encryption_AsymmetricEncryption_DecryptToString_System_Byte___System_Text_Encoding_" data-uid="Sensus.Encryption.AsymmetricEncryption.DecryptToString(System.Byte[],System.Text.Encoding)">DecryptToString(Byte[], Encoding)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string DecryptToString(byte[] encryptedBytes)</code></pre>
+    <pre><code class="lang-csharp hljs">public string DecryptToString(byte[] encryptedBytes, Encoding encoding)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -240,6 +241,11 @@ be generated with the following commands:</p>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">encryptedBytes</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Text.Encoding</span></td>
+        <td><span class="parametername">encoding</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -304,12 +310,12 @@ be generated with the following commands:</p>
   
   
   <a id="Sensus_Encryption_AsymmetricEncryption_Encrypt_" data-uid="Sensus.Encryption.AsymmetricEncryption.Encrypt*"></a>
-  <h4 id="Sensus_Encryption_AsymmetricEncryption_Encrypt_System_String_" data-uid="Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String)">Encrypt(String)</h4>
+  <h4 id="Sensus_Encryption_AsymmetricEncryption_Encrypt_System_String_System_Text_Encoding_" data-uid="Sensus.Encryption.AsymmetricEncryption.Encrypt(System.String,System.Text.Encoding)">Encrypt(String, Encoding)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public byte[] Encrypt(string unencryptedValue)</code></pre>
+    <pre><code class="lang-csharp hljs">public byte[] Encrypt(string unencryptedValue, Encoding encoding)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -324,6 +330,11 @@ be generated with the following commands:</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">unencryptedValue</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Text.Encoding</span></td>
+        <td><span class="parametername">encoding</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -345,16 +356,16 @@ be generated with the following commands:</p>
   </table>
   
   
-  <a id="Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_" data-uid="Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically*"></a>
-  <h4 id="Sensus_Encryption_AsymmetricEncryption_EncryptSymmetrically_System_Byte___System_Int32_System_Int32_System_String_" data-uid="Sensus.Encryption.AsymmetricEncryption.EncryptSymmetrically(System.Byte[],System.Int32,System.Int32,System.String)">EncryptSymmetrically(Byte[], Int32, Int32, String)</h4>
+  <a id="Sensus_Encryption_AsymmetricEncryption_EnvelopeAsync_" data-uid="Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync*"></a>
+  <h4 id="Sensus_Encryption_AsymmetricEncryption_EnvelopeAsync_System_Byte___System_Int32_System_Int32_System_IO_Stream_System_Threading_CancellationToken_" data-uid="Sensus.Encryption.AsymmetricEncryption.EnvelopeAsync(System.Byte[],System.Int32,System.Int32,System.IO.Stream,System.Threading.CancellationToken)">EnvelopeAsync(Byte[], Int32, Int32, Stream, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Encrypts bytes asymmetrically via symmetric encryption. Since asymmetric encryption does not support large data sizes, the approach
 is to generate a symmetric encryption key that is designed for large data sizes, encrypt the data with the symmetric key, encrypt
-the symmetric key with the asymmetric key, and send the encrypted symmetric key and encrypted data to the same file.</p>
+the symmetric key with the asymmetric key, and send everything to output.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void EncryptSymmetrically(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, string encryptedOutputPath)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -385,16 +396,40 @@ the symmetric key with the asymmetric key, and send the encrypted symmetric key 
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">encryptedOutputPath</span></td>
-        <td><p>Encrypted output path.</p>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">encryptedOutputStream</span></td>
+        <td><p>Encrypted output stream.</p>
 </td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="Sensus.Encryption.IEncryption.html">IEncryption</a>
+      <a class="xref" href="Sensus.Encryption.IEncryptor.html">IEncryptor</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Encryption.IEnvelopeEncryptor.html">IEnvelopeEncryptor</a>
   </div>
 </article>
           </div>
