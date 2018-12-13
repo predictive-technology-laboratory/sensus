@@ -500,6 +500,8 @@ namespace Sensus.UI
                         // handle managed studies...handshake with account manager
                         if (url.StartsWith("managed"))
                         {
+                            ProgressPage protocolProgressPage = null;
+
                             try
                             {
                                 // should have the following parts (participant is optional but the last colon is still required):  managed:BASEURL:PARTICIPANT_ID
@@ -513,6 +515,8 @@ namespace Sensus.UI
 
                                 string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
 
+                                AuthenticationService authenticationService = new AuthenticationService(baseUrl);
+
                                 // get participant id if one follows the last colon
                                 string participantId = null;
                                 if (lastColon < url.Length - 1)
@@ -520,27 +524,43 @@ namespace Sensus.UI
                                     participantId = url.Substring(lastColon + 1);
                                 }
 
-                                // get account and credentials
-                                AuthenticationService authenticationService = new AuthenticationService(baseUrl);
-                                Account account = await authenticationService.CreateAccountAsync(participantId);
-                                AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
+                                // get account and credentials. this can take a while, so show the user something fun to look at.
+                                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                                protocolProgressPage = new ProgressPage("Configuring study. Please wait...", cancellationTokenSource);
+                                await protocolProgressPage.DisplayAsync(Navigation);
 
-                                // get protocol and wire it up with the authentication service
+                                await protocolProgressPage.SetProgressAsync(0, "creating account");
+                                Account account = await authenticationService.CreateAccountAsync(participantId);
+                                cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                                await protocolProgressPage.SetProgressAsync(0.3, "getting credentials");
+                                AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
+                                cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                                await protocolProgressPage.SetProgressAsync(0.6, "downloading study");
                                 protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                await protocolProgressPage.SetProgressAsync(1, null);
+
+                                // don't throw for cancellation here as doing so will leave the protocol partially configured. if 
+                                // the download succeeds, ensure that the properties get set below before throwing any exceptions.
+                                protocol.ParticipantId = account.ParticipantId;
+                                protocol.AuthenticationService = authenticationService;
+                                authenticationService.Protocol = protocol;
 
                                 // make sure protocol has the id that we expect
                                 if (protocol.Id != credentials.ProtocolId)
                                 {
                                     throw new Exception("The identifier of the study does not match that of the credentials.");
                                 }
-
-                                protocol.ParticipantId = account.ParticipantId;
-                                protocol.AuthenticationService = authenticationService;
-                                authenticationService.Protocol = protocol;
                             }
                             catch (Exception ex)
                             {
                                 await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
+                                protocol = null;
+                            }
+                            finally
+                            {
+                                await (protocolProgressPage?.CloseAsync() ?? Task.CompletedTask);
                             }
                         }
                         // handle unmanaged studies...direct download from URL
@@ -559,6 +579,10 @@ namespace Sensus.UI
 
                     if (protocol != null)
                     {
+                        // save app state to hang on to protocol and authentication information
+                        await SensusServiceHelper.Get().SaveAsync();
+
+                        // show the protocol to the user and start
                         await Protocol.DisplayAndStartAsync(protocol);
                     }
                 }

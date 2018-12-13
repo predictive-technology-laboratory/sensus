@@ -1015,16 +1015,16 @@ namespace Sensus
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    resultCompletionSource.TrySetResult(null);
-
                     await closeScannerPageAsync();
                 };
+
+                string result = null;
 
                 barcodeScannerPage.OnScanResult += async r =>
                 {
                     if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
                     {
-                        resultCompletionSource.TrySetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
+                        result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
 
                         await closeScannerPageAsync();
                     }
@@ -1032,9 +1032,7 @@ namespace Sensus
 
                 barcodeScannerPage.Disappearing += (sender, e) =>
                 {
-                    // use TrySetResult to account for the cases where the cancel button was pressed or 
-                    // we scanned a barcode. if either of these happens the result will already be set.
-                    resultCompletionSource.TrySetResult(null);
+                    resultCompletionSource.TrySetResult(result);
                 };
 
                 await navigation.PushModalAsync(barcodeScannerPage);

@@ -98,6 +98,8 @@ namespace Sensus
 
             try
             {
+                byte[] protocolBytes = null;
+
                 // check if the URI points to an S3 bucket
                 if (AmazonS3Uri.IsAmazonS3Endpoint(uri))
                 {
@@ -131,19 +133,20 @@ namespace Sensus
                     {
                         MemoryStream byteStream = new MemoryStream();
                         response.ResponseStream.CopyTo(byteStream);
-                        protocol = await DeserializeAsync(byteStream.ToArray());
+                        protocolBytes = byteStream.ToArray();
                     }
                 }
                 // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
                 else
                 {
-                    byte[] protocolBytes = await uri.DownloadBytes();
-                    protocol = await DeserializeAsync(protocolBytes);
+                    protocolBytes = await uri.DownloadBytes();
                 }
+
+                protocol = await DeserializeAsync(protocolBytes);
             }
             catch (Exception ex)
             {
-                string errorMessage = "Failed to download protocol:  " + ex.Message;
+                string errorMessage = "Failed to download study:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
                 await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
             }
@@ -526,8 +529,7 @@ namespace Sensus
         private Dictionary<Type, Probe> _typeProbe;
 
         // members for displaying protocol start-up
-        private ProtocolStartPage _protocolStartPage;
-        private bool _pushedProtocolStartPage;
+        private ProgressPage _protocolStartPage;
         private Func<Task> _protocolStartInitiatedAsync;
         private Func<double, Task> _protocolStartAddProgressAsync;
         private Func<ProtocolState, Task> _protocolStartFinishedAsync;
@@ -2047,7 +2049,7 @@ namespace Sensus
         /// <summary>
         /// Starts the current <see cref="Protocol"/> after displaying a message to the user indicating what is about to happen. This is
         /// also the place where the user's agreement to the <see cref="Protocol"/> is obtained through the various 
-        /// <see cref="ProtocolStartConfirmationMode"/> options. After obtaining agreement, a <see cref="UI.ProtocolStartPage"/> is displayed
+        /// <see cref="ProtocolStartConfirmationMode"/> options. After obtaining agreement, a <see cref="UI.ProgressPage"/> is displayed
         /// to show progress and prevent the user from interacting with the app until the <see cref="Protocol"/> is fully started.
         /// </summary>
         /// <returns>The with user agreement async.</returns>
@@ -2221,44 +2223,24 @@ namespace Sensus
             {
                 // create startup page, passing cancellation token that will be used for the startup.
                 CancellationTokenSource startCancellationTokenSource = new CancellationTokenSource();
-                _protocolStartPage = new ProtocolStartPage(startCancellationTokenSource);
+                _protocolStartPage = new ProgressPage("Starting study. Please wait...", startCancellationTokenSource);
 
-                // wire up startup events
+                // wire up startup progress events
 
                 _protocolStartInitiatedAsync = async () =>
                 {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-                        await navigation.PushModalAsync(_protocolStartPage);
-                        _pushedProtocolStartPage = true;
-                        await _protocolStartPage.SetProgressAsync(0);
-                    });
+                    INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+                    await _protocolStartPage.DisplayAsync(navigation);
                 };
 
                 _protocolStartAddProgressAsync = async (additionalProgress) =>
                 {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress);
-                    });
+                    await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress, null);
                 };
 
                 _protocolStartFinishedAsync = async (state) =>
                 {
-                    if (_pushedProtocolStartPage)
-                    {
-                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-                            if (navigation.ModalStack.First() == _protocolStartPage)
-                            {
-                                await navigation.PopModalAsync();
-                            }
-
-                            _pushedProtocolStartPage = false;
-                        });
-                    }
+                    await _protocolStartPage.CloseAsync();
 
                     // if we started successfully on ios, warn the user not to terminate the app.
 #if __IOS__

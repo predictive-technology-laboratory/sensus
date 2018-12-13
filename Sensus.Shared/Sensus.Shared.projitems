@@ -263,7 +263,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEnvelopeEncryptor.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolStartPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProgressPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
