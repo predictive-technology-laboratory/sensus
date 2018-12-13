@@ -49,7 +49,7 @@ namespace Sensus.DataStores.Local
         /// <summary>
         /// Threshold on the size of files within the local storage directory. When this is exceeded, a new file will be started.
         /// </summary>
-        private const double MAX_FILE_SIZE_MB = 1;
+        private const double MAX_FILE_SIZE_MB = 5;
 
         /// <summary>
         /// File-based storage uses a <see cref="BufferedStream"/> for efficiency. This is the default buffer size in bytes.
