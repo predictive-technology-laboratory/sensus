@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # build the UI test project
-msbuild /p:Configuration=Debug $APPCENTER_SOURCE_DIRECTORY/Sensus.iOS.Tests.AppCenter/Sensus.iOS.Tests.AppCenter.csproj
+msbuild /p:Configuration=Debug /p:Platform=iPhone $APPCENTER_SOURCE_DIRECTORY/Sensus.iOS.Tests.AppCenter/Sensus.iOS.Tests.AppCenter.csproj
 
 # log in to the app center
 appcenter login --token $TEST_CLOUD_API_TOKEN
