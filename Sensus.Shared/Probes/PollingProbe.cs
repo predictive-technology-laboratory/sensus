@@ -308,6 +308,19 @@ namespace Sensus.Probes
             string userNotificationMessage = null;
 #endif
 
+            // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
+            // problems:
+            // 
+            //   * slow startup:  the immediate poll causes delays when starting the protocol. we show a progress page
+            //                    when starting, but it's still irritating to the user.
+            //
+            //   * protocol restart timeout on push notification (ios):  ios occasionally kills the app, and we can wake
+            //     it back up in the background via push notification. however, we only have ~30 seconds to finish processing
+            //     the push notification before the system suspends the app. furthermore, long-running push notifications
+            //     likely result in subsequent throttling of push notification delivery. 
+            //
+            // given the above, we now use an initial delay equal to the standard delay. the only cost is a single lost
+            // reading at the very beginning.
             _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 if (Running)
@@ -354,7 +367,7 @@ namespace Sensus.Probes
                     _isPolling = false;
                 }
 
-            }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
 
             bool schedulePollCallback = true;
 

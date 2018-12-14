@@ -91,14 +91,14 @@ namespace Sensus
 
 #if DEBUG || UI_TESTING
         /// <summary>
-        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// The health test interval.
         /// </summary>
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
         /// <summary>
-        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// The health test interval.
         /// </summary>
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(6);
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(3);
 #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings

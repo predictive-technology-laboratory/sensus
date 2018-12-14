@@ -15,6 +15,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Sensus.Notifications;
 
 namespace Sensus.Callbacks
@@ -37,6 +38,7 @@ namespace Sensus.Callbacks
         /// Action to execute.
         /// </summary>
         /// <value>The action.</value>
+        [JsonIgnore]
         public ActionDelegate Action { get; set; }
 
         /// <summary>
@@ -117,6 +119,16 @@ namespace Sensus.Callbacks
 #endif
 
         /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private ScheduledCallback()
+        {
+            Canceller = new CancellationTokenSource();
+            DisplayPage = DisplayPage.None;
+            State = ScheduledCallbackState.Created;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
         /// <param name="action">Action to execute when callback time arrives.</param>
@@ -132,7 +144,7 @@ namespace Sensus.Callbacks
                                  string domain,
                                  Protocol protocol,
                                  TimeSpan? callbackTimeout = null,
-                                 string userNotificationMessage = null)
+                                 string userNotificationMessage = null) : this()
         {
             Action = action;
             Delay = delay;
@@ -140,9 +152,6 @@ namespace Sensus.Callbacks
             Protocol = protocol;
             CallbackTimeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
-            Canceller = new CancellationTokenSource();
-            DisplayPage = DisplayPage.None;
-            State = ScheduledCallbackState.Created;
         }
 
         /// <summary>
