@@ -245,9 +245,12 @@ namespace Sensus.Probes.User.Scripts
         {
             get
             {
-                return _scheduledCallbackTimes.Select(scheduledCallbackTime => scheduledCallbackTime.Item1)
-                                              .Count(scheduledCallback => scheduledCallback.State == ScheduledCallbackState.Scheduled &&
-                                                                          scheduledCallback.NextExecution.GetValueOrDefault(DateTime.MinValue) > DateTime.Now);
+                lock (_scheduledCallbackTimes)
+                {
+                    return _scheduledCallbackTimes.Select(scheduledCallbackTime => scheduledCallbackTime.Item1)
+                                                  .Count(scheduledCallback => scheduledCallback.State == ScheduledCallbackState.Scheduled &&
+                                                                              scheduledCallback.NextExecution.GetValueOrDefault(DateTime.MinValue) > DateTime.Now);
+                }
             }
         }
 
@@ -650,7 +653,7 @@ namespace Sensus.Probes.User.Scripts
 
         private async Task UnscheduleCallbacksAsync()
         {
-            List<ScheduledCallback> scriptRunCallbacksToUnschedule = new List<ScheduledCallback>();
+            List<ScheduledCallback> callbacksToUnschedule = new List<ScheduledCallback>();
 
             lock (_scheduledCallbackTimes)
             {
@@ -659,12 +662,12 @@ namespace Sensus.Probes.User.Scripts
                     return;
                 }
 
-                scriptRunCallbacksToUnschedule = _scheduledCallbackTimes.Select(t => t.Item1).ToList();
+                callbacksToUnschedule = _scheduledCallbackTimes.Select(scheduledCallbackTime => scheduledCallbackTime.Item1).ToList();
 
                 _scheduledCallbackTimes.Clear();
             }
 
-            foreach (ScheduledCallback callback in scriptRunCallbacksToUnschedule)
+            foreach (ScheduledCallback callback in callbacksToUnschedule)
             {
                 await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(callback);
             }
