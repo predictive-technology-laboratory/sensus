@@ -114,13 +114,13 @@ namespace Sensus.Tests.Probes.User.Scripts
         }
 
         [Fact]
-        public void SchedulesPullsOnlyTenDays()
+        public void SchedulesPullsOnlySevenDays()
         {
             var schedule = new ScheduleTrigger { WindowsString = "10:00" };
 
             var triggerTimeCount = schedule.GetTriggerTimes(DateTime.Now).Count();
 
-            Assert.Equal(10, triggerTimeCount);
+            Assert.Equal(7, triggerTimeCount);
         }
 
         [Fact]
