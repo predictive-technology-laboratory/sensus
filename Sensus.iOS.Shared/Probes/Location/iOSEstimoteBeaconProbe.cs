@@ -143,7 +143,7 @@ namespace Sensus.iOS.Probes.Location
                 {
                     foreach (EILLocation location in _indoorLocationsBeingMonitored)
                     {
-                        _foregroundIndoorLocationManager.StopMonitoringForLocation(location);
+                        _foregroundIndoorLocationManager.StopPositionUpdates();
                         _backgroundIndoorLocationManager.StopPositionUpdatesForLocation(location);
                     }
                 }
