@@ -76,7 +76,7 @@ namespace Sensus.UI
 
                 List<Input> inputs = await SensusServiceHelper.Get().PromptForInputsAsync("Add Location", new Input[]
                 {
-                    new ItemPickerDialogInput("Location:", null, locations.Select(location => location.Name).ToList())
+                    new ItemPickerDialogInput("Location:", null, locations.Select(location => location.Name + " (" + location.Identifier + ")").ToList())
                     {
                         AllowClearSelection = false
                     }
@@ -87,8 +87,8 @@ namespace Sensus.UI
                 {
                     try
                     {
-                        string locationName = inputs[0].Value.ToString();
-                        estimoteBeaconProbe.Locations.Add(locations.Single(location => location.Name == locationName));
+                        string locationIdentifier = inputs[0].Value.ToString().Split('(', ')')[1];
+                        estimoteBeaconProbe.Locations.Add(locations.Single(location => location.Identifier == locationIdentifier));
                     }
                     catch (Exception)
                     {

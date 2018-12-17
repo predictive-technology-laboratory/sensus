@@ -24,7 +24,8 @@ namespace Sensus.iOS.Probes.Location
 {
     public class iOSEstimoteBeaconProbe : EstimoteBeaconProbe
     {
-        private ProximityObserver _observer;
+        private ProximityObserver _proximityObserver;
+        private EILIndoorLocationManager _foregroundIndoorLocationManager;
         private EILBackgroundIndoorLocationManager _backgroundIndoorLocationManager;
         private List<EILLocation> _indoorLocationsBeingMonitored;
 
@@ -39,16 +40,29 @@ namespace Sensus.iOS.Probes.Location
 
             if (Locations.Count > 0)
             {
-                _backgroundIndoorLocationManager = new EILBackgroundIndoorLocationManager();
+                // foreground monitoring
+                _foregroundIndoorLocationManager = new EILIndoorLocationManager();
 
-                EstimoteBackgroundIndoorLocationManagerDelegate locationManagerDelegate = new EstimoteBackgroundIndoorLocationManagerDelegate();
+                EstimoteForegroundIndoorLocationManagerDelegate foregroundLocationManagerDelegate = new EstimoteForegroundIndoorLocationManagerDelegate();
 
-                locationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
+                foregroundLocationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
                 {
                     await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracy.ToString(), location.Name, location.Identifier));
                 };
 
-                _backgroundIndoorLocationManager.Delegate = locationManagerDelegate;
+                _foregroundIndoorLocationManager.Delegate = foregroundLocationManagerDelegate;
+
+                // background monitoring
+                _backgroundIndoorLocationManager = new EILBackgroundIndoorLocationManager();
+
+                EstimoteBackgroundIndoorLocationManagerDelegate backgroundLocationManagerDelegate = new EstimoteBackgroundIndoorLocationManagerDelegate();
+
+                backgroundLocationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
+                {
+                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracy.ToString(), location.Name, location.Identifier));
+                };
+
+                _backgroundIndoorLocationManager.Delegate = backgroundLocationManagerDelegate;
             }
         }
 
@@ -58,16 +72,16 @@ namespace Sensus.iOS.Probes.Location
             {
                 if (Beacons.Count > 0)
                 {
-                    _observer = new ProximityObserver(new CloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
+                    _proximityObserver = new ProximityObserver(new CloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
                     {
                         SensusServiceHelper.Get().Logger.Log("Error while initializing proximity observer:  " + error, LoggingLevel.Normal, GetType());
                     });
 
-                    List<ProximityZone> zones = new List<ProximityZone>();
+                    List<ProximityZone> beaconZones = new List<ProximityZone>();
 
                     foreach (EstimoteBeacon beacon in Beacons)
                     {
-                        ProximityZone zone = new ProximityZone(beacon.Tag, new ProximityRange(beacon.ProximityMeters))
+                        ProximityZone beaconZone = new ProximityZone(beacon.Tag, new ProximityRange(beacon.ProximityMeters))
                         {
                             OnEnter = async (triggeringDeviceAttachment) =>
                             {
@@ -80,10 +94,10 @@ namespace Sensus.iOS.Probes.Location
                             }
                         };
 
-                        zones.Add(zone);
+                        beaconZones.Add(beaconZone);
                     }
 
-                    _observer.StartObservingZones(zones.ToArray());
+                    _proximityObserver.StartObservingZones(beaconZones.ToArray());
                 }
 
                 if (Locations.Count > 0)
@@ -96,6 +110,7 @@ namespace Sensus.iOS.Probes.Location
                         {
                             if (error == null)
                             {
+                                _foregroundIndoorLocationManager.StartPositionUpdatesForLocation(fetchedLocation);
                                 _backgroundIndoorLocationManager.StartPositionUpdatesForLocation(fetchedLocation);
 
                                 lock (_indoorLocationsBeingMonitored)
@@ -119,7 +134,7 @@ namespace Sensus.iOS.Probes.Location
         {
             if (Beacons.Count > 0)
             {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(_observer.StopObservingZones);
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(_proximityObserver.StopObservingZones);
             }
 
             lock (_indoorLocationsBeingMonitored)
@@ -128,6 +143,7 @@ namespace Sensus.iOS.Probes.Location
                 {
                     foreach (EILLocation location in _indoorLocationsBeingMonitored)
                     {
+                        _foregroundIndoorLocationManager.StopMonitoringForLocation(location);
                         _backgroundIndoorLocationManager.StopPositionUpdatesForLocation(location);
                     }
                 }

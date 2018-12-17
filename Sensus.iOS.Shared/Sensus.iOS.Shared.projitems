@@ -51,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkConnectivity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBackgroundIndoorLocationManagerDelegate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteForegroundIndoorLocationManagerDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />

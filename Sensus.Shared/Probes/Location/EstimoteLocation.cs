@@ -46,5 +46,10 @@ namespace Sensus.Probes.Location
                 throw new ArgumentNullException(nameof(identifier));
             }
         }
+
+        public override string ToString()
+        {
+            return _name + " (" + _identifier + ")";
+        }
     }
 }
