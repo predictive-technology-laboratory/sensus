@@ -21322,96 +21322,96 @@ references:
   commentId: T:Sensus.Callbacks.ScheduledCallback
   fullName: Sensus.Callbacks.ScheduledCallback
   nameWithType: ScheduledCallback
-- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name: ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name.vb: ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
-  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String)
-  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String)
-  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
-- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name: ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name.vb: ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
-  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String)
-  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String)
-  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
+- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
+  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
+  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
+  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String)
+  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String)
+  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
+  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
+- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
+  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
+  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
+  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String)
+  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String)
+  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
+  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
 - uid: Sensus.Callbacks.ScheduledCallback.#ctor*
   name: ScheduledCallback
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.#ctor
   fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback
   nameWithType: ScheduledCallback.ScheduledCallback
-- uid: Sensus.Callbacks.ScheduledCallback.Action
-  name: Action
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Action
-  commentId: P:Sensus.Callbacks.ScheduledCallback.Action
-  fullName: Sensus.Callbacks.ScheduledCallback.Action
-  nameWithType: ScheduledCallback.Action
-- uid: Sensus.Callbacks.ScheduledCallback.Action*
-  name: Action
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Action_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.Action
-  fullName: Sensus.Callbacks.ScheduledCallback.Action
-  nameWithType: ScheduledCallback.Action
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate
-  name: ScheduledCallback.ActionDelegate
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html
-  commentId: T:Sensus.Callbacks.ScheduledCallback.ActionDelegate
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate
-  nameWithType: ScheduledCallback.ActionDelegate
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.#ctor(System.Object,System.IntPtr)
-  name: ActionDelegate(Object, IntPtr)
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate__ctor_System_Object_System_IntPtr_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionDelegate.#ctor(System.Object,System.IntPtr)
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.ActionDelegate(System.Object, System.IntPtr)
-  nameWithType: ScheduledCallback.ActionDelegate.ActionDelegate(Object, IntPtr)
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.#ctor*
-  name: ActionDelegate
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate__ctor_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionDelegate.#ctor
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.ActionDelegate
-  nameWithType: ScheduledCallback.ActionDelegate.ActionDelegate
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsync
+  name: ActionAsync
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_ActionAsync
+  commentId: P:Sensus.Callbacks.ScheduledCallback.ActionAsync
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsync
+  nameWithType: ScheduledCallback.ActionAsync
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsync*
+  name: ActionAsync
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_ActionAsync_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsync
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsync
+  nameWithType: ScheduledCallback.ActionAsync
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate
+  name: ScheduledCallback.ActionAsyncDelegate
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html
+  commentId: T:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate
+  nameWithType: ScheduledCallback.ActionAsyncDelegate
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor(System.Object,System.IntPtr)
+  name: ActionAsyncDelegate(Object, IntPtr)
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate__ctor_System_Object_System_IntPtr_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor(System.Object,System.IntPtr)
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.ActionAsyncDelegate(System.Object, System.IntPtr)
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.ActionAsyncDelegate(Object, IntPtr)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor*
+  name: ActionAsyncDelegate
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate__ctor_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.ActionAsyncDelegate
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.ActionAsyncDelegate
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)
   name: BeginInvoke(String, CancellationToken, Action, AsyncCallback, Object)
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate_BeginInvoke_System_String_System_Threading_CancellationToken_System_Action_System_AsyncCallback_System_Object_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.BeginInvoke(System.String, System.Threading.CancellationToken, System.Action, System.AsyncCallback, System.Object)
-  nameWithType: ScheduledCallback.ActionDelegate.BeginInvoke(String, CancellationToken, Action, AsyncCallback, Object)
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.BeginInvoke*
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_System_String_System_Threading_CancellationToken_System_Action_System_AsyncCallback_System_Object_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String, System.Threading.CancellationToken, System.Action, System.AsyncCallback, System.Object)
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.BeginInvoke(String, CancellationToken, Action, AsyncCallback, Object)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke*
   name: BeginInvoke
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate_BeginInvoke_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionDelegate.BeginInvoke
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.BeginInvoke
-  nameWithType: ScheduledCallback.ActionDelegate.BeginInvoke
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.EndInvoke(System.IAsyncResult)
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.BeginInvoke
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke(System.IAsyncResult)
   name: EndInvoke(IAsyncResult)
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate_EndInvoke_System_IAsyncResult_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionDelegate.EndInvoke(System.IAsyncResult)
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.EndInvoke(System.IAsyncResult)
-  nameWithType: ScheduledCallback.ActionDelegate.EndInvoke(IAsyncResult)
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.EndInvoke*
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_EndInvoke_System_IAsyncResult_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke(System.IAsyncResult)
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke(System.IAsyncResult)
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.EndInvoke(IAsyncResult)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke*
   name: EndInvoke
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate_EndInvoke_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionDelegate.EndInvoke
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.EndInvoke
-  nameWithType: ScheduledCallback.ActionDelegate.EndInvoke
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_EndInvoke_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.EndInvoke
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)
   name: Invoke(String, CancellationToken, Action)
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate_Invoke_System_String_System_Threading_CancellationToken_System_Action_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.Invoke(System.String, System.Threading.CancellationToken, System.Action)
-  nameWithType: ScheduledCallback.ActionDelegate.Invoke(String, CancellationToken, Action)
-- uid: Sensus.Callbacks.ScheduledCallback.ActionDelegate.Invoke*
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_System_String_System_Threading_CancellationToken_System_Action_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String, System.Threading.CancellationToken, System.Action)
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.Invoke(String, CancellationToken, Action)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke*
   name: Invoke
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionDelegate_Invoke_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionDelegate.Invoke
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionDelegate.Invoke
-  nameWithType: ScheduledCallback.ActionDelegate.Invoke
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.Invoke
 - uid: Sensus.Callbacks.ScheduledCallback.CallbackTimeout
   name: CallbackTimeout
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_CallbackTimeout
@@ -42915,6 +42915,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ForceRemoteStorageOnSurveySubmission
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.ForceRemoteStorageOnSurveySubmission
   nameWithType: ScriptRunner.ForceRemoteStorageOnSurveySubmission
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount
+  name: FutureRunCount
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_FutureRunCount
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount
+  nameWithType: ScriptRunner.FutureRunCount
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount*
+  name: FutureRunCount
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_FutureRunCount_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount
+  nameWithType: ScriptRunner.FutureRunCount
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation
   name: IncompleteSubmissionConfirmation
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation
@@ -43065,6 +43077,30 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.RunTimes
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.RunTimes
   nameWithType: ScriptRunner.RunTimes
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
+  name: ScheduledCallbackDescriptions
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackDescriptions
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
+  nameWithType: ScriptRunner.ScheduledCallbackDescriptions
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions*
+  name: ScheduledCallbackDescriptions
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackDescriptions_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
+  nameWithType: ScriptRunner.ScheduledCallbackDescriptions
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
+  name: ScheduledCallbackTimes
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
+  nameWithType: ScriptRunner.ScheduledCallbackTimes
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes*
+  name: ScheduledCallbackTimes
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
+  nameWithType: ScriptRunner.ScheduledCallbackTimes
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduleScriptRunsAsync
   name: ScheduleScriptRunsAsync()
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduleScriptRunsAsync
@@ -43101,18 +43137,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.Script
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.Script
   nameWithType: ScriptRunner.Script
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
-  name: ScriptRunCallbacks
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
-  nameWithType: ScriptRunner.ScriptRunCallbacks
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks*
-  name: ScriptRunCallbacks
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks
-  nameWithType: ScriptRunner.ScriptRunCallbacks
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups
   name: ShuffleInputGroups
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups

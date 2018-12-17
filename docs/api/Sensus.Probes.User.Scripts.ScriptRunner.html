@@ -302,6 +302,33 @@ public bool ForceRemoteStorageOnSurveySubmission { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_FutureRunCount_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_FutureRunCount" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount">FutureRunCount</h4>
+  <div class="markdown level1 summary"><p>Gets the number of future runs that are currently scheduled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int FutureRunCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The future run count.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation">IncompleteSubmissionConfirmation</h4>
   <div class="markdown level1 summary"><p>The message to display to the user if a required field is invalid.</p>
@@ -557,6 +584,60 @@ public bool RunOnStart { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackDescriptions_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackDescriptions" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions">ScheduledCallbackDescriptions</h4>
+  <div class="markdown level1 summary"><p>Gets readable descriptions for the scheduled callbacks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;string&gt; ScheduledCallbackDescriptions { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>The scheduled callback descriptions.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes">ScheduledCallbackTimes</h4>
+  <div class="markdown level1 summary"><p>Public property for serialization only. Do not reference due to concurrency issues.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Tuple&lt;ScheduledCallback, ScriptTriggerTime&gt;&gt; ScheduledCallbackTimes { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptTriggerTime.html">ScriptTriggerTime</a>&gt;&gt;</td>
+        <td><p>The scheduled callbacks.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription">ScheduleTriggerReadableDescription</h4>
   <div class="markdown level1 summary"></div>
@@ -601,31 +682,6 @@ public bool RunOnStart { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks">ScriptRunCallbacks</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;ScheduledCallback&gt; ScriptRunCallbacks { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>

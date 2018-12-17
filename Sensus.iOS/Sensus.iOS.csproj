@@ -338,6 +338,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="AWSSDK.S3">
       <HintPath>..\packages\AWSSDK.S3.3.3.28\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
     </Reference>
+    <Reference Include="Estimote.iOS.Indoor">
+      <HintPath>..\packages\Estimote.iOS.Indoor.3.0.0\lib\xamarinios10\Estimote.iOS.Indoor.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />

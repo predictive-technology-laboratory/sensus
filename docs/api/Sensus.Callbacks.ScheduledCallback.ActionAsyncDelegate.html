@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class ProtocolStartPage
+    <title>Class ScheduledCallback.ActionAsyncDelegate
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class ProtocolStartPage
+    <meta name="title" content="Class ScheduledCallback.ActionAsyncDelegate
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
@@ -78,35 +78,36 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.UI.ProtocolStartPage">
+            <article class="content wrap" id="_content" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate">
   
   
-  <h1 id="Sensus_UI_ProtocolStartPage" data-uid="Sensus.UI.ProtocolStartPage" class="text-break">Class ProtocolStartPage
+  <h1 id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate" class="text-break">Class ScheduledCallback.ActionAsyncDelegate
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Delegate for scheduled callback actions.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">ProtocolStartPage</span></div>
+    <div class="level1"><span class="xref">ScheduledCallback.ActionAsyncDelegate</span></div>
   </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.html">Sensus.UI</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Callbacks.html">Sensus.Callbacks</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_UI_ProtocolStartPage_syntax">Syntax</h5>
+  <h5 id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ProtocolStartPage : ContentPage</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class ActionAsyncDelegate : MulticastDelegate</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_UI_ProtocolStartPage__ctor_" data-uid="Sensus.UI.ProtocolStartPage.#ctor*"></a>
-  <h4 id="Sensus_UI_ProtocolStartPage__ctor_System_Threading_CancellationTokenSource_" data-uid="Sensus.UI.ProtocolStartPage.#ctor(System.Threading.CancellationTokenSource)">ProtocolStartPage(CancellationTokenSource)</h4>
+  <a id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate__ctor_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate__ctor_System_Object_System_IntPtr_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor(System.Object,System.IntPtr)">ActionAsyncDelegate(Object, IntPtr)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ProtocolStartPage(CancellationTokenSource cancellationTokenSource)</code></pre>
+    <pre><code class="lang-csharp hljs">public ActionAsyncDelegate(object object, IntPtr method)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -119,8 +120,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.CancellationTokenSource</span></td>
-        <td><span class="parametername">cancellationTokenSource</span></td>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">object</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IntPtr</span></td>
+        <td><span class="parametername">method</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -129,63 +135,13 @@
   </h3>
   
   
-  <a id="Sensus_UI_ProtocolStartPage_GetProgress_" data-uid="Sensus.UI.ProtocolStartPage.GetProgress*"></a>
-  <h4 id="Sensus_UI_ProtocolStartPage_GetProgress" data-uid="Sensus.UI.ProtocolStartPage.GetProgress">GetProgress()</h4>
+  <a id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_System_String_System_Threading_CancellationToken_System_Action_System_AsyncCallback_System_Object_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)">BeginInvoke(String, CancellationToken, Action, AsyncCallback, Object)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double GetProgress()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_UI_ProtocolStartPage_OnBackButtonPressed_" data-uid="Sensus.UI.ProtocolStartPage.OnBackButtonPressed*"></a>
-  <h4 id="Sensus_UI_ProtocolStartPage_OnBackButtonPressed" data-uid="Sensus.UI.ProtocolStartPage.OnBackButtonPressed">OnBackButtonPressed()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override bool OnBackButtonPressed()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_UI_ProtocolStartPage_SetProgressAsync_" data-uid="Sensus.UI.ProtocolStartPage.SetProgressAsync*"></a>
-  <h4 id="Sensus_UI_ProtocolStartPage_SetProgressAsync_System_Double_" data-uid="Sensus.UI.ProtocolStartPage.SetProgressAsync(System.Double)">SetProgressAsync(Double)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task SetProgressAsync(double progress)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual IAsyncResult BeginInvoke(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback, AsyncCallback callback, object object)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -198,8 +154,122 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">progress</span></td>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td><span class="parametername">letDeviceSleepCallback</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.AsyncCallback</span></td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">object</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.IAsyncResult</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_EndInvoke_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_EndInvoke_System_IAsyncResult_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke(System.IAsyncResult)">EndInvoke(IAsyncResult)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Task EndInvoke(IAsyncResult result)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.IAsyncResult</span></td>
+        <td><span class="parametername">result</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_System_String_System_Threading_CancellationToken_System_Action_" data-uid="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)">Invoke(String, CancellationToken, Action)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Task Invoke(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span></td>
+        <td><span class="parametername">letDeviceSleepCallback</span></td>
         <td></td>
       </tr>
     </tbody>
