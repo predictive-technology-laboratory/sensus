@@ -37,7 +37,7 @@ namespace Sensus.Probes.Location
         {
             get
             {
-                return 15000; // every 15 seconds
+                return (int)TimeSpan.FromSeconds(15).TotalMilliseconds;
             }
         }
 

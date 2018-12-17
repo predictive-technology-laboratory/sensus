@@ -105,11 +105,11 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Gets trigger times relative to a given reference, starting on a particular date and having a maximum age until
-        /// expiration.
+        /// Gets trigger times starting on a particular date and having a maximum age until expiration.
         /// </summary>
         /// <returns>Trigger times.</returns>
-        /// <param name="startDate">The date on which the scheduled triggers should start. Only the year, month, and day elements will be considered.</param>
+        /// <param name="startDate">The date on which the scheduled triggers should start. Only the year, 
+        /// month, and day elements will be considered.</param>
         /// <param name="maxAge">Maximum age of the triggers, during which they should be valid.</param>
         public List<ScriptTriggerTime> GetTriggerTimes(DateTime startDate, TimeSpan? maxAge = null)
         {
@@ -124,15 +124,15 @@ namespace Sensus.Probes.User.Scripts
                 // ignore the time component of the start date. get all times on the given day.
                 startDate = new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 0);
 
-                // schedule enough days to ensure that all windows get at least one trigger. for DOW windows, this
+                // pull enough days to ensure that all windows get at least one trigger. for DOW windows, this
                 // means that we must schedule enough days to cover all days of the week (7 will suffice).  for
-                // time-of-day-winows, this means that we must schedule at least the number of days specified in the
-                // interval. the reason this is important is that, if the number of days that we schedule does not
+                // time-of-day-winows, this means that we must schedule at least the number of days specified in 
+                // the interval. the reason this is important is that, if the number of days that we pull does not
                 // include any trigger windows, then no surveys will be scheduled and we run the risk of losing
-                // touch with the user. the health test callbacks should ensure that survey triggers continue to
-                // be scheduled, so it should not be the case that we lose the user entirely. however, on ios it is
-                // more likely that the user will ignore surveys without bringing the app to the foreground and giving 
-                // an opportunity to schedule additional surveys.
+                // touch with the user. the health test callback should ensure that survey triggers continue to
+                // be scheduled, so it should not be the case that we lose the user with certainty. however, on 
+                // ios it is more likely that the user will ignore surveys without bringing the app to the foreground 
+                // and giving an opportunity for the health test to schedule additional surveys.
                 int numDays = Math.Max(7, _nonDowTriggerIntervalDays);
 
                 for (int dayOffset = 0; dayOffset < numDays; ++dayOffset)
