@@ -258,9 +258,9 @@ namespace Sensus.Probes
                     if (_pollCallback.CallbackTimeout.HasValue)
                     {
                         pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
-                    }
+                    }   
 
-                    await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
                 }
                 catch (Exception ex)
                 {
@@ -283,7 +283,7 @@ namespace Sensus.Probes
                             pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
                         }
 
-                        await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                        await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
                     }
                 }
                 catch (Exception ex)

@@ -32,14 +32,14 @@ namespace Sensus.Callbacks
         /// <param name="cancellationToken">Cancellation token for action.</param>
         /// <param name="letDeviceSleepCallback">Action to call if the system should be allowed to sleep prior to completion of the action. Can be null.</param>
         /// <returns>A task that can be awaited while the action completes.</returns>
-        public delegate Task ActionDelegate(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback);
+        public delegate Task ActionAsyncDelegate(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback);
 
         /// <summary>
         /// Action to execute.
         /// </summary>
         /// <value>The action.</value>
         [JsonIgnore]
-        public ActionDelegate Action { get; set; }
+        public ActionAsyncDelegate ActionAsync { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier.
@@ -131,22 +131,23 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action to execute when callback time arrives.</param>
+        /// <param name="actionAsync">Action to execute when callback time arrives.</param>
         /// <param name="delay">How long to delay callback execution.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
-        public ScheduledCallback(ActionDelegate action,
+        public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan delay,
                                  string id,
                                  string domain,
                                  Protocol protocol,
                                  TimeSpan? callbackTimeout = null,
-                                 string userNotificationMessage = null) : this()
+                                 string userNotificationMessage = null)
+            : this()
         {
-            Action = action;
+            ActionAsync = actionAsync;
             Delay = delay;
             Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
@@ -165,7 +166,7 @@ namespace Sensus.Callbacks
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
-        public ScheduledCallback(ActionDelegate action,
+        public ScheduledCallback(ActionAsyncDelegate action,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
                                  string id,
@@ -173,7 +174,13 @@ namespace Sensus.Callbacks
                                  Protocol protocol,
                                  TimeSpan? callbackTimeout = null,
                                  string userNotificationMessage = null)
-            : this(action, initialDelay, id, domain, protocol, callbackTimeout, userNotificationMessage)
+            : this(action,
+                   initialDelay,
+                   id, 
+                   domain, 
+                   protocol, 
+                   callbackTimeout, 
+                   userNotificationMessage)
         {
             RepeatDelay = repeatDelay;
         }

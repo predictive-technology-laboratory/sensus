@@ -208,7 +208,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// For serialization only. Do not reference due to concurrency issues.
+        /// Public property for serialization only. Do not reference due to concurrency issues.
         /// </summary>
         /// <value>The scheduled callbacks.</value>
         public List<Tuple<ScheduledCallback, ScriptTriggerTime>> ScheduledCallbackTimes
@@ -459,7 +459,6 @@ namespace Sensus.Probes.User.Scripts
 
         public async Task StartAsync()
         {
-            await UnscheduleCallbacksAsync();
             await ScheduleScriptRunsAsync();
 
             // use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
@@ -502,22 +501,25 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-            // remove old callbacks and get those that need to be rescheduled
+            // clean up scheduled callback times
             List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
             lock (_scheduledCallbackTimes)
             {
-                // remove any callbacks in the past
+                // remove any callbacks whose times have passed
                 _scheduledCallbackTimes.RemoveAll(scriptRunCallback => scriptRunCallback.Item1.NextExecution.GetValueOrDefault(DateTime.MinValue) < DateTime.Now);
 
                 // get future callbacks that need to be rescheduled. it can happen that the app crashes or is killed 
-                // and then resumes, and it's important for the times of the scheduled callbacks to be 
-                // maintained. this is particularly important for runs that are very far out in the future. 
-                // if the app is restarted more often than the script is run, then the script will likely never be fired.
-                foreach (Tuple<ScheduledCallback, ScriptTriggerTime> callbackTime in _scheduledCallbackTimes)
+                // and then resumes (e.g., on ios push notification), and it's important for the times of the scheduled 
+                // callbacks to be maintained. this is particularly important for runs that are very far out in the future. 
+                // if the app is restarted more often than the script is run, then the script will likely never be run.
+                foreach (Tuple<ScheduledCallback, ScriptTriggerTime> callbackTime in _scheduledCallbackTimes.ToList())
                 {
                     if (!SensusContext.Current.CallbackScheduler.ContainsCallback(callbackTime.Item1))
                     {
                         callbackTimesToReschedule.Add(callbackTime.Item2);
+
+                        // we're about to reschedule callback. remove the old one so we don't have duplicates.
+                        _scheduledCallbackTimes.Remove(callbackTime);
                     }
                 }
             }
@@ -545,15 +547,18 @@ namespace Sensus.Probes.User.Scripts
             // get all trigger times starting from today
             foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxAge))
             {
-                // schedule all future runs, except those beyond the protocol's end date (if there is one)
+                // schedule all future runs, except those beyond the protocol's end date (if there is one). need to check
+                // that they're in the future because GetTriggerTimes will return all times starting from 0:00 of the curren
+                // day.
                 if (triggerTime.Trigger > DateTime.Now && (Probe.Protocol.ContinueIndefinitely || triggerTime.Trigger < Probe.Protocol.EndDate))
                 {
+#if __IOS__
                     // ensure we have sufficient background time on ios. the current method is called both when servicing a callback
                     // as well as when restarting the app upon receipt of a push notification. in both cases, we need to be sensitive
                     // to the alotted background execution time remaining. the scheduling operating can be slow on ios because it 
                     // can involve the submission of a push notification request to the remote data store. we don't want to run afoul
-                    // of background execution time constraints as a result.
-#if __IOS__
+                    // of background execution time constraints as a result. we'll need to defer scheduling script runs until the
+                    // user foregrounds the app again.
                     if (UIKit.UIApplication.SharedApplication.BackgroundTimeRemaining < 10)
                     {
                         SensusServiceHelper.Get().Logger.Log("Running out of background time. Aborting scheduling script runs.", LoggingLevel.Normal, GetType());
@@ -573,6 +578,9 @@ namespace Sensus.Probes.User.Scripts
                     }
                 }
             }
+
+            // save the app state to retain the callback schedule in case the app terminates
+            await SensusServiceHelper.Get().SaveAsync();
         }
 
         private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
@@ -667,9 +675,9 @@ namespace Sensus.Probes.User.Scripts
                 _scheduledCallbackTimes.Clear();
             }
 
-            foreach (ScheduledCallback callback in callbacksToUnschedule)
+            foreach (ScheduledCallback callbackToUnschedule in callbacksToUnschedule)
             {
-                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(callback);
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(callbackToUnschedule);
             }
         }
 

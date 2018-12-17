@@ -194,7 +194,7 @@ namespace Sensus.Callbacks
                                 callback.Canceller.CancelAfter(callback.CallbackTimeout.Value);
                             }
 
-                            await callback.Action(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
+                            await callback.ActionAsync(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
                         }
                     }
                     catch (Exception raiseException)

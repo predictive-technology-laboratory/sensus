@@ -205,10 +205,10 @@ namespace Sensus.Notifications
                 {
                     SensusServiceHelper.Get().Logger.Log("Push notification targets a protocol that is not running but should be. Starting protocol.", LoggingLevel.Normal, GetType());
 
+#if __IOS__
                     // starting the protocol can be time consuming and run afoul of ios push notification processing 
                     // constraints. start a background task and let the time consuming aspects of app startup 
                     // (e.g., scheduling callbacks for script runs) take care of monitoring the background time remaining.
-#if __IOS__
                     nint protocolStartTaskId = -1;
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
@@ -216,6 +216,7 @@ namespace Sensus.Notifications
 
                         protocolStartTaskId = UIKit.UIApplication.SharedApplication.BeginBackgroundTask(() =>
                         {
+                            // can't think of anything to do if we run out of time.
                             SensusException.Report("Ran out of background time when starting protocol for push notification.");
                         });
                     });
@@ -224,8 +225,8 @@ namespace Sensus.Notifications
                     // all is lost if we cannot start the protocol. so don't pass the cancellation token to StartAsync.
                     await protocol.StartAsync(CancellationToken.None);
 
-                    // end the ios background task.
 #if __IOS__
+                    // end the ios background task.
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
                         UIKit.UIApplication.SharedApplication.EndBackgroundTask(protocolStartTaskId);
