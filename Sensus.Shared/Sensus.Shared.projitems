@@ -267,6 +267,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteLocation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeLocationsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

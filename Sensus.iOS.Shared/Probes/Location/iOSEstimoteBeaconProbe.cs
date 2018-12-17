@@ -18,43 +18,98 @@ using Estimote.iOS.Proximity;
 using System.Collections.Generic;
 using Sensus.Context;
 using System.Threading.Tasks;
+using Estimote.iOS.Indoor;
 
 namespace Sensus.iOS.Probes.Location
 {
     public class iOSEstimoteBeaconProbe : EstimoteBeaconProbe
     {
         private ProximityObserver _observer;
+        private EILBackgroundIndoorLocationManager _backgroundIndoorLocationManager;
+        private List<EILLocation> _indoorLocationsBeingMonitored;
+
+        private iOSEstimoteBeaconProbe()
+        {
+            _indoorLocationsBeingMonitored = new List<EILLocation>();
+        }
+
+        protected override async Task InitializeAsync()
+        {
+            await base.InitializeAsync();
+
+            if (Locations.Count > 0)
+            {
+                _backgroundIndoorLocationManager = new EILBackgroundIndoorLocationManager();
+
+                EstimoteBackgroundIndoorLocationManagerDelegate locationManagerDelegate = new EstimoteBackgroundIndoorLocationManagerDelegate();
+
+                locationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
+                {
+                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracy.ToString(), location.Name, location.Identifier));
+                };
+
+                _backgroundIndoorLocationManager.Delegate = locationManagerDelegate;
+            }
+        }
 
         protected override Task StartListeningAsync()
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                _observer = new ProximityObserver(new CloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
+                if (Beacons.Count > 0)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Error while initializing proximity observer:  " + error, LoggingLevel.Normal, GetType());
-                });
-
-                List<ProximityZone> zones = new List<ProximityZone>();
-
-                foreach (EstimoteBeacon beacon in Beacons)
-                {
-                    ProximityZone zone = new ProximityZone(beacon.Tag, new ProximityRange(beacon.ProximityMeters))
+                    _observer = new ProximityObserver(new CloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken), error =>
                     {
-                        OnEnter = async (triggeringDeviceAttachment) =>
-                        {
-                            await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
-                        },
+                        SensusServiceHelper.Get().Logger.Log("Error while initializing proximity observer:  " + error, LoggingLevel.Normal, GetType());
+                    });
 
-                        OnExit = async (triggeringDeviceAttachment) =>
-                        {
-                            await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
-                        }
-                    };
+                    List<ProximityZone> zones = new List<ProximityZone>();
 
-                    zones.Add(zone);
+                    foreach (EstimoteBeacon beacon in Beacons)
+                    {
+                        ProximityZone zone = new ProximityZone(beacon.Tag, new ProximityRange(beacon.ProximityMeters))
+                        {
+                            OnEnter = async (triggeringDeviceAttachment) =>
+                            {
+                                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Entered));
+                            },
+
+                            OnExit = async (triggeringDeviceAttachment) =>
+                            {
+                                await StoreDatumAsync(new EstimoteBeaconDatum(DateTimeOffset.UtcNow, beacon, EstimoteBeaconProximityEvent.Exited));
+                            }
+                        };
+
+                        zones.Add(zone);
+                    }
+
+                    _observer.StartObservingZones(zones.ToArray());
                 }
 
-                _observer.StartObservingZones(zones.ToArray());
+                if (Locations.Count > 0)
+                {
+                    foreach (EstimoteLocation location in Locations)
+                    {
+                        EILRequestFetchLocation locationFetchRequest = new EILRequestFetchLocation(location.Identifier);
+
+                        locationFetchRequest.SendRequest((fetchedLocation, error) =>
+                        {
+                            if (error == null)
+                            {
+                                _backgroundIndoorLocationManager.StartPositionUpdatesForLocation(fetchedLocation);
+
+                                lock (_indoorLocationsBeingMonitored)
+                                {
+                                    _indoorLocationsBeingMonitored.Add(fetchedLocation);
+                                }
+                            }
+                            else
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to fetch Estimote location:  " + error, LoggingLevel.Normal, GetType());
+                            }
+                        });
+                    }
+                }
             });
 
             return Task.CompletedTask;
@@ -62,7 +117,21 @@ namespace Sensus.iOS.Probes.Location
 
         protected override Task StopListeningAsync()
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(_observer.StopObservingZones);
+            if (Beacons.Count > 0)
+            {
+                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(_observer.StopObservingZones);
+            }
+
+            lock (_indoorLocationsBeingMonitored)
+            {
+                if (_indoorLocationsBeingMonitored.Count > 0)
+                {
+                    foreach (EILLocation location in _indoorLocationsBeingMonitored)
+                    {
+                        _backgroundIndoorLocationManager.StopPositionUpdatesForLocation(location);
+                    }
+                }
+            }
 
             return Task.CompletedTask;
         }

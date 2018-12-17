@@ -190,6 +190,20 @@ namespace Sensus.UI
                 {
                     await Navigation.PushAsync(new EstimoteBeaconProbeBeaconsPage(probe as EstimoteBeaconProbe));
                 };
+
+                Button editLocationsButton = new Button
+                {
+                    Text = "Edit Locations",
+                    FontSize = 20,
+                    HorizontalOptions = LayoutOptions.FillAndExpand
+                };
+
+                contentLayout.Children.Add(editLocationsButton);
+
+                editLocationsButton.Clicked += async (sender, e) =>
+                {
+                    await Navigation.PushAsync(new EstimoteBeaconProbeLocationsPage(probe as EstimoteBeaconProbe));
+                };
             }
             #endregion
 

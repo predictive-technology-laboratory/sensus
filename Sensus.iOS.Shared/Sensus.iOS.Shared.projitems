@@ -50,6 +50,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotificationCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkConnectivity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBackgroundIndoorLocationManagerDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
