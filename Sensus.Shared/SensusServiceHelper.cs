@@ -856,7 +856,11 @@ namespace Sensus
             {
                 await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
 
-                // save the app state. if the app crashes we want to keep the surveys around so they can be taken.
+                // save the app state. if the app crashes we want to keep the surveys around so they can be 
+                // taken. this will not result in duplicate surveys in cases where the script probe restarts
+                // and reschedules itself, as the the script probe schedule only concerns future surveys 
+                // whereas the surveys serialized within the app state within _scriptsToRun are by definition
+                // surveys deployed in the past.
                 try
                 {
                     await SaveAsync();
