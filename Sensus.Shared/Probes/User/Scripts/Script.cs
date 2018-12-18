@@ -66,11 +66,11 @@ namespace Sensus.Probes.User.Scripts
         public DateTime? ExpirationDate { get; set; }
 
         /// <summary>
-        /// Gets the runner interface. For NuGet interfacing.
+        /// Gets the <see cref="IScriptRunner"/> associated with the current <see cref="Script"/> (for NuGet interfacing).
         /// </summary>
         /// <value>The runner interface.</value>
         [JsonIgnore]
-        public IScriptRunner IRunner { get => Runner; }
+        public IScriptRunner IRunner => Runner;
 
         public Datum CurrentDatum
         {

@@ -887,7 +887,7 @@ namespace Sensus
                     await RemoveScriptAsync(script, issueNotification);
 
                     // let the script agent know and store a datum to record the event
-                    script.Runner.Probe.Agent?.Observe(script, ScriptState.Expired);
+                    await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
                     await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
                 }
             }
@@ -898,7 +898,7 @@ namespace Sensus
             foreach (Script script in _scriptsToRun)
             {
                 // let the script agent know and store a datum to record the event
-                script.Runner.Probe.Agent?.Observe(script, ScriptState.Deleted);
+                await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Deleted) ?? Task.CompletedTask);
                 await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 

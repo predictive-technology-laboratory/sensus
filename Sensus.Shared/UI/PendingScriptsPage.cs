@@ -20,6 +20,7 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.UI
 {
@@ -61,7 +62,7 @@ namespace Sensus.UI
                     await SensusServiceHelper.Get().RemoveScriptAsync(scriptToDelete, true);
 
                     // let the script agent know and store a datum to record the event
-                    scriptToDelete.Runner.Probe.Agent?.Observe(scriptToDelete, ScriptState.Deleted);
+                    await (scriptToDelete.Runner.Probe.Agent?.ObserveAsync(scriptToDelete, ScriptState.Deleted) ?? Task.CompletedTask);
                     await scriptToDelete.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete), CancellationToken.None);
                 };
 
@@ -130,7 +131,7 @@ namespace Sensus.UI
                 }
 
                 // let the script agent know and store a datum to record the event
-                selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Opened);
+                await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Opened) ?? Task.CompletedTask);
                 await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
 
                 selectedScript.Submitting = true;
@@ -142,13 +143,13 @@ namespace Sensus.UI
                 if (canceled)
                 {
                     // let the script agent know and store a datum to record the event
-                    selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Cancelled);
+                    await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Cancelled) ?? Task.CompletedTask);
                     await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
                 }
                 else
                 {
                     // let the script agent know and store a datum to record the event
-                    selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Submitted);
+                    await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Submitted) ?? Task.CompletedTask);
                     await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
 
                     // track times when script is completely valid and wasn't cancelled by the user

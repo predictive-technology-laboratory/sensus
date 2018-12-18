@@ -47,9 +47,24 @@ namespace Sensus.Probes.User.Scripts
 
         private readonly object _locker = new object();
 
+        /// <summary>
+        /// Gets or sets the probe.
+        /// </summary>
+        /// <value>The probe.</value>
         public ScriptProbe Probe { get; set; }
 
+        /// <summary>
+        /// Gets or sets the script.
+        /// </summary>
+        /// <value>The script.</value>
         public Script Script { get; set; }
+
+        /// <summary>
+        /// Gets the <see cref="IScript"/> that this <see cref="IScriptRunner"/> is configured to run (for NuGet interfacing).
+        /// </summary>
+        /// <value>The script.</value>
+        [JsonIgnore]
+        public IScript IScript => Script;
 
         /// <summary>
         /// Name of the survey. If you would like to use the value of a 
@@ -681,7 +696,7 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        private async Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
+        public async Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
         {
             SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
 
@@ -727,7 +742,7 @@ namespace Sensus.Probes.User.Scripts
             // check with the survey agent if there is one
             if (Probe.Agent != null)
             {
-                Tuple<bool, DateTimeOffset?> deliverFutureTime = await Probe.Agent.DeliverSurveyNow(script);
+                Tuple<bool, DateTimeOffset?> deliverFutureTime = await Probe.Agent.DeliverSurveyNowAsync(script);
 
                 if (!deliverFutureTime.Item1)
                 {
@@ -774,7 +789,7 @@ namespace Sensus.Probes.User.Scripts
             await SensusServiceHelper.Get().AddScriptAsync(script, RunMode);
 
             // let the script agent know and store a datum to record the event
-            Probe.Agent?.Observe(script, ScriptState.Delivered);
+            await (Probe.Agent?.ObserveAsync(script, ScriptState.Delivered) ?? Task.CompletedTask);
             await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
         }
     }
