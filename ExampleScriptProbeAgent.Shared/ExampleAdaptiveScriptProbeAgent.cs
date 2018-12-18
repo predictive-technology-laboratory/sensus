@@ -56,25 +56,34 @@ namespace ExampleScriptProbeAgent
         public string Id => "Adaptive";
 
         /// <summary>
+        /// The delivery interval.
+        /// </summary>
+        public TimeSpan? DeliveryInterval => null;
+
+        /// <summary>
         /// Sets the policy.
         /// </summary>
         /// <param name="policyJSON">Policy json.</param>
-        public void SetPolicy(string policyJSON)
+        public Task SetPolicyAsync(string policyJSON)
         {
             JObject policyObject = JObject.Parse(policyJSON);
             _deliveryProbability = (double)policyObject.GetValue("p");
             _deferralInterval = TimeSpan.FromSeconds((int)policyObject.GetValue("deferral"));
 
             _sensusServiceHelper?.Logger.Log("Script agent policy set:  p=" + _deliveryProbability + "; deferral=" + _deferralInterval, LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Observe the specified datum.
         /// </summary>
         /// <param name="datum">Datum.</param>
-        public void Observe(IDatum datum)
+        public Task ObserveAsync(IDatum datum)
         {
             _sensusServiceHelper?.Logger.Log("Datum observed (" + ++_numDataObserved + " total):  " + datum, LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -82,7 +91,7 @@ namespace ExampleScriptProbeAgent
         /// </summary>
         /// <returns>Deliver/defer decision.</returns>
         /// <param name="script">Script.</param>
-        public async Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNow(IScript script)
+        public async Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNowAsync(IScript script)
         {
             bool deliver = new Random().NextDouble() < _deliveryProbability;
 
@@ -102,7 +111,7 @@ namespace ExampleScriptProbeAgent
         /// </summary>
         /// <param name="script">Script.</param>
         /// <param name="state">State.</param>
-        public void Observe(IScript script, ScriptState state)
+        public Task ObserveAsync(IScript script, ScriptState state)
         {
             if (state == ScriptState.Opened)
             {
@@ -124,13 +133,15 @@ namespace ExampleScriptProbeAgent
                 // never set the probability to 0, as this would discontinue all surveys.
                 _deliveryProbability = Math.Max(0.1, _deliveryProbability - SUBMIT_DELETE_EXPIRE_REWARD);
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Reset this instance.
         /// </summary>
         /// <param name="sensusServiceHelper">A reference to the Sensus helper.</param>
-        public void Reset(ISensusServiceHelper sensusServiceHelper)
+        public Task ResetAsync(ISensusServiceHelper sensusServiceHelper)
         {
             _sensusServiceHelper = sensusServiceHelper;
 
@@ -138,6 +149,8 @@ namespace ExampleScriptProbeAgent
             _deliveryProbability = 0.5;
 
             _sensusServiceHelper?.Logger.Log("Agent has been reset.", LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

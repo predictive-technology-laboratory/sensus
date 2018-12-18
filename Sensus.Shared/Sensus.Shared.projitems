@@ -76,7 +76,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WheelchairUse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WheelchairUseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScheduleTrigger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
@@ -270,6 +269,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteLocation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeLocationsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

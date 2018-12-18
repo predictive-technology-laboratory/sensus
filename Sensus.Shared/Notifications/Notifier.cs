@@ -304,7 +304,7 @@ namespace Sensus.Notifications
                             {
                                 // retrieve and set the policy
                                 string policyJSON = await protocol.RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
-                                scriptProbe.Agent.SetPolicy(policyJSON);
+                                await scriptProbe.Agent.SetPolicyAsync(policyJSON);
 
                                 // save policy within app state (agent itself is not serialized)
                                 scriptProbe.AgentPolicyJSON = policyJSON;
