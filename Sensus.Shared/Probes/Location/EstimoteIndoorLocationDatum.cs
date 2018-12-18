@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus.Probes.Location
 {
@@ -24,7 +26,7 @@ namespace Sensus.Probes.Location
     {
         private double _x;
         private double _y;
-        private string _accuracy;
+        private EstimoteIndoorLocationAccuracy _accuracy;
         private string _locationName;
         private string _locationId;
 
@@ -40,7 +42,8 @@ namespace Sensus.Probes.Location
             set { _y = value; }
         }
 
-        public string Accuracy
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EstimoteIndoorLocationAccuracy Accuracy
         {
             get { return _accuracy; }
             set { _accuracy = value; }
@@ -68,7 +71,7 @@ namespace Sensus.Probes.Location
             get { return _locationName; }
         }
 
-        public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, string accuracy, string locationName, string locationId)
+        public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, EstimoteIndoorLocationAccuracy accuracy, string locationName, string locationId)
             : base(timestamp)
         {
             _x = x;

@@ -177,6 +177,8 @@ namespace Sensus.UI
             #region estimote probe
             if (probe is EstimoteBeaconProbe)
             {
+                EstimoteBeaconProbe estimoteBeaconProbe = probe as EstimoteBeaconProbe;
+
                 Button editBeaconsButton = new Button
                 {
                     Text = "Edit Beacons",
@@ -188,7 +190,7 @@ namespace Sensus.UI
 
                 editBeaconsButton.Clicked += async (sender, e) =>
                 {
-                    await Navigation.PushAsync(new EstimoteBeaconProbeBeaconsPage(probe as EstimoteBeaconProbe));
+                    await Navigation.PushAsync(new EstimoteBeaconProbeBeaconsPage(estimoteBeaconProbe));
                 };
 
                 Button editLocationsButton = new Button
@@ -202,7 +204,7 @@ namespace Sensus.UI
 
                 editLocationsButton.Clicked += async (sender, e) =>
                 {
-                    await Navigation.PushAsync(new EstimoteBeaconProbeLocationsPage(probe as EstimoteBeaconProbe));
+                    await Navigation.PushAsync(new EstimoteBeaconProbeLocationsPage(estimoteBeaconProbe));
                 };
             }
             #endregion

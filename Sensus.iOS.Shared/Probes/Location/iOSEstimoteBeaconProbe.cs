@@ -47,7 +47,8 @@ namespace Sensus.iOS.Probes.Location
 
                 foregroundLocationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
                 {
-                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracy.ToString(), location.Name, location.Identifier));
+                    EstimoteIndoorLocationAccuracy accuracyEnum = (EstimoteIndoorLocationAccuracy)Enum.Parse(typeof(EstimoteIndoorLocationAccuracy), accuracy.ToString(), true);
+                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracyEnum, location.Name, location.Identifier));
                 };
 
                 _foregroundIndoorLocationManager.Delegate = foregroundLocationManagerDelegate;
@@ -59,7 +60,8 @@ namespace Sensus.iOS.Probes.Location
 
                 backgroundLocationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
                 {
-                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracy.ToString(), location.Name, location.Identifier));
+                    EstimoteIndoorLocationAccuracy accuracyEnum = (EstimoteIndoorLocationAccuracy)Enum.Parse(typeof(EstimoteIndoorLocationAccuracy), accuracy.ToString(), true);
+                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracyEnum, location.Name, location.Identifier));
                 };
 
                 _backgroundIndoorLocationManager.Delegate = backgroundLocationManagerDelegate;

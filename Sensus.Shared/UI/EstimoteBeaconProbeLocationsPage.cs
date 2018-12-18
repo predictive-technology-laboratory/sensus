@@ -87,7 +87,7 @@ namespace Sensus.UI
                 {
                     try
                     {
-                        string locationIdentifier = inputs[0].Value.ToString().Split('(', ')')[1];
+                        string locationIdentifier = inputs[0].Value.ToString().Split(new char[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries)[1];
                         estimoteBeaconProbe.Locations.Add(locations.Single(location => location.Identifier == locationIdentifier));
                     }
                     catch (Exception)
