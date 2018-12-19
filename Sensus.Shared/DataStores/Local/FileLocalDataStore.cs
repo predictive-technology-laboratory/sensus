@@ -196,13 +196,14 @@ namespace Sensus.DataStores.Local
         }
 
         /// <summary>
-        /// Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must provide a public encryption 
-        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. You can generate a public encryption key following the instructions
-        /// provided for <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. Note that data are not encrypted immediately. They are first
-        /// written to a compressed file on the device where they live unencrypted for a period of time.
+        /// Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must either provide a public encryption 
+        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/> or use an [authentication server](xref:authentication_servers). 
+        /// You can generate a public encryption key following the instructions provided for 
+        /// <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. Note that data are not encrypted immediately. They are first
+        /// written to disk on the device where they live unencrypted for a period of time.
         /// </summary>
         /// <value><c>true</c> to encrypt; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
+        [OnOffUiProperty("Encrypt:", true, 6)]
         public bool Encrypt
         {
             get
