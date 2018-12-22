@@ -270,7 +270,6 @@ namespace Sensus.DataStores.Local
             // step 1:  buffer
             _dataBuffer = new List<Datum>();
             _dataHaveBeenBuffered = new AutoResetEvent(false);
-            _totalDataBuffered = 0;
 
             // step 2:  file
             _currentPath = null;
@@ -279,21 +278,15 @@ namespace Sensus.DataStores.Local
             _writeBufferedDataToFileTask = null;
             _toWriteBuffer = new List<Datum>();
             _bufferedDataHaveBeenWrittenToFile = new AutoResetEvent(false);
-            _totalDataWrittenToCurrentFile = 0;
-            _totalDataWritten = 0;
-            _totalFilesOpened = 0;
-            _totalFilesClosed = 0;
 
             // step 3:  compressed, encrypted file
             _compressionLevel = CompressionLevel.Optimal;
             _encrypt = false;
             _pathsPreparedForRemote = new List<string>();
             _pathsUnpreparedForRemote = new List<string>();
-            _totalFilesPreparedForRemote = 0;
 
             // step 4:  remote data store
             _writeToRemoteTask = null;
-            _totalFilesWrittenToRemote = 0;
         }
 
         public override async Task StartAsync()
@@ -328,20 +321,7 @@ namespace Sensus.DataStores.Local
             // indicated by a lack of file extension.
             foreach (string pathUnpreparedForRemote in Directory.GetFiles(StorageDirectory).Where(path => string.IsNullOrWhiteSpace(Path.GetExtension(path))))
             {
-                try
-                {
-                    await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while preparing path for remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-
-                    // if anything goes wrong (e.g., encryption failure), hang on to the path for later.
-                    lock (_pathsUnpreparedForRemote)
-                    {
-                        _pathsUnpreparedForRemote.Add(pathUnpreparedForRemote);
-                    }
-                }
+                await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
             }
 
             OpenFile();
@@ -519,23 +499,7 @@ namespace Sensus.DataStores.Local
 
                                 if (startNewFile)
                                 {
-                                    try
-                                    {
-                                        await CloseFileAsync(cancellationToken);
-                                    }
-                                    catch (Exception closeException)
-                                    {
-                                        SensusException.Report("Exception while closing file:  " + closeException.Message, closeException);
-                                    }
-
-                                    try
-                                    {
-                                        OpenFile();
-                                    }
-                                    catch (Exception openException)
-                                    {
-                                        SensusException.Report("Exception while opening file:  " + openException.Message, openException);
-                                    }
+                                    await StartNewFileAsync(cancellationToken);
                                 }
 
                                 if (checkSize)
@@ -574,6 +538,8 @@ namespace Sensus.DataStores.Local
                 {
                     _writeToRemoteTask = Task.Run(async () =>
                     {
+                        await StartNewFileAsync(cancellationToken);
+
                         string[] pathsPreparedForRemote;
                         lock (_pathsPreparedForRemote)
                         {
@@ -649,6 +615,37 @@ namespace Sensus.DataStores.Local
 
                 return _writeToRemoteTask;
             }
+        }
+
+        private async Task StartNewFileAsync(CancellationToken cancellationToken)
+        {
+            // start a new file within a lock to ensure that anyone with the lock will have a valid file
+            string unpreparedPath = null;
+            lock (_fileLocker)
+            {
+                try
+                {
+                    unpreparedPath = CloseFile();
+                }
+                catch (Exception closeException)
+                {
+                    SensusException.Report("Exception while closing file:  " + closeException.Message, closeException);
+                }
+
+                if (Running)
+                {
+                    try
+                    {
+                        OpenFile();
+                    }
+                    catch (Exception openException)
+                    {
+                        SensusException.Report("Exception while opening file:  " + openException.Message, openException);
+                    }
+                }
+            }
+
+            await PreparePathForRemoteAsync(unpreparedPath, cancellationToken);
         }
 
         public override void CreateTarFromLocalData(string outputPath)
@@ -740,9 +737,9 @@ namespace Sensus.DataStores.Local
             }
         }
 
-        private async Task CloseFileAsync(CancellationToken cancellationToken)
+        private string CloseFile()
         {
-            string unpreparedPath = null;
+            string path = _currentPath;
 
             lock (_fileLocker)
             {
@@ -750,11 +747,9 @@ namespace Sensus.DataStores.Local
                 {
                     try
                     {
-                        unpreparedPath = _currentPath;
-
-                        // end the JSON array and close the file
-                        byte[] jsonEndArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
-                        _currentFile.Write(jsonEndArrayBytes, 0, jsonEndArrayBytes.Length);
+                        // close the JSON array and close the file
+                        byte[] jsonCloseArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
+                        _currentFile.Write(jsonCloseArrayBytes, 0, jsonCloseArrayBytes.Length);
                         _currentFile.Flush();
                         _currentFile.Close();
                         _currentFile.Dispose();
@@ -770,70 +765,69 @@ namespace Sensus.DataStores.Local
                 }
             }
 
-            if (unpreparedPath != null)
-            {
-                try
-                {
-                    await PreparePathForRemoteAsync(unpreparedPath, cancellationToken);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while preparing path for remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-
-                    // if anything goes wrong (e.g., encryption failure), hang on to the path for later.
-                    lock (_pathsUnpreparedForRemote)
-                    {
-                        _pathsUnpreparedForRemote.Add(unpreparedPath);
-                    }
-                }
-            }
+            return path;
         }
 
         private async Task PreparePathForRemoteAsync(string path, CancellationToken cancellationToken)
         {
-            if (File.Exists(path))
+            try
             {
-                byte[] bytes = File.ReadAllBytes(path);
-
-                string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
-
-                if (_compressionLevel != CompressionLevel.NoCompression)
+                if (File.Exists(path))
                 {
-                    preparedPath += GZIP_FILE_EXTENSION;
+                    byte[] bytes = File.ReadAllBytes(path);
 
-                    Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-                    MemoryStream compressedStream = new MemoryStream();
-                    compressor.Compress(bytes, compressedStream, _compressionLevel);
-                    bytes = compressedStream.ToArray();
+                    string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
+
+                    if (_compressionLevel != CompressionLevel.NoCompression)
+                    {
+                        preparedPath += GZIP_FILE_EXTENSION;
+
+                        Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
+                        MemoryStream compressedStream = new MemoryStream();
+                        compressor.Compress(bytes, compressedStream, _compressionLevel);
+                        bytes = compressedStream.ToArray();
+                    }
+
+                    if (_encrypt)
+                    {
+                        preparedPath += ENCRYPTED_FILE_EXTENSION;
+
+                        using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+                        {
+                            await Protocol.EnvelopeEncryptor.EnvelopeAsync(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        File.WriteAllBytes(preparedPath, bytes);
+                    }
+
+                    lock (_pathsPreparedForRemote)
+                    {
+                        _pathsPreparedForRemote.Add(preparedPath);
+                    }
+
+                    File.Delete(path);
+
+                    _totalFilesPreparedForRemote++;
                 }
 
-                if (_encrypt)
+                lock (_pathsUnpreparedForRemote)
                 {
-                    preparedPath += ENCRYPTED_FILE_EXTENSION;
+                    _pathsUnpreparedForRemote.Remove(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while preparing path for remote:  " + ex.Message, LoggingLevel.Normal, GetType());
 
-                    using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+                lock (_pathsUnpreparedForRemote)
+                {
+                    if (!_pathsUnpreparedForRemote.Contains(path))
                     {
-                        await Protocol.EnvelopeEncryptor.EnvelopeAsync(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
+                        _pathsUnpreparedForRemote.Add(path);
                     }
                 }
-                else
-                {
-                    File.WriteAllBytes(preparedPath, bytes);
-                }
-
-                lock (_pathsPreparedForRemote)
-                {
-                    _pathsPreparedForRemote.Add(preparedPath);
-                }
-
-                File.Delete(path);
-
-                _totalFilesPreparedForRemote++;
-            }
-
-            lock (_pathsUnpreparedForRemote)
-            {
-                _pathsUnpreparedForRemote.Remove(path);
             }
         }
 
@@ -862,7 +856,7 @@ namespace Sensus.DataStores.Local
                 _toWriteBuffer.Clear();
             }
 
-            await CloseFileAsync(CancellationToken.None);
+            await PreparePathForRemoteAsync(CloseFile(), CancellationToken.None);
         }
 
         public void Clear()
@@ -880,6 +874,14 @@ namespace Sensus.DataStores.Local
                         SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
+
+                _totalDataBuffered = 0;
+                _totalDataWrittenToCurrentFile = 0;
+                _totalDataWritten = 0;
+                _totalFilesOpened = 0;
+                _totalFilesClosed = 0;
+                _totalFilesPreparedForRemote = 0;
+                _totalFilesWrittenToRemote = 0;
             }
         }
 
@@ -894,16 +896,7 @@ namespace Sensus.DataStores.Local
 
             foreach (string pathUnpreparedForRemote in pathsUnpreparedForRemote)
             {
-                try
-                {
-                    await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
-                }
-                catch (Exception ex)
-                {
-                    // if anything goes wrong (e.g., encryption failure), do nothing as the path is already
-                    // in the collection of unprepared paths. we'll try it again upon the next health test.
-                    SensusServiceHelper.Get().Logger.Log("Exception while preparing path for remote:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
             }
 
             HealthTestResult result = await base.TestHealthAsync(events);
@@ -911,10 +904,10 @@ namespace Sensus.DataStores.Local
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Percent Buffer Written", Convert.ToString(_totalDataWritten.RoundToWholePercentageOf(_totalDataBuffered, 5)) },
-                { "Percent Files Closed", Convert.ToString(_totalFilesClosed.RoundToWholePercentageOf(_totalFilesOpened, 5)) },
-                { "Percent Files Prepared For Remote", Convert.ToString(_totalFilesPreparedForRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
-                { "Percent Files Written To Remote", Convert.ToString(_totalFilesWrittenToRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
+                { "Percent Buffer Written To File", Convert.ToString(_totalDataWritten.RoundToWholePercentageOf(_totalDataBuffered, 5)) },
+                { "Percent Files Closed", Convert.ToString(_totalFilesClosed.RoundToWholePercentageOf(_currentPath == null ? _totalFilesOpened : _totalFilesOpened - 1, 5)) },  // don't count the currently open file in the denominator. we want the number to reflect the extent to which all files that should have been closed indeed were.
+                { "Percent Closed Files Prepared For Remote", Convert.ToString(_totalFilesPreparedForRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
+                { "Percent Closed Files Written To Remote", Convert.ToString(_totalFilesWrittenToRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
                 { "Paths Unprepared For Remote", Convert.ToString(_pathsUnpreparedForRemote.Count) },
                 { "Prepared Files Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
             };

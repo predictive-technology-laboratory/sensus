@@ -357,6 +357,33 @@ public string IncompleteSubmissionConfirmation { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_IScript_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IScript*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_IScript" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IScript">IScript</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_IScript">IScript</a> that this <a class="xref" href="Sensus.Probes.User.Scripts.IScriptRunner.html">IScriptRunner</a> is configured to run (for NuGet interfacing).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IScript IScript { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></td>
+        <td><p>The script.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_MaxAgeMinutes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.MaxAgeMinutes*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_MaxAgeMinutes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.MaxAgeMinutes">MaxAgeMinutes</h4>
   <div class="markdown level1 summary"><p>The maximum number of minutes, following delivery to the user, that this survey should remain available for completion.</p>
@@ -479,7 +506,8 @@ public bool OneShot { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_Probe_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Probe*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Probe" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Probe">Probe</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the probe.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -496,7 +524,8 @@ public bool OneShot { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></td>
-        <td></td>
+        <td><p>The probe.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -665,7 +694,8 @@ public bool RunOnStart { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_Script_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Script*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Script" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Script">Script</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the script.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -682,7 +712,8 @@ public bool RunOnStart { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
-        <td></td>
+        <td><p>The script.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -900,6 +931,58 @@ public bool WindowExpiration { get; set; }</code></pre>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public Task RestartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_RunAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_RunAsync_Sensus_Probes_User_Scripts_Script_Sensus_Datum_Sensus_Datum_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunAsync(Sensus.Probes.User.Scripts.Script,Sensus.Datum,Sensus.Datum)">RunAsync(Script, Datum, Datum)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
+        <td><span class="parametername">script</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">previousDatum</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">currentDatum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
