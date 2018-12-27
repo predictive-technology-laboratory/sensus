@@ -25,6 +25,9 @@ using System.Linq;
 using Sensus.Callbacks;
 using Sensus.Probes.User.Scripts;
 using Sensus.Probes;
+using System.Reflection;
+using Newtonsoft.Json;
+using Sensus.Extensions;
 
 namespace Sensus.Notifications
 {
@@ -35,6 +38,12 @@ namespace Sensus.Notifications
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
         private const string UPDATE_SCRIPT_AGENT_POLICY_COMMAND = "UPDATE-EMA-POLICY";
+        private const string UPDATE_PROTOCOL_SETTING = "UPDATE-PROTOCOL-SETTING";
+
+        private const string UPDATE_PROTOCOL_SETTING_PROTOCOL = "UPDATE-PROTOCOL-SETTING-PROTOCOL";
+        private const string UPDATE_PROTOCOL_SETTING_PROBE = "UPDATE-PROTOCOL-SETTING-PROBE";
+        private const string UPDATE_PROTOCOL_SETTING_STORE_LOCAL = "UPDATE-PROTOCOL-SETTING-STORE-LOCAL";
+        private const string UPDATE_PROTOCOL_SETTING_STORE_REMOTE = "UPDATE-PROTOCOL-SETTING-STORE-REMOTE";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
@@ -275,7 +284,7 @@ namespace Sensus.Notifications
                     {
                         if (commandParts.Length != 4)
                         {
-                            throw new Exception("Invalid push notification callback command format:  " + command);
+                            throw new Exception($"Invalid push notification callback command {commandParts.First()} format:  " + command);
                         }
 
                         string callbackId = commandParts[2];
@@ -312,6 +321,11 @@ namespace Sensus.Notifications
                             }
                         }
                     }
+                    else if(commandParts.First() == UPDATE_PROTOCOL_SETTING) //TODO:  right now it is only set up to do a single action/setting per notification.  This should be handled a level instead of speficially with this action
+                    {
+                        await ProcessSettingCommand(protocol, command);
+                        await protocol.StartAsync(cancellationToken); //this should also save the change
+                    }
                     else
                     {
                         throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
@@ -323,6 +337,111 @@ namespace Sensus.Notifications
                 SensusException.Report("Exception while processing push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
             }
         }
+        public async Task ProcessSettingCommand(Protocol protocol, string command)
+        {
+            if(command == null || command.Contains("|") == false)
+            {
+                throw new Exception($"Invalid push notification callback command:  " + command);
+            }
+            string[] commandParts = command.Split('|');
+
+            if (commandParts.Length != 7)
+            {
+                throw new Exception($"Invalid push notification callback command {commandParts.First()} format:  " + command);
+            }
+
+            string friendlyObjName = "";
+
+            string typeName = commandParts[2];
+            string typeValue = commandParts[3];
+            string propertyName = commandParts[4];
+            string valueString = commandParts[5];
+            bool.TryParse(commandParts[6], out bool notifyUser);
+            bool completed = false;
+
+            object parentObject = null;
+            //find the type
+
+            switch (typeName)
+            {
+                case UPDATE_PROTOCOL_SETTING_PROTOCOL:
+                    friendlyObjName = "Protocol";
+                    parentObject = protocol;
+                    break;
+                case UPDATE_PROTOCOL_SETTING_STORE_LOCAL:
+                    friendlyObjName = "Local Data Store";
+                    parentObject = protocol?.LocalDataStore;
+                    break;
+                case UPDATE_PROTOCOL_SETTING_STORE_REMOTE:
+                    friendlyObjName = "Remote Data Store";
+                    parentObject = protocol?.RemoteDataStore;
+                    break;
+                case UPDATE_PROTOCOL_SETTING_PROBE:
+                    friendlyObjName = typeValue + " Probe";
+                    parentObject = protocol.Probes.FirstOrDefault(w => w.DisplayName == typeValue);
+                    break;
+            }
+
+
+            if (parentObject != null)
+            {
+                completed = SetProperty(parentObject, propertyName, valueString);
+            }
+
+            if (completed == false)
+            {
+                throw new Exception($"We could not set a setting.  objFound:{(parentObject ?? "no parent found")} command:"+command);
+            }
+            else
+            {
+                var msg = $"Successfully set the {propertyName} setting was changed to {valueString} on the {friendlyObjName} for protocol {protocol.Name}";
+                SensusServiceHelper.Get().Logger.Log($"{msg} command:{command}", LoggingLevel.Normal, typeof(Notifier));
+                if(notifyUser == true)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync(msg);
+                }               
+            }
+        }
+        private bool SetProperty(object obj, string fieldName, string value)
+        {
+            bool set = false;
+            try
+            {
+                if (obj != null && string.IsNullOrWhiteSpace(fieldName) == false)
+                {
+                    PropertyInfo propInfo = obj.GetType().GetProperty(fieldName);
+                    if (propInfo != null)
+                    {
+                        object setVal = null;
+                        if (string.IsNullOrWhiteSpace(value) == false)
+                        {
+                            if (value.IsValidJson() == true)
+                            {
+                                setVal = JsonConvert.DeserializeObject(value);
+                            }
+                            else
+                            {
+                                var baseType = Nullable.GetUnderlyingType(propInfo.PropertyType) ?? propInfo.PropertyType;
+                                setVal = Convert.ChangeType(value, baseType);
+                            }
+                        }
+                        propInfo.SetValue(obj, setVal);
+                        set = true;
+                    }
+                }
+            }
+            catch(JsonException jsonExc)
+            {
+
+            }
+            catch(Exception exc)
+            {
+
+            }
+            return set;
+        }
+
+
 
         public async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
         {
