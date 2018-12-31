@@ -12,27 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace Sensus.Extensions
 {
-    public static class JsonConvertExtensions
+    public static class TypeExtensions
     {
-        public static bool IsValidJson(this string s)
+        public static List<Type> AncestorTypes(this Type type, bool includeObject)
         {
-            bool valid = true;
+            List<Type> ancestorTypes = new List<Type>();
 
-            try
+            type = type.BaseType;
+
+            while (type != null && (includeObject || type != typeof(object)))
             {
-                JToken.Parse(s);
-            }
-            catch (Exception)
-            {
-                valid = false;
+                ancestorTypes.Add(type);
+                type = type.BaseType;
             }
 
-            return valid;
+            return ancestorTypes;
         }
     }
 }

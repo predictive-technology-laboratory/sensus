@@ -40,8 +40,6 @@ namespace Sensus.Notifications
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
         private const string UPDATE_SCRIPT_AGENT_POLICY_COMMAND = "UPDATE-EMA-POLICY";
         private const string UPDATE_PROTOCOL_COMMAND = "UPDATE-PROTOCOL";
-        private const string UPDATE_PROTOCOL_TARGET_PROTOCOL = "UPDATE-PROTOCOL";
-        private const string UPDATE_PROTOCOL_TARGET_PROBE = "UPDATE-PROBE";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
@@ -324,24 +322,94 @@ namespace Sensus.Notifications
                         // retrieve and process the policy updates
                         string policyUpdatesJSON = await protocol.RemoteDataStore.GetPolicyUpdatesAsync(cancellationToken);
                         JObject policyUpdates = JObject.Parse(policyUpdatesJSON);
+                        bool restartProtocol = false;
                         foreach (JObject policyUpdate in policyUpdates.Value<JArray>("updates"))
                         {
-                            string targetName = policyUpdate.Value<string>("target");
-                            string targetPropertyName = policyUpdate.Value<string>("property");
+                            string propertyTypeName = policyUpdate.Value<string>("property-type");
+                            string propertyName = policyUpdate.Value<string>("property-name");
+                            string targetTypeName = policyUpdate.Value<string>("target-type");
                             string valueString = policyUpdate.Value<string>("value");
 
                             try
                             {
-                                ProcessPolicyUpdate(protocol, targetName, targetPropertyName, valueString);
+                                // get property type
+                                Type propertyType;
+                                try
+                                {
+                                    propertyType = Assembly.GetExecutingAssembly().GetType(propertyTypeName, true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("Exception while getting property type (" + propertyTypeName + "):  " + ex.Message, ex);
+                                }
+
+                                // get property
+                                PropertyInfo property = propertyType.GetProperty(propertyName);
+
+                                // get target type
+                                Type targetType;
+                                try
+                                {
+                                    targetType = Assembly.GetExecutingAssembly().GetType(targetTypeName, true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("Exception while getting target type (" + targetTypeName + "):  " + ex.Message, ex);
+                                }
+
+                                // if the value is JSON, then assume it is a reference type.
+                                object valueObject = null;
+                                if (valueString.IsValidJson())
+                                {
+                                    valueObject = JsonConvert.DeserializeObject(valueString);
+                                }
+                                // otherwise, assume it is a value type.
+                                else
+                                {
+                                    // watch out for nullable value types when converting the string to its value type
+                                    Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                                    valueObject = Convert.ChangeType(valueString, baseType);
+                                }
+
+                                // get objects to update
+                                if (targetType == typeof(Protocol))
+                                {
+                                    property.SetValue(protocol, valueObject);
+                                    restartProtocol = true;
+                                }
+                                else if (targetType.AncestorTypes(false).Last() == typeof(Probe))
+                                {
+                                    foreach (Probe probe in protocol.Probes)
+                                    {
+                                        if (probe.GetType().AncestorTypes(false).Any(ancestorType => ancestorType == targetType))
+                                        {
+                                            property.SetValue(probe, valueObject);
+                                            await probe.RestartAsync();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    throw new Exception("Unrecognized update target type:  " + targetType.FullName);
+                                }
+
+                                SensusServiceHelper.Get().Logger.Log("Updated policy:  " + propertyTypeName + "." + propertyName + " on " + targetTypeName + " = " + valueString, LoggingLevel.Normal, GetType());
                             }
                             catch (Exception updateException)
                             {
-                                SensusException.Report("Exception while processing protocol update:  " + updateException.Message, updateException);
+                                SensusServiceHelper.Get().Logger.Log("Exception while processing protocol update:  " + updateException.Message, LoggingLevel.Normal, GetType());
                             }
                         }
 
-                        // save updated protocol
-                        await SensusServiceHelper.Get().SaveAsync();
+                        if (restartProtocol)
+                        {
+                            await protocol.StopAsync();
+                            await protocol.StartAsync(cancellationToken);
+                        }
+                        else
+                        {
+                            await SensusServiceHelper.Get().SaveAsync();
+                        }
 
                         // let the user know if needed
                         JObject userNotification = policyUpdates.Value<JObject>("user-notification");
@@ -361,45 +429,6 @@ namespace Sensus.Notifications
             {
                 SensusException.Report("Exception while processing push notification command:  " + pushNotificationCommandException.Message, pushNotificationCommandException);
             }
-        }
-
-        public void ProcessPolicyUpdate(Protocol protocol, string targetName, string targetPropertyName, string valueString)
-        {
-            object targetObject = null;
-
-            if (targetName == UPDATE_PROTOCOL_TARGET_PROTOCOL)
-            {
-                targetObject = protocol;
-            }
-            else if (targetName.StartsWith(UPDATE_PROTOCOL_TARGET_PROBE))
-            {
-                string probeName = targetName.Split('|')[1];
-                targetObject = protocol.Probes.SingleOrDefault(w => w.DisplayName == probeName);
-            }
-            else
-            {
-                throw new Exception("Unrecognized update target:  " + targetName);
-            }
-
-            PropertyInfo targetProperty = targetObject.GetType().GetProperty(targetPropertyName);
-
-            // if the value is JSON, then assume it is a reference type.
-            object valueObject = null;
-            if (valueString.IsValidJson())
-            {
-                valueObject = JsonConvert.DeserializeObject(valueString);
-            }
-            // otherwise, assume it is a value type.
-            else
-            {
-                // watch out for nullable value types when converting the string to its value type
-                Type baseType = Nullable.GetUnderlyingType(targetProperty.PropertyType) ?? targetProperty.PropertyType;
-                valueObject = Convert.ChangeType(valueString, baseType);
-            }
-
-            targetProperty.SetValue(targetObject, valueObject);
-
-            SensusServiceHelper.Get().Logger.Log("Updated policy:  " + targetName + ", " + targetPropertyName + "," + valueString, LoggingLevel.Normal, GetType());
         }
 
         public async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)

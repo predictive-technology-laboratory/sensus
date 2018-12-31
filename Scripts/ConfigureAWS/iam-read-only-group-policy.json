@@ -25,7 +25,7 @@
     {
       "Effect": "Allow",
       "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::bucketName/policy-updates/*"
+      "Resource": "arn:aws:s3:::bucketName/protocol-updates/*"
     }
   ]
 }
