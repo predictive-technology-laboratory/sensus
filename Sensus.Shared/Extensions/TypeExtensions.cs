@@ -19,11 +19,15 @@ namespace Sensus.Extensions
 {
     public static class TypeExtensions
     {
-        public static List<Type> AncestorTypes(this Type type, bool includeObject)
+        /// <summary>
+        /// Gets the ancestor types of a given type.
+        /// </summary>
+        /// <returns>The ancestor types.</returns>
+        /// <param name="type">Type to get ancestor types for.</param>
+        /// <param name="includeObject">If set to <c>true</c> include <see cref="object"/> type.</param>
+        public static List<Type> GetAncestorTypes(this Type type, bool includeObject)
         {
             List<Type> ancestorTypes = new List<Type>();
-
-            type = type.BaseType;
 
             while (type != null && (includeObject || type != typeof(object)))
             {

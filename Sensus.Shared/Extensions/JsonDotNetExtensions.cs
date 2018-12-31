@@ -19,13 +19,13 @@ namespace Sensus.Extensions
 {
     public static class JsonDotNetExtensions
     {
-        public static bool IsValidJson(this string s)
+        public static bool IsValidJsonObject(this string s)
         {
             bool valid = true;
 
             try
             {
-                JToken.Parse(s);
+                JObject.Parse(s);
             }
             catch (Exception)
             {

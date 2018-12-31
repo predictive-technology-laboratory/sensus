@@ -359,7 +359,7 @@ namespace Sensus.Notifications
 
                                 // if the value is JSON, then assume it is a reference type.
                                 object valueObject = null;
-                                if (valueString.IsValidJson())
+                                if (valueString.IsValidJsonObject())
                                 {
                                     valueObject = JsonConvert.DeserializeObject(valueString);
                                 }
@@ -371,19 +371,26 @@ namespace Sensus.Notifications
                                     valueObject = Convert.ChangeType(valueString, baseType);
                                 }
 
+                                // update the protocol and request restart
                                 if (targetType == typeof(Protocol))
                                 {
                                     property.SetValue(protocol, valueObject);
                                     restartProtocol = true;
                                 }
-                                else if (targetType.AncestorTypes(false).Last() == typeof(Probe))
+                                else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
                                 {
+                                    // update/restart each probe dervied from the target type
                                     foreach (Probe probe in protocol.Probes)
                                     {
-                                        if (probe.GetType().AncestorTypes(false).Any(ancestorType => ancestorType == targetType))
+                                        if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
                                         {
                                             property.SetValue(probe, valueObject);
-                                            await probe.RestartAsync();
+
+                                            // restart any running probes to take on updated settings
+                                            if (probe.Running)
+                                            {
+                                                await probe.RestartAsync();
+                                            }
                                         }
                                     }
                                 }
@@ -392,7 +399,7 @@ namespace Sensus.Notifications
                                     throw new Exception("Unrecognized update target type:  " + targetType.FullName);
                                 }
 
-                                SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " on " + targetTypeName + " = " + valueString, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " for each " + targetTypeName + " = " + valueString, LoggingLevel.Normal, GetType());
                             }
                             catch (Exception updateException)
                             {
@@ -400,17 +407,19 @@ namespace Sensus.Notifications
                             }
                         }
 
+                        // restart the protocol if needed. this will have the side-effect of saving the app state.
                         if (restartProtocol)
                         {
                             await protocol.StopAsync();
                             await protocol.StartAsync(cancellationToken);
                         }
+                        // save the app state to record the changes.
                         else
                         {
                             await SensusServiceHelper.Get().SaveAsync();
                         }
 
-                        // let the user know if needed
+                        // let the user know if requested
                         JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
                         if (userNotification != null)
                         {
