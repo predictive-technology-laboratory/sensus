@@ -103,7 +103,7 @@ namespace Sensus.DataStores.Remote
             throw new NotImplementedException();
         }
 
-        public override Task<string> GetPolicyUpdatesAsync(CancellationToken cancellationToken)
+        public override Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

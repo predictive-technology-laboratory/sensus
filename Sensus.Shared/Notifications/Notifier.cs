@@ -319,16 +319,16 @@ namespace Sensus.Notifications
                     }
                     else if (commandParts.First() == UPDATE_PROTOCOL_COMMAND)
                     {
-                        // retrieve and process the policy updates
-                        string policyUpdatesJSON = await protocol.RemoteDataStore.GetPolicyUpdatesAsync(cancellationToken);
-                        JObject policyUpdates = JObject.Parse(policyUpdatesJSON);
+                        // retrieve and process the protocol updates
+                        string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(cancellationToken);
+                        JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
                         bool restartProtocol = false;
-                        foreach (JObject policyUpdate in policyUpdates.Value<JArray>("updates"))
+                        foreach (JObject protocolUpdate in protocolUpdates.Value<JArray>("updates"))
                         {
-                            string propertyTypeName = policyUpdate.Value<string>("property-type");
-                            string propertyName = policyUpdate.Value<string>("property-name");
-                            string targetTypeName = policyUpdate.Value<string>("target-type");
-                            string valueString = policyUpdate.Value<string>("value");
+                            string propertyTypeName = protocolUpdate.Value<string>("property-type");
+                            string propertyName = protocolUpdate.Value<string>("property-name");
+                            string targetTypeName = protocolUpdate.Value<string>("target-type");
+                            string valueString = protocolUpdate.Value<string>("value");
 
                             try
                             {
@@ -371,7 +371,6 @@ namespace Sensus.Notifications
                                     valueObject = Convert.ChangeType(valueString, baseType);
                                 }
 
-                                // get objects to update
                                 if (targetType == typeof(Protocol))
                                 {
                                     property.SetValue(protocol, valueObject);
@@ -393,7 +392,7 @@ namespace Sensus.Notifications
                                     throw new Exception("Unrecognized update target type:  " + targetType.FullName);
                                 }
 
-                                SensusServiceHelper.Get().Logger.Log("Updated policy:  " + propertyTypeName + "." + propertyName + " on " + targetTypeName + " = " + valueString, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " on " + targetTypeName + " = " + valueString, LoggingLevel.Normal, GetType());
                             }
                             catch (Exception updateException)
                             {
@@ -412,7 +411,7 @@ namespace Sensus.Notifications
                         }
 
                         // let the user know if needed
-                        JObject userNotification = policyUpdates.Value<JObject>("user-notification");
+                        JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
                         if (userNotification != null)
                         {
                             string message = userNotification.Value<string>("message");

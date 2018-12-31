@@ -341,7 +341,7 @@ namespace Sensus.DataStores.Remote
 
         public abstract Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
 
-        public abstract Task<string> GetPolicyUpdatesAsync(CancellationToken cancellationToken);
+        public abstract Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.
