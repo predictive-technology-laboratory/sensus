@@ -237,6 +237,14 @@ namespace Sensus.Android.Notifications
                     .SetAutoCancel(true)
                     .SetOngoing(false);
 
+                // use big-text style for long messages
+                if (message.Length > 20)
+                {
+                    Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+                    bigTextStyle.BigText(message);
+                    notificationBuilder.SetStyle(bigTextStyle);
+                }
+
                 _notificationManager.Notify(id, 0, notificationBuilder.Build());
             }
 

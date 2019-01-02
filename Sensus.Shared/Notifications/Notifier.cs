@@ -38,13 +38,11 @@ namespace Sensus.Notifications
     public abstract class Notifier
     {
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
-        private const string UPDATE_SCRIPT_AGENT_POLICY_COMMAND = "UPDATE-EMA-POLICY";
-        private const string UPDATE_PROTOCOL_COMMAND = "UPDATE-PROTOCOL";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
         /// <summary>
-        /// Whether trying to delete a push notification request, we don't always have the
+        /// When trying to delete a push notification request, we don't always have the
         /// original <see cref="PushNotificationRequest"/> object. This happens, for example,
         /// when we receive the push notification. All we have in that case is the ID and 
         /// protocol. So just track this information.
@@ -299,7 +297,7 @@ namespace Sensus.Notifications
 
                         await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
                     }
-                    else if (commandParts.First() == UPDATE_SCRIPT_AGENT_POLICY_COMMAND)
+                    else if (commandParts.First() == PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND)
                     {
                         if (protocol.TryGetProbe(typeof(ScriptProbe), out Probe probe))
                         {
@@ -317,7 +315,7 @@ namespace Sensus.Notifications
                             }
                         }
                     }
-                    else if (commandParts.First() == UPDATE_PROTOCOL_COMMAND)
+                    else if (commandParts.First() == PushNotificationRequest.UPDATE_PROTOCOL_COMMAND)
                     {
                         // retrieve and process the protocol updates
                         string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(cancellationToken);
@@ -424,7 +422,7 @@ namespace Sensus.Notifications
                         if (userNotification != null)
                         {
                             string message = userNotification.Value<string>("message");
-                            await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), id, protocol, true, DisplayPage.None);
+                            await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, protocol, true, DisplayPage.None);
                         }
                     }
                     else
