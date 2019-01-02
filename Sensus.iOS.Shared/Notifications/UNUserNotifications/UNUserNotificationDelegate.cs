@@ -49,8 +49,9 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 completionHandler?.Invoke(UNNotificationPresentationOptions.None);
             }
 
-            // if the notification is for pending surveys, show the notification along with any alert or sound.
-            if (notification?.Request?.Identifier == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
+            // if the notification is for pending surveys or study updates, show the notification along with any alert or sound.
+            if (notification?.Request?.Identifier == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID ||
+                notification?.Request?.Identifier == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
             }

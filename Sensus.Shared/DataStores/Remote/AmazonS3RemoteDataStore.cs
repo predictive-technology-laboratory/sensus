@@ -95,6 +95,7 @@ namespace Sensus.DataStores.Remote
         private const string DATA_DIRECTORY = "data";
         private const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
         private const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
+        private const string PROTOCOL_UPDATES_DIRECTORY = "protocol-updates";
 
         private string _region;
         private string _bucket;
@@ -639,6 +640,30 @@ namespace Sensus.DataStores.Remote
                 }
 
                 return policyJSON;
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
+        }
+
+        public override async Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                s3 = await CreateS3ClientAsync();
+
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, PROTOCOL_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+
+                string protocolUpdatesJSON;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    protocolUpdatesJSON = reader.ReadToEnd().Trim();
+                }
+
+                return protocolUpdatesJSON;
             }
             finally
             {

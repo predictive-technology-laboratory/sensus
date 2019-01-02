@@ -22788,6 +22788,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey
   nameWithType: AmazonS3RemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  name: GetProtocolUpdatesAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync*
+  name: GetProtocolUpdatesAsync
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync
+  nameWithType: AmazonS3RemoteDataStore.GetProtocolUpdatesAsync
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)
   name: GetScriptAgentPolicyAsync(CancellationToken)
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetScriptAgentPolicyAsync_System_Threading_CancellationToken_
@@ -23046,6 +23058,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   nameWithType: ConsoleRemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  name: GetProtocolUpdatesAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync*
+  name: GetProtocolUpdatesAsync
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_
+  commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync
+  nameWithType: ConsoleRemoteDataStore.GetProtocolUpdatesAsync
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)
   name: GetScriptAgentPolicyAsync(CancellationToken)
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetScriptAgentPolicyAsync_System_Threading_CancellationToken_
@@ -23205,6 +23229,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.RemoteDataStore.GetDatumKey
   nameWithType: RemoteDataStore.GetDatumKey
+- uid: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  name: GetProtocolUpdatesAsync(CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync*
+  name: GetProtocolUpdatesAsync
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync
+  nameWithType: RemoteDataStore.GetProtocolUpdatesAsync
 - uid: Sensus.DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)
   name: GetScriptAgentPolicyAsync(CancellationToken)
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetScriptAgentPolicyAsync_System_Threading_CancellationToken_
@@ -24186,6 +24222,24 @@ references:
   fullName.vb: Sensus.Extensions.EnumerableExtensions.ToObservableCollection(Of T)(System.Collections.Generic.IEnumerable(Of T), System.Collections.Specialized.NotifyCollectionChangedEventHandler)
   nameWithType: EnumerableExtensions.ToObservableCollection<T>(IEnumerable<T>, NotifyCollectionChangedEventHandler)
   nameWithType.vb: EnumerableExtensions.ToObservableCollection(Of T)(IEnumerable(Of T), NotifyCollectionChangedEventHandler)
+- uid: Sensus.Extensions.JsonDotNetExtensions
+  name: JsonDotNetExtensions
+  href: api/Sensus.Extensions.JsonDotNetExtensions.html
+  commentId: T:Sensus.Extensions.JsonDotNetExtensions
+  fullName: Sensus.Extensions.JsonDotNetExtensions
+  nameWithType: JsonDotNetExtensions
+- uid: Sensus.Extensions.JsonDotNetExtensions.IsValidJsonObject(System.String)
+  name: IsValidJsonObject(String)
+  href: api/Sensus.Extensions.JsonDotNetExtensions.html#Sensus_Extensions_JsonDotNetExtensions_IsValidJsonObject_System_String_
+  commentId: M:Sensus.Extensions.JsonDotNetExtensions.IsValidJsonObject(System.String)
+  fullName: Sensus.Extensions.JsonDotNetExtensions.IsValidJsonObject(System.String)
+  nameWithType: JsonDotNetExtensions.IsValidJsonObject(String)
+- uid: Sensus.Extensions.JsonDotNetExtensions.IsValidJsonObject*
+  name: IsValidJsonObject
+  href: api/Sensus.Extensions.JsonDotNetExtensions.html#Sensus_Extensions_JsonDotNetExtensions_IsValidJsonObject_
+  commentId: Overload:Sensus.Extensions.JsonDotNetExtensions.IsValidJsonObject
+  fullName: Sensus.Extensions.JsonDotNetExtensions.IsValidJsonObject
+  nameWithType: JsonDotNetExtensions.IsValidJsonObject
 - uid: Sensus.Extensions.NumericExtensions
   name: NumericExtensions
   href: api/Sensus.Extensions.NumericExtensions.html
@@ -24285,6 +24339,24 @@ references:
   commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetIntervalString
   fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString
   nameWithType: TimeSpanExtensions.GetIntervalString
+- uid: Sensus.Extensions.TypeExtensions
+  name: TypeExtensions
+  href: api/Sensus.Extensions.TypeExtensions.html
+  commentId: T:Sensus.Extensions.TypeExtensions
+  fullName: Sensus.Extensions.TypeExtensions
+  nameWithType: TypeExtensions
+- uid: Sensus.Extensions.TypeExtensions.GetAncestorTypes(System.Type,System.Boolean)
+  name: GetAncestorTypes(Type, Boolean)
+  href: api/Sensus.Extensions.TypeExtensions.html#Sensus_Extensions_TypeExtensions_GetAncestorTypes_System_Type_System_Boolean_
+  commentId: M:Sensus.Extensions.TypeExtensions.GetAncestorTypes(System.Type,System.Boolean)
+  fullName: Sensus.Extensions.TypeExtensions.GetAncestorTypes(System.Type, System.Boolean)
+  nameWithType: TypeExtensions.GetAncestorTypes(Type, Boolean)
+- uid: Sensus.Extensions.TypeExtensions.GetAncestorTypes*
+  name: GetAncestorTypes
+  href: api/Sensus.Extensions.TypeExtensions.html#Sensus_Extensions_TypeExtensions_GetAncestorTypes_
+  commentId: Overload:Sensus.Extensions.TypeExtensions.GetAncestorTypes
+  fullName: Sensus.Extensions.TypeExtensions.GetAncestorTypes
+  nameWithType: TypeExtensions.GetAncestorTypes
 - uid: Sensus.Extensions.UriExtensions
   name: UriExtensions
   href: api/Sensus.Extensions.UriExtensions.html
@@ -29061,6 +29133,18 @@ references:
   commentId: Overload:Sensus.Notifications.PushNotificationRequest.Protocol
   fullName: Sensus.Notifications.PushNotificationRequest.Protocol
   nameWithType: PushNotificationRequest.Protocol
+- uid: Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
+  name: UPDATE_PROTOCOL_COMMAND
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_UPDATE_PROTOCOL_COMMAND
+  commentId: F:Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
+  fullName: Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
+  nameWithType: PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
+- uid: Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
+  name: UPDATE_SCRIPT_AGENT_POLICY_COMMAND
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_UPDATE_SCRIPT_AGENT_POLICY_COMMAND
+  commentId: F:Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
+  fullName: Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
+  nameWithType: PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
 - uid: Sensus.Notifications.PushNotificationRequestFormat
   name: PushNotificationRequestFormat
   href: api/Sensus.Notifications.PushNotificationRequestFormat.html
@@ -45597,6 +45681,12 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.ProtectedFlashNotificationAsync
   fullName: Sensus.SensusServiceHelper.ProtectedFlashNotificationAsync
   nameWithType: SensusServiceHelper.ProtectedFlashNotificationAsync
+- uid: Sensus.SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
+  name: PROTOCOL_UPDATED_NOTIFICATION_ID
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PROTOCOL_UPDATED_NOTIFICATION_ID
+  commentId: F:Sensus.SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
+  fullName: Sensus.SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
+  nameWithType: SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
 - uid: Sensus.SensusServiceHelper.ProtocolShouldBeRunning(Sensus.Protocol)
   name: ProtocolShouldBeRunning(Protocol)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtocolShouldBeRunning_Sensus_Protocol_
