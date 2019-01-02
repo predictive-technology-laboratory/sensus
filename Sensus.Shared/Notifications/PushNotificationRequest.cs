@@ -31,15 +31,27 @@ namespace Sensus.Notifications
     ///   updates file to this location. The format of the file is shown in the [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-protocol-updates.json).
     ///   The fields in this file are as follows:
     /// 
-    ///     * property-type:  The fully qualified name of the type defining the property to be updated. For example, [Sensus.Probes.PollingProbe] contains
-    ///       properties that govern the behavior of all such probes.
-    ///     * property-name:  The name of the property within the type indicated by `property-type` that should be set. For example, 
-    ///       [Sensus.Probes.PollingProbe.PollingSleepDurationMS] determines how long the [Sensus.Probes.PollingProbe] will sleep between taking
-    ///       successive readings.
-    ///     * target-type:  The fully qualified name of the type whose instances should be updated. For example, a value of [Sensus.Probes.Location.PollingLocationProbe]
-    ///       would update the property indicated with the previous fields for just this particular probe, whereas a value of [Sensus.Probes.PollingProbe]
-    ///       would update the property for all such probes.
-    ///     * value:  Quoted string of the new value to be set for the above property and target objects.
+    /// <ul>
+    ///   <ul>
+    ///   <li>
+    ///   `property-type`:  The fully qualified name of the type defining the property to be updated. For example, [`Sensus.Probes.PollingProbe`](xref:Sensus.Probes.PollingProbe) contains
+    ///    properties that govern the behavior of all polling-style probes.
+    ///   </li>
+    ///   <li>
+    ///   `property-name`:  The name of the property within the type indicated by `property-type` that should be set. For example, 
+    ///   [`Sensus.Probes.PollingProbe.PollingSleepDurationMS`](xref:Sensus.Probes.PollingProbe.PollingSleepDurationMS) determines how long the 
+    ///   <see cref="Probes.PollingProbe"/> will sleep between taking successive readings.
+    ///   </li>
+    ///   <li>
+    ///   `target-type`:  The fully qualified name of the type whose instances should be updated. For example, a value of [`Sensus.Probes.Location.PollingLocationProbe`](xref:Sensus.Probes.Location.PollingLocationProbe)
+    ///   would update the property indicated with the previous fields for just the <see cref="Probes.Location.PollingLocationProbe"/>, whereas a value of [`Sensus.Probes.PollingProbe`](xref:Sensus.Probes.PollingProbe)
+    ///   would update the property for all probes that inherit from <see cref="Probes.PollingProbe"/>.
+    ///   </li>
+    ///   <li>
+    ///   `value`:  Quoted string of the new value to be set for the above property and target objects.
+    ///   </li>
+    ///   </ul>
+    /// </ul>
     /// 
     /// * <see cref="UPDATE_SCRIPT_AGENT_POLICY_COMMAND"/>:  Upon receipt of this command, Sensus will fetch the policy from the <see cref="DataStores.Remote.RemoteDataStore"/>
     ///   via <see cref="DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)"/>. The content of the returned
