@@ -42,23 +42,10 @@ file_list=$(mktemp)
 for n in $(ls $notifications_dir/*.json)
 do
 
-    # for backwards compability:  cover our previous approach in which there was only a "time"
-    # field indicating the target notification time. this previous approach was not correct
-    # because it did not account for push notifications scheduled into the future from 
-    # previous executions of the protocol. for example, if a protocol with surveys is started
-    # and schedules a survey for 1/1/2018 at 9pm, and if this protocol is restarted and
-    # schedules the same survey for 1/1/2018 at 6pm, then the first schedule (with the later
-    # notification time) would be processed first and invalidate the appropriate notification.
     sort_time=$(jq -r '."creation-time"' $n)
-    if [ "$sort_time" = "null" ] 
-    then
-	# fall back to the notification time (previous approach)
-	sort_time=$(jq -r '.time' $n)
-    fi
-
     echo "$sort_time $n"
 
-# reverse sort by the first field and output the second field (path)
+# reverse sort by the creation time (newest creations first) and output the second field (path)
 done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 
 # get shared access signature

@@ -330,6 +330,11 @@ namespace Sensus.iOS
                                 // flash a message to the user, and don't cancel the notification.
                                 await SensusServiceHelper.Get().FlashNotificationAsync("A new survey is available.");
                             }
+                            else if (notificationId == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
+                            {
+                                // flash a message to the user, and don't cancel the notification.
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Your study was updated.");
+                            }
                             else
                             {
                                 // cancel notification (removing it from the tray), since it has served its purpose (e.g., as a callback notification).

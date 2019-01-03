@@ -84,6 +84,7 @@ namespace Sensus.Probes.User.Scripts
 
         private ObservableCollection<ScriptRunner> _scriptRunners;
         private IScriptProbeAgent _agent;
+        private ScheduledCallback _agentIntervalDeliveryScheduledCallback;
 
         /// <summary>
         /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
@@ -257,14 +258,16 @@ namespace Sensus.Probes.User.Scripts
             // if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
             if (Agent?.DeliveryInterval != null)
             {
-                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(new ScheduledCallback(async (id, cancellationToken, letDeviceSleepCallback) =>
+                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async (id, cancellationToken, letDeviceSleepCallback) =>
                 {
                     foreach (ScriptRunner scriptRunner in _scriptRunners)
                     {
                         await scriptRunner.RunAsync(scriptRunner.Script.Copy(true));
                     }
 
-                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol));
+                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol);
+
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
             }
         }
 
@@ -317,6 +320,11 @@ namespace Sensus.Probes.User.Scripts
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 await scriptRunner.StopAsync();
+            }
+
+            if (_agentIntervalDeliveryScheduledCallback != null)
+            {
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
             }
         }
 

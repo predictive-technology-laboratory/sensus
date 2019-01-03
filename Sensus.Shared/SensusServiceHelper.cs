@@ -54,6 +54,7 @@ namespace Sensus
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         public const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+        public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
 
         /// <summary>
         /// App Center key for Android app. To obtain this key, create a new Xamarin Android app within the Microsoft App Center. This
@@ -856,7 +857,11 @@ namespace Sensus
             {
                 await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
 
-                // save the app state. if the app crashes we want to keep the surveys around so they can be taken.
+                // save the app state. if the app crashes we want to keep the surveys around so they can be 
+                // taken. this will not result in duplicate surveys in cases where the script probe restarts
+                // and reschedules itself, as the the script probe schedule only concerns future surveys 
+                // whereas the surveys serialized within the app state within _scriptsToRun are by definition
+                // surveys deployed in the past.
                 try
                 {
                     await SaveAsync();

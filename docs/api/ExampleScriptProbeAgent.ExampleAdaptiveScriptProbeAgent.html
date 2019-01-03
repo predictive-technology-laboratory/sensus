@@ -119,6 +119,32 @@ selected for delivery.</p>
   </h3>
   
   
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliveryInterval_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryInterval*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliveryInterval" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryInterval">DeliveryInterval</h4>
+  <div class="markdown level1 summary"><p>The delivery interval.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; DeliveryInterval { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Description_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Description*"></a>
   <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Description" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Description">Description</h4>
   <div class="markdown level1 summary"><p>Gets the description.</p>
@@ -175,14 +201,14 @@ selected for delivery.</p>
   </h3>
   
   
-  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliverSurveyNow_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliverSurveyNow*"></a>
-  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliverSurveyNow_Sensus_Probes_User_Scripts_IScript_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliverSurveyNow(Sensus.Probes.User.Scripts.IScript)">DeliverSurveyNow(IScript)</h4>
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliverSurveyNowAsync_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliverSurveyNowAsync*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliverSurveyNowAsync_Sensus_Probes_User_Scripts_IScript_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliverSurveyNowAsync(Sensus.Probes.User.Scripts.IScript)">DeliverSurveyNowAsync(IScript)</h4>
   <div class="markdown level1 summary"><p>Checks whether or not to deliver/defer a survey.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;Tuple&lt;bool, Nullable&lt;DateTimeOffset&gt;&gt;&gt; DeliverSurveyNow(IScript script)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;Tuple&lt;bool, Nullable&lt;DateTimeOffset&gt;&gt;&gt; DeliverSurveyNowAsync(IScript script)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -220,14 +246,14 @@ selected for delivery.</p>
   </table>
   
   
-  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe*"></a>
-  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_Sensus_IDatum_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe(Sensus.IDatum)">Observe(IDatum)</h4>
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ObserveAsync_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ObserveAsync_Sensus_IDatum_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync(Sensus.IDatum)">ObserveAsync(IDatum)</h4>
   <div class="markdown level1 summary"><p>Observe the specified datum.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Observe(IDatum datum)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ObserveAsync(IDatum datum)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -247,16 +273,31 @@ selected for delivery.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe*"></a>
-  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Observe_Sensus_Probes_User_Scripts_IScript_Sensus_Probes_User_Scripts_ScriptState_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Observe(Sensus.Probes.User.Scripts.IScript,Sensus.Probes.User.Scripts.ScriptState)">Observe(IScript, ScriptState)</h4>
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ObserveAsync_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ObserveAsync_Sensus_Probes_User_Scripts_IScript_Sensus_Probes_User_Scripts_ScriptState_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync(Sensus.Probes.User.Scripts.IScript,Sensus.Probes.User.Scripts.ScriptState)">ObserveAsync(IScript, ScriptState)</h4>
   <div class="markdown level1 summary"><p>Observe the specified script and state.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Observe(IScript script, ScriptState state)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ObserveAsync(IScript script, ScriptState state)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -282,16 +323,31 @@ selected for delivery.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Reset_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Reset*"></a>
-  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Reset_Sensus_ISensusServiceHelper_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Reset(Sensus.ISensusServiceHelper)">Reset(ISensusServiceHelper)</h4>
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ResetAsync_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ResetAsync_Sensus_ISensusServiceHelper_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)">ResetAsync(ISensusServiceHelper)</h4>
   <div class="markdown level1 summary"><p>Reset this instance.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void Reset(ISensusServiceHelper sensusServiceHelper)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ResetAsync(ISensusServiceHelper sensusServiceHelper)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -311,16 +367,31 @@ selected for delivery.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicy_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicy*"></a>
-  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicy_System_String_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicy(System.String)">SetPolicy(String)</h4>
+  <a id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicyAsync_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicyAsync*"></a>
+  <h4 id="ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicyAsync_System_String_" data-uid="ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicyAsync(System.String)">SetPolicyAsync(String)</h4>
   <div class="markdown level1 summary"><p>Sets the policy.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void SetPolicy(string policyJSON)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task SetPolicyAsync(string policyJSON)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -337,6 +408,21 @@ selected for delivery.</p>
         <td><span class="parametername">policyJSON</span></td>
         <td><p>Policy json.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>

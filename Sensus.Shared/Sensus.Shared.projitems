@@ -271,6 +271,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationAccuracy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonDotNetExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

@@ -82,76 +82,66 @@ namespace Sensus.DataStores.Local
         private const int ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS = 16 * 8;
 
         /// <summary>
-        /// First stop for data:  An in-memory buffer.
+        /// Step 1:  An in-memory buffer that can be written at high rates.
         /// </summary>
         private List<Datum> _dataBuffer;
-        private long _totalDataBuffered;
         private AutoResetEvent _dataHaveBeenBuffered;
+        private long _totalDataBuffered;
 
         /// <summary>
-        /// Next stop for data:  A (possibly compressed) file on disk. Such files are referred to as unpromoted.
+        /// Step 2:  A file on disk without a file extension, written with data from the in-memory buffer.
         /// </summary>
-        private Task _writeBufferedDataToFileTask;
-        private AutoResetEvent _bufferedDataHaveBeenWrittenToFile;
-        private List<Datum> _toWriteBuffer;
         private string _currentPath;
         private BufferedStream _currentFile;
-        private CompressionLevel _compressionLevel;
-        private int _bufferSizeBytes;
-        private long _dataWrittenToCurrentFile;
+        private int _currentFileBufferSizeBytes;
+        private Task _writeBufferedDataToFileTask;
+        private List<Datum> _toWriteBuffer;
+        private AutoResetEvent _bufferedDataHaveBeenWrittenToFile;
+        private long _totalDataWrittenToCurrentFile;
         private long _totalDataWritten;
-        private int _filesOpened;
-        private int _filesClosed;
-        private List<string> _unpromotedPaths;
-
+        private int _totalFilesOpened;
+        private int _totalFilesClosed;
         private readonly object _fileLocker = new object();
 
         /// <summary>
-        /// Next stop for data:  An encrypted file on disk. Such files are referred to as promoted.
+        /// Step 3:  A compressed, encrypted file on disk with a file extension. These files are ready for transmission to the <see cref="Remote.RemoteDataStore"/>.
         /// </summary>
-        private Task _promoteFilesTask;
+        private CompressionLevel _compressionLevel;
         private bool _encrypt;
-        private int _filesPromoted;
-        private List<string> _promotedPaths;
-
-        private readonly object _promoteFilesTaskLocker = new object();
+        private List<string> _pathsPreparedForRemote;
+        private List<string> _pathsUnpreparedForRemote;
+        private int _totalFilesPreparedForRemote;
 
         /// <summary>
-        /// Next stop for data:  The <see cref="Remote.RemoteDataStore"/>.
+        /// Step 4:  Transmission to the <see cref="Remote.RemoteDataStore"/>.
         /// </summary>
         private Task _writeToRemoteTask;
-        private int _filesWrittenToRemote;
-
+        private int _totalFilesWrittenToRemote;
         private readonly object _writeToRemoteTaskLocker = new object();
 
         public override bool HasDataToShare
         {
             get
             {
-                // we'll only have a collection of paths after the data store has started.
-                if (_promotedPaths == null)
+                lock (_pathsPreparedForRemote)
                 {
-                    return false;
-                }
-                else
-                {
-                    lock (_promotedPaths)
-                    {
-                        return _promotedPaths.Count > 0;
-                    }
+                    UpdatePathsPreparedForRemote();
+                    return _pathsPreparedForRemote.Count > 0;
                 }
             }
         }
 
 #if UNIT_TEST
-        /// <summary>
-        /// Gets the file path currently being written.
-        /// </summary>
-        /// <value>The path.</value>
         [JsonIgnore]
         public string CurrentPath
         {
             get { return _currentPath; }
+        }
+
+        [JsonIgnore]
+        public List<string> PathsPreparedForRemote
+        {
+            get { return _pathsPreparedForRemote; }
         }
 #endif
 
@@ -183,7 +173,7 @@ namespace Sensus.DataStores.Local
         [EntryIntegerUiProperty("Buffer Size (Bytes):", true, 2, true)]
         public int BufferSizeBytes
         {
-            get { return _bufferSizeBytes; }
+            get { return _currentFileBufferSizeBytes; }
             set
             {
                 if (value <= 0)
@@ -191,18 +181,19 @@ namespace Sensus.DataStores.Local
                     value = DEFAULT_BUFFER_SIZE_BYTES;
                 }
 
-                _bufferSizeBytes = value;
+                _currentFileBufferSizeBytes = value;
             }
         }
 
         /// <summary>
-        /// Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must provide a public encryption 
-        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. You can generate a public encryption key following the instructions
-        /// provided for <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. Note that data are not encrypted immediately. They are first
-        /// written to a compressed file on the device where they live unencrypted for a period of time.
+        /// Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must either provide a public encryption 
+        /// key to <see cref="Protocol.AsymmetricEncryptionPublicKey"/> or use an [authentication server](xref:authentication_servers). 
+        /// You can generate a public encryption key following the instructions provided for 
+        /// <see cref="Protocol.AsymmetricEncryptionPublicKey"/>. Note that data are not encrypted immediately. They are first
+        /// written to disk on the device where they live unencrypted for a period of time.
         /// </summary>
         /// <value><c>true</c> to encrypt; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Encrypt (must set public encryption key on protocol in order to use):", true, 6)]
+        [OnOffUiProperty("Encrypt:", true, 6)]
         public bool Encrypt
         {
             get
@@ -232,9 +223,9 @@ namespace Sensus.DataStores.Local
         }
 
         [JsonIgnore]
-        public long DataWrittenToCurrentFile
+        public long TotalDataWrittenToCurrentFile
         {
-            get { return _dataWrittenToCurrentFile; }
+            get { return _totalDataWrittenToCurrentFile; }
         }
 
         [JsonIgnore]
@@ -276,13 +267,26 @@ namespace Sensus.DataStores.Local
 
         public FileLocalDataStore()
         {
+            // step 1:  buffer
             _dataBuffer = new List<Datum>();
-            _toWriteBuffer = new List<Datum>();
             _dataHaveBeenBuffered = new AutoResetEvent(false);
+
+            // step 2:  file
+            _currentPath = null;
+            _currentFile = null;
+            _currentFileBufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
+            _writeBufferedDataToFileTask = null;
+            _toWriteBuffer = new List<Datum>();
             _bufferedDataHaveBeenWrittenToFile = new AutoResetEvent(false);
+
+            // step 3:  compressed, encrypted file
             _compressionLevel = CompressionLevel.Optimal;
-            _bufferSizeBytes = DEFAULT_BUFFER_SIZE_BYTES;
             _encrypt = false;
+            _pathsPreparedForRemote = new List<string>();
+            _pathsUnpreparedForRemote = new List<string>();
+
+            // step 4:  remote data store
+            _writeToRemoteTask = null;
         }
 
         public override async Task StartAsync()
@@ -305,22 +309,31 @@ namespace Sensus.DataStores.Local
                 }
             }
 
-            // get all unpromoted file paths. unpromoted file paths are those without an extension.
-            _unpromotedPaths = Directory.GetFiles(StorageDirectory).Where(path => string.IsNullOrWhiteSpace(Path.GetExtension(path))).ToList();
+            UpdatePathsPreparedForRemote();
 
-            // get all promoted file paths based on selected options. promoted files are those with an extension (.json, .gz, or .bin).
-            string promotedPathExtension = JSON_FILE_EXTENSION + (_compressionLevel == CompressionLevel.NoCompression ? "" : GZIP_FILE_EXTENSION) + (_encrypt ? ENCRYPTED_FILE_EXTENSION : "");
-            _promotedPaths = Directory.GetFiles(StorageDirectory, "*" + promotedPathExtension).ToList();
+            lock (_pathsUnpreparedForRemote)
+            {
+                _pathsUnpreparedForRemote.Clear();
+            }
 
-            _totalDataBuffered = 0;
-            _totalDataWritten = 0;
-            _dataWrittenToCurrentFile = 0;
-            _filesOpened = 0;
-            _filesClosed = 0;
-            _filesPromoted = 0;
-            _filesWrittenToRemote = 0;
+            // process any paths that were written but not prepared for transfer to the remote data store. such 
+            // paths can exist when the app crashes before a file is closed and prepared. these paths will be 
+            // indicated by a lack of file extension.
+            foreach (string pathUnpreparedForRemote in Directory.GetFiles(StorageDirectory).Where(path => string.IsNullOrWhiteSpace(Path.GetExtension(path))))
+            {
+                await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
+            }
 
             OpenFile();
+        }
+
+        private void UpdatePathsPreparedForRemote()
+        {
+            lock (_pathsPreparedForRemote)
+            {
+                _pathsPreparedForRemote.Clear();
+                _pathsPreparedForRemote.AddRange(Directory.GetFiles(StorageDirectory).Where(path => !string.IsNullOrWhiteSpace(Path.GetExtension(path))));
+            }
         }
 
         private void OpenFile()
@@ -336,14 +349,14 @@ namespace Sensus.DataStores.Local
                 // try a few times to open a new file within the storage directory
                 _currentPath = null;
                 Exception mostRecentException = null;
-                for (int i = 0; _currentPath == null && i < 5; ++i)
+                for (int tryNum = 0; _currentPath == null && tryNum < 5; ++tryNum)
                 {
                     try
                     {
                         _currentPath = Path.Combine(StorageDirectory, Guid.NewGuid().ToString());
-                        _currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _bufferSizeBytes);
-                        _dataWrittenToCurrentFile = 0;
-                        _filesOpened++;
+                        _currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _currentFileBufferSizeBytes);
+                        _totalDataWrittenToCurrentFile = 0;
+                        _totalFilesOpened++;
                     }
                     catch (Exception ex)
                     {
@@ -360,8 +373,8 @@ namespace Sensus.DataStores.Local
                 else
                 {
                     // open the JSON array
-                    byte[] jsonBeginArrayBytes = Encoding.UTF8.GetBytes("[");
-                    _currentFile.Write(jsonBeginArrayBytes, 0, jsonBeginArrayBytes.Length);
+                    byte[] jsonOpenArrayBytes = Encoding.UTF8.GetBytes("[");
+                    _currentFile.Write(jsonOpenArrayBytes, 0, jsonOpenArrayBytes.Length);
                 }
             }
         }
@@ -392,12 +405,12 @@ namespace Sensus.DataStores.Local
                         {
                             while (Running)
                             {
-                                // wait for the signal to check for and write buffered data
+                                // wait for the signal to from data from the buffer to the file
                                 _dataHaveBeenBuffered.WaitOne();
 
+                                // write data. be sure to acquire locks in the same order as in Flush.
                                 bool checkSize = false;
-
-                                // be sure to acquire the locks in the same order as done in Flush.
+                                bool startNewFile = false;
                                 lock (_toWriteBuffer)
                                 {
                                     // copy the current data to the buffer to write, and clear the current buffer. we use
@@ -438,40 +451,23 @@ namespace Sensus.DataStores.Local
                                                 {
                                                     try
                                                     {
-                                                        byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_dataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
+                                                        byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_totalDataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
                                                         _currentFile.Write(datumJsonBytes, 0, datumJsonBytes.Length);
-                                                        _dataWrittenToCurrentFile++;
+                                                        _totalDataWrittenToCurrentFile++;
                                                         _totalDataWritten++;
                                                         datumWritten = true;
 
-                                                        if (_dataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK == 0)
+                                                        // periodically check the size of the current file
+                                                        if (_totalDataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK == 0)
                                                         {
                                                             checkSize = true;
                                                         }
                                                     }
                                                     catch (Exception writeException)
                                                     {
-                                                        SensusException.Report("Failed to write datum JSON bytes to file.", writeException);
-
-                                                        #region something went wrong with file write...switch to a new file in the hope that it will work better.
-                                                        try
-                                                        {
-                                                            CloseFile();
-                                                        }
-                                                        catch (Exception closeException)
-                                                        {
-                                                            SensusException.Report("Failed to close file after failing to write it.", closeException);
-                                                        }
-
-                                                        try
-                                                        {
-                                                            OpenFile();
-                                                        }
-                                                        catch (Exception openException)
-                                                        {
-                                                            SensusException.Report("Failed to open new file after failing to write the previous one.", openException);
-                                                        }
-                                                        #endregion
+                                                        SensusException.Report("Exception while writing datum JSON bytes to file:  " + writeException.Message, writeException);
+                                                        startNewFile = true;
+                                                        break;
                                                     }
                                                 }
                                                 #endregion
@@ -489,7 +485,6 @@ namespace Sensus.DataStores.Local
                                     }
                                 }
 
-                                #region periodically check the size of the current file and the entire local data store
                                 if (checkSize)
                                 {
                                     // must do the check within the lock, since other callers might be trying to close the file and null the path.
@@ -497,26 +492,211 @@ namespace Sensus.DataStores.Local
                                     {
                                         if (SensusServiceHelper.GetFileSizeMB(_currentPath) >= MAX_FILE_SIZE_MB)
                                         {
-                                            CloseFile();
-                                            OpenFile();
+                                            startNewFile = true;
                                         }
                                     }
+                                }
 
-                                    // write the local data to remote if the overall size has grown too large
+                                if (startNewFile)
+                                {
+                                    await StartNewFileAsync(cancellationToken);
+                                }
+
+                                if (checkSize)
+                                {
                                     await WriteToRemoteIfTooLargeAsync(cancellationToken);
                                 }
-                                #endregion
 
                                 _bufferedDataHaveBeenWrittenToFile.Set();
                             }
                         }
-                        catch (Exception taskException)
+                        catch (Exception writeTaskException)
                         {
-                            SensusException.Report("Local data store write task threw exception:  " + taskException.Message, taskException);
+                            SensusException.Report("Exception while writing buffered data to file:  " + writeTaskException.Message, writeTaskException);
                         }
                     });
                 }
             }
+        }
+
+        public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
+        {
+            lock (_writeToRemoteTaskLocker)
+            {
+                // it's possible to stop the datastore before entering this lock.
+                if (!Running || !WriteToRemote)
+                {
+                    return Task.CompletedTask;
+                }
+
+                // if this is the first write or the previous write completed due to cancellation, fault, or completion, then
+                // run a new task. if a write-to-remote task is currently running, then return it to the caller instead.
+                if (_writeToRemoteTask == null ||
+                    _writeToRemoteTask.Status == TaskStatus.Canceled ||
+                    _writeToRemoteTask.Status == TaskStatus.Faulted ||
+                    _writeToRemoteTask.Status == TaskStatus.RanToCompletion)
+                {
+                    _writeToRemoteTask = Task.Run(async () =>
+                    {
+                        await StartNewFileAsync(cancellationToken);
+
+                        string[] pathsPreparedForRemote;
+                        lock (_pathsPreparedForRemote)
+                        {
+                            UpdatePathsPreparedForRemote();
+                            pathsPreparedForRemote = _pathsPreparedForRemote.ToArray();
+                        }
+
+                        // if no paths are prepared, then we have nothing to do.
+                        if (pathsPreparedForRemote.Length == 0)
+                        {
+                            return;
+                        }
+
+                        // write each file that is prepared for transmission to the remote data store
+                        for (int i = 0; i < pathsPreparedForRemote.Length && !cancellationToken.IsCancellationRequested; ++i)
+                        {
+#if __IOS__
+                            CaptionText = "Uploading file " + (i + 1) + " of " + pathsPreparedForRemote.Length + ". Please keep Sensus open...";
+#endif
+
+                            string pathPreparedForRemote = pathsPreparedForRemote[i];
+
+                            // wrap in try-catch to ensure that we process all files
+                            try
+                            {
+                                // get stream name and content type
+                                string streamName = Path.GetFileName(pathPreparedForRemote);
+                                string streamContentType;
+                                if (streamName.EndsWith(JSON_FILE_EXTENSION))
+                                {
+                                    streamContentType = "application/json";
+                                }
+                                else if (streamName.EndsWith(GZIP_FILE_EXTENSION))
+                                {
+                                    streamContentType = "application/gzip";
+                                }
+                                else if (streamName.EndsWith(ENCRYPTED_FILE_EXTENSION))
+                                {
+                                    streamContentType = "application/octet-stream";
+                                }
+                                else
+                                {
+                                    // this should never happen. write anyway and report the situation.
+                                    streamContentType = "application/octet-stream";
+                                    SensusException.Report("Unknown stream file extension:  " + streamName);
+                                }
+
+                                using (FileStream filePreparedForRemote = new FileStream(pathPreparedForRemote, FileMode.Open, FileAccess.Read))
+                                {
+                                    await Protocol.RemoteDataStore.WriteDataStreamAsync(filePreparedForRemote, streamName, streamContentType, cancellationToken);
+                                }
+
+                                // file was written remotely. delete it locally, and do this within a lock to prevent concurrent access
+                                // by the code that checks the size of the data store.
+                                lock (_pathsPreparedForRemote)
+                                {
+                                    File.Delete(pathPreparedForRemote);
+                                    _pathsPreparedForRemote.Remove(pathPreparedForRemote);
+                                }
+
+                                _totalFilesWrittenToRemote++;
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Exception while writing prepared file to remote data store:  " + ex, LoggingLevel.Normal, GetType());
+                            }
+                        }
+
+                        CaptionText = null;
+
+                    }, cancellationToken);
+                }
+
+                return _writeToRemoteTask;
+            }
+        }
+
+        private async Task StartNewFileAsync(CancellationToken cancellationToken)
+        {
+            // start a new file within a lock to ensure that anyone with the lock will have a valid file
+            string unpreparedPath = null;
+            lock (_fileLocker)
+            {
+                try
+                {
+                    unpreparedPath = CloseFile();
+                }
+                catch (Exception closeException)
+                {
+                    SensusException.Report("Exception while closing file:  " + closeException.Message, closeException);
+                }
+
+                if (Running)
+                {
+                    try
+                    {
+                        OpenFile();
+                    }
+                    catch (Exception openException)
+                    {
+                        SensusException.Report("Exception while opening file:  " + openException.Message, openException);
+                    }
+                }
+            }
+
+            await PreparePathForRemoteAsync(unpreparedPath, cancellationToken);
+        }
+
+        public override void CreateTarFromLocalData(string outputPath)
+        {
+            lock (_pathsPreparedForRemote)
+            {
+                UpdatePathsPreparedForRemote();
+
+                if (_pathsPreparedForRemote.Count == 0)
+                {
+                    throw new Exception("No data available.");
+                }
+
+                using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+                {
+                    using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
+                    {
+                        foreach (string pathPreparedForRemote in _pathsPreparedForRemote)
+                        {
+                            using (FileStream filePreparedForRemote = File.OpenRead(pathPreparedForRemote))
+                            {
+                                TarEntry tarEntry = TarEntry.CreateEntryFromFile(pathPreparedForRemote);
+                                tarEntry.Name = "data/" + Path.GetFileName(pathPreparedForRemote);
+                                tarArchive.WriteEntry(tarEntry, false);
+                                filePreparedForRemote.Close();
+                            }
+                        }
+
+                        tarArchive.Close();
+                    }
+
+                    outputFile.Close();
+                }
+            }
+        }
+
+        protected override bool IsTooLarge()
+        {
+            return GetSizeMB() >= REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
+        }
+
+        private double GetSizeMB()
+        {
+            double sizeMB = 0;
+
+            lock (_pathsPreparedForRemote)
+            {
+                sizeMB += SensusServiceHelper.GetFileSizeMB(_pathsPreparedForRemote.ToArray());
+            }
+
+            return sizeMB;
         }
 
         public void Flush()
@@ -548,299 +728,106 @@ namespace Sensus.DataStores.Local
                 }
                 else
                 {
+                    // ask the write task to write buffered data
                     _dataHaveBeenBuffered.Set();
+
+                    // wait for buffered data to be written
                     _bufferedDataHaveBeenWrittenToFile.WaitOne();
                 }
             }
         }
 
-        public override async Task CreateTarFromLocalDataAsync(string outputPath)
+        private string CloseFile()
         {
-            await PromoteFilesAsync(CancellationToken.None);
+            string path = _currentPath;
 
-            lock (_promotedPaths)
-            {
-                if (_promotedPaths.Count == 0)
-                {
-                    throw new Exception("No data available.");
-                }
-
-                using (FileStream outputFile = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
-                {
-                    using (TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outputFile))
-                    {
-                        foreach (string promotedPath in _promotedPaths)
-                        {
-                            using (FileStream promotedFile = File.OpenRead(promotedPath))
-                            {
-                                TarEntry tarEntry = TarEntry.CreateEntryFromFile(promotedPath);
-                                tarEntry.Name = "data/" + Path.GetFileName(promotedPath);
-                                tarArchive.WriteEntry(tarEntry, false);
-
-                                promotedFile.Close();
-                            }
-                        }
-
-                        tarArchive.Close();
-                    }
-
-                    outputFile.Close();
-                }
-            }
-        }
-
-        protected override bool IsTooLarge()
-        {
-            return GetSizeMB() >= REMOTE_WRITE_TRIGGER_STORAGE_DIRECTORY_SIZE_MB;
-        }
-
-        private double GetSizeMB()
-        {
-            double fileSizeMB = 0;
-
-            lock (_fileLocker)
-            {
-                fileSizeMB += SensusServiceHelper.GetFileSizeMB(_currentPath);
-            }
-
-            lock (_unpromotedPaths)
-            {
-                fileSizeMB += SensusServiceHelper.GetFileSizeMB(_unpromotedPaths.ToArray());
-            }
-
-            lock (_promotedPaths)
-            {
-                fileSizeMB += SensusServiceHelper.GetFileSizeMB(_promotedPaths.ToArray());
-            }
-
-            return fileSizeMB;
-        }
-
-        public override Task WriteToRemoteAsync(CancellationToken cancellationToken)
-        {
-            lock (_writeToRemoteTaskLocker)
-            {
-                // it's possible to stop the datastore before entering this lock.
-                if (!Running || !WriteToRemote)
-                {
-                    return Task.CompletedTask;
-                }
-
-                // if this is the first write or the previous write completed due to cancellation, fault, or completion, then
-                // run a new task. if a write-to-remote task is currently running, then return it to the caller instead.
-                if (_writeToRemoteTask == null ||
-                    _writeToRemoteTask.Status == TaskStatus.Canceled ||
-                    _writeToRemoteTask.Status == TaskStatus.Faulted ||
-                    _writeToRemoteTask.Status == TaskStatus.RanToCompletion)
-                {
-                    _writeToRemoteTask = Task.Run(async () =>
-                    {
-                        await PromoteFilesAsync(cancellationToken);
-
-                        string[] promotedPaths;
-                        lock (_promotedPaths)
-                        {
-                            promotedPaths = _promotedPaths.ToArray();
-                        }
-
-                        // if no paths were promoted, then we have nothing to do.
-                        if (promotedPaths.Length == 0)
-                        {
-                            return;
-                        }
-
-                        // write each promoted file
-                        for (int i = 0; i < promotedPaths.Length && !cancellationToken.IsCancellationRequested; ++i)
-                        {
-#if __IOS__
-                            CaptionText = "Uploading file " + (i + 1) + " of " + promotedPaths.Length + ". Please keep Sensus open...";
-#endif
-
-                            string promotedPath = promotedPaths[i];
-
-                            // wrap in try-catch to ensure that we process all files
-                            try
-                            {
-                                // get stream name and content type
-                                string streamName = Path.GetFileName(promotedPath);
-                                string streamContentType;
-                                if (streamName.EndsWith(JSON_FILE_EXTENSION))
-                                {
-                                    streamContentType = "application/json";
-                                }
-                                else if (streamName.EndsWith(GZIP_FILE_EXTENSION))
-                                {
-                                    streamContentType = "application/gzip";
-                                }
-                                else if (streamName.EndsWith(ENCRYPTED_FILE_EXTENSION))
-                                {
-                                    streamContentType = "application/octet-stream";
-                                }
-                                else
-                                {
-                                    // this should never happen. write anyway and report the situation.
-                                    streamContentType = "application/octet-stream";
-                                    SensusException.Report("Unknown stream file extension:  " + streamName);
-                                }
-
-                                using (FileStream promotedFile = new FileStream(promotedPath, FileMode.Open, FileAccess.Read))
-                                {
-                                    await Protocol.RemoteDataStore.WriteDataStreamAsync(promotedFile, streamName, streamContentType, cancellationToken);
-                                }
-
-                                // file was written remotely. delete it locally, and do this within a lock to prevent concurrent access
-                                // by the code that checks the size of the data store.
-                                lock (_promotedPaths)
-                                {
-                                    File.Delete(promotedPath);
-                                    _promotedPaths.Remove(promotedPath);
-                                }
-
-                                _filesWrittenToRemote++;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to write file to remote data store:  " + ex, LoggingLevel.Normal, GetType());
-                            }
-                        }
-
-                        CaptionText = null;
-
-                    }, cancellationToken);
-                }
-
-                return _writeToRemoteTask;
-            }
-        }
-
-        private void CloseFile()
-        {
             lock (_fileLocker)
             {
                 if (_currentFile != null)
                 {
                     try
                     {
-                        // end the JSON array and close the file
-                        byte[] jsonEndArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
-                        _currentFile.Write(jsonEndArrayBytes, 0, jsonEndArrayBytes.Length);
+                        // close the JSON array and close the file
+                        byte[] jsonCloseArrayBytes = Encoding.UTF8.GetBytes(Environment.NewLine + "]");
+                        _currentFile.Write(jsonCloseArrayBytes, 0, jsonCloseArrayBytes.Length);
                         _currentFile.Flush();
                         _currentFile.Close();
                         _currentFile.Dispose();
-
-                        // add to our list of unpromoted files
-                        lock (_unpromotedPaths)
-                        {
-                            _unpromotedPaths.Add(_currentPath);
-                        }
-
                         _currentFile = null;
                         _currentPath = null;
-                        _filesClosed++;
+                        _totalFilesClosed++;
+                        _totalDataWrittenToCurrentFile = 0;
                     }
                     catch (Exception ex)
                     {
-                        SensusException.Report("Failed to close and dispose the local file.", ex);
+                        SensusException.Report("Exception while closing file:  " + ex.Message, ex);
                     }
                 }
             }
+
+            return path;
         }
 
-        private Task PromoteFilesAsync(CancellationToken cancellationToken)
+        private async Task PreparePathForRemoteAsync(string path, CancellationToken cancellationToken)
         {
-            lock (_promoteFilesTaskLocker)
+            try
             {
-                lock (_fileLocker)
+                if (File.Exists(path))
                 {
-                    // close the current file, as we're about to delete/move all files in the storage directory
-                    // that do not have a file extension. the file currently being written is one such file, and 
-                    // we'll get an exception if we don't close it before moving it. if there is no current file
-                    // this will have no effect.
-                    CloseFile();
+                    byte[] bytes = File.ReadAllBytes(path);
 
-                    // open a new file for writing if the data store is currently running. we're going to return
-                    // immediately after checking/spawning the promotion task below, and there needs to be a file
-                    // ready as soon as we release the current lock. if the data store is not running, then we 
-                    // shouldn't open a new file as it will likely never be closed.
-                    if (Running)
+                    string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
+
+                    if (_compressionLevel != CompressionLevel.NoCompression)
                     {
-                        OpenFile();
+                        preparedPath += GZIP_FILE_EXTENSION;
+
+                        Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
+                        MemoryStream compressedStream = new MemoryStream();
+                        compressor.Compress(bytes, compressedStream, _compressionLevel);
+                        bytes = compressedStream.ToArray();
+                    }
+
+                    if (_encrypt)
+                    {
+                        preparedPath += ENCRYPTED_FILE_EXTENSION;
+
+                        using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+                        {
+                            await Protocol.EnvelopeEncryptor.EnvelopeAsync(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        File.WriteAllBytes(preparedPath, bytes);
+                    }
+
+                    lock (_pathsPreparedForRemote)
+                    {
+                        _pathsPreparedForRemote.Add(preparedPath);
+                    }
+
+                    File.Delete(path);
+
+                    _totalFilesPreparedForRemote++;
+                }
+
+                lock (_pathsUnpreparedForRemote)
+                {
+                    _pathsUnpreparedForRemote.Remove(path);
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while preparing path for remote:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                lock (_pathsUnpreparedForRemote)
+                {
+                    if (!_pathsUnpreparedForRemote.Contains(path))
+                    {
+                        _pathsUnpreparedForRemote.Add(path);
                     }
                 }
-
-                // if this is the first promote or the previous promote completed due to cancellation, fault, or completion, then
-                // run a new task. if a promote task is currently running, then return it to the caller instead.
-                if (_promoteFilesTask == null ||
-                    _promoteFilesTask.Status == TaskStatus.Canceled ||
-                    _promoteFilesTask.Status == TaskStatus.Faulted ||
-                    _promoteFilesTask.Status == TaskStatus.RanToCompletion)
-                {
-                    _promoteFilesTask = Task.Run(async () =>
-                    {
-                        // get a copied list of all files that have been closed but not promoted.
-                        string[] unpromotedPaths;
-                        lock (_unpromotedPaths)
-                        {
-                            unpromotedPaths = _unpromotedPaths.ToArray();
-                        }
-
-                        // promote each file
-                        foreach (string unpromotedPath in unpromotedPaths)
-                        {
-                            try
-                            {
-                                byte[] unpromotedBytes = File.ReadAllBytes(unpromotedPath);
-
-                                string promotedPath = unpromotedPath + JSON_FILE_EXTENSION;
-
-                                if (_compressionLevel != CompressionLevel.NoCompression)
-                                {
-                                    promotedPath += GZIP_FILE_EXTENSION;
-
-                                    Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-                                    MemoryStream compressedStream = new MemoryStream();
-                                    compressor.Compress(unpromotedBytes, compressedStream, _compressionLevel);
-                                    unpromotedBytes = compressedStream.ToArray();
-                                }
-
-                                if (_encrypt)
-                                {
-                                    promotedPath += ENCRYPTED_FILE_EXTENSION;
-
-                                    using (FileStream promotedFile = new FileStream(promotedPath, FileMode.Create, FileAccess.Write))
-                                    {
-                                        await Protocol.EnvelopeEncryptor.EnvelopeAsync(unpromotedBytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, promotedFile, cancellationToken);
-                                    }
-                                }
-                                else
-                                {
-                                    File.WriteAllBytes(promotedPath, unpromotedBytes);
-                                }
-
-                                // file has been promoted. delete the unpromoted file and remove it from the list.
-                                lock (_unpromotedPaths)
-                                {
-                                    File.Delete(unpromotedPath);
-                                    _unpromotedPaths.Remove(unpromotedPath);
-                                }
-
-                                // add to the list of promoted paths.
-                                lock (_promotedPaths)
-                                {
-                                    _promotedPaths.Add(promotedPath);
-                                }
-
-                                _filesPromoted++;
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusException.Report("Failed to promote file:  " + ex.Message, ex);
-                            }
-                        }
-                    });
-                }
-
-                return _promoteFilesTask;
             }
         }
 
@@ -869,12 +856,7 @@ namespace Sensus.DataStores.Local
                 _toWriteBuffer.Clear();
             }
 
-            // promote any existing files. this will encrypt any files if needed and ready them
-            // for local sharing. a new file will not be opened because the data store has already
-            // been stopped above.
-            await PromoteFilesAsync(CancellationToken.None);
-
-            _dataWrittenToCurrentFile = 0;
+            await PreparePathForRemoteAsync(CloseFile(), CancellationToken.None);
         }
 
         public void Clear()
@@ -892,30 +874,42 @@ namespace Sensus.DataStores.Local
                         SensusServiceHelper.Get().Logger.Log("Failed to delete local file \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
+
+                _totalDataBuffered = 0;
+                _totalDataWrittenToCurrentFile = 0;
+                _totalDataWritten = 0;
+                _totalFilesOpened = 0;
+                _totalFilesClosed = 0;
+                _totalFilesPreparedForRemote = 0;
+                _totalFilesWrittenToRemote = 0;
             }
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-
-            _currentPath = null;
         }
 
         public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
+            // retry file preparation for any unprepared paths
+            List<string> pathsUnpreparedForRemote;
+            lock (_pathsUnpreparedForRemote)
+            {
+                pathsUnpreparedForRemote = _pathsUnpreparedForRemote.ToList();
+            }
+
+            foreach (string pathUnpreparedForRemote in pathsUnpreparedForRemote)
+            {
+                await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
+            }
+
             HealthTestResult result = await base.TestHealthAsync(events);
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Percent Buffer Written", Convert.ToString(_totalDataWritten.RoundToWholePercentageOf(_totalDataBuffered, 5)) },
-                { "Percent Closed", Convert.ToString(_filesClosed.RoundToWholePercentageOf(_filesOpened, 5)) },
-                { "Percent Promoted", Convert.ToString(_filesPromoted.RoundToWholePercentageOf(_filesClosed, 5)) },
-                { "Percent Written", Convert.ToString(_filesWrittenToRemote.RoundToWholePercentageOf(_filesPromoted, 5)) },
-                { "Unpromoted Count", Convert.ToString(_unpromotedPaths == null ? 0 : _unpromotedPaths.Count) },
-                { "Promoted Count", Convert.ToString(_promotedPaths == null ? 0 : _promotedPaths.Count) },
-                { "Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
+                { "Percent Buffer Written To File", Convert.ToString(_totalDataWritten.RoundToWholePercentageOf(_totalDataBuffered, 5)) },
+                { "Percent Files Closed", Convert.ToString(_totalFilesClosed.RoundToWholePercentageOf(_currentPath == null ? _totalFilesOpened : _totalFilesOpened - 1, 5)) },  // don't count the currently open file in the denominator. we want the number to reflect the extent to which all files that should have been closed indeed were.
+                { "Percent Closed Files Prepared For Remote", Convert.ToString(_totalFilesPreparedForRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
+                { "Percent Closed Files Written To Remote", Convert.ToString(_totalFilesWrittenToRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
+                { "Paths Unprepared For Remote", Convert.ToString(_pathsUnpreparedForRemote.Count) },
+                { "Prepared Files Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
             };
 
             Analytics.TrackEvent(eventName, properties);
