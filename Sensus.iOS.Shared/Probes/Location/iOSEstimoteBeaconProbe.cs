@@ -40,7 +40,7 @@ namespace Sensus.iOS.Probes.Location
 
             if (Locations.Count > 0)
             {
-                // foreground monitoring
+                #region foreground monitoring
                 _foregroundIndoorLocationManager = new EILIndoorLocationManager();
 
                 EstimoteForegroundIndoorLocationManagerDelegate foregroundLocationManagerDelegate = new EstimoteForegroundIndoorLocationManagerDelegate();
@@ -48,12 +48,13 @@ namespace Sensus.iOS.Probes.Location
                 foregroundLocationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
                 {
                     EstimoteIndoorLocationAccuracy accuracyEnum = (EstimoteIndoorLocationAccuracy)Enum.Parse(typeof(EstimoteIndoorLocationAccuracy), accuracy.ToString(), true);
-                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracyEnum, location.Name, location.Identifier));
+                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracyEnum, location.Name, location.Identifier, position));
                 };
 
                 _foregroundIndoorLocationManager.Delegate = foregroundLocationManagerDelegate;
+                #endregion
 
-                // background monitoring
+                #region background monitoring
                 _backgroundIndoorLocationManager = new EILBackgroundIndoorLocationManager();
 
                 EstimoteBackgroundIndoorLocationManagerDelegate backgroundLocationManagerDelegate = new EstimoteBackgroundIndoorLocationManagerDelegate();
@@ -61,10 +62,11 @@ namespace Sensus.iOS.Probes.Location
                 backgroundLocationManagerDelegate.UpdatedPositionAsync += async (position, accuracy, location) =>
                 {
                     EstimoteIndoorLocationAccuracy accuracyEnum = (EstimoteIndoorLocationAccuracy)Enum.Parse(typeof(EstimoteIndoorLocationAccuracy), accuracy.ToString(), true);
-                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracyEnum, location.Name, location.Identifier));
+                    await StoreDatumAsync(new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, position.X, position.Y, accuracyEnum, location.Name, location.Identifier, position));
                 };
 
                 _backgroundIndoorLocationManager.Delegate = backgroundLocationManagerDelegate;
+                #endregion
             }
         }
 

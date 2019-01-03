@@ -16,6 +16,12 @@ using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
+#if __ANDROID__
+using EstimoteIndoorLocation = Estimote.Android.Indoor.Location;
+#elif __IOS__
+using EstimoteIndoorLocation = Estimote.iOS.Indoor.EILOrientedPoint;
+#endif
+
 namespace Sensus.Probes.Location
 {
     /// <summary>
@@ -29,6 +35,7 @@ namespace Sensus.Probes.Location
         private EstimoteIndoorLocationAccuracy _accuracy;
         private string _locationName;
         private string _locationId;
+        private EstimoteIndoorLocation _estimoteLocation;
 
         public double X
         {
@@ -61,6 +68,12 @@ namespace Sensus.Probes.Location
             set { _locationId = value; }
         }
 
+        [JsonIgnore]
+        public EstimoteIndoorLocation EstimoteLocation
+        {
+            get { return _estimoteLocation; }
+        }
+
         public override string DisplayDetail
         {
             get { return _locationName + " (X=" + _x + ", Y=" + _y + ")"; }
@@ -71,7 +84,7 @@ namespace Sensus.Probes.Location
             get { return _locationName; }
         }
 
-        public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, EstimoteIndoorLocationAccuracy accuracy, string locationName, string locationId)
+        public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, EstimoteIndoorLocationAccuracy accuracy, string locationName, string locationId, EstimoteIndoorLocation estimoteLocation)
             : base(timestamp)
         {
             _x = x;
@@ -79,6 +92,7 @@ namespace Sensus.Probes.Location
             _accuracy = accuracy;
             _locationName = locationName;
             _locationId = locationId;
+            _estimoteLocation = estimoteLocation;
         }
     }
 }

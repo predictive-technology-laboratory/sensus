@@ -337,6 +337,9 @@
     <Reference Include="Sensus.Shared.NuGet">
       <HintPath>..\packages\Sensus.1.17.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
+    <Reference Include="Estimote.Android.Indoor">
+      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />

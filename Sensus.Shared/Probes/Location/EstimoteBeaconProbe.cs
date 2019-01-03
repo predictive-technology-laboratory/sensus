@@ -90,6 +90,13 @@ namespace Sensus.Probes.Location
         [EntryStringUiProperty("Estimote Cloud App Token:", true, 36, true)]
         public string EstimoteCloudAppToken { get; set; }
 
+        /// <summary>
+        /// Gets or sets the indoor location update interval. This is currently known to impact Android.
+        /// </summary>
+        /// <value>The indoor location update interval.</value>
+        [TimeUiProperty("Indoor Location Update Interval", true, 37, true)]
+        public TimeSpan IndoorLocationUpdateInterval { get; set; } = TimeSpan.FromSeconds(60);
+
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {

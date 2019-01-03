@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Sensus.Probes.Location;
 using Sensus.Android.Notifications;
 using System.Threading.Tasks;
+using Estimote.Android.Indoor;
 
 // the unit test project contains the Resource class in its namespace rather than the Sensus.Android
 // namespace. include that namespace below.
@@ -71,44 +72,109 @@ namespace Sensus.Android.Probes.Location
 
         IProximityObserver _proximityObserver;
         IProximityObserverHandler _proximityObservationHandler;
+        List<IScanningIndoorLocationManager> _indoorLocationManagers;
 
-        protected override Task StartListeningAsync()
+        protected override Task InitializeAsync()
         {
-            Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
-                                                                                           .SetSmallIcon(Resource.Drawable.notification_icon_background)
-                                                                                           .SetContentTitle("Beacon Scan")
-                                                                                           .SetContentText("Scanning...")
-                                                                                           .SetOngoing(true)
-                                                                                           .Build();
+            await base.InitializeAsync();
 
-            _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
-                .WithBalancedPowerMode()
-                .WithScannerInForegroundService(notification)
-                .OnError(new ErrorHandler())
-                .Build();
+            _indoorLocationManagers = new List<IScanningIndoorLocationManager>();
+        }
 
-            List<IProximityZone> zones = new List<IProximityZone>();
-
-            foreach (EstimoteBeacon beacon in Beacons)
+        protected override async Task StartListeningAsync()
+        {
+            if (Beacons.Count > 0)
             {
-                IProximityZone zone = new ProximityZoneBuilder()
-                                              .ForTag(beacon.Tag)
-                                              .InCustomRange(beacon.ProximityMeters)
-                                              .OnEnter(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Entered))
-                                              .OnExit(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Exited))
-                                              .Build();
+                Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
+                                                                                               .SetSmallIcon(Resource.Drawable.notification_icon_background)
+                                                                                               .SetContentTitle("Beacon Scan")
+                                                                                               .SetContentText("Scanning...")
+                                                                                               .SetOngoing(true)
+                                                                                               .Build();
 
-                zones.Add(zone);
+                _proximityObserver = new ProximityObserverBuilder(Application.Context, new EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
+                    .WithBalancedPowerMode()
+                    .WithScannerInForegroundService(notification)
+                    .OnError(new ErrorHandler())
+                    .Build();
+
+                List<IProximityZone> zones = new List<IProximityZone>();
+
+                foreach (EstimoteBeacon beacon in Beacons)
+                {
+                    IProximityZone zone = new ProximityZoneBuilder()
+                                                  .ForTag(beacon.Tag)
+                                                  .InCustomRange(beacon.ProximityMeters)
+                                                  .OnEnter(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Entered))
+                                                  .OnExit(new ProximityHandler(this, beacon, EstimoteBeaconProximityEvent.Exited))
+                                                  .Build();
+
+                    zones.Add(zone);
+                }
+
+                _proximityObservationHandler = _proximityObserver.StartObserving(zones);
             }
 
-            _proximityObservationHandler = _proximityObserver.StartObserving(zones);
+            if (Locations.Count > 0)
+            {
+                EstimoteCloudCredentials credentials = new Estimote.Android.Indoor.EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken);
 
-            return Task.CompletedTask;
+                foreach (EstimoteLocation location in Locations)
+                {
+                    IIndoorCloudManager indoorCloudManager = new IndoorCloudManagerFactory().Create(global::Android.App.Application.Context, credentials);
+                    AndroidEstimoteIndoorCloudCallback cloudCallback = new AndroidEstimoteIndoorCloudCallback();
+                    indoorCloudManager.GetLocation(location.Identifier, cloudCallback);
+                    Estimote.Android.Indoor.Location cloudLocation = await cloudCallback.GetValueAsync();
+
+                    IScanningIndoorLocationManager indoorLocationManager = new IndoorLocationManagerBuilder(global::Android.App.Application.Context, cloudLocation, credentials)
+                        .WithPositionUpdateInterval(IndoorLocationUpdateInterval.TotalMilliseconds)
+                        .WithOnErrorAction(new ErrorHandler())
+                        .WithScannerInForegroundService(notification)
+                        .Build();
+
+                    AndroidEstimoteIndoorPositionUpdateListener indoorPositionUpdateListener = new AndroidEstimoteIndoorPositionUpdateListener();
+                    indoorPositionUpdateListener.UpdatedPosition += async (sender, estimoteLocation) =>
+                    {
+                        EstimoteIndoorLocationDatum datum = null;
+
+                        if (estimoteLocation != null)
+                        {
+                            datum = new EstimoteIndoorLocationDatum(DateTimeOffset.UtcNow, estimoteLocation.GetX(), estimoteLocation.GetY(), EstimoteIndoorLocationAccuracy.Unknown, location.Name, location.Identifier)
+                        }
+
+                        await StoreDatumAsync(datum);
+                    };
+
+                    indoorLocationManager.SetOnPositionUpdateListener(indoorPositionUpdateListener);
+                    indoorLocationManager.StartPositioning();
+
+                    lock (_indoorLocationManagers)
+                    {
+                        _indoorLocationManagers.Add(indoorLocationManager);
+                    }
+                }
+            }
         }
 
         protected override Task StopListeningAsync()
         {
-            _proximityObservationHandler.Stop();
+            if (Beacons.Count > 0)
+            {
+                _proximityObservationHandler.Stop();
+            }
+
+            lock (_indoorLocationManagers)
+            {
+                if (_indoorLocationManagers.Count > 0)
+                {
+                    foreach (IScanningIndoorLocationManager indoorLocationManager in _indoorLocationManagers)
+                    {
+                        indoorLocationManager.StopPositioning();
+                    }
+
+                    _indoorLocationManagers.Clear();
+                }
+            }
 
             return Task.CompletedTask;
         }
