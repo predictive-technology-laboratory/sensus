@@ -127,13 +127,13 @@ namespace Sensus.Android.Probes.Location
                     Estimote.Android.Indoor.Location cloudLocation = await cloudCallback.GetValueAsync();
 
                     IScanningIndoorLocationManager indoorLocationManager = new IndoorLocationManagerBuilder(global::Android.App.Application.Context, cloudLocation, credentials)
-                        .WithPositionUpdateInterval(IndoorLocationUpdateInterval.TotalMilliseconds)
+                        .WithPositionUpdateInterval(IndoorLocationUpdateIntervalMS.TotalMilliseconds)
                         .WithOnErrorAction(new ErrorHandler())
                         .WithScannerInForegroundService(notification)
                         .Build();
 
                     AndroidEstimoteIndoorPositionUpdateListener indoorPositionUpdateListener = new AndroidEstimoteIndoorPositionUpdateListener();
-                    indoorPositionUpdateListener.UpdatedPosition += async (sender, estimoteLocation) =>
+                    indoorPositionUpdateListener.UpdatedPositionAsync += async (sender, estimoteLocation) =>
                     {
                         EstimoteIndoorLocationDatum datum = null;
 

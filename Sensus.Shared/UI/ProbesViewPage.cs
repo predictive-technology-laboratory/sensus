@@ -18,6 +18,7 @@ using Xamarin.Forms;
 using System;
 using System.Threading.Tasks;
 using Sensus.Probes.Location;
+using Sensus.Context;
 
 #if __ANDROID__
 using EstimoteIndoorLocationView = Estimote.Android.Indoor.IndoorLocationView;
@@ -36,7 +37,7 @@ namespace Sensus.UI
         {
         }
 
-        protected override async void ProbeTapped(object sender, ItemTappedEventArgs e)
+        protected override async void ProbeTappedAsync(object sender, ItemTappedEventArgs e)
         {
             Probe probe = e.Item as Probe;
 
@@ -46,9 +47,11 @@ namespace Sensus.UI
 
 #if __ANDROID__
                 locationView = new EstimoteIndoorLocationView(global::Android.App.Application.Context);
-
 #elif __IOS__
-                locationView = new EstimoteIndoorLocationView();
+                locationView = new EstimoteIndoorLocationView
+                {
+                    PositionImage = UIKit.UIImage.FromFile("account.png")
+                };
 #endif
 
                 ContentPage indoorLocationPage = new ContentPage
@@ -57,19 +60,25 @@ namespace Sensus.UI
                     Content = locationView.ToView()
                 };
 
+                await Navigation.PushAsync(indoorLocationPage);
+
                 probe.MostRecentDatumChanged += (previous, current) =>
                 {
-                    EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
+
+                        locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
+
 #if __ANDROID__
-                    locationView.SetLocation(currentEstimoteDatum.EstimoteLocation);
+                        locationView.SetLocation(currentEstimoteDatum.EstimotePosition);
 #elif __IOS__
-                    locationView.UpdatePosition(currentEstimoteDatum.EstimoteLocation);
+                        locationView.UpdatePosition(currentEstimoteDatum.EstimotePosition);
 #endif
+                    });
 
                     return Task.CompletedTask;
                 };
-
-                await Navigation.PushAsync(indoorLocationPage);
             }
             else
             {

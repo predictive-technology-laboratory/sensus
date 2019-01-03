@@ -58,7 +58,7 @@ namespace Sensus.Probes.Location
     public abstract class EstimoteBeaconProbe : ListeningProbe
     {
         private ConcurrentObservableCollection<EstimoteBeacon> _beacons;
-        private ConcurrentObservableCollection<EstimoteLocation> _locations;
+        private EstimoteLocation _location;
 
         public ConcurrentObservableCollection<EstimoteBeacon> Beacons
         {
@@ -68,11 +68,15 @@ namespace Sensus.Probes.Location
             }
         }
 
-        public ConcurrentObservableCollection<EstimoteLocation> Locations
+        public EstimoteLocation Location
         {
             get
             {
-                return _locations;
+                return _location;
+            }
+            set
+            {
+                _location = value;
             }
         }
 
@@ -93,9 +97,9 @@ namespace Sensus.Probes.Location
         /// <summary>
         /// Gets or sets the indoor location update interval. This is currently known to impact Android.
         /// </summary>
-        /// <value>The indoor location update interval.</value>
-        [TimeUiProperty("Indoor Location Update Interval", true, 37, true)]
-        public TimeSpan IndoorLocationUpdateInterval { get; set; } = TimeSpan.FromSeconds(60);
+        /// <value>The indoor location update interval, in milliseconds.</value>
+        [EntryIntegerUiProperty("Indoor Location Update Interval (MS)", true, 37, true)]
+        public int IndoorLocationUpdateIntervalMS { get; set; } = (int)TimeSpan.FromSeconds(60).TotalMilliseconds;
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -145,7 +149,6 @@ namespace Sensus.Probes.Location
         public EstimoteBeaconProbe()
         {
             _beacons = new ConcurrentObservableCollection<EstimoteBeacon>();
-            _locations = new ConcurrentObservableCollection<EstimoteLocation>();
         }
 
         protected override async Task InitializeAsync()
@@ -157,9 +160,9 @@ namespace Sensus.Probes.Location
                 throw new Exception("Must provide Estimote Cloud application ID and token.");
             }
 
-            if (_beacons.Count == 0 && _locations.Count == 0)
+            if (_beacons.Count == 0 && _location == null)
             {
-                throw new Exception("Must add beacons or locations.");
+                throw new Exception("Must add beacon(s) or a location.");
             }
 
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
@@ -238,7 +241,7 @@ namespace Sensus.Probes.Location
 
             try
             {
-                WebRequest request = WebRequest.Create("https://cloud.estimote.com/indoor/locations");
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v1/indoor/locations");
                 request.ContentType = "application/json";
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
@@ -259,7 +262,7 @@ namespace Sensus.Probes.Location
                             throw new Exception("Received empty response content.");
                         }
 
-                        foreach (JObject location in JObject.Parse(content).Value<JArray>("locations"))
+                        foreach (JObject location in JArray.Parse(content))
                         {
                             try
                             {

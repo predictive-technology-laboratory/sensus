@@ -17,9 +17,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 #if __ANDROID__
+using EstimoteIndoorPosition = Estimote.Android.Indoor.LocationPosition;
 using EstimoteIndoorLocation = Estimote.Android.Indoor.Location;
 #elif __IOS__
-using EstimoteIndoorLocation = Estimote.iOS.Indoor.EILOrientedPoint;
+using EstimoteIndoorLocation = Estimote.iOS.Indoor.EILLocation;
+using EstimoteIndoorPosition = Estimote.iOS.Indoor.EILOrientedPoint;
 #endif
 
 namespace Sensus.Probes.Location
@@ -32,10 +34,12 @@ namespace Sensus.Probes.Location
     {
         private double _x;
         private double _y;
+        private double _orientation;
         private EstimoteIndoorLocationAccuracy _accuracy;
         private string _locationName;
         private string _locationId;
         private EstimoteIndoorLocation _estimoteLocation;
+        private EstimoteIndoorPosition _estimotePosition;
 
         public double X
         {
@@ -47,6 +51,12 @@ namespace Sensus.Probes.Location
         {
             get { return _y; }
             set { _y = value; }
+        }
+
+        public double Orientation
+        {
+            get { return _orientation; }
+            set { _orientation = value; }
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -68,15 +78,28 @@ namespace Sensus.Probes.Location
             set { _locationId = value; }
         }
 
-        [JsonIgnore]
+        /// <summary>
+        /// A convenience reference to the native Estimote location object. Not serialized to the data store.
+        /// </summary>
+        /// <value>The Estimote position.</value>
         public EstimoteIndoorLocation EstimoteLocation
         {
             get { return _estimoteLocation; }
         }
 
+        /// <summary>
+        /// A convenience reference to the native Estimote position object. Not serialized to the data store.
+        /// </summary>
+        /// <value>The Estimote position.</value>
+        [JsonIgnore]
+        public EstimoteIndoorPosition EstimotePosition
+        {
+            get { return _estimotePosition; }
+        }
+
         public override string DisplayDetail
         {
-            get { return _locationName + " (X=" + _x + ", Y=" + _y + ")"; }
+            get { return _locationName + " (X=" + Math.Round(_x, 1) + ", Y=" + Math.Round(_y, 1) + ", O=" + Math.Round(_orientation) + ")"; }
         }
 
         public override object StringPlaceholderValue
@@ -84,15 +107,17 @@ namespace Sensus.Probes.Location
             get { return _locationName; }
         }
 
-        public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, EstimoteIndoorLocationAccuracy accuracy, string locationName, string locationId, EstimoteIndoorLocation estimoteLocation)
+        public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, double orientation, EstimoteIndoorLocationAccuracy accuracy, string locationName, string locationId, EstimoteIndoorLocation estimoteLocation, EstimoteIndoorPosition estimotePosition)
             : base(timestamp)
         {
             _x = x;
             _y = y;
+            _orientation = orientation;
             _accuracy = accuracy;
             _locationName = locationName;
             _locationId = locationId;
             _estimoteLocation = estimoteLocation;
+            _estimotePosition = estimotePosition;
         }
     }
 }

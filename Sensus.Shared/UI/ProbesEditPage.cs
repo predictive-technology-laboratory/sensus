@@ -53,7 +53,7 @@ namespace Sensus.UI
             }));
         }
 
-        protected override async void ProbeTapped(object sender, ItemTappedEventArgs e)
+        protected override async void ProbeTappedAsync(object sender, ItemTappedEventArgs e)
         {
             ProbePage probePage = new ProbePage(e.Item as Probe);
             await Navigation.PushAsync(probePage);

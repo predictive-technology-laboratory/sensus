@@ -13,22 +13,23 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
 using Estimote.Android.Indoor;
 
 namespace Sensus.Android.Probes.Location
 {
     public class AndroidEstimoteIndoorPositionUpdateListener : Java.Lang.Object, IOnPositionUpdateListener
     {
-        public event EventHandler<LocationPosition> UpdatedPosition;
+        public event Func<LocationPosition, Task> UpdatedPositionAsync;
 
-        public void OnPositionOutsideLocation()
+        public async void OnPositionOutsideLocation()
         {
-            UpdatedPosition?.Invoke(this, null);
+            await (UpdatedPositionAsync?.Invoke(this, null) ?? Task.CompletedTask);
         }
 
-        public void OnPositionUpdate(LocationPosition position)
+        public async void OnPositionUpdate(LocationPosition position)
         {
-            UpdatedPosition?.Invoke(position);
+            await (UpdatedPositionAsync?.Invoke(position) ?? Task.CompletedTask);
         }
     }
 }
