@@ -290,6 +290,7 @@
     </Reference>
     <Reference Include="Estimote.Android.Proximity">
       <HintPath>..\packages\Estimote.Android.Proximity.1.0.3\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
+      <Aliases>proximity,global</Aliases>
     </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Location">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Location.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Location.dll</HintPath>
@@ -339,6 +340,7 @@
     </Reference>
     <Reference Include="Estimote.Android.Indoor">
       <HintPath>..\packages\Estimote.Android.Indoor.2.5.4\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
+      <Aliases>indoor,global</Aliases>
     </Reference>
   </ItemGroup>
   <ItemGroup>

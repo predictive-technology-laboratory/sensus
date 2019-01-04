@@ -24,7 +24,7 @@ namespace Sensus.Android.Probes.Location
 
         public async void OnPositionOutsideLocation()
         {
-            await (UpdatedPositionAsync?.Invoke(this, null) ?? Task.CompletedTask);
+            await (UpdatedPositionAsync?.Invoke(null) ?? Task.CompletedTask);
         }
 
         public async void OnPositionUpdate(LocationPosition position)

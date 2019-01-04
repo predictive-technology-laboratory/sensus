@@ -14,6 +14,9 @@
 
 namespace Sensus.Probes.Location
 {
+    /// <summary>
+    /// Estimote indoor location accuracy. Taken from [this page](https://developer.estimote.com/indoor/ios-tutorial/#start-location-updates).
+    /// </summary>
     public enum EstimoteIndoorLocationAccuracy
     {
         /// <summary>

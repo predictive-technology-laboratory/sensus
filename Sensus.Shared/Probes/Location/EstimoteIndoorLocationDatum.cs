@@ -82,6 +82,7 @@ namespace Sensus.Probes.Location
         /// A convenience reference to the native Estimote location object. Not serialized to the data store.
         /// </summary>
         /// <value>The Estimote position.</value>
+        [JsonIgnore]
         public EstimoteIndoorLocation EstimoteLocation
         {
             get { return _estimoteLocation; }

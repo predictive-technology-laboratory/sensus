@@ -24,7 +24,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <Description>Endpoint for the Sensus Android application. This is what gets built and distributed to the Android Play
 Store. It is possible to run and debug this project on physical and virtual Android devices.</Description>
-    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -299,6 +298,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     </Reference>
     <Reference Include="Estimote.Android.Proximity">
       <HintPath>..\packages\Estimote.Android.Proximity.1.0.3\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
+      <Aliases>proximity,global</Aliases>
     </Reference>
     <Reference Include="Xamarin.Azure.NotificationHubs.Android">
       <HintPath>..\packages\Xamarin.Azure.NotificationHubs.Android.0.5.0\lib\MonoAndroid403\Xamarin.Azure.NotificationHubs.Android.dll</HintPath>
@@ -338,6 +338,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     </Reference>
     <Reference Include="Estimote.Android.Indoor">
       <HintPath>..\packages\Estimote.Android.Indoor.2.5.4\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
+      <Aliases>indoor,global</Aliases>
     </Reference>
   </ItemGroup>
   <ItemGroup>
