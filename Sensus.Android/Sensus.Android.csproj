@@ -41,6 +41,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <NoWarn>1591</NoWarn>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -296,10 +297,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Xamarin.Forms.Maps">
       <HintPath>..\packages\Xamarin.Forms.Maps.3.2.0.839982\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
     </Reference>
-    <Reference Include="Estimote.Android.Proximity">
-      <HintPath>..\packages\Estimote.Android.Proximity.1.0.3\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
-      <Aliases>proximity,global</Aliases>
-    </Reference>
     <Reference Include="Xamarin.Azure.NotificationHubs.Android">
       <HintPath>..\packages\Xamarin.Azure.NotificationHubs.Android.0.5.0\lib\MonoAndroid403\Xamarin.Azure.NotificationHubs.Android.dll</HintPath>
     </Reference>
@@ -336,8 +333,12 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Sensus.Shared.NuGet">
       <HintPath>..\packages\Sensus.1.17.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
+    <Reference Include="Estimote.Android.Proximity">
+      <HintPath>..\..\Estimote-Xamarin-Bindings\Estimote.Android.Proximity\bin\Debug\Estimote.Android.Proximity.dll</HintPath>
+      <Aliases>proximity,global</Aliases>
+    </Reference>
     <Reference Include="Estimote.Android.Indoor">
-      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
+      <HintPath>..\..\Estimote-Xamarin-Bindings\Estimote.Android.Indoor\bin\Debug\Estimote.Android.Indoor.dll</HintPath>
       <Aliases>indoor,global</Aliases>
     </Reference>
   </ItemGroup>
