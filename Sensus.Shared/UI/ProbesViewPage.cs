@@ -66,14 +66,24 @@ namespace Sensus.UI
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
+                        // indoor positioning will report null if the user is outside the area
+                        if (current == null)
+                        {
+                            indoorLocationPage.Content.IsVisible = false;
+                        }
+                        else
+                        {
+                            indoorLocationPage.Content.IsVisible = true;
+
+                            EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
 
 #if __IOS__
-                        // must draw location below updating position
-                        locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
+                            // must draw location before updating position
+                            locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
 #endif
 
-                        locationView.UpdatePosition(currentEstimoteDatum.EstimotePosition);
+                            locationView.UpdatePosition(currentEstimoteDatum.EstimotePosition);
+                        }
                     });
 
                     return Task.CompletedTask;

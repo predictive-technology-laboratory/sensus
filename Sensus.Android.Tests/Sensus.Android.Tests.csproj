@@ -339,7 +339,7 @@
       <HintPath>..\packages\Sensus.1.17.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
     <Reference Include="Estimote.Android.Indoor">
-      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
+      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4.1\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
       <Aliases>indoor,global</Aliases>
     </Reference>
   </ItemGroup>
