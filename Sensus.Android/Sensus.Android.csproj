@@ -338,7 +338,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
       <Aliases>proximity,global</Aliases>
     </Reference>
     <Reference Include="Estimote.Android.Indoor">
-      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4.1\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
+      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4.2\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
       <Aliases>indoor,global</Aliases>
     </Reference>
   </ItemGroup>
