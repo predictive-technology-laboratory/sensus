@@ -306,7 +306,6 @@ namespace Sensus
         private ConcurrentObservableCollection<Script> _scriptsToRun;
         private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
-        private List<string> _whitelistedSslCertificateHosts;
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
         private readonly object _updatePushNotificationRegistrationsLocker = new object();
@@ -359,12 +358,6 @@ namespace Sensus
             {
                 return _scriptsToRun;
             }
-        }
-
-        [JsonProperty]
-        private List<string> WhitelistedSslCertificateHosts
-        {
-            get { return _whitelistedSslCertificateHosts; }
         }
 
         [JsonIgnore]
@@ -541,8 +534,6 @@ namespace Sensus
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
 
-            _whitelistedSslCertificateHosts = new List<string>();
-
             ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
         }
         #endregion
@@ -577,33 +568,8 @@ namespace Sensus
                 return false;
             }
 
-            // ignore policy errors if the host is whitelisted
-            lock (_whitelistedSslCertificateHosts)
-            {
-                if (_whitelistedSslCertificateHosts.Any(whitelistedHost => certificate.Subject == "CN=" + whitelistedHost))
-                {
-                    return true;
-                }
-            }
-
             // accept the certificate if there were no policy errors
             return sslPolicyErrors == SslPolicyErrors.None;
-        }
-
-        public bool AddWhitelistedSslCertificateHost(string host)
-        {
-            lock (_whitelistedSslCertificateHosts)
-            {
-                if (_whitelistedSslCertificateHosts.Contains(host))
-                {
-                    return false;
-                }
-                else
-                {
-                    _whitelistedSslCertificateHosts.Add(host);
-                    return true;
-                }
-            }
         }
 
         public string GetHash(string s)

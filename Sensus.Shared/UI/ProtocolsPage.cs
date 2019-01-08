@@ -494,49 +494,71 @@ namespace Sensus.UI
                         url = input?.Value?.ToString();
                     }
 
-                    Protocol protocol = null;
-
                     if (url != null)
                     {
+                        Protocol protocol = null;
                         Exception loadException = null;
 
-                        try
+                        // handle managed studies...handshake with authentication service.
+                        if (url.StartsWith(Protocol.MANAGED_URL_STRING))
                         {
-                            protocol = await LoadProtocolFromUrlAsync(url);
-                        }
-                        catch (Exception ex)
-                        {
-                            loadException = ex;
+                            ProgressPage loadProgressPage = null;
 
-                            // check for invalid certificate
-                            WebException innerWebException = ex.InnerException as WebException;
-                            if (innerWebException != null &&
-                                innerWebException.Status == WebExceptionStatus.TrustFailure &&
-                                await DisplayAlert("Invalid server certificate", "The server's certificate could not be validated. You may continue, but only if you are certain that the server should be trusted. Do you wish to continue?", "Yes", "No"))
+                            try
                             {
-                                try
+                                Tuple<string, string> baseUrlParticipantId = ParseManagedProtocolURL(url);
+
+                                AuthenticationService authenticationService = new AuthenticationService(baseUrlParticipantId.Item1);
+
+                                // get account and credentials. this can take a while, so show the user something fun to look at.
+                                CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+                                loadProgressPage = new ProgressPage("Configuring study. Please wait...", cancellationTokenSource);
+                                await loadProgressPage.DisplayAsync(Navigation);
+
+                                await loadProgressPage.SetProgressAsync(0, "creating account");
+                                Account account = await authenticationService.CreateAccountAsync(baseUrlParticipantId.Item2);
+                                cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                                await loadProgressPage.SetProgressAsync(0.3, "getting credentials");
+                                AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
+                                cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                                await loadProgressPage.SetProgressAsync(0.6, "downloading study");
+                                protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                await loadProgressPage.SetProgressAsync(1, null);
+
+                                // don't throw for cancellation here as doing so will leave the protocol partially configured. if 
+                                // the download succeeds, ensure that the properties get set below before throwing any exceptions.
+                                protocol.ParticipantId = account.ParticipantId;
+                                protocol.AuthenticationService = authenticationService;
+                                authenticationService.Protocol = protocol;
+
+                                // make sure protocol has the id that we expect
+                                if (protocol.Id != credentials.ProtocolId)
                                 {
-                                    loadException = null;
-
-                                    // whitelist host and retry
-                                    string host;
-                                    if (url.StartsWith(Protocol.MANAGED_URL_STRING))
-                                    {
-                                        host = new Uri(ParseManagedProtocolURL(url).Item1).Host;
-                                    }
-                                    else
-                                    {
-                                        host = new Uri(url).Host;
-                                    }
-
-                                    SensusServiceHelper.Get().AddWhitelistedSslCertificateHost(host);
-
-                                    protocol = await LoadProtocolFromUrlAsync(url);
+                                    throw new Exception("The identifier of the study does not match that of the credentials.");
                                 }
-                                catch (Exception whitelistedEx)
-                                {
-                                    loadException = whitelistedEx;
-                                }
+                            }
+                            catch(Exception ex)
+                            {
+                                loadException = ex;
+                            }
+                            finally
+                            {
+                                // ensure the progress page is closed
+                                await (loadProgressPage?.CloseAsync() ?? Task.CompletedTask);
+                            }
+                        }
+                        // handle unmanaged studies...direct download from URL.
+                        else
+                        {
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(new Uri(url));
+                            }
+                            catch(Exception ex)
+                            {
+                                loadException = ex;
                             }
                         }
 
@@ -545,15 +567,15 @@ namespace Sensus.UI
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + loadException.Message);
                             protocol = null;
                         }
-                    }
 
-                    if (protocol != null)
-                    {
-                        // save app state to hang on to protocol, authentication information, etc.
-                        await SensusServiceHelper.Get().SaveAsync();
+                        if (protocol != null)
+                        {
+                            // save app state to hang on to protocol, authentication information, etc.
+                            await SensusServiceHelper.Get().SaveAsync();
 
-                        // show the protocol to the user and start
-                        await Protocol.DisplayAndStartAsync(protocol);
+                            // show the protocol to the user and start
+                            await Protocol.DisplayAndStartAsync(protocol);
+                        }
                     }
                 }
             }));
@@ -590,65 +612,6 @@ namespace Sensus.UI
 
             }, ToolbarItemOrder.Secondary));
             #endregion
-        }
-
-        private async Task<Protocol> LoadProtocolFromUrlAsync(string url)
-        {
-            Protocol protocol = null;
-
-            // handle managed studies...handshake with authentication service.
-            if (url.StartsWith(Protocol.MANAGED_URL_STRING))
-            {
-                ProgressPage loadProgressPage = null;
-
-                try
-                {
-                    Tuple<string, string> baseUrlParticipantId = ParseManagedProtocolURL(url);
-
-                    AuthenticationService authenticationService = new AuthenticationService(baseUrlParticipantId.Item1);
-
-                    // get account and credentials. this can take a while, so show the user something fun to look at.
-                    CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                    loadProgressPage = new ProgressPage("Configuring study. Please wait...", cancellationTokenSource);
-                    await loadProgressPage.DisplayAsync(Navigation);
-
-                    await loadProgressPage.SetProgressAsync(0, "creating account");
-                    Account account = await authenticationService.CreateAccountAsync(baseUrlParticipantId.Item2);
-                    cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                    await loadProgressPage.SetProgressAsync(0.3, "getting credentials");
-                    AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
-                    cancellationTokenSource.Token.ThrowIfCancellationRequested();
-
-                    await loadProgressPage.SetProgressAsync(0.6, "downloading study");
-                    protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
-                    await loadProgressPage.SetProgressAsync(1, null);
-
-                    // don't throw for cancellation here as doing so will leave the protocol partially configured. if 
-                    // the download succeeds, ensure that the properties get set below before throwing any exceptions.
-                    protocol.ParticipantId = account.ParticipantId;
-                    protocol.AuthenticationService = authenticationService;
-                    authenticationService.Protocol = protocol;
-
-                    // make sure protocol has the id that we expect
-                    if (protocol.Id != credentials.ProtocolId)
-                    {
-                        throw new Exception("The identifier of the study does not match that of the credentials.");
-                    }
-                }
-                finally
-                {
-                    // ensure the progress page is closed
-                    await (loadProgressPage?.CloseAsync() ?? Task.CompletedTask);
-                }
-            }
-            // handle unmanaged studies...direct download from URL.
-            else
-            {
-                protocol = await Protocol.DeserializeAsync(new Uri(url));
-            }
-
-            return protocol;
         }
 
         private Tuple<string, string> ParseManagedProtocolURL(string url)

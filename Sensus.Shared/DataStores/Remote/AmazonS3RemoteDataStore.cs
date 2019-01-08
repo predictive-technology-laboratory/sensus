@@ -301,7 +301,7 @@ namespace Sensus.DataStores.Remote
             }
             else if (Protocol.AuthenticationService != null)
             {
-                await SetCredentialsFromAuthenticationService();
+                await GetCredentialsFromAuthenticationService();
             }
 
             // credentials must have been set, either directly in the protocol or via the authentication service.
@@ -318,7 +318,7 @@ namespace Sensus.DataStores.Remote
         {
             if (Protocol.AuthenticationService != null)
             {
-                await SetCredentialsFromAuthenticationService();
+                await GetCredentialsFromAuthenticationService();
             }
 
             AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3 related to logging metrics
@@ -657,11 +657,11 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private async Task SetCredentialsFromAuthenticationService()
+        private async Task GetCredentialsFromAuthenticationService()
         {
             if (Protocol.AuthenticationService == null)
             {
-                SensusException.Report(nameof(SetCredentialsFromAuthenticationService) + " called without an authentication service.");
+                SensusException.Report(nameof(GetCredentialsFromAuthenticationService) + " called without an authentication service.");
             }
             else
             {
