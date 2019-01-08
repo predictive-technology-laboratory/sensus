@@ -280,8 +280,8 @@ namespace Sensus.iOS
         /// <param name="notificationSettings">Notification settings.</param>
         public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
         {
-            // the variable should never be null, but just in case...
-            _uiUserNotificationSettingsRegistrationTask?.SetResult(notificationSettings);
+            // the variable should never be null, but just in case...also, use try-set as this method may be called multiple times by iOS per error reports.
+            _uiUserNotificationSettingsRegistrationTask?.TrySetResult(notificationSettings);
         }
 
         /// <summary>
