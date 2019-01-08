@@ -60,6 +60,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AndroidTextToSpeech.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\TextCellDisposedFix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidEstimoteIndoorCloudCallback.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidEstimoteIndoorPositionUpdateListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />

@@ -28,32 +28,57 @@ using System.Threading.Tasks;
 namespace Sensus.Probes.Location
 {
     /// <summary>
-    /// 
-    /// Sensus uses [Estimote Proximity Beacons](http://estimote.com/#get-beacons) to track fine-grained locations indoors. This 
+    /// Sensus uses [Estimote Beacons](http://estimote.com/#get-beacons) to track fine-grained locations indoors. This 
     /// Probe is available for Android and iOS and runs while the Sensus app is in the foreground and background. This Probe 
-    /// generates proximity event data in the form of <see cref="EstimoteBeaconDatum"/> readings.
+    /// generates proximity event data in the form of <see cref="EstimoteBeaconDatum"/> (for proximity events) and 
+    /// <see cref="EstimoteIndoorLocationDatum"/> (for indoor x-y positioning readings.
     /// 
     /// # Prerequisites
     /// 
     ///   * Purchase Proximity or Location beacons.
-    ///   * The beacons must be configured within the [Estimote Cloud console](https://cloud.estimote.com) and have tags attached to them.
+    ///   * The beacons must be configured within the [Estimote Cloud console](https://cloud.estimote.com). To generate 
+    ///     proximity (<see cref="EstimoteBeaconDatum"/>) readings, the beacons must have tags attached to them.
     ///     ```
     /// 
     /// More details are available [here](http://developer.estimote.com/proximity/android-tutorial).
     /// 
-    /// * Having entered the App Id and App Token, the list of beacons can be edited via the `Edit Beacons` button in the Estimote Beacon Probe 
-    ///   configuration. Each beacon definition contains the following:
+    /// * Having entered the App Id and App Token, the list of beacons and locations can be edited via the `Edit Beacons`
+    ///   and `Edit Locations` buttons in the Estimote Beacon Probe configuration. 
+    /// 
+    /// ## Beacons 
+    /// Each beacon definition contains the following:
     ///   
     ///   * `Beacon Tag`:  Tag of the beacon to detect, as specified above.
     ///   * `Proximity (Meters)`:  Number of meters desired for proximity.
     ///   * `Event Name`:  Name to be given to the proximity event.
     /// 
+    /// ## Locations
+    /// Each location contains a name and identifier.
     /// </summary>
     public abstract class EstimoteBeaconProbe : ListeningProbe
     {
         private ConcurrentObservableCollection<EstimoteBeacon> _beacons;
+        private EstimoteLocation _location;
 
-        public ConcurrentObservableCollection<EstimoteBeacon> Beacons { get { return _beacons; }}
+        public ConcurrentObservableCollection<EstimoteBeacon> Beacons
+        {
+            get
+            {
+                return _beacons;
+            }
+        }
+
+        public EstimoteLocation Location
+        {
+            get
+            {
+                return _location;
+            }
+            set
+            {
+                _location = value;
+            }
+        }
 
         /// <summary>
         /// The App Id from the [Estimote Cloud console](https://cloud.estimote.com/#/apps) that is associated with the beacons to be tracked.
@@ -68,6 +93,13 @@ namespace Sensus.Probes.Location
         /// <value>The Estimote Cloud app token.</value>
         [EntryStringUiProperty("Estimote Cloud App Token:", true, 36, true)]
         public string EstimoteCloudAppToken { get; set; }
+
+        /// <summary>
+        /// Gets or sets the indoor location update interval. This is currently known to impact Android.
+        /// </summary>
+        /// <value>The indoor location update interval, in milliseconds.</value>
+        [EntryIntegerUiProperty("Indoor Location Update Interval (MS)", true, 37, true)]
+        public int IndoorLocationUpdateIntervalMS { get; set; } = (int)TimeSpan.FromSeconds(60).TotalMilliseconds;
 
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
@@ -128,9 +160,9 @@ namespace Sensus.Probes.Location
                 throw new Exception("Must provide Estimote Cloud application ID and token.");
             }
 
-            if (_beacons.Count == 0)
+            if (_beacons.Count == 0 && _location == null)
             {
-                throw new Exception("Must add beacons.");
+                throw new Exception("Must add beacon(s) or a location.");
             }
 
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
@@ -201,6 +233,55 @@ namespace Sensus.Probes.Location
             }
 
             return tags;
+        }
+
+        public List<EstimoteLocation> GetLocationsFromCloud()
+        {
+            List<EstimoteLocation> locations = new List<EstimoteLocation>();
+
+            try
+            {
+                WebRequest request = WebRequest.Create("https://cloud.estimote.com/v1/indoor/locations");
+                request.ContentType = "application/json";
+                request.Method = "GET";
+                request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
+
+                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                {
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception("Received non-OK status code:  " + response.StatusCode);
+                    }
+
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    {
+                        string content = reader.ReadToEnd();
+
+                        if (string.IsNullOrWhiteSpace(content))
+                        {
+                            throw new Exception("Received empty response content.");
+                        }
+
+                        foreach (JObject location in JArray.Parse(content))
+                        {
+                            try
+                            {
+                                locations.Add(new EstimoteLocation(location.Value<string>("name"), location.Value<string>("identifier")));
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to get Estimote locations from Cloud:  " + ex, LoggingLevel.Normal, GetType());
+                throw ex;
+            }
+
+            return locations;
         }
 
         protected override ChartSeries GetChartSeries()

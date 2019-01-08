@@ -42,6 +42,10 @@ using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
 using Sensus.Authentication;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using Sensus.DataStores.Remote;
 
 namespace Sensus
 {
@@ -529,8 +533,44 @@ namespace Sensus
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
+
+            ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
         }
         #endregion
+
+        private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (certificate == null)
+            {
+                return false;
+            }
+
+            // check host/certificate against any protocols that are doing s3 certificate pinning. it is important to do this before the
+            // whitelist check below, as a man-in-the-middle attacker would presumably be able to spoof the whitelisted host whereas we
+            // wish to force the server to supply the expected public key instead.
+            if (_registeredProtocols.Any(protocol =>
+                {
+                    if (protocol.RemoteDataStore is AmazonS3RemoteDataStore)
+                    {
+                        AmazonS3RemoteDataStore amazonS3RemoteDataStore = protocol.RemoteDataStore as AmazonS3RemoteDataStore;
+
+                        if (!string.IsNullOrWhiteSpace(amazonS3RemoteDataStore.PinnedServiceURL) &&                 // if we're pinning
+                            certificate.Subject == "CN=" + new Uri(amazonS3RemoteDataStore.PinnedServiceURL).Host)  // if the certificate is from the host we are pinning
+                        {
+                            // check whether the certificate's public key is a mismatch for the one we are expecting
+                            return Convert.ToBase64String(certificate.GetPublicKey()) != amazonS3RemoteDataStore.PinnedPublicKey;
+                        }
+                    }
+
+                    return false;
+                }))
+            {
+                return false;
+            }
+
+            // accept the certificate if there were no policy errors
+            return sslPolicyErrors == SslPolicyErrors.None;
+        }
 
         public string GetHash(string s)
         {
@@ -640,15 +680,15 @@ namespace Sensus
                                 try
                                 {
                                     // get fresh credentials and check the protocol ID
-                                    AmazonS3Credentials credentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
+                                    AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
 
-                                    if (protocolToTest.Id != credentials.ProtocolId)
+                                    if (protocolToTest.Id != testCredentials.ProtocolId)
                                     {
                                         await protocolToTest.StopAsync();
                                         await protocolToTest.DeleteAsync();
 
                                         // get the desired protocol and wire it up with the current authentication service
-                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), testCredentials);
                                         desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
                                         desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
                                         desiredProtocol.AuthenticationService.Protocol = desiredProtocol;

@@ -308,9 +308,7 @@ namespace Sensus.DataStores.Remote
             {
                 SensusServiceHelper.Get().Logger.Log("Required charging but device is not charging.", LoggingLevel.Normal, GetType());
             }
-            // the second condition might seem unnecesary, but the battery charge level in the simulator is always -100 percent, which will always be less than 
-            // the required level. the second condition ensures proper operation in the simulator as well as on real devices.
-            else if (!_requireCharging && _requiredBatteryChargeLevelPercent > 0 && SensusServiceHelper.Get().BatteryChargePercent < _requiredBatteryChargeLevelPercent)
+            else if (!_requireCharging && !SensusServiceHelper.Get().IsCharging && _requiredBatteryChargeLevelPercent > 0 && SensusServiceHelper.Get().BatteryChargePercent < _requiredBatteryChargeLevelPercent)
             {
                 SensusServiceHelper.Get().Logger.Log("Charging not required, but the battery charge percent is lower than required.", LoggingLevel.Normal, GetType());
             }

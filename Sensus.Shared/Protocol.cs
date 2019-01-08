@@ -74,6 +74,7 @@ namespace Sensus
         public const int GPS_DEFAULT_ACCURACY_METERS = 25;
         public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
         public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
+        public const string MANAGED_URL_STRING = "managed";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static async Task<Protocol> CreateAsync(string name)
@@ -96,60 +97,51 @@ namespace Sensus
         {
             Protocol protocol = null;
 
-            try
+            byte[] protocolBytes = null;
+
+            // check if the URI points to an S3 bucket
+            if (AmazonS3Uri.IsAmazonS3Endpoint(uri))
             {
-                byte[] protocolBytes = null;
+                AmazonS3Client s3Client = null;
 
-                // check if the URI points to an S3 bucket
-                if (AmazonS3Uri.IsAmazonS3Endpoint(uri))
+                // use app-level S3 authentication if we don't have an authentication service
+                if (credentials == null)
                 {
-                    AmazonS3Client s3Client = null;
-
-                    // use app-level S3 authentication if we don't have an authentication service
-                    if (credentials == null)
+                    if (SensusContext.Current.IamAccessKey == null ||
+                        SensusContext.Current.IamAccessKeySecret == null |
+                        SensusContext.Current.IamRegion == null)
                     {
-                        if (SensusContext.Current.IamAccessKey == null ||
-                            SensusContext.Current.IamAccessKeySecret == null |
-                            SensusContext.Current.IamRegion == null)
-                        {
-                            throw new Exception("You must first authenticate.");
-                        }
-                        else
-                        {
-                            s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
-                        }
+                        throw new Exception("You must first authenticate.");
                     }
-                    // use authentication service S3 credentials
                     else
                     {
-                        s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken, credentials.RegionEndpoint);
-                    }
-
-                    AmazonS3Uri s3URI = new AmazonS3Uri(uri);
-
-                    GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
-
-                    if (response.HttpStatusCode == HttpStatusCode.OK)
-                    {
-                        MemoryStream byteStream = new MemoryStream();
-                        response.ResponseStream.CopyTo(byteStream);
-                        protocolBytes = byteStream.ToArray();
+                        s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
                     }
                 }
-                // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
+                // use authentication service S3 credentials
                 else
                 {
-                    protocolBytes = await uri.DownloadBytes();
+                    s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken, credentials.RegionEndpoint);
                 }
 
-                protocol = await DeserializeAsync(protocolBytes);
+                AmazonS3Uri s3URI = new AmazonS3Uri(uri);
+
+                GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
+
+                if (response.HttpStatusCode == HttpStatusCode.OK)
+                {
+                    MemoryStream byteStream = new MemoryStream();
+                    response.ResponseStream.CopyTo(byteStream);
+                    protocolBytes = byteStream.ToArray();
+                }
             }
-            catch (Exception ex)
+            // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
+            else
             {
-                string errorMessage = "Failed to download study:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                protocolBytes = await uri.DownloadBytes();
             }
+
+            protocol = await DeserializeAsync(protocolBytes);
 
             return protocol;
         }

@@ -129,7 +129,7 @@ namespace Sensus.iOS
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
                             }
                         }
                         else
@@ -140,7 +140,7 @@ namespace Sensus.iOS
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
                             }
                         }
 

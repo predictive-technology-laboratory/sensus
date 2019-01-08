@@ -17,6 +17,16 @@ using Syncfusion.SfChart.XForms;
 using Xamarin.Forms;
 using System;
 using System.Threading.Tasks;
+using Sensus.Probes.Location;
+using Sensus.Context;
+
+#if __ANDROID__
+using EstimoteIndoorLocationView = Estimote.Android.Indoor.IndoorLocationView;
+using Xamarin.Forms.Platform.Android;
+#elif __IOS__
+using EstimoteIndoorLocationView = Estimote.iOS.Indoor.EILIndoorLocationView;
+using Xamarin.Forms.Platform.iOS;
+#endif
 
 namespace Sensus.UI
 {
@@ -27,58 +37,109 @@ namespace Sensus.UI
         {
         }
 
-        protected override async void ProbeTapped(object sender, ItemTappedEventArgs e)
+        protected override async void ProbeTappedAsync(object sender, ItemTappedEventArgs e)
         {
             Probe probe = e.Item as Probe;
 
-            SfChart chart = null;
+            if (probe is EstimoteBeaconProbe)
+            {
+                EstimoteIndoorLocationView locationView;
 
-            try
-            {
-                chart = probe.GetChart();
-            }
-            catch (NotImplementedException)
-            {
-            }
+#if __ANDROID__
+                locationView = new EstimoteIndoorLocationView(global::Android.App.Application.Context);
+#elif __IOS__
+                locationView = new EstimoteIndoorLocationView
+                {
+                    PositionImage = UIKit.UIImage.FromFile("account.png")
+                };
+#endif
 
-            if (chart == null)
-            {
-                await SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.");
+                ContentPage indoorLocationPage = new ContentPage
+                {
+                    Title = "Estimote Indoor Location",
+                    Content = locationView.ToView()
+                };
+
+                await Navigation.PushAsync(indoorLocationPage);
+
+                probe.MostRecentDatumChanged += (previous, current) =>
+                {
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        // indoor positioning will report null if the user is outside the area
+                        if (current == null)
+                        {
+                            indoorLocationPage.Content.IsVisible = false;
+                        }
+                        else
+                        {
+                            indoorLocationPage.Content.IsVisible = true;
+
+                            EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
+
+#if __IOS__
+                            // must draw location before updating position
+                            locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
+#endif
+
+                            locationView.UpdatePosition(currentEstimoteDatum.EstimotePosition);
+                        }
+                    });
+
+                    return Task.CompletedTask;
+                };
             }
             else
             {
-                ContentPage chartPage = new ContentPage
-                {
-                    Title = probe.DisplayName,
-                    Content = chart,
-                };
+                SfChart chart = null;
 
-                chartPage.ToolbarItems.Add(new ToolbarItem("Refresh", null, () =>
+                try
                 {
-                    chartPage.Content = probe.GetChart();
-                }));
+                    chart = probe.GetChart();
+                }
+                catch (NotImplementedException)
+                {
+                }
 
-                chartPage.ToolbarItems.Add(new ToolbarItem("+", null, async () =>
+                if (chart == null)
                 {
-                    if (probe.MaxChartDataCount < 200)
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Charts are not available for " + probe.DisplayName + " data.");
+                }
+                else
+                {
+                    ContentPage chartPage = new ContentPage
                     {
-                        probe.MaxChartDataCount += 10;
-                    }
+                        Title = probe.DisplayName,
+                        Content = chart,
+                    };
 
-                    await FlashChartDataCountAsync(probe);
-                }));
-
-                chartPage.ToolbarItems.Add(new ToolbarItem("-", null, async () =>
-                {
-                    if (probe.MaxChartDataCount > 10)
+                    chartPage.ToolbarItems.Add(new ToolbarItem("Refresh", null, () =>
                     {
-                        probe.MaxChartDataCount -= 10;
-                    }
+                        chartPage.Content = probe.GetChart();
+                    }));
 
-                    await FlashChartDataCountAsync(probe);
-                }));
+                    chartPage.ToolbarItems.Add(new ToolbarItem("+", null, async () =>
+                    {
+                        if (probe.MaxChartDataCount < 200)
+                        {
+                            probe.MaxChartDataCount += 10;
+                        }
 
-                await Navigation.PushAsync(chartPage);
+                        await FlashChartDataCountAsync(probe);
+                    }));
+
+                    chartPage.ToolbarItems.Add(new ToolbarItem("-", null, async () =>
+                    {
+                        if (probe.MaxChartDataCount > 10)
+                        {
+                            probe.MaxChartDataCount -= 10;
+                        }
+
+                        await FlashChartDataCountAsync(probe);
+                    }));
+
+                    await Navigation.PushAsync(chartPage);
+                }
             }
         }
 

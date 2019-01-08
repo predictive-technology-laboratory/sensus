@@ -21,6 +21,7 @@ using Sensus.Context;
 using Sensus.UI.Inputs;
 using System.Threading.Tasks;
 using Sensus.Authentication;
+using System.Net;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -475,7 +476,7 @@ namespace Sensus.UI
 
                 if (action == "New")
                 {
-                    await Protocol.CreateAsync("New Protocol");
+                    await Protocol.CreateAsync("New Study");
                 }
                 else
                 {
@@ -487,59 +488,44 @@ namespace Sensus.UI
                     }
                     else if (action == "From URL")
                     {
-                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Protocol", new SingleLineTextInput("Protocol URL:", Keyboard.Url), null, true, null, null, null, null, false);
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Download Study", new SingleLineTextInput("Study URL:", Keyboard.Url), null, true, null, null, null, null, false);
 
                         // input might be null (user cancelled), or the value might be null (blank input submitted)
                         url = input?.Value?.ToString();
                     }
 
-                    Protocol protocol = null;
-
                     if (url != null)
                     {
-                        // handle managed studies...handshake with account manager
-                        if (url.StartsWith("managed"))
+                        Protocol protocol = null;
+                        Exception loadException = null;
+
+                        // handle managed studies...handshake with authentication service.
+                        if (url.StartsWith(Protocol.MANAGED_URL_STRING))
                         {
-                            ProgressPage protocolProgressPage = null;
+                            ProgressPage loadProgressPage = null;
 
                             try
                             {
-                                // should have the following parts (participant is optional but the last colon is still required):  managed:BASEURL:PARTICIPANT_ID
-                                int firstColon = url.IndexOf(':');
-                                int lastColon = url.LastIndexOf(':');
+                                Tuple<string, string> baseUrlParticipantId = ParseManagedProtocolURL(url);
 
-                                if (firstColon == lastColon)
-                                {
-                                    throw new Exception("Invalid managed study URL.");
-                                }
-
-                                string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
-
-                                AuthenticationService authenticationService = new AuthenticationService(baseUrl);
-
-                                // get participant id if one follows the last colon
-                                string participantId = null;
-                                if (lastColon < url.Length - 1)
-                                {
-                                    participantId = url.Substring(lastColon + 1);
-                                }
+                                AuthenticationService authenticationService = new AuthenticationService(baseUrlParticipantId.Item1);
 
                                 // get account and credentials. this can take a while, so show the user something fun to look at.
                                 CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-                                protocolProgressPage = new ProgressPage("Configuring study. Please wait...", cancellationTokenSource);
-                                await protocolProgressPage.DisplayAsync(Navigation);
+                                loadProgressPage = new ProgressPage("Configuring study. Please wait...", cancellationTokenSource);
+                                await loadProgressPage.DisplayAsync(Navigation);
 
-                                await protocolProgressPage.SetProgressAsync(0, "creating account");
-                                Account account = await authenticationService.CreateAccountAsync(participantId);
+                                await loadProgressPage.SetProgressAsync(0, "creating account");
+                                Account account = await authenticationService.CreateAccountAsync(baseUrlParticipantId.Item2);
                                 cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                                await protocolProgressPage.SetProgressAsync(0.3, "getting credentials");
+                                await loadProgressPage.SetProgressAsync(0.3, "getting credentials");
                                 AmazonS3Credentials credentials = await authenticationService.GetCredentialsAsync();
                                 cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                                await protocolProgressPage.SetProgressAsync(0.6, "downloading study");
+                                await loadProgressPage.SetProgressAsync(0.6, "downloading study");
                                 protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
-                                await protocolProgressPage.SetProgressAsync(1, null);
+                                await loadProgressPage.SetProgressAsync(1, null);
 
                                 // don't throw for cancellation here as doing so will leave the protocol partially configured. if 
                                 // the download succeeds, ensure that the properties get set below before throwing any exceptions.
@@ -553,37 +539,43 @@ namespace Sensus.UI
                                     throw new Exception("The identifier of the study does not match that of the credentials.");
                                 }
                             }
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
-                                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
-                                protocol = null;
+                                loadException = ex;
                             }
                             finally
                             {
-                                await (protocolProgressPage?.CloseAsync() ?? Task.CompletedTask);
+                                // ensure the progress page is closed
+                                await (loadProgressPage?.CloseAsync() ?? Task.CompletedTask);
                             }
                         }
-                        // handle unmanaged studies...direct download from URL
+                        // handle unmanaged studies...direct download from URL.
                         else
                         {
                             try
                             {
                                 protocol = await Protocol.DeserializeAsync(new Uri(url));
                             }
-                            catch (Exception ex)
+                            catch(Exception ex)
                             {
-                                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + ex.Message);
+                                loadException = ex;
                             }
                         }
-                    }
 
-                    if (protocol != null)
-                    {
-                        // save app state to hang on to protocol and authentication information
-                        await SensusServiceHelper.Get().SaveAsync();
+                        if (loadException != null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + loadException.Message);
+                            protocol = null;
+                        }
 
-                        // show the protocol to the user and start
-                        await Protocol.DisplayAndStartAsync(protocol);
+                        if (protocol != null)
+                        {
+                            // save app state to hang on to protocol, authentication information, etc.
+                            await SensusServiceHelper.Get().SaveAsync();
+
+                            // show the protocol to the user and start
+                            await Protocol.DisplayAndStartAsync(protocol);
+                        }
                     }
                 }
             }));
@@ -620,6 +612,34 @@ namespace Sensus.UI
 
             }, ToolbarItemOrder.Secondary));
             #endregion
+        }
+
+        private Tuple<string, string> ParseManagedProtocolURL(string url)
+        {
+            if (!url.StartsWith(Protocol.MANAGED_URL_STRING))
+            {
+                throw new Exception("Study URL is not managed.");
+            }
+
+            // should have the following parts (participant is optional but the last colon is still required):  managed:BASEURL:PARTICIPANT_ID
+            int firstColon = url.IndexOf(':');
+            int lastColon = url.LastIndexOf(':');
+
+            if (firstColon == lastColon)
+            {
+                throw new Exception("Invalid managed study URL format.");
+            }
+
+            string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
+
+            // get participant id if one follows the last colon
+            string participantId = null;
+            if (lastColon < url.Length - 1)
+            {
+                participantId = url.Substring(lastColon + 1);
+            }
+
+            return new Tuple<string, string>(baseUrl, participantId);
         }
     }
 }

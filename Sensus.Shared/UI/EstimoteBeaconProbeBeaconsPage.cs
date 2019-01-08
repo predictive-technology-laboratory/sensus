@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
@@ -83,7 +82,7 @@ namespace Sensus.UI
                     new NumberEntryInput("Proximity (Meters):"),
                     new SingleLineTextInput("Event Name (Defaults To Beacon Tag):", Keyboard.Default)
                     {
-                            Required = false
+                        Required = false
                     }
 
                 }, null, true, null, null, null, null, false);
