@@ -21,6 +21,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amazon.KeyManagementService;
 using Amazon.KeyManagementService.Model;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sensus.Context;
 using Sensus.Encryption;
@@ -39,6 +40,8 @@ namespace Sensus.Authentication
 
         private readonly string _createAccountURL;
         private readonly string _getCredentialsURL;
+        private Task<AmazonS3Credentials> _getCredentialsTask;
+        private readonly object _getCredentialsTaskLocker = new object();
         
         /// <summary>
         /// Gets or sets the base service URL.
@@ -53,10 +56,11 @@ namespace Sensus.Authentication
         public Account Account { get; set; }
 
         /// <summary>
-        /// Gets or sets the AWS S3 credentials. 
+        /// Gets or sets the AWS S3 credentials.
         /// </summary>
         /// <value>The credentials.</value>
-        public AmazonS3Credentials AmazonS3Credentials { get; set; }
+        [JsonProperty]
+        private AmazonS3Credentials AmazonS3Credentials { get; set; }
 
         public Protocol Protocol { get; set; }
 
@@ -68,7 +72,7 @@ namespace Sensus.Authentication
             _getCredentialsURL = BaseServiceURL + GET_CREDENTIALS_PATH;
         }
 
-        public async Task<Account> CreateAccountAsync(string participantId = null)
+        public async Task<Account> CreateAccountAsync(string participantId)
         {
             string deviceType = "";
             if (SensusContext.Current.Platform == Platform.Android)
@@ -84,9 +88,7 @@ namespace Sensus.Authentication
                 SensusException.Report("Unrecognized platform:  " + SensusContext.Current.Platform);
             }
 
-            ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
             string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId, deviceType)).DownloadString();
-            ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
 
             try
             {
@@ -115,121 +117,103 @@ namespace Sensus.Authentication
             return Account;
         }
 
-        private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sllPolicyErrors)
+        public Task<AmazonS3Credentials> GetCredentialsAsync()
         {
-            return true;
-        }
-
-        public async Task<AmazonS3Credentials> GetCredentialsAsync()
-        {
-            // create account if we don't have one for some reason. under normal conditions we can expect to always have an account, 
-            // as the account information is downloaded, attached to the protocol, and saved with the protocol when the protocol is started.
-            if (Account == null)
+            lock (_getCredentialsTaskLocker)
             {
-                await CreateAccountAsync();
-            }
-
-            ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-            string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
-            ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
-
-            // try creating a new account if an exception was generated.
-            if (IsExceptionResponse(credentialsJSON))
-            {
-                await CreateAccountAsync();
-
-                ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-                credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
-                ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
-
-                if (IsExceptionResponse(credentialsJSON))
+                if (_getCredentialsTask == null ||
+                    _getCredentialsTask.Status == TaskStatus.Canceled ||
+                    _getCredentialsTask.Status == TaskStatus.Faulted ||
+                    _getCredentialsTask.Status == TaskStatus.RanToCompletion)
                 {
-                    SensusException.Report("Received bad password response when getting credentials with newly created account.");
-                    throw new NotImplementedException();
+                    _getCredentialsTask = Task.Run(async () =>
+                    {
+                        if (AmazonS3Credentials?.WillBeValidFor(TimeSpan.FromHours(1)) ?? false)
+                        {
+                            return AmazonS3Credentials;
+                        }
+                        else
+                        {
+                            AmazonS3Credentials = null;
+                        }
+
+                        if (Account == null)
+                        {
+                            throw new Exception("Tried to get credentials without an account.");
+                        }
+
+                        string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
+
+                        // deserialize credentials
+                        try
+                        {
+                            AmazonS3Credentials = credentialsJSON.DeserializeJson<AmazonS3Credentials>();
+                        }
+                        catch (Exception ex)
+                        {
+                            SensusException.Report("Exception while deserializing AWS S3 credentials.", ex);
+                            throw ex;
+                        }
+
+                        // check properties
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.AccessKeyId))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.AccessKeyId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.CustomerMasterKey))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.CustomerMasterKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ExpirationUnixTimeMilliseconds))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.ExpirationUnixTimeMilliseconds) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolId))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolURL) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.Region) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.SecretAccessKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SessionToken))
+                        {
+                            SensusException.Report("Empty " + nameof(AmazonS3Credentials.SessionToken) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
+                        }
+
+                        // save the app state to hang on to the credentials
+                        await SensusServiceHelper.Get().SaveAsync();
+
+                        return AmazonS3Credentials;
+                    });
                 }
+
+                return _getCredentialsTask;
             }
-
-            // deserialize credentials
-            try
-            {
-                AmazonS3Credentials = credentialsJSON.DeserializeJson<AmazonS3Credentials>();
-            }
-            catch (Exception ex)
-            {
-                SensusException.Report("Exception while deserializing AWS S3 credentials.", ex);
-                throw ex;
-            }
-
-            // check properties
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.AccessKeyId))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.AccessKeyId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.CustomerMasterKey))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.CustomerMasterKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ExpirationUnixTimeMilliseconds))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.ExpirationUnixTimeMilliseconds) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolId))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolURL) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.Region) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.SecretAccessKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SessionToken))
-            {
-                SensusException.Report("Empty " + nameof(AmazonS3Credentials.SessionToken) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
-            }
-
-            // save the app state to hang on to the credentials
-            await SensusServiceHelper.Get().SaveAsync();
-
-            return AmazonS3Credentials;
-        }
-
-        private bool IsExceptionResponse(string json)
-        {
-            try
-            {
-                JObject response = JObject.Parse(json);
-                return response.ContainsKey("Exception");
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public void ClearCredentials()
-        {
-            AmazonS3Credentials = null;
         }
 
         public async Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)
         {
             try
             {
+                AmazonS3Credentials kmsCredentials = await GetCredentialsAsync();
+
                 if (symmetricKeySizeBits != 256)
                 {
                     throw new ArgumentOutOfRangeException(nameof(symmetricKeySizeBits), "Invalid value " + symmetricKeySizeBits + ". Only 256-bit keys are supported.");
@@ -240,7 +224,7 @@ namespace Sensus.Authentication
                     throw new ArgumentOutOfRangeException(nameof(symmetricInitializationVectorSizeBits), "Invalid value " + symmetricInitializationVectorSizeBits + ". Only 128-bit initialization vectors are supported.");
                 }
 
-                AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(AmazonS3Credentials.AccessKeyId, AmazonS3Credentials.SecretAccessKey, AmazonS3Credentials.SessionToken, AmazonS3Credentials.RegionEndpoint);
+                AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(kmsCredentials.AccessKeyId, kmsCredentials.SecretAccessKey, kmsCredentials.SessionToken, kmsCredentials.RegionEndpoint);
 
                 kmsClient.ExceptionEvent += (sender, e) =>
                 {
@@ -250,7 +234,7 @@ namespace Sensus.Authentication
                 // generate a symmetric data key
                 GenerateDataKeyResponse dataKeyResponse = await kmsClient.GenerateDataKeyAsync(new GenerateDataKeyRequest
                 {
-                    KeyId = AmazonS3Credentials.CustomerMasterKey,
+                    KeyId = kmsCredentials.CustomerMasterKey,
                     KeySpec = DataKeySpec.AES_256
 
                 }, cancellationToken);
@@ -270,7 +254,7 @@ namespace Sensus.Authentication
 
                 byte[] encryptedInitializationVectorBytes = (await kmsClient.EncryptAsync(new EncryptRequest
                 {
-                    KeyId = AmazonS3Credentials.CustomerMasterKey,
+                    KeyId = kmsCredentials.CustomerMasterKey,
                     Plaintext = new MemoryStream(initializationVectorBytes)
 
                 }, cancellationToken)).CiphertextBlob.ToArray();

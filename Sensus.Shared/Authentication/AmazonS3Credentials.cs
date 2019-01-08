@@ -65,7 +65,7 @@ namespace Sensus.Authentication
 
         public TimeSpan ValidityTimeSpan => ExpirationTimestamp - AcquisitionTimestamp;
 
-        public bool WillBeValidFor(TimeSpan? duration)
+        public bool WillBeValidFor(TimeSpan? duration = null)
         {
             return DateTimeOffset.UtcNow + (duration ?? TimeSpan.Zero) < ExpirationTimestamp;
         }
