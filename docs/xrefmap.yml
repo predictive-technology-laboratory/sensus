@@ -3145,6 +3145,108 @@ references:
   commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteBeaconProbe.StopListeningAsync
   fullName: Sensus.Android.Probes.Location.AndroidEstimoteBeaconProbe.StopListeningAsync
   nameWithType: AndroidEstimoteBeaconProbe.StopListeningAsync
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback
+  name: AndroidEstimoteIndoorCloudCallback
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html
+  commentId: T:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback
+  nameWithType: AndroidEstimoteIndoorCloudCallback
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.#ctor
+  name: AndroidEstimoteIndoorCloudCallback()
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback__ctor
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.#ctor
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.AndroidEstimoteIndoorCloudCallback()
+  nameWithType: AndroidEstimoteIndoorCloudCallback.AndroidEstimoteIndoorCloudCallback()
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.#ctor*
+  name: AndroidEstimoteIndoorCloudCallback
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback__ctor_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.#ctor
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.AndroidEstimoteIndoorCloudCallback
+  nameWithType: AndroidEstimoteIndoorCloudCallback.AndroidEstimoteIndoorCloudCallback
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Failure(Estimote.Android.Indoor.EstimoteCloudException)
+  name: Failure(EstimoteCloudException)
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback_Failure_Estimote_Android_Indoor_EstimoteCloudException_
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Failure(Estimote.Android.Indoor.EstimoteCloudException)
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Failure(Estimote.Android.Indoor.EstimoteCloudException)
+  nameWithType: AndroidEstimoteIndoorCloudCallback.Failure(EstimoteCloudException)
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Failure*
+  name: Failure
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback_Failure_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Failure
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Failure
+  nameWithType: AndroidEstimoteIndoorCloudCallback.Failure
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.GetValueAsync
+  name: GetValueAsync()
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback_GetValueAsync
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.GetValueAsync
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.GetValueAsync()
+  nameWithType: AndroidEstimoteIndoorCloudCallback.GetValueAsync()
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.GetValueAsync*
+  name: GetValueAsync
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback_GetValueAsync_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.GetValueAsync
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.GetValueAsync
+  nameWithType: AndroidEstimoteIndoorCloudCallback.GetValueAsync
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Success(Java.Lang.Object)
+  name: Success(Object)
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback_Success_Java_Lang_Object_
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Success(Java.Lang.Object)
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Success(Java.Lang.Object)
+  nameWithType: AndroidEstimoteIndoorCloudCallback.Success(Object)
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Success*
+  name: Success
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorCloudCallback_Success_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Success
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorCloudCallback.Success
+  nameWithType: AndroidEstimoteIndoorCloudCallback.Success
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener
+  name: AndroidEstimoteIndoorPositionUpdateListener
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html
+  commentId: T:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.#ctor
+  name: AndroidEstimoteIndoorPositionUpdateListener()
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener__ctor
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.#ctor
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.AndroidEstimoteIndoorPositionUpdateListener()
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.AndroidEstimoteIndoorPositionUpdateListener()
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.#ctor*
+  name: AndroidEstimoteIndoorPositionUpdateListener
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener__ctor_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.#ctor
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.AndroidEstimoteIndoorPositionUpdateListener
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.AndroidEstimoteIndoorPositionUpdateListener
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation
+  name: OnPositionOutsideLocation()
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener_OnPositionOutsideLocation
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation()
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation()
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation*
+  name: OnPositionOutsideLocation
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener_OnPositionOutsideLocation_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.OnPositionOutsideLocation
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate(Estimote.Android.Indoor.LocationPosition)
+  name: OnPositionUpdate(LocationPosition)
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener_OnPositionUpdate_Estimote_Android_Indoor_LocationPosition_
+  commentId: M:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate(Estimote.Android.Indoor.LocationPosition)
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate(Estimote.Android.Indoor.LocationPosition)
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate(LocationPosition)
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate*
+  name: OnPositionUpdate
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener_OnPositionUpdate_
+  commentId: Overload:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.OnPositionUpdate
+- uid: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.UpdatedPositionAsync
+  name: UpdatedPositionAsync
+  href: api/Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.html#Sensus_Android_Probes_Location_AndroidEstimoteIndoorPositionUpdateListener_UpdatedPositionAsync
+  commentId: E:Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.UpdatedPositionAsync
+  fullName: Sensus.Android.Probes.Location.AndroidEstimoteIndoorPositionUpdateListener.UpdatedPositionAsync
+  nameWithType: AndroidEstimoteIndoorPositionUpdateListener.UpdatedPositionAsync
 - uid: Sensus.Android.Probes.Location.AndroidProximityProbe
   name: AndroidProximityProbe
   href: api/Sensus.Android.Probes.Location.AndroidProximityProbe.html
@@ -6838,6 +6940,42 @@ references:
   commentId: F:Sensus.Android.Resource.Color.cardview_shadow_start_color
   fullName: Sensus.Android.Resource.Color.cardview_shadow_start_color
   nameWithType: Resource.Color.cardview_shadow_start_color
+- uid: Sensus.Android.Resource.Color.colorAccent
+  name: colorAccent
+  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_colorAccent
+  commentId: F:Sensus.Android.Resource.Color.colorAccent
+  fullName: Sensus.Android.Resource.Color.colorAccent
+  nameWithType: Resource.Color.colorAccent
+- uid: Sensus.Android.Resource.Color.colorNearbyBeaconCircle
+  name: colorNearbyBeaconCircle
+  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_colorNearbyBeaconCircle
+  commentId: F:Sensus.Android.Resource.Color.colorNearbyBeaconCircle
+  fullName: Sensus.Android.Resource.Color.colorNearbyBeaconCircle
+  nameWithType: Resource.Color.colorNearbyBeaconCircle
+- uid: Sensus.Android.Resource.Color.colorPrimary
+  name: colorPrimary
+  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_colorPrimary
+  commentId: F:Sensus.Android.Resource.Color.colorPrimary
+  fullName: Sensus.Android.Resource.Color.colorPrimary
+  nameWithType: Resource.Color.colorPrimary
+- uid: Sensus.Android.Resource.Color.colorPrimaryDark
+  name: colorPrimaryDark
+  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_colorPrimaryDark
+  commentId: F:Sensus.Android.Resource.Color.colorPrimaryDark
+  fullName: Sensus.Android.Resource.Color.colorPrimaryDark
+  nameWithType: Resource.Color.colorPrimaryDark
+- uid: Sensus.Android.Resource.Color.colorStroke
+  name: colorStroke
+  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_colorStroke
+  commentId: F:Sensus.Android.Resource.Color.colorStroke
+  fullName: Sensus.Android.Resource.Color.colorStroke
+  nameWithType: Resource.Color.colorStroke
+- uid: Sensus.Android.Resource.Color.colorText
+  name: colorText
+  href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_colorText
+  commentId: F:Sensus.Android.Resource.Color.colorText
+  fullName: Sensus.Android.Resource.Color.colorText
+  nameWithType: Resource.Color.colorText
 - uid: Sensus.Android.Resource.Color.com_facebook_blue
   name: com_facebook_blue
   href: api/Sensus.Android.Resource.Color.html#Sensus_Android_Resource_Color_com_facebook_blue
@@ -9064,6 +9202,12 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.account
   fullName: Sensus.Android.Resource.Drawable.account
   nameWithType: Resource.Drawable.account
+- uid: Sensus.Android.Resource.Drawable.avatar
+  name: avatar
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_avatar
+  commentId: F:Sensus.Android.Resource.Drawable.avatar
+  fullName: Sensus.Android.Resource.Drawable.avatar
+  nameWithType: Resource.Drawable.avatar
 - uid: Sensus.Android.Resource.Drawable.avd_hide_password
   name: avd_hide_password
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_avd_hide_password
@@ -9112,6 +9256,66 @@ references:
   commentId: F:Sensus.Android.Resource.Drawable.avd_show_password_3
   fullName: Sensus.Android.Resource.Drawable.avd_show_password_3
   nameWithType: Resource.Drawable.avd_show_password_3
+- uid: Sensus.Android.Resource.Drawable.beacon_beetroot_small
+  name: beacon_beetroot_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_beetroot_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_beetroot_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_beetroot_small
+  nameWithType: Resource.Drawable.beacon_beetroot_small
+- uid: Sensus.Android.Resource.Drawable.beacon_black_small
+  name: beacon_black_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_black_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_black_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_black_small
+  nameWithType: Resource.Drawable.beacon_black_small
+- uid: Sensus.Android.Resource.Drawable.beacon_blueberry_small
+  name: beacon_blueberry_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_blueberry_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_blueberry_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_blueberry_small
+  nameWithType: Resource.Drawable.beacon_blueberry_small
+- uid: Sensus.Android.Resource.Drawable.beacon_candy_small
+  name: beacon_candy_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_candy_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_candy_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_candy_small
+  nameWithType: Resource.Drawable.beacon_candy_small
+- uid: Sensus.Android.Resource.Drawable.beacon_grey_small
+  name: beacon_grey_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_grey_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_grey_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_grey_small
+  nameWithType: Resource.Drawable.beacon_grey_small
+- uid: Sensus.Android.Resource.Drawable.beacon_icy_small
+  name: beacon_icy_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_icy_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_icy_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_icy_small
+  nameWithType: Resource.Drawable.beacon_icy_small
+- uid: Sensus.Android.Resource.Drawable.beacon_lemon_small
+  name: beacon_lemon_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_lemon_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_lemon_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_lemon_small
+  nameWithType: Resource.Drawable.beacon_lemon_small
+- uid: Sensus.Android.Resource.Drawable.beacon_mint_small
+  name: beacon_mint_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_mint_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_mint_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_mint_small
+  nameWithType: Resource.Drawable.beacon_mint_small
+- uid: Sensus.Android.Resource.Drawable.beacon_transparent_small
+  name: beacon_transparent_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_transparent_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_transparent_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_transparent_small
+  nameWithType: Resource.Drawable.beacon_transparent_small
+- uid: Sensus.Android.Resource.Drawable.beacon_white_small
+  name: beacon_white_small
+  href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_beacon_white_small
+  commentId: F:Sensus.Android.Resource.Drawable.beacon_white_small
+  fullName: Sensus.Android.Resource.Drawable.beacon_white_small
+  nameWithType: Resource.Drawable.beacon_white_small
 - uid: Sensus.Android.Resource.Drawable.check
   name: check
   href: api/Sensus.Android.Resource.Drawable.html#Sensus_Android_Resource_Drawable_check
@@ -13096,6 +13300,24 @@ references:
   commentId: F:Sensus.Android.Resource.Layout.zxingscannerfragmentlayout
   fullName: Sensus.Android.Resource.Layout.zxingscannerfragmentlayout
   nameWithType: Resource.Layout.zxingscannerfragmentlayout
+- uid: Sensus.Android.Resource.Mipmap
+  name: Resource.Mipmap
+  href: api/Sensus.Android.Resource.Mipmap.html
+  commentId: T:Sensus.Android.Resource.Mipmap
+  fullName: Sensus.Android.Resource.Mipmap
+  nameWithType: Resource.Mipmap
+- uid: Sensus.Android.Resource.Mipmap.ic_launcher
+  name: ic_launcher
+  href: api/Sensus.Android.Resource.Mipmap.html#Sensus_Android_Resource_Mipmap_ic_launcher
+  commentId: F:Sensus.Android.Resource.Mipmap.ic_launcher
+  fullName: Sensus.Android.Resource.Mipmap.ic_launcher
+  nameWithType: Resource.Mipmap.ic_launcher
+- uid: Sensus.Android.Resource.Mipmap.ic_launcher_round
+  name: ic_launcher_round
+  href: api/Sensus.Android.Resource.Mipmap.html#Sensus_Android_Resource_Mipmap_ic_launcher_round
+  commentId: F:Sensus.Android.Resource.Mipmap.ic_launcher_round
+  fullName: Sensus.Android.Resource.Mipmap.ic_launcher_round
+  nameWithType: Resource.Mipmap.ic_launcher_round
 - uid: Sensus.Android.Resource.String
   name: Resource.String
   href: api/Sensus.Android.Resource.String.html
@@ -13864,6 +14086,12 @@ references:
   commentId: F:Sensus.Android.Resource.Style.Animation_Design_BottomSheetDialog
   fullName: Sensus.Android.Resource.Style.Animation_Design_BottomSheetDialog
   nameWithType: Resource.Style.Animation_Design_BottomSheetDialog
+- uid: Sensus.Android.Resource.Style.AppTheme
+  name: AppTheme
+  href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_AppTheme
+  commentId: F:Sensus.Android.Resource.Style.AppTheme
+  fullName: Sensus.Android.Resource.Style.AppTheme
+  nameWithType: Resource.Style.AppTheme
 - uid: Sensus.Android.Resource.Style.Base_AlertDialog_AppCompat
   name: Base_AlertDialog_AppCompat
   href: api/Sensus.Android.Resource.Style.html#Sensus_Android_Resource_Style_Base_AlertDialog_AppCompat
@@ -21082,18 +21310,6 @@ references:
   commentId: Overload:Sensus.Authentication.AuthenticationService.Account
   fullName: Sensus.Authentication.AuthenticationService.Account
   nameWithType: AuthenticationService.Account
-- uid: Sensus.Authentication.AuthenticationService.AmazonS3Credentials
-  name: AmazonS3Credentials
-  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_AmazonS3Credentials
-  commentId: P:Sensus.Authentication.AuthenticationService.AmazonS3Credentials
-  fullName: Sensus.Authentication.AuthenticationService.AmazonS3Credentials
-  nameWithType: AuthenticationService.AmazonS3Credentials
-- uid: Sensus.Authentication.AuthenticationService.AmazonS3Credentials*
-  name: AmazonS3Credentials
-  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_AmazonS3Credentials_
-  commentId: Overload:Sensus.Authentication.AuthenticationService.AmazonS3Credentials
-  fullName: Sensus.Authentication.AuthenticationService.AmazonS3Credentials
-  nameWithType: AuthenticationService.AmazonS3Credentials
 - uid: Sensus.Authentication.AuthenticationService.BaseServiceURL
   name: BaseServiceURL
   href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_BaseServiceURL
@@ -21106,18 +21322,6 @@ references:
   commentId: Overload:Sensus.Authentication.AuthenticationService.BaseServiceURL
   fullName: Sensus.Authentication.AuthenticationService.BaseServiceURL
   nameWithType: AuthenticationService.BaseServiceURL
-- uid: Sensus.Authentication.AuthenticationService.ClearCredentials
-  name: ClearCredentials()
-  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_ClearCredentials
-  commentId: M:Sensus.Authentication.AuthenticationService.ClearCredentials
-  fullName: Sensus.Authentication.AuthenticationService.ClearCredentials()
-  nameWithType: AuthenticationService.ClearCredentials()
-- uid: Sensus.Authentication.AuthenticationService.ClearCredentials*
-  name: ClearCredentials
-  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_ClearCredentials_
-  commentId: Overload:Sensus.Authentication.AuthenticationService.ClearCredentials
-  fullName: Sensus.Authentication.AuthenticationService.ClearCredentials
-  nameWithType: AuthenticationService.ClearCredentials
 - uid: Sensus.Authentication.AuthenticationService.CreateAccountAsync(System.String)
   name: CreateAccountAsync(String)
   href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_CreateAccountAsync_System_String_
@@ -22896,18 +23100,6 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StartAsync
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StartAsync
   nameWithType: AmazonS3RemoteDataStore.StartAsync
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StopAsync
-  name: StopAsync()
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StopAsync
-  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StopAsync
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StopAsync()
-  nameWithType: AmazonS3RemoteDataStore.StopAsync()
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StopAsync*
-  name: StopAsync
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StopAsync_
-  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StopAsync
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StopAsync
-  nameWithType: AmazonS3RemoteDataStore.StopAsync
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.StorageDescription
   name: StorageDescription
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_StorageDescription
@@ -26574,6 +26766,102 @@ references:
   commentId: N:Sensus.iOS.Probes.Location
   fullName: Sensus.iOS.Probes.Location
   nameWithType: Sensus.iOS.Probes.Location
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate
+  name: EstimoteBackgroundIndoorLocationManagerDelegate
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html
+  commentId: T:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.#ctor
+  name: EstimoteBackgroundIndoorLocationManagerDelegate()
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate__ctor
+  commentId: M:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.#ctor
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.EstimoteBackgroundIndoorLocationManagerDelegate()
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.EstimoteBackgroundIndoorLocationManagerDelegate()
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.#ctor*
+  name: EstimoteBackgroundIndoorLocationManagerDelegate
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate__ctor_
+  commentId: Overload:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.#ctor
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.EstimoteBackgroundIndoorLocationManagerDelegate
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.EstimoteBackgroundIndoorLocationManagerDelegate
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(Estimote.iOS.Indoor.EILBackgroundIndoorLocationManager,Foundation.NSError)
+  name: DidFailToUpdatePosition(EILBackgroundIndoorLocationManager, NSError)
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate_DidFailToUpdatePosition_Estimote_iOS_Indoor_EILBackgroundIndoorLocationManager_Foundation_NSError_
+  commentId: M:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(Estimote.iOS.Indoor.EILBackgroundIndoorLocationManager,Foundation.NSError)
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(Estimote.iOS.Indoor.EILBackgroundIndoorLocationManager, Foundation.NSError)
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(EILBackgroundIndoorLocationManager, NSError)
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition*
+  name: DidFailToUpdatePosition
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate_DidFailToUpdatePosition_
+  commentId: Overload:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.DidFailToUpdatePosition
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition(Estimote.iOS.Indoor.EILBackgroundIndoorLocationManager,Estimote.iOS.Indoor.EILOrientedPoint,Estimote.iOS.Indoor.EILPositionAccuracy,Estimote.iOS.Indoor.EILLocation)
+  name: DidUpdatePosition(EILBackgroundIndoorLocationManager, EILOrientedPoint, EILPositionAccuracy, EILLocation)
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate_DidUpdatePosition_Estimote_iOS_Indoor_EILBackgroundIndoorLocationManager_Estimote_iOS_Indoor_EILOrientedPoint_Estimote_iOS_Indoor_EILPositionAccuracy_Estimote_iOS_Indoor_EILLocation_
+  commentId: M:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition(Estimote.iOS.Indoor.EILBackgroundIndoorLocationManager,Estimote.iOS.Indoor.EILOrientedPoint,Estimote.iOS.Indoor.EILPositionAccuracy,Estimote.iOS.Indoor.EILLocation)
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition(Estimote.iOS.Indoor.EILBackgroundIndoorLocationManager, Estimote.iOS.Indoor.EILOrientedPoint, Estimote.iOS.Indoor.EILPositionAccuracy, Estimote.iOS.Indoor.EILLocation)
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition(EILBackgroundIndoorLocationManager, EILOrientedPoint, EILPositionAccuracy, EILLocation)
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition*
+  name: DidUpdatePosition
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate_DidUpdatePosition_
+  commentId: Overload:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.DidUpdatePosition
+- uid: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+  name: UpdatedPositionAsync
+  href: api/Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteBackgroundIndoorLocationManagerDelegate_UpdatedPositionAsync
+  commentId: E:Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+  fullName: Sensus.iOS.Probes.Location.EstimoteBackgroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+  nameWithType: EstimoteBackgroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate
+  name: EstimoteForegroundIndoorLocationManagerDelegate
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html
+  commentId: T:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.#ctor
+  name: EstimoteForegroundIndoorLocationManagerDelegate()
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate__ctor
+  commentId: M:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.#ctor
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.EstimoteForegroundIndoorLocationManagerDelegate()
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.EstimoteForegroundIndoorLocationManagerDelegate()
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.#ctor*
+  name: EstimoteForegroundIndoorLocationManagerDelegate
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate__ctor_
+  commentId: Overload:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.#ctor
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.EstimoteForegroundIndoorLocationManagerDelegate
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.EstimoteForegroundIndoorLocationManagerDelegate
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(Estimote.iOS.Indoor.EILIndoorLocationManager,Foundation.NSError)
+  name: DidFailToUpdatePosition(EILIndoorLocationManager, NSError)
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate_DidFailToUpdatePosition_Estimote_iOS_Indoor_EILIndoorLocationManager_Foundation_NSError_
+  commentId: M:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(Estimote.iOS.Indoor.EILIndoorLocationManager,Foundation.NSError)
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(Estimote.iOS.Indoor.EILIndoorLocationManager, Foundation.NSError)
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition(EILIndoorLocationManager, NSError)
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition*
+  name: DidFailToUpdatePosition
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate_DidFailToUpdatePosition_
+  commentId: Overload:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.DidFailToUpdatePosition
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition(Estimote.iOS.Indoor.EILIndoorLocationManager,Estimote.iOS.Indoor.EILOrientedPoint,Estimote.iOS.Indoor.EILPositionAccuracy,Estimote.iOS.Indoor.EILLocation)
+  name: DidUpdatePosition(EILIndoorLocationManager, EILOrientedPoint, EILPositionAccuracy, EILLocation)
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate_DidUpdatePosition_Estimote_iOS_Indoor_EILIndoorLocationManager_Estimote_iOS_Indoor_EILOrientedPoint_Estimote_iOS_Indoor_EILPositionAccuracy_Estimote_iOS_Indoor_EILLocation_
+  commentId: M:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition(Estimote.iOS.Indoor.EILIndoorLocationManager,Estimote.iOS.Indoor.EILOrientedPoint,Estimote.iOS.Indoor.EILPositionAccuracy,Estimote.iOS.Indoor.EILLocation)
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition(Estimote.iOS.Indoor.EILIndoorLocationManager, Estimote.iOS.Indoor.EILOrientedPoint, Estimote.iOS.Indoor.EILPositionAccuracy, Estimote.iOS.Indoor.EILLocation)
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition(EILIndoorLocationManager, EILOrientedPoint, EILPositionAccuracy, EILLocation)
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition*
+  name: DidUpdatePosition
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate_DidUpdatePosition_
+  commentId: Overload:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.DidUpdatePosition
+- uid: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+  name: UpdatedPositionAsync
+  href: api/Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.html#Sensus_iOS_Probes_Location_EstimoteForegroundIndoorLocationManagerDelegate_UpdatedPositionAsync
+  commentId: E:Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+  fullName: Sensus.iOS.Probes.Location.EstimoteForegroundIndoorLocationManagerDelegate.UpdatedPositionAsync
+  nameWithType: EstimoteForegroundIndoorLocationManagerDelegate.UpdatedPositionAsync
 - uid: Sensus.iOS.Probes.Location.iOSAltitudeProbe
   name: iOSAltitudeProbe
   href: api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html
@@ -26748,6 +27036,18 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.#ctor
   fullName: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.iOSEstimoteBeaconProbe
   nameWithType: iOSEstimoteBeaconProbe.iOSEstimoteBeaconProbe
+- uid: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.InitializeAsync
+  name: InitializeAsync()
+  href: api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html#Sensus_iOS_Probes_Location_iOSEstimoteBeaconProbe_InitializeAsync
+  commentId: M:Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.InitializeAsync
+  fullName: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.InitializeAsync()
+  nameWithType: iOSEstimoteBeaconProbe.InitializeAsync()
+- uid: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.InitializeAsync*
+  name: InitializeAsync
+  href: api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html#Sensus_iOS_Probes_Location_iOSEstimoteBeaconProbe_InitializeAsync_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.InitializeAsync
+  fullName: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.InitializeAsync
+  nameWithType: iOSEstimoteBeaconProbe.InitializeAsync
 - uid: Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.StartListeningAsync
   name: StartListeningAsync()
   href: api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html#Sensus_iOS_Probes_Location_iOSEstimoteBeaconProbe_StartListeningAsync
@@ -33405,6 +33705,30 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries
   nameWithType: EstimoteBeaconProbe.GetChartSeries
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
+  name: GetLocationsFromCloud()
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud
+  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud()
+  nameWithType: EstimoteBeaconProbe.GetLocationsFromCloud()
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud*
+  name: GetLocationsFromCloud
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
+  nameWithType: EstimoteBeaconProbe.GetLocationsFromCloud
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
+  name: IndoorLocationUpdateIntervalMS
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_IndoorLocationUpdateIntervalMS
+  commentId: P:Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
+  nameWithType: EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS*
+  name: IndoorLocationUpdateIntervalMS
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_IndoorLocationUpdateIntervalMS_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
+  nameWithType: EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
 - uid: Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync
   name: InitializeAsync()
   href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_InitializeAsync
@@ -33417,6 +33741,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync
   nameWithType: EstimoteBeaconProbe.InitializeAsync
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.Location
+  name: Location
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_Location
+  commentId: P:Sensus.Probes.Location.EstimoteBeaconProbe.Location
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.Location
+  nameWithType: EstimoteBeaconProbe.Location
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.Location*
+  name: Location
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_Location_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.Location
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.Location
+  nameWithType: EstimoteBeaconProbe.Location
 - uid: Sensus.Probes.Location.EstimoteBeaconProximityEvent
   name: EstimoteBeaconProximityEvent
   href: api/Sensus.Probes.Location.EstimoteBeaconProximityEvent.html
@@ -33441,6 +33777,246 @@ references:
   commentId: F:Sensus.Probes.Location.EstimoteBeaconProximityEvent.value__
   fullName: Sensus.Probes.Location.EstimoteBeaconProximityEvent.value__
   nameWithType: EstimoteBeaconProximityEvent.value__
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy
+  name: EstimoteIndoorLocationAccuracy
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html
+  commentId: T:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy
+  nameWithType: EstimoteIndoorLocationAccuracy
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.High
+  name: High
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_High
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.High
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.High
+  nameWithType: EstimoteIndoorLocationAccuracy.High
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Low
+  name: Low
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_Low
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Low
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Low
+  nameWithType: EstimoteIndoorLocationAccuracy.Low
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Medium
+  name: Medium
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_Medium
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Medium
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Medium
+  nameWithType: EstimoteIndoorLocationAccuracy.Medium
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Unknown
+  name: Unknown
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_Unknown
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Unknown
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.Unknown
+  nameWithType: EstimoteIndoorLocationAccuracy.Unknown
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.value__
+  name: value__
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_value__
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.value__
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.value__
+  nameWithType: EstimoteIndoorLocationAccuracy.value__
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.VeryHigh
+  name: VeryHigh
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_VeryHigh
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.VeryHigh
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.VeryHigh
+  nameWithType: EstimoteIndoorLocationAccuracy.VeryHigh
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.VeryLow
+  name: VeryLow
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html#Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_VeryLow
+  commentId: F:Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.VeryLow
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.VeryLow
+  nameWithType: EstimoteIndoorLocationAccuracy.VeryLow
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum
+  name: EstimoteIndoorLocationDatum
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html
+  commentId: T:Sensus.Probes.Location.EstimoteIndoorLocationDatum
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum
+  nameWithType: EstimoteIndoorLocationDatum
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.#ctor(System.DateTimeOffset,System.Double,System.Double,System.Double,Sensus.Probes.Location.EstimoteIndoorLocationAccuracy,System.String,System.String,Estimote.Android.Indoor.Location,Estimote.Android.Indoor.LocationPosition)
+  name: EstimoteIndoorLocationDatum(DateTimeOffset, Double, Double, Double, EstimoteIndoorLocationAccuracy, String, String, Location, LocationPosition)
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum__ctor_System_DateTimeOffset_System_Double_System_Double_System_Double_Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_System_String_System_String_Estimote_Android_Indoor_Location_Estimote_Android_Indoor_LocationPosition_
+  commentId: M:Sensus.Probes.Location.EstimoteIndoorLocationDatum.#ctor(System.DateTimeOffset,System.Double,System.Double,System.Double,Sensus.Probes.Location.EstimoteIndoorLocationAccuracy,System.String,System.String,Estimote.Android.Indoor.Location,Estimote.Android.Indoor.LocationPosition)
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteIndoorLocationDatum(System.DateTimeOffset, System.Double, System.Double, System.Double, Sensus.Probes.Location.EstimoteIndoorLocationAccuracy, System.String, System.String, Estimote.Android.Indoor.Location, Estimote.Android.Indoor.LocationPosition)
+  nameWithType: EstimoteIndoorLocationDatum.EstimoteIndoorLocationDatum(DateTimeOffset, Double, Double, Double, EstimoteIndoorLocationAccuracy, String, String, Location, LocationPosition)
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.#ctor*
+  name: EstimoteIndoorLocationDatum
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum__ctor_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.#ctor
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteIndoorLocationDatum
+  nameWithType: EstimoteIndoorLocationDatum.EstimoteIndoorLocationDatum
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy
+  name: Accuracy
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_Accuracy
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy
+  nameWithType: EstimoteIndoorLocationDatum.Accuracy
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy*
+  name: Accuracy
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_Accuracy_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy
+  nameWithType: EstimoteIndoorLocationDatum.Accuracy
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_DisplayDetail
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail
+  nameWithType: EstimoteIndoorLocationDatum.DisplayDetail
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_DisplayDetail_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail
+  nameWithType: EstimoteIndoorLocationDatum.DisplayDetail
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation
+  name: EstimoteLocation
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimoteLocation
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation
+  nameWithType: EstimoteIndoorLocationDatum.EstimoteLocation
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation*
+  name: EstimoteLocation
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimoteLocation_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation
+  nameWithType: EstimoteIndoorLocationDatum.EstimoteLocation
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition
+  name: EstimotePosition
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimotePosition
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition
+  nameWithType: EstimoteIndoorLocationDatum.EstimotePosition
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition*
+  name: EstimotePosition
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimotePosition_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition
+  nameWithType: EstimoteIndoorLocationDatum.EstimotePosition
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId
+  name: LocationId
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationId
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId
+  nameWithType: EstimoteIndoorLocationDatum.LocationId
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId*
+  name: LocationId
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationId_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId
+  nameWithType: EstimoteIndoorLocationDatum.LocationId
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName
+  name: LocationName
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationName
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName
+  nameWithType: EstimoteIndoorLocationDatum.LocationName
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName*
+  name: LocationName
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationName_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName
+  nameWithType: EstimoteIndoorLocationDatum.LocationName
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation
+  name: Orientation
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_Orientation
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation
+  nameWithType: EstimoteIndoorLocationDatum.Orientation
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation*
+  name: Orientation
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_Orientation_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation
+  nameWithType: EstimoteIndoorLocationDatum.Orientation
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_StringPlaceholderValue
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue
+  nameWithType: EstimoteIndoorLocationDatum.StringPlaceholderValue
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue*
+  name: StringPlaceholderValue
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_StringPlaceholderValue_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue
+  nameWithType: EstimoteIndoorLocationDatum.StringPlaceholderValue
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.X
+  name: X
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_X
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.X
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.X
+  nameWithType: EstimoteIndoorLocationDatum.X
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.X*
+  name: X
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_X_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.X
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.X
+  nameWithType: EstimoteIndoorLocationDatum.X
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y
+  name: Y
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_Y
+  commentId: P:Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y
+  nameWithType: EstimoteIndoorLocationDatum.Y
+- uid: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y*
+  name: Y
+  href: api/Sensus.Probes.Location.EstimoteIndoorLocationDatum.html#Sensus_Probes_Location_EstimoteIndoorLocationDatum_Y_
+  commentId: Overload:Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y
+  fullName: Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y
+  nameWithType: EstimoteIndoorLocationDatum.Y
+- uid: Sensus.Probes.Location.EstimoteLocation
+  name: EstimoteLocation
+  href: api/Sensus.Probes.Location.EstimoteLocation.html
+  commentId: T:Sensus.Probes.Location.EstimoteLocation
+  fullName: Sensus.Probes.Location.EstimoteLocation
+  nameWithType: EstimoteLocation
+- uid: Sensus.Probes.Location.EstimoteLocation.#ctor(System.String,System.String)
+  name: EstimoteLocation(String, String)
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation__ctor_System_String_System_String_
+  commentId: M:Sensus.Probes.Location.EstimoteLocation.#ctor(System.String,System.String)
+  fullName: Sensus.Probes.Location.EstimoteLocation.EstimoteLocation(System.String, System.String)
+  nameWithType: EstimoteLocation.EstimoteLocation(String, String)
+- uid: Sensus.Probes.Location.EstimoteLocation.#ctor*
+  name: EstimoteLocation
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation__ctor_
+  commentId: Overload:Sensus.Probes.Location.EstimoteLocation.#ctor
+  fullName: Sensus.Probes.Location.EstimoteLocation.EstimoteLocation
+  nameWithType: EstimoteLocation.EstimoteLocation
+- uid: Sensus.Probes.Location.EstimoteLocation.Identifier
+  name: Identifier
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation_Identifier
+  commentId: P:Sensus.Probes.Location.EstimoteLocation.Identifier
+  fullName: Sensus.Probes.Location.EstimoteLocation.Identifier
+  nameWithType: EstimoteLocation.Identifier
+- uid: Sensus.Probes.Location.EstimoteLocation.Identifier*
+  name: Identifier
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation_Identifier_
+  commentId: Overload:Sensus.Probes.Location.EstimoteLocation.Identifier
+  fullName: Sensus.Probes.Location.EstimoteLocation.Identifier
+  nameWithType: EstimoteLocation.Identifier
+- uid: Sensus.Probes.Location.EstimoteLocation.Name
+  name: Name
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation_Name
+  commentId: P:Sensus.Probes.Location.EstimoteLocation.Name
+  fullName: Sensus.Probes.Location.EstimoteLocation.Name
+  nameWithType: EstimoteLocation.Name
+- uid: Sensus.Probes.Location.EstimoteLocation.Name*
+  name: Name
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation_Name_
+  commentId: Overload:Sensus.Probes.Location.EstimoteLocation.Name
+  fullName: Sensus.Probes.Location.EstimoteLocation.Name
+  nameWithType: EstimoteLocation.Name
+- uid: Sensus.Probes.Location.EstimoteLocation.ToString
+  name: ToString()
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation_ToString
+  commentId: M:Sensus.Probes.Location.EstimoteLocation.ToString
+  fullName: Sensus.Probes.Location.EstimoteLocation.ToString()
+  nameWithType: EstimoteLocation.ToString()
+- uid: Sensus.Probes.Location.EstimoteLocation.ToString*
+  name: ToString
+  href: api/Sensus.Probes.Location.EstimoteLocation.html#Sensus_Probes_Location_EstimoteLocation_ToString_
+  commentId: Overload:Sensus.Probes.Location.EstimoteLocation.ToString
+  fullName: Sensus.Probes.Location.EstimoteLocation.ToString
+  nameWithType: EstimoteLocation.ToString
 - uid: Sensus.Probes.Location.GpsReceiver
   name: GpsReceiver
   href: api/Sensus.Probes.Location.GpsReceiver.html
@@ -44436,6 +45012,12 @@ references:
   commentId: Overload:Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
   fullName: Sensus.Protocol.LongitudeOffsetParticipantSeededRandom
   nameWithType: Protocol.LongitudeOffsetParticipantSeededRandom
+- uid: Sensus.Protocol.MANAGED_URL_STRING
+  name: MANAGED_URL_STRING
+  href: api/Sensus.Protocol.html#Sensus_Protocol_MANAGED_URL_STRING
+  commentId: F:Sensus.Protocol.MANAGED_URL_STRING
+  fullName: Sensus.Protocol.MANAGED_URL_STRING
+  nameWithType: Protocol.MANAGED_URL_STRING
 - uid: Sensus.Protocol.Name
   name: Name
   href: api/Sensus.Protocol.html#Sensus_Protocol_Name
@@ -48393,18 +48975,18 @@ references:
   commentId: Overload:Sensus.UI.ProbesEditPage.OnDisappearing
   fullName: Sensus.UI.ProbesEditPage.OnDisappearing
   nameWithType: ProbesEditPage.OnDisappearing
-- uid: Sensus.UI.ProbesEditPage.ProbeTapped(System.Object,Xamarin.Forms.ItemTappedEventArgs)
-  name: ProbeTapped(Object, ItemTappedEventArgs)
-  href: api/Sensus.UI.ProbesEditPage.html#Sensus_UI_ProbesEditPage_ProbeTapped_System_Object_Xamarin_Forms_ItemTappedEventArgs_
-  commentId: M:Sensus.UI.ProbesEditPage.ProbeTapped(System.Object,Xamarin.Forms.ItemTappedEventArgs)
-  fullName: Sensus.UI.ProbesEditPage.ProbeTapped(System.Object, Xamarin.Forms.ItemTappedEventArgs)
-  nameWithType: ProbesEditPage.ProbeTapped(Object, ItemTappedEventArgs)
-- uid: Sensus.UI.ProbesEditPage.ProbeTapped*
-  name: ProbeTapped
-  href: api/Sensus.UI.ProbesEditPage.html#Sensus_UI_ProbesEditPage_ProbeTapped_
-  commentId: Overload:Sensus.UI.ProbesEditPage.ProbeTapped
-  fullName: Sensus.UI.ProbesEditPage.ProbeTapped
-  nameWithType: ProbesEditPage.ProbeTapped
+- uid: Sensus.UI.ProbesEditPage.ProbeTappedAsync(System.Object,Xamarin.Forms.ItemTappedEventArgs)
+  name: ProbeTappedAsync(Object, ItemTappedEventArgs)
+  href: api/Sensus.UI.ProbesEditPage.html#Sensus_UI_ProbesEditPage_ProbeTappedAsync_System_Object_Xamarin_Forms_ItemTappedEventArgs_
+  commentId: M:Sensus.UI.ProbesEditPage.ProbeTappedAsync(System.Object,Xamarin.Forms.ItemTappedEventArgs)
+  fullName: Sensus.UI.ProbesEditPage.ProbeTappedAsync(System.Object, Xamarin.Forms.ItemTappedEventArgs)
+  nameWithType: ProbesEditPage.ProbeTappedAsync(Object, ItemTappedEventArgs)
+- uid: Sensus.UI.ProbesEditPage.ProbeTappedAsync*
+  name: ProbeTappedAsync
+  href: api/Sensus.UI.ProbesEditPage.html#Sensus_UI_ProbesEditPage_ProbeTappedAsync_
+  commentId: Overload:Sensus.UI.ProbesEditPage.ProbeTappedAsync
+  fullName: Sensus.UI.ProbesEditPage.ProbeTappedAsync
+  nameWithType: ProbesEditPage.ProbeTappedAsync
 - uid: Sensus.UI.ProbesPage
   name: ProbesPage
   href: api/Sensus.UI.ProbesPage.html
@@ -48435,18 +49017,18 @@ references:
   commentId: Overload:Sensus.UI.ProbesPage.ProbesList
   fullName: Sensus.UI.ProbesPage.ProbesList
   nameWithType: ProbesPage.ProbesList
-- uid: Sensus.UI.ProbesPage.ProbeTapped(System.Object,Xamarin.Forms.ItemTappedEventArgs)
-  name: ProbeTapped(Object, ItemTappedEventArgs)
-  href: api/Sensus.UI.ProbesPage.html#Sensus_UI_ProbesPage_ProbeTapped_System_Object_Xamarin_Forms_ItemTappedEventArgs_
-  commentId: M:Sensus.UI.ProbesPage.ProbeTapped(System.Object,Xamarin.Forms.ItemTappedEventArgs)
-  fullName: Sensus.UI.ProbesPage.ProbeTapped(System.Object, Xamarin.Forms.ItemTappedEventArgs)
-  nameWithType: ProbesPage.ProbeTapped(Object, ItemTappedEventArgs)
-- uid: Sensus.UI.ProbesPage.ProbeTapped*
-  name: ProbeTapped
-  href: api/Sensus.UI.ProbesPage.html#Sensus_UI_ProbesPage_ProbeTapped_
-  commentId: Overload:Sensus.UI.ProbesPage.ProbeTapped
-  fullName: Sensus.UI.ProbesPage.ProbeTapped
-  nameWithType: ProbesPage.ProbeTapped
+- uid: Sensus.UI.ProbesPage.ProbeTappedAsync(System.Object,Xamarin.Forms.ItemTappedEventArgs)
+  name: ProbeTappedAsync(Object, ItemTappedEventArgs)
+  href: api/Sensus.UI.ProbesPage.html#Sensus_UI_ProbesPage_ProbeTappedAsync_System_Object_Xamarin_Forms_ItemTappedEventArgs_
+  commentId: M:Sensus.UI.ProbesPage.ProbeTappedAsync(System.Object,Xamarin.Forms.ItemTappedEventArgs)
+  fullName: Sensus.UI.ProbesPage.ProbeTappedAsync(System.Object, Xamarin.Forms.ItemTappedEventArgs)
+  nameWithType: ProbesPage.ProbeTappedAsync(Object, ItemTappedEventArgs)
+- uid: Sensus.UI.ProbesPage.ProbeTappedAsync*
+  name: ProbeTappedAsync
+  href: api/Sensus.UI.ProbesPage.html#Sensus_UI_ProbesPage_ProbeTappedAsync_
+  commentId: Overload:Sensus.UI.ProbesPage.ProbeTappedAsync
+  fullName: Sensus.UI.ProbesPage.ProbeTappedAsync
+  nameWithType: ProbesPage.ProbeTappedAsync
 - uid: Sensus.UI.ProbesPage.Protocol
   name: Protocol
   href: api/Sensus.UI.ProbesPage.html#Sensus_UI_ProbesPage_Protocol
@@ -48477,18 +49059,18 @@ references:
   commentId: Overload:Sensus.UI.ProbesViewPage.#ctor
   fullName: Sensus.UI.ProbesViewPage.ProbesViewPage
   nameWithType: ProbesViewPage.ProbesViewPage
-- uid: Sensus.UI.ProbesViewPage.ProbeTapped(System.Object,Xamarin.Forms.ItemTappedEventArgs)
-  name: ProbeTapped(Object, ItemTappedEventArgs)
-  href: api/Sensus.UI.ProbesViewPage.html#Sensus_UI_ProbesViewPage_ProbeTapped_System_Object_Xamarin_Forms_ItemTappedEventArgs_
-  commentId: M:Sensus.UI.ProbesViewPage.ProbeTapped(System.Object,Xamarin.Forms.ItemTappedEventArgs)
-  fullName: Sensus.UI.ProbesViewPage.ProbeTapped(System.Object, Xamarin.Forms.ItemTappedEventArgs)
-  nameWithType: ProbesViewPage.ProbeTapped(Object, ItemTappedEventArgs)
-- uid: Sensus.UI.ProbesViewPage.ProbeTapped*
-  name: ProbeTapped
-  href: api/Sensus.UI.ProbesViewPage.html#Sensus_UI_ProbesViewPage_ProbeTapped_
-  commentId: Overload:Sensus.UI.ProbesViewPage.ProbeTapped
-  fullName: Sensus.UI.ProbesViewPage.ProbeTapped
-  nameWithType: ProbesViewPage.ProbeTapped
+- uid: Sensus.UI.ProbesViewPage.ProbeTappedAsync(System.Object,Xamarin.Forms.ItemTappedEventArgs)
+  name: ProbeTappedAsync(Object, ItemTappedEventArgs)
+  href: api/Sensus.UI.ProbesViewPage.html#Sensus_UI_ProbesViewPage_ProbeTappedAsync_System_Object_Xamarin_Forms_ItemTappedEventArgs_
+  commentId: M:Sensus.UI.ProbesViewPage.ProbeTappedAsync(System.Object,Xamarin.Forms.ItemTappedEventArgs)
+  fullName: Sensus.UI.ProbesViewPage.ProbeTappedAsync(System.Object, Xamarin.Forms.ItemTappedEventArgs)
+  nameWithType: ProbesViewPage.ProbeTappedAsync(Object, ItemTappedEventArgs)
+- uid: Sensus.UI.ProbesViewPage.ProbeTappedAsync*
+  name: ProbeTappedAsync
+  href: api/Sensus.UI.ProbesViewPage.html#Sensus_UI_ProbesViewPage_ProbeTappedAsync_
+  commentId: Overload:Sensus.UI.ProbesViewPage.ProbeTappedAsync
+  fullName: Sensus.UI.ProbesViewPage.ProbeTappedAsync
+  nameWithType: ProbesViewPage.ProbeTappedAsync
 - uid: Sensus.UI.ProgressPage
   name: ProgressPage
   href: api/Sensus.UI.ProgressPage.html

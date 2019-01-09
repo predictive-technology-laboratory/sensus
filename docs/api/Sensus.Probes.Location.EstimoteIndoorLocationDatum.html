@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class EstimoteBeaconDatum
+    <title>Class EstimoteIndoorLocationDatum
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class EstimoteBeaconDatum
+    <meta name="title" content="Class EstimoteIndoorLocationDatum
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
@@ -78,12 +78,12 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum">
+            <article class="content wrap" id="_content" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum">
   
   
-  <h1 id="Sensus_Probes_Location_EstimoteBeaconDatum" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum" class="text-break">Class EstimoteBeaconDatum
+  <h1 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum" class="text-break">Class EstimoteIndoorLocationDatum
   </h1>
-  <div class="markdown level0 summary"><p>Event proximity for named beacons at specified distance thresholds. See <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProbe.html">EstimoteBeaconProbe</a>
+  <div class="markdown level0 summary"><p>The location of the device within a space monitored by Estimote indoor location beacons. See <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProbe.html">EstimoteBeaconProbe</a>
 for more information.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -91,11 +91,10 @@ for more information.</p>
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Sensus.Datum.html">Datum</a></div>
-    <div class="level2"><span class="xref">EstimoteBeaconDatum</span></div>
+    <div class="level2"><span class="xref">EstimoteIndoorLocationDatum</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="Sensus.Probes.Location.IEstimoteBeaconDatum.html">IEstimoteBeaconDatum</a></div>
     <div><a class="xref" href="Sensus.IDatum.html">IDatum</a></div>
   </div>
   <div class="inheritedMembers">
@@ -111,6 +110,9 @@ for more information.</p>
     </div>
     <div>
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Equals_System_Object_">Datum.Equals(Object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Datum.Id</a>
@@ -151,21 +153,21 @@ for more information.</p>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Probes.Location.html">Sensus.Probes.Location</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Probes_Location_EstimoteBeaconDatum_syntax">Syntax</h5>
+  <h5 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class EstimoteBeaconDatum : Datum, IEstimoteBeaconDatum, IDatum</code></pre>
+    <pre><code class="lang-csharp hljs">public class EstimoteIndoorLocationDatum : Datum, IDatum</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum__ctor_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.#ctor*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum__ctor_System_DateTimeOffset_Sensus_Probes_Location_EstimoteBeacon_Sensus_Probes_Location_EstimoteBeaconProximityEvent_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.#ctor(System.DateTimeOffset,Sensus.Probes.Location.EstimoteBeacon,Sensus.Probes.Location.EstimoteBeaconProximityEvent)">EstimoteBeaconDatum(DateTimeOffset, EstimoteBeacon, EstimoteBeaconProximityEvent)</h4>
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum__ctor_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.#ctor*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum__ctor_System_DateTimeOffset_System_Double_System_Double_System_Double_Sensus_Probes_Location_EstimoteIndoorLocationAccuracy_System_String_System_String_Estimote_Android_Indoor_Location_Estimote_Android_Indoor_LocationPosition_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.#ctor(System.DateTimeOffset,System.Double,System.Double,System.Double,Sensus.Probes.Location.EstimoteIndoorLocationAccuracy,System.String,System.String,Estimote.Android.Indoor.Location,Estimote.Android.Indoor.LocationPosition)">EstimoteIndoorLocationDatum(DateTimeOffset, Double, Double, Double, EstimoteIndoorLocationAccuracy, String, String, Location, LocationPosition)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EstimoteBeaconDatum(DateTimeOffset timestamp, EstimoteBeacon beacon, EstimoteBeaconProximityEvent proximityEvent)</code></pre>
+    <pre><code class="lang-csharp hljs">public EstimoteIndoorLocationDatum(DateTimeOffset timestamp, double x, double y, double orientation, EstimoteIndoorLocationAccuracy accuracy, string locationName, string locationId, Location estimoteLocation, LocationPosition estimotePosition)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -183,13 +185,43 @@ for more information.</p>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Probes.Location.EstimoteBeacon.html">EstimoteBeacon</a></td>
-        <td><span class="parametername">beacon</span></td>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">x</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProximityEvent.html">EstimoteBeaconProximityEvent</a></td>
-        <td><span class="parametername">proximityEvent</span></td>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">y</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">orientation</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html">EstimoteIndoorLocationAccuracy</a></td>
+        <td><span class="parametername">accuracy</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">locationName</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">locationId</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Estimote.Android.Indoor.Location</span></td>
+        <td><span class="parametername">estimoteLocation</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">Estimote.Android.Indoor.LocationPosition</span></td>
+        <td><span class="parametername">estimotePosition</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -198,16 +230,13 @@ for more information.</p>
   </h3>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_BeaconTag_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_BeaconTag" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.BeaconTag">BeaconTag</h4>
-  <div class="markdown level1 summary"><p>The tag assigned to the beacon.</p>
-</div>
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_Accuracy_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_Accuracy" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.Accuracy">Accuracy</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[StringProbeTriggerProperty(&quot;Beacon Tag&quot;)]
-[Anonymizable]
-public string BeaconTag { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EstimoteIndoorLocationAccuracy Accuracy { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -219,16 +248,15 @@ public string BeaconTag { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><p>The name of the beacon.</p>
-</td>
+        <td><a class="xref" href="Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html">EstimoteIndoorLocationAccuracy</a></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_DisplayDetail_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.DisplayDetail*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_DisplayDetail" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.DisplayDetail">DisplayDetail</h4>
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_DisplayDetail_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_DisplayDetail" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.DisplayDetail">DisplayDetail</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -254,16 +282,117 @@ public string BeaconTag { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_DisplayDetail">Datum.DisplayDetail</a></div>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_DistanceMeters_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.DistanceMeters*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_DistanceMeters" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.DistanceMeters">DistanceMeters</h4>
-  <div class="markdown level1 summary"><p>Proximity detection threshold.</p>
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimoteLocation_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimoteLocation" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimoteLocation">EstimoteLocation</h4>
+  <div class="markdown level1 summary"><p>A convenience reference to the native Estimote location object. Not serialized to the data store.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DoubleProbeTriggerProperty(&quot;Distance (Meters)&quot;)]
-[Anonymizable]
-public double DistanceMeters { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Location EstimoteLocation { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Estimote.Android.Indoor.Location</span></td>
+        <td><p>The Estimote position.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimotePosition_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_EstimotePosition" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.EstimotePosition">EstimotePosition</h4>
+  <div class="markdown level1 summary"><p>A convenience reference to the native Estimote position object. Not serialized to the data store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LocationPosition EstimotePosition { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Estimote.Android.Indoor.LocationPosition</span></td>
+        <td><p>The Estimote position.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationId_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationId" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationId">LocationId</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string LocationId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationName_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_LocationName" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.LocationName">LocationName</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string LocationName { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_Orientation_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_Orientation" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.Orientation">Orientation</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double Orientation { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -276,97 +405,15 @@ public double DistanceMeters { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Double</span></td>
-        <td><p>The distance in meters.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_EventName_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.EventName*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_EventName" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.EventName">EventName</h4>
-  <div class="markdown level1 summary"><p>Name of the proximity event.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[StringProbeTriggerProperty(&quot;Event Name&quot;)]
-[Anonymizable]
-public string EventName { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><p>The name of the event.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_EventSummary_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.EventSummary*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_EventSummary" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.EventSummary">EventSummary</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[StringProbeTriggerProperty(&quot;Entered/Exited [Event Name]&quot;)]
-public string EventSummary { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_ProximityEvent_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.ProximityEvent*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_ProximityEvent" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.ProximityEvent">ProximityEvent</h4>
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
   <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EstimoteBeaconProximityEvent ProximityEvent { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProximityEvent.html">EstimoteBeaconProximityEvent</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_StringPlaceholderValue_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.StringPlaceholderValue*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_StringPlaceholderValue" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.StringPlaceholderValue">StringPlaceholderValue</h4>
-  <div class="markdown level1 summary"><p>Gets the string placeholder value, which is the beacon name.</p>
-</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -383,26 +430,23 @@ public string EventSummary { get; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Object</span></td>
-        <td><p>The string placeholder value.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_StringPlaceholderValue">Datum.StringPlaceholderValue</a></div>
-  <h3 id="methods">Methods
-  </h3>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconDatum_ToString_" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.ToString*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconDatum_ToString" data-uid="Sensus.Probes.Location.EstimoteBeaconDatum.ToString">ToString()</h4>
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_X_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.X*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_X" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.X">X</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+    <pre><code class="lang-csharp hljs">public double X { get; set; }</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
+  <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
@@ -412,17 +456,37 @@ public string EventSummary { get; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">System.Double</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Datum.html#Sensus_Datum_ToString">Datum.ToString()</a></div>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="Sensus.Probes.Location.IEstimoteBeaconDatum.html">IEstimoteBeaconDatum</a>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_Y_" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteIndoorLocationDatum_Y" data-uid="Sensus.Probes.Location.EstimoteIndoorLocationDatum.Y">Y</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double Y { get; set; }</code></pre>
   </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Sensus.IDatum.html">IDatum</a>
   </div>
