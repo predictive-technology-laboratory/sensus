@@ -24,6 +24,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <Description>Endpoint for the Sensus Android application. This is what gets built and distributed to the Android Play
 Store. It is possible to run and debug this project on physical and virtual Android devices.</Description>
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -41,9 +42,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <NoWarn>1591</NoWarn>
-    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType></DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
