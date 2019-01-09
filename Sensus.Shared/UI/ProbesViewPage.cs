@@ -77,8 +77,11 @@ namespace Sensus.UI
 
                             EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
 
-#if __IOS__
-                            // must draw location before updating position
+                            // draw location before updating position
+#if __ANDROID__
+                            locationView.SetLocation(currentEstimoteDatum.EstimoteLocation);
+#elif __IOS__
+
                             locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
 #endif
 
