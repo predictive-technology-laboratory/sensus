@@ -556,11 +556,11 @@ namespace Sensus.DataStores.Local
                         // write each file that is prepared for transmission to the remote data store
                         for (int i = 0; i < pathsPreparedForRemote.Length && !cancellationToken.IsCancellationRequested; ++i)
                         {
-                            CaptionText = "Uploading file " + (i + 1) + " of " + pathsPreparedForRemote.Length;
+                            CaptionText = "Uploading file " + (i + 1) + " of " + pathsPreparedForRemote.Length + ".";
 
-#if __IOS
+#if __IOS__
                             // add encouragement to keep app open so that the upload may continue
-                            CaptionText += ". Please keep Sensus open...";
+                            CaptionText += " Please keep Sensus open...";
 #endif
 
                             string pathPreparedForRemote = pathsPreparedForRemote[i];
