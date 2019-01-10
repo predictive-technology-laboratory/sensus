@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,6 +41,11 @@ using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
 using ZXing.Mobile;
+using Sensus.Authentication;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using Sensus.DataStores.Remote;
 
 namespace Sensus
 {
@@ -53,6 +58,7 @@ namespace Sensus
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
         public const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+        public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
 
         /// <summary>
         /// App Center key for Android app. To obtain this key, create a new Xamarin Android app within the Microsoft App Center. This
@@ -90,14 +96,14 @@ namespace Sensus
 
 #if DEBUG || UI_TESTING
         /// <summary>
-        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// The health test interval.
         /// </summary>
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
         /// <summary>
-        /// The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.
+        /// The health test interval.
         /// </summary>
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(6);
+        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(3);
 #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
@@ -165,7 +171,7 @@ namespace Sensus
                     throw exceptionToReport;
                 }
 
-                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + deserializeException.Message, LoggingLevel.Normal, SINGLETON.GetType());
+                SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + (deserializeException?.Message ?? "No exception"), LoggingLevel.Normal, SINGLETON.GetType());
                 SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
             }
         }
@@ -188,7 +194,8 @@ namespace Sensus
                 string decryptedJSON;
                 try
                 {
-                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes);
+                    // once upon a time, we made the poor decision to encode the helper as unicode (UTF-16). can't switch to UTF-8 now...
+                    decryptedJSON = SensusContext.Current.SymmetricEncryption.DecryptToString(encryptedJsonBytes, Encoding.Unicode);
                 }
                 catch (Exception exception)
                 {
@@ -262,9 +269,20 @@ namespace Sensus
             return directorySizeMB;
         }
 
-        public static double GetFileSizeMB(string path)
+        public static double GetFileSizeMB(params string[] paths)
         {
-            return new FileInfo(path).Length / Math.Pow(1024d, 2);
+            return paths.Sum(path =>
+            {
+                // files have a habit of racing to deletion...
+                try
+                {
+                    return new FileInfo(path).Length / Math.Pow(1024d, 2);
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            });
         }
 
         /// <remarks>
@@ -515,8 +533,44 @@ namespace Sensus
 
             _logger = new Logger(LOG_PATH, loggingLevel, Console.Error);
             _logger.Log("Log file started at \"" + LOG_PATH + "\".", LoggingLevel.Normal, GetType());
+
+            ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
         }
         #endregion
+
+        private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (certificate == null)
+            {
+                return false;
+            }
+
+            // check host/certificate against any protocols that are doing s3 certificate pinning. it is important to do this before the
+            // whitelist check below, as a man-in-the-middle attacker would presumably be able to spoof the whitelisted host whereas we
+            // wish to force the server to supply the expected public key instead.
+            if (_registeredProtocols.Any(protocol =>
+                {
+                    if (protocol.RemoteDataStore is AmazonS3RemoteDataStore)
+                    {
+                        AmazonS3RemoteDataStore amazonS3RemoteDataStore = protocol.RemoteDataStore as AmazonS3RemoteDataStore;
+
+                        if (!string.IsNullOrWhiteSpace(amazonS3RemoteDataStore.PinnedServiceURL) &&                 // if we're pinning
+                            certificate.Subject == "CN=" + new Uri(amazonS3RemoteDataStore.PinnedServiceURL).Host)  // if the certificate is from the host we are pinning
+                        {
+                            // check whether the certificate's public key is a mismatch for the one we are expecting
+                            return Convert.ToBase64String(certificate.GetPublicKey()) != amazonS3RemoteDataStore.PinnedPublicKey;
+                        }
+                    }
+
+                    return false;
+                }))
+            {
+                return false;
+            }
+
+            // accept the certificate if there were no policy errors
+            return sslPolicyErrors == SslPolicyErrors.None;
+        }
 
         public string GetHash(string s)
         {
@@ -619,8 +673,39 @@ namespace Sensus
 
                             _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
-                            await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
+                            // the protocol id returned with credentials.
+                            if (protocolToTest.AuthenticationService != null)
+                            {
+                                try
+                                {
+                                    // get fresh credentials and check the protocol ID
+                                    AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
 
+                                    if (protocolToTest.Id != testCredentials.ProtocolId)
+                                    {
+                                        await protocolToTest.StopAsync();
+                                        await protocolToTest.DeleteAsync();
+
+                                        // get the desired protocol and wire it up with the current authentication service
+                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), testCredentials);
+                                        desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+                                        desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                        desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
+
+                                        await desiredProtocol.StartAsync(cancellationToken);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
+                                }
+                            }
+                            else
+                            {
+                                await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            }
+                            
                             // write a heartbeat datum to let the backend know we're alive
                             protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
                         }
@@ -696,7 +781,9 @@ namespace Sensus
                     try
                     {
                         string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON);
+
+                        // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
                         File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
                         _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
@@ -810,7 +897,11 @@ namespace Sensus
             {
                 await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
 
-                // save the app state. if the app crashes we want to keep the surveys around so they can be taken.
+                // save the app state. if the app crashes we want to keep the surveys around so they can be 
+                // taken. this will not result in duplicate surveys in cases where the script probe restarts
+                // and reschedules itself, as the the script probe schedule only concerns future surveys 
+                // whereas the surveys serialized within the app state within _scriptsToRun are by definition
+                // surveys deployed in the past.
                 try
                 {
                     await SaveAsync();
@@ -841,8 +932,8 @@ namespace Sensus
                     await RemoveScriptAsync(script, issueNotification);
 
                     // let the script agent know and store a datum to record the event
-                    script.Runner.Probe.Agent?.Observe(script, ScriptState.Expired);
-                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), default(CancellationToken));
+                    await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
+                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
                 }
             }
         }
@@ -852,8 +943,8 @@ namespace Sensus
             foreach (Script script in _scriptsToRun)
             {
                 // let the script agent know and store a datum to record the event
-                script.Runner.Probe.Agent?.Observe(script, ScriptState.Deleted);
-                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), default(CancellationToken));
+                await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Deleted) ?? Task.CompletedTask);
+                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
             _scriptsToRun.Clear();
@@ -969,16 +1060,16 @@ namespace Sensus
 
                 cancelButton.Clicked += async (o, e) =>
                 {
-                    resultCompletionSource.TrySetResult(null);
-
                     await closeScannerPageAsync();
                 };
+
+                string result = null;
 
                 barcodeScannerPage.OnScanResult += async r =>
                 {
                     if (resultPrefix == null || r.Text.StartsWith(resultPrefix))
                     {
-                        resultCompletionSource.TrySetResult(r.Text.Substring(resultPrefix?.Length ?? 0).Trim());
+                        result = r.Text.Substring(resultPrefix?.Length ?? 0).Trim();
 
                         await closeScannerPageAsync();
                     }
@@ -986,9 +1077,7 @@ namespace Sensus
 
                 barcodeScannerPage.Disappearing += (sender, e) =>
                 {
-                    // use TrySetResult to account for the cases where the cancel button was pressed or 
-                    // we scanned a barcode. if either of these happens the result will already be set.
-                    resultCompletionSource.TrySetResult(null);
+                    resultCompletionSource.TrySetResult(result);
                 };
 
                 await navigation.PushModalAsync(barcodeScannerPage);

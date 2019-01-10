@@ -88,7 +88,7 @@ namespace Sensus.Tests.DataStores.Local
             await WriteLocalDataStoreAsync(data, CompressionLevel.NoCompression, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
-                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
+                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.CurrentPath);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
@@ -107,7 +107,7 @@ namespace Sensus.Tests.DataStores.Local
             await WriteLocalDataStoreAsync(data, CompressionLevel.Fastest, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
-                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
+                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.CurrentPath);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
@@ -126,7 +126,7 @@ namespace Sensus.Tests.DataStores.Local
             await WriteLocalDataStoreAsync(data, CompressionLevel.Optimal, fileLocalDataStore =>
             {
                 fileLocalDataStore.Flush();
-                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.Path);
+                double newSizeMB = SensusServiceHelper.GetFileSizeMB(fileLocalDataStore.CurrentPath);
                 Assert.True(newSizeMB >= currentSizeMB);
                 currentSizeMB = newSizeMB;
             });
@@ -323,32 +323,27 @@ namespace Sensus.Tests.DataStores.Local
             Protocol protocol = await CreateProtocolAsync(compressionLevel);
             FileLocalDataStore localDataStore = protocol.LocalDataStore as FileLocalDataStore;
 
-            List<string> paths = new List<string>();
-
             for (int i = 0; i < numTimes; ++i)
             {
                 await localDataStore.StartAsync();
                 WriteData(data, localDataStore, postWriteAction);
-                string path = localDataStore.Path + ".json" + (compressionLevel == CompressionLevel.NoCompression ? "" : ".gz"); // file is about to be promoted on Stop.
-                paths.Add(path);
                 await localDataStore.StopAsync();
-                Assert.True(File.Exists(path));
                 Assert.Equal(localDataStore.TotalDataWritten, localDataStore.TotalDataBuffered);
             }
 
-            Assert.Equal(numTimes, paths.Count);
+            Assert.Equal(numTimes, localDataStore.PathsPreparedForRemote.Count);
 
-            return paths.ToArray();
+            return localDataStore.PathsPreparedForRemote.ToArray();
         }
 
         private async Task<Protocol> CreateProtocolAsync(CompressionLevel compressionLevel)
         {
-            FileLocalDataStore localDataStore = new FileLocalDataStore()
+            FileLocalDataStore localDataStore = new FileLocalDataStore
             {
                 CompressionLevel = compressionLevel
             };
 
-            ConsoleRemoteDataStore remoteDataStore = new ConsoleRemoteDataStore()
+            ConsoleRemoteDataStore remoteDataStore = new ConsoleRemoteDataStore
             {
                 WriteDelayMS = 1000000
             };

@@ -20,7 +20,13 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 namespace Sensus.Probes.Movement
 {
     /// <summary>
-    /// Activity the user is engaged in, as inferred from the phone's sensors.
+    /// Activity the user is engaged in, as inferred from the phone's sensors. Note the following differences between iOS and
+    /// Android:
+    /// 
+    /// * <see cref="Confidence"/> values will not be reported for Android. All values will be <see cref="ActivityConfidence.NotAvailable"/>.
+    /// * On iOS, all values of <see cref="Phase"/> will be <see cref="ActivityPhase.Starting"/> and all values of <see cref="State"/> will
+    /// be <see cref="ActivityState.Active"/>. This is the case for all <see cref="Activities"/> and all <see cref="ActivityDatum"/> objects
+    /// reported for iOS.
     /// </summary>
     public class ActivityDatum : Datum, IActivityDatum
     {
@@ -49,6 +55,7 @@ namespace Sensus.Probes.Movement
         /// The confidence level of the estimated activity information.
         /// </summary>
         /// <value>The confidence.</value>
+        [JsonConverter(typeof(StringEnumConverter))]
         public ActivityConfidence Confidence { get; set; }
 
         /// <summary>

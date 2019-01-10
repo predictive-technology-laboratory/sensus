@@ -27,7 +27,7 @@ namespace Sensus.Android.Notifications
             // update push notification registrations using the new token. as this 
             // is a service, we're not exactly sure when it will be started. so 
             // the service helper might not be immediately available.
-            await SensusServiceHelper.Get()?.UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get()?.UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
         }
     }
 }

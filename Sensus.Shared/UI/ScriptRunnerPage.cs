@@ -80,11 +80,7 @@ namespace Sensus.UI
 
             viewScheduledTriggersButton.Clicked += async (o, e) =>
             {
-                await Navigation.PushAsync(new ViewTextLinesPage("Scheduled Triggers", scriptRunner.ScriptRunCallbacks.Select(scheduledCallback =>
-                {
-                    return scheduledCallback.Id + " (" + scheduledCallback.State + "):  " + (scheduledCallback.NextExecution == null ? "Next execution date and time have not been set." : scheduledCallback.NextExecution.ToString());
-
-                }).ToList()));
+                await Navigation.PushAsync(new ViewTextLinesPage("Scheduled Triggers", scriptRunner.ScheduledCallbackDescriptions));
             };
 
             contentLayout.Children.Add(viewScheduledTriggersButton);

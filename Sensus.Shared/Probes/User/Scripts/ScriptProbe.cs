@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using System.Reflection;
 using Sensus.Callbacks;
 using Sensus.Exceptions;
+using Sensus.Context;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -83,6 +84,7 @@ namespace Sensus.Probes.User.Scripts
 
         private ObservableCollection<ScriptRunner> _scriptRunners;
         private IScriptProbeAgent _agent;
+        private ScheduledCallback _agentIntervalDeliveryScheduledCallback;
 
         /// <summary>
         /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
@@ -112,7 +114,7 @@ namespace Sensus.Probes.User.Scripts
                         // set the agent's policy if we previously received one (e.g., via push notification)
                         if (!string.IsNullOrWhiteSpace(AgentPolicyJSON))
                         {
-                            _agent.SetPolicy(AgentPolicyJSON);
+                            _agent.SetPolicyAsync(AgentPolicyJSON).Wait();
                         }
                     }
                     catch (Exception ex)
@@ -238,7 +240,7 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
 
-            Agent?.Reset(SensusServiceHelper.Get());
+            await (Agent?.ResetAsync(SensusServiceHelper.Get()) ?? Task.CompletedTask);
         }
 
         protected override async Task ProtectedStartAsync()
@@ -251,6 +253,21 @@ namespace Sensus.Probes.User.Scripts
                 {
                     await scriptRunner.StartAsync();
                 }
+            }
+
+            // if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
+            if (Agent?.DeliveryInterval != null)
+            {
+                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async (id, cancellationToken, letDeviceSleepCallback) =>
+                {
+                    foreach (ScriptRunner scriptRunner in _scriptRunners)
+                    {
+                        await scriptRunner.RunAsync(scriptRunner.Script.Copy(true));
+                    }
+
+                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol);
+
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
             }
         }
 
@@ -265,9 +282,7 @@ namespace Sensus.Probes.User.Scripts
                 await scriptRunner.ScheduleScriptRunsAsync();
 
                 // ensure that at least 1 callback is scheduled for the future
-                int triggersScheduled = scriptRunner.ScriptRunCallbacks.Count(scheduledCallback => scheduledCallback.State == ScheduledCallbackState.Scheduled &&
-                                                                                                   scheduledCallback.NextExecution != null &&
-                                                                                                   (scheduledCallback.NextExecution.Value - DateTime.Now).Ticks > 0);
+                int triggersScheduled = scriptRunner.FutureRunCount;
 
                 if (triggersScheduled <= 0)
                 {
@@ -305,6 +320,11 @@ namespace Sensus.Probes.User.Scripts
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 await scriptRunner.StopAsync();
+            }
+
+            if (_agentIntervalDeliveryScheduledCallback != null)
+            {
+                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
             }
         }
 

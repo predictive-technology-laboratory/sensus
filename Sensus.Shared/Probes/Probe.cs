@@ -483,7 +483,7 @@ namespace Sensus.Probes
             Protocol.TryGetProbe(typeof(ScriptProbe), out Probe scriptProbe);
             if (scriptProbe?.Enabled ?? false)
             {
-                (scriptProbe as ScriptProbe).Agent?.Observe(datum);
+                await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
             }
         }
 

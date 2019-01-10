@@ -39,16 +39,11 @@ namespace Sensus.Probes.User.Scripts
             {
                 // copy all properties except the script runner
                 IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
-                return properties.Where(p => p.PropertyName != nameof(Script.Runner)).ToList();
+                return properties.Where(p => p.PropertyName != nameof(Runner)).ToList();
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private bool _submitting;
-        private Datum _currentDatum;
-
-        private JsonSerializerSettings _copySettings = new JsonSerializerSettings
+        private static readonly JsonSerializerSettings COPY_SETTINGS = new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
@@ -57,14 +52,25 @@ namespace Sensus.Probes.User.Scripts
             ContractResolver = new CopyContractResolver()
         };
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private bool _submitting;
+        private Datum _currentDatum;
+
         public string Id { get; set; }
         public ScriptRunner Runner { get; set; }
-        public IScriptRunner IRunner { get => Runner; }  // for NuGet interfacing
         public ObservableCollection<InputGroup> InputGroups { get; }
         public DateTimeOffset? ScheduledRunTime { get; set; }
         public DateTimeOffset? RunTime { get; set; }
         public Datum PreviousDatum { get; set; }
         public DateTime? ExpirationDate { get; set; }
+
+        /// <summary>
+        /// Gets the <see cref="IScriptRunner"/> associated with the current <see cref="Script"/> (for NuGet interfacing).
+        /// </summary>
+        /// <value>The runner interface.</value>
+        [JsonIgnore]
+        public IScriptRunner IRunner => Runner;
 
         public Datum CurrentDatum
         {
@@ -187,12 +193,12 @@ namespace Sensus.Probes.User.Scripts
         /// Creates a copy of the current <see cref="Script"/>.
         /// </summary>
         /// <returns>The copy.</returns>
-        /// <param name="newId">If set to <c>true</c>, set a new random <see cref="Script.Id"/> on the script. Doing so does not change
+        /// <param name="newId">If set to <c>true</c>, set a new random <see cref="Id"/> on the script. Doing so does not change
         /// the <see cref="InputGroup.Id"/> or <see cref="Input.Id"/> values associated with this <see cref="Script"/>.</param>
         public Script Copy(bool newId)
         {
             // copy the script except for the script runner
-            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, _copySettings), _copySettings);
+            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, COPY_SETTINGS), COPY_SETTINGS);
 
             if (newId)
             {

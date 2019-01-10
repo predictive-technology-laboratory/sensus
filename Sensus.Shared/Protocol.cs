@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,8 +46,10 @@ using Amazon.S3.Util;
 using Amazon;
 using Amazon.S3.Model;
 using Sensus.Anonymization.Anonymizers;
+using Sensus.Authentication;
 using Sensus.UI;
 using Sensus.Exceptions;
+using Sensus.Extensions;
 
 #if __IOS__
 using HealthKit;
@@ -72,6 +74,7 @@ namespace Sensus
         public const int GPS_DEFAULT_ACCURACY_METERS = 25;
         public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
         public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
+        public const string MANAGED_URL_STRING = "managed";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static async Task<Protocol> CreateAsync(string name)
@@ -90,64 +93,55 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(Uri webURI)
+        public static async Task<Protocol> DeserializeAsync(Uri uri, AmazonS3Credentials credentials = null)
         {
             Protocol protocol = null;
 
-            try
+            byte[] protocolBytes = null;
+
+            // check if the URI points to an S3 bucket
+            if (AmazonS3Uri.IsAmazonS3Endpoint(uri))
             {
-                // check if the URI points to an S3 bucket
-                AmazonS3Uri s3URI = null;
-                try
-                {
-                    s3URI = new AmazonS3Uri(webURI);
-                }
-                catch (Exception)
-                {
-                }
+                AmazonS3Client s3Client = null;
 
-                if (s3URI == null)
+                // use app-level S3 authentication if we don't have an authentication service
+                if (credentials == null)
                 {
-                    TaskCompletionSource<Protocol> completionSource = new TaskCompletionSource<Protocol>();
-                    WebClient downloadClient = new WebClient();
-
-                    downloadClient.DownloadDataCompleted += async (o, e) =>
+                    if (SensusContext.Current.IamAccessKey == null ||
+                        SensusContext.Current.IamAccessKeySecret == null |
+                        SensusContext.Current.IamRegion == null)
                     {
-                        if (e.Error == null)
-                        {
-                            completionSource.SetResult(await DeserializeAsync(e.Result));
-                        }
-                        else
-                        {
-                            string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + e.Error.Message;
-                            SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                            await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
-                            completionSource.SetResult(null);
-                        }
-                    };
-
-                    downloadClient.DownloadDataAsync(webURI);
-
-                    protocol = await completionSource.Task;
-                }
-                else
-                {
-                    AmazonS3Client s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
-                    GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
-                    if (response.HttpStatusCode == HttpStatusCode.OK)
+                        throw new Exception("You must first authenticate.");
+                    }
+                    else
                     {
-                        MemoryStream byteStream = new MemoryStream();
-                        response.ResponseStream.CopyTo(byteStream);
-                        protocol = await DeserializeAsync(byteStream.ToArray());
+                        s3Client = new AmazonS3Client(SensusContext.Current.IamAccessKey, SensusContext.Current.IamAccessKeySecret, RegionEndpoint.GetBySystemName(SensusContext.Current.IamRegion));
                     }
                 }
+                // use authentication service S3 credentials
+                else
+                {
+                    s3Client = new AmazonS3Client(credentials.AccessKeyId, credentials.SecretAccessKey, credentials.SessionToken, credentials.RegionEndpoint);
+                }
+
+                AmazonS3Uri s3URI = new AmazonS3Uri(uri);
+
+                GetObjectResponse response = await s3Client.GetObjectAsync(s3URI.Bucket, s3URI.Key);
+
+                if (response.HttpStatusCode == HttpStatusCode.OK)
+                {
+                    MemoryStream byteStream = new MemoryStream();
+                    response.ResponseStream.CopyTo(byteStream);
+                    protocolBytes = byteStream.ToArray();
+                }
             }
-            catch (Exception ex)
+            // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
+            else
             {
-                string errorMessage = "Failed to download protocol from URI \"" + webURI + "\". If this is an HTTPS URI, make sure the server's certificate is valid. Message:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(errorMessage, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(errorMessage);
+                protocolBytes = await uri.DownloadBytes();
             }
+
+            protocol = await DeserializeAsync(protocolBytes);
 
             return protocol;
         }
@@ -158,7 +152,8 @@ namespace Sensus
             string json;
             try
             {
-                json = SensusContext.Current.SymmetricEncryption.DecryptToString(bytes);
+                // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                json = SensusContext.Current.SymmetricEncryption.DecryptToString(bytes, Encoding.Unicode);
             }
             catch (Exception ex)
             {
@@ -185,11 +180,11 @@ namespace Sensus
             Protocol protocol;
             try
             {
-                protocol = await DeserializeAsync(json);
+                protocol = json.DeserializeJson<Protocol>();
             }
             catch (Exception ex)
             {
-                string message = "Failed to deserialize protocol JSON:  " + ex.Message;
+                string message = "Failed to deserialize protocol:  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
                 await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 return null;
@@ -392,46 +387,6 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(string json)
-        {
-            Protocol protocol = null;
-
-            try
-            {
-                // always deserialize protocols on the main thread (e.g., since a looper is required for android). also, disable
-                // flash notifications so we don't get any messages that result from properties being set within the protocol.
-                SensusServiceHelper.Get().FlashNotificationsEnabled = false;
-                protocol = SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    try
-                    {
-                        return JsonConvert.DeserializeObject<Protocol>(json, SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Error while deserializing protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                        return null;
-                    }
-                });
-
-                if (protocol == null)
-                {
-                    throw new Exception("Failed to deserialize protocol from JSON.");
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Failed to deserialize protocol from JSON:  " + ex.Message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync("Failed to unpack protocol from JSON:  " + ex.Message);
-            }
-            finally
-            {
-                SensusServiceHelper.Get().FlashNotificationsEnabled = true;
-            }
-
-            return protocol;
-        }
-
         public static async Task DisplayAndStartAsync(Protocol protocol)
         {
             if (protocol == null)
@@ -468,8 +423,10 @@ namespace Sensus
                 using (MemoryStream protocolStream = new MemoryStream())
                 {
                     uiTestingProtocolFile.CopyTo(protocolStream);
-                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray()));
-                    Protocol protocol = await DeserializeAsync(protocolJSON);
+
+                    // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                    string protocolJSON = SensusServiceHelper.Get().ConvertJsonForCrossPlatform(SensusContext.Current.SymmetricEncryption.DecryptToString(protocolStream.ToArray(), Encoding.Unicode));
+                    Protocol protocol = protocolJSON.DeserializeJson<Protocol>();
 
                     if (protocol == null)
                     {
@@ -564,8 +521,7 @@ namespace Sensus
         private Dictionary<Type, Probe> _typeProbe;
 
         // members for displaying protocol start-up
-        private ProtocolStartPage _protocolStartPage;
-        private bool _pushedProtocolStartPage;
+        private ProgressPage _protocolStartPage;
         private Func<Task> _protocolStartInitiatedAsync;
         private Func<double, Task> _protocolStartAddProgressAsync;
         private Func<ProtocolState, Task> _protocolStartFinishedAsync;
@@ -1269,11 +1225,18 @@ namespace Sensus
         }
 
         [JsonIgnore]
-        public AsymmetricEncryption AsymmetricEncryption
+        public IEnvelopeEncryptor EnvelopeEncryptor
         {
             get
             {
-                return new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
+                if (AuthenticationService == null)
+                {
+                    return new AsymmetricEncryption(_asymmetricEncryptionPublicKey);
+                }
+                else
+                {
+                    return AuthenticationService;
+                }
             }
         }
 
@@ -1422,6 +1385,14 @@ namespace Sensus
             get { return _pushNotificationsSharedAccessSignature; }
             set { _pushNotificationsSharedAccessSignature = value; }
         }
+
+        /// <summary>
+        /// The authentication service. This is serialized to JSON; however, the only thing that is retained in the
+        /// serialized JSON is the service base URL. No account or credential information is serialized; rather, 
+        /// this information is refreshed when needed.
+        /// </summary>
+        /// <value>The management service.</value>
+        public AuthenticationService AuthenticationService { get; set; }
 
         /// <summary>
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
@@ -1672,14 +1643,15 @@ namespace Sensus
         {
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
-                byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+                // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), Encoding.Unicode);
                 file.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
         }
 
         public async Task<Protocol> CopyAsync(bool resetId, bool register)
         {
-            Protocol protocol = await DeserializeAsync(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS));
+            Protocol protocol = JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS).DeserializeJson<Protocol>();
 
             await protocol.ResetAsync(resetId);
 
@@ -2021,7 +1993,7 @@ namespace Sensus
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
             // add the token to the backend, as the push notification for the schedule start needs to be active.
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
         }
@@ -2032,7 +2004,7 @@ namespace Sensus
             _scheduledStartCallback = null;
 
             // remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
-            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+            await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
 
@@ -2070,7 +2042,7 @@ namespace Sensus
         /// <summary>
         /// Starts the current <see cref="Protocol"/> after displaying a message to the user indicating what is about to happen. This is
         /// also the place where the user's agreement to the <see cref="Protocol"/> is obtained through the various 
-        /// <see cref="ProtocolStartConfirmationMode"/> options. After obtaining agreement, a <see cref="UI.ProtocolStartPage"/> is displayed
+        /// <see cref="ProtocolStartConfirmationMode"/> options. After obtaining agreement, a <see cref="UI.ProgressPage"/> is displayed
         /// to show progress and prevent the user from interacting with the app until the <see cref="Protocol"/> is fully started.
         /// </summary>
         /// <returns>The with user agreement async.</returns>
@@ -2244,44 +2216,24 @@ namespace Sensus
             {
                 // create startup page, passing cancellation token that will be used for the startup.
                 CancellationTokenSource startCancellationTokenSource = new CancellationTokenSource();
-                _protocolStartPage = new ProtocolStartPage(startCancellationTokenSource);
+                _protocolStartPage = new ProgressPage("Starting study. Please wait...", startCancellationTokenSource);
 
-                // wire up startup events
+                // wire up startup progress events
 
                 _protocolStartInitiatedAsync = async () =>
                 {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-                        await navigation.PushModalAsync(_protocolStartPage);
-                        _pushedProtocolStartPage = true;
-                        await _protocolStartPage.SetProgressAsync(0);
-                    });
+                    INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+                    await _protocolStartPage.DisplayAsync(navigation);
                 };
 
                 _protocolStartAddProgressAsync = async (additionalProgress) =>
                 {
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress);
-                    });
+                    await _protocolStartPage.SetProgressAsync(_protocolStartPage.GetProgress() + additionalProgress, null);
                 };
 
                 _protocolStartFinishedAsync = async (state) =>
                 {
-                    if (_pushedProtocolStartPage)
-                    {
-                        await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                        {
-                            INavigation navigation = (Application.Current as App).DetailPage.Navigation;
-                            if (navigation.ModalStack.First() == _protocolStartPage)
-                            {
-                                await navigation.PopModalAsync();
-                            }
-
-                            _pushedProtocolStartPage = false;
-                        });
-                    }
+                    await _protocolStartPage.CloseAsync();
 
                     // if we started successfully on ios, warn the user not to terminate the app.
 #if __IOS__
@@ -2484,7 +2436,7 @@ namespace Sensus
                     }
                 }
 
-                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(default(CancellationToken));
+                await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
                 // save the state of the app, so that if it terminates unexpectedly (e.g., if the user swipes it away)
                 // we won't attempt to restart the protocol if/when the app restarts.

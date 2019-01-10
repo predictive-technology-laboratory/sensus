@@ -177,7 +177,16 @@
   
   
   <h4 id="Sensus_QrCodePrefix_SENSUS_PROTOCOL" data-uid="Sensus.QrCodePrefix.SENSUS_PROTOCOL">SENSUS_PROTOCOL</h4>
-  <div class="markdown level1 summary"><p>Sensus protocols. Following this prefix should be an internet-accessible URL from which to download a protocol file via HTTPS.</p>
+  <div class="markdown level1 summary"><p>Sensus protocols. There are two types of Sensus protocol QR codes:</p>
+<ul>
+<li><p>Direct URL:  Following the prefix should be an internet-accessible URL from which to download a protocol file directly via HTTPS.</p>
+</li>
+<li><p>Managed URL:  Following the prefix should be the following:</p>
+<pre><code>managed:BASEURL:PARTICIPANT_ID
+</code></pre><p>where BASEURL is the URL to a Sensus authentication server (e.g., <a href="https://some.host.com">https://some.host.com</a> or <a href="https://some.host.com:12345">https://some.host.com:12345</a>), and 
+PARTICIPANT_ID is an (optional) participant ID. Read more about Sensus authentication servers <a class="xref" href="../articles/authentication-servers.html">here</a>.</p>
+</li>
+</ul>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

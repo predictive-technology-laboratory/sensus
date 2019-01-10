@@ -83,7 +83,46 @@
   
   <h1 id="Sensus_Notifications_PushNotificationRequest" data-uid="Sensus.Notifications.PushNotificationRequest" class="text-break">Class PushNotificationRequest
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>See <a class="xref" href="../articles/push-notifications.html">this article</a> for an overview of push notifications. This class reflects the representation
+of push notification requests submitted to the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> for processing by the 
+push notification backend. See the <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-notification-request.json">example</a>
+for the format of such requests. The following values of the <code>command</code> field are available:</p>
+<ul>
+<li><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_UPDATE_PROTOCOL_COMMAND">UPDATE_PROTOCOL_COMMAND</a>:  Upon receipt of this command, Sensus will fetch <a class="xref" href="Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_Protocol">Protocol</a> updates from
+the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> via <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_">GetProtocolUpdatesAsync(CancellationToken)</a>. 
+In the case of a <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>, Sensus will get the object at <code>BUCKET/protocol-updates/DEVICE-ID</code>, where
+<code>BUCKET</code> is the bucket and <code>DEVICE-ID</code> is the device identifier. So, if one wishes to deliver this command, one should first upload the protocol
+updates file to this location. The format of the file is shown in the <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-protocol-updates.json">example</a>.
+The fields in this file are as follows:</li>
+</ul>
+<ul>
+<ul>
+<li>
+<code>property-type</code>:  The fully qualified name of the type defining the property to be updated. For example, <a class="xref" href="Sensus.Probes.PollingProbe.html"><code>Sensus.Probes.PollingProbe</code></a> contains
+ properties that govern the behavior of all polling-style probes.
+</li>
+<li>
+<code>property-name</code>:  The name of the property within the type indicated by <code>property-type</code> that should be set. For example, 
+<a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS"><code>Sensus.Probes.PollingProbe.PollingSleepDurationMS</code></a> determines how long the 
+<a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> will sleep between taking successive readings.
+</li>
+<li>
+<code>target-type</code>:  The fully qualified name of the type whose instances should be updated. For example, a value of <a class="xref" href="Sensus.Probes.Location.PollingLocationProbe.html"><code>Sensus.Probes.Location.PollingLocationProbe</code></a>
+would update the property indicated with the previous fields for just the <a class="xref" href="Sensus.Probes.Location.PollingLocationProbe.html">PollingLocationProbe</a>, whereas a value of <a class="xref" href="Sensus.Probes.PollingProbe.html"><code>Sensus.Probes.PollingProbe</code></a>
+would update the property for all probes that inherit from <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>.
+</li>
+<li>
+<code>value</code>:  Quoted string of the new value to be set for the above property and target objects.
+</li>
+</ul>
+</ul>
+
+<ul>
+<li><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_UPDATE_SCRIPT_AGENT_POLICY_COMMAND">UPDATE_SCRIPT_AGENT_POLICY_COMMAND</a>:  Upon receipt of this command, Sensus will fetch the policy from the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>
+via <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetScriptAgentPolicyAsync_System_Threading_CancellationToken_">GetScriptAgentPolicyAsync(CancellationToken)</a>. The content of the returned
+JSON file will be passed to <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_System_String_">SetPolicyAsync(String)</a>.</li>
+</ul>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -208,6 +247,58 @@
       <tr>
         <td><a class="xref" href="Sensus.Notifications.PushNotificationRequestFormat.html">PushNotificationRequestFormat</a></td>
         <td><span class="parametername">format</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="Sensus_Notifications_PushNotificationRequest_UPDATE_PROTOCOL_COMMAND" data-uid="Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND">UPDATE_PROTOCOL_COMMAND</h4>
+  <div class="markdown level1 summary"><p>Instruct Sensus to retrieve and set <a class="xref" href="Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_Protocol">Protocol</a> updates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string UPDATE_PROTOCOL_COMMAND = &quot;UPDATE-PROTOCOL&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_PushNotificationRequest_UPDATE_SCRIPT_AGENT_POLICY_COMMAND" data-uid="Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND">UPDATE_SCRIPT_AGENT_POLICY_COMMAND</h4>
+  <div class="markdown level1 summary"><p>Instruct Sensus to update the policy running within the <a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html#Sensus_Probes_User_Scripts_ScriptProbe_Agent">Agent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string UPDATE_SCRIPT_AGENT_POLICY_COMMAND = &quot;UPDATE-EMA-POLICY&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
         <td></td>
       </tr>
     </tbody>

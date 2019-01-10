@@ -84,7 +84,7 @@
   <h1 id="Sensus_DataStores_Local_FileLocalDataStore" data-uid="Sensus.DataStores.Local.FileLocalDataStore" class="text-break">Class FileLocalDataStore
   </h1>
   <div class="markdown level0 summary"><p>Stores each <a class="xref" href="Sensus.Datum.html">Datum</a> as plain-text JSON in a gzip-compressed file on the device&apos;s local storage media. Also
-supports encryption.</p>
+supports encryption prior to transmission to a <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -111,6 +111,9 @@ supports encryption.</p>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_RestartAsync">DataStore.RestartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Reset">DataStore.Reset()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Copy">DataStore.Copy()</a>
@@ -210,31 +213,6 @@ public CompressionLevel CompressionLevel { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_DataWrittenToCurrentFile" data-uid="Sensus.DataStores.Local.FileLocalDataStore.DataWrittenToCurrentFile">DataWrittenToCurrentFile</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public long DataWrittenToCurrentFile { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int64</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_DataStores_Local_FileLocalDataStore_DisplayName_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.DisplayName*"></a>
   <h4 id="Sensus_DataStores_Local_FileLocalDataStore_DisplayName" data-uid="Sensus.DataStores.Local.FileLocalDataStore.DisplayName">DisplayName</h4>
   <div class="markdown level1 summary"></div>
@@ -264,15 +242,16 @@ public CompressionLevel CompressionLevel { get; set; }</code></pre>
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_Encrypt_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Encrypt*"></a>
   <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Encrypt" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Encrypt">Encrypt</h4>
-  <div class="markdown level1 summary"><p>Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must provide a public encryption 
-key to <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>. You can generate a public encryption key following the instructions
-provided for <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>. Note that data are not encrypted immediately. They are first
-written to a compressed file on the device where they live unencrypted for a period of time.</p>
+  <div class="markdown level1 summary"><p>Whether or not to apply asymmetric-key encryption to data. If this is enabled, then you must either provide a public encryption 
+key to <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a> or use an <a class="xref" href="../articles/authentication-servers.html">authentication server</a>. 
+You can generate a public encryption key following the instructions provided for 
+<a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</a>. Note that data are not encrypted immediately. They are first
+written to disk on the device where they live unencrypted for a period of time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Encrypt (must set public encryption key on protocol in order to use):&quot;, true, 6)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Encrypt:&quot;, true, 6)]
 public bool Encrypt { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -318,33 +297,6 @@ public bool Encrypt { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_HasDataToShare">LocalDataStore.HasDataToShare</a></div>
-  
-  
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_Path_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Path*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Path" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Path">Path</h4>
-  <div class="markdown level1 summary"><p>Gets the path.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string Path { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><p>The path.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_SizeDescription_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.SizeDescription*"></a>
@@ -447,6 +399,31 @@ public bool Encrypt { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_DataStores_Local_FileLocalDataStore_TotalDataWrittenToCurrentFile_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TotalDataWrittenToCurrentFile*"></a>
+  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_TotalDataWrittenToCurrentFile" data-uid="Sensus.DataStores.Local.FileLocalDataStore.TotalDataWrittenToCurrentFile">TotalDataWrittenToCurrentFile</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long TotalDataWrittenToCurrentFile { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   
@@ -525,18 +502,6 @@ public bool Encrypt { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.DataStores.Local.LocalDataStore.html#Sensus_DataStores_Local_LocalDataStore_IsTooLarge">LocalDataStore.IsTooLarge()</a></div>
-  
-  
-  <a id="Sensus_DataStores_Local_FileLocalDataStore_Reset_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Reset*"></a>
-  <h4 id="Sensus_DataStores_Local_FileLocalDataStore_Reset" data-uid="Sensus.DataStores.Local.FileLocalDataStore.Reset">Reset()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Reset()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.DataStore.html#Sensus_DataStores_DataStore_Reset">DataStore.Reset()</a></div>
   
   
   <a id="Sensus_DataStores_Local_FileLocalDataStore_StartAsync_" data-uid="Sensus.DataStores.Local.FileLocalDataStore.StartAsync*"></a>

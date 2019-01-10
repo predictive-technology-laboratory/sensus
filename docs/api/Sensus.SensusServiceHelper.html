@@ -227,7 +227,7 @@ to the App Center.</p>
   
   
   <h4 id="Sensus_SensusServiceHelper_HEALTH_TEST_DELAY" data-uid="Sensus.SensusServiceHelper.HEALTH_TEST_DELAY">HEALTH_TEST_DELAY</h4>
-  <div class="markdown level1 summary"><p>The health test interval. Currently set to once every 30 seconds in development mode and once every 6 hours in production.</p>
+  <div class="markdown level1 summary"><p>The health test interval.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -305,6 +305,30 @@ to the App Center.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const string PENDING_SURVEY_NOTIFICATION_ID = &quot;SENSUS-PENDING-SURVEY-NOTIFICATION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_SensusServiceHelper_PROTOCOL_UPDATED_NOTIFICATION_ID" data-uid="Sensus.SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID">PROTOCOL_UPDATED_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PROTOCOL_UPDATED_NOTIFICATION_ID = &quot;SENSUS-PROTOCOL-UPDATED-NOTIFICATION&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1314,12 +1338,12 @@ decide which probes to enable when enabling all probes.</p>
   
   
   <a id="Sensus_SensusServiceHelper_GetFileSizeMB_" data-uid="Sensus.SensusServiceHelper.GetFileSizeMB*"></a>
-  <h4 id="Sensus_SensusServiceHelper_GetFileSizeMB_System_String_" data-uid="Sensus.SensusServiceHelper.GetFileSizeMB(System.String)">GetFileSizeMB(String)</h4>
+  <h4 id="Sensus_SensusServiceHelper_GetFileSizeMB_System_String___" data-uid="Sensus.SensusServiceHelper.GetFileSizeMB(System.String[])">GetFileSizeMB(String[])</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static double GetFileSizeMB(string path)</code></pre>
+    <pre><code class="lang-csharp hljs">public static double GetFileSizeMB(params string[] paths)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1332,8 +1356,8 @@ decide which probes to enable when enabling all probes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">path</span></td>
+        <td><span class="xref">System.String</span>[]</td>
+        <td><span class="parametername">paths</span></td>
         <td></td>
       </tr>
     </tbody>

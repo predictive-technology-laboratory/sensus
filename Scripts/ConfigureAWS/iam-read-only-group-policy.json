@@ -21,6 +21,11 @@
       "Effect": "Allow",
       "Action": "s3:PutObject",
       "Resource": "arn:aws:s3:::bucketName/adaptive-ema-policies/*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::bucketName/protocol-updates/*"
     }
   ]
 }

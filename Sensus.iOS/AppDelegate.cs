@@ -129,7 +129,7 @@ namespace Sensus.iOS
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
                             }
                         }
                         else
@@ -140,7 +140,7 @@ namespace Sensus.iOS
                             }
                             catch (Exception ex)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Failed to display Sensus Protocol from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
                             }
                         }
 
@@ -280,8 +280,8 @@ namespace Sensus.iOS
         /// <param name="notificationSettings">Notification settings.</param>
         public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
         {
-            // the variable should never be null, but just in case...
-            _uiUserNotificationSettingsRegistrationTask?.SetResult(notificationSettings);
+            // the variable should never be null, but just in case...also, use try-set as this method may be called multiple times by iOS per error reports.
+            _uiUserNotificationSettingsRegistrationTask?.TrySetResult(notificationSettings);
         }
 
         /// <summary>
@@ -329,6 +329,11 @@ namespace Sensus.iOS
                             {
                                 // flash a message to the user, and don't cancel the notification.
                                 await SensusServiceHelper.Get().FlashNotificationAsync("A new survey is available.");
+                            }
+                            else if (notificationId == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
+                            {
+                                // flash a message to the user, and don't cancel the notification.
+                                await SensusServiceHelper.Get().FlashNotificationAsync("Your study was updated.");
                             }
                             else
                             {
@@ -406,7 +411,12 @@ namespace Sensus.iOS
             {
                 // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
                 // be on the conservative side and only run for 25 seconds.
-                cancellationTokenSource.CancelAfter(TimeSpan.FromSeconds(25));
+                TimeSpan processingTimeLimit = TimeSpan.FromSeconds(25);
+                cancellationTokenSource.CancelAfter(processingTimeLimit);
+                cancellationTokenSource.Token.Register(() =>
+                {
+                    SensusServiceHelper.Get().Logger.Log("Cancelled token for remote notification processing due to iOS background time limit:  " + processingTimeLimit, LoggingLevel.Normal, GetType());
+                });
 
                 string protocolId;
                 string id;

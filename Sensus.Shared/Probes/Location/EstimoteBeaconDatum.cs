@@ -22,7 +22,8 @@ using Newtonsoft.Json.Converters;
 namespace Sensus.Probes.Location
 {
     /// <summary>
-    /// Event proximity for named beacons at specified distance thresholds.
+    /// Event proximity for named beacons at specified distance thresholds. See <see cref="EstimoteBeaconProbe"/>
+    /// for more information.
     /// </summary>
     public class EstimoteBeaconDatum : Datum, IEstimoteBeaconDatum
     {

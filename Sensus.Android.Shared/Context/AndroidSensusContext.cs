@@ -24,7 +24,7 @@ namespace Sensus.Android.Context
     {
         public Platform Platform { get; set; }
         public IConcurrent MainThreadSynchronizer { get; set; }
-        public IEncryption SymmetricEncryption { get; set; }
+        public IEncryptor SymmetricEncryption { get; set; }
         public CallbackScheduler CallbackScheduler { get; set; }
         public Notifier Notifier { get; set; }
         public string ActivationId { get; set; }

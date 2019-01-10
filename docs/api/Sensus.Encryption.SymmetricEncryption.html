@@ -92,13 +92,13 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><a class="xref" href="Sensus.Encryption.IEncryption.html">IEncryption</a></div>
+    <div><a class="xref" href="Sensus.Encryption.IEncryptor.html">IEncryptor</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Encryption.html">Sensus.Encryption</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Encryption_SymmetricEncryption_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SymmetricEncryption : Object, IEncryption</code></pre>
+    <pre><code class="lang-csharp hljs">public class SymmetricEncryption : Object, IEncryptor</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -141,7 +141,7 @@
   
   <a id="Sensus_Encryption_SymmetricEncryption__ctor_" data-uid="Sensus.Encryption.SymmetricEncryption.#ctor*"></a>
   <h4 id="Sensus_Encryption_SymmetricEncryption__ctor_System_String_" data-uid="Sensus.Encryption.SymmetricEncryption.#ctor(System.String)">SymmetricEncryption(String)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.Encryption.SymmetricEncryption.html">SymmetricEncryption</a> class. Uses zero-valued initialization vector.</p>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.Encryption.SymmetricEncryption.html">SymmetricEncryption</a> class. Uses a zero-valued initialization vector.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -214,12 +214,12 @@
   
   
   <a id="Sensus_Encryption_SymmetricEncryption_DecryptToString_" data-uid="Sensus.Encryption.SymmetricEncryption.DecryptToString*"></a>
-  <h4 id="Sensus_Encryption_SymmetricEncryption_DecryptToString_System_Byte___" data-uid="Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[])">DecryptToString(Byte[])</h4>
+  <h4 id="Sensus_Encryption_SymmetricEncryption_DecryptToString_System_Byte___System_Text_Encoding_" data-uid="Sensus.Encryption.SymmetricEncryption.DecryptToString(System.Byte[],System.Text.Encoding)">DecryptToString(Byte[], Encoding)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string DecryptToString(byte[] encryptedBytes)</code></pre>
+    <pre><code class="lang-csharp hljs">public string DecryptToString(byte[] encryptedBytes, Encoding encoding)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -234,6 +234,11 @@
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">encryptedBytes</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Text.Encoding</span></td>
+        <td><span class="parametername">encoding</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -298,12 +303,12 @@
   
   
   <a id="Sensus_Encryption_SymmetricEncryption_Encrypt_" data-uid="Sensus.Encryption.SymmetricEncryption.Encrypt*"></a>
-  <h4 id="Sensus_Encryption_SymmetricEncryption_Encrypt_System_String_" data-uid="Sensus.Encryption.SymmetricEncryption.Encrypt(System.String)">Encrypt(String)</h4>
+  <h4 id="Sensus_Encryption_SymmetricEncryption_Encrypt_System_String_System_Text_Encoding_" data-uid="Sensus.Encryption.SymmetricEncryption.Encrypt(System.String,System.Text.Encoding)">Encrypt(String, Encoding)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public byte[] Encrypt(string unencryptedValue)</code></pre>
+    <pre><code class="lang-csharp hljs">public byte[] Encrypt(string unencryptedValue, Encoding encoding)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -318,6 +323,11 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">unencryptedValue</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Text.Encoding</span></td>
+        <td><span class="parametername">encoding</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -339,7 +349,7 @@
   </table>
   <h3 id="implements">Implements</h3>
   <div>
-      <a class="xref" href="Sensus.Encryption.IEncryption.html">IEncryption</a>
+      <a class="xref" href="Sensus.Encryption.IEncryptor.html">IEncryptor</a>
   </div>
 </article>
           </div>

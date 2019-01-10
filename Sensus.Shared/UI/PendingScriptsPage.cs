@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sensus.UI
 {
@@ -61,8 +62,8 @@ namespace Sensus.UI
                     await SensusServiceHelper.Get().RemoveScriptAsync(scriptToDelete, true);
 
                     // let the script agent know and store a datum to record the event
-                    scriptToDelete.Runner.Probe.Agent?.Observe(scriptToDelete, ScriptState.Deleted);
-                    await scriptToDelete.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete), default(CancellationToken));
+                    await (scriptToDelete.Runner.Probe.Agent?.ObserveAsync(scriptToDelete, ScriptState.Deleted) ?? Task.CompletedTask);
+                    await scriptToDelete.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete), CancellationToken.None);
                 };
 
                 ContextActions.Add(deleteMenuItem);
@@ -130,8 +131,8 @@ namespace Sensus.UI
                 }
 
                 // let the script agent know and store a datum to record the event
-                selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Opened);
-                await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));
+                await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Opened) ?? Task.CompletedTask);
+                await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
 
                 selectedScript.Submitting = true;
 
@@ -142,14 +143,14 @@ namespace Sensus.UI
                 if (canceled)
                 {
                     // let the script agent know and store a datum to record the event
-                    selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Cancelled);
-                    await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));
+                    await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Cancelled) ?? Task.CompletedTask);
+                    await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
                 }
                 else
                 {
                     // let the script agent know and store a datum to record the event
-                    selectedScript.Runner.Probe.Agent?.Observe(selectedScript, ScriptState.Submitted);
-                    await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, selectedScript), default(CancellationToken));
+                    await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Submitted) ?? Task.CompletedTask);
+                    await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
 
                     // track times when script is completely valid and wasn't cancelled by the user
                     if (selectedScript.Valid)
@@ -192,7 +193,7 @@ namespace Sensus.UI
                                                                                               input.LocationUpdateTimestamp, 
                                                                                               selectedScript.RunTime.Value, 
                                                                                               input.CompletionRecords, 
-                                                                                              input.SubmissionTimestamp.Value), default(CancellationToken));
+                                                                                              input.SubmissionTimestamp.Value), CancellationToken.None);
 
                             inputStored = true;
                         }

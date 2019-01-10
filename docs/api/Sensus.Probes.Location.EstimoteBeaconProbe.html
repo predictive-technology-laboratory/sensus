@@ -83,25 +83,31 @@
   
   <h1 id="Sensus_Probes_Location_EstimoteBeaconProbe" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe" class="text-break">Class EstimoteBeaconProbe
   </h1>
-  <div class="markdown level0 summary"><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Proximity Beacons</a> to track fine-grained locations indoors. This 
+  <div class="markdown level0 summary"><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Beacons</a> to track fine-grained locations indoors. This 
 Probe is available for Android and iOS and runs while the Sensus app is in the foreground and background. This Probe 
-generates proximity event data in the form of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> readings.</p>
+generates proximity event data in the form of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> (for proximity events) and 
+<a class="xref" href="Sensus.Probes.Location.EstimoteIndoorLocationDatum.html">EstimoteIndoorLocationDatum</a> (for indoor x-y positioning readings.</p>
 <h1 id="prerequisites">Prerequisites</h1>
 <ul>
 <li>Purchase Proximity or Location beacons.</li>
-<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a> and have tags attached to them.
+<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a>. To generate 
+proximity (<a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a>) readings, the beacons must have tags attached to them.
 ```</li>
 </ul>
 <p>More details are available <a href="http://developer.estimote.com/proximity/android-tutorial">here</a>.</p>
 <ul>
-<li><p>Having entered the App Id and App Token, the list of beacons can be edited via the <code>Edit Beacons</code> button in the Estimote Beacon Probe 
-configuration. Each beacon definition contains the following:</p>
-</li>
-<li><p><code>Beacon Tag</code>:  Tag of the beacon to detect, as specified above.</p>
-</li>
+<li>Having entered the App Id and App Token, the list of beacons and locations can be edited via the <code>Edit Beacons</code>
+and <code>Edit Locations</code> buttons in the Estimote Beacon Probe configuration. </li>
+</ul>
+<h2 id="beacons">Beacons</h2>
+<p>Each beacon definition contains the following:</p>
+<ul>
+<li><code>Beacon Tag</code>:  Tag of the beacon to detect, as specified above.</li>
 <li><code>Proximity (Meters)</code>:  Number of meters desired for proximity.</li>
 <li><code>Event Name</code>:  Name to be given to the proximity event.</li>
 </ul>
+<h2 id="locations">Locations</h2>
+<p>Each location contains a name and identifier.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -458,6 +464,59 @@ public string EstimoteCloudAppToken { get; set; }</code></pre>
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_IndoorLocationUpdateIntervalMS_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_IndoorLocationUpdateIntervalMS" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS">IndoorLocationUpdateIntervalMS</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the indoor location update interval. This is currently known to impact Android.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Indoor Location Update Interval (MS)&quot;, true, 37, true)]
+public int IndoorLocationUpdateIntervalMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The indoor location update interval, in milliseconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_Location_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.Location*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_Location" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.Location">Location</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EstimoteLocation Location { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.Location.EstimoteLocation.html">EstimoteLocation</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   
@@ -610,6 +669,31 @@ public string EstimoteCloudAppToken { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSeries">Probe.GetChartSeries()</a></div>
+  
+  
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud">GetLocationsFromCloud()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;EstimoteLocation&gt; GetLocationsFromCloud()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Location.EstimoteLocation.html">EstimoteLocation</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_Location_EstimoteBeaconProbe_InitializeAsync_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.InitializeAsync*"></a>

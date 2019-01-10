@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -194,7 +194,7 @@ namespace Sensus.Callbacks
                                 callback.Canceller.CancelAfter(callback.CallbackTimeout.Value);
                             }
 
-                            await callback.Action(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
+                            await callback.ActionAsync(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
                         }
                     }
                     catch (Exception raiseException)
@@ -268,7 +268,7 @@ namespace Sensus.Callbacks
             // push notification requests for scheduled callbacks do not make sense on android, as the callback will reliably 
             // come back to the app through the alarm system.
 #if __IOS__
-            await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+            await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
 #else
             await Task.CompletedTask;
 #endif
@@ -354,7 +354,7 @@ namespace Sensus.Callbacks
                 UnscheduleCallbackPlatformSpecific(callback);
 
                 // delete the push notification
-                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
 
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }

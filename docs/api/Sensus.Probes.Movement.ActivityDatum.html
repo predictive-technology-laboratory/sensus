@@ -83,7 +83,14 @@
   
   <h1 id="Sensus_Probes_Movement_ActivityDatum" data-uid="Sensus.Probes.Movement.ActivityDatum" class="text-break">Class ActivityDatum
   </h1>
-  <div class="markdown level0 summary"><p>Activity the user is engaged in, as inferred from the phone&apos;s sensors.</p>
+  <div class="markdown level0 summary"><p>Activity the user is engaged in, as inferred from the phone&apos;s sensors. Note the following differences between iOS and
+Android:</p>
+<ul>
+<li><a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_Confidence">Confidence</a> values will not be reported for Android. All values will be <a class="xref" href="Sensus.Probes.Movement.ActivityConfidence.html#Sensus_Probes_Movement_ActivityConfidence_NotAvailable">NotAvailable</a>.</li>
+<li>On iOS, all values of <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_Phase">Phase</a> will be <a class="xref" href="Sensus.Probes.Movement.ActivityPhase.html#Sensus_Probes_Movement_ActivityPhase_Starting">Starting</a> and all values of <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html#Sensus_Probes_Movement_ActivityDatum_State">State</a> will
+be <a class="xref" href="Sensus.Probes.Movement.ActivityState.html#Sensus_Probes_Movement_ActivityState_Active">Active</a>. This is the case for all <a class="xref" href="Sensus.Probes.Movement.Activities.html">Activities</a> and all <a class="xref" href="Sensus.Probes.Movement.ActivityDatum.html">ActivityDatum</a> objects
+reported for iOS.</li>
+</ul>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">

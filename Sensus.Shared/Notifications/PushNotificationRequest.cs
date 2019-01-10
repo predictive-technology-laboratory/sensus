@@ -15,10 +15,48 @@
 using System;
 using Sensus.Exceptions;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace Sensus.Notifications
 {
+    /// <summary>
+    /// See [this article](xref:push_notifications) for an overview of push notifications. This class reflects the representation
+    /// of push notification requests submitted to the <see cref="DataStores.Remote.RemoteDataStore"/> for processing by the 
+    /// push notification backend. See the [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-notification-request.json)
+    /// for the format of such requests. The following values of the `command` field are available:
+    /// 
+    /// * <see cref="UPDATE_PROTOCOL_COMMAND"/>:  Upon receipt of this command, Sensus will fetch <see cref="Protocol"/> updates from
+    ///   the <see cref="DataStores.Remote.RemoteDataStore"/> via <see cref="DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)"/>. 
+    ///   In the case of a <see cref="DataStores.Remote.AmazonS3RemoteDataStore"/>, Sensus will get the object at `BUCKET/protocol-updates/DEVICE-ID`, where
+    ///   `BUCKET` is the bucket and `DEVICE-ID` is the device identifier. So, if one wishes to deliver this command, one should first upload the protocol
+    ///   updates file to this location. The format of the file is shown in the [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-protocol-updates.json).
+    ///   The fields in this file are as follows:
+    /// 
+    /// <ul>
+    ///   <ul>
+    ///   <li>
+    ///   `property-type`:  The fully qualified name of the type defining the property to be updated. For example, [`Sensus.Probes.PollingProbe`](xref:Sensus.Probes.PollingProbe) contains
+    ///    properties that govern the behavior of all polling-style probes.
+    ///   </li>
+    ///   <li>
+    ///   `property-name`:  The name of the property within the type indicated by `property-type` that should be set. For example, 
+    ///   [`Sensus.Probes.PollingProbe.PollingSleepDurationMS`](xref:Sensus.Probes.PollingProbe.PollingSleepDurationMS) determines how long the 
+    ///   <see cref="Probes.PollingProbe"/> will sleep between taking successive readings.
+    ///   </li>
+    ///   <li>
+    ///   `target-type`:  The fully qualified name of the type whose instances should be updated. For example, a value of [`Sensus.Probes.Location.PollingLocationProbe`](xref:Sensus.Probes.Location.PollingLocationProbe)
+    ///   would update the property indicated with the previous fields for just the <see cref="Probes.Location.PollingLocationProbe"/>, whereas a value of [`Sensus.Probes.PollingProbe`](xref:Sensus.Probes.PollingProbe)
+    ///   would update the property for all probes that inherit from <see cref="Probes.PollingProbe"/>.
+    ///   </li>
+    ///   <li>
+    ///   `value`:  Quoted string of the new value to be set for the above property and target objects.
+    ///   </li>
+    ///   </ul>
+    /// </ul>
+    /// 
+    /// * <see cref="UPDATE_SCRIPT_AGENT_POLICY_COMMAND"/>:  Upon receipt of this command, Sensus will fetch the policy from the <see cref="DataStores.Remote.RemoteDataStore"/>
+    ///   via <see cref="DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)"/>. The content of the returned
+    ///   JSON file will be passed to <see cref="Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(string)"/>.
+    /// </summary>
     public class PushNotificationRequest
     {
         private static PushNotificationRequestFormat GetLocalFormat()
@@ -48,6 +86,16 @@ namespace Sensus.Notifications
                 return "";
             }
         }
+
+        /// <summary>
+        /// Instruct Sensus to update the policy running within the <see cref="Probes.User.Scripts.ScriptProbe.Agent"/>.
+        /// </summary>
+        public const string UPDATE_SCRIPT_AGENT_POLICY_COMMAND = "UPDATE-EMA-POLICY";
+
+        /// <summary>
+        /// Instruct Sensus to retrieve and set <see cref="Protocol"/> updates.
+        /// </summary>
+        public const string UPDATE_PROTOCOL_COMMAND = "UPDATE-PROTOCOL";
 
         private string _id;
         private string _deviceId;
