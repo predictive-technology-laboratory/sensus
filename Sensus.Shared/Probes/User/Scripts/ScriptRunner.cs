@@ -339,7 +339,7 @@ namespace Sensus.Probes.User.Scripts
         /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 10, true)]
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 19, true)]
         public int DelayToleranceBeforeMS { get; set; }
 
         /// <summary>
@@ -347,7 +347,7 @@ namespace Sensus.Probes.User.Scripts
         /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 11, true)]
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 20, true)]
         public int DelayToleranceAfterMS { get; set; }
 
         [JsonIgnore]
