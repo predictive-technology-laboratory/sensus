@@ -161,6 +161,22 @@ namespace Sensus.DataStores.Remote
             set { _userNotificationMessage = value; }
         }
 
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
+        public int DelayToleranceBeforeMS { get; set; }
+
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> after the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 61, true)]
+        public int DelayToleranceAfterMS { get; set; }
+
         [JsonIgnore]
         public abstract bool CanRetrieveWrittenData { get; }
 
@@ -230,7 +246,7 @@ namespace Sensus.DataStores.Remote
             userNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage);
+            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver

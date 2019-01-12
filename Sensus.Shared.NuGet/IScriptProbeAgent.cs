@@ -27,6 +27,20 @@ namespace Sensus.Probes.User.Scripts
         TimeSpan? DeliveryInterval { get; }
 
         /// <summary>
+        /// Tolerance for <see cref="DeliveryInterval"/> before the scheduled time, if doing so 
+        /// will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        TimeSpan? DeliveryIntervalToleranceBefore { get; }
+
+        /// <summary>
+        /// Tolerance for <see cref="DeliveryInterval"/> after the scheduled time, if doing so 
+        /// will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        TimeSpan? DeliveryIntervalToleranceAfter { get; }
+
+        /// <summary>
         /// Sets the policy of the agent
         /// </summary>
         /// <param name="policyJSON">Policy JSON.</param>

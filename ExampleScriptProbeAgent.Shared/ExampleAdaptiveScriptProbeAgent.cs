@@ -61,6 +61,16 @@ namespace ExampleScriptProbeAgent
         public TimeSpan? DeliveryInterval => null;
 
         /// <summary>
+        /// Tolerance before.
+        /// </summary>
+        public TimeSpan? DeliveryIntervalToleranceBefore => TimeSpan.Zero;
+
+        /// <summary>
+        /// Tolerance after.
+        /// </summary>
+        public TimeSpan? DeliveryIntervalToleranceAfter => TimeSpan.Zero;
+
+        /// <summary>
         /// Sets the policy.
         /// </summary>
         /// <param name="policyJSON">Policy json.</param>

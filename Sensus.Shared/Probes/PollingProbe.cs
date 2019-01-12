@@ -196,6 +196,22 @@ namespace Sensus.Probes
         }
 #endif
 
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="PollingProbe"/> before the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 10, true)]
+        public int DelayToleranceBeforeMS { get; set; }
+
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="PollingProbe"/> after the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 11, true)]
+        public int DelayToleranceAfterMS { get; set; }
+
         public override string CollectionDescription
         {
             get
@@ -255,9 +271,9 @@ namespace Sensus.Probes
                     CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                     // if the callback specified a timeout, request cancellation at the specified time.
-                    if (_pollCallback.CallbackTimeout.HasValue)
+                    if (_pollCallback.Timeout.HasValue)
                     {
-                        pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                     }   
 
                     await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
@@ -278,9 +294,9 @@ namespace Sensus.Probes
                         CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                         // if the callback specified a timeout, request cancellation at the specified time.
-                        if (_pollCallback.CallbackTimeout.HasValue)
+                        if (_pollCallback.Timeout.HasValue)
                         {
-                            pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                            pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                         }
 
                         await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
@@ -367,7 +383,7 @@ namespace Sensus.Probes
                     _isPolling = false;
                 }
 
-            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
 
             bool schedulePollCallback = true;
 

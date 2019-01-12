@@ -722,9 +722,7 @@ namespace Sensus
                         // test the notifier, which checks the push notification requests.
                         await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
-
-                    scheduleHealthTestCallback = true;
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.scheduleHealthTestCallback = true;
                 }
             }
 
