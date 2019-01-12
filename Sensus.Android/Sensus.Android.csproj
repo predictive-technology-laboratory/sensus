@@ -331,9 +331,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="AWSSDK.KeyManagementService">
       <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.26\lib\MonoAndroid10\AWSSDK.KeyManagementService.dll</HintPath>
     </Reference>
-    <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.17.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
-    </Reference>
     <Reference Include="Estimote.Android.Proximity">
       <HintPath>..\packages\Estimote.Android.Proximity.1.0.3\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
       <Aliases>proximity,global</Aliases>
@@ -341,6 +338,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Estimote.Android.Indoor">
       <HintPath>..\packages\Estimote.Android.Indoor.2.5.4.2\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
       <Aliases>indoor,global</Aliases>
+    </Reference>
+    <Reference Include="Sensus.Shared.NuGet">
+      <HintPath>..\packages\Sensus.1.18.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

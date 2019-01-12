@@ -63,7 +63,7 @@ namespace Sensus.Callbacks
         /// Gets or sets the callback timeout. After this time has elapsed, the callback's cancellation token will be cancelled.
         /// </summary>
         /// <value>The callback timeout.</value>
-        public TimeSpan? CallbackTimeout { get; set; }
+        public TimeSpan? Timeout { get; set; }
 
         /// <summary>
         /// Notification message that should be displayed to the user when the callback is invoked.
@@ -107,6 +107,24 @@ namespace Sensus.Callbacks
         /// <value>The next execution time.</value>
         public DateTime? NextExecution { get; set; }
 
+        /// <summary>
+        /// Gets or sets the delay tolerance before <see cref="NextExecution"/>.
+        /// </summary>
+        /// <value>The delay tolerance.</value>
+        public TimeSpan DelayToleranceBefore { get; set; }
+
+        /// <summary>
+        /// Gets or sets the delay tolerance after <see cref="NextExecution"/>.
+        /// </summary>
+        /// <value>The delay tolerance.</value>
+        public TimeSpan DelayToleranceAfter { get; set; }
+
+        /// <summary>
+        /// Gets the delay tolerance total.
+        /// </summary>
+        /// <value>The delay tolerance total.</value>
+        public TimeSpan DelayToleranceTotal => DelayToleranceBefore + DelayToleranceAfter;
+
 #if __IOS__
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> is silent. Silent 
@@ -138,21 +156,27 @@ namespace Sensus.Callbacks
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
+        /// <param name="delayToleranceBefore">Delay tolerance before.</param>
+        /// <param name="delayToleranceAfter">Delay tolerance after.</param>
         public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan delay,
                                  string id,
                                  string domain,
                                  Protocol protocol,
-                                 TimeSpan? callbackTimeout = null,
-                                 string userNotificationMessage = null)
+                                 TimeSpan? callbackTimeout,
+                                 string userNotificationMessage,
+                                 TimeSpan delayToleranceBefore,
+                                 TimeSpan delayToleranceAfter)
             : this()
         {
             ActionAsync = actionAsync;
             Delay = delay;
             Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
-            CallbackTimeout = callbackTimeout;
+            Timeout = callbackTimeout;
             UserNotificationMessage = userNotificationMessage;
+            DelayToleranceBefore = delayToleranceBefore;
+            DelayToleranceAfter = delayToleranceAfter;
         }
 
         /// <summary>
@@ -166,21 +190,27 @@ namespace Sensus.Callbacks
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
+        /// <param name="delayToleranceBefore">Delay tolerance before.</param>
+        /// <param name="delayToleranceAfter">Delay tolerance after.</param>
         public ScheduledCallback(ActionAsyncDelegate action,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
                                  string id,
                                  string domain,
                                  Protocol protocol,
-                                 TimeSpan? callbackTimeout = null,
-                                 string userNotificationMessage = null)
+                                 TimeSpan? callbackTimeout,
+                                 string userNotificationMessage,
+                                 TimeSpan delayToleranceBefore,
+                                 TimeSpan delayToleranceAfter)
             : this(action,
                    initialDelay,
-                   id, 
-                   domain, 
-                   protocol, 
-                   callbackTimeout, 
-                   userNotificationMessage)
+                   id,
+                   domain,
+                   protocol,
+                   callbackTimeout,
+                   userNotificationMessage,
+                   delayToleranceBefore,
+                   delayToleranceAfter)
         {
             RepeatDelay = repeatDelay;
         }

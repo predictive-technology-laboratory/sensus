@@ -1983,12 +1983,13 @@ namespace Sensus
 
             }, timeUntilStart, "START", _id, this, null,
 #if __ANDROID__
-            $"Started study: {Name}.");
+            $"Started study: {Name}."
 #elif __IOS__
-            $"Please open to start study {Name}.");
+            $"Please open to start study {Name}."
 #else
-            $"Started study: {Name}.");
+            $"Started study: {Name}."
 #endif
+            , TimeSpan.Zero, TimeSpan.Zero);
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
@@ -2023,12 +2024,13 @@ namespace Sensus
 
             }, timeUntilStop, "STOP", _id, this, null,
 #if __ANDROID__
-            $"Stopped study: {Name}.");
+            $"Stopped study: {Name}."
 #elif __IOS__
-            $"Please open to stop study: {Name}.");
+            $"Please open to stop study: {Name}."
 #else
-            $"Stopped study: {Name}.");
+            $"Stopped study: {Name}."
 #endif
+            , TimeSpan.Zero, TimeSpan.Zero);
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStopCallback);
         }

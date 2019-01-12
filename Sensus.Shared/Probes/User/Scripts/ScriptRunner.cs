@@ -334,6 +334,22 @@ namespace Sensus.Probes.User.Scripts
         [OnOffUiProperty("Force Remote Storage On Survey Submission:", true, 18)]
         public bool ForceRemoteStorageOnSurveySubmission { get; set; }
 
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="Script"/> before the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 10, true)]
+        public int DelayToleranceBeforeMS { get; set; }
+
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="Script"/> after the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 11, true)]
+        public int DelayToleranceAfterMS { get; set; }
+
         [JsonIgnore]
         public string Caption
         {
@@ -651,7 +667,7 @@ namespace Sensus.Probes.User.Scripts
                 // time to update the scheduled callbacks to run this script.
                 await ScheduleScriptRunsAsync();
 
-            }, triggerTime.TimeTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol);  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
+            }, triggerTime.TimeTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol, null, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 
