@@ -99,15 +99,11 @@ namespace Sensus
         /// The health test interval.
         /// </summary>
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
-        private static readonly TimeSpan HEALTH_TEST_DELAY_TOLERANCE_BEFORE = TimeSpan.FromSeconds(15);
-        private static readonly TimeSpan HEALTH_TEST_DELAY_TOLERANCE_AFTER = TimeSpan.FromSeconds(15);
 #elif RELEASE
         /// <summary>
         /// The health test interval.
         /// </summary>
         public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(3);
-        private static readonly TimeSpan HEALTH_TEST_DELAY_TOLERANCE_BEFORE = TimeSpan.FromMinutes(30);
-        private static readonly TimeSpan HEALTH_TEST_DELAY_TOLERANCE_AFTER = TimeSpan.FromMinutes(30);
 #endif
 
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
@@ -726,9 +722,7 @@ namespace Sensus
                         // test the notifier, which checks the push notification requests.
                         await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1), null, HEALTH_TEST_DELAY_TOLERANCE_BEFORE, HEALTH_TEST_DELAY_TOLERANCE_AFTER);
-
-                    scheduleHealthTestCallback = true;
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.scheduleHealthTestCallback = true;
                 }
             }
 

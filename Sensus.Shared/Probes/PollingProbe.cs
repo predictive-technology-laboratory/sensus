@@ -271,9 +271,9 @@ namespace Sensus.Probes
                     CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                     // if the callback specified a timeout, request cancellation at the specified time.
-                    if (_pollCallback.CallbackTimeout.HasValue)
+                    if (_pollCallback.Timeout.HasValue)
                     {
-                        pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                        pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                     }   
 
                     await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });

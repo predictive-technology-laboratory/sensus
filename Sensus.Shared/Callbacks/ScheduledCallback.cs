@@ -154,7 +154,7 @@ namespace Sensus.Callbacks
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
-        /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
+        /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
@@ -163,7 +163,7 @@ namespace Sensus.Callbacks
                                  string id,
                                  string domain,
                                  Protocol protocol,
-                                 TimeSpan? callbackTimeout,
+                                 TimeSpan? timeout,
                                  string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
@@ -173,7 +173,7 @@ namespace Sensus.Callbacks
             Delay = delay;
             Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
-            Timeout = callbackTimeout;
+            Timeout = timeout;
             UserNotificationMessage = userNotificationMessage;
             DelayToleranceBefore = delayToleranceBefore;
             DelayToleranceAfter = delayToleranceAfter;
@@ -188,7 +188,7 @@ namespace Sensus.Callbacks
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
-        /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
+        /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
@@ -198,7 +198,7 @@ namespace Sensus.Callbacks
                                  string id,
                                  string domain,
                                  Protocol protocol,
-                                 TimeSpan? callbackTimeout,
+                                 TimeSpan? timeout,
                                  string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
@@ -207,7 +207,7 @@ namespace Sensus.Callbacks
                    id,
                    domain,
                    protocol,
-                   callbackTimeout,
+                   timeout,
                    userNotificationMessage,
                    delayToleranceBefore,
                    delayToleranceAfter)
