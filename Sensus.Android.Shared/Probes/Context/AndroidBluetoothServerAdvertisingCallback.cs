@@ -77,7 +77,7 @@ namespace Sensus.Android.Probes.Context
 
         public override void OnStartFailure(AdvertiseFailure errorCode)
         {
-            SensusServiceHelper.Get().Logger.Log("Failed to start advertising:" + errorCode, LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Failed to start advertising:  " + errorCode, LoggingLevel.Normal, GetType());
         }
 
         public void CloseServer()

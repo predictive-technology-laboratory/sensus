@@ -55,6 +55,19 @@ namespace Sensus.Probes.Context
             }
         }
 
+        /// <summary>
+        /// There are two approaches to scanning for Bluetooth devices within Sensus. Upon each poll, Sensus can
+        /// initiate a scan, check for nearby devices after <see cref="ScanDurationMS"/> has elapsed, and leave the
+        /// scan running until the next poll. This is a continuous scan, and doing this will detect nearby devices 
+        /// between polls at the cost of significantly increased power usage. Alternatively, Sensus can initiate a scan,
+        /// check for nearby devices after <see cref="ScanDurationMS"/> has elapsed, and then stop the scan. This
+        /// is a noncontinuous scan, and doing this will miss nearby devices between polls but will significantly decrease
+        /// power usage.
+        /// </summary>
+        /// <value><c>true</c> if continuous scan; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Continuous Scan:", true, 6)]
+        public bool ContinuousScan { get; set; } = true;
+
         public sealed override string DisplayName
         {
             get { return "Bluetooth Encounters"; }
@@ -106,15 +119,21 @@ namespace Sensus.Probes.Context
         {
             try
             {
-                // start a new scan
+                // start a new scan. if we're not running a continuous scan and the previous scan
+                // was already stopped, then the call to StopScan below may throw an exception, which
+                // will be caught by the overriding implementation.
                 SensusServiceHelper.Get().Logger.Log("Scanning...", LoggingLevel.Normal, GetType());
                 StopScan();
                 StartScan();
 
-                // wait for scanning results to arrive. we're not going to stop the scan, as it will continue 
-                // in the background on both android and iOS and continue to deliver results, which will be
-                // collected upon next poll.
+                // wait for scanning results to arrive
                 await Task.Delay(ScanDurationMS, cancellationToken);
+
+                // if we're not running a continuous scan, stop the scan now.
+                if (!ContinuousScan)
+                {
+                    StopScan();
+                }
             }
             catch (Exception ex)
             {

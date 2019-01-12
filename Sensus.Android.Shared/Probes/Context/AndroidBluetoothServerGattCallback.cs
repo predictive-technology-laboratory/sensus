@@ -14,6 +14,7 @@
 
 using System;
 using Android.Bluetooth;
+using Sensus.Context;
 using Sensus.Exceptions;
 
 namespace Sensus.Android.Probes.Context
@@ -52,27 +53,30 @@ namespace Sensus.Android.Probes.Context
         {
             base.OnCharacteristicReadRequest(device, requestId, offset, characteristic);
 
-            try
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
-                if (Server == null)
+                try
                 {
-                    SensusException.Report("Null server when responding to BLE characteristic read request.");
-                }
+                    if (Server == null)
+                    {
+                        SensusException.Report("Null server when responding to BLE characteristic read request.");
+                    }
 
-                // only respond to client requests for the service and characteristic we are expecting
-                if (characteristic.Service.Uuid == _service.Uuid && characteristic.Uuid == _characteristic.Uuid)
-                {
-                    Server?.SendResponse(device, requestId, GattStatus.Success, offset, _characteristic.GetValue());
+                    // only respond to client requests for the service and characteristic we are expecting
+                    if (characteristic.Service.Uuid == _service.Uuid && characteristic.Uuid == _characteristic.Uuid)
+                    {
+                        Server?.SendResponse(device, requestId, GattStatus.Success, offset, _characteristic.GetValue());
+                    }
+                    else
+                    {
+                        Server?.SendResponse(device, requestId, GattStatus.RequestNotSupported, offset, null);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Server?.SendResponse(device, requestId, GattStatus.RequestNotSupported, offset, null);
+                    SensusServiceHelper.Get().Logger.Log("Exception while sending response:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while sending response:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
+            });
         }
     }
 }
