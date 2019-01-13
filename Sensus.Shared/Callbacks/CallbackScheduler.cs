@@ -63,10 +63,10 @@ namespace Sensus.Callbacks
                 callback.InvocationId = Guid.NewGuid().ToString();
                 callback.State = ScheduledCallbackState.Scheduled;
 
-                // update next execution if possible
-                UpdateNextExecutionWithToleratedDelay(callback);
+                // batch next execution if possible
+                BatchNextExecutionWithToleratedDelay(callback);
 
-                // schedule callback locally according to the current platform
+                // schedule callback locally per the current platform
                 await ScheduleCallbackPlatformSpecificAsync(callback);
 
                 // request a push notification for the callback (adds redundancy) 
@@ -81,11 +81,11 @@ namespace Sensus.Callbacks
         }
 
         /// <summary>
-        /// Updates the <see cref="ScheduledCallback.NextExecution"/> value within the parameters of toleration (<see cref="ScheduledCallback.DelayToleranceBefore"/>
+        /// Batches the <see cref="ScheduledCallback.NextExecution"/> value within the parameters of toleration (<see cref="ScheduledCallback.DelayToleranceBefore"/>
         /// and <see cref="ScheduledCallback.DelayToleranceAfter"/>), given the <see cref="ScheduledCallback"/>s that are already scheduled to run.
         /// </summary>
         /// <param name="callback">Callback.</param>
-        private void UpdateNextExecutionWithToleratedDelay(ScheduledCallback callback)
+        private void BatchNextExecutionWithToleratedDelay(ScheduledCallback callback)
         {
             // if delay tolerance is allowed, look for other scheduled callbacks in range of the delay tolerance.
             if (callback.DelayToleranceTotal.Ticks > 0)
@@ -93,16 +93,16 @@ namespace Sensus.Callbacks
                 DateTime rangeStart = callback.NextExecution.Value - callback.DelayToleranceBefore;
                 DateTime rangeEnd = callback.NextExecution.Value + callback.DelayToleranceAfter;
 
-                ScheduledCallback closestCallbackInRange = _idCallback.Values.Where(existingCallback => existingCallback != callback &&
-                                                                                                        existingCallback.NextExecution.Value >= rangeStart &&
-                                                                                                        existingCallback.NextExecution.Value <= rangeEnd)
+                ScheduledCallback closestCallbackInRange = _idCallback.Values.Where(existingCallback => existingCallback != callback &&                        // the current callback will already have been added to the collection. don't consider it.
+                                                                                                        existingCallback.NextExecution.Value >= rangeStart &&  // consider callbacks within range of the current
+                                                                                                        existingCallback.NextExecution.Value <= rangeEnd)      // consider callbacks within range of the current
 
-                                                                             .OrderBy(existingCallback => Math.Abs(callback.NextExecution.Value.Ticks - existingCallback.NextExecution.Value.Ticks))
+                                                                             .OrderBy(existingCallback => Math.Abs(callback.NextExecution.Value.Ticks - existingCallback.NextExecution.Value.Ticks))  // get existing callback with execution time closest to the current callback's time
                                                                              .FirstOrDefault();
                 // use the closest if there is one in range
                 if (closestCallbackInRange != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Found existing callback with next execution " + closestCallbackInRange.NextExecution + " in range [" + rangeStart + "," + rangeEnd + "].", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Found existing callback with next execution " + closestCallbackInRange.NextExecution + " in range of the current callback [" + rangeStart + "," + rangeEnd + "]. Batching the current callback with this time.", LoggingLevel.Normal, GetType());
                     callback.NextExecution = closestCallbackInRange.NextExecution;
                 }
             }
@@ -273,7 +273,7 @@ namespace Sensus.Callbacks
                                 callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
                                 callback.State = ScheduledCallbackState.Scheduled;
 
-                                UpdateNextExecutionWithToleratedDelay(callback);
+                                BatchNextExecutionWithToleratedDelay(callback);
 
                                 // schedule callback locally
                                 await scheduleRepeatCallbackAsync();
