@@ -98,7 +98,7 @@ namespace Sensus.Callbacks
                                                                                                         existingCallback.NextExecution.Value <= rangeEnd)      // consider callbacks within range of the current
 
                                                                              .OrderBy(existingCallback => Math.Abs(callback.NextExecution.Value.Ticks - existingCallback.NextExecution.Value.Ticks))  // get existing callback with execution time closest to the current callback's time
-                                                                             .FirstOrDefault();
+                                                                             .FirstOrDefault();  // there might not be a callback within range
                 // use the closest if there is one in range
                 if (closestCallbackInRange != null)
                 {
