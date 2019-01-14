@@ -102,7 +102,12 @@ namespace Sensus.Callbacks
                 // use the closest if there is one in range
                 if (closestCallbackInRange != null)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Found existing callback with next execution " + closestCallbackInRange.NextExecution + " in range of the current callback [" + rangeStart + "," + rangeEnd + "]. Batching the current callback with this time.", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Batching callback " + callback.Id + ":" + Environment.NewLine +
+                                                         "\tCurrent time:  " + callback.NextExecution + Environment.NewLine + 
+                                                         "\tRange:  " + rangeStart + " -- " + rangeEnd + Environment.NewLine + 
+                                                         "\tNearest:  " + closestCallbackInRange.Id + Environment.NewLine + 
+                                                         "\tNew time:  " + closestCallbackInRange.NextExecution, LoggingLevel.Normal, GetType());
+
                     callback.NextExecution = closestCallbackInRange.NextExecution;
                 }
             }

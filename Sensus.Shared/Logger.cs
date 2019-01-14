@@ -55,8 +55,6 @@ namespace Sensus
             
             if (level <= _level)
             {
-                // remove newlines and extra white space, and only log if the result is non-empty
-                message = _extraWhiteSpace.Replace(message.Replace('\r', ' ').Replace('\n', ' ').Trim(), " ");
                 if (!string.IsNullOrWhiteSpace(message))
                 {
                     // add timestamp and calling type type
@@ -148,19 +146,19 @@ namespace Sensus
             }
         }
 
-        public List<string> Read(int maxMessages, bool mostRecentFirst)
+        public List<string> Read(int maxLines, bool mostRecentFirst)
         {            
             lock (_messageBuffer)
             {
                 CommitMessageBuffer();
 
-                List<string> messages = new List<string>();
+                List<string> lines = new List<string>();
 
                 try
                 {
                     using (StreamReader file = new StreamReader(_path))
                     {       
-                        if (maxMessages > 0)
+                        if (maxLines > 0)
                         {
                             int numLines = 0;
                             while (file.ReadLine() != null)
@@ -171,7 +169,7 @@ namespace Sensus
                             file.BaseStream.Position = 0;
                             file.DiscardBufferedData();
 
-                            int linesToSkip = Math.Max(numLines - maxMessages, 0);
+                            int linesToSkip = Math.Max(numLines - maxLines, 0);
                             for (int i = 1; i <= linesToSkip; ++i)
                             {
                                 file.ReadLine();
@@ -181,7 +179,7 @@ namespace Sensus
                         string line;
                         while ((line = file.ReadLine()) != null)
                         {
-                            messages.Add(line);
+                            lines.Add(line);
                         }
 
                     }
@@ -193,10 +191,10 @@ namespace Sensus
 
                 if (mostRecentFirst)
                 {
-                    messages.Reverse();
+                    lines.Reverse();
                 }
 
-                return messages;
+                return lines;
             }
         }
 
