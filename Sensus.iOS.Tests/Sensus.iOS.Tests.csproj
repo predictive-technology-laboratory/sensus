@@ -135,15 +135,6 @@
     <Reference Include="Microsoft.Band.Portable">
       <HintPath>..\dependencies\msband\ios\Microsoft.Band.Portable.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.SfChart.iOS">
-      <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfChart.XForms">
-      <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfChart.XForms.iOS">
-      <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="Plugin.Clipboard.Abstractions">
       <HintPath>..\packages\Xamarin.Plugins.Clipboard.2.2.1\lib\Xamarin.iOS10\Plugin.Clipboard.Abstractions.dll</HintPath>
     </Reference>

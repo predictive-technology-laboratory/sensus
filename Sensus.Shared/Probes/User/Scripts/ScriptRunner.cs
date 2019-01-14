@@ -579,7 +579,7 @@ namespace Sensus.Probes.User.Scripts
             foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxAge))
             {
                 // schedule all future runs, except those beyond the protocol's end date (if there is one). need to check
-                // that they're in the future because GetTriggerTimes will return all times starting from 0:00 of the curren
+                // that they're in the future because GetTriggerTimes will return all times starting from 0:00 of the current
                 // day.
                 if (triggerTime.Trigger > DateTime.Now && (Probe.Protocol.ContinueIndefinitely || triggerTime.Trigger < Probe.Protocol.EndDate))
                 {
