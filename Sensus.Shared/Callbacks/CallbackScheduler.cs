@@ -142,17 +142,17 @@ namespace Sensus.Callbacks
             // app. in this case, the service helper would be null and there is nothing to do.
             if (serviceHelper != null)
             {
-                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
-                // this only applies to android, as iOS does not support such functionality. furthermore, it is the job of the android-specific implementation
-                // of ServiceCallbackAsync to call the corresponding "let sleep".
-                serviceHelper.KeepDeviceAwake();
-
                 ScheduledCallback callback = TryGetCallback(callbackId);
 
                 // callback might have been unscheduled
                 if (callback != null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+
+                    // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+                    // this only applies to android, as iOS does not support such functionality. furthermore, it is the job of the android-specific implementation
+                    // of ServiceCallbackAsync to call the corresponding "let sleep".
+                    serviceHelper.KeepDeviceAwake();
 
                     // if the cancellation token is cancelled, cancel the callback
                     cancellationToken.Register(() =>

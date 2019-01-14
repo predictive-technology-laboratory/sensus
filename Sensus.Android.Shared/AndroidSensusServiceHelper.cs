@@ -54,6 +54,8 @@ namespace Sensus.Android
         private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private bool _userDeniedBluetoothEnable;
+        private TimeSpan _wakeLockTime;
+        private DateTime? _wakeLockTimestamp;
 
         public override string DeviceId
         {
@@ -184,6 +186,12 @@ namespace Sensus.Android
         public int WakeLockAcquisitionCount
         {
             get { return _wakeLockAcquisitionCount; }
+        }
+
+        [JsonIgnore]
+        public TimeSpan WakeLockTime
+        {
+            get { return _wakeLockTime; }
         }
 
         public bool UserDeniedBluetoothEnable
@@ -759,6 +767,16 @@ namespace Sensus.Android
                 {
                     _wakeLock.Acquire();
                     Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+
+                    if (_wakeLockAcquisitionCount == 1)
+                    {
+                        if (_wakeLockTimestamp != null)
+                        {
+                            SensusException.Report("Device awake timestamp is not null, but we just acquired the first wake lock.");
+                        }
+
+                        _wakeLockTimestamp = DateTime.Now;
+                    }
                 }
             }
         }
@@ -771,6 +789,21 @@ namespace Sensus.Android
                 {
                     _wakeLock.Release();
                     Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+
+                    if (_wakeLockAcquisitionCount == 0)
+                    {
+                        if (_wakeLockTimestamp == null)
+                        {
+                            SensusException.Report("Device awake timestamp is null, but we just released the final wake lock.");
+                        }
+                        else
+                        {
+                            _wakeLockTime += DateTime.Now - _wakeLockTimestamp.Value;
+                            _wakeLockTimestamp = null;
+
+                            SensusServiceHelper.Get().Logger.Log("Spent " + _wakeLockTime + " holding wake lock(s).", LoggingLevel.Normal, GetType());
+                        }
+                    }
                 }
             }
         }
