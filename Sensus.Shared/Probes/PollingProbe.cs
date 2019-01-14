@@ -244,7 +244,7 @@ namespace Sensus.Probes
 
                 if (!scheduledPollOverridden)
                 {
-                    description += TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
+                    description += TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetFullDescription(TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS)) + ".";
                 }
 
                 return description;
