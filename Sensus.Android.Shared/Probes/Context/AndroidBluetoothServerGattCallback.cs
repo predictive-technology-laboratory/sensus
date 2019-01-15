@@ -37,8 +37,6 @@ namespace Sensus.Android.Probes.Context
 
         public override void OnServiceAdded(GattStatus status, BluetoothGattService service)
         {
-            base.OnServiceAdded(status, service);
-
             SensusServiceHelper.Get().Logger.Log("Service added status:  " + status, LoggingLevel.Normal, GetType());
         }
 
@@ -51,32 +49,27 @@ namespace Sensus.Android.Probes.Context
         /// <param name="characteristic">Characteristic to read.</param>
         public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic)
         {
-            base.OnCharacteristicReadRequest(device, requestId, offset, characteristic);
-
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            try
             {
-                try
+                if (Server == null)
                 {
-                    if (Server == null)
-                    {
-                        SensusException.Report("Null server when responding to BLE characteristic read request.");
-                    }
+                    SensusException.Report("Null server when responding to BLE characteristic read request.");
+                }
 
-                    // only respond to client requests for the service and characteristic we are expecting
-                    if (characteristic.Service.Uuid == _service.Uuid && characteristic.Uuid == _characteristic.Uuid)
-                    {
-                        Server?.SendResponse(device, requestId, GattStatus.Success, offset, _characteristic.GetValue());
-                    }
-                    else
-                    {
-                        Server?.SendResponse(device, requestId, GattStatus.RequestNotSupported, offset, null);
-                    }
-                }
-                catch (Exception ex)
+                // only respond to client requests for the service and characteristic we are expecting
+                if (characteristic.Service.Uuid == _service.Uuid && characteristic.Uuid == _characteristic.Uuid)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while sending response:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    Server?.SendResponse(device, requestId, GattStatus.Success, offset, _characteristic.GetValue());
                 }
-            });
+                else
+                {
+                    Server?.SendResponse(device, requestId, GattStatus.RequestNotSupported, offset, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while sending response:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
     }
 }
