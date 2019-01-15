@@ -191,7 +191,7 @@ namespace Sensus.Probes.Context
 
                 try
                 {
-                    foreach (Tuple<string, DateTimeOffset> deviceIdTimestamp in await ReadPeripheralCharacteristicValuesAsync(cancellationToken))
+                    foreach (Tuple<string, DateTimeOffset> deviceIdTimestamp in await ReadPeripheralCharacteristicValuesAsync(readCanceller.Token))
                     {
                         dataToReturn.Add(new BluetoothDeviceProximityDatum(deviceIdTimestamp.Item2, deviceIdTimestamp.Item1));
                     }
