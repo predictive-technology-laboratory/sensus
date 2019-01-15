@@ -102,12 +102,12 @@
   
   
   <a id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback__ctor_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor*"></a>
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback__ctor_Android_Bluetooth_BluetoothGattService_Android_Bluetooth_BluetoothGattCharacteristic_System_DateTimeOffset_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic,System.DateTimeOffset)">AndroidBluetoothClientGattCallback(BluetoothGattService, BluetoothGattCharacteristic, DateTimeOffset)</h4>
+  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback__ctor_Android_Bluetooth_BluetoothGattService_Android_Bluetooth_BluetoothGattCharacteristic_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic)">AndroidBluetoothClientGattCallback(BluetoothGattService, BluetoothGattCharacteristic)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AndroidBluetoothClientGattCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic, DateTimeOffset encounterTimestamp)</code></pre>
+    <pre><code class="lang-csharp hljs">public AndroidBluetoothClientGattCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -129,15 +129,20 @@
         <td><span class="parametername">characteristic</span></td>
         <td></td>
       </tr>
-      <tr>
-        <td><span class="xref">System.DateTimeOffset</span></td>
-        <td><span class="parametername">encounterTimestamp</span></td>
-        <td></td>
-      </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
+  
+  
+  <a id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_DisconnectPeripheral_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral*"></a>
+  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_DisconnectPeripheral" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral">DisconnectPeripheral()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DisconnectPeripheral()</code></pre>
+  </div>
   
   
   <a id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_OnCharacteristicRead_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.OnCharacteristicRead*"></a>
@@ -244,18 +249,34 @@
       </tr>
     </tbody>
   </table>
-  <h3 id="events">Events
-  </h3>
   
   
-  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_CharacteristicRead" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.CharacteristicRead">CharacteristicRead</h4>
+  <a id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_ReadCharacteristicValueAsync_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync*"></a>
+  <h4 id="Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_ReadCharacteristicValueAsync_System_Threading_CancellationToken_" data-uid="Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync(System.Threading.CancellationToken)">ReadCharacteristicValueAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public event EventHandler&lt;BluetoothCharacteristicReadArgs&gt; CharacteristicRead</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;string&gt; ReadCharacteristicValueAsync(CancellationToken cancellationToken)</code></pre>
   </div>
-  <h5 class="eventType">Event Type</h5>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
@@ -265,7 +286,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.EventHandler</span>&lt;<a class="xref" href="Sensus.Probes.Context.BluetoothCharacteristicReadArgs.html">BluetoothCharacteristicReadArgs</a>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

@@ -76,6 +76,30 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryInterval
   fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryInterval
   nameWithType: ExampleAdaptiveScriptProbeAgent.DeliveryInterval
+- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+  name: DeliveryIntervalToleranceAfter
+  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliveryIntervalToleranceAfter
+  commentId: P:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+  nameWithType: ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter*
+  name: DeliveryIntervalToleranceAfter
+  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliveryIntervalToleranceAfter_
+  commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+  nameWithType: ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceAfter
+- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
+  name: DeliveryIntervalToleranceBefore
+  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliveryIntervalToleranceBefore
+  commentId: P:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
+  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
+  nameWithType: ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
+- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore*
+  name: DeliveryIntervalToleranceBefore
+  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_DeliveryIntervalToleranceBefore_
+  commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
+  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
+  nameWithType: ExampleAdaptiveScriptProbeAgent.DeliveryIntervalToleranceBefore
 - uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Description
   name: Description
   href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_Description
@@ -196,6 +220,30 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryInterval
   fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryInterval
   nameWithType: ExampleRandomScriptProbeAgent.DeliveryInterval
+- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+  name: DeliveryIntervalToleranceAfter
+  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_DeliveryIntervalToleranceAfter
+  commentId: P:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+  nameWithType: ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter*
+  name: DeliveryIntervalToleranceAfter
+  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_DeliveryIntervalToleranceAfter_
+  commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+  nameWithType: ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceAfter
+- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
+  name: DeliveryIntervalToleranceBefore
+  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_DeliveryIntervalToleranceBefore
+  commentId: P:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
+  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
+  nameWithType: ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
+- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore*
+  name: DeliveryIntervalToleranceBefore
+  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_DeliveryIntervalToleranceBefore_
+  commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
+  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
+  nameWithType: ExampleRandomScriptProbeAgent.DeliveryIntervalToleranceBefore
 - uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.Description
   name: Description
   href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_Description
@@ -1315,6 +1363,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
   fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
   nameWithType: AndroidSensusServiceHelper.WakeLockAcquisitionCount
+- uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockTime
+  name: WakeLockTime
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockTime
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.WakeLockTime
+  fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockTime
+  nameWithType: AndroidSensusServiceHelper.WakeLockTime
+- uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockTime*
+  name: WakeLockTime
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockTime_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.WakeLockTime
+  fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockTime
+  nameWithType: AndroidSensusServiceHelper.WakeLockTime
 - uid: Sensus.Android.AndroidSensusServiceHelper.WiFiConnected
   name: WiFiConnected
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WiFiConnected
@@ -2449,24 +2509,30 @@ references:
   commentId: T:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback
   nameWithType: AndroidBluetoothClientGattCallback
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic,System.DateTimeOffset)
-  name: AndroidBluetoothClientGattCallback(BluetoothGattService, BluetoothGattCharacteristic, DateTimeOffset)
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback__ctor_Android_Bluetooth_BluetoothGattService_Android_Bluetooth_BluetoothGattCharacteristic_System_DateTimeOffset_
-  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic,System.DateTimeOffset)
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.AndroidBluetoothClientGattCallback(Android.Bluetooth.BluetoothGattService, Android.Bluetooth.BluetoothGattCharacteristic, System.DateTimeOffset)
-  nameWithType: AndroidBluetoothClientGattCallback.AndroidBluetoothClientGattCallback(BluetoothGattService, BluetoothGattCharacteristic, DateTimeOffset)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic)
+  name: AndroidBluetoothClientGattCallback(BluetoothGattService, BluetoothGattCharacteristic)
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback__ctor_Android_Bluetooth_BluetoothGattService_Android_Bluetooth_BluetoothGattCharacteristic_
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic)
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.AndroidBluetoothClientGattCallback(Android.Bluetooth.BluetoothGattService, Android.Bluetooth.BluetoothGattCharacteristic)
+  nameWithType: AndroidBluetoothClientGattCallback.AndroidBluetoothClientGattCallback(BluetoothGattService, BluetoothGattCharacteristic)
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor*
   name: AndroidBluetoothClientGattCallback
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback__ctor_
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.#ctor
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.AndroidBluetoothClientGattCallback
   nameWithType: AndroidBluetoothClientGattCallback.AndroidBluetoothClientGattCallback
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.CharacteristicRead
-  name: CharacteristicRead
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_CharacteristicRead
-  commentId: E:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.CharacteristicRead
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.CharacteristicRead
-  nameWithType: AndroidBluetoothClientGattCallback.CharacteristicRead
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral
+  name: DisconnectPeripheral()
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_DisconnectPeripheral
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral()
+  nameWithType: AndroidBluetoothClientGattCallback.DisconnectPeripheral()
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral*
+  name: DisconnectPeripheral
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_DisconnectPeripheral_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.DisconnectPeripheral
+  nameWithType: AndroidBluetoothClientGattCallback.DisconnectPeripheral
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.OnCharacteristicRead(Android.Bluetooth.BluetoothGatt,Android.Bluetooth.BluetoothGattCharacteristic,Android.Bluetooth.GattStatus)
   name: OnCharacteristicRead(BluetoothGatt, BluetoothGattCharacteristic, GattStatus)
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_OnCharacteristicRead_Android_Bluetooth_BluetoothGatt_Android_Bluetooth_BluetoothGattCharacteristic_Android_Bluetooth_GattStatus_
@@ -2503,30 +2569,36 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.OnServicesDiscovered
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.OnServicesDiscovered
   nameWithType: AndroidBluetoothClientGattCallback.OnServicesDiscovered
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync(System.Threading.CancellationToken)
+  name: ReadCharacteristicValueAsync(CancellationToken)
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_ReadCharacteristicValueAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync(System.Threading.CancellationToken)
+  nameWithType: AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync(CancellationToken)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync*
+  name: ReadCharacteristicValueAsync
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientGattCallback_ReadCharacteristicValueAsync_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync
+  nameWithType: AndroidBluetoothClientGattCallback.ReadCharacteristicValueAsync
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback
   name: AndroidBluetoothClientScannerCallback
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html
   commentId: T:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback
   nameWithType: AndroidBluetoothClientScannerCallback
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic)
-  name: AndroidBluetoothClientScannerCallback(BluetoothGattService, BluetoothGattCharacteristic)
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback__ctor_Android_Bluetooth_BluetoothGattService_Android_Bluetooth_BluetoothGattCharacteristic_
-  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic)
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.AndroidBluetoothClientScannerCallback(Android.Bluetooth.BluetoothGattService, Android.Bluetooth.BluetoothGattCharacteristic)
-  nameWithType: AndroidBluetoothClientScannerCallback.AndroidBluetoothClientScannerCallback(BluetoothGattService, BluetoothGattCharacteristic)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic,Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe)
+  name: AndroidBluetoothClientScannerCallback(BluetoothGattService, BluetoothGattCharacteristic, AndroidBluetoothDeviceProximityProbe)
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback__ctor_Android_Bluetooth_BluetoothGattService_Android_Bluetooth_BluetoothGattCharacteristic_Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.#ctor(Android.Bluetooth.BluetoothGattService,Android.Bluetooth.BluetoothGattCharacteristic,Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe)
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.AndroidBluetoothClientScannerCallback(Android.Bluetooth.BluetoothGattService, Android.Bluetooth.BluetoothGattCharacteristic, Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe)
+  nameWithType: AndroidBluetoothClientScannerCallback.AndroidBluetoothClientScannerCallback(BluetoothGattService, BluetoothGattCharacteristic, AndroidBluetoothDeviceProximityProbe)
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.#ctor*
   name: AndroidBluetoothClientScannerCallback
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback__ctor_
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.#ctor
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.AndroidBluetoothClientScannerCallback
   nameWithType: AndroidBluetoothClientScannerCallback.AndroidBluetoothClientScannerCallback
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.CharacteristicRead
-  name: CharacteristicRead
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback_CharacteristicRead
-  commentId: E:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.CharacteristicRead
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.CharacteristicRead
-  nameWithType: AndroidBluetoothClientScannerCallback.CharacteristicRead
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.OnBatchScanResults(System.Collections.Generic.IList{Android.Bluetooth.LE.ScanResult})
   name: OnBatchScanResults(IList<ScanResult>)
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback_OnBatchScanResults_System_Collections_Generic_IList_Android_Bluetooth_LE_ScanResult__
@@ -2554,6 +2626,18 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.OnScanResult
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.OnScanResult
   nameWithType: AndroidBluetoothClientScannerCallback.OnScanResult
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  name: ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  nameWithType: AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync*
+  name: ReadPeripheralCharacteristicValuesAsync
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.html#Sensus_Android_Probes_Context_AndroidBluetoothClientScannerCallback_ReadPeripheralCharacteristicValuesAsync_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync
+  nameWithType: AndroidBluetoothClientScannerCallback.ReadPeripheralCharacteristicValuesAsync
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe
   name: AndroidBluetoothDeviceProximityProbe
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html
@@ -2596,6 +2680,30 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.InitializeAsync
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.InitializeAsync
   nameWithType: AndroidBluetoothDeviceProximityProbe.InitializeAsync
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  name: ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  nameWithType: AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync*
+  name: ReadPeripheralCharacteristicValuesAsync
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+  nameWithType: AndroidBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  name: ScanAsync(CancellationToken)
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_ScanAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  nameWithType: AndroidBluetoothDeviceProximityProbe.ScanAsync(CancellationToken)
+- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ScanAsync*
+  name: ScanAsync
+  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_ScanAsync_
+  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ScanAsync
+  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.ScanAsync
+  nameWithType: AndroidBluetoothDeviceProximityProbe.ScanAsync
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartAdvertising
   name: StartAdvertising()
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StartAdvertising
@@ -2608,18 +2716,6 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartAdvertising
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartAdvertising
   nameWithType: AndroidBluetoothDeviceProximityProbe.StartAdvertising
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartScan
-  name: StartScan()
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StartScan
-  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartScan
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartScan()
-  nameWithType: AndroidBluetoothDeviceProximityProbe.StartScan()
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartScan*
-  name: StartScan
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StartScan_
-  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartScan
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StartScan
-  nameWithType: AndroidBluetoothDeviceProximityProbe.StartScan
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopAdvertising
   name: StopAdvertising()
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StopAdvertising
@@ -2632,18 +2728,6 @@ references:
   commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopAdvertising
   fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopAdvertising
   nameWithType: AndroidBluetoothDeviceProximityProbe.StopAdvertising
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan
-  name: StopScan()
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StopScan
-  commentId: M:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan()
-  nameWithType: AndroidBluetoothDeviceProximityProbe.StopScan()
-- uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan*
-  name: StopScan
-  href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_StopScan_
-  commentId: Overload:Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan
-  fullName: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.StopScan
-  nameWithType: AndroidBluetoothDeviceProximityProbe.StopScan
 - uid: Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})
   name: TestHealthAsync(List<AnalyticsTrackedEvent>)
   href: api/Sensus.Android.Probes.Context.AndroidBluetoothDeviceProximityProbe.html#Sensus_Android_Probes_Context_AndroidBluetoothDeviceProximityProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__
@@ -21550,24 +21634,24 @@ references:
   commentId: T:Sensus.Callbacks.ScheduledCallback
   fullName: Sensus.Callbacks.ScheduledCallback
   nameWithType: ScheduledCallback
-- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
-  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String)
-  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String)
-  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
-- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String)
-  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
-  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String)
-  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String)
-  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String)
-  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String)
+- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
+  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_System_TimeSpan_System_TimeSpan_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
+  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
+  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String, System.TimeSpan, System.TimeSpan)
+  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String, System.TimeSpan, System.TimeSpan)
+  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
+  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
+- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
+  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_System_TimeSpan_System_TimeSpan_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
+  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
+  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String, System.TimeSpan, System.TimeSpan)
+  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String, System.TimeSpan, System.TimeSpan)
+  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
+  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
 - uid: Sensus.Callbacks.ScheduledCallback.#ctor*
   name: ScheduledCallback
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_
@@ -21640,18 +21724,6 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke
   fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke
   nameWithType: ScheduledCallback.ActionAsyncDelegate.Invoke
-- uid: Sensus.Callbacks.ScheduledCallback.CallbackTimeout
-  name: CallbackTimeout
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_CallbackTimeout
-  commentId: P:Sensus.Callbacks.ScheduledCallback.CallbackTimeout
-  fullName: Sensus.Callbacks.ScheduledCallback.CallbackTimeout
-  nameWithType: ScheduledCallback.CallbackTimeout
-- uid: Sensus.Callbacks.ScheduledCallback.CallbackTimeout*
-  name: CallbackTimeout
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_CallbackTimeout_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.CallbackTimeout
-  fullName: Sensus.Callbacks.ScheduledCallback.CallbackTimeout
-  nameWithType: ScheduledCallback.CallbackTimeout
 - uid: Sensus.Callbacks.ScheduledCallback.Canceller
   name: Canceller
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Canceller
@@ -21676,6 +21748,42 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.Delay
   fullName: Sensus.Callbacks.ScheduledCallback.Delay
   nameWithType: ScheduledCallback.Delay
+- uid: Sensus.Callbacks.ScheduledCallback.DelayToleranceAfter
+  name: DelayToleranceAfter
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DelayToleranceAfter
+  commentId: P:Sensus.Callbacks.ScheduledCallback.DelayToleranceAfter
+  fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceAfter
+  nameWithType: ScheduledCallback.DelayToleranceAfter
+- uid: Sensus.Callbacks.ScheduledCallback.DelayToleranceAfter*
+  name: DelayToleranceAfter
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DelayToleranceAfter_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.DelayToleranceAfter
+  fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceAfter
+  nameWithType: ScheduledCallback.DelayToleranceAfter
+- uid: Sensus.Callbacks.ScheduledCallback.DelayToleranceBefore
+  name: DelayToleranceBefore
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DelayToleranceBefore
+  commentId: P:Sensus.Callbacks.ScheduledCallback.DelayToleranceBefore
+  fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceBefore
+  nameWithType: ScheduledCallback.DelayToleranceBefore
+- uid: Sensus.Callbacks.ScheduledCallback.DelayToleranceBefore*
+  name: DelayToleranceBefore
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DelayToleranceBefore_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.DelayToleranceBefore
+  fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceBefore
+  nameWithType: ScheduledCallback.DelayToleranceBefore
+- uid: Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
+  name: DelayToleranceTotal
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DelayToleranceTotal
+  commentId: P:Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
+  fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
+  nameWithType: ScheduledCallback.DelayToleranceTotal
+- uid: Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal*
+  name: DelayToleranceTotal
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DelayToleranceTotal_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
+  fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
+  nameWithType: ScheduledCallback.DelayToleranceTotal
 - uid: Sensus.Callbacks.ScheduledCallback.DisplayPage
   name: DisplayPage
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DisplayPage
@@ -21760,6 +21868,18 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.State
   fullName: Sensus.Callbacks.ScheduledCallback.State
   nameWithType: ScheduledCallback.State
+- uid: Sensus.Callbacks.ScheduledCallback.Timeout
+  name: Timeout
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Timeout
+  commentId: P:Sensus.Callbacks.ScheduledCallback.Timeout
+  fullName: Sensus.Callbacks.ScheduledCallback.Timeout
+  nameWithType: ScheduledCallback.Timeout
+- uid: Sensus.Callbacks.ScheduledCallback.Timeout*
+  name: Timeout
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Timeout_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.Timeout
+  fullName: Sensus.Callbacks.ScheduledCallback.Timeout
+  nameWithType: ScheduledCallback.Timeout
 - uid: Sensus.Callbacks.ScheduledCallback.UserNotificationMessage
   name: UserNotificationMessage
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_UserNotificationMessage
@@ -23364,6 +23484,30 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
   fullName: Sensus.DataStores.Remote.RemoteDataStore.CanRetrieveWrittenData
   nameWithType: RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS
+  name: DelayToleranceAfterMS
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceAfterMS
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS
+  nameWithType: RemoteDataStore.DelayToleranceAfterMS
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS*
+  name: DelayToleranceAfterMS
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceAfterMS_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS
+  nameWithType: RemoteDataStore.DelayToleranceAfterMS
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS
+  name: DelayToleranceBeforeMS
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceBeforeMS
+  commentId: P:Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS
+  nameWithType: RemoteDataStore.DelayToleranceBeforeMS
+- uid: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS*
+  name: DelayToleranceBeforeMS
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceBeforeMS_
+  commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS
+  nameWithType: RemoteDataStore.DelayToleranceBeforeMS
 - uid: Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   name: DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_
@@ -24519,18 +24663,33 @@ references:
   commentId: T:Sensus.Extensions.TimeSpanExtensions
   fullName: Sensus.Extensions.TimeSpanExtensions
   nameWithType: TimeSpanExtensions
-- uid: Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
-  name: GetIntervalString(TimeSpan)
-  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetIntervalString_System_TimeSpan_
-  commentId: M:Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
-  fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)
-  nameWithType: TimeSpanExtensions.GetIntervalString(TimeSpan)
-- uid: Sensus.Extensions.TimeSpanExtensions.GetIntervalString*
-  name: GetIntervalString
-  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetIntervalString_
-  commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetIntervalString
-  fullName: Sensus.Extensions.TimeSpanExtensions.GetIntervalString
-  nameWithType: TimeSpanExtensions.GetIntervalString
+- uid: Sensus.Extensions.TimeSpanExtensions.GetFullDescription(System.TimeSpan,System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan})
+  name: GetFullDescription(TimeSpan, Nullable<TimeSpan>, Nullable<TimeSpan>)
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetFullDescription_System_TimeSpan_System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Extensions.TimeSpanExtensions.GetFullDescription(System.TimeSpan,System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan})
+  name.vb: GetFullDescription(TimeSpan, Nullable(Of TimeSpan), Nullable(Of TimeSpan))
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetFullDescription(System.TimeSpan, System.Nullable<System.TimeSpan>, System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Extensions.TimeSpanExtensions.GetFullDescription(System.TimeSpan, System.Nullable(Of System.TimeSpan), System.Nullable(Of System.TimeSpan))
+  nameWithType: TimeSpanExtensions.GetFullDescription(TimeSpan, Nullable<TimeSpan>, Nullable<TimeSpan>)
+  nameWithType.vb: TimeSpanExtensions.GetFullDescription(TimeSpan, Nullable(Of TimeSpan), Nullable(Of TimeSpan))
+- uid: Sensus.Extensions.TimeSpanExtensions.GetFullDescription*
+  name: GetFullDescription
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetFullDescription_
+  commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetFullDescription
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetFullDescription
+  nameWithType: TimeSpanExtensions.GetFullDescription
+- uid: Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription(System.TimeSpan)
+  name: GetPlusMinusDescription(TimeSpan)
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetPlusMinusDescription_System_TimeSpan_
+  commentId: M:Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription(System.TimeSpan)
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription(System.TimeSpan)
+  nameWithType: TimeSpanExtensions.GetPlusMinusDescription(TimeSpan)
+- uid: Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription*
+  name: GetPlusMinusDescription
+  href: api/Sensus.Extensions.TimeSpanExtensions.html#Sensus_Extensions_TimeSpanExtensions_GetPlusMinusDescription_
+  commentId: Overload:Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription
+  fullName: Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription
+  nameWithType: TimeSpanExtensions.GetPlusMinusDescription
 - uid: Sensus.Extensions.TypeExtensions
   name: TypeExtensions
   href: api/Sensus.Extensions.TypeExtensions.html
@@ -26445,6 +26604,30 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.InitializeAsync
   fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.InitializeAsync
   nameWithType: iOSBluetoothDeviceProximityProbe.InitializeAsync
+- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  name: ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  nameWithType: iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync*
+  name: ReadPeripheralCharacteristicValuesAsync
+  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_
+  commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+  nameWithType: iOSBluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  name: ScanAsync(CancellationToken)
+  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_ScanAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  nameWithType: iOSBluetoothDeviceProximityProbe.ScanAsync(CancellationToken)
+- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ScanAsync*
+  name: ScanAsync
+  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_ScanAsync_
+  commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ScanAsync
+  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.ScanAsync
+  nameWithType: iOSBluetoothDeviceProximityProbe.ScanAsync
 - uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartAdvertising
   name: StartAdvertising()
   href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_StartAdvertising
@@ -26457,18 +26640,6 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartAdvertising
   fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartAdvertising
   nameWithType: iOSBluetoothDeviceProximityProbe.StartAdvertising
-- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartScan
-  name: StartScan()
-  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_StartScan
-  commentId: M:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartScan
-  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartScan()
-  nameWithType: iOSBluetoothDeviceProximityProbe.StartScan()
-- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartScan*
-  name: StartScan
-  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_StartScan_
-  commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartScan
-  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StartScan
-  nameWithType: iOSBluetoothDeviceProximityProbe.StartScan
 - uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopAdvertising
   name: StopAdvertising()
   href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_StopAdvertising
@@ -26481,18 +26652,6 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopAdvertising
   fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopAdvertising
   nameWithType: iOSBluetoothDeviceProximityProbe.StopAdvertising
-- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopScan
-  name: StopScan()
-  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_StopScan
-  commentId: M:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopScan
-  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopScan()
-  nameWithType: iOSBluetoothDeviceProximityProbe.StopScan()
-- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopScan*
-  name: StopScan
-  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe_StopScan_
-  commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopScan
-  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.StopScan
-  nameWithType: iOSBluetoothDeviceProximityProbe.StopScan
 - uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate
   name: iOSBluetoothDeviceProximityProbeCentralManagerDelegate
   href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html
@@ -26511,12 +26670,6 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.#ctor
   fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.iOSBluetoothDeviceProximityProbeCentralManagerDelegate
   nameWithType: iOSBluetoothDeviceProximityProbeCentralManagerDelegate.iOSBluetoothDeviceProximityProbeCentralManagerDelegate
-- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.CharacteristicRead
-  name: CharacteristicRead
-  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_CharacteristicRead
-  commentId: F:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.CharacteristicRead
-  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.CharacteristicRead
-  nameWithType: iOSBluetoothDeviceProximityProbeCentralManagerDelegate.CharacteristicRead
 - uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ConnectedPeripheral(CoreBluetooth.CBCentralManager,CoreBluetooth.CBPeripheral)
   name: ConnectedPeripheral(CBCentralManager, CBPeripheral)
   href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_ConnectedPeripheral_CoreBluetooth_CBCentralManager_CoreBluetooth_CBPeripheral_
@@ -26565,6 +26718,18 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.FailedToConnectPeripheral
   fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.FailedToConnectPeripheral
   nameWithType: iOSBluetoothDeviceProximityProbeCentralManagerDelegate.FailedToConnectPeripheral
+- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  name: ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  nameWithType: iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+- uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync*
+  name: ReadPeripheralCharacteristicValuesAsync
+  href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_ReadPeripheralCharacteristicValuesAsync_
+  commentId: Overload:Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync
+  fullName: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync
+  nameWithType: iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync
 - uid: Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.UpdatedState(CoreBluetooth.CBCentralManager)
   name: UpdatedState(CBCentralManager)
   href: api/Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.html#Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_UpdatedState_CoreBluetooth_CBCentralManager_
@@ -31317,6 +31482,21 @@ references:
   commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.#ctor
   fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.BluetoothDeviceProximityProbe
   nameWithType: BluetoothDeviceProximityProbe.BluetoothDeviceProximityProbe
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync(System.Threading.Tasks.TaskCompletionSource{System.String},System.Threading.CancellationToken)
+  name: CompleteReadAsync(TaskCompletionSource<String>, CancellationToken)
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_CompleteReadAsync_System_Threading_Tasks_TaskCompletionSource_System_String__System_Threading_CancellationToken_
+  commentId: M:Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync(System.Threading.Tasks.TaskCompletionSource{System.String},System.Threading.CancellationToken)
+  name.vb: CompleteReadAsync(TaskCompletionSource(Of String), CancellationToken)
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync(System.Threading.Tasks.TaskCompletionSource<System.String>, System.Threading.CancellationToken)
+  fullName.vb: Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync(System.Threading.Tasks.TaskCompletionSource(Of System.String), System.Threading.CancellationToken)
+  nameWithType: BluetoothDeviceProximityProbe.CompleteReadAsync(TaskCompletionSource<String>, CancellationToken)
+  nameWithType.vb: BluetoothDeviceProximityProbe.CompleteReadAsync(TaskCompletionSource(Of String), CancellationToken)
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync*
+  name: CompleteReadAsync
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_CompleteReadAsync_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync
+  nameWithType: BluetoothDeviceProximityProbe.CompleteReadAsync
 - uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.DatumType
   name: DatumType
   href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_DatumType
@@ -31347,18 +31527,6 @@ references:
   commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.DisplayName
   fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.DisplayName
   nameWithType: BluetoothDeviceProximityProbe.DisplayName
-- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData
-  name: EncounteredDeviceData
-  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_EncounteredDeviceData
-  commentId: P:Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData
-  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData
-  nameWithType: BluetoothDeviceProximityProbe.EncounteredDeviceData
-- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData*
-  name: EncounteredDeviceData
-  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_EncounteredDeviceData_
-  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData
-  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData
-  nameWithType: BluetoothDeviceProximityProbe.EncounteredDeviceData
 - uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.GetChartDataPointFromDatum(Sensus.Datum)
   name: GetChartDataPointFromDatum(Datum)
   href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_GetChartDataPointFromDatum_Sensus_Datum_
@@ -31443,6 +31611,66 @@ references:
   commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ProtectedStartAsync
   fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ProtectedStartAsync
   nameWithType: BluetoothDeviceProximityProbe.ProtectedStartAsync
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount
+  name: ReadAttemptCount
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadAttemptCount
+  commentId: P:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount
+  nameWithType: BluetoothDeviceProximityProbe.ReadAttemptCount
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount*
+  name: ReadAttemptCount
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadAttemptCount_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount
+  nameWithType: BluetoothDeviceProximityProbe.ReadAttemptCount
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS
+  name: ReadDurationMS
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadDurationMS
+  commentId: P:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS
+  nameWithType: BluetoothDeviceProximityProbe.ReadDurationMS
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS*
+  name: ReadDurationMS
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadDurationMS_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS
+  nameWithType: BluetoothDeviceProximityProbe.ReadDurationMS
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  name: ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)
+  nameWithType: BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(CancellationToken)
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync*
+  name: ReadPeripheralCharacteristicValuesAsync
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+  nameWithType: BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount
+  name: ReadSuccessCount
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadSuccessCount
+  commentId: P:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount
+  nameWithType: BluetoothDeviceProximityProbe.ReadSuccessCount
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount*
+  name: ReadSuccessCount
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadSuccessCount_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount
+  nameWithType: BluetoothDeviceProximityProbe.ReadSuccessCount
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  name: ScanAsync(CancellationToken)
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)
+  nameWithType: BluetoothDeviceProximityProbe.ScanAsync(CancellationToken)
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync*
+  name: ScanAsync
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanAsync_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync
+  nameWithType: BluetoothDeviceProximityProbe.ScanAsync
 - uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanDurationMS
   name: ScanDurationMS
   href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanDurationMS
@@ -31467,18 +31695,6 @@ references:
   commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartAdvertising
   fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartAdvertising
   nameWithType: BluetoothDeviceProximityProbe.StartAdvertising
-- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan
-  name: StartScan()
-  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StartScan
-  commentId: M:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan
-  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan()
-  nameWithType: BluetoothDeviceProximityProbe.StartScan()
-- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan*
-  name: StartScan
-  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StartScan_
-  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan
-  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan
-  nameWithType: BluetoothDeviceProximityProbe.StartScan
 - uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopAdvertising
   name: StopAdvertising()
   href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopAdvertising
@@ -31503,18 +31719,21 @@ references:
   commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopAsync
   fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopAsync
   nameWithType: BluetoothDeviceProximityProbe.StopAsync
-- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan
-  name: StopScan()
-  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopScan
-  commentId: M:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan
-  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan()
-  nameWithType: BluetoothDeviceProximityProbe.StopScan()
-- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan*
-  name: StopScan
-  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopScan_
-  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan
-  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan
-  nameWithType: BluetoothDeviceProximityProbe.StopScan
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})
+  name: TestHealthAsync(List<AnalyticsTrackedEvent>)
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__
+  commentId: M:Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})
+  name.vb: TestHealthAsync(List(Of AnalyticsTrackedEvent))
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List<Sensus.AnalyticsTrackedEvent>)
+  fullName.vb: Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List(Of Sensus.AnalyticsTrackedEvent))
+  nameWithType: BluetoothDeviceProximityProbe.TestHealthAsync(List<AnalyticsTrackedEvent>)
+  nameWithType.vb: BluetoothDeviceProximityProbe.TestHealthAsync(List(Of AnalyticsTrackedEvent))
+- uid: Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync*
+  name: TestHealthAsync
+  href: api/Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_TestHealthAsync_
+  commentId: Overload:Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync
+  fullName: Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync
+  nameWithType: BluetoothDeviceProximityProbe.TestHealthAsync
 - uid: Sensus.Probes.Context.HumidityDatum
   name: HumidityDatum
   href: api/Sensus.Probes.Context.HumidityDatum.html
@@ -37584,6 +37803,30 @@ references:
   commentId: Overload:Sensus.Probes.PollingProbe.DefaultPollingSleepDurationMS
   fullName: Sensus.Probes.PollingProbe.DefaultPollingSleepDurationMS
   nameWithType: PollingProbe.DefaultPollingSleepDurationMS
+- uid: Sensus.Probes.PollingProbe.DelayToleranceAfterMS
+  name: DelayToleranceAfterMS
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS
+  commentId: P:Sensus.Probes.PollingProbe.DelayToleranceAfterMS
+  fullName: Sensus.Probes.PollingProbe.DelayToleranceAfterMS
+  nameWithType: PollingProbe.DelayToleranceAfterMS
+- uid: Sensus.Probes.PollingProbe.DelayToleranceAfterMS*
+  name: DelayToleranceAfterMS
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS_
+  commentId: Overload:Sensus.Probes.PollingProbe.DelayToleranceAfterMS
+  fullName: Sensus.Probes.PollingProbe.DelayToleranceAfterMS
+  nameWithType: PollingProbe.DelayToleranceAfterMS
+- uid: Sensus.Probes.PollingProbe.DelayToleranceBeforeMS
+  name: DelayToleranceBeforeMS
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS
+  commentId: P:Sensus.Probes.PollingProbe.DelayToleranceBeforeMS
+  fullName: Sensus.Probes.PollingProbe.DelayToleranceBeforeMS
+  nameWithType: PollingProbe.DelayToleranceBeforeMS
+- uid: Sensus.Probes.PollingProbe.DelayToleranceBeforeMS*
+  name: DelayToleranceBeforeMS
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS_
+  commentId: Overload:Sensus.Probes.PollingProbe.DelayToleranceBeforeMS
+  fullName: Sensus.Probes.PollingProbe.DelayToleranceBeforeMS
+  nameWithType: PollingProbe.DelayToleranceBeforeMS
 - uid: Sensus.Probes.PollingProbe.MaxDataStoresPerSecond
   name: MaxDataStoresPerSecond
   href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_MaxDataStoresPerSecond
@@ -42354,6 +42597,30 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryInterval
   fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryInterval
   nameWithType: IScriptProbeAgent.DeliveryInterval
+- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter
+  name: DeliveryIntervalToleranceAfter
+  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceAfter
+  commentId: P:Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter
+  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter
+  nameWithType: IScriptProbeAgent.DeliveryIntervalToleranceAfter
+- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter*
+  name: DeliveryIntervalToleranceAfter
+  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceAfter_
+  commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter
+  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter
+  nameWithType: IScriptProbeAgent.DeliveryIntervalToleranceAfter
+- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore
+  name: DeliveryIntervalToleranceBefore
+  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceBefore
+  commentId: P:Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore
+  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore
+  nameWithType: IScriptProbeAgent.DeliveryIntervalToleranceBefore
+- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore*
+  name: DeliveryIntervalToleranceBefore
+  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceBefore_
+  commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore
+  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore
+  nameWithType: IScriptProbeAgent.DeliveryIntervalToleranceBefore
 - uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.Description
   name: Description
   href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_Description
@@ -43575,6 +43842,30 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.CompletionTimes
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.CompletionTimes
   nameWithType: ScriptRunner.CompletionTimes
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS
+  name: DelayToleranceAfterMS
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceAfterMS
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS
+  nameWithType: ScriptRunner.DelayToleranceAfterMS
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS*
+  name: DelayToleranceAfterMS
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceAfterMS_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS
+  nameWithType: ScriptRunner.DelayToleranceAfterMS
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS
+  name: DelayToleranceBeforeMS
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceBeforeMS
+  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS
+  nameWithType: ScriptRunner.DelayToleranceBeforeMS
+- uid: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS*
+  name: DelayToleranceBeforeMS
+  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceBeforeMS_
+  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS
+  fullName: Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS
+  nameWithType: ScriptRunner.DelayToleranceBeforeMS
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.DisplayProgress
   name: DisplayProgress
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_DisplayProgress

@@ -167,6 +167,64 @@ are safely transferred off of the device before their accumulated size grows too
   </table>
   
   
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceAfterMS_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceAfterMS" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceAfterMS">DelayToleranceAfterMS</h4>
+  <div class="markdown level1 summary"><p>Tolerance in milliseconds for running the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> after the scheduled 
+time, if doing so will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Delay Tolerance After (MS):&quot;, true, 61, true)]
+public int DelayToleranceAfterMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceBeforeMS_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_DelayToleranceBeforeMS" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DelayToleranceBeforeMS">DelayToleranceBeforeMS</h4>
+  <div class="markdown level1 summary"><p>Tolerance in milliseconds for running the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> before the scheduled 
+time, if doing so will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Delay Tolerance Before (MS):&quot;, true, 60, true)]
+public int DelayToleranceBeforeMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_DataStores_Remote_RemoteDataStore_RequireCharging_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.RequireCharging*"></a>
   <h4 id="Sensus_DataStores_Remote_RemoteDataStore_RequireCharging" data-uid="Sensus.DataStores.Remote.RemoteDataStore.RequireCharging">RequireCharging</h4>
   <div class="markdown level1 summary"><p>Whether to require external power when uploading data.</p>
