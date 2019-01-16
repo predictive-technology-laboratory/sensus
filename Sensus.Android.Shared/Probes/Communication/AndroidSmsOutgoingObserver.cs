@@ -172,10 +172,16 @@ namespace Sensus.Android.Probes.Communication
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while getting MMS:  " + ex.Message, LoggingLevel.Normal, GetType());
+                string message = "Exception while getting MMS:  " + ex.Message;
 
-                // throw back to caller
-                throw ex;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
+                // throw a NotSupportedException, as our implementation is probably not correct -- and 
+                // will never work for -- this device. this message will cause the probe to be disabled
+                // if thrown on protocol startup; otherwise, it will simply be ignored. one reason this
+                // is important is that sensus will continue to foreground the app in an attempt to get
+                // the probe started. but it will always fail, and this will really irritate the user.
+                throw new NotSupportedException(message, ex);
             }
             finally
             {
