@@ -25,12 +25,6 @@ in-app visualization of certain data streams.
 You should carefully inspect the terms and conditions associated with other libraries and packages consumed by 
 Sensus to ensure that your intended use is compliant.
 
-## Facebook API
-
-Sensus uses the Facebook API to collect public profile information from users who grant this permission. To do this, 
-visit the [Facebook developer console](https://developers.facebook.com) and create a new app, noting your app name and ID.
-If you do not do this, you will not be able to use the [Facebook Probe](xref:Sensus.Probes.Apps.FacebookProbe).
-
 ## Keys and IDs
 Edit the following fields of `Sensus.SensusServiceHelper.cs` (in the `Sensus.Shared` project):
 
@@ -121,9 +115,6 @@ services and then associate these servies with your app before compiling and dep
      <permission android:name="edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE" android:protectionLevel="signature" />
      ```
    
-1. If you wish to use the [Facebook Probe](xref:Sensus.Probes.Apps.FacebookProbe) to collect public profile information from 
-   users who explicitly permit it, then add your Facebook app name and ID to the `Sensus.Android/Resources/values/strings.xml` file.
-   
 ## Sensus iOS
 
 Sensus iOS consumes services provided by Apple. Since these services and their authorized consumers are tied
@@ -141,14 +132,8 @@ services and then associate these servies with your app.
    * `CFBundleDisplayName`
    * `CFBundleIdentifier`
    * Each `CFBundleURLSchemes` element under `CFBundleURLTypes`
-   * `FacebookAppID`
-   * `FacebookDisplayName`
    * `CFBundleDocumentTypes`
    * Elements under `UTExportedTypeDeclarations`
    * `CFBundleShortVersionString`
    * `CFBundleVersion`
    * Each of the usage descriptions.
-
-1. If you wish to use the [Facebook Probe](xref:Sensus.Probes.Apps.FacebookProbe) to collect public profile information from 
-   users who explicit permit it, then add your Facebook app name and ID to the `Sensus.iOS/AppDelegate.cs` file at the location 
-   indicated in the comments.
