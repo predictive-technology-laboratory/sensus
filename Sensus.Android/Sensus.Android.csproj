@@ -44,7 +44,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
+    <DebugType>
+    </DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -253,18 +254,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.1.0.0\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.Facebook.Core.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Core.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Core.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.AppLinks.Android">
-      <HintPath>..\packages\Xamarin.Facebook.AppLinks.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.AppLinks.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.Messenger.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Messenger.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Messenger.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.Places.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Places.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Places.Android.dll</HintPath>
-    </Reference>
     <Reference Include="FormsViewGroup">
       <HintPath>..\packages\Xamarin.Forms.3.2.0.839982\lib\MonoAndroid10\FormsViewGroup.dll</HintPath>
     </Reference>
@@ -279,18 +268,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     </Reference>
     <Reference Include="Xamarin.Forms.Xaml">
       <HintPath>..\packages\Xamarin.Forms.3.2.0.839982\lib\MonoAndroid10\Xamarin.Forms.Xaml.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.Common.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Common.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Common.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.Login.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Login.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Login.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.Share.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Share.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Share.Android.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Facebook.Android">
-      <HintPath>..\packages\Xamarin.Facebook.Android.4.34.0\lib\monoandroid81\Xamarin.Facebook.Android.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Forms.Maps.Android">
       <HintPath>..\packages\Xamarin.Forms.Maps.3.2.0.839982\lib\MonoAndroid10\Xamarin.Forms.Maps.Android.dll</HintPath>
@@ -349,6 +326,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Sensus.licenseheader" />
@@ -387,10 +365,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\values-v21\" />
-    <Folder Include="Resources\layout\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
   </ItemGroup>

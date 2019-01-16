@@ -24,7 +24,6 @@ using Xunit;
 using Android.Widget;
 using Android.Content;
 using System;
-using Xamarin.Facebook;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -35,7 +34,6 @@ namespace Sensus.Android
     [Activity(Label = "xUnit Android Runner", MainLauncher = true, Theme = "@android:style/Theme.Material.Light")]
     public class AndroidMainActivity : RunnerActivity
     {
-        public ICallbackManager FacebookCallbackManager { get; set; }
 
         protected override void OnCreate(Bundle bundle)
         {

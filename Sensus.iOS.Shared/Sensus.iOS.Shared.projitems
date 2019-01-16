@@ -11,7 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSFacebookProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSSoundProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSAltitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSCompassProbe.cs" />
@@ -55,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Probes\Apps\" />
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\UILocalNotifications\" />

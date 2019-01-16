@@ -30,27 +30,27 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.iOS.Shared", "Sensus
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8603D3F-6823-47C7-90D1-024B226A5229}"
 	ProjectSection(SolutionItems) = preProject
+		DocFX\articles\adaptive-surveys.md = DocFX\articles\adaptive-surveys.md
 		DocFX\articles\anonymization.md = DocFX\articles\anonymization.md
-		DocFX\articles\encryption.md = DocFX\articles\encryption.md
-		DocFX\articles\github.md = DocFX\articles\github.md
-		DocFX\articles\intro.md = DocFX\articles\intro.md
-		DocFX\articles\toc.yml = DocFX\articles\toc.yml
+		DocFX\articles\authentication-servers.md = DocFX\articles\authentication-servers.md
 		DocFX\articles\backwards-compatibility.md = DocFX\articles\backwards-compatibility.md
 		DocFX\articles\build-problems.md = DocFX\articles\build-problems.md
 		DocFX\articles\coding-conventions.md = DocFX\articles\coding-conventions.md
 		DocFX\articles\configuring-a-development-system.md = DocFX\articles\configuring-a-development-system.md
 		DocFX\articles\contributed-resources.md = DocFX\articles\contributed-resources.md
+		DocFX\articles\encryption.md = DocFX\articles\encryption.md
+		DocFX\articles\github.md = DocFX\articles\github.md
+		DocFX\articles\intro.md = DocFX\articles\intro.md
+		DocFX\articles\local-only-storage.md = DocFX\articles\local-only-storage.md
 		DocFX\articles\privacy-policy.md = DocFX\articles\privacy-policy.md
 		DocFX\articles\protocol-creation.md = DocFX\articles\protocol-creation.md
 		DocFX\articles\protocol-distribution.md = DocFX\articles\protocol-distribution.md
 		DocFX\articles\push-notifications.md = DocFX\articles\push-notifications.md
+		DocFX\articles\redeploying-sensus.md = DocFX\articles\redeploying-sensus.md
 		DocFX\articles\sensus-r.md = DocFX\articles\sensus-r.md
 		DocFX\articles\ssl-pinning.md = DocFX\articles\ssl-pinning.md
-		DocFX\articles\redeploying-sensus.md = DocFX\articles\redeploying-sensus.md
 		DocFX\articles\tagging-mode.md = DocFX\articles\tagging-mode.md
-		DocFX\articles\local-only-storage.md = DocFX\articles\local-only-storage.md
-		DocFX\articles\adaptive-surveys.md = DocFX\articles\adaptive-surveys.md
-		DocFX\articles\authentication-servers.md = DocFX\articles\authentication-servers.md
+		DocFX\articles\toc.yml = DocFX\articles\toc.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
@@ -75,7 +75,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android.Tests.AppCen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.iOS.Tests.AppCenter", "Sensus.iOS.Tests.AppCenter\Sensus.iOS.Tests.AppCenter.csproj", "{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Shared.NuGet", "Sensus.Shared.NuGet\Sensus.Shared.NuGet.csproj", "{117104F2-EE3A-4BF1-B617-DE009D6453F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensus.Shared.NuGet", "Sensus.Shared.NuGet\Sensus.Shared.NuGet.csproj", "{117104F2-EE3A-4BF1-B617-DE009D6453F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleScriptProbeAgent", "ExampleScriptProbeAgent\ExampleScriptProbeAgent.csproj", "{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}"
 EndProject
@@ -83,20 +83,27 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleScriptProbeAgent.Sha
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems*{057de2b3-ac3b-4a46-8ec9-7470697fd64f}*SharedItemsImports = 4
+		Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems*{1d5fb22f-8472-400c-95b1-cbdd1db68358}*SharedItemsImports = 13
+		ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems*{40433736-3696-43e1-8aa2-1b954035ad9e}*SharedItemsImports = 13
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13
+		ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems*{5fb09805-1e4c-4901-8bf4-8314ae69e5d5}*SharedItemsImports = 4
+		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{5fb09805-1e4c-4901-8bf4-8314ae69e5d5}*SharedItemsImports = 4
+		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{5fb09805-1e4c-4901-8bf4-8314ae69e5d5}*SharedItemsImports = 4
+		Sensus.Shared\Sensus.Shared.projitems*{5fb09805-1e4c-4901-8bf4-8314ae69e5d5}*SharedItemsImports = 4
+		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{970a8722-c237-42d3-8f1d-4096355ca144}*SharedItemsImports = 4
+		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{970a8722-c237-42d3-8f1d-4096355ca144}*SharedItemsImports = 4
+		Sensus.Shared\Sensus.Shared.projitems*{970a8722-c237-42d3-8f1d-4096355ca144}*SharedItemsImports = 4
+		Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems*{aafabf65-6e6f-4c50-8f7a-af4bf191cc9e}*SharedItemsImports = 4
+		ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
 		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
-		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
-		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
-		Sensus.Shared\Sensus.Shared.projitems*{ad7b78b0-ae51-4fb7-9b11-4e22a2b538ca}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
 		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
 		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
-		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
-		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
-		Sensus.Shared\Sensus.Shared.projitems*{d2ced8f0-7a76-454d-b5f7-9e8b9fe6a58e}*SharedItemsImports = 4
 		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
+		Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems*{e2a77014-4847-4f00-b2b2-ce9a7b3bcb09}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Android = Ad-Hoc|Android
@@ -113,29 +120,58 @@ Global
 		Release|iPhoneSimulator = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Android.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Android.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Android.Deploy.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|Any CPU.Deploy.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhone.Deploy.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhoneSimulator.Deploy.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.ActiveCfg = Debug|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.Build.0 = Debug|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|iPhoneSimulator.Deploy.0 = Debug|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.ActiveCfg = Debug|Any CPU
-		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.Build.0 = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Android.ActiveCfg = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Android.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|Android.ActiveCfg = Ad-Hoc|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|Any CPU.ActiveCfg = Ad-Hoc|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Ad-Hoc|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhoneSimulator.Build.0 = Ad-Hoc|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Android.ActiveCfg = Debug|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Any CPU.ActiveCfg = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhone.Build.0 = Debug|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Android.ActiveCfg = Release|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Any CPU.ActiveCfg = Release|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhone.ActiveCfg = Release|iPhone
 		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhone.Build.0 = Release|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Debug|Any CPU.ActiveCfg = Debug|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|Any CPU.ActiveCfg = Release|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
-		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{ACFA56BF-B959-4CAF-A2A7-981A9E48E17C}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Android.ActiveCfg = Release|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Android.Build.0 = Release|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Any CPU.ActiveCfg = Release|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|Any CPU.Build.0 = Release|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhone.ActiveCfg = Debug|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|Android.ActiveCfg = Debug|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|Any CPU.ActiveCfg = Debug|iPhone
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Debug|iPhone.ActiveCfg = Debug|iPhone
@@ -145,7 +181,18 @@ Global
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|Android.ActiveCfg = Debug|iPhoneSimulator
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|Any CPU.ActiveCfg = Release|iPhone
 		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|iPhone.ActiveCfg = Release|iPhone
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{5FB09805-1E4C-4901-8BF4-8314AE69E5D5}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|Android.ActiveCfg = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|Android.Build.0 = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|Android.Deploy.0 = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|Any CPU.Deploy.0 = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Ad-Hoc|iPhoneSimulator.Deploy.0 = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Debug|Android.ActiveCfg = Debug|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Debug|Android.Build.0 = Debug|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -157,7 +204,16 @@ Global
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|Any CPU.Build.0 = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|Android.ActiveCfg = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|Android.Build.0 = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Debug|Android.ActiveCfg = Debug|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Debug|Android.Build.0 = Debug|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -169,7 +225,15 @@ Global
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{E2A77014-4847-4F00-B2B2-CE9A7B3BCB09}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|Android.ActiveCfg = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|Android.Build.0 = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Debug|Android.ActiveCfg = Debug|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Debug|iPhone.ActiveCfg = Debug|Any CPU
@@ -179,6 +243,8 @@ Global
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|Android.ActiveCfg = Release|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{AAFABF65-6E6F-4C50-8F7A-AF4BF191CC9E}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{117104F2-EE3A-4BF1-B617-DE009D6453F7}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
 		{117104F2-EE3A-4BF1-B617-DE009D6453F7}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
 		{117104F2-EE3A-4BF1-B617-DE009D6453F7}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
@@ -218,6 +284,14 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B8603D3F-6823-47C7-90D1-024B226A5229} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
+		{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5} = {56DC9286-7449-4F64-8C94-C6B4543F125D}
+		{1833108D-29EF-4FE0-9D3C-7E2B5FCCBA02} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AEEF3EDC-0FB6-414D-ABAD-4137A2366A69}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
@@ -264,10 +338,5 @@ Global
 		$6.IncludeStaticEntities = True
 		description = Sensus
 		version = 2.0.0
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{B8603D3F-6823-47C7-90D1-024B226A5229} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
-		{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5} = {56DC9286-7449-4F64-8C94-C6B4543F125D}
-		{1833108D-29EF-4FE0-9D3C-7E2B5FCCBA02} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
 	EndGlobalSection
 EndGlobal

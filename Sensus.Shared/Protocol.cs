@@ -28,7 +28,6 @@ using System.Linq;
 using System.Reflection;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
-using Sensus.Probes.Apps;
 using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
@@ -437,11 +436,6 @@ namespace Sensus
                     {
                         // UI testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                         // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                        if (probe is FacebookProbe)
-                        {
-                            probe.Enabled = false;
-                        }
 
 #if __IOS__
                         if (probe is iOSHealthKitProbe)
