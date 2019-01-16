@@ -31,7 +31,13 @@ namespace Sensus.UI.Inputs
         private List<Label> _itemLabels;
         private Label _label;
 
-        public List<object> Items => _items;
+        public List<object> Items
+        {
+            get
+            {
+                return _items;
+            }
+        }
 
         /// <summary>
         /// These are the items that the user will have to select from.
@@ -41,24 +47,48 @@ namespace Sensus.UI.Inputs
         [JsonIgnore]
         public List<string> StringItems
         {
-            get => _items.Select(item => item.ToString()).ToList();
+            get
+            {
+                return _items.Select(item => item.ToString()).ToList();
+            }
             // need set method so that binding can set the list via the EditableListUiProperty
-            set => _items = value.Cast<object>().ToList();
+            set
+            {
+                _items = value.Cast<object>().ToList();
+            }
+        }
+
+        public override object Value
+        {
+            get
+            {
+                return _selectedItems;
+            }
         }
 
         public string TextBindingPropertyPath
         {
-            get => _textBindingPropertyPath;
-            set => _textBindingPropertyPath = value;
+            get
+            {
+                return _textBindingPropertyPath;
+            }
+            set
+            {
+                _textBindingPropertyPath = value;
+            }
         }
 
         public List<object> SelectedItems
         {
-            get => _selectedItems;
-            set => _selectedItems = value;
+            get
+            {
+                return _selectedItems;
+            }
+            set
+            {
+                _selectedItems = value;
+            }
         }
-
-        public override object Value => _selectedItems;
 
         /// <summary>
         /// Whether or not to allow the user to select multiple items simultaneously.
@@ -67,14 +97,23 @@ namespace Sensus.UI.Inputs
         [OnOffUiProperty(null, true, 11)]
         public bool Multiselect
         {
-            get => _multiselect;
-            set => _multiselect = value;
+            get
+            {
+                return _multiselect;
+            }
+            set
+            {
+                _multiselect = value;
+            }
         }
 
         [JsonIgnore]
         public override bool Enabled
         {
-            get => _itemLabels.Count == 0 ? true : _itemLabels[0].IsEnabled;
+            get
+            {
+                return _itemLabels.Count == 0 ? true : _itemLabels[0].IsEnabled;
+            }
             set
             {
                 foreach (Label itemLabel in _itemLabels)
@@ -84,7 +123,13 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        public override string DefaultName => "Picker (Page)";
+        public override string DefaultName
+        {
+            get
+            {
+                return "Picker (Page)";
+            }
+        }
 
         public ItemPickerPageInput()
         {
@@ -122,7 +167,6 @@ namespace Sensus.UI.Inputs
 
             if (base.GetView(index) == null)
             {
-                //_selectedItems.Clear();
                 _itemLabels.Clear();
 
                 StackLayout itemLabelStack = new StackLayout
