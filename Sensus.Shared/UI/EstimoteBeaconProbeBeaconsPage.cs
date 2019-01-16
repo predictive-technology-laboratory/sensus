@@ -60,7 +60,7 @@ namespace Sensus.UI
                 List<string> beaconTags;
                 try
                 {
-                    beaconTags = estimoteBeaconProbe.GetBeaconTagsFromCloud();
+                    beaconTags = await estimoteBeaconProbe.GetBeaconTagsFromCloudAsync(TimeSpan.FromSeconds(10));
 
                     if (beaconTags.Count == 0)
                     {
@@ -69,7 +69,7 @@ namespace Sensus.UI
                 }
                 catch (Exception ex)
                 {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Cannot add beacon:  " + ex);
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon:  " + ex.Message);
                     return;
                 }
 
