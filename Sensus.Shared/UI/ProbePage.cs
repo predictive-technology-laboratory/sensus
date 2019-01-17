@@ -195,7 +195,7 @@ namespace Sensus.UI
 
                 Button setLocationButton = new Button
                 {
-                    Text = "Set Location",
+                    Text = estimoteBeaconProbe.Location == null ? "Set Location" : "Location:  " + estimoteBeaconProbe.Location,
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
