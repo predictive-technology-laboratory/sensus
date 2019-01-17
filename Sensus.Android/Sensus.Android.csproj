@@ -44,7 +44,8 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
+    <DebugType>
+    </DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -388,8 +389,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\values-v21\" />
-    <Folder Include="Resources\layout\" />
+    <Folder Include="Sensus\" />
   </ItemGroup>
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
