@@ -226,11 +226,6 @@ namespace Sensus.Authentication
 
                 AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(kmsCredentials.AccessKeyId, kmsCredentials.SecretAccessKey, kmsCredentials.SessionToken, kmsCredentials.RegionEndpoint);
 
-                kmsClient.ExceptionEvent += (sender, e) =>
-                {
-                    SensusException.Report("Exception from KMS client:  " + e);
-                };
-
                 // generate a symmetric data key
                 GenerateDataKeyResponse dataKeyResponse = await kmsClient.GenerateDataKeyAsync(new GenerateDataKeyRequest
                 {
@@ -268,6 +263,10 @@ namespace Sensus.Authentication
                 SymmetricEncryption symmetricEncryption = new SymmetricEncryption(dataKeyBytes, initializationVectorBytes);
                 byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
                 encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
+            }
+            catch(WebException ex)
+            {
+                if(ex.Status == WebExceptionStatus.)
             }
             catch (Exception ex)
             {
