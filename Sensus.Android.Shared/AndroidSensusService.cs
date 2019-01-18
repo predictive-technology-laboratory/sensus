@@ -245,7 +245,7 @@ namespace Sensus.Android
 
                 _foregroundServiceNotificationBuilder.SetContentText(contentText);
 
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                 {
                     if (numRunningStudies > 0 || serviceHelper.RegisteredProtocols.Count > 0)
                     {
