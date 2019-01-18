@@ -22,7 +22,6 @@ namespace Sensus.Android.Probes.Device
 {
     public class AndroidProcessorUtilizationProbe : ProcessorUtilizationProbe
     {
-        private bool _running = false;
         private string _cmd;
         protected override async Task InitializeAsync()
         {
@@ -41,8 +40,7 @@ namespace Sensus.Android.Probes.Device
 
         protected override async Task StartListeningAsync()
         {
-            _running = true;
-            while (_running)
+            while (Running)
             {
                 await RecordUtilization(); //remove the await
                 await Task.Delay(MinDataStoreDelay.HasValue ? MinDataStoreDelay.Value.Milliseconds : 1000);
@@ -51,7 +49,6 @@ namespace Sensus.Android.Probes.Device
 
         protected override Task StopListeningAsync()
         {
-            _running = false;
             return Task.CompletedTask;
         }
 
@@ -86,9 +83,9 @@ namespace Sensus.Android.Probes.Device
                 await StoreDatumAsync(new ProcessorUtilizationDatum(DateTimeOffset.UtcNow, cpuPercent));
 
             }
-            catch (IOException)
+            catch (Exception exc)
             {
-
+                SensusServiceHelper.Get().Logger.Log("Error getting CPU Utilization. msg:"+exc.Message, LoggingLevel.Normal, GetType());
             }
         }
 
