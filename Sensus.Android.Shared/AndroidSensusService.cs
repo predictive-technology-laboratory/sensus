@@ -245,27 +245,25 @@ namespace Sensus.Android
 
                 _foregroundServiceNotificationBuilder.SetContentText(contentText);
 
-                if(numRunningStudies > 0 || serviceHelper.RegisteredProtocols.Count > 0)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                 {
-
-
-                    if (numRunningStudies > 0)
+                    if (numRunningStudies > 0 || serviceHelper.RegisteredProtocols.Count > 0)
                     {
-                        Intent pauseIntent = new Intent(this, typeof(AndroidMainActivity));
-                        pauseIntent.SetAction(SERVICE_PROTOCOL_STOP_ACTION);
-                        PendingIntent playPauseBroadcastIntent = PendingIntent.GetBroadcast(this, 0, pauseIntent, 0);
-                        _foregroundServiceNotificationBuilder.SetActions(new Notification.Action(Resource.Drawable.ic_launcher, $"Stop {numRunningStudies} {(numRunningStudies == 1 ? "study" : "studies")}", playPauseBroadcastIntent));
-                    }
-                    else
-                    {
-                        Intent playIntent = new Intent(this, typeof(AndroidMainActivity));
-                        playIntent.SetAction(SERVICE_PROTOCOL_START_ACTION);
-                        PendingIntent playPauseBroadcastIntent = PendingIntent.GetBroadcast(this, 0, playIntent, PendingIntentFlags.UpdateCurrent);
-                        var stoppedCnt = 
-                        _foregroundServiceNotificationBuilder.SetActions(new Notification.Action(Resource.Drawable.ic_launcher, $"Start {serviceHelper.RegisteredProtocols.Count} {(serviceHelper.RegisteredProtocols.Count == 1 ? "study" : "studies")}", playPauseBroadcastIntent));
+                        if (numRunningStudies > 0)
+                        {
+                            Intent pauseIntent = new Intent(SERVICE_PROTOCOL_STOP_ACTION);
+                            PendingIntent playPauseBroadcastIntent = PendingIntent.GetBroadcast(this, 0, pauseIntent, 0);
+                            _foregroundServiceNotificationBuilder.SetActions(new Notification.Action(Resource.Drawable.ic_launcher, $"Stop {numRunningStudies} {(numRunningStudies == 1 ? "study" : "studies")}", playPauseBroadcastIntent));
+                        }
+                        else
+                        {
+                            Intent playIntent = new Intent(SERVICE_PROTOCOL_START_ACTION);
+                            PendingIntent playPauseBroadcastIntent = PendingIntent.GetBroadcast(this, 0, playIntent, PendingIntentFlags.UpdateCurrent);
+                            var stoppedCnt =
+                            _foregroundServiceNotificationBuilder.SetActions(new Notification.Action(Resource.Drawable.ic_launcher, $"Start {serviceHelper.RegisteredProtocols.Count} {(serviceHelper.RegisteredProtocols.Count == 1 ? "study" : "studies")}", playPauseBroadcastIntent));
+                        }
                     }
                 }
-
             }
         }
 

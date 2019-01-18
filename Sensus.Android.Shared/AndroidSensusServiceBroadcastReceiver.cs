@@ -20,9 +20,7 @@ using System.Threading.Tasks;
 
 namespace Sensus.Android
 {
-    //[BroadcastReceiver]
-    //[IntentFilter(new string[] { AndroidSensusService.SERVICE_PROTOCOL_START_ACTION, AndroidSensusService.SERVICE_PROTOCOL_STOP_ACTION })]
-
+    [BroadcastReceiver]
     public class AndroidSensusServiceBroadcastReceiver : BroadcastReceiver
     {
 
@@ -42,11 +40,20 @@ namespace Sensus.Android
 
                     if (intent.Action == AndroidSensusService.SERVICE_PROTOCOL_START_ACTION)
                     {
-                        foreach(var protocol in serviceHelper.RegisteredProtocols)
+                        foreach (var protocol in serviceHelper.RegisteredProtocols)
                         {
-                            if(serviceHelper.RunningProtocolIds.Contains(protocol.Id) == false)
+                            if (serviceHelper.RunningProtocolIds.Contains(protocol.Id) == false)
                             {
-                                Task.Run(async () => await protocol.StartAsync(System.Threading.CancellationToken.None)).Wait();
+                                Task.Run(async () => await serviceHelper.RunActionUsingMainActivityAsync(mainActivity =>
+                                {
+                                    mainActivity.RunOnUiThread(async () =>
+                                    {
+                                        await protocol.StartAsync(System.Threading.CancellationToken.None);
+
+                                    });
+
+                                }, true, false));
+                                //Task.Run(async () => await protocol.StartAsync(System.Threading.CancellationToken.None)).Wait();
                             }
                         }
                     }
@@ -56,7 +63,15 @@ namespace Sensus.Android
                         {
                             if (serviceHelper.RunningProtocolIds.Contains(protocol.Id) == true)
                             {
-                                Task.Run(async () => await protocol.StopAsync()).Wait();
+                                Task.Run(async () => await serviceHelper.RunActionUsingMainActivityAsync(mainActivity =>
+                                {
+                                    mainActivity.RunOnUiThread(async () =>
+                                    {
+                                        await serviceHelper.StopProtocolsAsync();
+
+                                    });
+
+                                }, true, false));
                             }
                         }
                     }
