@@ -26,6 +26,7 @@ using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using ICSharpCode.SharpZipLib.Tar;
+using System.Net;
 
 namespace Sensus.DataStores.Local
 {
@@ -296,6 +297,8 @@ namespace Sensus.DataStores.Local
             // ensure that we have a valid encryption setup if one is requested
             if (_encrypt)
             {
+                Exception exToThrow = null;
+
                 try
                 {
                     using (MemoryStream testStream = new MemoryStream())
@@ -303,9 +306,23 @@ namespace Sensus.DataStores.Local
                         await Protocol.EnvelopeEncryptor.EnvelopeAsync(Encoding.UTF8.GetBytes("testing"), ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, testStream, CancellationToken.None);
                     }
                 }
-                catch (Exception encryptionTestException)
+                catch (WebException webException)
                 {
-                    throw new Exception("Envelope encryption test failed:  " + encryptionTestException.Message);
+                    // only throw the web exception if it was not caused by a connection failure. we'll get these under normal conditions.
+                    if (webException.Status != WebExceptionStatus.ConnectFailure)
+                    {
+                        exToThrow = webException;
+                    }
+                }
+                // throw all other exceptions
+                catch (Exception ex)
+                {
+                    exToThrow = ex;
+                }
+
+                if (exToThrow != null)
+                {
+                    throw new Exception("Failed encryption test:  " + exToThrow.Message, exToThrow);
                 }
             }
 
