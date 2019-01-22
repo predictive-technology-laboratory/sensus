@@ -251,12 +251,14 @@ namespace Sensus.Android
                 {
                     _foregroundServiceNotificationBuilder.SetActions();
 
-                    if (numRunningStudies > 0)
+                    List<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause).ToList();
+
+                    if (pausableProtocols.Count > 0)
                     {
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
                         PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
-                        string actionTitle = "Pause " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".";
-                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_launcher, actionTitle, actionPendingIntent));
+                        string actionTitle = "Pause " + pausableProtocols.Count + " " + (pausableProtocols.Count == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, actionTitle, actionPendingIntent));
                     }
 
                     int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
@@ -266,7 +268,7 @@ namespace Sensus.Android
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);
                         PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
                         string actionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
-                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_launcher, actionTitle, actionPendingIntent));
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_light, actionTitle, actionPendingIntent));
                     }
                 }
             }

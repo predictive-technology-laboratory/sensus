@@ -1317,6 +1317,13 @@ namespace Sensus
         public List<string> AvailableTags { get; set; } = new List<string>();
 
         /// <summary>
+        /// Whether or not to allow the user to put the protocol into the <see cref="ProtocolState.Paused"/> state.
+        /// </summary>
+        /// <value><c>true</c> to allow pause; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Pause:  ", true, 48)]
+        public bool AllowPause { get; set; } = false;
+
+        /// <summary>
         /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value>The tag identifier.</value>
@@ -1351,7 +1358,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 48, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 50, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1370,7 +1377,7 @@ namespace Sensus
         /// the <see cref="PushNotificationsSharedAccessSignature"/> for this hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 49, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 51, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1383,7 +1390,7 @@ namespace Sensus
         /// the DefaultListenSharedAccessSignature policy and copy the entire value of the connection string into this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 50, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 52, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1402,7 +1409,7 @@ namespace Sensus
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
-        [ListUiProperty("Compatibility:", true, 51, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
@@ -2390,6 +2397,7 @@ namespace Sensus
                 if (_state == ProtocolState.Running)
                 {
                     _state = ProtocolState.Paused;
+                    FireStateChanged();
                     SensusServiceHelper.Get().Logger.Log("Protocol paused.", LoggingLevel.Normal, GetType());
                 }
             }
@@ -2404,6 +2412,7 @@ namespace Sensus
                 if (_state == ProtocolState.Paused)
                 {
                     _state = ProtocolState.Running;
+                    FireStateChanged();
                     SensusServiceHelper.Get().Logger.Log("Protocol resumed.", LoggingLevel.Normal, GetType());
                 }
             }
