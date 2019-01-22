@@ -13,15 +13,15 @@
 // limitations under the License.
 
 using System;
-using Sensus.Probes.Context;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using CoreBluetooth;
 using CoreFoundation;
 using Foundation;
-using System.Text;
 using Newtonsoft.Json;
-using Sensus.Context;
-using System.Threading.Tasks;
-using System.Threading;
+using Sensus.Probes.Context;
 
 namespace Sensus.iOS.Probes.Context
 {
@@ -62,6 +62,7 @@ namespace Sensus.iOS.Probes.Context
         private CBMutableService _deviceIdService;
         private CBMutableCharacteristic _deviceIdCharacteristic;
         private CBCentralManager _bluetoothCentralManager;
+        private iOSBluetoothDeviceProximityProbeCentralManagerDelegate _bluetoothCentralManagerDelegate;
         private CBPeripheralManager _bluetoothPeripheralManager;
 
         [JsonIgnore]
@@ -83,101 +84,93 @@ namespace Sensus.iOS.Probes.Context
         }
 
         #region central -- scan
-        protected override void StartScan()
+        protected override async Task ScanAsync(CancellationToken cancellationToken)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            try
             {
-                try
-                {
-                    iOSBluetoothDeviceProximityProbeCentralManagerDelegate bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
+                // start a fresh manager delegate to collect/read results
+                _bluetoothCentralManagerDelegate = new iOSBluetoothDeviceProximityProbeCentralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this);
 
-                    bluetoothCentralManagerDelegate.CharacteristicRead += (sender, e) =>
+                // initialize manager, which starts scan.
+                _bluetoothCentralManager = new CBCentralManager(_bluetoothCentralManagerDelegate,
+                                                                new DispatchQueue("ble"),
+                                                                NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
+
+                TaskCompletionSource<bool> scanCompletionSource = new TaskCompletionSource<bool>();
+
+                cancellationToken.Register(() =>
+                {
+                    try
                     {
-                        lock (EncounteredDeviceData)
-                        {
-                            EncounteredDeviceData.Add(new BluetoothDeviceProximityDatum(e.Timestamp, e.Value));
-                        }
-                    };
+                        _bluetoothCentralManager.StopScan();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                    finally
+                    {
+                        _bluetoothCentralManager = null;
+                        scanCompletionSource.TrySetResult(true);
+                    }
+                });
 
-                    _bluetoothCentralManager = new CBCentralManager(bluetoothCentralManagerDelegate,
-                                                                    DispatchQueue.MainQueue,
-                                                                    NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBCentralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            });
+                await scanCompletionSource.Task;
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
 
-        protected override void StopScan()
+        protected override Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {                
-                try
-                {
-                    _bluetoothCentralManager?.StopScan();
-                }
-                catch(Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _bluetoothCentralManager = null;
-                }
-            });
+            return _bluetoothCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(cancellationToken);
         }
         #endregion
 
         #region peripheral -- advertise
         protected override void StartAdvertising()
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            try
             {
-                try
-                {
-                    _bluetoothPeripheralManager = new CBPeripheralManager(new iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this),
-                                                                          DispatchQueue.MainQueue,
-                                                                          NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBPeripheralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            });
+                _bluetoothPeripheralManager = new CBPeripheralManager(new iOSBluetoothDeviceProximityProbePeripheralManagerDelegate(_deviceIdService, _deviceIdCharacteristic, this),
+                                                                      new DispatchQueue("ble"),
+                                                                      NSDictionary.FromObjectAndKey(NSNumber.FromBoolean(false), CBPeripheralManager.OptionShowPowerAlertKey));  // the base class handles prompting using to turn on bluetooth and stops the probe if the user does not.
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
 
         protected override void StopAdvertising()
         {
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            // remove service
+            try
             {
-                // remove service
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Removing service.", LoggingLevel.Normal, GetType());
-                    _bluetoothPeripheralManager?.RemoveService(_deviceIdService);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while removing service " + _deviceIdService.UUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+                SensusServiceHelper.Get().Logger.Log("Removing service.", LoggingLevel.Normal, GetType());
+                _bluetoothPeripheralManager?.RemoveService(_deviceIdService);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while removing service " + _deviceIdService.UUID + ":  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
 
-                // stop advertising
-                try
-                {
-                    SensusServiceHelper.Get().Logger.Log("Stopping peripheral advertising.", LoggingLevel.Normal, GetType());
-                    _bluetoothPeripheralManager?.StopAdvertising();
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                finally
-                {
-                    _bluetoothPeripheralManager = null;
-                }
-            });
+            // stop advertising
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("Stopping peripheral advertising.", LoggingLevel.Normal, GetType());
+                _bluetoothPeripheralManager?.StopAdvertising();
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+            finally
+            {
+                _bluetoothPeripheralManager = null;
+            }
         }
         #endregion
     }

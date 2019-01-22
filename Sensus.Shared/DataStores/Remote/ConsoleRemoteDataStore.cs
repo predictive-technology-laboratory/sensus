@@ -49,7 +49,7 @@ namespace Sensus.DataStores.Remote
         {
             get
             {
-                return base.StorageDescription ?? "Data will be discarded " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower();
+                return base.StorageDescription ?? "Data will be discarded " + TimeSpan.FromMilliseconds(WriteDelayMS).GetFullDescription(TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS)).ToLower() + ".";
             }
         }
 

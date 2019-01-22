@@ -195,7 +195,7 @@ namespace Sensus.UI
 
                 Button setLocationButton = new Button
                 {
-                    Text = "Set Location",
+                    Text = estimoteBeaconProbe.Location == null ? "Set Location" : "Location:  " + estimoteBeaconProbe.Location,
                     FontSize = 20,
                     HorizontalOptions = LayoutOptions.FillAndExpand
                 };
@@ -207,7 +207,7 @@ namespace Sensus.UI
                     List<EstimoteLocation> locations;
                     try
                     {
-                        locations = estimoteBeaconProbe.GetLocationsFromCloud();
+                        locations = await estimoteBeaconProbe.GetLocationsFromCloudAsync(TimeSpan.FromSeconds(10));
 
                         if (locations.Count == 0)
                         {
@@ -216,7 +216,7 @@ namespace Sensus.UI
                     }
                     catch (Exception ex)
                     {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Cannot set location:  " + ex);
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Failed to set location:  " + ex.Message);
                         return;
                     }
 

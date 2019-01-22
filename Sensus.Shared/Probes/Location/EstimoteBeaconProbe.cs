@@ -24,6 +24,7 @@ using System.IO;
 using Newtonsoft.Json.Linq;
 using Sensus.Concurrent;
 using System.Threading.Tasks;
+using Sensus.Extensions;
 
 namespace Sensus.Probes.Location
 {
@@ -180,7 +181,7 @@ namespace Sensus.Probes.Location
             }
         }
 
-        public List<string> GetBeaconTagsFromCloud()
+        public async Task<List<string>> GetBeaconTagsFromCloudAsync(TimeSpan? timeout = null)
         {
             List<string> tags = new List<string>();
 
@@ -191,7 +192,7 @@ namespace Sensus.Probes.Location
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
 
-                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                using (HttpWebResponse response = await request.GetResponseAsync(timeout) as HttpWebResponse)
                 {
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
@@ -235,7 +236,7 @@ namespace Sensus.Probes.Location
             return tags;
         }
 
-        public List<EstimoteLocation> GetLocationsFromCloud()
+        public async Task<List<EstimoteLocation>> GetLocationsFromCloudAsync(TimeSpan? timeout)
         {
             List<EstimoteLocation> locations = new List<EstimoteLocation>();
 
@@ -246,7 +247,7 @@ namespace Sensus.Probes.Location
                 request.Method = "GET";
                 request.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(EstimoteCloudAppId + ":" + EstimoteCloudAppToken)));
 
-                using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+                using (HttpWebResponse response = await request.GetResponseAsync(timeout) as HttpWebResponse)
                 {
                     if (response.StatusCode != HttpStatusCode.OK)
                     {

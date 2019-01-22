@@ -46,6 +46,16 @@ namespace ExampleScriptProbeAgent
         public TimeSpan? DeliveryInterval => TimeSpan.FromSeconds(5);
 
         /// <summary>
+        /// Tolerance before.
+        /// </summary>
+        public TimeSpan? DeliveryIntervalToleranceBefore => TimeSpan.Zero;
+
+        /// <summary>
+        /// Tolerance after.
+        /// </summary>
+        public TimeSpan? DeliveryIntervalToleranceAfter => TimeSpan.Zero;
+
+        /// <summary>
         /// Checks whether or not to deliver/defer a survey.
         /// </summary>
         /// <returns>Deliver/defer decision.</returns>

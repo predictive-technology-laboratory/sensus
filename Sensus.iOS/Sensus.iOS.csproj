@@ -339,7 +339,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
       <HintPath>..\packages\Estimote.iOS.Indoor.3.0.0\lib\xamarinios10\Estimote.iOS.Indoor.dll</HintPath>
     </Reference>
     <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.17.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+      <HintPath>..\packages\Sensus.1.18.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

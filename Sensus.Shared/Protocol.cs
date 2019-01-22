@@ -58,6 +58,10 @@ using Sensus.iOS.Probes.User.Health;
 using Plugin.Geolocator.Abstractions;
 #endif
 
+#if __ANDROID__
+using Sensus.Android;
+#endif
+
 namespace Sensus
 {
     /// <summary>
@@ -1983,12 +1987,13 @@ namespace Sensus
 
             }, timeUntilStart, "START", _id, this, null,
 #if __ANDROID__
-            $"Started study: {Name}.");
+            $"Started study: {Name}."
 #elif __IOS__
-            $"Please open to start study {Name}.");
+            $"Please open to start study {Name}."
 #else
-            $"Started study: {Name}.");
+            $"Started study: {Name}."
 #endif
+            , TimeSpan.Zero, TimeSpan.Zero);
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
@@ -2023,12 +2028,13 @@ namespace Sensus
 
             }, timeUntilStop, "STOP", _id, this, null,
 #if __ANDROID__
-            $"Stopped study: {Name}.");
+            $"Stopped study: {Name}."
 #elif __IOS__
-            $"Please open to stop study: {Name}.");
+            $"Please open to stop study: {Name}."
 #else
-            $"Stopped study: {Name}.");
+            $"Stopped study: {Name}."
 #endif
+            , TimeSpan.Zero, TimeSpan.Zero);
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStopCallback);
         }
@@ -2354,13 +2360,17 @@ namespace Sensus
             }
 
 #if __ANDROID__
+            AndroidSensusServiceHelper androidSensusServiceHelper = SensusServiceHelper.Get() as Android.AndroidSensusServiceHelper;
             eventName = TrackedEvent.Miscellaneous + ":" + GetType().Name;
             properties = new Dictionary<string, string>
             {
-                { "Wake Lock Count", (SensusServiceHelper.Get() as Android.AndroidSensusServiceHelper).WakeLockAcquisitionCount.ToString() }
+                { "Wake Lock Count", androidSensusServiceHelper.WakeLockAcquisitionCount.ToString() }                
             };
 
             Analytics.TrackEvent(eventName, properties);
+
+            // don't add time to tracked event, as it'll create too many distinct values.
+            properties.Add("Wake Lock Time", androidSensusServiceHelper.WakeLockTime.ToString());
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));
 #endif

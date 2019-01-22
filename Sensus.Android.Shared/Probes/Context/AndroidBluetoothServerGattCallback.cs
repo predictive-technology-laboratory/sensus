@@ -14,6 +14,7 @@
 
 using System;
 using Android.Bluetooth;
+using Sensus.Context;
 using Sensus.Exceptions;
 
 namespace Sensus.Android.Probes.Context
@@ -36,8 +37,6 @@ namespace Sensus.Android.Probes.Context
 
         public override void OnServiceAdded(GattStatus status, BluetoothGattService service)
         {
-            base.OnServiceAdded(status, service);
-
             SensusServiceHelper.Get().Logger.Log("Service added status:  " + status, LoggingLevel.Normal, GetType());
         }
 
@@ -50,8 +49,6 @@ namespace Sensus.Android.Probes.Context
         /// <param name="characteristic">Characteristic to read.</param>
         public override void OnCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset, BluetoothGattCharacteristic characteristic)
         {
-            base.OnCharacteristicReadRequest(device, requestId, offset, characteristic);
-
             try
             {
                 if (Server == null)

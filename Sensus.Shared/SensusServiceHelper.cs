@@ -673,6 +673,8 @@ namespace Sensus
 
                             _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
+                            bool testCurrentProtocol = true;
+
                             // if we're using an authentication service, check if the desired protocol has changed as indicated by 
                             // the protocol id returned with credentials.
                             if (protocolToTest.AuthenticationService != null)
@@ -684,6 +686,11 @@ namespace Sensus
 
                                     if (protocolToTest.Id != testCredentials.ProtocolId)
                                     {
+                                        // we're about to stop and delete the current protocol. don't bother testing it once we're done.
+                                        testCurrentProtocol = false;
+
+                                        Logger.Log("Protocol identifier no longer matches that of credentials. Downloading new protocol.", LoggingLevel.Normal, GetType());
+
                                         await protocolToTest.StopAsync();
                                         await protocolToTest.DeleteAsync();
 
@@ -694,6 +701,13 @@ namespace Sensus
                                         desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
 
                                         await desiredProtocol.StartAsync(cancellationToken);
+
+                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing to be
+                                        // gained in doing so. rather, just report the exception and continue running the new protocol.
+                                        if (desiredProtocol.Id != testCredentials.ProtocolId)
+                                        {
+                                            SensusException.Report("Retrieved new protocol on the fly, but its identifier does not match that of the credentials.");
+                                        }
                                     }
                                 }
                                 catch (Exception ex)
@@ -701,11 +715,12 @@ namespace Sensus
                                     SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
                                 }
                             }
-                            else
+
+                            if (testCurrentProtocol)
                             {
                                 await protocolToTest.TestHealthAsync(false, cancellationToken);
                             }
-                            
+
                             // write a heartbeat datum to let the backend know we're alive
                             protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
                         }
@@ -722,7 +737,7 @@ namespace Sensus
                         // test the notifier, which checks the push notification requests.
                         await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1));
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
 
                     scheduleHealthTestCallback = true;
                 }

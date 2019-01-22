@@ -42,7 +42,7 @@ namespace Sensus.Authentication
         private readonly string _getCredentialsURL;
         private Task<AmazonS3Credentials> _getCredentialsTask;
         private readonly object _getCredentialsTaskLocker = new object();
-        
+
         /// <summary>
         /// Gets or sets the base service URL.
         /// </summary>
@@ -226,11 +226,6 @@ namespace Sensus.Authentication
 
                 AmazonKeyManagementServiceClient kmsClient = new AmazonKeyManagementServiceClient(kmsCredentials.AccessKeyId, kmsCredentials.SecretAccessKey, kmsCredentials.SessionToken, kmsCredentials.RegionEndpoint);
 
-                kmsClient.ExceptionEvent += (sender, e) =>
-                {
-                    SensusException.Report("Exception from KMS client:  " + e);
-                };
-
                 // generate a symmetric data key
                 GenerateDataKeyResponse dataKeyResponse = await kmsClient.GenerateDataKeyAsync(new GenerateDataKeyRequest
                 {
@@ -269,9 +264,26 @@ namespace Sensus.Authentication
                 byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
                 encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
+            catch (WebException ex)
+            {
+                // don't report the exception if it was caused by a connection failure, as we'll get this under expected conditions.
+                if (ex.Status == WebExceptionStatus.ConnectFailure)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to connect when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+                // report non-connect based exceptions
+                else
+                {
+                    SensusException.Report("Non-connection web exception when running KMS-based envelope encryption:  " + ex.Message, ex);
+                }
+
+                // always throw the exception though, as we did not succeed.
+                throw ex;
+            }
+            // any other exceptions may be problematic, so report and throw them.
             catch (Exception ex)
             {
-                SensusException.Report("Exception while running envelope encryption with authentication service:  " + ex.Message, ex);
+                SensusException.Report("Exception when running KMS-based envelope encryption:  " + ex.Message, ex);
                 throw ex;
             }
         }
