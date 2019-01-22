@@ -249,26 +249,24 @@ namespace Sensus.Android
                 // allow user to pause/resume data collection via the notification
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                 {
-                    Intent actionIntent = null;
-                    string actionTitle = null;
-
-                    int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
+                    _foregroundServiceNotificationBuilder.SetActions();
 
                     if (numRunningStudies > 0)
                     {
-                        actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
-                        actionTitle = "Pause " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".";
-                    }
-                    else if (numPausedStudies > 0)
-                    {
-                        actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);
-                        actionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
+                        Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
+                        PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
+                        string actionTitle = "Pause " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_launcher, actionTitle, actionPendingIntent));
                     }
 
-                    if (actionIntent != null)
+                    int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
+
+                    if (numPausedStudies > 0)
                     {
+                        Intent actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);
                         PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
-                        _foregroundServiceNotificationBuilder.SetActions(new Notification.Action(Resource.Drawable.ic_launcher, actionTitle, actionPendingIntent));
+                        string actionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_launcher, actionTitle, actionPendingIntent));
                     }
                 }
             }
