@@ -641,10 +641,6 @@ namespace Sensus
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
-
-#if __ANDROID__
-                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
                 }
 
                 // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
@@ -760,10 +756,6 @@ namespace Sensus
                 {
                     unscheduleHealthTestCallback = true;
                 }
-
-#if __ANDROID__
-                (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
             }
 
             if (unscheduleHealthTestCallback)

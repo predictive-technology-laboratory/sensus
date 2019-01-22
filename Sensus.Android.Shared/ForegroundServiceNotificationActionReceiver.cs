@@ -34,6 +34,7 @@ namespace Sensus.Android
                 }
 
                 SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+
                 if (serviceHelper != null)
                 {
                     if (intent.Action == AndroidSensusService.NOTIFICATION_ACTION_PAUSE)

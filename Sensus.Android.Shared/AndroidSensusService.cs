@@ -258,7 +258,7 @@ namespace Sensus.Android
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
                         PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
                         string actionTitle = "Pause " + numPausableProtocols + " " + (numPausableProtocols == 1 ? "study" : "studies") + ".";
-                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, actionTitle, actionPendingIntent));
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_dark, actionTitle, actionPendingIntent));
                     }
 
                     int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
@@ -268,7 +268,7 @@ namespace Sensus.Android
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);
                         PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
                         string actionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
-                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_light, actionTitle, actionPendingIntent));
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_dark, actionTitle, actionPendingIntent));
                     }
                 }
             }
