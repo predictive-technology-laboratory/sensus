@@ -37,6 +37,11 @@ namespace Sensus
         /// <summary>
         /// The <see cref="Protocol"/> is in the middle of stopping and will soon become <see cref="Stopped"/>.
         /// </summary>
-        Stopping
+        Stopping,
+
+        /// <summary>
+        /// The protocol has been paused, which means that it is not storing data but is otherwise operating as normal.
+        /// </summary>
+        Paused
     }
 }

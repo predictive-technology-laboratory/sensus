@@ -2383,6 +2383,34 @@ namespace Sensus
             return events;
         }
 
+        public Task PauseAsync()
+        {
+            lock (this)
+            {
+                if (_state == ProtocolState.Running)
+                {
+                    _state = ProtocolState.Paused;
+                    SensusServiceHelper.Get().Logger.Log("Protocol paused.", LoggingLevel.Normal, GetType());
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task ResumeAsync()
+        {
+            lock (this)
+            {
+                if (_state == ProtocolState.Paused)
+                {
+                    _state = ProtocolState.Running;
+                    SensusServiceHelper.Get().Logger.Log("Protocol resumed.", LoggingLevel.Normal, GetType());
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
         public async Task StopAsync()
         {
             try
