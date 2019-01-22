@@ -42,6 +42,7 @@ namespace Sensus.Android.Callbacks
 
         private Intent CreateCallbackIntent(ScheduledCallback callback)
         {
+            
             Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
             callbackIntent.SetAction(callback.Id);
             callbackIntent.PutExtra(Notifier.DISPLAY_PAGE_KEY, callback.DisplayPage.ToString());

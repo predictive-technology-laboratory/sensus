@@ -276,26 +276,37 @@ namespace Sensus.Notifications
                 {
                     if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
                     {
-                        if (commandParts.Length != 4)
+                
+
+                        string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(cancellationToken);
+                        JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
+
+                        foreach (JObject protocolUpdate in protocolUpdates.Value<JArray>("updates"))
                         {
-                            throw new Exception("Invalid push notification callback command format:  " + command);
-                        }
+                            string callbackId = protocolUpdate.Value<string>("callback-id");
+                            string invocationId = protocolUpdate.Value<string>("invocation-id");
+                            try
+                            {
 
-                        string callbackId = commandParts[2];
-                        string invocationId = commandParts[3];
-
-                        // cancel any local notification associated with the callback (e.g., the notification 
-                        // that prompts for polling readings). this only applies to ios, as there are no such
-                        // notifications on android. furthermore, we need to do this before servicing the 
-                        // callback below, as the servicing routines will typically schedule a new poll with
-                        // new local/remote notifications. if we cancel the notification after servicing, 
-                        // we will end up cancelling the new notification rather than the current one (found
-                        // this out the hard way!).
+                                // cancel any local notification associated with the callback (e.g., the notification 
+                                // that prompts for polling readings). this only applies to ios, as there are no such
+                                // notifications on android. furthermore, we need to do this before servicing the 
+                                // callback below, as the servicing routines will typically schedule a new poll with
+                                // new local/remote notifications. if we cancel the notification after servicing, 
+                                // we will end up cancelling the new notification rather than the current one (found
+                                // this out the hard way!).
 #if __IOS__
-                        SensusContext.Current.Notifier.CancelNotification(callbackId);
+                                SensusContext.Current.Notifier.CancelNotification(callbackId);
 #endif
 
-                        await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
+                                await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("Exception while getting callback Id ( " + callbackId + ") for inovocation Id (" + invocationId + "):  " + ex.Message, ex);
+                            }
+
+                        }
                     }
                     else if (commandParts.First() == PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND)
                     {
