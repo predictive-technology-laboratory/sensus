@@ -251,13 +251,13 @@ namespace Sensus.Android
                 {
                     _foregroundServiceNotificationBuilder.SetActions();
 
-                    List<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause).ToList();
+                    int numPausableProtocols = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause);
 
-                    if (pausableProtocols.Count > 0)
+                    if (numPausableProtocols > 0)
                     {
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
                         PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
-                        string actionTitle = "Pause " + pausableProtocols.Count + " " + (pausableProtocols.Count == 1 ? "study" : "studies") + ".";
+                        string actionTitle = "Pause " + numPausableProtocols + " " + (numPausableProtocols == 1 ? "study" : "studies") + ".";
                         _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, actionTitle, actionPendingIntent));
                     }
 

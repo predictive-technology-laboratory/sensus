@@ -15,6 +15,7 @@
 using Android.Content;
 using Sensus.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Sensus.Android
@@ -37,9 +38,11 @@ namespace Sensus.Android
                 {
                     if (intent.Action == AndroidSensusService.NOTIFICATION_ACTION_PAUSE)
                     {
-                        foreach (Protocol protocol in serviceHelper.RegisteredProtocols.Where(protocol => protocol.State == ProtocolState.Running))
+                        List<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause).ToList();
+
+                        foreach (Protocol pausableProtocol in pausableProtocols)
                         {
-                            await protocol.PauseAsync();
+                            await pausableProtocol.PauseAsync();
                         }
                     }
                     else if (intent.Action == AndroidSensusService.NOTIFICATION_ACTION_RESUME)
