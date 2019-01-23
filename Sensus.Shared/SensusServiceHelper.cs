@@ -1699,7 +1699,7 @@ namespace Sensus
         {
             _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            foreach (Protocol runningProtocol in _registeredProtocols.ToArray().Where(p => p.State == ProtocolState.Running))
+            foreach (Protocol runningProtocol in _registeredProtocols.ToArray())
             {
                 try
                 {

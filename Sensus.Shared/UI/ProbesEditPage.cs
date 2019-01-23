@@ -23,7 +23,7 @@ namespace Sensus.UI
             : base(protocol, "Edit Probes")
         {
             // enabling all probes is only available when the protocol is stopped. the enable is an async operation, and 
-            // the probes don't play nice with each other when starting concurrently.
+            // the probes don't play nice with each other when starting/stopping concurrently.
             if (protocol.State == ProtocolState.Stopped)
             {
                 ToolbarItems.Add(new ToolbarItem("All", null, async () =>

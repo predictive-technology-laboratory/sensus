@@ -2487,7 +2487,7 @@ namespace Sensus
                     // add running protocol, which starts the health test callback.
                     await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
                 }
-                else if (_state == ProtocolState.Stopped)
+                else if (_state == ProtocolState.Stopped || _state == ProtocolState.Paused)
                 {
                     // remove running protocol, which stops the health test callback if all protocols have stopped.
                     await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);

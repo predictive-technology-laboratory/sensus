@@ -105,6 +105,25 @@ namespace Sensus.UI
                     await SensusServiceHelper.Get().FlashNotificationAsync("The study associated with this survey is currently starting up. Please try again shortly or check the Studies page.");
                     return;
                 }
+                else if(selectedScript.Runner.Probe.Protocol.State == ProtocolState.Paused)
+                {
+                    // ask the user to resume the protocol associated with the script
+                    if (await DisplayAlert("Resume Study?", "The study associated with this survey is paused. You cannot take this survey unless you resume the study. Would you like to resume the study now?", "Yes", "No"))
+                    {
+                        await selectedScript.Runner.Probe.Protocol.ResumeAsync();
+
+                        // if the protocol failed to resume, then bail.
+                        if (selectedScript.Runner.Probe.Protocol.State != ProtocolState.Running)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Study was not resumed.");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
                 else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Stopping)
                 {
                     await SensusServiceHelper.Get().FlashNotificationAsync("You cannot take this survey because the associated study is currently shutting down.");
@@ -112,7 +131,7 @@ namespace Sensus.UI
                 }
                 else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Stopped)
                 {
-                    // ask the user to start the protocol associated with the script, if it is not already running.
+                    // ask the user to start the protocol associated with the script
                     if (await DisplayAlert("Start Study?", "The study associated with this survey is not running. You cannot take this survey unless you start the study. Would you like to start the study now?", "Yes", "No"))
                     {
                         await selectedScript.Runner.Probe.Protocol.StartWithUserAgreementAsync();
