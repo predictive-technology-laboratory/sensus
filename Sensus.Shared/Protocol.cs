@@ -1689,21 +1689,21 @@ namespace Sensus
 
         private async Task PrivateStartAsync(CancellationToken cancellationToken)
         {
+            // only start protocols from the stopped state.
+            lock (this)
+            {
+                if (_state == ProtocolState.Stopped)
+                {
+                    _state = ProtocolState.Starting;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             try
             {
-                // prevent concurrent calls to the current method
-                lock (this)
-                {
-                    if (_state == ProtocolState.Stopped)
-                    {
-                        _state = ProtocolState.Starting;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
                 await FireStateChangedAsync();
 
                 await (_protocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
@@ -1897,14 +1897,10 @@ namespace Sensus
             catch (Exception startException)
             {
                 // the current method must leave the protocol in a suitable state, either stopped or running. if 
-                // we're in anything these states, then stop the protocol.
+                // we're not currently running, then ensure we become stopped.
                 if (_state != ProtocolState.Running)
                 {
-                    string message = "Error while starting study:  " + startException.Message;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
-
-                    // stop the study
+                    // stop the study. the following call is guaranteed to leave the protocol in the stopped state.
                     try
                     {
                         await StopAsync();
@@ -1913,6 +1909,10 @@ namespace Sensus
                     {
                         SensusServiceHelper.Get().Logger.Log("Exception while stopping study after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
                     }
+
+                    string message = "Error while starting study:  " + startException.Message;
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 }
 
                 // report any non-cancellation exceptions. we should not see them.
@@ -2332,6 +2332,7 @@ namespace Sensus
 
         public async Task PauseAsync()
         {
+            // only permit pausing from the running state
             lock (this)
             {
                 if (_state == ProtocolState.Running)
@@ -2349,6 +2350,7 @@ namespace Sensus
 
         public async Task ResumeAsync()
         {
+            // only permit resuming from the paused state
             lock (this)
             {
                 if (_state == ProtocolState.Paused)
@@ -2366,20 +2368,24 @@ namespace Sensus
 
         public async Task StopAsync()
         {
+            lock (this)
+            {
+                // the current method may be called during a failed protocol start, when the protocol's
+                // state is running. allow the current method to complete in such cases; also allow the
+                // protocol to be stopped from the paused state; otherwise, do not continue.
+                if (_state == ProtocolState.Starting || _state == ProtocolState.Running || _state == ProtocolState.Paused)
+                {
+                    _state = ProtocolState.Stopping;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            // guarantee that the current protocol will be left in the stopped state
             try
             {
-                lock (this)
-                {
-                    if (_state == ProtocolState.Starting || _state == ProtocolState.Running)
-                    {
-                        _state = ProtocolState.Stopping;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
                 await FireStateChangedAsync();
 
                 SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
@@ -2427,16 +2433,13 @@ namespace Sensus
                 }
 
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
-
-                _state = ProtocolState.Stopped;
-                await FireStateChangedAsync();
-
-                await SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
             }
             catch (Exception ex)
             {
                 SensusException.Report("Exception while stopping protocol:  " + ex.Message, ex);
-
+            }
+            finally
+            {
                 _state = ProtocolState.Stopped;
                 await FireStateChangedAsync();
             }
@@ -2474,10 +2477,11 @@ namespace Sensus
 
         private async Task FireStateChangedAsync()
         {
-            SensusServiceHelper.Get().Logger.Log("New state:  " + _state, LoggingLevel.Normal, GetType());
-
+            // the current method may be called in response to a UI interaction, so ensure we do not throw exceptions back.
             try
             {
+                SensusServiceHelper.Get().Logger.Log("New state:  " + _state, LoggingLevel.Normal, GetType());
+
                 if (_state == ProtocolState.Running)
                 {
                     // add running protocol, which starts the health test callback.
@@ -2488,31 +2492,18 @@ namespace Sensus
                     // remove running protocol, which stops the health test callback if all protocols have stopped.
                     await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
                 }
+
+                StateChanged?.Invoke(this, _state);
+                FireCaptionChanged();
+
+#if __ANDROID__
+                // the foreground service notification's pause/resume buttons depend on protocol state. reissue the notification to reflect new state.
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+#endif
             }
             catch (Exception ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Exception while firing state changed:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-
-            StateChanged?.Invoke(this, _state);
-            FireCaptionChanged();
-
-#if __ANDROID__
-            // the foreground service notification's pause/resume buttons depend on protocol state. reissue the notification to reflect new state.
-            (SensusServiceHelper.Get() as AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
-
-            // save app state, as it's important for the current state to be adhered to if the app crashes for some reason.
-            try
-            {
-                // save the state of the app in case it crashes or -- on ios -- in case the user terminates
-                // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
-                await SensusServiceHelper.Get().SaveAsync();
-            }
-            catch (Exception saveException)
-            {
-                // don't stop the protocol if we weren't able to save. we might recover.
-                SensusServiceHelper.Get().Logger.Log("Failure while saving app state:  " + saveException.Message, LoggingLevel.Normal, GetType());
+                SensusException.Report("Exception while firing protocol state changed event:  " + ex.Message, ex);
             }
         }
 

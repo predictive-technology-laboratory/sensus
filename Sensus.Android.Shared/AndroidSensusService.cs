@@ -249,10 +249,11 @@ namespace Sensus.Android
                 // allow user to pause/resume data collection via the notification
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                 {
+                    // clear current actions
                     _foregroundServiceNotificationBuilder.SetActions();
 
+                    // add pause action
                     int numPausableProtocols = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause);
-
                     if (numPausableProtocols > 0)
                     {
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
@@ -261,8 +262,8 @@ namespace Sensus.Android
                         _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_dark, actionTitle, actionPendingIntent));
                     }
 
+                    // add resume action
                     int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
-
                     if (numPausedStudies > 0)
                     {
                         Intent actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);

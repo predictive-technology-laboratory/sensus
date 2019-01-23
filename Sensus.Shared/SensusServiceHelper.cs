@@ -634,6 +634,7 @@ namespace Sensus
 
         public async Task AddRunningProtocolIdAsync(string id)
         {
+            bool save = false;
             bool scheduleHealthTestCallback = false;
 
             lock (_runningProtocolIds)
@@ -641,6 +642,7 @@ namespace Sensus
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
+                    save = true;
                 }
 
                 // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
@@ -744,17 +746,28 @@ namespace Sensus
             {
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
+
+            if (save)
+            {
+                await SaveAsync();
+            }
         }
 
         public async Task RemoveRunningProtocolIdAsync(string id)
         {
+            bool save = false;
             bool unscheduleHealthTestCallback = false;
 
             lock (_runningProtocolIds)
             {
-                if (_runningProtocolIds.Remove(id) && _runningProtocolIds.Count == 0)
+                if (_runningProtocolIds.Remove(id))
                 {
-                    unscheduleHealthTestCallback = true;
+                    save = true;
+
+                    if (_runningProtocolIds.Count == 0)
+                    {
+                        unscheduleHealthTestCallback = true;
+                    }
                 }
             }
 
@@ -762,6 +775,11 @@ namespace Sensus
             {
                 await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
                 _healthTestCallback = null;
+            }
+
+            if (save)
+            {
+                await SaveAsync();
             }
         }
 
