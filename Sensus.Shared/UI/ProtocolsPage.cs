@@ -192,10 +192,7 @@ namespace Sensus.UI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 // must reset the protocol selection manually
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    _protocolsList.SelectedItem = null;
-                });
+                _protocolsList.SelectedItem = null;
 
                 if (selectedAction == "Start")
                 {
@@ -481,8 +478,8 @@ namespace Sensus.UI
                         await selectedProtocol.DeleteAsync();
                     }
                 }
+                #endregion
             };
-            #endregion
 
             Content = _protocolsList;
 

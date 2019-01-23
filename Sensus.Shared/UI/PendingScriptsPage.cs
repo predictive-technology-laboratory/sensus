@@ -93,17 +93,19 @@ namespace Sensus.UI
 
                 Script selectedScript = scriptList.SelectedItem as Script;
 
+                bool abortScript = false;
+
                 // the selected script might already be in the process of submission (e.g., waiting for GPS tagging). don't let the user open it again.
                 if (selectedScript.Submitting)
                 {
                     await SensusServiceHelper.Get().FlashNotificationAsync("The selected survey has already been completed and is being submitted. You cannot take it again.");
-                    return;
+                    abortScript = true;
                 }
                 // the script might be saved from a previous run of the app, and the protocol might not yet be running.
                 else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Starting)
                 {
                     await SensusServiceHelper.Get().FlashNotificationAsync("The study associated with this survey is currently starting up. Please try again shortly or check the Studies page.");
-                    return;
+                    abortScript = true;
                 }
                 else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Paused)
                 {
@@ -116,18 +118,18 @@ namespace Sensus.UI
                         if (selectedScript.Runner.Probe.Protocol.State != ProtocolState.Running)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Study was not resumed.");
-                            return;
+                            abortScript = true;
                         }
                     }
                     else
                     {
-                        return;
+                        abortScript = true;
                     }
                 }
                 else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Stopping)
                 {
                     await SensusServiceHelper.Get().FlashNotificationAsync("You cannot take this survey because the associated study is currently shutting down.");
-                    return;
+                    abortScript = true;
                 }
                 else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Stopped)
                 {
@@ -140,26 +142,37 @@ namespace Sensus.UI
                         if (selectedScript.Runner.Probe.Protocol.State != ProtocolState.Running)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Study was not started.");
-                            return;
+                            abortScript = true;
                         }
                     }
                     else
                     {
-                        return;
+                        abortScript = true;
                     }
                 }
+
+                if (abortScript)
+                {
+                    // must reset the script selection manually
+                    scriptList.SelectedItem = null;
+                    return;
+                }
+
+                selectedScript.Submitting = true;
 
                 // let the script agent know and store a datum to record the event
                 await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Opened) ?? Task.CompletedTask);
                 await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, selectedScript), CancellationToken.None);
 
-                selectedScript.Submitting = true;
-
                 IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(selectedScript.RunTime, selectedScript.InputGroups, null, selectedScript.Runner.AllowCancel, null, null, selectedScript.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", selectedScript.Runner.DisplayProgress, null);
 
-                bool canceled = inputGroups == null;
+                // must reset the script selection manually
+                scriptList.SelectedItem = null;
 
-                if (canceled)
+                bool userCancelled = inputGroups == null;
+
+                // track script state and completions. do this immediately so that all timestamps are as accurate as possible.
+                if (userCancelled)
                 {
                     // let the script agent know and store a datum to record the event
                     await (selectedScript.Runner.Probe.Agent?.ObserveAsync(selectedScript, ScriptState.Cancelled) ?? Task.CompletedTask);
@@ -189,7 +202,7 @@ namespace Sensus.UI
                 {
                     foreach (Input input in inputGroup.Inputs)
                     {
-                        if (canceled)
+                        if (userCancelled)
                         {
                             input.Reset();
                         }
@@ -219,21 +232,16 @@ namespace Sensus.UI
                     }
                 }
 
-                // if the user cancelled, deselect the survey.
-                if (canceled)
+                // remove the submitted script. this should be done before the script is marked 
+                // as not submitting in order to prevent the user from retaking the script.
+                if (!userCancelled)
                 {
-                    scriptList.SelectedItem = null;
-                }
-                else
-                {
-                    // otherwise, remove the submitted script.
                     await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript, true);
                 }
 
-                // update UI to indicate that the script is no longer being submitted
+                // update UI to indicate that the script is no longer being submitted. this should 
+                // be done after the script is removed in order to prevent the user from retaking the script.
                 selectedScript.Submitting = false;
-
-                SensusServiceHelper.Get().Logger.Log("\"" + selectedScript.Runner.Name + "\" has finished running.", LoggingLevel.Normal, typeof(Script));
 
                 // run a local-to-remote transfer if desired, respecting wifi requirements. do this after everything above, as it may take
                 // quite some time to transfer the data depending on its size.
@@ -242,6 +250,8 @@ namespace Sensus.UI
                     SensusServiceHelper.Get().Logger.Log("Forcing a local-to-remote transfer.", LoggingLevel.Normal, typeof(Script));
                     await selectedScript.Runner.Probe.Protocol.RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken.None);
                 }
+
+                SensusServiceHelper.Get().Logger.Log("\"" + selectedScript.Runner.Name + "\" has completed processing.", LoggingLevel.Normal, typeof(Script));
             };
 
             // display an informative message when there are no surveys
