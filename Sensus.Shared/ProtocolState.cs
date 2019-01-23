@@ -40,7 +40,9 @@ namespace Sensus
         Stopping,
 
         /// <summary>
-        /// The protocol has been paused, which means that it is not storing data but is otherwise operating as normal.
+        /// The protocol has been paused, which means that it is not storing data and is not registered as <see cref="Running"/>, but is
+        /// active in other ways (e.g., surveys will fire, push notifications will be received, data will be transmitted to the
+        /// <see cref="DataStores.Remote.RemoteDataStore"/>).
         /// </summary>
         Paused
     }

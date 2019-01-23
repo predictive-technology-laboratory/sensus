@@ -741,7 +741,6 @@ namespace Sensus
                 }
             }
 
-            // schedule the callback outside of the lock, as we're async.
             if (scheduleHealthTestCallback)
             {
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
@@ -781,11 +780,6 @@ namespace Sensus
             {
                 await SaveAsync();
             }
-        }
-
-        public bool ProtocolShouldBeRunning(Protocol protocol)
-        {
-            return _runningProtocolIds.Contains(protocol.Id);
         }
 
         public List<Protocol> GetRunningProtocols()

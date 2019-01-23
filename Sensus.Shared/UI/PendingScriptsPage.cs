@@ -75,7 +75,7 @@ namespace Sensus.UI
             Title = "Pending Surveys";
 
             ListView scriptList = new ListView(ListViewCachingStrategy.RecycleElement)
-            {                
+            {
                 BindingContext = SensusServiceHelper.Get().ScriptsToRun  // used to show/hide when there are no surveys
             };
 
@@ -105,7 +105,7 @@ namespace Sensus.UI
                     await SensusServiceHelper.Get().FlashNotificationAsync("The study associated with this survey is currently starting up. Please try again shortly or check the Studies page.");
                     return;
                 }
-                else if(selectedScript.Runner.Probe.Protocol.State == ProtocolState.Paused)
+                else if (selectedScript.Runner.Probe.Protocol.State == ProtocolState.Paused)
                 {
                     // ask the user to resume the protocol associated with the script
                     if (await DisplayAlert("Resume Study?", "The study associated with this survey is paused. You cannot take this survey unless you resume the study. Would you like to resume the study now?", "Yes", "No"))
@@ -199,19 +199,19 @@ namespace Sensus.UI
                             // that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
                             // collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
                             // grouped across runs. this is the difference between scriptId and runId in the following line.
-                            await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow), 
-                                                                                              selectedScript.Runner.Script.Id, 
-                                                                                              selectedScript.Runner.Name, 
-                                                                                              input.GroupId, 
-                                                                                              input.Id, 
-                                                                                              selectedScript.Id, 
-                                                                                              input.Value, 
-                                                                                              selectedScript.CurrentDatum?.Id, 
-                                                                                              input.Latitude, 
-                                                                                              input.Longitude, 
-                                                                                              input.LocationUpdateTimestamp, 
-                                                                                              selectedScript.RunTime.Value, 
-                                                                                              input.CompletionRecords, 
+                            await selectedScript.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+                                                                                              selectedScript.Runner.Script.Id,
+                                                                                              selectedScript.Runner.Name,
+                                                                                              input.GroupId,
+                                                                                              input.Id,
+                                                                                              selectedScript.Id,
+                                                                                              input.Value,
+                                                                                              selectedScript.CurrentDatum?.Id,
+                                                                                              input.Latitude,
+                                                                                              input.Longitude,
+                                                                                              input.LocationUpdateTimestamp,
+                                                                                              selectedScript.RunTime.Value,
+                                                                                              input.CompletionRecords,
                                                                                               input.SubmissionTimestamp.Value), CancellationToken.None);
 
                             inputStored = true;

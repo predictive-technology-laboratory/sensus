@@ -2370,9 +2370,13 @@ namespace Sensus
         {
             lock (this)
             {
-                // the current method may be called during a failed protocol start, when the protocol's
-                // state is running. allow the current method to complete in such cases; also allow the
-                // protocol to be stopped from the paused state; otherwise, do not continue.
+                // stop the protocol from the following states:
+                // 
+                // * starting:  this may result from a failed start attempt
+                // * running:  the most common state from which to stop the protocol
+                // * paused:  the user has explicitly paused the protocol
+                //
+                // otherwise (from stopping and stopped states), do not continue.
                 if (_state == ProtocolState.Starting || _state == ProtocolState.Running || _state == ProtocolState.Paused)
                 {
                     _state = ProtocolState.Stopping;
