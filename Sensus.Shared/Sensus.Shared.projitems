@@ -234,7 +234,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />

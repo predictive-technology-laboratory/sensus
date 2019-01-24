@@ -5789,8 +5789,6 @@
   "Sensus.UI.PendingScriptsPage.#ctor": "Sensus.UI.PendingScriptsPage.yml",
   "Sensus.UI.PointsOfInterestPage": "Sensus.UI.PointsOfInterestPage.yml",
   "Sensus.UI.PointsOfInterestPage.#ctor(Sensus.Concurrent.ConcurrentObservableCollection{Sensus.Probes.Location.PointOfInterest})": "Sensus.UI.PointsOfInterestPage.yml",
-  "Sensus.UI.PrivacyPolicyPage": "Sensus.UI.PrivacyPolicyPage.yml",
-  "Sensus.UI.PrivacyPolicyPage.#ctor": "Sensus.UI.PrivacyPolicyPage.yml",
   "Sensus.UI.ProbePage": "Sensus.UI.ProbePage.yml",
   "Sensus.UI.ProbePage.#ctor(Sensus.Probes.Probe)": "Sensus.UI.ProbePage.yml",
   "Sensus.UI.ProbesEditPage": "Sensus.UI.ProbesEditPage.yml",

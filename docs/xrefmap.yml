@@ -49299,24 +49299,6 @@ references:
   commentId: Overload:Sensus.UI.PointsOfInterestPage.#ctor
   fullName: Sensus.UI.PointsOfInterestPage.PointsOfInterestPage
   nameWithType: PointsOfInterestPage.PointsOfInterestPage
-- uid: Sensus.UI.PrivacyPolicyPage
-  name: PrivacyPolicyPage
-  href: api/Sensus.UI.PrivacyPolicyPage.html
-  commentId: T:Sensus.UI.PrivacyPolicyPage
-  fullName: Sensus.UI.PrivacyPolicyPage
-  nameWithType: PrivacyPolicyPage
-- uid: Sensus.UI.PrivacyPolicyPage.#ctor
-  name: PrivacyPolicyPage()
-  href: api/Sensus.UI.PrivacyPolicyPage.html#Sensus_UI_PrivacyPolicyPage__ctor
-  commentId: M:Sensus.UI.PrivacyPolicyPage.#ctor
-  fullName: Sensus.UI.PrivacyPolicyPage.PrivacyPolicyPage()
-  nameWithType: PrivacyPolicyPage.PrivacyPolicyPage()
-- uid: Sensus.UI.PrivacyPolicyPage.#ctor*
-  name: PrivacyPolicyPage
-  href: api/Sensus.UI.PrivacyPolicyPage.html#Sensus_UI_PrivacyPolicyPage__ctor_
-  commentId: Overload:Sensus.UI.PrivacyPolicyPage.#ctor
-  fullName: Sensus.UI.PrivacyPolicyPage.PrivacyPolicyPage
-  nameWithType: PrivacyPolicyPage.PrivacyPolicyPage
 - uid: Sensus.UI.ProbePage
   name: ProbePage
   href: api/Sensus.UI.ProbePage.html
