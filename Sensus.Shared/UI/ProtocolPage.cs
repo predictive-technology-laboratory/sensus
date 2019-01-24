@@ -79,32 +79,45 @@ namespace Sensus.UI
 
             setIdButton.Clicked += async (o, e) =>
             {
-                Input input = await SensusServiceHelper.Get().PromptForInputAsync("Set Study Identifier", new SingleLineTextInput("Identifier:", "id", Keyboard.Text)
+                if (await DisplayAlert("Confirm", "Setting the study identifier should not be necessary. Proceed only if you understand the consequences. Do you wish to proceed?", "Yes", "No"))
                 {
-                    Required = true
+                    string newId = null;
 
-                }, CancellationToken.None, true, "Set", null, null, "Are you sure you wish to set the study identifier? This should not be necessary under normal circumstances. Proceed only if you understand the implications.", false);
+                    if (await DisplayAlert("Random Identifier", "Do you wish to use a random identifier?", "Yes", "No"))
+                    {
+                        newId = Guid.NewGuid().ToString();
+                    }
+                    else
+                    {
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Study Identifier", new SingleLineTextInput("Identifier:", "id", Keyboard.Text)
+                        {
+                            Required = true
 
-                if (string.IsNullOrWhiteSpace(input?.Value?.ToString()))
-                {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Identifier not set.");
-                    return;
-                }
+                        }, CancellationToken.None, true, "Set", null, null, null, false);
 
-                string newId = input.Value.ToString().Trim();
+                        newId = input?.Value?.ToString().Trim();
+                    }
 
-                if (protocol.Id == newId)
-                {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Identifier unchanged.");
-                }
-                else if (SensusServiceHelper.Get().RegisteredProtocols.Any(p => p.Id == newId))
-                {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("A study with the same identifier already exists.");
-                }
-                else
-                {
-                    protocol.Id = newId;
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Identifier set.");
+                    if (string.IsNullOrWhiteSpace(newId))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("No identifier supplied. Identifier not set.");
+                    }
+                    else
+                    {
+                        if (protocol.Id == newId)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Identifier unchanged.");
+                        }
+                        else if (SensusServiceHelper.Get().RegisteredProtocols.Any(p => p.Id == newId))
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("A study with the same identifier already exists. Identifier not set.");
+                        }
+                        else
+                        {
+                            protocol.Id = newId;
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Identifier set.");
+                        }
+                    }
                 }
             };
 

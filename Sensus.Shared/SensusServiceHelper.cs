@@ -682,6 +682,12 @@ namespace Sensus
                                     // get fresh credentials and check the protocol ID
                                     AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
 
+                                    // we're getting app center errors indicating a null reference somewhere in this try clause. do some extra reporting.
+                                    if (testCredentials == null)
+                                    {
+                                        throw new NullReferenceException("Returned test credentials are null.");
+                                    }
+
                                     if (protocolToTest.Id != testCredentials.ProtocolId)
                                     {
                                         // we're about to stop and delete the current protocol. don't bother testing it once we're done.
@@ -692,8 +698,16 @@ namespace Sensus
                                         await protocolToTest.StopAsync();
                                         await protocolToTest.DeleteAsync();
 
-                                        // get the desired protocol and wire it up with the current authentication service
+                                        // get the desired protocol
                                         Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), testCredentials);
+
+                                        // we're getting app center errors indicating a null reference somewhere in this try clause. do some extra reporting.
+                                        if (desiredProtocol == null)
+                                        {
+                                            throw new NullReferenceException("Retrieved new protcol that was null.");
+                                        }
+
+                                        // wire up new protocol with the current authentication service
                                         desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
                                         desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
                                         desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
@@ -704,7 +718,7 @@ namespace Sensus
                                         // gained in doing so. rather, just report the exception and continue running the new protocol.
                                         if (desiredProtocol.Id != testCredentials.ProtocolId)
                                         {
-                                            SensusException.Report("Retrieved new protocol on the fly, but its identifier does not match that of the credentials.");
+                                            SensusException.Report("Retrieved new protocol, but its identifier does not match that of the credentials.");
                                         }
                                     }
                                 }

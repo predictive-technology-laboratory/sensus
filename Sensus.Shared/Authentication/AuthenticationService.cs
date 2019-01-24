@@ -266,8 +266,9 @@ namespace Sensus.Authentication
             }
             catch (WebException ex)
             {
-                // don't report the exception if it was caused by a connection failure, as we'll get this under expected conditions.
-                if (ex.Status == WebExceptionStatus.ConnectFailure)
+                // don't report the exceptions caused by connection issues, as we'll get these under normal operating conditions (e.g., lack of wifi).
+                if (ex.Status == WebExceptionStatus.ConnectFailure ||
+                    ex.Status == WebExceptionStatus.NameResolutionFailure)
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to connect when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
@@ -277,13 +278,23 @@ namespace Sensus.Authentication
                     SensusException.Report("Non-connection web exception when running KMS-based envelope encryption:  " + ex.Message, ex);
                 }
 
-                // always throw the exception though, as we did not succeed.
+                // always throw the exception, as we did not succeed.
+                throw ex;
+            }
+            // do not report cancellation exceptions, as we'll get these under normal operating conditions (timeouts, delays, etc.)
+            catch (OperationCanceledException ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Cancelled KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+
+                // always throw the exception, as we did not succeed.
                 throw ex;
             }
             // any other exceptions may be problematic, so report and throw them.
             catch (Exception ex)
             {
                 SensusException.Report("Exception when running KMS-based envelope encryption:  " + ex.Message, ex);
+
+                // always throw the exception, as we did not succeed.
                 throw ex;
             }
         }

@@ -168,7 +168,8 @@ namespace Sensus.Notifications
             }
             catch (Exception ex)
             {
-                SensusException.Report("Failed to get protocol with id " + protocolId + ":  " + ex.Message, ex);
+                // it's possible for the user to delete the protocol but to continue receiving push notifications. ignore them.
+                SensusServiceHelper.Get().Logger.Log("Failed to get protocol " + protocolId + " for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
                 return;
             }
 
