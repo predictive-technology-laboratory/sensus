@@ -1317,6 +1317,13 @@ namespace Sensus
         public List<string> AvailableTags { get; set; } = new List<string>();
 
         /// <summary>
+        /// Whether or not to allow the user to put the protocol into the <see cref="ProtocolState.Paused"/> state.
+        /// </summary>
+        /// <value><c>true</c> to allow pause; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Pause:  ", true, 48)]
+        public bool AllowPause { get; set; } = false;
+
+        /// <summary>
         /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value>The tag identifier.</value>
@@ -1351,7 +1358,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 48, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 50, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1370,7 +1377,7 @@ namespace Sensus
         /// the <see cref="PushNotificationsSharedAccessSignature"/> for this hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 49, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 51, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1383,7 +1390,7 @@ namespace Sensus
         /// the DefaultListenSharedAccessSignature policy and copy the entire value of the connection string into this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 50, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 52, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1402,7 +1409,7 @@ namespace Sensus
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
-        [ListUiProperty("Compatibility:", true, 51, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
@@ -1682,21 +1689,22 @@ namespace Sensus
 
         private async Task PrivateStartAsync(CancellationToken cancellationToken)
         {
+            // only start protocols from the stopped state.
+            lock (this)
+            {
+                if (_state == ProtocolState.Stopped)
+                {
+                    _state = ProtocolState.Starting;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             try
             {
-                // prevent concurrent calls to the current method
-                lock (this)
-                {
-                    if (_state == ProtocolState.Stopped)
-                    {
-                        _state = ProtocolState.Starting;
-                        FireStateChanged();
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
+                await FireStateChangedAsync();
 
                 await (_protocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
@@ -1706,16 +1714,14 @@ namespace Sensus
                 _scheduledStartCallback = null;
                 FireCaptionChanged();
 
-                // there are five steps to starting a protocol
+                // there are four steps to starting a protocol
                 //
                 // 1) local data store
                 // 2) remote data store
                 // 3) probes
                 // 4) push notification registrations
-                // 5) saving the protocol
                 //
-                // give each step 20 percent
-                double perStepPercent = 0.2;
+                double perStepPercent = 0.25;
 
                 // track any exception that can cancel the start
                 Exception cancelStartException = null;
@@ -1877,51 +1883,11 @@ namespace Sensus
                     }
                 }
 
-                // add running protocol, which starts the health test callback.
-                if (cancelStartException == null)
-                {
-                    try
-                    {
-                        await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
-                    }
-                    catch (Exception addRunningProtocolException)
-                    {
-                        // don't stop the protocol if we weren't able to add. we might recover.
-                        SensusServiceHelper.Get().Logger.Log("Exception while adding running protocol:  " + addRunningProtocolException.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
-
-                // save app state
-                if (cancelStartException == null)
-                {
-                    try
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        // save the state of the app in case it crashes or -- on ios -- in case the user terminates
-                        // the app by swiping it away. once saved, we'll start back up properly if/when the app restarts
-                        await SensusServiceHelper.Get().SaveAsync();
-
-                        await (_protocolStartAddProgressAsync?.Invoke(perStepPercent) ?? Task.CompletedTask);
-                    }
-                    catch (OperationCanceledException cancellationException)
-                    {
-                        cancelStartException = cancellationException;
-                    }
-                    catch (Exception saveException)
-                    {
-                        // don't stop the protocol if we weren't able to save. we might recover.
-                        SensusServiceHelper.Get().Logger.Log("Failure while saving app state:  " + saveException.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
-
                 // wrap up if there was no start-cancelling exception
                 if (cancelStartException == null)
                 {
                     _state = ProtocolState.Running;
-                    FireStateChanged();
-
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Started \"" + _name + "\".");
+                    await FireStateChangedAsync();
                 }
                 else
                 {
@@ -1931,14 +1897,10 @@ namespace Sensus
             catch (Exception startException)
             {
                 // the current method must leave the protocol in a suitable state, either stopped or running. if 
-                // we're in anything these states, then stop the protocol.
+                // we're not currently running, then ensure we become stopped.
                 if (_state != ProtocolState.Running)
                 {
-                    string message = "Error while starting study:  " + startException.Message;
-                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
-
-                    // stop the study
+                    // stop the study. the following call is guaranteed to leave the protocol in the stopped state.
                     try
                     {
                         await StopAsync();
@@ -1947,6 +1909,10 @@ namespace Sensus
                     {
                         SensusServiceHelper.Get().Logger.Log("Exception while stopping study after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
                     }
+
+                    string message = "Error while starting study:  " + startException.Message;
+                    SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                    await SensusServiceHelper.Get().FlashNotificationAsync(message);
                 }
 
                 // report any non-cancellation exceptions. we should not see them.
@@ -2285,25 +2251,6 @@ namespace Sensus
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
-            if (_state != ProtocolState.Starting && _state != ProtocolState.Running)
-            {
-                try
-                {
-                    await StopAsync();
-                }
-                catch (Exception)
-                {
-                }
-
-                try
-                {
-                    await StartAsync(cancellationToken);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
             if (_state == ProtocolState.Running)
             {
                 if (await _localDataStore.TestHealthAsync(events) == HealthTestResult.Restart)
@@ -2383,29 +2330,72 @@ namespace Sensus
             return events;
         }
 
+        public async Task PauseAsync()
+        {
+            // only permit pausing from the running state
+            lock (this)
+            {
+                if (_state == ProtocolState.Running)
+                {
+                    _state = ProtocolState.Paused;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            await FireStateChangedAsync();
+        }
+
+        public async Task ResumeAsync()
+        {
+            // only permit resuming from the paused state
+            lock (this)
+            {
+                if (_state == ProtocolState.Paused)
+                {
+                    _state = ProtocolState.Running;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            await FireStateChangedAsync();
+        }
+
         public async Task StopAsync()
         {
+            lock (this)
+            {
+                // stop the protocol from the following states:
+                // 
+                // * starting:  this may result from a failed start attempt
+                // * running:  the most common state from which to stop the protocol
+                // * paused:  the user has explicitly paused the protocol
+                //
+                // otherwise (from stopping and stopped states), do not continue.
+                if (_state == ProtocolState.Starting || _state == ProtocolState.Running || _state == ProtocolState.Paused)
+                {
+                    _state = ProtocolState.Stopping;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            // guarantee that the current protocol will be left in the stopped state
             try
             {
-                lock (this)
-                {
-                    if (_state == ProtocolState.Starting || _state == ProtocolState.Running)
-                    {
-                        _state = ProtocolState.Stopping;
-                        FireStateChanged();
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
+                await FireStateChangedAsync();
 
                 SensusServiceHelper.Get().Logger.Log("Stopping protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
 
                 // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
                 await CancelScheduledStopAsync();
-
-                await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
 
                 foreach (Probe probe in _probes)
                 {
@@ -2447,23 +2437,15 @@ namespace Sensus
                 }
 
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
-
-                // save the state of the app, so that if it terminates unexpectedly (e.g., if the user swipes it away)
-                // we won't attempt to restart the protocol if/when the app restarts.
-                await SensusServiceHelper.Get().SaveAsync();
-
-                SensusServiceHelper.Get().Logger.Log("Stopped protocol \"" + _name + "\".", LoggingLevel.Normal, GetType());
-                await SensusServiceHelper.Get().FlashNotificationAsync("Stopped \"" + _name + "\".");
-
-                _state = ProtocolState.Stopped;
-                FireStateChanged();
             }
             catch (Exception ex)
             {
                 SensusException.Report("Exception while stopping protocol:  " + ex.Message, ex);
-
+            }
+            finally
+            {
                 _state = ProtocolState.Stopped;
-                FireStateChanged();
+                await FireStateChangedAsync();
             }
         }
 
@@ -2497,10 +2479,36 @@ namespace Sensus
             return _name;
         }
 
-        private void FireStateChanged()
+        private async Task FireStateChangedAsync()
         {
-            StateChanged?.Invoke(this, _state);
-            FireCaptionChanged();
+            // the current method may be called in response to a UI interaction, so ensure we do not throw exceptions back.
+            try
+            {
+                SensusServiceHelper.Get().Logger.Log("New state:  " + _state, LoggingLevel.Normal, GetType());
+
+                if (_state == ProtocolState.Running)
+                {
+                    // add running protocol, which starts the health test callback.
+                    await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
+                }
+                else if (_state == ProtocolState.Stopped || _state == ProtocolState.Paused)
+                {
+                    // remove running protocol, which stops the health test callback if all protocols have stopped.
+                    await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
+                }
+
+                StateChanged?.Invoke(this, _state);
+                FireCaptionChanged();
+
+#if __ANDROID__
+                // the foreground service notification's pause/resume buttons depend on protocol state. reissue the notification to reflect new state.
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+#endif
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while firing protocol state changed event:  " + ex.Message, ex);
+            }
         }
 
         private void FireCaptionChanged()

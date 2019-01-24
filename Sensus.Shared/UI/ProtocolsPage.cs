@@ -91,10 +91,19 @@ namespace Sensus.UI
                 if (selectedProtocol.State == ProtocolState.Running)
                 {
                     actions.Add("Stop");
+
+                    if (selectedProtocol.AllowPause)
+                    {
+                        actions.Add("Pause");
+                    }
                 }
                 else if (selectedProtocol.State == ProtocolState.Stopped)
                 {
                     actions.Add("Start");
+                }
+                else if (selectedProtocol.State == ProtocolState.Paused)
+                {
+                    actions.Add("Resume");
                 }
 
                 if (selectedProtocol.AllowTagging)
@@ -183,10 +192,7 @@ namespace Sensus.UI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 // must reset the protocol selection manually
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    _protocolsList.SelectedItem = null;
-                });
+                _protocolsList.SelectedItem = null;
 
                 if (selectedAction == "Start")
                 {
@@ -205,6 +211,14 @@ namespace Sensus.UI
                     {
                         await selectedProtocol.StopAsync();
                     }
+                }
+                else if (selectedAction == "Pause")
+                {
+                    await selectedProtocol.PauseAsync();
+                }
+                else if (selectedAction == "Resume")
+                {
+                    await selectedProtocol.ResumeAsync();
                 }
                 else if (selectedAction == "Tag Data")
                 {
@@ -464,8 +478,8 @@ namespace Sensus.UI
                         await selectedProtocol.DeleteAsync();
                     }
                 }
+                #endregion
             };
-            #endregion
 
             Content = _protocolsList;
 

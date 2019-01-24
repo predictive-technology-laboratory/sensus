@@ -255,6 +255,8 @@ namespace Sensus.DataStores.Remote
 
         public override async Task StopAsync()
         {
+            await base.StopAsync();
+
             await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver

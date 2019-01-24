@@ -634,6 +634,7 @@ namespace Sensus
 
         public async Task AddRunningProtocolIdAsync(string id)
         {
+            bool save = false;
             bool scheduleHealthTestCallback = false;
 
             lock (_runningProtocolIds)
@@ -641,10 +642,7 @@ namespace Sensus
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
-
-#if __ANDROID__
-                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
+                    save = true;
                 }
 
                 // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
@@ -743,27 +741,33 @@ namespace Sensus
                 }
             }
 
-            // schedule the callback outside of the lock, as we're async.
             if (scheduleHealthTestCallback)
             {
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
+            }
+
+            if (save)
+            {
+                await SaveAsync();
             }
         }
 
         public async Task RemoveRunningProtocolIdAsync(string id)
         {
+            bool save = false;
             bool unscheduleHealthTestCallback = false;
 
             lock (_runningProtocolIds)
             {
-                if (_runningProtocolIds.Remove(id) && _runningProtocolIds.Count == 0)
+                if (_runningProtocolIds.Remove(id))
                 {
-                    unscheduleHealthTestCallback = true;
-                }
+                    save = true;
 
-#if __ANDROID__
-                (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
+                    if (_runningProtocolIds.Count == 0)
+                    {
+                        unscheduleHealthTestCallback = true;
+                    }
+                }
             }
 
             if (unscheduleHealthTestCallback)
@@ -771,11 +775,11 @@ namespace Sensus
                 await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
                 _healthTestCallback = null;
             }
-        }
 
-        public bool ProtocolShouldBeRunning(Protocol protocol)
-        {
-            return _runningProtocolIds.Contains(protocol.Id);
+            if (save)
+            {
+                await SaveAsync();
+            }
         }
 
         public List<Protocol> GetRunningProtocols()
@@ -1689,7 +1693,7 @@ namespace Sensus
         {
             _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            foreach (Protocol runningProtocol in _registeredProtocols.ToArray().Where(p => p.State == ProtocolState.Running))
+            foreach (Protocol runningProtocol in _registeredProtocols.ToArray())
             {
                 try
                 {

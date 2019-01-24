@@ -45,6 +45,8 @@ namespace Sensus.Android
     {
         public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
         public const string FROM_ON_BOOT_KEY = "from-on-boot";
+        public const string NOTIFICATION_ACTION_PAUSE = "NOTIFICATION-ACTION-PAUSE";
+        public const string NOTIFICATION_ACTION_RESUME = "NOTIFICATION-ACTION-RESUME";
 
         public static Intent StartService(global::Android.Content.Context context, bool fromOnBoot)
         {
@@ -76,6 +78,7 @@ namespace Sensus.Android
         private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
         private Notification.Builder _foregroundServiceNotificationBuilder;
         private AndroidPowerConnectionChangeBroadcastReceiver _powerBroadcastReceiver;
+        private ForegroundServiceNotificationActionReceiver _notificationActionReceiver;
 
         public override void OnCreate()
         {
@@ -90,6 +93,14 @@ namespace Sensus.Android
                 Notifier = new AndroidNotifier(this),
                 PowerConnectionChangeListener = new AndroidPowerConnectionChangeListener()
             };
+
+            // register the notification action receiver
+            _notificationActionReceiver = new ForegroundServiceNotificationActionReceiver();
+            IntentFilter notificationActionIntentFilter = new IntentFilter();
+            notificationActionIntentFilter.AddAction(NOTIFICATION_ACTION_PAUSE);
+            notificationActionIntentFilter.AddAction(NOTIFICATION_ACTION_RESUME);
+            notificationActionIntentFilter.AddCategory(Intent.CategoryDefault);
+            RegisterReceiver(_notificationActionReceiver, notificationActionIntentFilter);
 
             // promote this service to a foreground service as soon as possible. we use a foreground service for several 
             // reasons. it's honest and transparent. it lets us work effectively with the android 8.0 restrictions on 
@@ -217,7 +228,8 @@ namespace Sensus.Android
             // after the service helper has been initialized, we'll have more information about the studies.
             else
             {
-                int numRunningStudies = serviceHelper.RunningProtocolIds.Count;
+                int numRunningStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Running);
+
                 _foregroundServiceNotificationBuilder.SetContentTitle("You are enrolled in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
 
                 string contentText = "";
@@ -233,6 +245,33 @@ namespace Sensus.Android
                 contentText += "Tap to open Sensus.";
 
                 _foregroundServiceNotificationBuilder.SetContentText(contentText);
+
+                // allow user to pause/resume data collection via the notification
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                {
+                    // clear current actions
+                    _foregroundServiceNotificationBuilder.SetActions();
+
+                    // add pause action
+                    int numPausableProtocols = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause);
+                    if (numPausableProtocols > 0)
+                    {
+                        Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
+                        PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
+                        string actionTitle = "Pause " + numPausableProtocols + " " + (numPausableProtocols == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, actionTitle, actionPendingIntent));  // note that notification actions no longer display the icon
+                    }
+
+                    // add resume action
+                    int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
+                    if (numPausedStudies > 0)
+                    {
+                        Intent actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);
+                        PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(this, 0, actionIntent, PendingIntentFlags.CancelCurrent);
+                        string actionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_light, actionTitle, actionPendingIntent));  // note that notification actions no longer display the icon
+                    }
+                }
             }
         }
 
@@ -309,6 +348,13 @@ namespace Sensus.Android
             try
             {
                 UnregisterReceiver(_powerBroadcastReceiver);
+            }
+            catch (Exception)
+            { }
+
+            try
+            {
+                UnregisterReceiver(_notificationActionReceiver);
             }
             catch (Exception)
             { }

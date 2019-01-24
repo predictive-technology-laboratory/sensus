@@ -9,6 +9,7 @@
     <Import_RootNamespace>Sensus.Android</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ForegroundServiceNotificationActionReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidGyroscopeProbe.cs" />
