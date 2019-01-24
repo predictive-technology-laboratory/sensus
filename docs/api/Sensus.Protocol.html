@@ -350,6 +350,34 @@ public bool AllowParticipationScanning { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowPause_" data-uid="Sensus.Protocol.AllowPause*"></a>
+  <h4 id="Sensus_Protocol_AllowPause" data-uid="Sensus.Protocol.AllowPause">AllowPause</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to put the protocol into the <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Paused">Paused</a> state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Pause:  &quot;, true, 48)]
+public bool AllowPause { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow pause; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AllowSubmitData_" data-uid="Sensus.Protocol.AllowSubmitData*"></a>
   <h4 id="Sensus_Protocol_AllowSubmitData" data-uid="Sensus.Protocol.AllowSubmitData">AllowSubmitData</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to manually submit data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -1308,7 +1336,7 @@ the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_PushNotifications
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 49, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 51, false)]
 public string PushNotificationsHub { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1338,7 +1366,7 @@ the DefaultListenSharedAccessSignature policy and copy the entire value of the c
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 50, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 52, false)]
 public string PushNotificationsSharedAccessSignature { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -2229,6 +2257,56 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_PauseAsync_" data-uid="Sensus.Protocol.PauseAsync*"></a>
+  <h4 id="Sensus_Protocol_PauseAsync" data-uid="Sensus.Protocol.PauseAsync">PauseAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task PauseAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ResumeAsync_" data-uid="Sensus.Protocol.ResumeAsync*"></a>
+  <h4 id="Sensus_Protocol_ResumeAsync" data-uid="Sensus.Protocol.ResumeAsync">ResumeAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ResumeAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

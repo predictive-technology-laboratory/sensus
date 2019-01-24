@@ -721,6 +721,18 @@ references:
   commentId: F:Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
   fullName: Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
   nameWithType: AndroidSensusService.FROM_ON_BOOT_KEY
+- uid: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE
+  name: NOTIFICATION_ACTION_PAUSE
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_NOTIFICATION_ACTION_PAUSE
+  commentId: F:Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE
+  fullName: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE
+  nameWithType: AndroidSensusService.NOTIFICATION_ACTION_PAUSE
+- uid: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME
+  name: NOTIFICATION_ACTION_RESUME
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_NOTIFICATION_ACTION_RESUME
+  commentId: F:Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME
+  fullName: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME
+  nameWithType: AndroidSensusService.NOTIFICATION_ACTION_RESUME
 - uid: Sensus.Android.AndroidSensusService.OnBind(Android.Content.Intent)
   name: OnBind(Intent)
   href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_OnBind_Android_Content_Intent_
@@ -1801,6 +1813,36 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   fullName: Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   nameWithType: AndroidSensusContext.SymmetricEncryption
+- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver
+  name: ForegroundServiceNotificationActionReceiver
+  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html
+  commentId: T:Sensus.Android.ForegroundServiceNotificationActionReceiver
+  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver
+  nameWithType: ForegroundServiceNotificationActionReceiver
+- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor
+  name: ForegroundServiceNotificationActionReceiver()
+  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver__ctor
+  commentId: M:Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor
+  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver()
+  nameWithType: ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver()
+- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor*
+  name: ForegroundServiceNotificationActionReceiver
+  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver__ctor_
+  commentId: Overload:Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor
+  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver
+  nameWithType: ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver
+- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  name: OnReceive(Context, Intent)
+  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
+  commentId: M:Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
+  nameWithType: ForegroundServiceNotificationActionReceiver.OnReceive(Context, Intent)
+- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive*
+  name: OnReceive
+  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver_OnReceive_
+  commentId: Overload:Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive
+  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive
+  nameWithType: ForegroundServiceNotificationActionReceiver.OnReceive
 - uid: Sensus.Android.Notifications
   name: Sensus.Android.Notifications
   href: api/Sensus.Android.Notifications.html
@@ -24738,6 +24780,27 @@ references:
   commentId: Overload:Sensus.Extensions.UriExtensions.DownloadString
   fullName: Sensus.Extensions.UriExtensions.DownloadString
   nameWithType: UriExtensions.DownloadString
+- uid: Sensus.Extensions.WebRequestExtensions
+  name: WebRequestExtensions
+  href: api/Sensus.Extensions.WebRequestExtensions.html
+  commentId: T:Sensus.Extensions.WebRequestExtensions
+  fullName: Sensus.Extensions.WebRequestExtensions
+  nameWithType: WebRequestExtensions
+- uid: Sensus.Extensions.WebRequestExtensions.GetResponseAsync(System.Net.WebRequest,System.Nullable{System.TimeSpan})
+  name: GetResponseAsync(WebRequest, Nullable<TimeSpan>)
+  href: api/Sensus.Extensions.WebRequestExtensions.html#Sensus_Extensions_WebRequestExtensions_GetResponseAsync_System_Net_WebRequest_System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Extensions.WebRequestExtensions.GetResponseAsync(System.Net.WebRequest,System.Nullable{System.TimeSpan})
+  name.vb: GetResponseAsync(WebRequest, Nullable(Of TimeSpan))
+  fullName: Sensus.Extensions.WebRequestExtensions.GetResponseAsync(System.Net.WebRequest, System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Extensions.WebRequestExtensions.GetResponseAsync(System.Net.WebRequest, System.Nullable(Of System.TimeSpan))
+  nameWithType: WebRequestExtensions.GetResponseAsync(WebRequest, Nullable<TimeSpan>)
+  nameWithType.vb: WebRequestExtensions.GetResponseAsync(WebRequest, Nullable(Of TimeSpan))
+- uid: Sensus.Extensions.WebRequestExtensions.GetResponseAsync*
+  name: GetResponseAsync
+  href: api/Sensus.Extensions.WebRequestExtensions.html#Sensus_Extensions_WebRequestExtensions_GetResponseAsync_
+  commentId: Overload:Sensus.Extensions.WebRequestExtensions.GetResponseAsync
+  fullName: Sensus.Extensions.WebRequestExtensions.GetResponseAsync
+  nameWithType: WebRequestExtensions.GetResponseAsync
 - uid: Sensus.HealthTestResult
   name: HealthTestResult
   href: api/Sensus.HealthTestResult.html
@@ -33864,18 +33927,21 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppToken
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.EstimoteCloudAppToken
   nameWithType: EstimoteBeaconProbe.EstimoteCloudAppToken
-- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
-  name: GetBeaconTagsFromCloud()
-  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloud
-  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
-  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud()
-  nameWithType: EstimoteBeaconProbe.GetBeaconTagsFromCloud()
-- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud*
-  name: GetBeaconTagsFromCloud
-  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloud_
-  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
-  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud
-  nameWithType: EstimoteBeaconProbe.GetBeaconTagsFromCloud
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(System.Nullable{System.TimeSpan})
+  name: GetBeaconTagsFromCloudAsync(Nullable<TimeSpan>)
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloudAsync_System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(System.Nullable{System.TimeSpan})
+  name.vb: GetBeaconTagsFromCloudAsync(Nullable(Of TimeSpan))
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(System.Nullable(Of System.TimeSpan))
+  nameWithType: EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(Nullable<TimeSpan>)
+  nameWithType.vb: EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(Nullable(Of TimeSpan))
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync*
+  name: GetBeaconTagsFromCloudAsync
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloudAsync_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync
+  nameWithType: EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync
 - uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetChartDataPointFromDatum(Sensus.Datum)
   name: GetChartDataPointFromDatum(Datum)
   href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetChartDataPointFromDatum_Sensus_Datum_
@@ -33924,18 +33990,21 @@ references:
   commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries
   fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetChartSeries
   nameWithType: EstimoteBeaconProbe.GetChartSeries
-- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
-  name: GetLocationsFromCloud()
-  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud
-  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
-  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud()
-  nameWithType: EstimoteBeaconProbe.GetLocationsFromCloud()
-- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud*
-  name: GetLocationsFromCloud
-  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud_
-  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
-  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud
-  nameWithType: EstimoteBeaconProbe.GetLocationsFromCloud
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync(System.Nullable{System.TimeSpan})
+  name: GetLocationsFromCloudAsync(Nullable<TimeSpan>)
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloudAsync_System_Nullable_System_TimeSpan__
+  commentId: M:Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync(System.Nullable{System.TimeSpan})
+  name.vb: GetLocationsFromCloudAsync(Nullable(Of TimeSpan))
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync(System.Nullable<System.TimeSpan>)
+  fullName.vb: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync(System.Nullable(Of System.TimeSpan))
+  nameWithType: EstimoteBeaconProbe.GetLocationsFromCloudAsync(Nullable<TimeSpan>)
+  nameWithType.vb: EstimoteBeaconProbe.GetLocationsFromCloudAsync(Nullable(Of TimeSpan))
+- uid: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync*
+  name: GetLocationsFromCloudAsync
+  href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloudAsync_
+  commentId: Overload:Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync
+  fullName: Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync
+  nameWithType: EstimoteBeaconProbe.GetLocationsFromCloudAsync
 - uid: Sensus.Probes.Location.EstimoteBeaconProbe.IndoorLocationUpdateIntervalMS
   name: IndoorLocationUpdateIntervalMS
   href: api/Sensus.Probes.Location.EstimoteBeaconProbe.html#Sensus_Probes_Location_EstimoteBeaconProbe_IndoorLocationUpdateIntervalMS
@@ -44844,6 +44913,18 @@ references:
   commentId: Overload:Sensus.Protocol.AllowParticipationScanning
   fullName: Sensus.Protocol.AllowParticipationScanning
   nameWithType: Protocol.AllowParticipationScanning
+- uid: Sensus.Protocol.AllowPause
+  name: AllowPause
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowPause
+  commentId: P:Sensus.Protocol.AllowPause
+  fullName: Sensus.Protocol.AllowPause
+  nameWithType: Protocol.AllowPause
+- uid: Sensus.Protocol.AllowPause*
+  name: AllowPause
+  href: api/Sensus.Protocol.html#Sensus_Protocol_AllowPause_
+  commentId: Overload:Sensus.Protocol.AllowPause
+  fullName: Sensus.Protocol.AllowPause
+  nameWithType: Protocol.AllowPause
 - uid: Sensus.Protocol.AllowSubmitData
   name: AllowSubmitData
   href: api/Sensus.Protocol.html#Sensus_Protocol_AllowSubmitData
@@ -45369,6 +45450,18 @@ references:
   commentId: Overload:Sensus.Protocol.ParticipationHorizonDays
   fullName: Sensus.Protocol.ParticipationHorizonDays
   nameWithType: Protocol.ParticipationHorizonDays
+- uid: Sensus.Protocol.PauseAsync
+  name: PauseAsync()
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PauseAsync
+  commentId: M:Sensus.Protocol.PauseAsync
+  fullName: Sensus.Protocol.PauseAsync()
+  nameWithType: Protocol.PauseAsync()
+- uid: Sensus.Protocol.PauseAsync*
+  name: PauseAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_PauseAsync_
+  commentId: Overload:Sensus.Protocol.PauseAsync
+  fullName: Sensus.Protocol.PauseAsync
+  nameWithType: Protocol.PauseAsync
 - uid: Sensus.Protocol.PointsOfInterest
   name: PointsOfInterest
   href: api/Sensus.Protocol.html#Sensus_Protocol_PointsOfInterest
@@ -45447,6 +45540,18 @@ references:
   commentId: Overload:Sensus.Protocol.RemoteDataStore
   fullName: Sensus.Protocol.RemoteDataStore
   nameWithType: Protocol.RemoteDataStore
+- uid: Sensus.Protocol.ResumeAsync
+  name: ResumeAsync()
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ResumeAsync
+  commentId: M:Sensus.Protocol.ResumeAsync
+  fullName: Sensus.Protocol.ResumeAsync()
+  nameWithType: Protocol.ResumeAsync()
+- uid: Sensus.Protocol.ResumeAsync*
+  name: ResumeAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ResumeAsync_
+  commentId: Overload:Sensus.Protocol.ResumeAsync
+  fullName: Sensus.Protocol.ResumeAsync
+  nameWithType: Protocol.ResumeAsync
 - uid: Sensus.Protocol.RewardThreshold
   name: RewardThreshold
   href: api/Sensus.Protocol.html#Sensus_Protocol_RewardThreshold
@@ -45882,6 +45987,12 @@ references:
   commentId: T:Sensus.ProtocolState
   fullName: Sensus.ProtocolState
   nameWithType: ProtocolState
+- uid: Sensus.ProtocolState.Paused
+  name: Paused
+  href: api/Sensus.ProtocolState.html#Sensus_ProtocolState_Paused
+  commentId: F:Sensus.ProtocolState.Paused
+  fullName: Sensus.ProtocolState.Paused
+  nameWithType: ProtocolState.Paused
 - uid: Sensus.ProtocolState.Running
   name: Running
   href: api/Sensus.ProtocolState.html#Sensus_ProtocolState_Running
@@ -46560,18 +46671,6 @@ references:
   commentId: F:Sensus.SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
   fullName: Sensus.SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
   nameWithType: SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID
-- uid: Sensus.SensusServiceHelper.ProtocolShouldBeRunning(Sensus.Protocol)
-  name: ProtocolShouldBeRunning(Protocol)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtocolShouldBeRunning_Sensus_Protocol_
-  commentId: M:Sensus.SensusServiceHelper.ProtocolShouldBeRunning(Sensus.Protocol)
-  fullName: Sensus.SensusServiceHelper.ProtocolShouldBeRunning(Sensus.Protocol)
-  nameWithType: SensusServiceHelper.ProtocolShouldBeRunning(Protocol)
-- uid: Sensus.SensusServiceHelper.ProtocolShouldBeRunning*
-  name: ProtocolShouldBeRunning
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ProtocolShouldBeRunning_
-  commentId: Overload:Sensus.SensusServiceHelper.ProtocolShouldBeRunning
-  fullName: Sensus.SensusServiceHelper.ProtocolShouldBeRunning
-  nameWithType: SensusServiceHelper.ProtocolShouldBeRunning
 - uid: Sensus.SensusServiceHelper.PushNotificationToken
   name: PushNotificationToken
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PushNotificationToken
