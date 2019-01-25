@@ -28,7 +28,6 @@ using System.ComponentModel;
 using Sensus.Extensions;
 using Sensus.Exceptions;
 using Sensus.Probes.User.Scripts;
-using Xamarin.Forms;
 
 namespace Sensus.Probes
 {

@@ -1242,7 +1242,6 @@ namespace Sensus
                     return AuthenticationService;
                 }
             }
-
         }
 
         #endregion
@@ -1414,7 +1413,7 @@ namespace Sensus
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
-        /// Sets wether to allow the user to disable specific probes when starting the <see cref="Protocol"/>.
+        /// Whether or not to allow the user to disable probes when starting the <see cref="Protocol"/>.
         /// </summary>
         /// <value>Allow user to disable probes on start up.</value>
         [OnOffUiProperty("Allow Probe Disable On Startup:", true, 54)]
@@ -2064,10 +2063,17 @@ namespace Sensus
 
             int collectionDescriptionFontSize = 15;
 
+            // if the user is allowed to disable probes, display a picker.
             ItemPickerPageInput probePicker = null;
             if (AllowProbeDisableOnStartUp)
             {
-                probePicker = new ItemPickerPageInput("Select data streams", probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList())
+                // initially select all probes that are enabled. probes may have been disabled due to lack of system support or 
+                // due to user preferences.
+                List<int> initialSelectedIndices = probeDescriptions.Select((probeDescription, index) => probeDescription.Item1.Enabled ? index : -1)
+                                                                    .Where(index => index >= 0)
+                                                                    .ToList();
+
+                probePicker = new ItemPickerPageInput("Select data streams", probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList(), initialSelectedIndices)
                 {
                     DisplayNumber = false,
                     RandomizeItemOrder = false,
@@ -2076,6 +2082,7 @@ namespace Sensus
 
                 inputs.Add(probePicker);
             }
+            // if the user is not allowed to disable probes, then display a label with probe information.
             else
             {
                 StringBuilder collectionSummary = new StringBuilder();
@@ -2208,7 +2215,7 @@ namespace Sensus
                     }
                 }
 
-                // if the user was given an option to disable probes, set their preferences now.
+                // if the user was given an option to disable probes, set their probe enable/disable preferences now.
                 if (probePicker != null)
                 {
                     List<string> selectedProbeDescriptions = probePicker.Value as List<string>;
