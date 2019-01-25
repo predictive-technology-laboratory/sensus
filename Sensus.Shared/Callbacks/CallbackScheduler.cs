@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Extensions;
 using Sensus.Notifications;
+using System.Linq;
 
 namespace Sensus.Callbacks
 {
@@ -45,6 +46,12 @@ namespace Sensus.Callbacks
 
         public async Task<ScheduledCallbackState> ScheduleCallbackAsync(ScheduledCallback callback)
         {
+            // the next execution time is computed from the time the current method is called, as the
+            // caller may hang on to the ScheduledCallback for some time before calling the current method.
+            // we set the time here, before adding it to the collection below, so that any callback
+            // in the collection will certainly have a next execution time.
+            callback.NextExecution = DateTime.Now + callback.Delay;
+
             if (callback.State != ScheduledCallbackState.Created)
             {
                 SensusException.Report("Attemped to schedule callback " + callback.Id + ", which is in the " + callback.State + " state and not the " + ScheduledCallbackState.Created + " state.");
@@ -52,11 +59,14 @@ namespace Sensus.Callbacks
             }
             else if (_idCallback.TryAdd(callback.Id, callback))
             {
+                // assign an invocation identifier and update state
                 callback.InvocationId = Guid.NewGuid().ToString();
-                callback.NextExecution = DateTime.Now + callback.Delay;
                 callback.State = ScheduledCallbackState.Scheduled;
 
-                // schedule callback locally
+                // batch next execution if possible
+                BatchNextExecutionWithToleratedDelay(callback);
+
+                // schedule callback locally per the current platform
                 await ScheduleCallbackPlatformSpecificAsync(callback);
 
                 // request a push notification for the callback (adds redundancy) 
@@ -68,6 +78,39 @@ namespace Sensus.Callbacks
             }
 
             return callback.State;
+        }
+
+        /// <summary>
+        /// Batches the <see cref="ScheduledCallback.NextExecution"/> value within the parameters of toleration (<see cref="ScheduledCallback.DelayToleranceBefore"/>
+        /// and <see cref="ScheduledCallback.DelayToleranceAfter"/>), given the <see cref="ScheduledCallback"/>s that are already scheduled to run.
+        /// </summary>
+        /// <param name="callback">Callback.</param>
+        private void BatchNextExecutionWithToleratedDelay(ScheduledCallback callback)
+        {
+            // if delay tolerance is allowed, look for other scheduled callbacks in range of the delay tolerance.
+            if (callback.DelayToleranceTotal.Ticks > 0)
+            {
+                DateTime rangeStart = callback.NextExecution.Value - callback.DelayToleranceBefore;
+                DateTime rangeEnd = callback.NextExecution.Value + callback.DelayToleranceAfter;
+
+                ScheduledCallback closestCallbackInRange = _idCallback.Values.Where(existingCallback => existingCallback != callback &&                        // the current callback will already have been added to the collection. don't consider it.
+                                                                                                        existingCallback.NextExecution.Value >= rangeStart &&  // consider callbacks within range of the current
+                                                                                                        existingCallback.NextExecution.Value <= rangeEnd)      // consider callbacks within range of the current
+
+                                                                             .OrderBy(existingCallback => Math.Abs(callback.NextExecution.Value.Ticks - existingCallback.NextExecution.Value.Ticks))  // get existing callback with execution time closest to the current callback's time
+                                                                             .FirstOrDefault();  // there might not be a callback within range
+                // use the closest if there is one in range
+                if (closestCallbackInRange != null)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Batching callback " + callback.Id + ":" + Environment.NewLine +
+                                                         "\tCurrent time:  " + callback.NextExecution + Environment.NewLine + 
+                                                         "\tRange:  " + rangeStart + " -- " + rangeEnd + Environment.NewLine + 
+                                                         "\tNearest:  " + closestCallbackInRange.Id + Environment.NewLine + 
+                                                         "\tNew time:  " + closestCallbackInRange.NextExecution, LoggingLevel.Normal, GetType());
+
+                    callback.NextExecution = closestCallbackInRange.NextExecution;
+                }
+            }
         }
 
         public bool ContainsCallback(ScheduledCallback callback)
@@ -104,17 +147,17 @@ namespace Sensus.Callbacks
             // app. in this case, the service helper would be null and there is nothing to do.
             if (serviceHelper != null)
             {
-                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
-                // this only applies to android, as iOS does not support such functionality. furthermore, it is the job of the android-specific implementation
-                // of ServiceCallbackAsync to call the corresponding "let sleep".
-                serviceHelper.KeepDeviceAwake();
-
                 ScheduledCallback callback = TryGetCallback(callbackId);
 
                 // callback might have been unscheduled
                 if (callback != null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
+
+                    // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
+                    // this only applies to android, as iOS does not support such functionality. furthermore, it is the job of the android-specific implementation
+                    // of ServiceCallbackAsync to call the corresponding "let sleep".
+                    serviceHelper.KeepDeviceAwake();
 
                     // if the cancellation token is cancelled, cancel the callback
                     cancellationToken.Register(() =>
@@ -189,12 +232,12 @@ namespace Sensus.Callbacks
                             }
 
                             // if the callback specified a timeout, request cancellation at the specified time.
-                            if (callback.CallbackTimeout.HasValue)
+                            if (callback.Timeout.HasValue)
                             {
-                                callback.Canceller.CancelAfter(callback.CallbackTimeout.Value);
+                                callback.Canceller.CancelAfter(callback.Timeout.Value);
                             }
 
-                            await callback.Action(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
+                            await callback.ActionAsync(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
                         }
                     }
                     catch (Exception raiseException)
@@ -235,6 +278,8 @@ namespace Sensus.Callbacks
                                 callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
                                 callback.State = ScheduledCallbackState.Scheduled;
 
+                                BatchNextExecutionWithToleratedDelay(callback);
+
                                 // schedule callback locally
                                 await scheduleRepeatCallbackAsync();
 
@@ -268,7 +313,7 @@ namespace Sensus.Callbacks
             // push notification requests for scheduled callbacks do not make sense on android, as the callback will reliably 
             // come back to the app through the alarm system.
 #if __IOS__
-            await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+            await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
 #else
             await Task.CompletedTask;
 #endif
@@ -354,7 +399,7 @@ namespace Sensus.Callbacks
                 UnscheduleCallbackPlatformSpecific(callback);
 
                 // delete the push notification
-                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), default(CancellationToken));
+                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
 
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }

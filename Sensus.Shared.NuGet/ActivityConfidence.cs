@@ -15,7 +15,7 @@
 namespace Sensus.Probes.Movement
 {
     /// <summary>
-    /// Confidence of the inferred activity.
+    /// Confidence of the inferred activity. Note that, on Android, only <see cref="NotAvailable"/> will be reported.
     /// </summary>
     public enum ActivityConfidence
     {

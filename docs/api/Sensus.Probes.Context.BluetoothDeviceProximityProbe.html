@@ -101,9 +101,6 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">PollingProbe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a>
-    </div>
-    <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ResetAsync">PollingProbe.ResetAsync()</a>
     </div>
     <div>
@@ -132,6 +129,12 @@
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AcPowerConnectPollOverridesScheduledPolls">PollingProbe.AcPowerConnectPollOverridesScheduledPolls</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS">PollingProbe.DelayToleranceBeforeMS</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">PollingProbe.DelayToleranceAfterMS</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_CollectionDescription">PollingProbe.CollectionDescription</a>
@@ -305,13 +308,13 @@
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_DisplayName">Probe.DisplayName</a></div>
   
   
-  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_EncounteredDeviceData_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData*"></a>
-  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_EncounteredDeviceData" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.EncounteredDeviceData">EncounteredDeviceData</h4>
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadAttemptCount_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadAttemptCount" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadAttemptCount">ReadAttemptCount</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected List&lt;BluetoothDeviceProximityDatum&gt; EncounteredDeviceData { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public int ReadAttemptCount { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -323,7 +326,65 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityDatum.html">BluetoothDeviceProximityDatum</a>&gt;</td>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadDurationMS_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadDurationMS" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadDurationMS">ReadDurationMS</h4>
+  <div class="markdown level1 summary"><p>The length of time to read identifiers from scanned devices (in milliseconds). The longer the read, the
+more likely it is that all scanned devices will be read. However, note that, if the <a class="xref" href="Sensus.Protocol.html">Protocol</a> 
+is configured to use <a class="xref" href="../articles/push-notifications.html">push notifications</a>, then the combination of 
+<a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanDurationMS">ScanDurationMS</a> and <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadDurationMS">ReadDurationMS</a> should not exceed 20 seconds, as there is 
+limited time to complete all background processing. It is difficult to recommend a &quot;best&quot; value, but 
+10000ms seems like a reasonable read duration, all things considered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Read Duration (MS):&quot;, true, 5, true)]
+public int ReadDurationMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The read time ms.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadSuccessCount_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadSuccessCount" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadSuccessCount">ReadSuccessCount</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int ReadSuccessCount { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -332,10 +393,13 @@
   
   <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanDurationMS_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanDurationMS*"></a>
   <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanDurationMS" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanDurationMS">ScanDurationMS</h4>
-  <div class="markdown level1 summary"><p>The length of time to scan for devices in proximity (in milliseconds). Note that, if the <a class="xref" href="Sensus.Protocol.html">Protocol</a>
-is configured to use <a class="xref" href="../articles/push-notifications.html">push notifications</a>, then this should not be set above 20 seconds 
-on iOS as background execution is limited to 30 seconds total. It should also not be set to less than 10 seconds
-as the scan can take at least this long to pick up nearby devices. The recommended value is 20000ms.</p>
+  <div class="markdown level1 summary"><p>The length of time to scan for devices in proximity (in milliseconds). The longer the scan, the
+more likely it is that devices in the environment will be detected. However, a longer scan also
+means that a detected device may go out of range before the scan completes and device identifiers
+are read. Also note that, if the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is configured to use <a class="xref" href="../articles/push-notifications.html">push notifications</a>, 
+then the combination of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanDurationMS">ScanDurationMS</a> and <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html#Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadDurationMS">ReadDurationMS</a> should not
+exceed 20 seconds, as there is limited time to complete all background processing. It is difficult
+to recommend a &quot;best&quot; value, but 10000ms seems like a reasonable scan duration, all things considered.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -361,6 +425,53 @@ public int ScanDurationMS { get; set; }</code></pre>
   </table>
   <h3 id="methods">Methods
   </h3>
+  
+  
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_CompleteReadAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_CompleteReadAsync_System_Threading_Tasks_TaskCompletionSource_System_String__System_Threading_CancellationToken_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.CompleteReadAsync(System.Threading.Tasks.TaskCompletionSource{System.String},System.Threading.CancellationToken)">CompleteReadAsync(TaskCompletionSource&lt;String&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Task&lt;string&gt; CompleteReadAsync(TaskCompletionSource&lt;string&gt; readCompletionSource, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.TaskCompletionSource</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">readCompletionSource</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_GetChartDataPointFromDatum_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.GetChartDataPointFromDatum*"></a>
@@ -586,6 +697,90 @@ public int ScanDurationMS { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ProtectedStartAsync">PollingProbe.ProtectedStartAsync()</a></div>
   
   
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)">ReadPeripheralCharacteristicValuesAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract Task&lt;List&lt;Tuple&lt;string, DateTimeOffset&gt;&gt;&gt; ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.DateTimeOffset</span>&gt;&gt;&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ScanAsync_System_Threading_CancellationToken_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ScanAsync(System.Threading.CancellationToken)">ScanAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract Task ScanAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StartAdvertising_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartAdvertising*"></a>
   <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StartAdvertising" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartAdvertising">StartAdvertising()</h4>
   <div class="markdown level1 summary"></div>
@@ -593,16 +788,6 @@ public int ScanDurationMS { get; set; }</code></pre>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">protected abstract void StartAdvertising()</code></pre>
-  </div>
-  
-  
-  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StartScan_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan*"></a>
-  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StartScan" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StartScan">StartScan()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void StartScan()</code></pre>
   </div>
   
   
@@ -643,14 +828,48 @@ public int ScanDurationMS { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_StopAsync">PollingProbe.StopAsync()</a></div>
   
   
-  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopScan_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan*"></a>
-  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopScan" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopScan">StopScan()</h4>
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_TestHealthAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract void StopScan()</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;HealthTestResult&gt; TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt; events)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AnalyticsTrackedEvent.html">AnalyticsTrackedEvent</a>&gt;</td>
+        <td><span class="parametername">events</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.HealthTestResult.html">HealthTestResult</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__">PollingProbe.TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>

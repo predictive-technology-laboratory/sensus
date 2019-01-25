@@ -14,7 +14,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using CoreBluetooth;
 using Foundation;
 using Sensus.Probes.Context;
@@ -27,19 +30,17 @@ namespace Sensus.iOS.Probes.Context
     /// </summary>
     public class iOSBluetoothDeviceProximityProbeCentralManagerDelegate : CBCentralManagerDelegate
     {
-        public EventHandler<BluetoothCharacteristicReadArgs> CharacteristicRead;
-
         private CBMutableService _service;
         private CBMutableCharacteristic _characteristic;
         private iOSBluetoothDeviceProximityProbe _probe;
-        private List<CBPeripheral> _peripherals;
+        private List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>> _peripheralCentralTimestamps;
 
         public iOSBluetoothDeviceProximityProbeCentralManagerDelegate(CBMutableService service, CBMutableCharacteristic characteristic, iOSBluetoothDeviceProximityProbe probe)
         {
             _service = service;
             _characteristic = characteristic;
             _probe = probe;
-            _peripherals = new List<CBPeripheral>();
+            _peripheralCentralTimestamps = new List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>>();
         }
 
         public override void UpdatedState(CBCentralManager central)
@@ -61,124 +62,161 @@ namespace Sensus.iOS.Probes.Context
 
         public override void DiscoveredPeripheral(CBCentralManager central, CBPeripheral peripheral, NSDictionary advertisementData, NSNumber RSSI)
         {
-            // we've observed that, if we do not hold on to a reference to the peripheral, it gets cleaned up by GC and the subsequent connect/read
-            // operations do not go through. this has also been observed by others:  https://stackoverflow.com/questions/21466245/cbcentralmanager-connecting-to-a-cbperipheralmanager-connects-then-disconnects
-            // there is no need to clear this collection out after we process the peripheral, because the current object will be disposed after the
-            // scan has completed. a new object of the current type will be initialized when the next scan beings, and around and around we go.
-            lock (_peripherals)
+            lock (_peripheralCentralTimestamps)
             {
-                _peripherals.Add(peripheral);
+                SensusServiceHelper.Get().Logger.Log("Discovered peripheral:  " + peripheral.Identifier, LoggingLevel.Normal, GetType());
+                _peripheralCentralTimestamps.Add(new Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>(peripheral, central, DateTimeOffset.UtcNow));
+            }
+        }
+
+        public async Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+        {
+            List<Tuple<string, DateTimeOffset>> characteristicValueTimestamps = new List<Tuple<string, DateTimeOffset>>();
+
+            // copy list of peripherals to read. note that the same device may be reported more than once. read each once.
+            List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>> peripheralCentralTimestamps;
+            lock (_peripheralCentralTimestamps)
+            {
+                peripheralCentralTimestamps = _peripheralCentralTimestamps.GroupBy(peripheralCentralTimestamp => peripheralCentralTimestamp.Item1.Identifier).Select(group => group.First()).ToList();
             }
 
-            peripheral.DiscoveredService += (sender, e) =>
-            {
-                try
-                {
-                    if (e.Error == null)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Discovered service. Discovering characteristics...", LoggingLevel.Normal, GetType());
+            _probe.ReadAttemptCount += peripheralCentralTimestamps.Count;
 
-                        // discover characteristics for newly discovered services that match the one we're looking for
-                        foreach (CBService service in peripheral.Services)
+            // read characteristic from each peripheral
+            foreach (Tuple<CBPeripheral, CBCentralManager, DateTimeOffset> peripheralCentralTimestamp in peripheralCentralTimestamps)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                TaskCompletionSource<string> readCompletionSource = new TaskCompletionSource<string>();
+
+                CBPeripheral peripheral = peripheralCentralTimestamp.Item1;
+                CBCentralManager central = peripheralCentralTimestamp.Item2;
+                DateTimeOffset timestamp = peripheralCentralTimestamp.Item3;
+
+                #region discover services
+                peripheral.DiscoveredService += (sender, e) =>
+                {
+                    try
+                    {
+                        if (e.Error == null)
                         {
-                            if (service.UUID.Equals(_service.UUID))
+                            SensusServiceHelper.Get().Logger.Log("Discovered services. Discovering characteristics...", LoggingLevel.Normal, GetType());
+
+                            // discover characteristics for newly discovered services that match the one we're looking for
+                            foreach (CBService service in peripheral.Services)
                             {
-                                peripheral.DiscoverCharacteristics(new CBUUID[] { _characteristic.UUID }, service);
+                                if (service.UUID.Equals(_service.UUID))
+                                {
+                                    peripheral.DiscoverCharacteristics(new CBUUID[] { _characteristic.UUID }, service);
+                                }
                             }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Error while discovering characteristics:  " + e.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while discovering characteristics:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    DisconnectPeripheral(central, peripheral);
-                }
-            };
-
-            peripheral.DiscoveredCharacteristic += (sender, e) =>
-            {
-                try
-                {
-                    if (e.Error == null)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Discovered characteristic. Reading value...", LoggingLevel.Normal, GetType());
-
-                        // read characteristic value for newly discovered characteristics that match the one we're looking for
-                        foreach (CBCharacteristic characteristic in e.Service.Characteristics)
-                        {
-                            if (characteristic.UUID.Equals(_characteristic.UUID))
-                            {
-                                peripheral.ReadValue(characteristic);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Error while reading characteristic values:  " + e.Error);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while reading characteristic values from peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    DisconnectPeripheral(central, peripheral);
-                }
-            };
-
-            peripheral.UpdatedCharacterteristicValue += (sender, e) =>
-            {
-                try
-                {
-                    if (e.Error == null)
-                    {
-                        // characteristic should have a non-null value
-                        if (e.Characteristic.Value == null)
-                        {
-                            throw new Exception("Null updated value for characteristic.");
                         }
                         else
                         {
-                            SensusServiceHelper.Get().Logger.Log("Value read.", LoggingLevel.Normal, GetType());
-
-                            string characteristicValue = Encoding.UTF8.GetString(e.Characteristic.Value.ToArray());
-                            CharacteristicRead?.Invoke(this, new BluetoothCharacteristicReadArgs(characteristicValue, DateTime.UtcNow));
+                            throw new Exception("Error while discovering services:  " + e.Error);
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        throw new Exception("Error while updating characteristic value:  " + e.Error);
+                        SensusServiceHelper.Get().Logger.Log("Exception while discovering characteristics:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                };
+                #endregion
+
+                #region discover characteristics
+                peripheral.DiscoveredCharacteristic += (sender, e) =>
+                {
+                    try
+                    {
+                        if (e.Error == null)
+                        {
+                            SensusServiceHelper.Get().Logger.Log("Discovered characteristics. Reading value...", LoggingLevel.Normal, GetType());
+
+                            // read characteristic value for newly discovered characteristics that match the one we're looking for
+                            foreach (CBCharacteristic characteristic in e.Service.Characteristics)
+                            {
+                                if (characteristic.UUID.Equals(_characteristic.UUID))
+                                {
+                                    peripheral.ReadValue(characteristic);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Error while discovering characteristics:  " + e.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while reading characteristic values from peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                };
+                #endregion
+
+                #region update characteristic value
+                peripheral.UpdatedCharacterteristicValue += (sender, e) =>
+                {
+                    try
+                    {
+                        if (e.Error == null)
+                        {
+                            // characteristic should have a non-null value
+                            if (e.Characteristic.Value == null)
+                            {
+                                throw new Exception("Null updated value for characteristic.");
+                            }
+                            else
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Value read.", LoggingLevel.Normal, GetType());
+                                string characteristicValue = Encoding.UTF8.GetString(e.Characteristic.Value.ToArray());
+                                readCompletionSource.SetResult(characteristicValue);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("Error while updating characteristic value:  " + e.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while reporting characteristic value:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                };
+                #endregion
+
+                try
+                {
+                    SensusServiceHelper.Get().Logger.Log("Connecting to peripheral...", LoggingLevel.Normal, GetType());
+                    central.ConnectPeripheral(peripheral);
+
+                    string characteristicValue = await BluetoothDeviceProximityProbe.CompleteReadAsync(readCompletionSource, cancellationToken);
+
+                    if (characteristicValue != null)
+                    {
+                        characteristicValueTimestamps.Add(new Tuple<string, DateTimeOffset>(characteristicValue, timestamp));
+                        _probe.ReadSuccessCount++;
                     }
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Exception while reporting encountered device ID:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Exception while reading peripheral:  " + ex, LoggingLevel.Normal, GetType());
                 }
                 finally
                 {
                     DisconnectPeripheral(central, peripheral);
                 }
-            };
-
-            try
-            {
-                SensusServiceHelper.Get().Logger.Log("Discovered peripheral. Connecting to it...", LoggingLevel.Normal, GetType());
-
-                central.ConnectPeripheral(peripheral);
             }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while connecting to peripheral:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
+
+            return characteristicValueTimestamps;
         }
 
         public override void ConnectedPeripheral(CBCentralManager central, CBPeripheral peripheral)
         {
             SensusServiceHelper.Get().Logger.Log("Connected to peripheral. Discovering its services...", LoggingLevel.Normal, GetType());
 
-            // discover services for newly connected peripheral
             try
             {
                 peripheral.DiscoverServices(new CBUUID[] { _service.UUID });
@@ -186,7 +224,6 @@ namespace Sensus.iOS.Probes.Context
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while discovering services:  " + ex.Message, LoggingLevel.Normal, GetType());
-                DisconnectPeripheral(central, peripheral);
             }
         }
 
@@ -194,8 +231,7 @@ namespace Sensus.iOS.Probes.Context
         {
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Cancelling peripheral connection...", LoggingLevel.Normal, GetType());
-
+                SensusServiceHelper.Get().Logger.Log("Disconnecting peripheral...", LoggingLevel.Normal, GetType());
                 central.CancelPeripheralConnection(peripheral);
             }
             catch (Exception ex)
@@ -204,14 +240,14 @@ namespace Sensus.iOS.Probes.Context
             }
         }
 
-        public override void FailedToConnectPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
-        {
-            SensusServiceHelper.Get().Logger.Log("Failed to connect peripheral:  " + (error?.ToString() ?? "[no error]"), LoggingLevel.Normal, GetType());
-        }
-
         public override void DisconnectedPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
         {
             SensusServiceHelper.Get().Logger.Log("Disconnected peripheral:  " + (error?.ToString() ?? "[no error]"), LoggingLevel.Normal, GetType());
+        }
+
+        public override void FailedToConnectPeripheral(CBCentralManager central, CBPeripheral peripheral, NSError error)
+        {
+            SensusServiceHelper.Get().Logger.Log("Failed to connect peripheral:  " + (error?.ToString() ?? "[no error]"), LoggingLevel.Normal, GetType());
         }
 
         public override void WillRestoreState(CBCentralManager central, NSDictionary dict)

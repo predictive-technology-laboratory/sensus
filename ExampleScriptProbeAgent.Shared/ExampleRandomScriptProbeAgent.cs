@@ -41,11 +41,26 @@ namespace ExampleScriptProbeAgent
         public string Id => "Random";
 
         /// <summary>
+        /// The delivery interval.
+        /// </summary>
+        public TimeSpan? DeliveryInterval => TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Tolerance before.
+        /// </summary>
+        public TimeSpan? DeliveryIntervalToleranceBefore => TimeSpan.Zero;
+
+        /// <summary>
+        /// Tolerance after.
+        /// </summary>
+        public TimeSpan? DeliveryIntervalToleranceAfter => TimeSpan.Zero;
+
+        /// <summary>
         /// Checks whether or not to deliver/defer a survey.
         /// </summary>
         /// <returns>Deliver/defer decision.</returns>
         /// <param name="script">Script.</param>
-        public async Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNow(IScript script)
+        public async Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNowAsync(IScript script)
         {
             bool deliver = new Random().NextDouble() < _deliveryProbability;
 
@@ -59,9 +74,11 @@ namespace ExampleScriptProbeAgent
         /// Observe the specified datum.
         /// </summary>
         /// <param name="datum">Datum.</param>
-        public void Observe(IDatum datum)
+        public Task ObserveAsync(IDatum datum)
         {
             _sensusServiceHelper?.Logger.Log("Observed datum:  " + datum, LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -69,31 +86,37 @@ namespace ExampleScriptProbeAgent
         /// </summary>
         /// <param name="script">Script.</param>
         /// <param name="state">State.</param>
-        public void Observe(IScript script, ScriptState state)
+        public Task ObserveAsync(IScript script, ScriptState state)
         {
             _sensusServiceHelper?.Logger.Log("Script " + script.IRunner.Name + " state:  " + state, LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Reset this instance.
         /// </summary>
         /// <param name="sensusServiceHelper">Reference to the Sensus helper.</param>
-        public void Reset(ISensusServiceHelper sensusServiceHelper)
+        public Task ResetAsync(ISensusServiceHelper sensusServiceHelper)
         {
             _sensusServiceHelper = sensusServiceHelper;
             _sensusServiceHelper?.Logger.Log("Agent has been reset.", LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// Sets the policy.
         /// </summary>
         /// <param name="policyJSON">Policy json.</param>
-        public void SetPolicy(string policyJSON)
+        public Task SetPolicyAsync(string policyJSON)
         {
             JObject policyObject = JObject.Parse(policyJSON);
             _deliveryProbability = (double)policyObject.GetValue("p");
 
             _sensusServiceHelper?.Logger.Log("Script agent policy set:  p=" + _deliveryProbability, LoggingLevel.Normal, GetType());
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

@@ -136,32 +136,6 @@
       </tr>
     </tbody>
   </table>
-  <h3 id="fields">Fields
-  </h3>
-  
-  
-  <h4 id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_CharacteristicRead" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.CharacteristicRead">CharacteristicRead</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EventHandler&lt;BluetoothCharacteristicReadArgs&gt; CharacteristicRead</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.EventHandler</span>&lt;<a class="xref" href="Sensus.Probes.Context.BluetoothCharacteristicReadArgs.html">BluetoothCharacteristicReadArgs</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="methods">Methods
   </h3>
   
@@ -308,6 +282,48 @@
       <tr>
         <td><span class="xref">Foundation.NSError</span></td>
         <td><span class="parametername">error</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_ReadPeripheralCharacteristicValuesAsync_" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync*"></a>
+  <h4 id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbeCentralManagerDelegate_ReadPeripheralCharacteristicValuesAsync_System_Threading_CancellationToken_" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbeCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(System.Threading.CancellationToken)">ReadPeripheralCharacteristicValuesAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;Tuple&lt;string, DateTimeOffset&gt;&gt;&gt; ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.DateTimeOffset</span>&gt;&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using Sensus.Exceptions;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -24,7 +25,33 @@ namespace Sensus.UI
         public SensusMasterDetailPage()
         {
             _masterPage = new SensusMasterPage();
-            _masterPage.MasterPageItemsListView.ItemSelected += OnItemSelected;
+
+            _masterPage.MasterPageItemsListView.ItemSelected += (sender, e) =>
+            {
+                try
+                {
+                    SensusDetailPageItem selectedDetailPageItem = e.SelectedItem as SensusDetailPageItem;
+
+                    if (selectedDetailPageItem != null)
+                    {
+                        if (selectedDetailPageItem.TargetType == null)
+                        {
+                            selectedDetailPageItem.Action?.Invoke();
+                        }
+                        else
+                        {
+                            Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
+                            IsPresented = false;
+                        }
+
+                        _masterPage.MasterPageItemsListView.SelectedItem = null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while handling master-detail menu selection:  " + ex.Message, ex);
+                }
+            };
 
             Master = _masterPage;
 
@@ -46,26 +73,6 @@ namespace Sensus.UI
             });
 
             IsPresented = true;
-        }
-
-        private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-            SensusDetailPageItem selectedDetailPageItem = e.SelectedItem as SensusDetailPageItem;
-
-            if (selectedDetailPageItem != null)
-            {
-                if (selectedDetailPageItem.TargetType == null)
-                {
-                    selectedDetailPageItem.Action?.Invoke();
-                }
-                else
-                {
-                    Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
-                    IsPresented = false;
-                }
-
-                _masterPage.MasterPageItemsListView.SelectedItem = null;
-            }
         }
     }
 }

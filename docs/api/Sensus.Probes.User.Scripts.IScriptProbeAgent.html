@@ -96,6 +96,89 @@
   </h3>
   
   
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryInterval_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryInterval*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryInterval" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryInterval">DeliveryInterval</h4>
+  <div class="markdown level1 summary"><p>Interval of time between successive queries regarding the delivery of surveys.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Nullable&lt;TimeSpan&gt; DeliveryInterval { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The delivery interval.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceAfter_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceAfter" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceAfter">DeliveryIntervalToleranceAfter</h4>
+  <div class="markdown level1 summary"><p>Tolerance for <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryInterval">DeliveryInterval</a> after the scheduled time, if doing so 
+will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Nullable&lt;TimeSpan&gt; DeliveryIntervalToleranceAfter { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceBefore_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryIntervalToleranceBefore" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliveryIntervalToleranceBefore">DeliveryIntervalToleranceBefore</h4>
+  <div class="markdown level1 summary"><p>Tolerance for <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliveryInterval">DeliveryInterval</a> before the scheduled time, if doing so 
+will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Nullable&lt;TimeSpan&gt; DeliveryIntervalToleranceBefore { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Description_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Description*"></a>
   <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Description" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Description">Description</h4>
   <div class="markdown level1 summary"><p>Readable description of the agent.</p>
@@ -152,15 +235,15 @@
   </h3>
   
   
-  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliverSurveyNow_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliverSurveyNow*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliverSurveyNow_Sensus_Probes_User_Scripts_IScript_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliverSurveyNow(Sensus.Probes.User.Scripts.IScript)">DeliverSurveyNow(IScript)</h4>
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliverSurveyNowAsync_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliverSurveyNowAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_DeliverSurveyNowAsync_Sensus_Probes_User_Scripts_IScript_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.DeliverSurveyNowAsync(Sensus.Probes.User.Scripts.IScript)">DeliverSurveyNowAsync(IScript)</h4>
   <div class="markdown level1 summary"><p>Asks the agent whether an <a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a> should be delivered at the present time as scheduled/triggered, or
 if the delivery should instead be deferred to a later date.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;Tuple&lt;bool, Nullable&lt;DateTimeOffset&gt;&gt;&gt; DeliverSurveyNow(IScript script)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;Tuple&lt;bool, Nullable&lt;DateTimeOffset&gt;&gt;&gt; DeliverSurveyNowAsync(IScript script)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -204,14 +287,14 @@ if not, what time instead it should be delivered. For example:</p>
   </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_Sensus_IDatum_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe(Sensus.IDatum)">Observe(IDatum)</h4>
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_ObserveAsync_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_ObserveAsync_Sensus_IDatum_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync(Sensus.IDatum)">ObserveAsync(IDatum)</h4>
   <div class="markdown level1 summary"><p>Asks the agent to observe an <a class="xref" href="Sensus.IDatum.html">IDatum</a> object that was just generated by Sensus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void Observe(IDatum datum)</code></pre>
+    <pre><code class="lang-csharp hljs">Task ObserveAsync(IDatum datum)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -231,16 +314,31 @@ if not, what time instead it should be delivered. For example:</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Observe_Sensus_Probes_User_Scripts_IScript_Sensus_Probes_User_Scripts_ScriptState_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Observe(Sensus.Probes.User.Scripts.IScript,Sensus.Probes.User.Scripts.ScriptState)">Observe(IScript, ScriptState)</h4>
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_ObserveAsync_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_ObserveAsync_Sensus_Probes_User_Scripts_IScript_Sensus_Probes_User_Scripts_ScriptState_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync(Sensus.Probes.User.Scripts.IScript,Sensus.Probes.User.Scripts.ScriptState)">ObserveAsync(IScript, ScriptState)</h4>
   <div class="markdown level1 summary"><p>Asks the agent to observe a new state for an <a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void Observe(IScript script, ScriptState state)</code></pre>
+    <pre><code class="lang-csharp hljs">Task ObserveAsync(IScript script, ScriptState state)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -266,16 +364,31 @@ if not, what time instead it should be delivered. For example:</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Reset_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Reset*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_Reset_Sensus_ISensusServiceHelper_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.Reset(Sensus.ISensusServiceHelper)">Reset(ISensusServiceHelper)</h4>
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_ResetAsync_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_ResetAsync_Sensus_ISensusServiceHelper_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)">ResetAsync(ISensusServiceHelper)</h4>
   <div class="markdown level1 summary"><p>Asks the agent to reset itself</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void Reset(ISensusServiceHelper sensusServiceHelper)</code></pre>
+    <pre><code class="lang-csharp hljs">Task ResetAsync(ISensusServiceHelper sensusServiceHelper)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -295,16 +408,31 @@ if not, what time instead it should be delivered. For example:</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicy_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicy*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicy_System_String_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicy(System.String)">SetPolicy(String)</h4>
+  <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_System_String_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(System.String)">SetPolicyAsync(String)</h4>
   <div class="markdown level1 summary"><p>Sets the policy of the agent</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void SetPolicy(string policyJSON)</code></pre>
+    <pre><code class="lang-csharp hljs">Task SetPolicyAsync(string policyJSON)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -321,6 +449,21 @@ if not, what time instead it should be delivered. For example:</p>
         <td><span class="parametername">policyJSON</span></td>
         <td><p>Policy JSON.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>

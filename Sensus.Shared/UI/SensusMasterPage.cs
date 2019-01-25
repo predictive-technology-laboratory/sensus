@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using Sensus.Context;
 using Sensus.UI.Inputs;
@@ -53,29 +54,21 @@ namespace Sensus.UI
             {
                 Title = "Privacy Policy",
                 IconSource = "privacy.png",
-                TargetType = typeof(PrivacyPolicyPage)
+                Action = () =>
+                {
+                    Device.OpenUri(new Uri("https://predictive-technology-laboratory.github.io/sensus/articles/privacy-policy.html"));
+                }
             });
 
-            SensusDetailPageItem accountItem = new SensusDetailPageItem
+            detailPageItems.Add(new SensusDetailPageItem
             {
-                Title = "Log In",
-                IconSource = "account.png"
-            };
-
-            accountItem.Action = () =>
-            {
-                if (accountItem.Title == "Log Out")
-                {
-                    SensusContext.Current.IamRegion = null;
-                    SensusContext.Current.IamAccessKey = null;
-                    SensusContext.Current.IamAccessKeySecret = null;
-                    accountItem.Title = "Log In";
-                }
-                else
+                Title = "Authenticate",
+                IconSource = "account.png",
+                Action = () =>
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Log In", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
 
                         if (input == null)
                         {
@@ -106,8 +99,7 @@ namespace Sensus.UI
 
                         if (error == null)
                         {
-                            accountItem.Title = "Log Out";
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Logged in.");
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Successfully authenticated.");
                         }
                         else
                         {
@@ -115,9 +107,7 @@ namespace Sensus.UI
                         }
                     });
                 }
-            };
-
-            detailPageItems.Add(accountItem);
+            });
 
             _masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)
             {

@@ -18,9 +18,9 @@ namespace Sensus.Probes.User.Scripts
 {
     public class ScriptTriggerTime
     {
-        public DateTime Trigger { get; private set; }
-        public DateTime? Expiration { get; private set; }
-        public string Window { get; private set; }
+        public DateTime Trigger { get; set; }
+        public DateTime? Expiration { get; set; }
+        public string Window { get; set; }
         public TimeSpan TimeTillTrigger => Trigger - DateTime.Now;
 
         public ScriptTriggerTime(DateTime trigger, DateTime? expiration, string window)

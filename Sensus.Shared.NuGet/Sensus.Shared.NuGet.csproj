@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Sensus</PackageId>
-    <PackageVersion>1.15.0</PackageVersion>
+    <PackageVersion>1.18.0</PackageVersion>
     <Authors>Matthew Gerber</Authors>
     <Description>Package for developing plug-ins and other code modules that integrate with Sensus.</Description>
     <ReleaseVersion>2.0.0</ReleaseVersion>
@@ -13,6 +13,8 @@
     <PackageProjectUrl>https://predictive-technology-laboratory.github.io/sensus/</PackageProjectUrl>
     <Title>Sensus</Title>
     <RootNamespace>Sensus</RootNamespace>
+    <PackageLicenseUrl>https://predictive-technology-laboratory.github.io/sensus/</PackageLicenseUrl>
+    <Summary>Package for developing plug-ins and other code modules that integrate with Sensus.</Summary>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

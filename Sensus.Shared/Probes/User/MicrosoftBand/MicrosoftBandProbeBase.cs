@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ namespace Sensus.Probes.User.MicrosoftBand
         private static ScheduledCallback HEALTH_TEST_CALLBACK;
         private readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(60);
         private readonly TimeSpan HEALTH_TEST_TIMEOUT = TimeSpan.FromSeconds(60);
+        private readonly TimeSpan HEALTH_TEST_DELAY_TOLERANCE_BEFORE = TimeSpan.FromSeconds(15);
+        private readonly TimeSpan HEALTH_TEST_DELAY_TOLERANCE_AFTER = TimeSpan.FromSeconds(15);
         private static bool REENABLE_BLUETOOTH_IF_NEEDED = true;
 
         private static List<MicrosoftBandProbeBase> BandProbesThatShouldBeRunning
@@ -366,7 +368,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             if (HEALTH_TEST_CALLBACK == null)
             {
                 // the band health test is static, so it has no domain other than sensus.
-                HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT);
+                HEALTH_TEST_CALLBACK = new ScheduledCallback(TestBandClientAsync, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "BAND-HEALTH-TEST", null, null, HEALTH_TEST_TIMEOUT, null, HEALTH_TEST_DELAY_TOLERANCE_BEFORE, HEALTH_TEST_DELAY_TOLERANCE_AFTER);
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(HEALTH_TEST_CALLBACK);
             }
 

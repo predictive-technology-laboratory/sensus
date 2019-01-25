@@ -217,6 +217,64 @@ public bool AllowCancel { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceAfterMS_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceAfterMS" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceAfterMS">DelayToleranceAfterMS</h4>
+  <div class="markdown level1 summary"><p>Tolerance in milliseconds for running the <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Script">Script</a> after the scheduled 
+time, if doing so will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Delay Tolerance After (MS):&quot;, true, 20, true)]
+public int DelayToleranceAfterMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceBeforeMS_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_DelayToleranceBeforeMS" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DelayToleranceBeforeMS">DelayToleranceBeforeMS</h4>
+  <div class="markdown level1 summary"><p>Tolerance in milliseconds for running the <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_Script">Script</a> before the scheduled 
+time, if doing so will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryIntegerUiProperty(&quot;Delay Tolerance Before (MS):&quot;, true, 19, true)]
+public int DelayToleranceBeforeMS { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_DisplayProgress_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DisplayProgress*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_DisplayProgress" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.DisplayProgress">DisplayProgress</h4>
   <div class="markdown level1 summary"><p>Whether or not to display progress (% complete) to the user when they are working on the survey.</p>
@@ -302,6 +360,33 @@ public bool ForceRemoteStorageOnSurveySubmission { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_FutureRunCount_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_FutureRunCount" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.FutureRunCount">FutureRunCount</h4>
+  <div class="markdown level1 summary"><p>Gets the number of future runs that are currently scheduled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int FutureRunCount { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The future run count.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_IncompleteSubmissionConfirmation" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IncompleteSubmissionConfirmation">IncompleteSubmissionConfirmation</h4>
   <div class="markdown level1 summary"><p>The message to display to the user if a required field is invalid.</p>
@@ -324,6 +409,33 @@ public string IncompleteSubmissionConfirmation { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><p>The incomplete submission confirmation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_IScript_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IScript*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_IScript" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.IScript">IScript</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_IScript">IScript</a> that this <a class="xref" href="Sensus.Probes.User.Scripts.IScriptRunner.html">IScriptRunner</a> is configured to run (for NuGet interfacing).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IScript IScript { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.IScript.html">IScript</a></td>
+        <td><p>The script.</p>
 </td>
       </tr>
     </tbody>
@@ -452,7 +564,8 @@ public bool OneShot { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_Probe_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Probe*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Probe" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Probe">Probe</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the probe.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -469,7 +582,8 @@ public bool OneShot { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.ScriptProbe.html">ScriptProbe</a></td>
-        <td></td>
+        <td><p>The probe.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -557,6 +671,60 @@ public bool RunOnStart { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackDescriptions_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackDescriptions" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions">ScheduledCallbackDescriptions</h4>
+  <div class="markdown level1 summary"><p>Gets readable descriptions for the scheduled callbacks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;string&gt; ScheduledCallbackDescriptions { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><p>The scheduled callback descriptions.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes">ScheduledCallbackTimes</h4>
+  <div class="markdown level1 summary"><p>Public property for serialization only. Do not reference due to concurrency issues.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;Tuple&lt;ScheduledCallback, ScriptTriggerTime&gt;&gt; ScheduledCallbackTimes { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptTriggerTime.html">ScriptTriggerTime</a>&gt;&gt;</td>
+        <td><p>The scheduled callbacks.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription">ScheduleTriggerReadableDescription</h4>
   <div class="markdown level1 summary"></div>
@@ -584,7 +752,8 @@ public bool RunOnStart { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_Script_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Script*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_Script" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.Script">Script</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the script.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -601,32 +770,8 @@ public bool RunOnStart { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScriptRunCallbacks" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScriptRunCallbacks">ScriptRunCallbacks</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyList&lt;ScheduledCallback&gt; ScriptRunCallbacks { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>&gt;</td>
-        <td></td>
+        <td><p>The script.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -844,6 +989,58 @@ public bool WindowExpiration { get; set; }</code></pre>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public Task RestartAsync()</code></pre>
   </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_User_Scripts_ScriptRunner_RunAsync_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunAsync*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_RunAsync_Sensus_Probes_User_Scripts_Script_Sensus_Datum_Sensus_Datum_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.RunAsync(Sensus.Probes.User.Scripts.Script,Sensus.Datum,Sensus.Datum)">RunAsync(Script, Datum, Datum)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a></td>
+        <td><span class="parametername">script</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">previousDatum</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Datum.html">Datum</a></td>
+        <td><span class="parametername">currentDatum</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>

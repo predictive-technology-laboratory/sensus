@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
@@ -61,7 +60,7 @@ namespace Sensus.UI
                 List<string> beaconTags;
                 try
                 {
-                    beaconTags = estimoteBeaconProbe.GetBeaconTagsFromCloud();
+                    beaconTags = await estimoteBeaconProbe.GetBeaconTagsFromCloudAsync(TimeSpan.FromSeconds(10));
 
                     if (beaconTags.Count == 0)
                     {
@@ -70,7 +69,7 @@ namespace Sensus.UI
                 }
                 catch (Exception ex)
                 {
-                    await SensusServiceHelper.Get().FlashNotificationAsync("Cannot add beacon:  " + ex);
+                    await SensusServiceHelper.Get().FlashNotificationAsync("Failed to add beacon:  " + ex.Message);
                     return;
                 }
 
@@ -83,7 +82,7 @@ namespace Sensus.UI
                     new NumberEntryInput("Proximity (Meters):"),
                     new SingleLineTextInput("Event Name (Defaults To Beacon Tag):", Keyboard.Default)
                     {
-                            Required = false
+                        Required = false
                     }
 
                 }, null, true, null, null, null, null, false);

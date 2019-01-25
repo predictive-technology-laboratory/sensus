@@ -25,21 +25,21 @@ namespace Sensus.DataStores
             GZip
         }
 
-        private CompressionMethod _method;
+        private readonly CompressionMethod _method;
 
         public Compressor(CompressionMethod method)
         {
             _method = method;
         }
 
-        public void Compress(byte[] bytesToCompress, Stream destinationStream)
+        public void Compress(byte[] bytesToCompress, Stream destinationStream, CompressionLevel compressionLevel)
         {
             if (_method == CompressionMethod.GZip)
             {
-                using (GZipStream zip = new GZipStream(destinationStream, CompressionMode.Compress, true))
+                using (GZipStream gZipStream = new GZipStream(destinationStream, compressionLevel, true))
                 {
-                    zip.Write(bytesToCompress, 0, bytesToCompress.Length);
-                    zip.Flush();
+                    gZipStream.Write(bytesToCompress, 0, bytesToCompress.Length);
+                    gZipStream.Flush();
                 }
             }
             else
@@ -54,11 +54,11 @@ namespace Sensus.DataStores
             {
                 MemoryStream decompressedStream = new MemoryStream();
 
-                using (GZipStream zip = new GZipStream(compressedStream, CompressionMode.Decompress, true))
+                using (GZipStream gZipStream = new GZipStream(compressedStream, CompressionMode.Decompress, true))
                 {
                     byte[] buffer = new byte[4096];
                     int bytesRead;
-                    while ((bytesRead = zip.Read(buffer, 0, buffer.Length)) > 0)
+                    while ((bytesRead = gZipStream.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         decompressedStream.Write(buffer, 0, bytesRead);
                     }

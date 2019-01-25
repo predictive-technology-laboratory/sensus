@@ -56,6 +56,8 @@ namespace Sensus.Tests.Classes
                 {
                     _testStateCount.Add(testState, 1);
                 }
+
+                Console.Out.WriteLine(result.TestCase.DisplayName + ":  " + result.TestCase.Result);
             }
         }
     }

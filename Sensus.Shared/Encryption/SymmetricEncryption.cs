@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using System;
 
 namespace Sensus.Encryption
 {
-    public class SymmetricEncryption : IEncryption
+    public class SymmetricEncryption : IEncryptor
     {
         private readonly byte[] _encryptionKeyBytes;
         private readonly byte[] _initializationVectorBytes;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses zero-valued initialization vector.
+        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.SymmetricEncryption"/> class. Uses a zero-valued initialization vector.
         /// 
         /// </summary>
         /// <param name="encryptionKeyHexString">A 64-character hex-encoded string for a 256-bit symmetric AES encryption key. Can be generated with the following:
@@ -70,9 +69,9 @@ namespace Sensus.Encryption
             return bytes;
         }
 
-        public byte[] Encrypt(string unencryptedValue)
+        public byte[] Encrypt(string unencryptedValue, Encoding encoding)
         {
-            return Encrypt(Encoding.Unicode.GetBytes(unencryptedValue));
+            return Encrypt(encoding.GetBytes(unencryptedValue));
         }
 
         public byte[] Encrypt(byte[] unencryptedBytes)
@@ -89,7 +88,7 @@ namespace Sensus.Encryption
             }
         }
 
-        public string DecryptToString(byte[] encryptedBytes)
+        public string DecryptToString(byte[] encryptedBytes, Encoding encoding)
         {
             using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
             {
@@ -98,7 +97,7 @@ namespace Sensus.Encryption
 
                 using (ICryptoTransform transform = aes.CreateDecryptor(_encryptionKeyBytes, _initializationVectorBytes))
                 {
-                    return Encoding.Unicode.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
+                    return encoding.GetString(transform.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length));
                 }
             }
         }

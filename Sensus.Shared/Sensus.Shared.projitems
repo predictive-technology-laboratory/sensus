@@ -24,7 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Datum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Dispose\Disposable.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryption.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryptor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
@@ -76,7 +76,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WheelchairUse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\WheelchairUseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScheduleTrigger.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
@@ -235,7 +234,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
@@ -257,15 +255,29 @@
     <Compile Include="$(MSBuildThisFileDirectory)HealthTestResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\TaggingPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolStartPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\AmazonS3Credentials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Authentication\AuthenticationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEnvelopeEncryptor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ProgressPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteLocation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationAccuracy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonDotNetExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Authentication\" />
   </ItemGroup>
 </Project>

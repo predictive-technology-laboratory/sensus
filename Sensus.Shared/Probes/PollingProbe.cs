@@ -196,6 +196,22 @@ namespace Sensus.Probes
         }
 #endif
 
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="PollingProbe"/> before the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 11, true)]
+        public int DelayToleranceBeforeMS { get; set; }
+
+        /// <summary>
+        /// Tolerance in milliseconds for running the <see cref="PollingProbe"/> after the scheduled 
+        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+        /// </summary>
+        /// <value>The delay tolerance before.</value>
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 12, true)]
+        public int DelayToleranceAfterMS { get; set; }
+
         public override string CollectionDescription
         {
             get
@@ -228,7 +244,7 @@ namespace Sensus.Probes
 
                 if (!scheduledPollOverridden)
                 {
-                    description += TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetIntervalString();
+                    description += TimeSpan.FromMilliseconds(_pollingSleepDurationMS).GetFullDescription(TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS)) + ".";
                 }
 
                 return description;
@@ -255,12 +271,12 @@ namespace Sensus.Probes
                     CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                     // if the callback specified a timeout, request cancellation at the specified time.
-                    if (_pollCallback.CallbackTimeout.HasValue)
+                    if (_pollCallback.Timeout.HasValue)
                     {
-                        pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
-                    }
+                        pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
+                    }   
 
-                    await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
                 }
                 catch (Exception ex)
                 {
@@ -278,12 +294,12 @@ namespace Sensus.Probes
                         CancellationTokenSource pollCallbackCanceller = new CancellationTokenSource();
 
                         // if the callback specified a timeout, request cancellation at the specified time.
-                        if (_pollCallback.CallbackTimeout.HasValue)
+                        if (_pollCallback.Timeout.HasValue)
                         {
-                            pollCallbackCanceller.CancelAfter(_pollCallback.CallbackTimeout.Value);
+                            pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                         }
 
-                        await _pollCallback.Action(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                        await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
                     }
                 }
                 catch (Exception ex)
@@ -308,6 +324,19 @@ namespace Sensus.Probes
             string userNotificationMessage = null;
 #endif
 
+            // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
+            // problems:
+            // 
+            //   * slow startup:  the immediate poll causes delays when starting the protocol. we show a progress page
+            //                    when starting, but it's still irritating to the user.
+            //
+            //   * protocol restart timeout on push notification (ios):  ios occasionally kills the app, and we can wake
+            //     it back up in the background via push notification. however, we only have ~30 seconds to finish processing
+            //     the push notification before the system suspends the app. furthermore, long-running push notifications
+            //     likely result in subsequent throttling of push notification delivery. 
+            //
+            // given the above, we now use an initial delay equal to the standard delay. the only cost is a single lost
+            // reading at the very beginning.
             _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
                 if (Running)
@@ -354,7 +383,7 @@ namespace Sensus.Probes
                     _isPolling = false;
                 }
 
-            }, TimeSpan.Zero, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage);
+            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
 
             bool schedulePollCallback = true;
 

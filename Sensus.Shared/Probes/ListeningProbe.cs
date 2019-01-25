@@ -231,7 +231,13 @@ namespace Sensus.Probes
             }
         }
 
-        protected override long DataRateSampleSize => 10;
+        /// <summary>
+        /// Gets the size of the data rate sample. Uses 10 times the <see cref="MaxDataStoresPerSecond"/> if one is specified, so 
+        /// that the data rate and sampling parameters will be recalculated every 10 seconds when at maximum throughput. If no
+        /// <see cref="MaxDataStoresPerSecond"/> is specified (no rate limit), then a data rate sample size of 10 will be used.
+        /// </summary>
+        /// <value>The size of the data rate sample.</value>
+        protected override long DataRateSampleSize => _maxDataStoresPerSecond.HasValue ? (long)_maxDataStoresPerSecond.Value * 10 : 10;
 
         public override string CollectionDescription
         {

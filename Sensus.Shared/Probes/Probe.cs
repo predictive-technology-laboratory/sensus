@@ -405,11 +405,11 @@ namespace Sensus.Probes
         /// <param name="cancellationToken">Cancellation token.</param>
         public async Task StoreDatumAsync(Datum datum, CancellationToken? cancellationToken = null)
         {
-            // it's possible for the current method to be called when the protocol is not running. we try to prevent
-            // this (e.g., by forcing the user to start the protocol before taking a survey saved from a previous run of
-            // the app), but there are probably corner cases we haven't accounted for. at the very least, there are race
-            // conditions (e.g., taking a survey when a protocol is about to stop) that could cause data to be stored 
-            // without a running protocol.
+            // it's possible for the current method to be called when the protocol is not running. the obvious case is when
+            // the protocol is paused, but there are other race-like conditions. we try to prevent this (e.g., by forcing 
+            // the user to start the protocol before taking a survey saved from a previous run of the app), but there are 
+            // probably corner cases we haven't accounted for. at the very least, there are race conditions (e.g., taking a 
+            // survey when a protocol is about to stop) that could cause data to be stored without a running protocol.
             if (_protocol.State != ProtocolState.Running)
             {
                 return;
@@ -505,7 +505,7 @@ namespace Sensus.Probes
             Protocol.TryGetProbe(typeof(ScriptProbe), out Probe scriptProbe);
             if (scriptProbe?.Enabled ?? false)
             {
-                (scriptProbe as ScriptProbe).Agent?.Observe(datum);
+                await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
             }
         }
 

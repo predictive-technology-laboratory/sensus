@@ -15,6 +15,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Sensus.Notifications;
 
 namespace Sensus.Callbacks
@@ -27,17 +28,18 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Delegate for scheduled callback actions.
         /// </summary>
-        /// <param name="name">Name of action.</param>
+        /// <param name="id">Identifier of the callback.</param>
         /// <param name="cancellationToken">Cancellation token for action.</param>
         /// <param name="letDeviceSleepCallback">Action to call if the system should be allowed to sleep prior to completion of the action. Can be null.</param>
         /// <returns>A task that can be awaited while the action completes.</returns>
-        public delegate Task ActionDelegate(string name, CancellationToken cancellationToken, Action letDeviceSleepCallback);
+        public delegate Task ActionAsyncDelegate(string id, CancellationToken cancellationToken, Action letDeviceSleepCallback);
 
         /// <summary>
         /// Action to execute.
         /// </summary>
         /// <value>The action.</value>
-        public ActionDelegate Action { get; set; }
+        [JsonIgnore]
+        public ActionAsyncDelegate ActionAsync { get; set; }
 
         /// <summary>
         /// Gets or sets the identifier.
@@ -61,7 +63,7 @@ namespace Sensus.Callbacks
         /// Gets or sets the callback timeout. After this time has elapsed, the callback's cancellation token will be cancelled.
         /// </summary>
         /// <value>The callback timeout.</value>
-        public TimeSpan? CallbackTimeout { get; set; }
+        public TimeSpan? Timeout { get; set; }
 
         /// <summary>
         /// Notification message that should be displayed to the user when the callback is invoked.
@@ -105,6 +107,24 @@ namespace Sensus.Callbacks
         /// <value>The next execution time.</value>
         public DateTime? NextExecution { get; set; }
 
+        /// <summary>
+        /// Gets or sets the delay tolerance before <see cref="NextExecution"/>.
+        /// </summary>
+        /// <value>The delay tolerance.</value>
+        public TimeSpan DelayToleranceBefore { get; set; }
+
+        /// <summary>
+        /// Gets or sets the delay tolerance after <see cref="NextExecution"/>.
+        /// </summary>
+        /// <value>The delay tolerance.</value>
+        public TimeSpan DelayToleranceAfter { get; set; }
+
+        /// <summary>
+        /// Gets the delay tolerance total.
+        /// </summary>
+        /// <value>The delay tolerance total.</value>
+        public TimeSpan DelayToleranceTotal => DelayToleranceBefore + DelayToleranceAfter;
+
 #if __IOS__
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> is silent. Silent 
@@ -117,32 +137,46 @@ namespace Sensus.Callbacks
 #endif
 
         /// <summary>
+        /// For JSON deserialization.
+        /// </summary>
+        private ScheduledCallback()
+        {
+            Canceller = new CancellationTokenSource();
+            DisplayPage = DisplayPage.None;
+            State = ScheduledCallbackState.Created;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action to execute when callback time arrives.</param>
+        /// <param name="actionAsync">Action to execute when callback time arrives.</param>
         /// <param name="delay">How long to delay callback execution.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
-        /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
+        /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
-        public ScheduledCallback(ActionDelegate action,
+        /// <param name="delayToleranceBefore">Delay tolerance before.</param>
+        /// <param name="delayToleranceAfter">Delay tolerance after.</param>
+        public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan delay,
                                  string id,
                                  string domain,
                                  Protocol protocol,
-                                 TimeSpan? callbackTimeout = null,
-                                 string userNotificationMessage = null)
+                                 TimeSpan? timeout,
+                                 string userNotificationMessage,
+                                 TimeSpan delayToleranceBefore,
+                                 TimeSpan delayToleranceAfter)
+            : this()
         {
-            Action = action;
+            ActionAsync = actionAsync;
             Delay = delay;
             Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
-            CallbackTimeout = callbackTimeout;
+            Timeout = timeout;
             UserNotificationMessage = userNotificationMessage;
-            Canceller = new CancellationTokenSource();
-            DisplayPage = DisplayPage.None;
-            State = ScheduledCallbackState.Created;
+            DelayToleranceBefore = delayToleranceBefore;
+            DelayToleranceAfter = delayToleranceAfter;
         }
 
         /// <summary>
@@ -154,17 +188,29 @@ namespace Sensus.Callbacks
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
-        /// <param name="callbackTimeout">How long to allow callback to execute before cancelling it.</param>
+        /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
-        public ScheduledCallback(ActionDelegate action,
+        /// <param name="delayToleranceBefore">Delay tolerance before.</param>
+        /// <param name="delayToleranceAfter">Delay tolerance after.</param>
+        public ScheduledCallback(ActionAsyncDelegate action,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
                                  string id,
                                  string domain,
                                  Protocol protocol,
-                                 TimeSpan? callbackTimeout = null,
-                                 string userNotificationMessage = null)
-            : this(action, initialDelay, id, domain, protocol, callbackTimeout, userNotificationMessage)
+                                 TimeSpan? timeout,
+                                 string userNotificationMessage,
+                                 TimeSpan delayToleranceBefore,
+                                 TimeSpan delayToleranceAfter)
+            : this(action,
+                   initialDelay,
+                   id,
+                   domain,
+                   protocol,
+                   timeout,
+                   userNotificationMessage,
+                   delayToleranceBefore,
+                   delayToleranceAfter)
         {
             RepeatDelay = repeatDelay;
         }

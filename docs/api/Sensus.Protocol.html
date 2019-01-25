@@ -177,6 +177,30 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
       </tr>
     </tbody>
   </table>
+  
+  
+  <h4 id="Sensus_Protocol_MANAGED_URL_STRING" data-uid="Sensus.Protocol.MANAGED_URL_STRING">MANAGED_URL_STRING</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string MANAGED_URL_STRING = &quot;managed&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   
@@ -326,6 +350,34 @@ public bool AllowParticipationScanning { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowPause_" data-uid="Sensus.Protocol.AllowPause*"></a>
+  <h4 id="Sensus_Protocol_AllowPause" data-uid="Sensus.Protocol.AllowPause">AllowPause</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to put the protocol into the <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Paused">Paused</a> state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Pause:  &quot;, true, 48)]
+public bool AllowPause { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow pause; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AllowSubmitData_" data-uid="Sensus.Protocol.AllowSubmitData*"></a>
   <h4 id="Sensus_Protocol_AllowSubmitData" data-uid="Sensus.Protocol.AllowSubmitData">AllowSubmitData</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to manually submit data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -438,31 +490,6 @@ public bool AllowViewStatus { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Protocol_AsymmetricEncryption_" data-uid="Sensus.Protocol.AsymmetricEncryption*"></a>
-  <h4 id="Sensus_Protocol_AsymmetricEncryption" data-uid="Sensus.Protocol.AsymmetricEncryption">AsymmetricEncryption</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AsymmetricEncryption AsymmetricEncryption { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Encryption.AsymmetricEncryption.html">AsymmetricEncryption</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Protocol_AsymmetricEncryptionPublicKey_" data-uid="Sensus.Protocol.AsymmetricEncryptionPublicKey*"></a>
   <h4 id="Sensus_Protocol_AsymmetricEncryptionPublicKey" data-uid="Sensus.Protocol.AsymmetricEncryptionPublicKey">AsymmetricEncryptionPublicKey</h4>
   <div class="markdown level1 summary"><p>Sensus is able to use asymmetric key encryption to secure data before transmission from the device to a remote endpoint (e.g., AWS S3). This 
@@ -507,6 +534,35 @@ public string AsymmetricEncryptionPublicKey { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><p>The asymmetric encryption public key.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AuthenticationService_" data-uid="Sensus.Protocol.AuthenticationService*"></a>
+  <h4 id="Sensus_Protocol_AuthenticationService" data-uid="Sensus.Protocol.AuthenticationService">AuthenticationService</h4>
+  <div class="markdown level1 summary"><p>The authentication service. This is serialized to JSON; however, the only thing that is retained in the
+serialized JSON is the service base URL. No account or credential information is serialized; rather, 
+this information is refreshed when needed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AuthenticationService AuthenticationService { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Authentication.AuthenticationService.html">AuthenticationService</a></td>
+        <td><p>The management service.</p>
 </td>
       </tr>
     </tbody>
@@ -730,6 +786,31 @@ public TimeSpan EndTime { get; set; }</code></pre>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><p>The end time.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_EnvelopeEncryptor_" data-uid="Sensus.Protocol.EnvelopeEncryptor*"></a>
+  <h4 id="Sensus_Protocol_EnvelopeEncryptor" data-uid="Sensus.Protocol.EnvelopeEncryptor">EnvelopeEncryptor</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnvelopeEncryptor EnvelopeEncryptor { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Encryption.IEnvelopeEncryptor.html">IEnvelopeEncryptor</a></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -1255,7 +1336,7 @@ the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_PushNotifications
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 49, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 51, false)]
 public string PushNotificationsHub { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1285,7 +1366,7 @@ the DefaultListenSharedAccessSignature policy and copy the entire value of the c
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 50, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 52, false)]
 public string PushNotificationsSharedAccessSignature { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -2027,54 +2108,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
-  <h4 id="Sensus_Protocol_DeserializeAsync_System_String_" data-uid="Sensus.Protocol.DeserializeAsync(System.String)">DeserializeAsync(String)</h4>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_Sensus_Authentication_AmazonS3Credentials_" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)">DeserializeAsync(Uri, AmazonS3Credentials)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(string json)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">json</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.Protocol.html">Protocol</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
-  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri)">DeserializeAsync(Uri)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(Uri webURI)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(Uri uri, AmazonS3Credentials credentials = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2088,7 +2127,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Uri</span></td>
-        <td><span class="parametername">webURI</span></td>
+        <td><span class="parametername">uri</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Authentication.AmazonS3Credentials.html">AmazonS3Credentials</a></td>
+        <td><span class="parametername">credentials</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2213,6 +2257,56 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_PauseAsync_" data-uid="Sensus.Protocol.PauseAsync*"></a>
+  <h4 id="Sensus_Protocol_PauseAsync" data-uid="Sensus.Protocol.PauseAsync">PauseAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task PauseAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ResumeAsync_" data-uid="Sensus.Protocol.ResumeAsync*"></a>
+  <h4 id="Sensus_Protocol_ResumeAsync" data-uid="Sensus.Protocol.ResumeAsync">ResumeAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ResumeAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2409,7 +2503,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   <h4 id="Sensus_Protocol_StartWithUserAgreementAsync_System_String_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync(System.String)">StartWithUserAgreementAsync(String)</h4>
   <div class="markdown level1 summary"><p>Starts the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> after displaying a message to the user indicating what is about to happen. This is
 also the place where the user&apos;s agreement to the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is obtained through the various 
-<a class="xref" href="Sensus.ProtocolStartConfirmationMode.html">ProtocolStartConfirmationMode</a> options. After obtaining agreement, a <a class="xref" href="Sensus.UI.ProtocolStartPage.html">ProtocolStartPage</a> is displayed
+<a class="xref" href="Sensus.ProtocolStartConfirmationMode.html">ProtocolStartConfirmationMode</a> options. After obtaining agreement, a <a class="xref" href="Sensus.UI.ProgressPage.html">ProgressPage</a> is displayed
 to show progress and prevent the user from interacting with the app until the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is fully started.</p>
 </div>
   <div class="markdown level1 conceptual"></div>

@@ -98,30 +98,46 @@
       <h4><a class="xref" href="Sensus.Probes.Location.EstimoteBeacon.html">EstimoteBeacon</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a></h4>
-      <section><p>Event proximity for named beacons at specified distance thresholds.</p>
+      <section><p>Event proximity for named beacons at specified distance thresholds. See <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProbe.html">EstimoteBeaconProbe</a>
+for more information.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProbe.html">EstimoteBeaconProbe</a></h4>
-      <section><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Proximity Beacons</a> to track fine-grained locations indoors. This 
+      <section><p>Sensus uses <a href="http://estimote.com/#get-beacons">Estimote Beacons</a> to track fine-grained locations indoors. This 
 Probe is available for Android and iOS and runs while the Sensus app is in the foreground and background. This Probe 
-generates proximity event data in the form of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> readings.</p>
+generates proximity event data in the form of <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a> (for proximity events) and 
+<a class="xref" href="Sensus.Probes.Location.EstimoteIndoorLocationDatum.html">EstimoteIndoorLocationDatum</a> (for indoor x-y positioning readings.</p>
 <h1 id="prerequisites">Prerequisites</h1>
 <ul>
 <li>Purchase Proximity or Location beacons.</li>
-<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a> and have tags attached to them.
+<li>The beacons must be configured within the <a href="https://cloud.estimote.com">Estimote Cloud console</a>. To generate 
+proximity (<a class="xref" href="Sensus.Probes.Location.EstimoteBeaconDatum.html">EstimoteBeaconDatum</a>) readings, the beacons must have tags attached to them.
 ```</li>
 </ul>
 <p>More details are available <a href="http://developer.estimote.com/proximity/android-tutorial">here</a>.</p>
 <ul>
-<li><p>Having entered the App Id and App Token, the list of beacons can be edited via the <code>Edit Beacons</code> button in the Estimote Beacon Probe 
-configuration. Each beacon definition contains the following:</p>
-</li>
-<li><p><code>Beacon Tag</code>:  Tag of the beacon to detect, as specified above.</p>
-</li>
+<li>Having entered the App Id and App Token, the list of beacons and locations can be edited via the <code>Edit Beacons</code>
+and <code>Edit Locations</code> buttons in the Estimote Beacon Probe configuration. </li>
+</ul>
+<h2 id="beacons">Beacons</h2>
+<p>Each beacon definition contains the following:</p>
+<ul>
+<li><code>Beacon Tag</code>:  Tag of the beacon to detect, as specified above.</li>
 <li><code>Proximity (Meters)</code>:  Number of meters desired for proximity.</li>
 <li><code>Event Name</code>:  Name to be given to the proximity event.</li>
 </ul>
+<h2 id="locations">Locations</h2>
+<p>Each location contains a name and identifier.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProximityEvent.html">EstimoteBeaconProximityEvent</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.Location.EstimoteIndoorLocationAccuracy.html">EstimoteIndoorLocationAccuracy</a></h4>
+      <section><p>Estimote indoor location accuracy. Taken from <a href="https://developer.estimote.com/indoor/ios-tutorial/#start-location-updates">this page</a>.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.Location.EstimoteIndoorLocationDatum.html">EstimoteIndoorLocationDatum</a></h4>
+      <section><p>The location of the device within a space monitored by Estimote indoor location beacons. See <a class="xref" href="Sensus.Probes.Location.EstimoteBeaconProbe.html">EstimoteBeaconProbe</a>
+for more information.</p>
+</section>
+      <h4><a class="xref" href="Sensus.Probes.Location.EstimoteLocation.html">EstimoteLocation</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Probes.Location.GpsReceiver.html">GpsReceiver</a></h4>
       <section><p>A GPS receiver. Implemented as a singleton.</p>

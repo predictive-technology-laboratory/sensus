@@ -23,13 +23,12 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Net;
 using Sensus.Exceptions;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
 using System.Text;
 using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
+using Sensus.Authentication;
 
 namespace Sensus.DataStores.Remote
 {
@@ -94,12 +93,14 @@ namespace Sensus.DataStores.Remote
         private const string DATA_DIRECTORY = "data";
         private const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
         private const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
+        private const string PROTOCOL_UPDATES_DIRECTORY = "protocol-updates";
 
         private string _region;
         private string _bucket;
         private string _folder;
         private string _iamAccessKey;
         private string _iamSecretKey;
+        private string _sessionToken;
         private string _pinnedServiceURL;
         private string _pinnedPublicKey;
         private int _putCount;
@@ -175,18 +176,33 @@ namespace Sensus.DataStores.Remote
         {
             get
             {
-                return _iamAccessKey + ":" + _iamSecretKey;
+                return _iamAccessKey + ":" + _iamSecretKey + (string.IsNullOrWhiteSpace(_sessionToken) ? "" : ":" + _sessionToken);
             }
             set
             {
+                bool validValue = false;
+
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     string[] parts = value.Split(':');
-                    if (parts.Length == 2)
+
+                    if (parts.Length == 2 || parts.Length == 3)
                     {
                         _iamAccessKey = parts[0].Trim();
                         _iamSecretKey = parts[1].Trim();
+
+                        if (parts.Length == 3)
+                        {
+                            _sessionToken = parts[2].Trim();
+                        }
+
+                        validValue = true;
                     }
+                }
+
+                if (!validValue)
+                {
+                    _iamAccessKey = _iamSecretKey = null;
                 }
             }
         }
@@ -264,7 +280,7 @@ namespace Sensus.DataStores.Remote
         {
             get
             {
-                return base.StorageDescription ?? "Data will be transmitted " + TimeSpan.FromMilliseconds(WriteDelayMS).GetIntervalString().ToLower();
+                return base.StorageDescription ?? "Data will be transmitted " + TimeSpan.FromMilliseconds(WriteDelayMS).GetFullDescription(TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS)).ToLower() + ".";
             }
         }
 
@@ -278,20 +294,17 @@ namespace Sensus.DataStores.Remote
 
         public override async Task StartAsync()
         {
-            if (_pinnedServiceURL != null)
+            // ensure that we have a pinned public key if we're pinning the service URL
+            if (_pinnedServiceURL != null && string.IsNullOrWhiteSpace(_pinnedPublicKey))
             {
-                // ensure that we have a pinned public key if we're pinning the service URL
-                if (string.IsNullOrWhiteSpace(_pinnedPublicKey))
-                {
-                    throw new Exception("Ensure that a pinned public key is provided to the AWS S3 remote data store.");
-                }
-                // set up a certificate validation callback if we're pinning and have a public key
-                else
-                {
-                    ServicePointManager.ServerCertificateValidationCallback += ServerCertificateValidationCallback;
-                }
+                throw new Exception("Ensure that a pinned public key is provided to the AWS S3 remote data store.");
+            }
+            else if (Protocol.AuthenticationService != null)
+            {
+                await GetCredentialsFromAuthenticationService();
             }
 
+            // credentials must have been set, either directly in the protocol or via the authentication service.
             if (string.IsNullOrWhiteSpace(_iamAccessKey) || string.IsNullOrWhiteSpace(_iamSecretKey))
             {
                 throw new Exception("Must specify an IAM account within the S3 remote data store.");
@@ -301,28 +314,15 @@ namespace Sensus.DataStores.Remote
             await base.StartAsync();
         }
 
-        private bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sllPolicyErrors)
+        private async Task<AmazonS3Client> CreateS3ClientAsync()
         {
-            if (certificate == null)
+            if (Protocol.AuthenticationService != null)
             {
-                return false;
+                await GetCredentialsFromAuthenticationService();
             }
 
-            if (certificate.Subject == "CN=" + _pinnedServiceURL.Substring("https://".Length))
-            {
-                return Convert.ToBase64String(certificate.GetPublicKey()) == _pinnedPublicKey;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        private AmazonS3Client InitializeS3()
-        {
             AWSConfigs.LoggingConfig.LogMetrics = false;  // getting many uncaught exceptions from AWS S3 related to logging metrics
             AmazonS3Config clientConfig = new AmazonS3Config();
-            clientConfig.ForcePathStyle = true;  // when using pinning via CloudFront reverse proxy, the bucket name is prepended to the host if the path style is not used. the resulting host does not exist for our reverse proxy, causing DNS name resolution errors. by using the path style, the bucket is appended to the reverse-proxy host and everything goes through fine.
 
             if (_pinnedServiceURL == null)
             {
@@ -331,9 +331,23 @@ namespace Sensus.DataStores.Remote
             else
             {
                 clientConfig.ServiceURL = _pinnedServiceURL;
+
+                // when using pinning via CloudFront reverse proxy, the bucket name is prepended to the host if the path style is not used. the resulting host does not exist for our reverse proxy, causing DNS name resolution errors. by using the path style, the bucket is appended to the reverse-proxy host and everything goes through fine.
+                clientConfig.ForcePathStyle = true;
             }
 
-            return new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig);
+            AmazonS3Client client;
+
+            if (string.IsNullOrWhiteSpace(_sessionToken))
+            {
+                client = new AmazonS3Client(_iamAccessKey, _iamSecretKey, clientConfig);
+            }
+            else
+            {
+                client = new AmazonS3Client(_iamAccessKey, _iamSecretKey, _sessionToken, clientConfig);
+            }
+
+            return client;
         }
 
         public override async Task WriteDataStreamAsync(Stream stream, string name, string contentType, CancellationToken cancellationToken)
@@ -342,7 +356,7 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
 
                 await PutAsync(s3, stream, DATA_DIRECTORY + "/" + (string.IsNullOrWhiteSpace(_folder) ? "" : _folder + "/") + (string.IsNullOrWhiteSpace(Protocol.ParticipantId) ? "" : Protocol.ParticipantId + "/") + name, contentType, cancellationToken);
             }
@@ -358,7 +372,7 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
                 string datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, true);
                 byte[] datumJsonBytes = Encoding.UTF8.GetBytes(datumJSON);
                 MemoryStream dataStream = new MemoryStream(datumJsonBytes);
@@ -378,7 +392,7 @@ namespace Sensus.DataStores.Remote
             try
             {
                 // send the token
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
                 byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
                 MemoryStream dataStream = new MemoryStream(tokenBytes);
 
@@ -397,7 +411,7 @@ namespace Sensus.DataStores.Remote
             try
             {
                 // send an empty data stream to clear the token. we don't have delete access.
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
 
                 await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
             }
@@ -419,7 +433,7 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
                 byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
                 MemoryStream dataStream = new MemoryStream(requestJsonBytes);
 
@@ -443,7 +457,7 @@ namespace Sensus.DataStores.Remote
             try
             {
                 // send an empty data stream to clear the request. we don't have delete access.
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
 
                 await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(id), "text/plain", cancellationToken);
             }
@@ -463,12 +477,12 @@ namespace Sensus.DataStores.Remote
             return PUSH_NOTIFICATIONS_DIRECTORY + "/" + pushNotificationRequestId + ".json";
         }
 
-        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
+        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken, bool allowRetry = true)
         {
-            _putCount++;
-
             try
             {
+                _putCount++;
+
                 PutObjectRequest putRequest = new PutObjectRequest
                 {
                     BucketName = _bucket,
@@ -489,11 +503,48 @@ namespace Sensus.DataStores.Remote
                     throw new Exception("Bad status code:  " + putStatus);
                 }
             }
+            catch (AmazonS3Exception s3Exception)
+            {
+                // retry the put if the credentials were invalid. might just need new ones.
+                if ((s3Exception.ErrorCode == "InvalidAccessKeyId" ||
+                     s3Exception.ErrorCode == "SignatureDoesNotMatch" ||
+                     s3Exception.ErrorCode == "InvalidToken") && allowRetry && Protocol.AuthenticationService != null)
+                {
+                    AmazonS3Client retryS3 = null;
+
+                    try
+                    {
+                        retryS3 = await CreateS3ClientAsync();
+                        stream.Position = 0;
+                        await PutAsync(retryS3, stream, key, contentType, cancellationToken, false);
+                    }
+                    catch (Exception retryException)
+                    {
+                        // there's probably something wrong with the authentication service. report the exception
+                        // and throw it back to the caller. we throw just like we do for other exceptions caught
+                        // in the current method.
+                        string message = "The credentials from the S3 credentials service failed.";
+                        SensusException.Report(message, retryException);
+                        throw retryException;
+                    }
+                    finally
+                    {
+                        DisposeS3(retryS3);
+                    }
+                }
+                else
+                {
+                    throw s3Exception;
+                }
+            }
             catch (WebException ex)
             {
+                // this can happen if the endpoint is using a self-signed certificate and we're not pinning. when
+                // we pin we permit self-signed certificates via the ServicePointManager.ServerCertificateValidationCallback
+                // delegate within the SensusServiceHelper, which checks for the expected certificate public key.
                 if (ex.Status == WebExceptionStatus.TrustFailure)
                 {
-                    string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint. This is likely the result of a failed match between the server's public key and the pinned public key within the Sensus AWS S3 remote data store.";
+                    string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint.";
                     SensusException.Report(message, ex);
                 }
 
@@ -518,7 +569,7 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
 
                 Stream responseStream = (await s3.GetObjectAsync(_bucket, datumKey, cancellationToken)).ResponseStream;
                 T datum = null;
@@ -549,7 +600,7 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                s3 = InitializeS3();
+                s3 = await CreateS3ClientAsync();
 
                 Stream responseStream = (await s3.GetObjectAsync(_bucket, ADAPTIVE_EMA_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
 
@@ -567,14 +618,27 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task StopAsync()
+        public override async Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken)
         {
-            await base.StopAsync();
+            AmazonS3Client s3 = null;
 
-            // remove the callback
-            if (_pinnedServiceURL != null && !string.IsNullOrWhiteSpace(_pinnedPublicKey))
+            try
             {
-                ServicePointManager.ServerCertificateValidationCallback -= ServerCertificateValidationCallback;
+                s3 = await CreateS3ClientAsync();
+
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, PROTOCOL_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+
+                string protocolUpdatesJSON;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    protocolUpdatesJSON = reader.ReadToEnd().Trim();
+                }
+
+                return protocolUpdatesJSON;
+            }
+            finally
+            {
+                DisposeS3(s3);
             }
         }
 
@@ -590,6 +654,23 @@ namespace Sensus.DataStores.Remote
                 {
                     SensusServiceHelper.Get().Logger.Log("Failed to dispose Amazon S3 client:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
+            }
+        }
+
+        private async Task GetCredentialsFromAuthenticationService()
+        {
+            if (Protocol.AuthenticationService == null)
+            {
+                SensusException.Report(nameof(GetCredentialsFromAuthenticationService) + " called without an authentication service.");
+            }
+            else
+            {
+                // set keys/token for use in the data store
+                AmazonS3Credentials s3Credentials = await Protocol.AuthenticationService.GetCredentialsAsync();
+                _iamAccessKey = s3Credentials.AccessKeyId;
+                _iamSecretKey = s3Credentials.SecretAccessKey;
+                _sessionToken = s3Credentials.SessionToken;
+                _region = s3Credentials.Region;
             }
         }
 

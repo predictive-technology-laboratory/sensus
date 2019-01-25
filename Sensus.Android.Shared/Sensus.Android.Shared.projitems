@@ -9,6 +9,7 @@
     <Import_RootNamespace>Sensus.Android</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ForegroundServiceNotificationActionReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidGyroscopeProbe.cs" />
@@ -60,6 +61,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)AndroidServiceConnectedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AndroidTextToSpeech.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\TextCellDisposedFix.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidEstimoteIndoorCloudCallback.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidEstimoteIndoorPositionUpdateListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />

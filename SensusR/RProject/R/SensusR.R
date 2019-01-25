@@ -157,13 +157,17 @@ sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE
 #' @param data.path Path to Sensus JSON data (either a file or a directory).
 #' @param is.directory Whether or not the path is a directory.
 #' @param recursive Whether or not to read files recursively from directory indicated by path.
-#' @param convert.to.local.timezone Whether or not to convert timestamps to the local timezone.
-#' @param local.timezone If converting timestamps to local timesonze, the local timezone to use.
+#' @param local.timezone The local timezone to convert datum timestamps to, or NULL to leave the timestamps unconverted.
+#' @param data.types Specific data types to read. A full list of data types can be found here:  \url{https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html}. For example \code{c("AccelerometerDatum", "HeightDatum")} will only read accelerometer and height data. Pass \code{NULL} to read all data types.
 #' @return All data, listed by type.
 #' @examples
 #' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
-sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TRUE, convert.to.local.timezone = TRUE, local.timezone = Sys.timezone())
+sensus.read.json.files = function(data.path, 
+                                  is.directory = TRUE, 
+                                  recursive = TRUE,
+                                  local.timezone = Sys.timezone(),
+                                  data.types = NULL)
 {
   paths = c(data.path)
   
@@ -201,8 +205,42 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       next
     }
     
-    # read JSON
-    file.text = readChar(path, file.size)
+    # if we're filtering for specific data types, read JSON lines and filter for desired data types.
+    if(length(data.types) > 0)
+    {
+      file.lines = readLines(path, file.size, warn = FALSE)
+      
+      # set up booleans for lines to keep, always keeping first and last lines if they are array brackets.
+      lines.to.keep = rep(FALSE, length(file.lines))
+      lines.to.keep[1] = file.lines[1] == "["
+      lines.to.keep[length(lines.to.keep)] = file.lines[length(file.lines)] == "]"
+      
+      # keep lines of each desired data type
+      for(data.type in data.types)
+      {
+        # example line:  {"$type":"Sensus.Probes.Movement.GyroscopeDatum, SensusAndroid","X":0.00038380140904337168,"Y":0.00050759583245962858,"Z":-4.7261957661248744E-05,"Id":"e7485732-8678-46ee-b458-a1515adf8655","DeviceId":"dae1fdfe91facb68","Timestamp":"2019-01-09T13:08:21.172667+00:00","ProtocolId":"cf54e60f-0461-4234-9548-c8f297117d37","BuildId":"1547004843","ParticipantId":null,"DeviceManufacturer":"Google","DeviceModel":"sailfish","OperatingSystem":"Android P","TaggedEventId":null,"TaggedEventTags":null}
+        lines.with.data.type = grep(pattern = paste("\"\\$type\":\"[^\"]+", data.type, "[^\"]+\"", sep=""), x = file.lines, value = FALSE, fixed = FALSE)
+        lines.to.keep[lines.with.data.type] = TRUE
+      }
+      
+      # subset lines to those that were array brackets or matched one of the desired data types
+      file.lines = file.lines[lines.to.keep]
+      
+      # ensure last line doesn't end with a comma, which will be the case if we filter out the final JSON object in the original array but keep previous ones, which ended with commas.
+      if(length(file.lines) >= 2)
+      {
+        index = length(file.lines) - 1
+        file.lines[index] = sub(",$", "", file.lines[index])
+      }
+      
+      # collapse subsetted lines back to a single string with newlines
+      file.text = paste(file.lines, collapse = "\n")
+    }
+    # otherwise, read all text as is.
+    else
+    {
+      file.text = readChar(path, file.size)
+    }
     
     # check for incomplete JSON file. this can happen if the app is killed before it has a chance
     # to properly close of the JSON array. in such cases, the file will abruptly terminate with
@@ -235,13 +273,13 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       next
     }
     
+    # add to expected total count of data, which is the length of the Id list column (or any column).
+    expected.total.cnt = expected.total.cnt + length(file.json$Id)
+    
     # file.json is a list with one entry per column (e.g., for the X coordinates of accelerometer readings). sub-list
     # the file.json list to include only those columns that are not themselves lists. such list columns will be seen
-    # in cases like the survey data.
+    # in cases like the survey data, which we currently cannot handle.
     file.json = file.json[sapply(file.json, typeof) != "list"]
-    
-    # add to expected total count of data, which is the length of the Id list entry
-    expected.total.cnt = expected.total.cnt + length(file.json$Id)
     
     # set datum type and OS columns
     type.os = lapply(file.json$"$type", function(type)
@@ -261,12 +299,13 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
     # remove the original $type column
     file.json$"$type" = NULL
     
-    # remove the original $Anonymized column. not needed.
+    # remove the original $Anonymized column. not needed. this column was removed from serialization 
+    # in a later version of sensus, but we retain it here for backwards compatibility.
     file.json$Anonymized = NULL
     
     # parse timestamps and convert to local time zone if needed
     file.json$Timestamp = strptime(file.json$Timestamp, format = "%Y-%m-%dT%H:%M:%OS", tz="UTC")    
-    if(convert.to.local.timezone)
+    if(!is.null(local.timezone))
     {
       file.json$Timestamp = lubridate::with_tz(file.json$Timestamp, local.timezone)
     }
@@ -287,11 +326,11 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
       {
         return(sum(is.na(data.type.column)) == length(data.type.column))
       })
-      
+
       # remove list elements (columns) for the current data type that have all NAs, as this indicates
       # that the column actually belongs to some other data type. the only exception to this is the
       # TaggedEventId column, which will typically be all NAs but is a valid column for all data types.
-      data.type[column.is.all.nas & names(data.type) != "TaggedEventId"] = NULL
+      data.type[column.is.all.nas & (names(data.type) != "TaggedEventId")] = NULL
       
       return(data.type)
     })
@@ -350,6 +389,8 @@ sensus.read.json.files = function(data.path, is.directory = TRUE, recursive = TR
   final.total.cnt = 0
   for(datum.type in names(data))
   { 
+    print(paste("Merging data for type ", datum.type, ".", sep = ""))
+    
     datum.type.data = data[[datum.type]]
     
     # pre-allocate vectors for each column in data frame according to each column's type, using
@@ -553,9 +594,9 @@ plot.AltitudeDatum = function(x, pch = ".", type = "l", ...)
 #' data.path = system.file("extdata", "example-data", package="SensusR")
 #' data = sensus.read.json.files(data.path)
 #' plot(data$BatteryDatum)
-plot.BatteryDatum = function(x, pch = ".", type = "l", ...)
+plot.BatteryDatum = function(x, pch = ".", type = "l", main = "Battery", ...)
 {
-  plot(x$Timestamp, x$Level, main = "Battery", xlab = "Time", ylab = "Level (%)", pch = pch, type = type, ...)
+  plot(x$Timestamp, x$Level, main = main, xlab = "Time", ylab = "Level (%)", pch = pch, type = type, ...)
 }
 
 #' Plot cell tower data.

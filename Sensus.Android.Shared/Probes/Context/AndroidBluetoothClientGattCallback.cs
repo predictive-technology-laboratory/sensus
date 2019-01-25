@@ -16,6 +16,8 @@ using System;
 using Android.Bluetooth;
 using System.Text;
 using Sensus.Probes.Context;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -24,17 +26,16 @@ namespace Sensus.Android.Probes.Context
     /// </summary>
     public class AndroidBluetoothClientGattCallback : BluetoothGattCallback
     {
-        public event EventHandler<BluetoothCharacteristicReadArgs> CharacteristicRead;
-
         private BluetoothGattService _service;
         private BluetoothGattCharacteristic _characteristic;
-        private DateTimeOffset _encounterTimestamp;
+        private TaskCompletionSource<string> _readCompletionSource;
+        private BluetoothGatt _peripheral;
 
-        public AndroidBluetoothClientGattCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic, DateTimeOffset encounterTimestamp)
+        public AndroidBluetoothClientGattCallback(BluetoothGattService service, BluetoothGattCharacteristic characteristic)
         {
             _service = service;
             _characteristic = characteristic;
-            _encounterTimestamp = encounterTimestamp;
+            _readCompletionSource = new TaskCompletionSource<string>();
         }
 
         public override void OnConnectionStateChange(BluetoothGatt peripheral, GattStatus status, ProfileState newState)
@@ -44,12 +45,12 @@ namespace Sensus.Android.Probes.Context
                 // discover services offered by the peripheral we connected to
                 try
                 {
-                    peripheral.DiscoverServices();
+                    _peripheral = peripheral;
+                    _peripheral.DiscoverServices();
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while discovering peripheral services:  " + ex, LoggingLevel.Normal, GetType());
-                    DisconnectPeripheral(peripheral);
                 }
             }
             // ensure that all disconnected peripherals get closed (released). without closing, we'll use up all the BLE interfaces.
@@ -68,12 +69,12 @@ namespace Sensus.Android.Probes.Context
 
         public override void OnServicesDiscovered(BluetoothGatt peripheral, GattStatus status)
         {
-            BluetoothGattService peripheralService;
+            BluetoothGattService service = null;
             try
             {
-                peripheralService = peripheral.GetService(_service.Uuid);
+                service = peripheral.GetService(_service.Uuid);
 
-                if (peripheralService == null)
+                if (service == null)
                 {
                     throw new Exception("Null service returned.");
                 }
@@ -81,36 +82,36 @@ namespace Sensus.Android.Probes.Context
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while getting peripheral service:  " + ex, LoggingLevel.Normal, GetType());
-                DisconnectPeripheral(peripheral);
-                return;
             }
 
-            BluetoothGattCharacteristic peripheralCharacteristic;
-            try
+            if (service != null)
             {
-                peripheralCharacteristic = peripheralService.GetCharacteristic(_characteristic.Uuid);
-
-                if (peripheralCharacteristic == null)
+                BluetoothGattCharacteristic characteristic = null;
+                try
                 {
-                    throw new Exception("Null characteristic returned.");
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while getting peripheral characteristic:  " + ex, LoggingLevel.Normal, GetType());
-                DisconnectPeripheral(peripheral);
-                return;
-            }
+                    characteristic = service.GetCharacteristic(_characteristic.Uuid);
 
-            try
-            {
-                peripheral.ReadCharacteristic(peripheralCharacteristic);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while reading peripheral characteristic:  " + ex, LoggingLevel.Normal, GetType());
-                DisconnectPeripheral(peripheral);
-                return;
+                    if (characteristic == null)
+                    {
+                        throw new Exception("Null characteristic returned.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while getting peripheral characteristic:  " + ex, LoggingLevel.Normal, GetType());
+                }
+
+                if (characteristic != null)
+                {
+                    try
+                    {
+                        peripheral.ReadCharacteristic(characteristic);
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while reading peripheral characteristic:  " + ex, LoggingLevel.Normal, GetType());
+                    }
+                }
             }
         }
 
@@ -118,25 +119,27 @@ namespace Sensus.Android.Probes.Context
         {
             try
             {
-                byte[] characteristicBytes = characteristic.GetValue();
-                string characteristicString = Encoding.UTF8.GetString(characteristicBytes);
-                CharacteristicRead?.Invoke(this, new BluetoothCharacteristicReadArgs(characteristicString, _encounterTimestamp));
+                byte[] valueBytes = characteristic.GetValue();
+                string valueString = Encoding.UTF8.GetString(valueBytes);
+                _readCompletionSource.SetResult(valueString);
             }
             catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while getting characteristic string after reading it:  " + ex, LoggingLevel.Normal, GetType());
             }
-            finally
-            {
-                DisconnectPeripheral(peripheral);
-            }
         }
 
-        private void DisconnectPeripheral(BluetoothGatt peripheral)
+        public Task<string> ReadCharacteristicValueAsync(CancellationToken cancellationToken)
+        {
+            return BluetoothDeviceProximityProbe.CompleteReadAsync(_readCompletionSource, cancellationToken);
+        }
+
+        public void DisconnectPeripheral()
         {
             try
             {
-                peripheral.Disconnect();
+                SensusServiceHelper.Get().Logger.Log("Disconnecting peripheral...", LoggingLevel.Normal, GetType());
+                _peripheral?.Disconnect();
             }
             catch (Exception ex)
             {

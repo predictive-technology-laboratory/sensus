@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
+using Sensus.UI.UiProperties;
+using Sensus.Exceptions;
 
 namespace Sensus.UI.Inputs
 {

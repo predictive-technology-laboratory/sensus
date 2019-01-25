@@ -100,13 +100,65 @@
   </h3>
   
   
-  <a id="Sensus_Extensions_TimeSpanExtensions_GetIntervalString_" data-uid="Sensus.Extensions.TimeSpanExtensions.GetIntervalString*"></a>
-  <h4 id="Sensus_Extensions_TimeSpanExtensions_GetIntervalString_System_TimeSpan_" data-uid="Sensus.Extensions.TimeSpanExtensions.GetIntervalString(System.TimeSpan)">GetIntervalString(TimeSpan)</h4>
+  <a id="Sensus_Extensions_TimeSpanExtensions_GetFullDescription_" data-uid="Sensus.Extensions.TimeSpanExtensions.GetFullDescription*"></a>
+  <h4 id="Sensus_Extensions_TimeSpanExtensions_GetFullDescription_System_TimeSpan_System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__" data-uid="Sensus.Extensions.TimeSpanExtensions.GetFullDescription(System.TimeSpan,System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan})">GetFullDescription(TimeSpan, Nullable&lt;TimeSpan&gt;, Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static string GetIntervalString(this TimeSpan interval)</code></pre>
+    <pre><code class="lang-csharp hljs">public static string GetFullDescription(this TimeSpan interval, Nullable&lt;TimeSpan&gt; bufferBefore = null, Nullable&lt;TimeSpan&gt; bufferAfter = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">interval</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">bufferBefore</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">bufferAfter</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Extensions_TimeSpanExtensions_GetPlusMinusDescription_" data-uid="Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription*"></a>
+  <h4 id="Sensus_Extensions_TimeSpanExtensions_GetPlusMinusDescription_System_TimeSpan_" data-uid="Sensus.Extensions.TimeSpanExtensions.GetPlusMinusDescription(System.TimeSpan)">GetPlusMinusDescription(TimeSpan)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static string GetPlusMinusDescription(this TimeSpan interval)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

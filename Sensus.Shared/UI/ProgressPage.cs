@@ -17,34 +17,36 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sensus.Context;
 using Xamarin.Forms;
+using System.Linq;
 
 namespace Sensus.UI
 {
-    public class ProtocolStartPage : ContentPage
+    public class ProgressPage : ContentPage
     {
         private CancellationTokenSource _cancellationTokenSource;
         private ProgressBar _progressBar;
         private Label _progressBarLabel;
+        private bool _displayed;
 
-        public ProtocolStartPage(CancellationTokenSource cancellationTokenSource)
+        public ProgressPage(string description, CancellationTokenSource cancellationTokenSource)
         {
             _cancellationTokenSource = cancellationTokenSource;
 
-            _progressBar = new ProgressBar()
+            _progressBar = new ProgressBar
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            _progressBarLabel = new Label()
+            _progressBarLabel = new Label
             {
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.CenterAndExpand
             };
 
-            Button cancelButton = new Button()
+            Button cancelButton = new Button
             {
                 Text = "Cancel",
-                FontSize = 30,
+                FontSize = 25,
                 HorizontalOptions = LayoutOptions.CenterAndExpand
             };
 
@@ -62,8 +64,8 @@ namespace Sensus.UI
                 {
                     new Label
                     {
-                        Text = "Starting study. Please wait...",
-                        FontSize = 30,
+                        Text = description,
+                        FontSize = 25,
                         HorizontalOptions = LayoutOptions.CenterAndExpand,
                         VerticalOptions = LayoutOptions.CenterAndExpand
                     },
@@ -74,6 +76,16 @@ namespace Sensus.UI
             };
         }
 
+        public async Task DisplayAsync(INavigation navigation)
+        {
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+            {
+                await navigation.PushModalAsync(this);
+                _displayed = true;
+                await SetProgressAsync(0, null);
+            });
+        }
+
         public double GetProgress()
         {
             return SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -82,11 +94,11 @@ namespace Sensus.UI
             });
         }
 
-        public async Task SetProgressAsync(double progress)
+        public async Task SetProgressAsync(double progress, string currentTask)
         {
             await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                _progressBarLabel.Text = $"Progress:  {Math.Round(progress * 100)}%";
+                _progressBarLabel.Text = "Progress:  " + Math.Round(progress * 100) + "%" + (string.IsNullOrWhiteSpace(currentTask) ? "" : " (" + currentTask + ")");
                 await _progressBar.ProgressTo(progress, 100, Easing.Linear);
             });
         }
@@ -98,6 +110,22 @@ namespace Sensus.UI
             _cancellationTokenSource.Cancel();
 
             return true;
+        }
+
+        public async Task CloseAsync()
+        {
+            if (_displayed)
+            {
+                await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                {
+                    if (Navigation.ModalStack.LastOrDefault() == this)
+                    {
+                        await Navigation.PopModalAsync();
+                    }
+
+                    _displayed = false;
+                });
+            }
         }
     }
 }

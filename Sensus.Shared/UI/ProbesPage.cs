@@ -66,11 +66,11 @@ namespace Sensus.UI
             _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, nameof(Probe.CaptionColor));
             _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));
             _probesList.ItemsSource = _protocol.Probes;
-            _probesList.ItemTapped += ProbeTapped;
+            _probesList.ItemTapped += ProbeTappedAsync;
 
             Content = _probesList;
         }
 
-        protected abstract void ProbeTapped(object sender, ItemTappedEventArgs e);
+        protected abstract void ProbeTappedAsync(object sender, ItemTappedEventArgs e);
     }
 }
