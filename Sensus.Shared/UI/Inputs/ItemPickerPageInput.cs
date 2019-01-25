@@ -19,14 +19,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
-using Sensus.UI.UiProperties;
-using Sensus.Exceptions;
 
 namespace Sensus.UI.Inputs
 {
     public class ItemPickerPageInput : ItemPickerInput
     {
         private List<object> _items;
+        private List<int> _initialSelectedIndices;
         private bool _multiselect;
         private List<object> _selectedItems;
         private string _textBindingPropertyPath;
@@ -60,14 +59,6 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        public override object Value
-        {
-            get
-            {
-                return _selectedItems;
-            }
-        }
-
         public string TextBindingPropertyPath
         {
             get
@@ -80,15 +71,11 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        public List<object> SelectedItems
+        public override object Value
         {
             get
             {
                 return _selectedItems;
-            }
-            set
-            {
-                _selectedItems = value;
             }
         }
 
@@ -138,12 +125,13 @@ namespace Sensus.UI.Inputs
             Construct();
         }
 
-        public ItemPickerPageInput(string labelText, List<object> items, string textBindingPropertyPath = ".")
+        public ItemPickerPageInput(string labelText, List<object> items, List<int> initialSelectedIndices = null, string textBindingPropertyPath = ".")
             : base(labelText)
         {
             Construct();
 
             _items = items;
+            _initialSelectedIndices = initialSelectedIndices;
 
             if (!string.IsNullOrWhiteSpace(textBindingPropertyPath))
             {
@@ -169,6 +157,7 @@ namespace Sensus.UI.Inputs
 
             if (base.GetView(index) == null)
             {
+                _selectedItems.Clear();
                 _itemLabels.Clear();
 
                 StackLayout itemLabelStack = new StackLayout
@@ -191,12 +180,10 @@ namespace Sensus.UI.Inputs
                 {
                     object item = itemList[i];
 
-                    Color defaultBackgroundColor = new Label().BackgroundColor;
                     Label itemLabel = new Label
                     {
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
-                        BackgroundColor = _selectedItems.Contains(item) ? Color.Accent : defaultBackgroundColor,
                         BindingContext = item
 
                         // set the style ID on the view so that we can retrieve it when UI testing
@@ -214,7 +201,7 @@ namespace Sensus.UI.Inputs
                         NumberOfTapsRequired = 1
                     };
 
-
+                    Color defaultBackgroundColor = itemLabel.BackgroundColor;
 
                     tapRecognizer.Tapped += (o, e) =>
                     {
@@ -246,6 +233,12 @@ namespace Sensus.UI.Inputs
                     };
 
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
+
+                    // if the item should be initially selected, simulate a user tap.
+                    if (_initialSelectedIndices.Contains(i))
+                    {
+                        tapRecognizer.Command.Execute(null);
+                    }
 
                     // add invisible separator between items for fewer tapping errors
                     if (itemLabelStack.Children.Count > 0)

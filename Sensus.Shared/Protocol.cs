@@ -499,7 +499,7 @@ namespace Sensus
         private string _lockPasswordHash;
         private AnonymizedJsonContractResolver _jsonAnonymizer;
         private DateTimeOffset _randomTimeAnchor;
-        private readonly ConcurrentObservableCollection<PointOfInterest> _pointsOfInterest;
+        private ConcurrentObservableCollection<PointOfInterest> _pointsOfInterest;
         private string _description;
         private DateTime _startTimestamp;
         private bool _startImmediately;
@@ -522,8 +522,6 @@ namespace Sensus
         private string _pushNotificationsHub;
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
-        private bool _allowProbeDisableOnStartUp;
-        private List<string> _probesSelectedOnStartUp;
         private Dictionary<Type, Probe> _typeProbe;
 
         // members for displaying protocol start-up
@@ -1416,23 +1414,11 @@ namespace Sensus
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
-        /// Sets wether to allow the user to disable specific protocol probes on start up
+        /// Sets wether to allow the user to disable specific probes when starting the <see cref="Protocol"/>.
         /// </summary>
-        /// <value>Allow user to disable probes on start up</value>
-        [OnOffUiProperty("Allow Probe Disable on startup:", true, 52)]
-        public bool AllowProbeDisableOnStartUp
-        {
-            get
-            {
-                return _allowProbeDisableOnStartUp;
-            }
-            set
-            {
-                _allowProbeDisableOnStartUp = value;
-            }
-        }
-
-
+        /// <value>Allow user to disable probes on start up.</value>
+        [OnOffUiProperty("Allow Probe Disable On Startup:", true, 54)]
+        public bool AllowProbeDisableOnStartUp { get; set; } = false;
 
         /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 
@@ -1559,7 +1545,6 @@ namespace Sensus
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
-            _allowProbeDisableOnStartUp = false;
             _probes = new List<Probe>();
         }
 
@@ -1825,11 +1810,11 @@ namespace Sensus
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                         int probesEnabled = 0;
                         bool startMicrosoftBandProbes = true;
-                        int numProbesToStart = _probes.Count(p => p.Enabled && p.Selected);
+                        int numProbesToStart = _probes.Count(p => p.Enabled);
                         double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                         foreach (Probe probe in _probes)
                         {
-                            if (probe.Enabled && probe.Selected == true)
+                            if (probe.Enabled)
                             {
                                 if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
                                 {
@@ -2044,15 +2029,9 @@ namespace Sensus
         /// <param name="startupMessage">Startup message to display, along with the standard information.</param>
         public async Task StartWithUserAgreementAsync(string startupMessage = null)
         {
-            if (!_probes.Any(probe => probe.Enabled))
-            {
-                await SensusServiceHelper.Get().FlashNotificationAsync("Probes not enabled. Cannot start.");
-                return;
-            }
-
             if (!_continueIndefinitely && _endTimestamp <= DateTime.Now)
             {
-                await SensusServiceHelper.Get().FlashNotificationAsync("You cannot start this study because it has already ended.");
+                await SensusServiceHelper.Get().FlashNotificationAsync("You cannot start this study because it has already ended. Please contact the study administrator.");
                 return;
             }
 
@@ -2072,45 +2051,53 @@ namespace Sensus
                                           " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
                                           " The following data will be collected:"));
 
-            var enabledProbes = _probes.Where(w => w.Enabled && w.StoreData).OrderBy(o => o.DisplayName).ToList();
+            // get list of probes and their collection descriptions. include probes that were originally enabled rather than those
+            // that are currently enabled, as probes can be disabled due to user preferences and temporary system unavailability.
+            // all probes originally enabled in the protocol should be shown to the user. only those that are currently enabled
+            // will be shown as selected if the user is permitted to disabled them upon startup.
+            List<Tuple<Probe, string>> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
+                                                                                  probe.StoreData &&                                        // probes might only be enabled to trigger surveys. they don't actually store data and should not be listed here
+                                                                                  !string.IsNullOrWhiteSpace(probe.CollectionDescription))  // probes like the script probe can be enabled but not have any intent to collect (e.g., no surveys)
+                                                                  .OrderBy(probe => probe.DisplayName)
+                                                                  .Select(probe => new Tuple<Probe, string>(probe, probe.CollectionDescription))
+                                                                  .ToList();
+
             int collectionDescriptionFontSize = 15;
 
-            if (AllowProbeDisableOnStartUp == false)
+            ItemPickerPageInput probePicker = null;
+            if (AllowProbeDisableOnStartUp)
             {
-                StringBuilder collectionDescription = new StringBuilder();
-                foreach (Probe probe in enabledProbes)
+                probePicker = new ItemPickerPageInput("Select data streams", probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList())
                 {
-                    probe.Selected = true;
-                    string probeCollectionDescription = probe.CollectionDescription;
-                    if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
-                    {
-                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probeCollectionDescription);
-                    }
+                    DisplayNumber = false,
+                    RandomizeItemOrder = false,
+                    Multiselect = true
+                };
+
+                inputs.Add(probePicker);
+            }
+            else
+            {
+                StringBuilder collectionSummary = new StringBuilder();
+                foreach (string description in probeDescriptions.Select(probeDescription => probeDescription.Item2))
+                {
+                    collectionSummary.Append((collectionSummary.Length == 0 ? "" : Environment.NewLine) + description);
                 }
 
                 LabelOnlyInput collectionDescriptionLabel = null;
-                if (collectionDescription.Length == 0)
+
+                if (collectionSummary.Length == 0)
                 {
                     collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
                 }
                 else
                 {
-                    collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
+                    collectionDescriptionLabel = new LabelOnlyInput(collectionSummary.ToString(), collectionDescriptionFontSize);
                 }
 
                 collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
+
                 inputs.Add(collectionDescriptionLabel);
-            }
-            else
-            {
-                ItemPickerPageInput probeSelectionPage = new ItemPickerPageInput("Load the following probes", enabledProbes.Select(s => s.DisplayName).Cast<object>().ToList())
-                {
-                    DisplayNumber = false,
-                    RandomizeItemOrder = false,
-                    Multiselect = true,
-                    SelectedItems = enabledProbes.Where(w => w.Selected == true).Select(s => s.DisplayName).Cast<object>().ToList()
-                };
-                inputs.Add(probeSelectionPage);
             }
 
             // describe remote data storage
@@ -2164,9 +2151,9 @@ namespace Sensus
 
             bool start = false;
 
+            // if the user didn't cancel, check the confirmation mode and selected probes
             if (completedInputs != null)
             {
-
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
                 {
                     start = true;
@@ -2221,18 +2208,15 @@ namespace Sensus
                     }
                 }
 
-                var selectedProbeObjs = completedInputs.Where(w => w.GetType() == typeof(ItemPickerPageInput)).FirstOrDefault()?.Value as List<object>;
-                _probesSelectedOnStartUp = selectedProbeObjs?.Select(s => s.ToString())?.ToList();
-                if (AllowProbeDisableOnStartUp == true)
+                // if the user was given an option to disable probes, set their preferences now.
+                if (probePicker != null)
                 {
-                    if (selectedProbeObjs.Count == 0)
+                    List<string> selectedProbeDescriptions = probePicker.Value as List<string>;
+                    foreach (Tuple<Probe, string> probeDescription in probeDescriptions)
                     {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("You must select at least one probe to include in this study.  Cannot Start.");
-                        start = false;
+                        probeDescription.Item1.Enabled = selectedProbeDescriptions.Contains(probeDescription.Item2);
                     }
                 }
-                enabledProbes.ForEach(e => e.Selected = _probesSelectedOnStartUp == null || _probesSelectedOnStartUp.Contains(e.DisplayName));
-
             }
 
             if (start)
@@ -2328,7 +2312,7 @@ namespace Sensus
 
                 foreach (Probe probe in _probes)
                 {
-                    if (probe.Enabled && probe.Selected)
+                    if (probe.Enabled)
                     {
                         if (await probe.TestHealthAsync(events) == HealthTestResult.Restart)
                         {

@@ -162,8 +162,6 @@ namespace Sensus.Probes
             set { _storeData = value; }
         }
 
-        public bool Selected { get; set; }
-
         [JsonIgnore]
         public abstract Type DatumType { get; }
 
@@ -252,25 +250,6 @@ namespace Sensus.Probes
             }
         }
 
-        [JsonIgnore]
-        public Color CaptionColor
-        {
-            get
-            {
-                if (Enabled == false)
-                {
-                    return Color.Red;
-                }
-                else if(Selected == false)
-                {
-                    return Color.DarkOrange;
-                }
-                else
-                {
-                    return Color.Green;
-                }
-            }
-        }
         protected Probe()
         {
             _enabled = _running = false;

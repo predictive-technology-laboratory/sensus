@@ -437,12 +437,11 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Group")
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Group",
-                        new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
-                        {
-                            Multiselect = true
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Group", new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), textBindingPropertyPath: nameof(Protocol.Name))
+                    {
+                        Multiselect = true
 
-                        }, null, true, "Group", null, null, null, false);
+                    }, null, true, "Group", null, null, null, false);
 
                     if (input == null)
                     {

@@ -63,7 +63,6 @@ namespace Sensus.UI
             _probesList = new ListView(ListViewCachingStrategy.RecycleElement);
             _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
             _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Probe.Caption));
-            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, nameof(Probe.CaptionColor));
             _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));
             _probesList.ItemsSource = _protocol.Probes;
             _probesList.ItemTapped += ProbeTappedAsync;
