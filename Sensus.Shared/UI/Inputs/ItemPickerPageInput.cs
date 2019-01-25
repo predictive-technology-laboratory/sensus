@@ -24,8 +24,13 @@ namespace Sensus.UI.Inputs
 {
     public class ItemPickerPageInput : ItemPickerInput
     {
+        private readonly Color BACKGROUND_COLOR_SELECTED = Color.LightBlue;
+        private readonly Color BACKGROUND_COLOR_FROZEN = Color.LightGray;
+        private readonly Color BACKGROUND_COLOR_DESELECTED = new Label().BackgroundColor;
+
         private List<object> _items;
-        private List<int> _initialSelectedIndices;
+        private Dictionary<int, bool> _initialIndexSelected;
+        private List<int> _frozenIndices;
         private bool _multiselect;
         private List<object> _selectedItems;
         private string _textBindingPropertyPath;
@@ -125,13 +130,18 @@ namespace Sensus.UI.Inputs
             Construct();
         }
 
-        public ItemPickerPageInput(string labelText, List<object> items, List<int> initialSelectedIndices = null, string textBindingPropertyPath = ".")
+        public ItemPickerPageInput(string labelText, 
+                                   List<object> items, 
+                                   Dictionary<int, bool> initialIndexSelected = null, 
+                                   List<int> frozenIndices = null,
+                                   string textBindingPropertyPath = ".")
             : base(labelText)
         {
             Construct();
 
             _items = items;
-            _initialSelectedIndices = initialSelectedIndices;
+            _initialIndexSelected = initialIndexSelected;
+            _frozenIndices = frozenIndices;
 
             if (!string.IsNullOrWhiteSpace(textBindingPropertyPath))
             {
@@ -198,46 +208,37 @@ namespace Sensus.UI.Inputs
 
                     TapGestureRecognizer tapRecognizer = new TapGestureRecognizer
                     {
-                        NumberOfTapsRequired = 1
+                        NumberOfTapsRequired = 1,
+                        CommandParameter = i
                     };
 
-                    Color defaultBackgroundColor = itemLabel.BackgroundColor;
-
-                    tapRecognizer.Tapped += (o, e) =>
+                    tapRecognizer.Tapped += async (o, e) =>
                     {
                         if (!itemLabel.IsEnabled)
                         {
                             return;
                         }
 
-                        if (_selectedItems.Contains(item))
+                        TappedEventArgs tappedEventArgs = e as TappedEventArgs;
+                        int itemIndex = (int)tappedEventArgs.Parameter;
+                        bool itemIsFrozen = _frozenIndices?.Contains(itemIndex) ?? false;
+
+                        // bail if user is not allowed to change the item
+                        if (itemIsFrozen)
                         {
-                            _selectedItems.Remove(item);
-                        }
-                        else
-                        {
-                            _selectedItems.Add(item);
+                            await SensusServiceHelper.Get().FlashNotificationAsync("That item cannot be changed.");
+                            return;
                         }
 
-                        if (!_multiselect)
-                        {
-                            _selectedItems.RemoveAll(selectedItem => selectedItem != item);
-                        }
-
-                        foreach (Label label in _itemLabels)
-                        {
-                            label.BackgroundColor = _selectedItems.Contains(label.BindingContext) ? Color.Accent : defaultBackgroundColor;
-                        }
-
-                        Complete = (Value as List<object>).Count > 0;
+                        ItemTapped(item);
                     };
 
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
 
                     // if the item should be initially selected, simulate a user tap.
-                    if (_initialSelectedIndices.Contains(i))
+                    if (_initialIndexSelected != null && _initialIndexSelected.TryGetValue(i, out bool selected) && selected)
                     {
-                        tapRecognizer.Command.Execute(null);
+                        ItemTapped(item);
                     }
 
                     // add invisible separator between items for fewer tapping errors
@@ -264,6 +265,49 @@ namespace Sensus.UI.Inputs
             }
 
             return base.GetView(index);
+        }
+
+        private void ItemTapped(object item)
+        {
+            if (_selectedItems.Contains(item))
+            {
+                _selectedItems.Remove(item);
+            }
+            else
+            {
+                _selectedItems.Add(item);
+            }
+
+            if (!_multiselect)
+            {
+                _selectedItems.RemoveAll(selectedItem => selectedItem != item);
+            }
+
+            // update label background colors according to selected items
+            for (int i = 0; i < _itemLabels.Count; ++i)
+            {
+                Label label = _itemLabels[i];
+
+                Color labelBackgroundColor = BACKGROUND_COLOR_DESELECTED;
+
+                if (_selectedItems.Contains(label.BindingContext))
+                {
+                    bool itemIsFrozen = _frozenIndices?.Contains(i) ?? false;
+
+                    if (itemIsFrozen)
+                    {
+                        labelBackgroundColor = BACKGROUND_COLOR_FROZEN;
+                    }
+                    else
+                    {
+                        labelBackgroundColor = BACKGROUND_COLOR_SELECTED;
+                    }
+                }
+
+                label.BackgroundColor = labelBackgroundColor;
+            }
+
+            Complete = (Value as List<object>).Count > 0;
         }
 
         public override bool ValueMatches(object conditionValue, bool conjunctive)

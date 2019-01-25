@@ -1413,13 +1413,6 @@ namespace Sensus
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
-        /// Whether or not to allow the user to disable probes when starting the <see cref="Protocol"/>.
-        /// </summary>
-        /// <value>Allow user to disable probes on start up.</value>
-        [OnOffUiProperty("Allow Probe Disable On Startup:", true, 54)]
-        public bool AllowProbeDisableOnStartUp { get; set; } = false;
-
-        /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 
         /// no need to serialize it. Furthermore, we never want the offset
         /// to be shared.
@@ -2034,6 +2027,23 @@ namespace Sensus
                 return;
             }
 
+            // get list of probes and their collection descriptions. include probes that were originally enabled rather than those
+            // that are currently enabled, as probes can be disabled due to user preferences and temporary system unavailability.
+            // all probes originally enabled in the protocol should be shown to the user. only those that are currently enabled
+            // will be shown as selected if the user is permitted to disabled them upon startup.
+            List<Tuple<Probe, string>> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
+                                                                                  probe.StoreData &&                                        // probes might only be enabled to trigger surveys. they don't actually store data and should not be listed here
+                                                                                  !string.IsNullOrWhiteSpace(probe.CollectionDescription))  // probes like the script probe can be enabled but not have any intent to collect (e.g., no surveys)
+                                                                  .OrderBy(probe => probe.DisplayName)
+                                                                  .Select(probe => new Tuple<Probe, string>(probe, probe.CollectionDescription))
+                                                                  .ToList();
+
+            if (probeDescriptions.Count == 0)
+            {
+                await SensusServiceHelper.Get().FlashNotificationAsync("This study is not configured to collect any data. Please contact the study administrator.");
+                return;
+            }
+
             List<Input> inputs = new List<Input>();
 
             if (!string.IsNullOrWhiteSpace(startupMessage))
@@ -2047,64 +2057,52 @@ namespace Sensus
             }
 
             inputs.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                          " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
-                                          " The following data will be collected:"));
-
-            // get list of probes and their collection descriptions. include probes that were originally enabled rather than those
-            // that are currently enabled, as probes can be disabled due to user preferences and temporary system unavailability.
-            // all probes originally enabled in the protocol should be shown to the user. only those that are currently enabled
-            // will be shown as selected if the user is permitted to disabled them upon startup.
-            List<Tuple<Probe, string>> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
-                                                                                  probe.StoreData &&                                        // probes might only be enabled to trigger surveys. they don't actually store data and should not be listed here
-                                                                                  !string.IsNullOrWhiteSpace(probe.CollectionDescription))  // probes like the script probe can be enabled but not have any intent to collect (e.g., no surveys)
-                                                                  .OrderBy(probe => probe.DisplayName)
-                                                                  .Select(probe => new Tuple<Probe, string>(probe, probe.CollectionDescription))
-                                                                  .ToList();
+                                          " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
 
             int collectionDescriptionFontSize = 15;
 
-            // if the user is allowed to disable probes, display a picker.
+            // if the user is allowed to disable probes.
             ItemPickerPageInput probePicker = null;
-            if (AllowProbeDisableOnStartUp)
+            if (probeDescriptions.Any(probeDescription => probeDescription.Item1.AllowDisableOnStartUp))
             {
-                // initially select all probes that are enabled. probes may have been disabled due to lack of system support or 
-                // due to user preferences.
-                List<int> initialSelectedIndices = probeDescriptions.Select((probeDescription, index) => probeDescription.Item1.Enabled ? index : -1)
-                                                                    .Where(index => index >= 0)
-                                                                    .ToList();
+                inputs.Add(new LabelOnlyInput("This study intends to collect the data types highlighted below. Tap to enable or disable data types to suit your preferences:"));
 
-                probePicker = new ItemPickerPageInput("Select data streams", probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList(), initialSelectedIndices)
+                // initially select all probes that are enabled. probes may have been disabled due to lack of system support or due to user preferences.
+                Dictionary<int, bool> initialIndexSelected = new Dictionary<int, bool>(probeDescriptions.Select((probeDescription, index) => new KeyValuePair<int, bool>(index, probeDescription.Item1.Enabled)));
+
+                // don't allow the user to change indices associated with probes that do not allow disabling
+                List<int> frozenIndices = probeDescriptions.Select((probeDescription, index) => probeDescription.Item1.AllowDisableOnStartUp ? -1 : index)
+                                                           .Where(index => index >= 0)
+                                                           .ToList();
+
+                probePicker = new ItemPickerPageInput("",
+                                                      probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList(),
+                                                      initialIndexSelected,
+                                                      frozenIndices)
                 {
                     DisplayNumber = false,
                     RandomizeItemOrder = false,
-                    Multiselect = true
+                    Multiselect = true,
+                    Required = false
                 };
 
                 inputs.Add(probePicker);
             }
-            // if the user is not allowed to disable probes, then display a label with probe information.
+            // otherwise display a fixed label with probe descriptions
             else
             {
+                inputs.Add(new LabelOnlyInput("This study intends to collect the following data types:"));
+
                 StringBuilder collectionSummary = new StringBuilder();
                 foreach (string description in probeDescriptions.Select(probeDescription => probeDescription.Item2))
                 {
                     collectionSummary.Append((collectionSummary.Length == 0 ? "" : Environment.NewLine) + description);
                 }
 
-                LabelOnlyInput collectionDescriptionLabel = null;
-
-                if (collectionSummary.Length == 0)
+                inputs.Add(new LabelOnlyInput(collectionSummary.ToString(), collectionDescriptionFontSize)
                 {
-                    collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
-                }
-                else
-                {
-                    collectionDescriptionLabel = new LabelOnlyInput(collectionSummary.ToString(), collectionDescriptionFontSize);
-                }
-
-                collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
-
-                inputs.Add(collectionDescriptionLabel);
+                    Padding = new Thickness(20, 0, 0, 0)
+                });
             }
 
             // describe remote data storage
@@ -2218,10 +2216,17 @@ namespace Sensus
                 // if the user was given an option to disable probes, set their probe enable/disable preferences now.
                 if (probePicker != null)
                 {
-                    List<string> selectedProbeDescriptions = probePicker.Value as List<string>;
+                    List<string> selectedProbeDescriptions = (probePicker.Value as List<object>).Cast<string>().ToList();
                     foreach (Tuple<Probe, string> probeDescription in probeDescriptions)
                     {
                         probeDescription.Item1.Enabled = selectedProbeDescriptions.Contains(probeDescription.Item2);
+                    }
+
+                    // do not start if the user disabled all probes
+                    if (!probeDescriptions.Any(probeDescription => probeDescription.Item1.Enabled))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("All data types were disabled. Cannot start study.");
+                        start = false;
                     }
                 }
             }
