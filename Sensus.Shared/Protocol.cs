@@ -2159,7 +2159,7 @@ namespace Sensus
 
             bool start = false;
 
-            // if the user didn't cancel, check the confirmation mode and selected probes
+            // if the user didn't cancel, check the confirmation mode and set probes enabled as selected.
             if (completedInputs != null)
             {
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))

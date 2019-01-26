@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Xamarin.Forms;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 using Sensus.Exceptions;
 using Sensus.UI.UiProperties;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
