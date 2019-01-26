@@ -17,8 +17,8 @@ using Xamarin.Forms;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
-using Sensus.Exceptions;
 using Sensus.UI.UiProperties;
+using Sensus.Exceptions;
 
 namespace Sensus.UI.Inputs
 {
