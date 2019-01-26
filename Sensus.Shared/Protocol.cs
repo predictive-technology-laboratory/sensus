@@ -2045,7 +2045,7 @@ namespace Sensus
 
             List<Input> inputs = new List<Input>();
 
-            int summaryFontSize = 17;
+            int summaryFontSize = 18;
 
             if (!string.IsNullOrWhiteSpace(_description))
             {
@@ -2069,7 +2069,7 @@ namespace Sensus
                                                            .Where(index => index >= 0)
                                                            .ToList();
 
-                probePicker = new ItemPickerPageInput("Data:  This study intends to collect the data types highlighted below. Tap to enable or disable data types to suit your preferences. Data types in gray cannot be disabled.",
+                probePicker = new ItemPickerPageInput("Data:  This study intends to collect the data types circled below. Data types circled in gray cannot be disabled. Tap the others to enable or disable them.",
                                                       probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList(),
                                                       initialIndexSelected,
                                                       frozenIndices)

@@ -24,17 +24,13 @@ namespace Sensus.UI.Inputs
 {
     public class ItemPickerPageInput : ItemPickerInput
     {
-        private readonly Color ITEM_LABEL_BACKGROUND_COLOR_SELECTED = Color.LightBlue;
-        private readonly Color ITEM_LABEL_BACKGROUND_COLOR_FROZEN = Color.LightGray;
-        private readonly Color ITEM_LABEL_BACKGROUND_COLOR_DESELECTED = new Label().BackgroundColor;
-
         private List<object> _items;
         private Dictionary<int, bool> _initialIndexSelected;
         private List<int> _frozenIndices;
         private bool _multiselect;
         private List<object> _selectedItems;
         private string _textBindingPropertyPath;
-        private List<Label> _itemLabels;
+        private List<Frame> _itemFrames;
         private Label _label;
 
         public List<object> Items
@@ -106,13 +102,13 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-                return _itemLabels.Count == 0 ? true : _itemLabels[0].IsEnabled;
+                return _itemFrames.Count == 0 || _itemFrames[0].IsEnabled;
             }
             set
             {
-                foreach (Label itemLabel in _itemLabels)
+                foreach (Frame itemFrame in _itemFrames)
                 {
-                    itemLabel.IsEnabled = value;
+                    itemFrame.IsEnabled = value;
                 }
             }
         }
@@ -155,7 +151,7 @@ namespace Sensus.UI.Inputs
             _multiselect = false;
             _selectedItems = new List<object>();
             _textBindingPropertyPath = ".";
-            _itemLabels = new List<Label>();
+            _itemFrames = new List<Frame>();
         }
 
         public override View GetView(int index)
@@ -168,7 +164,7 @@ namespace Sensus.UI.Inputs
             if (base.GetView(index) == null)
             {
                 _selectedItems.Clear();
-                _itemLabels.Clear();
+                _itemFrames.Clear();
 
                 StackLayout itemLabelStack = new StackLayout
                 {
@@ -202,7 +198,17 @@ namespace Sensus.UI.Inputs
 #endif
                     };
 
-                    _itemLabels.Add(itemLabel);
+                    // frame the label to indicate selection
+                    Frame itemFrame = new Frame
+                    {
+                        Content = itemLabel,
+                        BackgroundColor = Color.Transparent,
+                        HasShadow = false,
+                        Padding = new Thickness(5)
+                    };
+
+                    // needs to be added before taps are registered
+                    _itemFrames.Add(itemFrame);
 
                     itemLabel.SetBinding(Label.TextProperty, _textBindingPropertyPath, stringFormat: "{0}");
 
@@ -249,7 +255,7 @@ namespace Sensus.UI.Inputs
                         itemLabelStack.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = 5 });
                     }
 
-                    itemLabelStack.Children.Add(itemLabel);
+                    itemLabelStack.Children.Add(itemFrame);
                 }
 
                 _label = CreateLabel(index);
@@ -287,27 +293,27 @@ namespace Sensus.UI.Inputs
             }
 
             // update label background colors according to selected items
-            for (int i = 0; i < _itemLabels.Count; ++i)
+            for (int i = 0; i < _itemFrames.Count; ++i)
             {
-                Label itemLabel = _itemLabels[i];
+                Frame itemFrame = _itemFrames[i];
 
-                Color itemLabelBackgroundColor = ITEM_LABEL_BACKGROUND_COLOR_DESELECTED;
+                Color frameBorderColor = Color.Transparent;
 
-                if (_selectedItems.Contains(itemLabel.BindingContext))
+                if (_selectedItems.Contains(itemFrame.Content.BindingContext))
                 {
                     bool itemIsFrozen = _frozenIndices?.Contains(i) ?? false;
 
                     if (itemIsFrozen)
                     {
-                        itemLabelBackgroundColor = ITEM_LABEL_BACKGROUND_COLOR_FROZEN;
+                        frameBorderColor = Color.LightGray;
                     }
                     else
                     {
-                        itemLabelBackgroundColor = ITEM_LABEL_BACKGROUND_COLOR_SELECTED;
+                        frameBorderColor = Color.Accent;
                     }
                 }
 
-                itemLabel.BackgroundColor = itemLabelBackgroundColor;
+                itemFrame.BorderColor = frameBorderColor;
             }
 
             Complete = (Value as List<object>).Count > 0;
