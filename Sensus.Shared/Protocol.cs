@@ -397,7 +397,7 @@ namespace Sensus
             {
                 return;
             }
-            else if(protocol.State == ProtocolState.Starting)
+            else if (protocol.State == ProtocolState.Starting)
             {
                 await SensusServiceHelper.Get().FlashNotificationAsync("The study \"" + protocol.Name + "\" is starting.");
             }
@@ -409,7 +409,7 @@ namespace Sensus
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
+                    await protocol.StartWithUserAgreementAsync();
                 });
             }
         }
@@ -2017,116 +2017,149 @@ namespace Sensus
         /// <see cref="ProtocolStartConfirmationMode"/> options. After obtaining agreement, a <see cref="UI.ProgressPage"/> is displayed
         /// to show progress and prevent the user from interacting with the app until the <see cref="Protocol"/> is fully started.
         /// </summary>
-        /// <returns>The with user agreement async.</returns>
-        /// <param name="startupMessage">Startup message to display, along with the standard information.</param>
-        public async Task StartWithUserAgreementAsync(string startupMessage = null)
+        public async Task StartWithUserAgreementAsync()
         {
-            if (!_probes.Any(probe => probe.Enabled))
+            if (!_continueIndefinitely && _endTimestamp <= DateTime.Now)
             {
-                await SensusServiceHelper.Get().FlashNotificationAsync("Probes not enabled. Cannot start.");
+                await SensusServiceHelper.Get().FlashNotificationAsync("You cannot start this study because it has already ended. Please contact the study administrator.");
                 return;
             }
 
-            if (!_continueIndefinitely && _endTimestamp <= DateTime.Now)
+            // get list of probes and their collection descriptions. include probes that were originally enabled rather than those
+            // that are currently enabled, as probes can be disabled due to user preferences and temporary system unavailability.
+            // all probes originally enabled in the protocol should be shown to the user. only those that are currently enabled
+            // will be shown as selected if the user is permitted to disabled them upon startup.
+            List<Tuple<Probe, string>> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
+                                                                                  probe.StoreData &&                                        // probes might only be enabled to trigger surveys. they don't actually store data and should not be listed here
+                                                                                  !string.IsNullOrWhiteSpace(probe.CollectionDescription))  // probes like the script probe can be enabled but not have any intent to collect (e.g., no surveys)
+
+                                                                  .OrderBy(probe => probe.DisplayName)
+                                                                  .Select(probe => new Tuple<Probe, string>(probe, probe.CollectionDescription))
+                                                                  .ToList();
+
+            if (probeDescriptions.Count == 0)
             {
-                await SensusServiceHelper.Get().FlashNotificationAsync("You cannot start this study because it has already ended.");
+                await SensusServiceHelper.Get().FlashNotificationAsync("This study is not configured to collect any data. Please contact the study administrator.");
                 return;
             }
 
             List<Input> inputs = new List<Input>();
 
-            if (!string.IsNullOrWhiteSpace(startupMessage))
-            {
-                inputs.Add(new LabelOnlyInput(startupMessage));
-            }
+            int summaryFontSize = 18;
 
             if (!string.IsNullOrWhiteSpace(_description))
             {
-                inputs.Add(new LabelOnlyInput(_description));
+                inputs.Add(new LabelOnlyInput("Description:  " + _description, summaryFontSize) { Frame = true });
             }
 
-            inputs.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                          " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".") +
-                                          " The following data will be collected:"));
+            inputs.Add(new LabelOnlyInput("Duration:  This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) + " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + "."), summaryFontSize) { Frame = true });
 
-            StringBuilder collectionDescription = new StringBuilder();
-            foreach (Probe probe in _probes.OrderBy(probe => probe.DisplayName))
+            // if the user is allowed to disable probes.
+            ItemPickerPageInput probePicker = null;
+            if (probeDescriptions.Any(probeDescription => probeDescription.Item1.AllowDisableOnStartUp))
             {
-                if (probe.Enabled && probe.StoreData)
+                // initially select all probes that are either (1) enabled or (2) are disabled but not because the user did so. the latter
+                // can happen upon probe start-up if the system does not support them. as reasons for lack of support can be transient, we
+                // again enable them here and attempt to start them. the only condition under which a probe may be deselected is, therefore,
+                // when a probe is explicitly allowed to be disabled and has been disabled.
+                Dictionary<int, bool> initialIndexSelected = new Dictionary<int, bool>(probeDescriptions.Select((probeDescription, index) => new KeyValuePair<int, bool>(index, probeDescription.Item1.Enabled || !probeDescription.Item1.AllowDisableOnStartUp)));
+
+                // don't allow the user to change indices associated with probes that do not allow disabling
+                List<int> frozenIndices = probeDescriptions.Select((probeDescription, index) => probeDescription.Item1.AllowDisableOnStartUp ? -1 : index)
+                                                           .Where(index => index >= 0)
+                                                           .ToList();
+
+                probePicker = new ItemPickerPageInput("Data:  This study intends to collect the data types circled below. Data types circled in gray cannot be disabled. Tap the others to enable or disable them.",
+                                                      probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList(),
+                                                      initialIndexSelected,
+                                                      frozenIndices)
                 {
-                    string probeCollectionDescription = probe.CollectionDescription;
-                    if (!string.IsNullOrWhiteSpace(probeCollectionDescription))
-                    {
-                        collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + probeCollectionDescription);
-                    }
-                }
-            }
+                    DisplayNumber = false,
+                    RandomizeItemOrder = false,
+                    Multiselect = true,
+                    Required = false,
+                    LabelFontSize = summaryFontSize
+                };
 
-            LabelOnlyInput collectionDescriptionLabel = null;
-            int collectionDescriptionFontSize = 15;
-            if (collectionDescription.Length == 0)
-            {
-                collectionDescriptionLabel = new LabelOnlyInput("No information will be collected.", collectionDescriptionFontSize);
+                inputs.Add(probePicker);
             }
+            // otherwise display a fixed label with probe descriptions
             else
             {
-                collectionDescriptionLabel = new LabelOnlyInput(collectionDescription.ToString(), collectionDescriptionFontSize);
-            }
+                StringBuilder collectionSummary = new StringBuilder();
+                foreach (string description in probeDescriptions.Select(probeDescription => probeDescription.Item2))
+                {
+                    collectionSummary.Append((collectionSummary.Length == 0 ? "" : Environment.NewLine) + "-" + description);
+                }
 
-            collectionDescriptionLabel.Padding = new Thickness(20, 0, 0, 0);
-            inputs.Add(collectionDescriptionLabel);
+                inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the following data types:" + Environment.NewLine +
+                                              Environment.NewLine + 
+                                              collectionSummary, summaryFontSize)
+                {
+                    Frame = true
+                });
+            }
 
             // describe remote data storage
             if (_remoteDataStore != null)
             {
-                inputs.Add(new LabelOnlyInput((_remoteDataStore as RemoteDataStore).StorageDescription, collectionDescriptionFontSize));
+                inputs.Add(new LabelOnlyInput("Storage:  " + (_remoteDataStore as RemoteDataStore).StorageDescription, summaryFontSize) { Frame = true });
             }
 
             // don't repeatedly prompt the participant for their ID
             if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
             {
-                inputs.Add(new LabelOnlyInput("Tap Submit below to begin."));
+                inputs.Add(new LabelOnlyInput("Tap Submit below to begin.", summaryFontSize));
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
             {
                 inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter the following code:  " + new Random().Next(1000, 10000), "code", Keyboard.Numeric)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdDigits)
             {
                 inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Numeric)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
 
                 inputs.Add(new SingleLineTextInput("Please re-enter your participant identifier to confirm.", "confirm", Keyboard.Numeric)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdQrCode)
             {
-                inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", false, "To participate in this study as described above, please scan your participant barcode."));
+                inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", false, "To participate in this study as described above, please scan your participant barcode.")
+                {
+                    LabelFontSize = summaryFontSize
+                });
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdText)
             {
                 inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Text)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
 
                 inputs.Add(new SingleLineTextInput("Please re-enter your participant identifier to confirm.", "confirm", Keyboard.Text)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
             }
 
-            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Confirm Study Participation", inputs.ToArray(), null, true, null, "Are you sure you would like cancel your enrollment in this study?", null, null, false);
+            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Study:  " + _name, inputs.ToArray(), null, true, null, "Are you sure you would like cancel your enrollment in this study?", null, null, false);
 
             bool start = false;
 
+            // if the user didn't cancel, check the confirmation mode and set probes enabled as selected.
             if (completedInputs != null)
             {
                 if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
@@ -2180,6 +2213,23 @@ namespace Sensus
                     {
                         _participantId = codeValue;
                         start = true;
+                    }
+                }
+
+                // if the user was given an option to disable probes, set their probe enable/disable preferences now.
+                if (probePicker != null)
+                {
+                    List<string> selectedProbeDescriptions = (probePicker.Value as List<object>).Cast<string>().ToList();
+                    foreach (Tuple<Probe, string> probeDescription in probeDescriptions)
+                    {
+                        probeDescription.Item1.Enabled = selectedProbeDescriptions.Contains(probeDescription.Item2);
+                    }
+
+                    // do not start if the user disabled all probes
+                    if (!probeDescriptions.Any(probeDescription => probeDescription.Item1.Enabled))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("All data types were disabled. Cannot start study.");
+                        start = false;
                     }
                 }
             }

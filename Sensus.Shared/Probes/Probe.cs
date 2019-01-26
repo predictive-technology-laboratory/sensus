@@ -161,6 +161,13 @@ namespace Sensus.Probes
             set { _storeData = value; }
         }
 
+        /// <summary>
+        /// Whether or not to allow the user to disable this <see cref="Probe"/> when starting the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value>Allow user to disable on start up.</value>
+        [OnOffUiProperty("Allow Disable On Startup:", true, 5)]
+        public bool AllowDisableOnStartUp { get; set; } = false;
+
         [JsonIgnore]
         public abstract Type DatumType { get; }
 

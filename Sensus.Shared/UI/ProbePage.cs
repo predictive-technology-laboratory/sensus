@@ -369,7 +369,7 @@ namespace Sensus.UI
             ItemPickerPageInput currentAgentsPicker = null;
             if (currentAgents != null && currentAgents.Count > 0)
             {
-                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList(), ".")
+                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList())
                 {
                     Required = false
                 };
