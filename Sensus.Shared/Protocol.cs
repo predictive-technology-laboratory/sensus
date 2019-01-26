@@ -409,7 +409,7 @@ namespace Sensus
             {
                 await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                 {
-                    await protocol.StartWithUserAgreementAsync("You just opened \"" + protocol.Name + "\" within Sensus.");
+                    await protocol.StartWithUserAgreementAsync();
                 });
             }
         }
@@ -2017,9 +2017,7 @@ namespace Sensus
         /// <see cref="ProtocolStartConfirmationMode"/> options. After obtaining agreement, a <see cref="UI.ProgressPage"/> is displayed
         /// to show progress and prevent the user from interacting with the app until the <see cref="Protocol"/> is fully started.
         /// </summary>
-        /// <returns>The with user agreement async.</returns>
-        /// <param name="startupMessage">Startup message to display, along with the standard information.</param>
-        public async Task StartWithUserAgreementAsync(string startupMessage = null)
+        public async Task StartWithUserAgreementAsync()
         {
             if (!_continueIndefinitely && _endTimestamp <= DateTime.Now)
             {
@@ -2047,26 +2045,19 @@ namespace Sensus
 
             List<Input> inputs = new List<Input>();
 
-            if (!string.IsNullOrWhiteSpace(startupMessage))
-            {
-                inputs.Add(new LabelOnlyInput(startupMessage));
-            }
+            int summaryFontSize = 17;
 
             if (!string.IsNullOrWhiteSpace(_description))
             {
-                inputs.Add(new LabelOnlyInput(_description));
+                inputs.Add(new LabelOnlyInput("Description:  " + _description, summaryFontSize) { Frame = true });
             }
 
-            inputs.Add(new LabelOnlyInput("Duration:  This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) + " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")) { Frame = true });
-
-            int collectionDescriptionFontSize = 15;
+            inputs.Add(new LabelOnlyInput("Duration:  This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) + " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + "."), summaryFontSize) { Frame = true });
 
             // if the user is allowed to disable probes.
             ItemPickerPageInput probePicker = null;
             if (probeDescriptions.Any(probeDescription => probeDescription.Item1.AllowDisableOnStartUp))
             {
-                inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the data types highlighted below. Tap to enable or disable data types to suit your preferences. Data types in gray cannot be disabled.") { Frame = true });
-
                 // initially select all probes that are either (1) enabled or (2) are disabled but not because the user did so. the latter
                 // can happen upon probe start-up if the system does not support them. as reasons for lack of support can be transient, we
                 // again enable them here and attempt to start them. the only condition under which a probe may be deselected is, therefore,
@@ -2078,7 +2069,7 @@ namespace Sensus
                                                            .Where(index => index >= 0)
                                                            .ToList();
 
-                probePicker = new ItemPickerPageInput("",
+                probePicker = new ItemPickerPageInput("Data:  This study intends to collect the data types highlighted below. Tap to enable or disable data types to suit your preferences. Data types in gray cannot be disabled.",
                                                       probeDescriptions.Select(probeDescription => probeDescription.Item2).Cast<object>().ToList(),
                                                       initialIndexSelected,
                                                       frozenIndices)
@@ -2086,7 +2077,8 @@ namespace Sensus
                     DisplayNumber = false,
                     RandomizeItemOrder = false,
                     Multiselect = true,
-                    Required = false
+                    Required = false,
+                    LabelFontSize = summaryFontSize
                 };
 
                 inputs.Add(probePicker);
@@ -2094,68 +2086,76 @@ namespace Sensus
             // otherwise display a fixed label with probe descriptions
             else
             {
-                inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the following data types.") { Frame = true });
-
                 StringBuilder collectionSummary = new StringBuilder();
                 foreach (string description in probeDescriptions.Select(probeDescription => probeDescription.Item2))
                 {
-                    collectionSummary.Append((collectionSummary.Length == 0 ? "" : Environment.NewLine) + description);
+                    collectionSummary.Append((collectionSummary.Length == 0 ? "" : Environment.NewLine) + "-" + description);
                 }
 
-                inputs.Add(new LabelOnlyInput(collectionSummary.ToString(), collectionDescriptionFontSize)
+                inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the following data types:" + Environment.NewLine +
+                                              Environment.NewLine + 
+                                              collectionSummary, summaryFontSize)
                 {
-                    Padding = new Thickness(20, 0, 0, 0)
+                    Frame = true
                 });
             }
 
             // describe remote data storage
             if (_remoteDataStore != null)
             {
-                inputs.Add(new LabelOnlyInput((_remoteDataStore as RemoteDataStore).StorageDescription, collectionDescriptionFontSize));
+                inputs.Add(new LabelOnlyInput("Storage:  " + (_remoteDataStore as RemoteDataStore).StorageDescription, summaryFontSize) { Frame = true });
             }
 
             // don't repeatedly prompt the participant for their ID
             if (_startConfirmationMode == ProtocolStartConfirmationMode.None || !string.IsNullOrWhiteSpace(_participantId))
             {
-                inputs.Add(new LabelOnlyInput("Tap Submit below to begin."));
+                inputs.Add(new LabelOnlyInput("Tap Submit below to begin.", summaryFontSize));
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.RandomDigits)
             {
                 inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter the following code:  " + new Random().Next(1000, 10000), "code", Keyboard.Numeric)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdDigits)
             {
                 inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Numeric)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
 
                 inputs.Add(new SingleLineTextInput("Please re-enter your participant identifier to confirm.", "confirm", Keyboard.Numeric)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdQrCode)
             {
-                inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", false, "To participate in this study as described above, please scan your participant barcode."));
+                inputs.Add(new QrCodeInput(QrCodePrefix.SENSUS_PARTICIPANT_ID, "Participant ID:  ", false, "To participate in this study as described above, please scan your participant barcode.")
+                {
+                    LabelFontSize = summaryFontSize
+                });
             }
             else if (_startConfirmationMode == ProtocolStartConfirmationMode.ParticipantIdText)
             {
                 inputs.Add(new SingleLineTextInput("To participate in this study as described above, please enter your participant identifier below.", "code", Keyboard.Text)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
 
                 inputs.Add(new SingleLineTextInput("Please re-enter your participant identifier to confirm.", "confirm", Keyboard.Text)
                 {
-                    DisplayNumber = false
+                    DisplayNumber = false,
+                    LabelFontSize = summaryFontSize
                 });
             }
 
-            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Confirm Study Participation", inputs.ToArray(), null, true, null, "Are you sure you would like cancel your enrollment in this study?", null, null, false);
+            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Study:  " + _name, inputs.ToArray(), null, true, null, "Are you sure you would like cancel your enrollment in this study?", null, null, false);
 
             bool start = false;
 

@@ -175,7 +175,7 @@ namespace Sensus.UI.Inputs
                     Orientation = StackOrientation.Vertical,
                     VerticalOptions = LayoutOptions.Start,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Padding = new Thickness(30, 10, 0, 10)
+                    Padding = new Thickness(10, 10, 0, 10)
                 };
 
                 List<object> itemList = RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
@@ -192,7 +192,7 @@ namespace Sensus.UI.Inputs
 
                     Label itemLabel = new Label
                     {
-                        FontSize = 20,
+                        FontSize = LabelFontSize,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         BindingContext = item
 
