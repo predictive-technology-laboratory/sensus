@@ -2034,6 +2034,7 @@ namespace Sensus
             List<Tuple<Probe, string>> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
                                                                                   probe.StoreData &&                                        // probes might only be enabled to trigger surveys. they don't actually store data and should not be listed here
                                                                                   !string.IsNullOrWhiteSpace(probe.CollectionDescription))  // probes like the script probe can be enabled but not have any intent to collect (e.g., no surveys)
+
                                                                   .OrderBy(probe => probe.DisplayName)
                                                                   .Select(probe => new Tuple<Probe, string>(probe, probe.CollectionDescription))
                                                                   .ToList();
@@ -2056,8 +2057,7 @@ namespace Sensus
                 inputs.Add(new LabelOnlyInput(_description));
             }
 
-            inputs.Add(new LabelOnlyInput("This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) +
-                                          " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")));
+            inputs.Add(new LabelOnlyInput("Duration:  This study will start " + (_startImmediately || DateTime.Now >= _startTimestamp ? "immediately" : "on " + _startTimestamp.ToShortDateString() + " at " + _startTimestamp.ToShortTimeString()) + " and " + (_continueIndefinitely ? "continue indefinitely." : "stop on " + _endTimestamp.ToShortDateString() + " at " + _endTimestamp.ToShortTimeString() + ".")) { Frame = true });
 
             int collectionDescriptionFontSize = 15;
 
@@ -2065,10 +2065,13 @@ namespace Sensus
             ItemPickerPageInput probePicker = null;
             if (probeDescriptions.Any(probeDescription => probeDescription.Item1.AllowDisableOnStartUp))
             {
-                inputs.Add(new LabelOnlyInput("This study intends to collect the data types highlighted below. Tap to enable or disable data types to suit your preferences:"));
+                inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the data types highlighted below. Tap to enable or disable data types to suit your preferences. Data types in gray cannot be disabled.") { Frame = true });
 
-                // initially select all probes that are enabled. probes may have been disabled due to lack of system support or due to user preferences.
-                Dictionary<int, bool> initialIndexSelected = new Dictionary<int, bool>(probeDescriptions.Select((probeDescription, index) => new KeyValuePair<int, bool>(index, probeDescription.Item1.Enabled)));
+                // initially select all probes that are either (1) enabled or (2) are disabled but not because the user did so. the latter
+                // can happen upon probe start-up if the system does not support them. as reasons for lack of support can be transient, we
+                // again enable them here and attempt to start them. the only condition under which a probe may be deselected is, therefore,
+                // when a probe is explicitly allowed to be disabled and has been disabled.
+                Dictionary<int, bool> initialIndexSelected = new Dictionary<int, bool>(probeDescriptions.Select((probeDescription, index) => new KeyValuePair<int, bool>(index, probeDescription.Item1.Enabled || !probeDescription.Item1.AllowDisableOnStartUp)));
 
                 // don't allow the user to change indices associated with probes that do not allow disabling
                 List<int> frozenIndices = probeDescriptions.Select((probeDescription, index) => probeDescription.Item1.AllowDisableOnStartUp ? -1 : index)
@@ -2091,7 +2094,7 @@ namespace Sensus
             // otherwise display a fixed label with probe descriptions
             else
             {
-                inputs.Add(new LabelOnlyInput("This study intends to collect the following data types:"));
+                inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the following data types.") { Frame = true });
 
                 StringBuilder collectionSummary = new StringBuilder();
                 foreach (string description in probeDescriptions.Select(probeDescription => probeDescription.Item2))

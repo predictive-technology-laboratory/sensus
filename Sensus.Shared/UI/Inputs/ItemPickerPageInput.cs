@@ -24,9 +24,9 @@ namespace Sensus.UI.Inputs
 {
     public class ItemPickerPageInput : ItemPickerInput
     {
-        private readonly Color BACKGROUND_COLOR_SELECTED = Color.LightBlue;
-        private readonly Color BACKGROUND_COLOR_FROZEN = Color.LightGray;
-        private readonly Color BACKGROUND_COLOR_DESELECTED = new Label().BackgroundColor;
+        private readonly Color ITEM_LABEL_BACKGROUND_COLOR_SELECTED = Color.LightBlue;
+        private readonly Color ITEM_LABEL_BACKGROUND_COLOR_FROZEN = Color.LightGray;
+        private readonly Color ITEM_LABEL_BACKGROUND_COLOR_DESELECTED = new Label().BackgroundColor;
 
         private List<object> _items;
         private Dictionary<int, bool> _initialIndexSelected;
@@ -212,14 +212,15 @@ namespace Sensus.UI.Inputs
                         CommandParameter = i
                     };
 
-                    tapRecognizer.Tapped += async (o, e) =>
+                    tapRecognizer.Tapped += async (o, eventArgs) =>
                     {
                         if (!itemLabel.IsEnabled)
                         {
                             return;
                         }
 
-                        TappedEventArgs tappedEventArgs = e as TappedEventArgs;
+                        // check whether the item is frozen
+                        TappedEventArgs tappedEventArgs = eventArgs as TappedEventArgs;
                         int itemIndex = (int)tappedEventArgs.Parameter;
                         bool itemIsFrozen = _frozenIndices?.Contains(itemIndex) ?? false;
 
@@ -235,7 +236,8 @@ namespace Sensus.UI.Inputs
 
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
 
-                    // if the item should be initially selected, simulate a user tap.
+                    // if the item should be initially selected, simulate a user tap. the item's label has not yet been
+                    // shown to the user, so this first tap will certainly be the selection tap as opposed to deselection.
                     if (_initialIndexSelected != null && _initialIndexSelected.TryGetValue(i, out bool selected) && selected)
                     {
                         ItemTapped(item);
@@ -269,6 +271,7 @@ namespace Sensus.UI.Inputs
 
         private void ItemTapped(object item)
         {
+            // update the list of selected items
             if (_selectedItems.Contains(item))
             {
                 _selectedItems.Remove(item);
@@ -286,25 +289,25 @@ namespace Sensus.UI.Inputs
             // update label background colors according to selected items
             for (int i = 0; i < _itemLabels.Count; ++i)
             {
-                Label label = _itemLabels[i];
+                Label itemLabel = _itemLabels[i];
 
-                Color labelBackgroundColor = BACKGROUND_COLOR_DESELECTED;
+                Color itemLabelBackgroundColor = ITEM_LABEL_BACKGROUND_COLOR_DESELECTED;
 
-                if (_selectedItems.Contains(label.BindingContext))
+                if (_selectedItems.Contains(itemLabel.BindingContext))
                 {
                     bool itemIsFrozen = _frozenIndices?.Contains(i) ?? false;
 
                     if (itemIsFrozen)
                     {
-                        labelBackgroundColor = BACKGROUND_COLOR_FROZEN;
+                        itemLabelBackgroundColor = ITEM_LABEL_BACKGROUND_COLOR_FROZEN;
                     }
                     else
                     {
-                        labelBackgroundColor = BACKGROUND_COLOR_SELECTED;
+                        itemLabelBackgroundColor = ITEM_LABEL_BACKGROUND_COLOR_SELECTED;
                     }
                 }
 
-                label.BackgroundColor = labelBackgroundColor;
+                itemLabel.BackgroundColor = itemLabelBackgroundColor;
             }
 
             Complete = (Value as List<object>).Count > 0;
