@@ -38049,6 +38049,18 @@ references:
   commentId: Overload:Sensus.Probes.Probe.add_MostRecentDatumChanged
   fullName: Sensus.Probes.Probe.add_MostRecentDatumChanged
   nameWithType: Probe.add_MostRecentDatumChanged
+- uid: Sensus.Probes.Probe.AllowDisableOnStartUp
+  name: AllowDisableOnStartUp
+  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_AllowDisableOnStartUp
+  commentId: P:Sensus.Probes.Probe.AllowDisableOnStartUp
+  fullName: Sensus.Probes.Probe.AllowDisableOnStartUp
+  nameWithType: Probe.AllowDisableOnStartUp
+- uid: Sensus.Probes.Probe.AllowDisableOnStartUp*
+  name: AllowDisableOnStartUp
+  href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_AllowDisableOnStartUp_
+  commentId: Overload:Sensus.Probes.Probe.AllowDisableOnStartUp
+  fullName: Sensus.Probes.Probe.AllowDisableOnStartUp
+  nameWithType: Probe.AllowDisableOnStartUp
 - uid: Sensus.Probes.Probe.Caption
   name: Caption
   href: api/Sensus.Probes.Probe.html#Sensus_Probes_Probe_Caption
@@ -45708,12 +45720,12 @@ references:
   commentId: Overload:Sensus.Protocol.StartTime
   fullName: Sensus.Protocol.StartTime
   nameWithType: Protocol.StartTime
-- uid: Sensus.Protocol.StartWithUserAgreementAsync(System.String)
-  name: StartWithUserAgreementAsync(String)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_System_String_
-  commentId: M:Sensus.Protocol.StartWithUserAgreementAsync(System.String)
-  fullName: Sensus.Protocol.StartWithUserAgreementAsync(System.String)
-  nameWithType: Protocol.StartWithUserAgreementAsync(String)
+- uid: Sensus.Protocol.StartWithUserAgreementAsync
+  name: StartWithUserAgreementAsync()
+  href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync
+  commentId: M:Sensus.Protocol.StartWithUserAgreementAsync
+  fullName: Sensus.Protocol.StartWithUserAgreementAsync()
+  nameWithType: Protocol.StartWithUserAgreementAsync()
 - uid: Sensus.Protocol.StartWithUserAgreementAsync*
   name: StartWithUserAgreementAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_StartWithUserAgreementAsync_
@@ -48234,15 +48246,15 @@ references:
   commentId: M:Sensus.UI.Inputs.ItemPickerPageInput.#ctor
   fullName: Sensus.UI.Inputs.ItemPickerPageInput.ItemPickerPageInput()
   nameWithType: ItemPickerPageInput.ItemPickerPageInput()
-- uid: Sensus.UI.Inputs.ItemPickerPageInput.#ctor(System.String,System.Collections.Generic.List{System.Object},System.String)
-  name: ItemPickerPageInput(String, List<Object>, String)
-  href: api/Sensus.UI.Inputs.ItemPickerPageInput.html#Sensus_UI_Inputs_ItemPickerPageInput__ctor_System_String_System_Collections_Generic_List_System_Object__System_String_
-  commentId: M:Sensus.UI.Inputs.ItemPickerPageInput.#ctor(System.String,System.Collections.Generic.List{System.Object},System.String)
-  name.vb: ItemPickerPageInput(String, List(Of Object), String)
-  fullName: Sensus.UI.Inputs.ItemPickerPageInput.ItemPickerPageInput(System.String, System.Collections.Generic.List<System.Object>, System.String)
-  fullName.vb: Sensus.UI.Inputs.ItemPickerPageInput.ItemPickerPageInput(System.String, System.Collections.Generic.List(Of System.Object), System.String)
-  nameWithType: ItemPickerPageInput.ItemPickerPageInput(String, List<Object>, String)
-  nameWithType.vb: ItemPickerPageInput.ItemPickerPageInput(String, List(Of Object), String)
+- uid: Sensus.UI.Inputs.ItemPickerPageInput.#ctor(System.String,System.Collections.Generic.List{System.Object},System.Collections.Generic.Dictionary{System.Int32,System.Boolean},System.Collections.Generic.List{System.Int32},System.String)
+  name: ItemPickerPageInput(String, List<Object>, Dictionary<Int32, Boolean>, List<Int32>, String)
+  href: api/Sensus.UI.Inputs.ItemPickerPageInput.html#Sensus_UI_Inputs_ItemPickerPageInput__ctor_System_String_System_Collections_Generic_List_System_Object__System_Collections_Generic_Dictionary_System_Int32_System_Boolean__System_Collections_Generic_List_System_Int32__System_String_
+  commentId: M:Sensus.UI.Inputs.ItemPickerPageInput.#ctor(System.String,System.Collections.Generic.List{System.Object},System.Collections.Generic.Dictionary{System.Int32,System.Boolean},System.Collections.Generic.List{System.Int32},System.String)
+  name.vb: ItemPickerPageInput(String, List(Of Object), Dictionary(Of Int32, Boolean), List(Of Int32), String)
+  fullName: Sensus.UI.Inputs.ItemPickerPageInput.ItemPickerPageInput(System.String, System.Collections.Generic.List<System.Object>, System.Collections.Generic.Dictionary<System.Int32, System.Boolean>, System.Collections.Generic.List<System.Int32>, System.String)
+  fullName.vb: Sensus.UI.Inputs.ItemPickerPageInput.ItemPickerPageInput(System.String, System.Collections.Generic.List(Of System.Object), System.Collections.Generic.Dictionary(Of System.Int32, System.Boolean), System.Collections.Generic.List(Of System.Int32), System.String)
+  nameWithType: ItemPickerPageInput.ItemPickerPageInput(String, List<Object>, Dictionary<Int32, Boolean>, List<Int32>, String)
+  nameWithType.vb: ItemPickerPageInput.ItemPickerPageInput(String, List(Of Object), Dictionary(Of Int32, Boolean), List(Of Int32), String)
 - uid: Sensus.UI.Inputs.ItemPickerPageInput.#ctor*
   name: ItemPickerPageInput
   href: api/Sensus.UI.Inputs.ItemPickerPageInput.html#Sensus_UI_Inputs_ItemPickerPageInput__ctor_

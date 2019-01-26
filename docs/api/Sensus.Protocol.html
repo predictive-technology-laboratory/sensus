@@ -2500,7 +2500,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_StartWithUserAgreementAsync_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync*"></a>
-  <h4 id="Sensus_Protocol_StartWithUserAgreementAsync_System_String_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync(System.String)">StartWithUserAgreementAsync(String)</h4>
+  <h4 id="Sensus_Protocol_StartWithUserAgreementAsync" data-uid="Sensus.Protocol.StartWithUserAgreementAsync">StartWithUserAgreementAsync()</h4>
   <div class="markdown level1 summary"><p>Starts the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> after displaying a message to the user indicating what is about to happen. This is
 also the place where the user&apos;s agreement to the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is obtained through the various 
 <a class="xref" href="Sensus.ProtocolStartConfirmationMode.html">ProtocolStartConfirmationMode</a> options. After obtaining agreement, a <a class="xref" href="Sensus.UI.ProgressPage.html">ProgressPage</a> is displayed
@@ -2509,26 +2509,8 @@ to show progress and prevent the user from interacting with the app until the <a
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task StartWithUserAgreementAsync(string startupMessage = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StartWithUserAgreementAsync()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">startupMessage</span></td>
-        <td><p>Startup message to display, along with the standard information.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -2540,8 +2522,7 @@ to show progress and prevent the user from interacting with the app until the <a
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>The with user agreement async.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
