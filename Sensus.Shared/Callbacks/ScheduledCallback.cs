@@ -182,7 +182,7 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action to execute when callback time arrives.</param>
+        /// <param name="actionAsync">Action to execute when callback time arrives.</param>
         /// <param name="initialDelay">How long to delay callback execution.</param>
         /// <param name="repeatDelay">How long to delay repeating callback executions following the first callback.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
@@ -192,7 +192,7 @@ namespace Sensus.Callbacks
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
-        public ScheduledCallback(ActionAsyncDelegate action,
+        public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
                                  string id,
@@ -202,7 +202,7 @@ namespace Sensus.Callbacks
                                  string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
-            : this(action,
+            : this(actionAsync,
                    initialDelay,
                    id,
                    domain,

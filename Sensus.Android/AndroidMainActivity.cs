@@ -310,7 +310,7 @@ namespace Sensus.Android
 
                     if (intent.Scheme == "https")
                     {
-                        protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()));
+                        protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()), true);
                     }
                     else if (intent.Scheme == "content" || intent.Scheme == "file")
                     {
@@ -331,7 +331,7 @@ namespace Sensus.Android
 
                         if (bytes != null)
                         {
-                            protocol = await Protocol.DeserializeAsync(bytes);
+                            protocol = await Protocol.DeserializeAsync(bytes, true);
                         }
                     }
                     else
@@ -345,8 +345,9 @@ namespace Sensus.Android
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        new AlertDialog.Builder(this).SetTitle("Failed to start protocol").SetMessage(ex.Message).Show();
-                        SensusServiceHelper.Get().Logger.Log(ex.Message, LoggingLevel.Normal, GetType());
+                        string message = "Failed to start study:  " + ex.Message;
+                        new AlertDialog.Builder(this).SetTitle("Error").SetMessage(message).Show();
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     });
                 }
             }

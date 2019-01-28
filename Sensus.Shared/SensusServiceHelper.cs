@@ -695,46 +695,50 @@ namespace Sensus
 
                                         Logger.Log("Protocol identifier no longer matches that of credentials. Downloading new protocol.", LoggingLevel.Normal, GetType());
 
-                                        await protocolToTest.StopAsync();
-                                        await protocolToTest.DeleteAsync();
+                                        // download the desired protocol. as we're initiating the download without user interaction, do not explicitly
+                                        // offer to replace the existing protocol. in principle, this should not even happen, as the credentials indicate
+                                        // that the protocol in the authentication service has an identifier that is different than the the one on the
+                                        // protocol we are currently testing. however, things might just be misconfigured in the authentication service.
+                                        // so, if the identifier in the protocol that we download duplicates one on the current device, don't bother the
+                                        // user (as they did not initiate the action) and expect an exception to be thrown back.
+                                        Protocol newProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), false, testCredentials);
 
-                                        // get the desired protocol
-                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), testCredentials);
-
-                                        // we're getting app center errors indicating a null reference somewhere in this try clause. do some extra reporting.
-                                        if (desiredProtocol == null)
-                                        {
-                                            throw new NullReferenceException("Retrieved new protcol that was null.");
-                                        }
-
-                                        // wire up new protocol with the current authentication service
-                                        desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
-                                        desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
-                                        desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
-
-                                        await desiredProtocol.StartAsync(cancellationToken);
-
-                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing to be
-                                        // gained in doing so. rather, just report the exception and continue running the new protocol.
-                                        if (desiredProtocol.Id != testCredentials.ProtocolId)
+                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing 
+                                        // to be gained in doing so. rather, just report the exception and continue running the new protocol.
+                                        if (newProtocol.Id != testCredentials.ProtocolId)
                                         {
                                             SensusException.Report("Retrieved new protocol, but its identifier does not match that of the credentials.");
                                         }
+
+                                        // wire up new protocol with the current authentication service
+                                        newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+                                        newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                        newProtocol.AuthenticationService.Protocol = newProtocol;
+
+                                        // start the new protocol
+                                        await newProtocol.StartAsync(cancellationToken);
+
+                                        // stop and delete the old protocol. we must do this after starting the new one because
+                                        // if we stop the protocol first and it's the only protocol running, then the health test
+                                        // will be cancelled resulting in the current cancellation token (the one passed to start)
+                                        // being cancelled as well.
+                                        await protocolToTest.StopAsync();
+                                        await protocolToTest.DeleteAsync();
                                     }
                                 }
                                 catch (Exception ex)
                                 {
-                                    SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
+                                    Logger.Log("Exception while checking for protocol change:  " + ex.Message, LoggingLevel.Normal, GetType());
                                 }
                             }
 
                             if (testCurrentProtocol)
                             {
                                 await protocolToTest.TestHealthAsync(false, cancellationToken);
-                            }
 
-                            // write a heartbeat datum to let the backend know we're alive
-                            protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
+                                // write a heartbeat datum to let the backend know we've tested the protocol and we're alive
+                                protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
+                            }
                         }
 
                         // test the callback scheduler
@@ -749,7 +753,7 @@ namespace Sensus
                         // test the notifier, which checks the push notification requests.
                         await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
 
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(5), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
 
                     scheduleHealthTestCallback = true;
                 }

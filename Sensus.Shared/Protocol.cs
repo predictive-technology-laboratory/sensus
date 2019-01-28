@@ -97,7 +97,7 @@ namespace Sensus
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(Uri uri, AmazonS3Credentials credentials = null)
+        public static async Task<Protocol> DeserializeAsync(Uri uri, bool offerToReplaceExistingProtocol, AmazonS3Credentials credentials = null)
         {
             Protocol protocol = null;
 
@@ -145,12 +145,12 @@ namespace Sensus
                 protocolBytes = await uri.DownloadBytes();
             }
 
-            protocol = await DeserializeAsync(protocolBytes);
+            protocol = await DeserializeAsync(protocolBytes, offerToReplaceExistingProtocol);
 
             return protocol;
         }
 
-        public static async Task<Protocol> DeserializeAsync(byte[] bytes)
+        public static async Task<Protocol> DeserializeAsync(byte[] bytes, bool offerToReplaceExistingProtocol)
         {
             // decrypt the bytes to JSON
             string json;
@@ -161,10 +161,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                string message = "Failed to decrypt protocol bytes:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                return null;
+                throw new Exception("Failed to decrypt study:  " + ex.Message);
             }
 
             // make any necessary platform conversions to type names to allow the JSON to deserialize
@@ -174,10 +171,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                string message = "Failed to cross-platform convert protocol:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                return null;
+                throw new Exception("Failed to convert study:  " + ex.Message);
             }
 
             // deserialize JSON to protocol object
@@ -188,10 +182,7 @@ namespace Sensus
             }
             catch (Exception ex)
             {
-                string message = "Failed to deserialize protocol:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                return null;
+                throw new Exception("Failed to unpack study:  " + ex.Message);
             }
 
             // check whether protocol is compatible with the current device
@@ -216,9 +207,7 @@ namespace Sensus
 
                 message += " devices.";
 
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                return null;
+                throw new Exception(message);
             }
 
             // set up protocol
@@ -241,36 +230,44 @@ namespace Sensus
                 // protocol is the match for the newly deserialized one, also check the protocols grouped with the registered
                 // protocol. from the user's perspective these grouped protocols are not visible, but they should trigger
                 // a match from an randomized experimental design perspective.
-                Protocol registeredProtocol = null;
-                foreach (Protocol p in SensusServiceHelper.Get().RegisteredProtocols)
+                Protocol existingProtocol = null;
+                foreach (Protocol registeredProtocol in SensusServiceHelper.Get().RegisteredProtocols)
                 {
-                    if (p.Equals(protocol) || p.GroupedProtocols.Contains(protocol) || protocol.GroupedProtocols.Contains(p))
+                    if (registeredProtocol.Equals(protocol) || registeredProtocol.GroupedProtocols.Contains(protocol) || protocol.GroupedProtocols.Contains(registeredProtocol))
                     {
-                        registeredProtocol = p;
+                        existingProtocol = registeredProtocol;
                         break;
                     }
                 }
 
                 #region if we've previously registered the protocol, the user needs to decide what to do:  either keep the previous one or use the new one
-                if (registeredProtocol != null)
+                bool configureProtocolAsNew = false;
+                if (existingProtocol == null)
                 {
+                    configureProtocolAsNew = true;
+                }
+                else
+                {
+                    // it is an exception to obtain a duplicate protocol but not be allowed to prompt the user to replace the old one with it.
+                    if (!offerToReplaceExistingProtocol)
+                    {
+                        throw new Exception("Duplicate study");
+                    }
+
+                    // ask whether the user wishes to replace the existing one
+                    bool replaceExistingProtocol = false;
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        if (!await Application.Current.MainPage.DisplayAlert("Study Already Loaded", "The study that you just opened has already been loaded into Sensus. Would you like to use the study you just opened or continue using the previous one?", "Use the study I just opened.", "Continue using the previous study."))
-                        {
-                            // use the previous study
-                            protocol = registeredProtocol;
-                        }
+                        replaceExistingProtocol = await Application.Current.MainPage.DisplayAlert("Study Already Loaded", "The study that you just opened has already been loaded into Sensus. Would you like to use the study you just opened or continue using the previous one?", "Use the study I just opened.", "Continue using the previous study.");
                     });
 
-                    // if the user opted to use the new protocol, we need to replace the previous one with the new one.
-                    if (protocol != registeredProtocol)
+                    if (replaceExistingProtocol)
                     {
                         // if the new protocol is groupable, we do not want to randomly select one out of the group. instead, we want to continue using 
                         // the same protocol that we have been using. 
                         if (protocol.GroupedProtocols.Count > 0)
                         {
-                            if (protocol.Id == registeredProtocol.Id)
+                            if (protocol.Id == existingProtocol.Id)
                             {
                                 // don't re-group below. use the currently assigned protocol.
                                 groupableProtocolIndex = 0;
@@ -278,7 +275,7 @@ namespace Sensus
                             else
                             {
                                 // locate the index of the new protocol corresponding to the old one.
-                                groupableProtocolIndex = protocol.GroupedProtocols.FindIndex(groupedProtocol => groupedProtocol.Id == registeredProtocol.Id) + 1;
+                                groupableProtocolIndex = protocol.GroupedProtocols.FindIndex(groupedProtocol => groupedProtocol.Id == existingProtocol.Id) + 1;
 
                                 // it's possible that the new protocol does not include the one we were previously using (e.g., if the study desiger has deleted it
                                 // from the group). in this case, set the groupable index to null. we'll pick randomly below.
@@ -291,19 +288,24 @@ namespace Sensus
 
                         // store any data that have accumulated locally
                         await SensusServiceHelper.Get().FlashNotificationAsync("Submitting data from previous study...");
-                        await registeredProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
+                        await existingProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
 
                         // stop the study and unregister it 
                         await SensusServiceHelper.Get().FlashNotificationAsync("Stopping previous study...");
-                        await registeredProtocol.StopAsync();
-                        await SensusServiceHelper.Get().UnregisterProtocolAsync(registeredProtocol);
-                        registeredProtocol = null;
+                        await existingProtocol.StopAsync();
+                        await SensusServiceHelper.Get().UnregisterProtocolAsync(existingProtocol);
+
+                        // indicate that the current protocol needs to be configured
+                        configureProtocolAsNew = true;
+                    }
+                    else
+                    {
+                        protocol = existingProtocol;
                     }
                 }
                 #endregion
 
-                // if we're not using a previously registered protocol, then we need to configure the new one.
-                if (registeredProtocol == null)
+                if (configureProtocolAsNew)
                 {
                     #region if grouped protocols are available, consider swapping the currently assigned one with another.
                     if (protocol.GroupedProtocols.Count > 0)
@@ -379,23 +381,21 @@ namespace Sensus
                 // if the protocol is unlocked then the user will be able to go edit the protocol and make it groupable. this is why
                 // all protocols should be locked before deployment in an experiment.
                 protocol.Groupable = false;
+
+                return protocol;
             }
             catch (Exception ex)
             {
-                string message = "Failed to set up protocol:  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, typeof(Protocol));
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-                protocol = null;
+                throw new Exception("Failed to set up study:  " + ex.Message);
             }
-
-            return protocol;
         }
 
         public static async Task DisplayAndStartAsync(Protocol protocol)
         {
+            // recent enhancements should guarantee non-null protocols
             if (protocol == null)
             {
-                return;
+                SensusException.Report("Attempted to display and start a null protocol.");
             }
             else if (protocol.State == ProtocolState.Starting)
             {

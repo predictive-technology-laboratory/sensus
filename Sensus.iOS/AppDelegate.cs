@@ -115,36 +115,31 @@ namespace Sensus.iOS
         {
             System.Threading.Tasks.Task.Run(async () =>
             {
-                if (url != null)
+                if (url?.PathExtension == "json")
                 {
-                    if (url.PathExtension == "json")
+                    try
                     {
                         Protocol protocol = null;
 
                         if (url.Scheme == "sensuss")
                         {
-                            try
-                            {
-                                protocol = await Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()));
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
-                            }
+                            protocol = await Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()), true);
                         }
                         else
                         {
-                            try
-                            {
-                                protocol = await Protocol.DeserializeAsync(File.ReadAllBytes(url.Path));
-                            }
-                            catch (Exception ex)
-                            {
-                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
-                            }
+                            protocol = await Protocol.DeserializeAsync(File.ReadAllBytes(url.Path), true);
                         }
 
                         await Protocol.DisplayAndStartAsync(protocol);
+                    }
+                    catch (Exception ex)
+                    {
+                        InvokeOnMainThread(() =>
+                        {
+                            string message = "Failed to start study:  " + ex.Message;
+                            new UIAlertView("Error", message, default(IUIAlertViewDelegate), "Close").Show();
+                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                        });
                     }
                 }
             });

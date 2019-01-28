@@ -537,7 +537,7 @@ namespace Sensus.UI
                                 cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                                 await loadProgressPage.SetProgressAsync(0.6, "downloading study");
-                                protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), true, credentials);
                                 await loadProgressPage.SetProgressAsync(1, null);
 
                                 // don't throw for cancellation here as doing so will leave the protocol partially configured. if 
@@ -567,7 +567,7 @@ namespace Sensus.UI
                         {
                             try
                             {
-                                protocol = await Protocol.DeserializeAsync(new Uri(url));
+                                protocol = await Protocol.DeserializeAsync(new Uri(url), true);
                             }
                             catch(Exception ex)
                             {
@@ -575,12 +575,14 @@ namespace Sensus.UI
                             }
                         }
 
+                        // show load exception to user
                         if (loadException != null)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + loadException.Message);
                             protocol = null;
                         }
 
+                        // start protocol if we have one
                         if (protocol != null)
                         {
                             // save app state to hang on to protocol, authentication information, etc.
