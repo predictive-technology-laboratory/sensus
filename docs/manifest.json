@@ -228,7 +228,7 @@
           "hash": "M5Sk6jdOdBDY3i4/vM74Xg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -240,7 +240,7 @@
           "hash": "RbhCEP456swIKdoyAyFJzQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -528,7 +528,7 @@
           "hash": "djcHZwa1MPkWm0F4uetJuA=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -1416,7 +1416,7 @@
           "hash": "71bWqaQn6/ZJOZiUTSZkBA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1437,7 +1437,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Callbacks.ScheduledCallback.html",
-          "hash": "3NVsLg9QN2/xTDveXZHJ7Q=="
+          "hash": "8pG54Yg3ixf5BmL6C54Usw=="
         }
       },
       "is_incremental": false,
@@ -1452,7 +1452,7 @@
           "hash": "b+6EdxrnU0AVPjNTUQcZBw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -3324,7 +3324,7 @@
           "hash": "rTKv9Lu96eDh5uK+NJFs3g=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4188,7 +4188,7 @@
           "hash": "v1NSz1KdvmGVe1PMCPKaPA=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4245,7 +4245,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "sxZJPO6AN3xFNc2w395hTA=="
+          "hash": "dCXybQw5h8+G3tsoGSnWcQ=="
         }
       },
       "is_incremental": false,
@@ -4296,7 +4296,7 @@
           "hash": "0caJ675pPOPeohIw0KLVZg=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4380,7 +4380,7 @@
           "hash": "nYH4lA5dLSXhltPGSRwrSA=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4500,7 +4500,7 @@
           "hash": "BitVIL7ONHizW/4nFl7P6A=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4512,7 +4512,7 @@
           "hash": "HsTZZL7eO8zspGrME9v5pg=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4680,7 +4680,7 @@
           "hash": "32lPeYFxyRUtYLdiGz1xdA=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -4836,7 +4836,7 @@
           "hash": "ihJwKzMAQNyGBfLLaoFdfg=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -5220,7 +5220,7 @@
           "hash": "j6+SV9Oucr9YmVQ+56xDLw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -5232,7 +5232,7 @@
           "hash": "dSo7AznGBFW/qepnz627ew=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -5244,7 +5244,7 @@
           "hash": "esSJhRhw7aRB7QHkjHq1zA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -5256,7 +5256,7 @@
           "hash": "42K8HP+35/yQe+cF9pWTCQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -5484,7 +5484,7 @@
           "hash": "NLiyyATFqA6LORjkrC6zUw=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -5496,7 +5496,7 @@
           "hash": "zGLLjXxfpnjPZR7rRQ0Sxg=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -5952,7 +5952,7 @@
           "hash": "kiAjOil8a59Ge5AEA9MDLA=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -5988,7 +5988,7 @@
           "hash": "RfjpFXa523JmShay4FDu1w=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -6144,7 +6144,7 @@
           "hash": "8558eXFleDQcWgXlqvpPNg=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -6281,7 +6281,7 @@
           "hash": "z7VKF5Okt40AZYm1u0X2Og=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -6309,17 +6309,17 @@
           "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": true,
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build"
         },
-        "ResourceDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
           "incrementalPhase": "build"
         }
       }

@@ -2066,12 +2066,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
-  <h4 id="Sensus_Protocol_DeserializeAsync_System_Byte___" data-uid="Sensus.Protocol.DeserializeAsync(System.Byte[])">DeserializeAsync(Byte[])</h4>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Byte___System_Boolean_" data-uid="Sensus.Protocol.DeserializeAsync(System.Byte[],System.Boolean)">DeserializeAsync(Byte[], Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(byte[] bytes)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(byte[] bytes, bool offerToReplaceExistingProtocol)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2086,6 +2086,11 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">bytes</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">offerToReplaceExistingProtocol</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2108,12 +2113,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
-  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_Sensus_Authentication_AmazonS3Credentials_" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)">DeserializeAsync(Uri, AmazonS3Credentials)</h4>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_System_Boolean_Sensus_Authentication_AmazonS3Credentials_" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri,System.Boolean,Sensus.Authentication.AmazonS3Credentials)">DeserializeAsync(Uri, Boolean, AmazonS3Credentials)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(Uri uri, AmazonS3Credentials credentials = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(Uri uri, bool offerToReplaceExistingProtocol, AmazonS3Credentials credentials = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2128,6 +2133,11 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Uri</span></td>
         <td><span class="parametername">uri</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">offerToReplaceExistingProtocol</span></td>
         <td></td>
       </tr>
       <tr>

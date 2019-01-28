@@ -45141,21 +45141,21 @@ references:
   commentId: Overload:Sensus.Protocol.Description
   fullName: Sensus.Protocol.Description
   nameWithType: Protocol.Description
-- uid: Sensus.Protocol.DeserializeAsync(System.Byte[])
-  name: DeserializeAsync(Byte[])
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Byte___
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.Byte[])
-  name.vb: DeserializeAsync(Byte())
-  fullName: Sensus.Protocol.DeserializeAsync(System.Byte[])
-  fullName.vb: Sensus.Protocol.DeserializeAsync(System.Byte())
-  nameWithType: Protocol.DeserializeAsync(Byte[])
-  nameWithType.vb: Protocol.DeserializeAsync(Byte())
-- uid: Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)
-  name: DeserializeAsync(Uri, AmazonS3Credentials)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Uri_Sensus_Authentication_AmazonS3Credentials_
-  commentId: M:Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)
-  fullName: Sensus.Protocol.DeserializeAsync(System.Uri, Sensus.Authentication.AmazonS3Credentials)
-  nameWithType: Protocol.DeserializeAsync(Uri, AmazonS3Credentials)
+- uid: Sensus.Protocol.DeserializeAsync(System.Byte[],System.Boolean)
+  name: DeserializeAsync(Byte[], Boolean)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Byte___System_Boolean_
+  commentId: M:Sensus.Protocol.DeserializeAsync(System.Byte[],System.Boolean)
+  name.vb: DeserializeAsync(Byte(), Boolean)
+  fullName: Sensus.Protocol.DeserializeAsync(System.Byte[], System.Boolean)
+  fullName.vb: Sensus.Protocol.DeserializeAsync(System.Byte(), System.Boolean)
+  nameWithType: Protocol.DeserializeAsync(Byte[], Boolean)
+  nameWithType.vb: Protocol.DeserializeAsync(Byte(), Boolean)
+- uid: Sensus.Protocol.DeserializeAsync(System.Uri,System.Boolean,Sensus.Authentication.AmazonS3Credentials)
+  name: DeserializeAsync(Uri, Boolean, AmazonS3Credentials)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_System_Uri_System_Boolean_Sensus_Authentication_AmazonS3Credentials_
+  commentId: M:Sensus.Protocol.DeserializeAsync(System.Uri,System.Boolean,Sensus.Authentication.AmazonS3Credentials)
+  fullName: Sensus.Protocol.DeserializeAsync(System.Uri, System.Boolean, Sensus.Authentication.AmazonS3Credentials)
+  nameWithType: Protocol.DeserializeAsync(Uri, Boolean, AmazonS3Credentials)
 - uid: Sensus.Protocol.DeserializeAsync*
   name: DeserializeAsync
   href: api/Sensus.Protocol.html#Sensus_Protocol_DeserializeAsync_
