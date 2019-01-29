@@ -59,10 +59,10 @@ of your protocol.
 ### Example Survey Agents
 See the following implementations for example agents:
 
-* [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs)):  A 
+* [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent.Shared/ExampleRandomScriptProbeAgent.cs)):  A 
 survey agent that randomly decides whether or not to deliver surveys.
 
-* [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs)):  A 
+* [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent.Shared/ExampleAdaptiveScriptProbeAgent.cs)):  A 
 survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.
 
 ## iOS
@@ -73,10 +73,10 @@ run time. Thus, adaptive survey agents are more limited on iOS compared with And
 * The app comes with two example survey agents; however, these are simply for demonstration performance and are unlikely to work
 well in practice. Nonetheless, the examples are:
 
-  * [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleRandomScriptProbeAgent.cs)):  A 
+  * [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent.Shared/ExampleRandomScriptProbeAgent.cs)):  A 
 survey agent that randomly decides whether or not to deliver surveys.
 
-  * [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent/ExampleAdaptiveScriptProbeAgent.cs)):  A 
+  * [Adaptive](xref:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent.Shared/ExampleAdaptiveScriptProbeAgent.cs)):  A 
 survey agent that attempts to adapt to the user by increasing and decreasing the likelihood of survey delivery based on experience.
 
   You can select either of these agents when configuring the <xref:Sensus.Probes.User.Scripts.ScriptProbe>.
