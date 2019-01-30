@@ -133,7 +133,7 @@ namespace Sensus.Probes.User.Scripts
                 // be scheduled, so it should not be the case that we lose the user with certainty. however, on 
                 // ios it is more likely that the user will ignore surveys without bringing the app to the foreground 
                 // and giving an opportunity for the health test to schedule additional surveys.
-                int numDays = Math.Max(7, _nonDowTriggerIntervalDays);
+                int numDays = Math.Max(7, _nonDowTriggerIntervalDays + 1);  // super tricky corner case:  if the interval is greater than 7 days and the current day matches the interval check below, but the current time follows the window, then the current day won't be scheduled nor will any other. so add a day to the interval so that two days will match.
 
                 for (int dayOffset = 0; dayOffset < numDays; ++dayOffset)
                 {

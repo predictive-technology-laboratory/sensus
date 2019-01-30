@@ -142,7 +142,7 @@ namespace Sensus
             // if we don't have an S3 URI, then download protocol bytes directly from web and deserialize.
             else
             {
-                protocolBytes = await uri.DownloadBytes();
+                protocolBytes = await uri.DownloadBytesAsync();
             }
 
             protocol = await DeserializeAsync(protocolBytes, offerToReplaceExistingProtocol);

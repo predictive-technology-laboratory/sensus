@@ -45,14 +45,18 @@ namespace Sensus.Notifications
         /// When trying to delete a push notification request, we don't always have the
         /// original <see cref="PushNotificationRequest"/> object. This happens, for example,
         /// when we receive the push notification. All we have in that case is the ID and 
-        /// protocol. So just track this information.
+        /// protocol. So just track this information. Furthermore, we used to keep an object
+        /// reference to the <see cref="Protocol"/>, but this caused problems when <see cref="Protocol"/>s
+        /// are replaced upon loading. Instead of attempting to update the object references 
+        /// in this collection, simply track the identifier and grab the current <see cref="Protocol"/>
+        /// when needed.
         /// </summary>
-        private List<Tuple<string, Protocol>> _pushNotificationRequestsToDelete;
+        private List<Tuple<string, string>> _pushNotificationRequestIdProtocolIdsToDelete;
 
         public Notifier()
         {
             _pushNotificationRequestsToSend = new List<PushNotificationRequest>();
-            _pushNotificationRequestsToDelete = new List<Tuple<string, Protocol>>();
+            _pushNotificationRequestIdProtocolIdsToDelete = new List<Tuple<string, string>>();
         }
 
         public abstract Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
@@ -135,9 +139,9 @@ namespace Sensus.Notifications
             {
                 // we just sent the push notification request, so it doesn't make sense for there to be a pending push notification
                 // request to delete. remove any pending push notifications to delete that match the passed id.
-                lock (_pushNotificationRequestsToDelete)
+                lock (_pushNotificationRequestIdProtocolIdsToDelete)
                 {
-                    _pushNotificationRequestsToDelete.RemoveAll(idProtocol => idProtocol.Item1 == request.Id);
+                    _pushNotificationRequestIdProtocolIdsToDelete.RemoveAll(requestIdProtocolId => requestIdProtocolId.Item1 == request.Id);
                 }
             }
         }
@@ -468,9 +472,9 @@ namespace Sensus.Notifications
             {
                 await protocol.RemoteDataStore.DeletePushNotificationRequestAsync(id, cancellationToken);
 
-                lock (_pushNotificationRequestsToDelete)
+                lock (_pushNotificationRequestIdProtocolIdsToDelete)
                 {
-                    _pushNotificationRequestsToDelete.RemoveAll(idProtocol => idProtocol.Item1 == id);
+                    _pushNotificationRequestIdProtocolIdsToDelete.RemoveAll(requestIdProtocolId => requestIdProtocolId.Item1 == id);
                 }
             }
             catch (Exception deleteException)
@@ -478,11 +482,11 @@ namespace Sensus.Notifications
                 SensusServiceHelper.Get().Logger.Log("Exception while deleting push notification request:  " + deleteException.Message, LoggingLevel.Normal, GetType());
 
                 // hang on to the push notification for deleting in the future, e.g., when internet is restored.
-                lock (_pushNotificationRequestsToDelete)
+                lock (_pushNotificationRequestIdProtocolIdsToDelete)
                 {
-                    if (!_pushNotificationRequestsToDelete.Any(idProtocol => idProtocol.Item1 == id))
+                    if (!_pushNotificationRequestIdProtocolIdsToDelete.Any(requestIdProtocolId => requestIdProtocolId.Item1 == id))
                     {
-                        _pushNotificationRequestsToDelete.Add(new Tuple<string, Protocol>(id, protocol));
+                        _pushNotificationRequestIdProtocolIdsToDelete.Add(new Tuple<string, string>(id, protocol.Id));
                     }
                 }
             }
@@ -534,15 +538,29 @@ namespace Sensus.Notifications
             #endregion
 
             #region delete all outstanding push notification requests
-            List<Tuple<string, Protocol>> pushNotificationRequestsToDelete;
-            lock (_pushNotificationRequestsToDelete)
+            List<Tuple<string, Protocol>> pushNotificationRequestIdProtocolsToDelete = new List<Tuple<string, Protocol>>();
+            lock (_pushNotificationRequestIdProtocolIdsToDelete)
             {
-                pushNotificationRequestsToDelete = _pushNotificationRequestsToDelete.ToList();
+                foreach (Tuple<string, string> requestIdProtocolId in _pushNotificationRequestIdProtocolIdsToDelete)
+                {
+                    Protocol protocol = SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(p => p.Id == requestIdProtocolId.Item2);
+
+                    // it's possible for the protocol to be deleted before we get around to deleting the current request
+                    if (protocol == null)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("No protocol found for push notification to delete.", LoggingLevel.Normal, GetType());
+                        _pushNotificationRequestIdProtocolIdsToDelete.Remove(requestIdProtocolId);
+                    }
+                    else
+                    {
+                        pushNotificationRequestIdProtocolsToDelete.Add(new Tuple<string, Protocol>(requestIdProtocolId.Item1, protocol));
+                    }
+                }
             }
 
-            SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotificationRequestsToDelete.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Deleting " + pushNotificationRequestIdProtocolsToDelete.Count + " outstanding push notification request(s).", LoggingLevel.Normal, GetType());
 
-            foreach (Tuple<string, Protocol> pushNotificationRequestIdProtocol in pushNotificationRequestsToDelete)
+            foreach (Tuple<string, Protocol> pushNotificationRequestIdProtocol in pushNotificationRequestIdProtocolsToDelete)
             {
                 try
                 {
@@ -555,12 +573,12 @@ namespace Sensus.Notifications
             }
 
             // report remaining PNRs to delete
-            lock (_pushNotificationRequestsToDelete)
+            lock (_pushNotificationRequestIdProtocolIdsToDelete)
             {
                 string eventName = TrackedEvent.Health + ":" + GetType().Name;
                 Dictionary<string, string> properties = new Dictionary<string, string>
                 {
-                    { "PNRs to Delete", _pushNotificationRequestsToDelete.Count.ToString() }
+                    { "PNRs to Delete", _pushNotificationRequestIdProtocolIdsToDelete.Count.ToString() }
                 };
 
                 Analytics.TrackEvent(eventName, properties);

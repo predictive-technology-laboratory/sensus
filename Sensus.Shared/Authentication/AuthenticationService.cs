@@ -88,7 +88,7 @@ namespace Sensus.Authentication
                 SensusException.Report("Unrecognized platform:  " + SensusContext.Current.Platform);
             }
 
-            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId, deviceType)).DownloadString();
+            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId, deviceType)).DownloadStringAsync();
 
             try
             {
@@ -142,7 +142,7 @@ namespace Sensus.Authentication
                             throw new Exception("Tried to get credentials without an account.");
                         }
 
-                        string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
+                        string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadStringAsync();
 
                         // deserialize credentials
                         try
