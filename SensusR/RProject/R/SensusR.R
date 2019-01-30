@@ -138,8 +138,8 @@ sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = 
 #' @param remove If TRUE, the input file is removed afterward, otherwise not.
 #' @return None
 #' @examples 
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' sensus.decompress.gz.files(data.path)
+#' # data.path = system.file("extdata", "example-data", package="SensusR")
+#' # sensus.decompress.gz.files(data.path)
 sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE, remove = FALSE)
 {
   gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz$")
