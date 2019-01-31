@@ -24756,30 +24756,30 @@ references:
   commentId: T:Sensus.Extensions.UriExtensions
   fullName: Sensus.Extensions.UriExtensions
   nameWithType: UriExtensions
-- uid: Sensus.Extensions.UriExtensions.DownloadBytes(System.Uri)
-  name: DownloadBytes(Uri)
-  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadBytes_System_Uri_
-  commentId: M:Sensus.Extensions.UriExtensions.DownloadBytes(System.Uri)
-  fullName: Sensus.Extensions.UriExtensions.DownloadBytes(System.Uri)
-  nameWithType: UriExtensions.DownloadBytes(Uri)
-- uid: Sensus.Extensions.UriExtensions.DownloadBytes*
-  name: DownloadBytes
-  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadBytes_
-  commentId: Overload:Sensus.Extensions.UriExtensions.DownloadBytes
-  fullName: Sensus.Extensions.UriExtensions.DownloadBytes
-  nameWithType: UriExtensions.DownloadBytes
-- uid: Sensus.Extensions.UriExtensions.DownloadString(System.Uri)
-  name: DownloadString(Uri)
-  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadString_System_Uri_
-  commentId: M:Sensus.Extensions.UriExtensions.DownloadString(System.Uri)
-  fullName: Sensus.Extensions.UriExtensions.DownloadString(System.Uri)
-  nameWithType: UriExtensions.DownloadString(Uri)
-- uid: Sensus.Extensions.UriExtensions.DownloadString*
-  name: DownloadString
-  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadString_
-  commentId: Overload:Sensus.Extensions.UriExtensions.DownloadString
-  fullName: Sensus.Extensions.UriExtensions.DownloadString
-  nameWithType: UriExtensions.DownloadString
+- uid: Sensus.Extensions.UriExtensions.DownloadBytesAsync(System.Uri)
+  name: DownloadBytesAsync(Uri)
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadBytesAsync_System_Uri_
+  commentId: M:Sensus.Extensions.UriExtensions.DownloadBytesAsync(System.Uri)
+  fullName: Sensus.Extensions.UriExtensions.DownloadBytesAsync(System.Uri)
+  nameWithType: UriExtensions.DownloadBytesAsync(Uri)
+- uid: Sensus.Extensions.UriExtensions.DownloadBytesAsync*
+  name: DownloadBytesAsync
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadBytesAsync_
+  commentId: Overload:Sensus.Extensions.UriExtensions.DownloadBytesAsync
+  fullName: Sensus.Extensions.UriExtensions.DownloadBytesAsync
+  nameWithType: UriExtensions.DownloadBytesAsync
+- uid: Sensus.Extensions.UriExtensions.DownloadStringAsync(System.Uri)
+  name: DownloadStringAsync(Uri)
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadStringAsync_System_Uri_
+  commentId: M:Sensus.Extensions.UriExtensions.DownloadStringAsync(System.Uri)
+  fullName: Sensus.Extensions.UriExtensions.DownloadStringAsync(System.Uri)
+  nameWithType: UriExtensions.DownloadStringAsync(Uri)
+- uid: Sensus.Extensions.UriExtensions.DownloadStringAsync*
+  name: DownloadStringAsync
+  href: api/Sensus.Extensions.UriExtensions.html#Sensus_Extensions_UriExtensions_DownloadStringAsync_
+  commentId: Overload:Sensus.Extensions.UriExtensions.DownloadStringAsync
+  fullName: Sensus.Extensions.UriExtensions.DownloadStringAsync
+  nameWithType: UriExtensions.DownloadStringAsync
 - uid: Sensus.Extensions.WebRequestExtensions
   name: WebRequestExtensions
   href: api/Sensus.Extensions.WebRequestExtensions.html
