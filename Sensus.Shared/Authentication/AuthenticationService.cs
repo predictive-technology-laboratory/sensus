@@ -121,6 +121,8 @@ namespace Sensus.Authentication
         {
             lock (_getCredentialsTaskLocker)
             {
+                // if the get credentials task is in a state from which we wouldn't expect to return a presently
+                // valid set of credentials, then start a new task to check/refresh the credentials.
                 if (_getCredentialsTask == null ||
                     _getCredentialsTask.Status == TaskStatus.Canceled ||
                     _getCredentialsTask.Status == TaskStatus.Faulted ||
@@ -128,6 +130,7 @@ namespace Sensus.Authentication
                 {
                     _getCredentialsTask = Task.Run(async () =>
                     {
+                        // if the credentials we currently hold will be valid for a while, then simply return them.
                         if (AmazonS3Credentials?.WillBeValidFor(TimeSpan.FromHours(1)) ?? false)
                         {
                             return AmazonS3Credentials;
@@ -137,9 +140,12 @@ namespace Sensus.Authentication
                             AmazonS3Credentials = null;
                         }
 
+                        // we should always have an account
                         if (Account == null)
                         {
-                            throw new Exception("Tried to get credentials without an account.");
+                            Exception noAccountException = new Exception("Tried to get credentials without an account.");
+                            SensusException.Report(noAccountException);
+                            throw noAccountException;
                         }
 
                         string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadStringAsync();

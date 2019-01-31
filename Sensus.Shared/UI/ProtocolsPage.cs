@@ -552,7 +552,7 @@ namespace Sensus.UI
                                     throw new Exception("The identifier of the study does not match that of the credentials.");
                                 }
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 loadException = ex;
                             }
@@ -569,7 +569,7 @@ namespace Sensus.UI
                             {
                                 protocol = await Protocol.DeserializeAsync(new Uri(url), true);
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 loadException = ex;
                             }
