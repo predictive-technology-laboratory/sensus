@@ -15,6 +15,3 @@ Result of trimming.
 \description{
 Trim trailing white space from a string.
 }
-\examples{
-trim.trailing("asdfasdf  ")
-}

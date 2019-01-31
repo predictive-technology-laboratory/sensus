@@ -27,8 +27,3 @@ None
 \description{
 Decrypts Sensus .bin files that were encrypted using asymmetric public/private key encryption.
 }
-\examples{
-# sensus.decrypt.bin.files(data.path = "/path/to/bin/files/directory", 
-#                          rsa.private.key.path = "/path/to/private.pem", 
-#                          replace.files = FALSE)
-}

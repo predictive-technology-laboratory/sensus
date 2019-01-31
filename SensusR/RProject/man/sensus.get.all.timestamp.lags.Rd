@@ -7,17 +7,11 @@
 sensus.get.all.timestamp.lags(data)
 }
 \arguments{
-\item{data}{Data to plot lags for (e.g., the result of \code{read.sensus.json}).}
+\item{data}{Data to plot lags for (e.g., the result of \code{sensus.read.json.files}).}
 }
 \value{
 List of lags organized by datum type.
 }
 \description{
 Get timestamp lags for a Sensus data frame.
-}
-\examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-data = sensus.read.json.files(data.path)
-lags = sensus.get.all.timestamp.lags(data)
-plot(lags[["AccelerometerDatum"]])
 }

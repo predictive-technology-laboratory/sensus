@@ -13,11 +13,9 @@ sensus.write.csv.files(data, directory, file.name.prefix = "")
 
 \item{file.name.prefix}{Prefix to add to the generated file names.}
 }
+\value{
+None
+}
 \description{
 Write data to CSV files.
-}
-\examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-data = sensus.read.json.files(data.path)
-# sensus.write.csv.files(data, directory = "/path/to/directory")
 }

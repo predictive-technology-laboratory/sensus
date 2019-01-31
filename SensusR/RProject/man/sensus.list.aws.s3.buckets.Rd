@@ -12,6 +12,9 @@ sensus.list.aws.s3.buckets(profile = "default",
 
 \item{aws.path}{Path to AWS client.}
 }
+\value{
+None
+}
 \description{
 Lists S3 buckets.
 }

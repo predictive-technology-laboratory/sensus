@@ -15,6 +15,3 @@ Result of trimming.
 \description{
 Trim leading and trailing white space from a string.
 }
-\examples{
-trim("  asdf  ")
-}

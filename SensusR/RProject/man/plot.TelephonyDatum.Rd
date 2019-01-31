@@ -11,11 +11,9 @@
 
 \item{...}{Other plotting parameters.}
 }
+\value{
+None
+}
 \description{
 Plot telephony data.
-}
-\examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-data = sensus.read.json.files(data.path)
-plot(data$TelephonyDatum)
 }

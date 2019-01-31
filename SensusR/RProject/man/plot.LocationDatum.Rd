@@ -11,11 +11,9 @@
 
 \item{...}{Arguments to pass to plotting routines. This can include two special arguments:  qmap.args (passed to \code{\link{qmap}}) and geom.point.args (passed to \code{\link{geom_point}}).}
 }
+\value{
+None
+}
 \description{
 Plot location data.
-}
-\examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-data = sensus.read.json.files(data.path)
-#plot(data$LocationDatum) -- this line of example code does not play nicely with the CRAN servers.
 }
