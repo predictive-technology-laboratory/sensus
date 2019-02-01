@@ -775,12 +775,17 @@ namespace Sensus
                                             SensusException.Report("Retrieved new protocol, but its identifier does not match that of the credentials.");
                                         }
 
+                                        // if the old protocol is currently starting or running, then start the new protocol. do this before 
+                                        // stopping/deleting the old one, as we might fail to start the new protocol,  or the cancellation 
+                                        // token might expire -- in either case we must maintain continuous operation.
+                                        if (protocolToTest.State == ProtocolState.Starting || protocolToTest.State == ProtocolState.Running)
+                                        {
+                                            await newProtocol.StartAsync(cancellationToken);
+                                        }
+
                                         // stop and delete the old protocol
                                         await protocolToTest.StopAsync();
                                         await protocolToTest.DeleteAsync();
-
-                                        // start the new protocol
-                                        await newProtocol.StartAsync(cancellationToken);
                                     }
                                 }
                                 catch (Exception ex)
