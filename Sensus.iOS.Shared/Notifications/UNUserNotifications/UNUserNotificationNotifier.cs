@@ -156,5 +156,11 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
         {
             CancelNotification(request?.Identifier);
         }
+
+        public override void ClearAllNotifications()
+        {
+            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+            UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
+        }
     }
 }

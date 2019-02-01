@@ -26,7 +26,6 @@ using UIKit;
 using Foundation;
 using Facebook.CoreKit;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
-using Sensus.iOS.Notifications.UILocalNotifications;
 using Sensus.iOS.Callbacks;
 using UserNotifications;
 using Sensus.iOS.Notifications.UNUserNotifications;
@@ -44,8 +43,6 @@ namespace Sensus.iOS
     [Register("AppDelegate")]
     public class AppDelegate : FormsApplicationDelegate
     {
-        private TaskCompletionSource<UIUserNotificationSettings> _uiUserNotificationSettingsRegistrationTask;
-
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
@@ -58,18 +55,14 @@ namespace Sensus.iOS
                 PowerConnectionChangeListener = new iOSPowerConnectionChangeListener()
             };
 
-            // set up scheduler / notifier depending on the iOS version.
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
-                SensusContext.Current.Notifier = new UNUserNotificationNotifier();
-                UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
-            }
-            else
-            {
-                SensusContext.Current.CallbackScheduler = new UILocalNotificationCallbackScheduler();
-                SensusContext.Current.Notifier = new UILocalNotificationNotifier();
-            }
+            SensusContext.Current.CallbackScheduler = new UNUserNotificationCallbackScheduler();
+            SensusContext.Current.Notifier = new UNUserNotificationNotifier();
+            UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
+
+            // we've seen cases where previously terminated runs of the app leave behind 
+            // local notifications. clear these out now. any callbacks these notifications
+            // would have triggered are about to be rescheduled when the app is actived.
+            (SensusContext.Current.Notifier as iOSNotifier).ClearAllNotifications();
 
             // initialize service helper. must come after context initialization.
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
@@ -162,58 +155,20 @@ namespace Sensus.iOS
                     // request authorization to show notifications to the user for data/survey requests.
                     bool notificationsAuthorized = false;
 
-                    if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+                    // if notifications were previously authorized and configured, there's nothing more to do.
+                    UNNotificationSettings settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync();
+
+                    if (settings.BadgeSetting == UNNotificationSetting.Enabled &&
+                        settings.SoundSetting == UNNotificationSetting.Enabled &&
+                        settings.AlertSetting == UNNotificationSetting.Enabled)
                     {
-                        // if notifications were previously authorized and configured, there's nothing more to do.
-                        UNNotificationSettings settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync();
-
-                        if (settings.BadgeSetting == UNNotificationSetting.Enabled &&
-                            settings.SoundSetting == UNNotificationSetting.Enabled &&
-                            settings.AlertSetting == UNNotificationSetting.Enabled)
-                        {
-                            notificationsAuthorized = true;
-                        }
-                        else
-                        {
-                            // request authorization for notifications. if the user previously denied authorization, this will simply return non-granted.
-                            Tuple<bool, NSError> grantedError = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
-
-                            // if the user just granted authorization, configure the notification subsystem.
-                            if (grantedError.Item1)
-                            {
-                                // clear any current/pending notifications
-                                UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-                                UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
-
-                                notificationsAuthorized = true;
-                            }
-                        }
+                        notificationsAuthorized = true;
                     }
-                    // use the pre-10.0 approach based on UILocalNotifications. we require ios 9 or later, so we don't have to worry about 
-                    // pre-8 ios as done here:  https://docs.microsoft.com/en-us/azure/notification-hubs/xamarin-notification-hubs-ios-push-notification-apns-get-started
                     else
                     {
-                        // if notifications were previously authorized and configured, there's nothing more to do.
-                        UIUserNotificationSettings settings = uiApplication.CurrentUserNotificationSettings;
-
-                        if (settings.Types == (UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert))
-                        {
-                            notificationsAuthorized = true;
-                        }
-                        else
-                        {
-                            // request authorization for notifications. if the user previously denied authorization, this will simply return non-granted.
-                            _uiUserNotificationSettingsRegistrationTask = new TaskCompletionSource<UIUserNotificationSettings>();
-                            UIUserNotificationSettings notificationSettings = UIUserNotificationSettings.GetSettingsForTypes(UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert, new NSSet());
-                            UIApplication.SharedApplication.RegisterUserNotificationSettings(notificationSettings);
-                            settings = await _uiUserNotificationSettingsRegistrationTask.Task;
-
-                            // if the user just granted authorization, configure the notification subsystem.
-                            if (settings.Types == (UIUserNotificationType.Badge | UIUserNotificationType.Sound | UIUserNotificationType.Alert))
-                            {
-                                notificationsAuthorized = true;
-                            }
-                        }
+                        // request authorization for notifications. if the user previously denied authorization, this will simply return non-granted.
+                        Tuple<bool, NSError> grantedError = await UNUserNotificationCenter.Current.RequestAuthorizationAsync(UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound | UNAuthorizationOptions.Alert);
+                        notificationsAuthorized = grantedError.Item1;
                     }
 
                     // ensure service helper is running. it is okay to call the following line multiple times, as repeats have no effect.
@@ -222,7 +177,7 @@ namespace Sensus.iOS
                     await SensusServiceHelper.Get().StartAsync();
 
                     // update/run all callbacks
-                    await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksAsync();
+                    await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksOnActivationAsync();
 
                     // disabling notifications will greatly impair the user's studies. let the user know.
                     if (!notificationsAuthorized)
@@ -235,20 +190,7 @@ namespace Sensus.iOS
                             if (e.ButtonIndex == 1)
                             {
                                 NSUrl notificationSettingsURL = new NSUrl(UIApplication.OpenSettingsUrlString.ToString());
-
-                                // deprecation:  https://developer.apple.com/library/archive/releasenotes/General/WhatsNewIniOS/Articles/iOS10.html
-                                if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-                                {
-#pragma warning disable XI0002 // Notifies you from using newer Apple APIs when targeting an older OS version
-                                    await uiApplication.OpenUrlAsync(notificationSettingsURL, new UIApplicationOpenUrlOptions());
-#pragma warning restore XI0002 // Notifies you from using newer Apple APIs when targeting an older OS version
-                                }
-                                else
-                                {
-#pragma warning disable XI0003 // Notifies you when using a deprecated, obsolete or unavailable Apple API
-                                    uiApplication.OpenUrl(notificationSettingsURL);
-#pragma warning restore XI0003 // Notifies you when using a deprecated, obsolete or unavailable Apple API
-                                }
+                                await uiApplication.OpenUrlAsync(notificationSettingsURL, new UIApplicationOpenUrlOptions());
                             }
                         };
 
@@ -268,103 +210,6 @@ namespace Sensus.iOS
             catch (Exception ex)
             {
                 SensusException.Report("Exception while activating:  " + ex.Message, ex);
-            }
-        }
-
-        /// <summary>
-        /// Pre-10.0:  Handles local notification registration results.
-        /// </summary>
-        /// <param name="application">Application.</param>
-        /// <param name="notificationSettings">Notification settings.</param>
-        public override void DidRegisterUserNotificationSettings(UIApplication application, UIUserNotificationSettings notificationSettings)
-        {
-            // the variable should never be null, but just in case...also, use try-set as this method may be called multiple times by iOS per error reports.
-            _uiUserNotificationSettingsRegistrationTask?.TrySetResult(notificationSettings);
-        }
-
-        /// <summary>
-        /// Pre-10.0:  Handles notifications received when the app is in the foreground. See <see cref="UNUserNotificationDelegate.WillPresentNotification"/> for
-        /// the corresponding handler for iOS 10.0 and above.
-        /// </summary>
-        /// <param name="application">Application.</param>
-        /// <param name="notification">Notification.</param>
-        public override async void ReceivedLocalNotification(UIApplication application, UILocalNotification notification)
-        {
-            // UILocalNotifications were obsoleted in iOS 10.0, and we should not be receiving them via this app delegate
-            // method. we won't have any idea how to service them on iOS 10.0 and above. report the problem and bail.
-            if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
-            {
-                SensusException.Report("Received UILocalNotification in iOS 10 or later.");
-            }
-            else
-            {
-                // we're in iOS < 10.0, which means we should have a UILocal-based notifier and scheduler to handle the notification.
-                UILocalNotificationNotifier notifier = SensusContext.Current.Notifier as UILocalNotificationNotifier;
-                UILocalNotificationCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as UILocalNotificationCallbackScheduler;
-                if (notifier == null)
-                {
-                    SensusException.Report("We don't have a UILocalNotificationNotifier.");
-                }
-                else if (callbackScheduler == null)
-                {
-                    SensusException.Report("We don't have a UILocalNotificationCallbackScheduler.");
-                }
-                else if (notification.UserInfo == null)
-                {
-                    SensusException.Report("Null user info passed to ReceivedLocalNotification.");
-                }
-                else
-                {
-                    // we've tried pulling some of the code below out of the UI thread, but we do not receive/process
-                    // the callback notifications when doing so.
-                    await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        try
-                        {
-                            // check for the pending survey notification
-                            string notificationId = notification.UserInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY))?.ToString();
-                            if (notificationId == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID)
-                            {
-                                // flash a message to the user, and don't cancel the notification.
-                                await SensusServiceHelper.Get().FlashNotificationAsync("A new survey is available.");
-                            }
-                            else if (notificationId == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
-                            {
-                                // flash a message to the user, and don't cancel the notification.
-                                await SensusServiceHelper.Get().FlashNotificationAsync("Your study was updated.");
-                            }
-                            else
-                            {
-                                // cancel notification (removing it from the tray), since it has served its purpose (e.g., as a callback notification).
-                                notifier.CancelNotification(notification);
-                            }
-
-                            // service the callback if we've got one (not all notification userinfo bundles are for callbacks)
-                            if (callbackScheduler.IsCallback(notification.UserInfo))
-                            {
-                                await callbackScheduler.ServiceCallbackAsync(notification.UserInfo);
-                            }
-
-                            // check whether the user opened the notification to open sensus, indicated by an application state that is not active. we'll
-                            // also get notifications when the app is active, since we use them for timed callback events.
-                            if (application.ApplicationState != UIApplicationState.Active)
-                            {
-                                // if the user opened the notification, display the page associated with the notification, if any. 
-                                callbackScheduler.OpenDisplayPage(notification.UserInfo);
-
-                                // provide some generic feedback if the user responded to a silent callback notification
-                                if (callbackScheduler.TryGetCallback(notification.UserInfo)?.Silent ?? false)
-                                {
-                                    await SensusServiceHelper.Get().FlashNotificationAsync("Study Updated.");
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusException.Report("Exception while processing local notification (iOS < 10):  " + ex.Message, ex);
-                        }
-                    });
-                }
             }
         }
 

@@ -23,8 +23,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
     public class UNUserNotificationDelegate : UNUserNotificationCenterDelegate
     {
         /// <summary>
-        /// Called just prior to a notification being presented while the app is in the foreground. See <see cref="AppDelegate.ReceivedLocalNotification"/>
-        /// for the corresponding handler on iOS pre-10.
+        /// Called just prior to a notification being presented while the app is in the foreground.
         /// </summary>
         /// <param name="center"></param>
         /// <param name="notification"></param>
@@ -58,8 +57,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
         }
 
         /// <summary>
-        /// Called when the user taps a notification. See <see cref="AppDelegate.ReceivedLocalNotification"/>
-        /// for the corresponding handler on iOS pre-10.
+        /// Called when the user taps a notification.
         /// </summary>
         /// <param name="center"></param>
         /// <param name="response"></param>

@@ -42,11 +42,12 @@ namespace Sensus.iOS.Callbacks
         public abstract List<string> CallbackIds { get; }
 
         /// <summary>
-        /// Updates the callbacks by running any that should have already been serviced or will be serviced in the near future.
-        /// Also reissues all silent notifications, which would have been canceled when the app went into the background.
+        /// Updates the callbacks when the app is activated. This services any callbacks that should have already been 
+        /// serviced or will be serviced in the near future. This also reissues all silent notifications, which would 
+        /// have been canceled when the app went into the background.
         /// </summary>
         /// <returns>Async task.</returns>
-        public async Task UpdateCallbacksAsync()
+        public async Task UpdateCallbacksOnActivationAsync()
         {
             foreach (string callbackId in CallbackIds)
             {
