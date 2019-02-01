@@ -612,7 +612,7 @@ namespace Sensus.UI
             {
                 if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                 {
-                    await SensusServiceHelper.Get().StopProtocolsAsync();
+                    await SensusServiceHelper.Get().StopAsync();
 
                     (SensusServiceHelper.Get() as AndroidSensusServiceHelper)?.StopAndroidSensusService();
                 }

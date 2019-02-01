@@ -62,7 +62,7 @@ namespace Sensus.iOS
             // we've seen cases where previously terminated runs of the app leave behind 
             // local notifications. clear these out now. any callbacks these notifications
             // would have triggered are about to be rescheduled when the app is actived.
-            (SensusContext.Current.Notifier as iOSNotifier).ClearAllNotifications();
+            (SensusContext.Current.Notifier as iOSNotifier).RemoveAllNotifications();
 
             // initialize service helper. must come after context initialization.
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
@@ -341,8 +341,8 @@ namespace Sensus.iOS
         // when the user quits.
         public override void DidEnterBackground(UIApplication uiApplication)
         {
-            // scheduler will be null in the case where notifications have not been authorized
-            (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler)?.CancelSilentNotifications();
+            // cancel all silent notifications, which should not be shown to the user.
+            (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
 
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
@@ -366,6 +366,9 @@ namespace Sensus.iOS
         // This method is called when the application is about to terminate. Save data, if needed.
         public override async void WillTerminate(UIApplication uiApplication)
         {
+            // remove all notifications, which will just confuse the user since the app has terminated.
+            (SensusContext.Current.Notifier as iOSNotifier).RemoveAllNotifications();
+
             // this method won't be called when the user kills the app using multitasking; however,
             // it should be called if the system kills the app when it's running in the background.
             // it should also be called if the system shuts down due to loss of battery power.
@@ -398,7 +401,7 @@ namespace Sensus.iOS
             }
 
             await serviceHelper.SaveAsync();
-            await serviceHelper.StopProtocolsAsync();
+            await serviceHelper.StopAsync();
         }
     }
 }

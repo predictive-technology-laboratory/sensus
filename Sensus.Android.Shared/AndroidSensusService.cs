@@ -338,7 +338,7 @@ namespace Sensus.Android
             {
                 serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
                 NotifyBindingsOfStop();
-                await serviceHelper.StopProtocolsAsync();
+                await serviceHelper.StopAsync();
                 serviceHelper.SetService(null);
             }
 

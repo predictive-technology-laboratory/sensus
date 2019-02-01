@@ -2288,18 +2288,6 @@ namespace Sensus
         public async Task<List<AnalyticsTrackedEvent>> TestHealthAsync(bool userInitiated, CancellationToken cancellationToken)
         {
             List<AnalyticsTrackedEvent> events = new List<AnalyticsTrackedEvent>();
-            string eventName;
-            Dictionary<string, string> properties;
-
-            eventName = TrackedEvent.Health + ":" + GetType().Name;
-            properties = new Dictionary<string, string>
-            {
-                { "State", _state.ToString() }
-            };
-
-            Analytics.TrackEvent(eventName, properties);
-
-            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
             if (_state == ProtocolState.Running)
             {
@@ -2354,12 +2342,20 @@ namespace Sensus
                         }
                     }
                 }
+
+                // submit participation report
+                ParticipationReportDatum participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
+                SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + participationReport, LoggingLevel.Normal, GetType());
+                _localDataStore.WriteDatum(participationReport, cancellationToken);
+
+                // write a heartbeat datum to let the backend know we've tested the protocol and we're alive
+                _localDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
             }
 
 #if __ANDROID__
             AndroidSensusServiceHelper androidSensusServiceHelper = SensusServiceHelper.Get() as Android.AndroidSensusServiceHelper;
-            eventName = TrackedEvent.Miscellaneous + ":" + GetType().Name;
-            properties = new Dictionary<string, string>
+            string eventName = TrackedEvent.Miscellaneous + ":" + GetType().Name;
+            Dictionary<string, string> properties = new Dictionary<string, string>
             {
                 { "Wake Lock Count", androidSensusServiceHelper.WakeLockAcquisitionCount.ToString() }                
             };
@@ -2371,11 +2367,6 @@ namespace Sensus
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));
 #endif
-
-            ParticipationReportDatum participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
-            SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + participationReport, LoggingLevel.Normal, GetType());
-
-            _localDataStore.WriteDatum(participationReport, cancellationToken);
 
             return events;
         }

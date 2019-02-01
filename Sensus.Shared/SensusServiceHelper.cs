@@ -306,6 +306,8 @@ namespace Sensus
         private ConcurrentObservableCollection<Script> _scriptsToRun;
         private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
+
+        private readonly object _healthTestCallbackLocker = new object();
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
         private readonly object _updatePushNotificationRegistrationsLocker = new object();
@@ -635,7 +637,6 @@ namespace Sensus
         public async Task AddRunningProtocolIdAsync(string id)
         {
             bool save = false;
-            bool scheduleHealthTestCallback = false;
 
             lock (_runningProtocolIds)
             {
@@ -644,123 +645,6 @@ namespace Sensus
                     _runningProtocolIds.Add(id);
                     save = true;
                 }
-
-                // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
-                // callback, initialize if needed, and request that the callback be scheduled.
-                if (_healthTestCallback == null)
-                {
-                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
-                    {
-                        // get protocols to test (those that should be running)
-                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
-                        {
-                            lock (_runningProtocolIds)
-                            {
-                                return _runningProtocolIds.Contains(protocol.Id);
-                            }
-
-                        }).ToList();
-
-                        // test protocols
-                        foreach (Protocol protocolToTest in protocolsToTest)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                break;
-                            }
-
-                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                            bool testCurrentProtocol = true;
-
-                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
-                            // the protocol id returned with credentials.
-                            if (protocolToTest.AuthenticationService != null)
-                            {
-                                try
-                                {
-                                    // get fresh credentials and check the protocol ID
-                                    AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
-
-                                    // we're getting app center errors indicating a null reference somewhere in this try clause. do some extra reporting.
-                                    if (testCredentials == null)
-                                    {
-                                        throw new NullReferenceException("Returned test credentials are null.");
-                                    }
-
-                                    if (protocolToTest.Id != testCredentials.ProtocolId)
-                                    {
-                                        // we're about to stop and delete the current protocol. don't bother testing it once we're done.
-                                        testCurrentProtocol = false;
-
-                                        Logger.Log("Protocol identifier no longer matches that of credentials. Downloading new protocol.", LoggingLevel.Normal, GetType());
-
-                                        // download the desired protocol. as we're initiating the download without user interaction, do not explicitly
-                                        // offer to replace the existing protocol. in principle, this should not even happen, as the credentials indicate
-                                        // that the protocol in the authentication service has an identifier that is different than the the one on the
-                                        // protocol we are currently testing. however, things might just be misconfigured in the authentication service.
-                                        // so, if the identifier in the protocol that we download duplicates one on the current device, don't bother the
-                                        // user (as they did not initiate the action) and expect an exception to be thrown back.
-                                        Protocol newProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), false, testCredentials);
-
-                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing 
-                                        // to be gained in doing so. rather, just report the exception and continue running the new protocol.
-                                        if (newProtocol.Id != testCredentials.ProtocolId)
-                                        {
-                                            SensusException.Report("Retrieved new protocol, but its identifier does not match that of the credentials.");
-                                        }
-
-                                        // wire up new protocol with the current authentication service
-                                        newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
-                                        newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
-
-                                        // start the new protocol
-                                        await newProtocol.StartAsync(cancellationToken);
-
-                                        // stop and delete the old protocol. we must do this after starting the new one because
-                                        // if we stop the protocol first and it's the only protocol running, then the health test
-                                        // will be cancelled resulting in the current cancellation token (the one passed to start)
-                                        // being cancelled as well.
-                                        await protocolToTest.StopAsync();
-                                        await protocolToTest.DeleteAsync();
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Logger.Log("Exception while checking for protocol change:  " + ex.Message, LoggingLevel.Normal, GetType());
-                                }
-                            }
-
-                            if (testCurrentProtocol)
-                            {
-                                await protocolToTest.TestHealthAsync(false, cancellationToken);
-
-                                // write a heartbeat datum to let the backend know we've tested the protocol and we're alive
-                                protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
-                            }
-                        }
-
-                        // test the callback scheduler
-                        SensusContext.Current.CallbackScheduler.TestHealth();
-
-                        // update push notification registrations
-                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
-                        {
-                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
-                        }
-
-                        // test the notifier, which checks the push notification requests.
-                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
-
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(5), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
-
-                    scheduleHealthTestCallback = true;
-                }
-            }
-
-            if (scheduleHealthTestCallback)
-            {
-                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
 
             if (save)
@@ -772,25 +656,13 @@ namespace Sensus
         public async Task RemoveRunningProtocolIdAsync(string id)
         {
             bool save = false;
-            bool unscheduleHealthTestCallback = false;
 
             lock (_runningProtocolIds)
             {
                 if (_runningProtocolIds.Remove(id))
                 {
                     save = true;
-
-                    if (_runningProtocolIds.Count == 0)
-                    {
-                        unscheduleHealthTestCallback = true;
-                    }
                 }
-            }
-
-            if (unscheduleHealthTestCallback)
-            {
-                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
-                _healthTestCallback = null;
             }
 
             if (save)
@@ -842,6 +714,110 @@ namespace Sensus
         /// </summary>
         public async Task StartAsync()
         {
+            // initialize the health test callback if it hasn't already been done
+            bool scheduleHealthTestCallback = false;
+            lock (_healthTestCallbackLocker)
+            {
+                if (_healthTestCallback == null)
+                {
+                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    {
+                        // test protocols
+                        foreach (Protocol protocolToTest in _registeredProtocols.ToList())
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+
+                            bool testCurrentProtocol = true;
+
+                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
+                            // the protocol id returned with credentials.
+                            if (protocolToTest.AuthenticationService != null)
+                            {
+                                try
+                                {
+                                    // get fresh credentials and check the protocol ID
+                                    AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
+
+                                    // we're getting app center errors indicating a null reference somewhere in this try clause. do some extra reporting.
+                                    if (testCredentials == null)
+                                    {
+                                        throw new NullReferenceException("Returned test credentials are null.");
+                                    }
+
+                                    if (protocolToTest.Id != testCredentials.ProtocolId)
+                                    {
+                                        // we're about to stop and delete the current protocol. don't bother testing it once we're done.
+                                        testCurrentProtocol = false;
+
+                                        Logger.Log("Protocol identifier no longer matches that of credentials. Downloading new protocol.", LoggingLevel.Normal, GetType());
+
+                                        // download the desired protocol. as we're initiating the download without user interaction, do not explicitly
+                                        // offer to replace the existing protocol. in principle, this should not even happen, as the credentials indicate
+                                        // that the protocol in the authentication service has an identifier that is different than the the one on the
+                                        // protocol we are currently testing. however, things might just be misconfigured in the authentication service.
+                                        // so, if the identifier in the protocol that we download duplicates one on the current device, don't bother the
+                                        // user (as they did not initiate the action) and expect an exception to be thrown back.
+                                        Protocol newProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), false, testCredentials);
+
+                                        // wire up new protocol with the current authentication service
+                                        newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                        newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+
+                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing 
+                                        // to be gained in doing so. rather, just report the exception and continue running the new protocol.
+                                        if (newProtocol.Id != testCredentials.ProtocolId)
+                                        {
+                                            SensusException.Report("Retrieved new protocol, but its identifier does not match that of the credentials.");
+                                        }
+
+                                        // stop and delete the old protocol
+                                        await protocolToTest.StopAsync();
+                                        await protocolToTest.DeleteAsync();
+
+                                        // start the new protocol
+                                        await newProtocol.StartAsync(cancellationToken);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Log("Exception while checking for protocol change:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }
+                            }
+
+                            if (testCurrentProtocol)
+                            {
+                                await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            }
+                        }
+
+                        // test the callback scheduler
+                        SensusContext.Current.CallbackScheduler.TestHealth();
+
+                        // update push notification registrations
+                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
+                        {
+                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                        }
+
+                        // test the notifier, which checks the push notification requests.
+                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(5), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
+
+                    scheduleHealthTestCallback = true;
+                }
+            }
+
+            if (scheduleHealthTestCallback)
+            {
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
+            }
+
             foreach (Protocol registeredProtocol in _registeredProtocols)
             {
                 if (registeredProtocol.State == ProtocolState.Stopped && _runningProtocolIds.Contains(registeredProtocol.Id))
@@ -1706,21 +1682,28 @@ namespace Sensus
             }
         }
 
-        public async Task StopProtocolsAsync()
+        /// <summary>
+        /// Called when the system or user wishes to stop the app entirely. Will stop all protocols and clean up.
+        /// </summary>
+        /// <returns>Task</returns>
+        public async Task StopAsync()
         {
-            _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
+            Logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            foreach (Protocol runningProtocol in _registeredProtocols.ToArray())
+            foreach (Protocol protocol in _registeredProtocols.ToArray())
             {
                 try
                 {
-                    await runningProtocol.StopAsync();
+                    await protocol.StopAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"Failed to stop protocol \"{runningProtocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
+                    _logger.Log($"Failed to stop protocol \"{protocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
                 }
             }
+
+            Logger.Log("Unscheduling health test callback.", LoggingLevel.Normal, GetType());
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
         }
 
         #region Private Methods
