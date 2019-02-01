@@ -151,6 +151,9 @@ sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE
 #' @param local.timezone The local timezone to convert datum timestamps to, or NULL to leave the timestamps unconverted.
 #' @param data.types Specific data types to read. A full list of data types can be found here:  \url{https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html}. For example \code{c("AccelerometerDatum", "HeightDatum")} will only read accelerometer and height data. Pass \code{NULL} to read all data types.
 #' @return All data, listed by type.
+#' @examples	
+#' data.path = system.file("extdata", "example-data", package="SensusR")	
+#' data = sensus.read.json.files(data.path)
 sensus.read.json.files = function(data.path, 
                                   is.directory = TRUE, 
                                   recursive = TRUE,

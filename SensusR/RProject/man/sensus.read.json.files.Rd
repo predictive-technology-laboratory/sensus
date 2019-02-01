@@ -25,3 +25,7 @@ All data, listed by type.
 \description{
 Read JSON-formatted Sensus data.
 }
+\examples{
+data.path = system.file("extdata", "example-data", package="SensusR")	
+data = sensus.read.json.files(data.path)
+}

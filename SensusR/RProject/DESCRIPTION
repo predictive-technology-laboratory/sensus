@@ -2,7 +2,7 @@ Package: SensusR
 Type: Package
 Title: Sensus Analytics
 Version: 2.3.1
-Date: 2019-01-30
+Date: 2019-02-01
 Author: Matthew S. Gerber
 Maintainer: Matthew S. Gerber <gerber.matthew@gmail.com>
 Description: Provides access and analytic functions for Sensus data.
