@@ -65,6 +65,7 @@ namespace Sensus.iOS.Callbacks
                     await ServiceCallbackAsync(callback, callback.InvocationId);
                 }
                 // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
+                // if the notification has already been issued, it will simply be replaced with itself (no change).
                 else if (callback.Silent)
                 {
                     await ReissueSilentNotificationAsync(callback.Id);

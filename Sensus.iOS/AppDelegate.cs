@@ -76,7 +76,10 @@ namespace Sensus.iOS
 
             // register for push notifications. must come after service helper initialization. if the 
             // user subsequently denies authorization to display notifications, then all notifications will
-            // simply be delivered to the app silently, per the following:  https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications
+            // simply be delivered to the app silently, per the following:  
+            //
+            // https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications
+            //
             UIApplication.SharedApplication.RegisterForRemoteNotifications();
 
             // facebook settings

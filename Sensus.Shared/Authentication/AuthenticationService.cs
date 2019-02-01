@@ -62,8 +62,6 @@ namespace Sensus.Authentication
         [JsonProperty]
         private AmazonS3Credentials AmazonS3Credentials { get; set; }
 
-        public Protocol Protocol { get; set; }
-
         public AuthenticationService(string baseServiceURL)
         {
             BaseServiceURL = baseServiceURL.Trim('/');

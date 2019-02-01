@@ -713,7 +713,6 @@ namespace Sensus
                                         // wire up new protocol with the current authentication service
                                         newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
                                         newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
-                                        newProtocol.AuthenticationService.Protocol = newProtocol;
 
                                         // start the new protocol
                                         await newProtocol.StartAsync(cancellationToken);

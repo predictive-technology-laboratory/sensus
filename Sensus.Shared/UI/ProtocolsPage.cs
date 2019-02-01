@@ -544,7 +544,6 @@ namespace Sensus.UI
                                 // the download succeeds, ensure that the properties get set below before throwing any exceptions.
                                 protocol.ParticipantId = account.ParticipantId;
                                 protocol.AuthenticationService = authenticationService;
-                                authenticationService.Protocol = protocol;
 
                                 // make sure protocol has the id that we expect
                                 if (protocol.Id != credentials.ProtocolId)
