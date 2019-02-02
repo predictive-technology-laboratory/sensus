@@ -21487,18 +21487,6 @@ references:
   commentId: Overload:Sensus.Authentication.AuthenticationService.GetCredentialsAsync
   fullName: Sensus.Authentication.AuthenticationService.GetCredentialsAsync
   nameWithType: AuthenticationService.GetCredentialsAsync
-- uid: Sensus.Authentication.AuthenticationService.Protocol
-  name: Protocol
-  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_Protocol
-  commentId: P:Sensus.Authentication.AuthenticationService.Protocol
-  fullName: Sensus.Authentication.AuthenticationService.Protocol
-  nameWithType: AuthenticationService.Protocol
-- uid: Sensus.Authentication.AuthenticationService.Protocol*
-  name: Protocol
-  href: api/Sensus.Authentication.AuthenticationService.html#Sensus_Authentication_AuthenticationService_Protocol_
-  commentId: Overload:Sensus.Authentication.AuthenticationService.Protocol
-  fullName: Sensus.Authentication.AuthenticationService.Protocol
-  nameWithType: AuthenticationService.Protocol
 - uid: Sensus.Callbacks
   name: Sensus.Callbacks
   href: api/Sensus.Callbacks.html
@@ -25098,18 +25086,6 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.DidReceiveRemoteNotification
   fullName: Sensus.iOS.AppDelegate.DidReceiveRemoteNotification
   nameWithType: AppDelegate.DidReceiveRemoteNotification
-- uid: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication,UIKit.UIUserNotificationSettings)
-  name: DidRegisterUserNotificationSettings(UIApplication, UIUserNotificationSettings)
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_DidRegisterUserNotificationSettings_UIKit_UIApplication_UIKit_UIUserNotificationSettings_
-  commentId: M:Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication,UIKit.UIUserNotificationSettings)
-  fullName: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings(UIKit.UIApplication, UIKit.UIUserNotificationSettings)
-  nameWithType: AppDelegate.DidRegisterUserNotificationSettings(UIApplication, UIUserNotificationSettings)
-- uid: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings*
-  name: DidRegisterUserNotificationSettings
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_DidRegisterUserNotificationSettings_
-  commentId: Overload:Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings
-  fullName: Sensus.iOS.AppDelegate.DidRegisterUserNotificationSettings
-  nameWithType: AppDelegate.DidRegisterUserNotificationSettings
 - uid: Sensus.iOS.AppDelegate.FailedToRegisterForRemoteNotifications(UIKit.UIApplication,Foundation.NSError)
   name: FailedToRegisterForRemoteNotifications(UIApplication, NSError)
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_FailedToRegisterForRemoteNotifications_UIKit_UIApplication_Foundation_NSError_
@@ -25158,18 +25134,6 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.OpenUrl
   fullName: Sensus.iOS.AppDelegate.OpenUrl
   nameWithType: AppDelegate.OpenUrl
-- uid: Sensus.iOS.AppDelegate.ReceivedLocalNotification(UIKit.UIApplication,UIKit.UILocalNotification)
-  name: ReceivedLocalNotification(UIApplication, UILocalNotification)
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedLocalNotification_UIKit_UIApplication_UIKit_UILocalNotification_
-  commentId: M:Sensus.iOS.AppDelegate.ReceivedLocalNotification(UIKit.UIApplication,UIKit.UILocalNotification)
-  fullName: Sensus.iOS.AppDelegate.ReceivedLocalNotification(UIKit.UIApplication, UIKit.UILocalNotification)
-  nameWithType: AppDelegate.ReceivedLocalNotification(UIApplication, UILocalNotification)
-- uid: Sensus.iOS.AppDelegate.ReceivedLocalNotification*
-  name: ReceivedLocalNotification
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedLocalNotification_
-  commentId: Overload:Sensus.iOS.AppDelegate.ReceivedLocalNotification
-  fullName: Sensus.iOS.AppDelegate.ReceivedLocalNotification
-  nameWithType: AppDelegate.ReceivedLocalNotification
 - uid: Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary)
   name: ReceivedRemoteNotification(UIApplication, NSDictionary)
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedRemoteNotification_UIKit_UIApplication_Foundation_NSDictionary_
@@ -25368,111 +25332,18 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.TryGetCallback
   fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.TryGetCallback
   nameWithType: iOSCallbackScheduler.TryGetCallback
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksAsync
-  name: UpdateCallbacksAsync()
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_UpdateCallbacksAsync
-  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksAsync
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksAsync()
-  nameWithType: iOSCallbackScheduler.UpdateCallbacksAsync()
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksAsync*
-  name: UpdateCallbacksAsync
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_UpdateCallbacksAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksAsync
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksAsync
-  nameWithType: iOSCallbackScheduler.UpdateCallbacksAsync
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler
-  name: UILocalNotificationCallbackScheduler
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html
-  commentId: T:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler
-  nameWithType: UILocalNotificationCallbackScheduler
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.#ctor
-  name: UILocalNotificationCallbackScheduler()
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler__ctor
-  commentId: M:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.#ctor
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UILocalNotificationCallbackScheduler()
-  nameWithType: UILocalNotificationCallbackScheduler.UILocalNotificationCallbackScheduler()
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.#ctor*
-  name: UILocalNotificationCallbackScheduler
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler__ctor_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.#ctor
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UILocalNotificationCallbackScheduler
-  nameWithType: UILocalNotificationCallbackScheduler.UILocalNotificationCallbackScheduler
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CallbackIds
-  name: CallbackIds
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_CallbackIds
-  commentId: P:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CallbackIds
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CallbackIds
-  nameWithType: UILocalNotificationCallbackScheduler.CallbackIds
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CallbackIds*
-  name: CallbackIds
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_CallbackIds_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CallbackIds
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CallbackIds
-  nameWithType: UILocalNotificationCallbackScheduler.CallbackIds
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CancelSilentNotifications
-  name: CancelSilentNotifications()
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_CancelSilentNotifications
-  commentId: M:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CancelSilentNotifications
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CancelSilentNotifications()
-  nameWithType: UILocalNotificationCallbackScheduler.CancelSilentNotifications()
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CancelSilentNotifications*
-  name: CancelSilentNotifications
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_CancelSilentNotifications_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CancelSilentNotifications
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.CancelSilentNotifications
-  nameWithType: UILocalNotificationCallbackScheduler.CancelSilentNotifications
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)
-  name: RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func<Task>, Action)
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Func_System_Threading_Tasks_Task__System_Action_
-  commentId: M:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)
-  name.vb: RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func(Of Task), Action)
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean, System.Func<System.Threading.Tasks.Task>, System.Action)
-  fullName.vb: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean, System.Func(Of System.Threading.Tasks.Task), System.Action)
-  nameWithType: UILocalNotificationCallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func<Task>, Action)
-  nameWithType.vb: UILocalNotificationCallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func(Of Task), Action)
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync*
-  name: RaiseCallbackAsync
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_RaiseCallbackAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.RaiseCallbackAsync
-  nameWithType: UILocalNotificationCallbackScheduler.RaiseCallbackAsync
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync(System.String)
-  name: ReissueSilentNotificationAsync(String)
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_ReissueSilentNotificationAsync_System_String_
-  commentId: M:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync(System.String)
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync(System.String)
-  nameWithType: UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync(String)
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync*
-  name: ReissueSilentNotificationAsync
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_ReissueSilentNotificationAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync
-  nameWithType: UILocalNotificationCallbackScheduler.ReissueSilentNotificationAsync
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  name: ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync*
-  name: ScheduleCallbackPlatformSpecificAsync
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  nameWithType: UILocalNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  name: UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_UnscheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-- uid: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific*
-  name: UnscheduleCallbackPlatformSpecific
-  href: api/Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UILocalNotificationCallbackScheduler_UnscheduleCallbackPlatformSpecific_
-  commentId: Overload:Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific
-  fullName: Sensus.iOS.Callbacks.UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific
-  nameWithType: UILocalNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific
+- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync
+  name: UpdateCallbacksOnActivationAsync()
+  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_UpdateCallbacksOnActivationAsync
+  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync
+  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync()
+  nameWithType: iOSCallbackScheduler.UpdateCallbacksOnActivationAsync()
+- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync*
+  name: UpdateCallbacksOnActivationAsync
+  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_UpdateCallbacksOnActivationAsync_
+  commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync
+  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync
+  nameWithType: iOSCallbackScheduler.UpdateCallbacksOnActivationAsync
 - uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler
   name: UNUserNotificationCallbackScheduler
   href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html
@@ -26316,96 +26187,18 @@ references:
   commentId: F:Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ID_KEY
   fullName: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ID_KEY
   nameWithType: iOSNotifier.NOTIFICATION_ID_KEY
-- uid: Sensus.iOS.Notifications.UILocalNotifications
-  name: Sensus.iOS.Notifications.UILocalNotifications
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.html
-  commentId: N:Sensus.iOS.Notifications.UILocalNotifications
-  fullName: Sensus.iOS.Notifications.UILocalNotifications
-  nameWithType: Sensus.iOS.Notifications.UILocalNotifications
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier
-  name: UILocalNotificationNotifier
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html
-  commentId: T:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier
-  nameWithType: UILocalNotificationNotifier
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.#ctor
-  name: UILocalNotificationNotifier()
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier__ctor
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.#ctor
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.UILocalNotificationNotifier()
-  nameWithType: UILocalNotificationNotifier.UILocalNotificationNotifier()
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.#ctor*
-  name: UILocalNotificationNotifier
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier__ctor_
-  commentId: Overload:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.#ctor
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.UILocalNotificationNotifier
-  nameWithType: UILocalNotificationNotifier.UILocalNotificationNotifier
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification(System.String)
-  name: CancelNotification(String)
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_CancelNotification_System_String_
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification(System.String)
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification(System.String)
-  nameWithType: UILocalNotificationNotifier.CancelNotification(String)
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification(UIKit.UILocalNotification)
-  name: CancelNotification(UILocalNotification)
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_CancelNotification_UIKit_UILocalNotification_
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification(UIKit.UILocalNotification)
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification(UIKit.UILocalNotification)
-  nameWithType: UILocalNotificationNotifier.CancelNotification(UILocalNotification)
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification*
-  name: CancelNotification
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_CancelNotification_
-  commentId: Overload:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.CancelNotification
-  nameWithType: UILocalNotificationNotifier.CancelNotification
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})
-  name: IssueNotification(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action<UILocalNotification>)
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueNotification_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_System_DateTime_Foundation_NSMutableDictionary_System_Action_UIKit_UILocalNotification__
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})
-  name.vb: IssueNotification(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action(Of UILocalNotification))
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action<UIKit.UILocalNotification>)
-  fullName.vb: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UIKit.UILocalNotification))
-  nameWithType: UILocalNotificationNotifier.IssueNotification(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action<UILocalNotification>)
-  nameWithType.vb: UILocalNotificationNotifier.IssueNotification(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action(Of UILocalNotification))
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(UIKit.UILocalNotification)
-  name: IssueNotification(UILocalNotification)
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueNotification_UIKit_UILocalNotification_
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(UIKit.UILocalNotification)
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification(UIKit.UILocalNotification)
-  nameWithType: UILocalNotificationNotifier.IssueNotification(UILocalNotification)
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification*
-  name: IssueNotification
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueNotification_
-  commentId: Overload:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotification
-  nameWithType: UILocalNotificationNotifier.IssueNotification
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage)
-  nameWithType: UILocalNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync*
-  name: IssueNotificationAsync
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueNotificationAsync_
-  commentId: Overload:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueNotificationAsync
-  nameWithType: UILocalNotificationNotifier.IssueNotificationAsync
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification(System.String,System.DateTime,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})
-  name: IssueSilentNotification(String, DateTime, NSMutableDictionary, Action<UILocalNotification>)
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueSilentNotification_System_String_System_DateTime_Foundation_NSMutableDictionary_System_Action_UIKit_UILocalNotification__
-  commentId: M:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification(System.String,System.DateTime,Foundation.NSMutableDictionary,System.Action{UIKit.UILocalNotification})
-  name.vb: IssueSilentNotification(String, DateTime, NSMutableDictionary, Action(Of UILocalNotification))
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification(System.String, System.DateTime, Foundation.NSMutableDictionary, System.Action<UIKit.UILocalNotification>)
-  fullName.vb: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification(System.String, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UIKit.UILocalNotification))
-  nameWithType: UILocalNotificationNotifier.IssueSilentNotification(String, DateTime, NSMutableDictionary, Action<UILocalNotification>)
-  nameWithType.vb: UILocalNotificationNotifier.IssueSilentNotification(String, DateTime, NSMutableDictionary, Action(Of UILocalNotification))
-- uid: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification*
-  name: IssueSilentNotification
-  href: api/Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.html#Sensus_iOS_Notifications_UILocalNotifications_UILocalNotificationNotifier_IssueSilentNotification_
-  commentId: Overload:Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification
-  fullName: Sensus.iOS.Notifications.UILocalNotifications.UILocalNotificationNotifier.IssueSilentNotification
-  nameWithType: UILocalNotificationNotifier.IssueSilentNotification
+- uid: Sensus.iOS.Notifications.iOSNotifier.RemoveAllNotifications
+  name: RemoveAllNotifications()
+  href: api/Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_RemoveAllNotifications
+  commentId: M:Sensus.iOS.Notifications.iOSNotifier.RemoveAllNotifications
+  fullName: Sensus.iOS.Notifications.iOSNotifier.RemoveAllNotifications()
+  nameWithType: iOSNotifier.RemoveAllNotifications()
+- uid: Sensus.iOS.Notifications.iOSNotifier.RemoveAllNotifications*
+  name: RemoveAllNotifications
+  href: api/Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_RemoveAllNotifications_
+  commentId: Overload:Sensus.iOS.Notifications.iOSNotifier.RemoveAllNotifications
+  fullName: Sensus.iOS.Notifications.iOSNotifier.RemoveAllNotifications
+  nameWithType: iOSNotifier.RemoveAllNotifications
 - uid: Sensus.iOS.Notifications.UNUserNotifications
   name: Sensus.iOS.Notifications.UNUserNotifications
   href: api/Sensus.iOS.Notifications.UNUserNotifications.html
@@ -26544,6 +26337,18 @@ references:
   commentId: Overload:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueSilentNotificationAsync
   fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueSilentNotificationAsync
   nameWithType: UNUserNotificationNotifier.IssueSilentNotificationAsync
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications
+  name: RemoveAllNotifications()
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_RemoveAllNotifications
+  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications()
+  nameWithType: UNUserNotificationNotifier.RemoveAllNotifications()
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications*
+  name: RemoveAllNotifications
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_RemoveAllNotifications_
+  commentId: Overload:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications
+  nameWithType: UNUserNotificationNotifier.RemoveAllNotifications
 - uid: Sensus.iOS.Probes.Apps
   name: Sensus.iOS.Probes.Apps
   href: api/Sensus.iOS.Probes.Apps.html
@@ -44319,6 +44124,24 @@ references:
   commentId: T:Sensus.Probes.User.Scripts.ScriptState
   fullName: Sensus.Probes.User.Scripts.ScriptState
   nameWithType: ScriptState
+- uid: Sensus.Probes.User.Scripts.ScriptState.AgentAccepted
+  name: AgentAccepted
+  href: api/Sensus.Probes.User.Scripts.ScriptState.html#Sensus_Probes_User_Scripts_ScriptState_AgentAccepted
+  commentId: F:Sensus.Probes.User.Scripts.ScriptState.AgentAccepted
+  fullName: Sensus.Probes.User.Scripts.ScriptState.AgentAccepted
+  nameWithType: ScriptState.AgentAccepted
+- uid: Sensus.Probes.User.Scripts.ScriptState.AgentDeclined
+  name: AgentDeclined
+  href: api/Sensus.Probes.User.Scripts.ScriptState.html#Sensus_Probes_User_Scripts_ScriptState_AgentDeclined
+  commentId: F:Sensus.Probes.User.Scripts.ScriptState.AgentDeclined
+  fullName: Sensus.Probes.User.Scripts.ScriptState.AgentDeclined
+  nameWithType: ScriptState.AgentDeclined
+- uid: Sensus.Probes.User.Scripts.ScriptState.AgentDeferred
+  name: AgentDeferred
+  href: api/Sensus.Probes.User.Scripts.ScriptState.html#Sensus_Probes_User_Scripts_ScriptState_AgentDeferred
+  commentId: F:Sensus.Probes.User.Scripts.ScriptState.AgentDeferred
+  fullName: Sensus.Probes.User.Scripts.ScriptState.AgentDeferred
+  nameWithType: ScriptState.AgentDeferred
 - uid: Sensus.Probes.User.Scripts.ScriptState.Cancelled
   name: Cancelled
   href: api/Sensus.Probes.User.Scripts.ScriptState.html#Sensus_Probes_User_Scripts_ScriptState_Cancelled
@@ -46908,18 +46731,18 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.StartAsync
   fullName: Sensus.SensusServiceHelper.StartAsync
   nameWithType: SensusServiceHelper.StartAsync
-- uid: Sensus.SensusServiceHelper.StopProtocolsAsync
-  name: StopProtocolsAsync()
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopProtocolsAsync
-  commentId: M:Sensus.SensusServiceHelper.StopProtocolsAsync
-  fullName: Sensus.SensusServiceHelper.StopProtocolsAsync()
-  nameWithType: SensusServiceHelper.StopProtocolsAsync()
-- uid: Sensus.SensusServiceHelper.StopProtocolsAsync*
-  name: StopProtocolsAsync
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopProtocolsAsync_
-  commentId: Overload:Sensus.SensusServiceHelper.StopProtocolsAsync
-  fullName: Sensus.SensusServiceHelper.StopProtocolsAsync
-  nameWithType: SensusServiceHelper.StopProtocolsAsync
+- uid: Sensus.SensusServiceHelper.StopAsync
+  name: StopAsync()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopAsync
+  commentId: M:Sensus.SensusServiceHelper.StopAsync
+  fullName: Sensus.SensusServiceHelper.StopAsync()
+  nameWithType: SensusServiceHelper.StopAsync()
+- uid: Sensus.SensusServiceHelper.StopAsync*
+  name: StopAsync
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopAsync_
+  commentId: Overload:Sensus.SensusServiceHelper.StopAsync
+  fullName: Sensus.SensusServiceHelper.StopAsync
+  nameWithType: SensusServiceHelper.StopAsync
 - uid: Sensus.SensusServiceHelper.TextToSpeechAsync(System.String)
   name: TextToSpeechAsync(String)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_TextToSpeechAsync_System_String_

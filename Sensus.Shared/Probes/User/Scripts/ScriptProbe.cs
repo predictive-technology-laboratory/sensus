@@ -37,9 +37,9 @@ namespace Sensus.Probes.User.Scripts
     public class ScriptProbe : Probe
     {
 
+#if __ANDROID__
         // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
         // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
-#if __ANDROID__
 
         public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
         {

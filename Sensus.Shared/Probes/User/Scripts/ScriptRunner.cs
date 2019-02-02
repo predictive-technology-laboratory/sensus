@@ -760,15 +760,23 @@ namespace Sensus.Probes.User.Scripts
             {
                 Tuple<bool, DateTimeOffset?> deliverFutureTime = await Probe.Agent.DeliverSurveyNowAsync(script);
 
-                if (!deliverFutureTime.Item1)
+                if (deliverFutureTime.Item1)
+                {
+                    await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script), CancellationToken.None);
+                }
+                else
                 {
                     if (deliverFutureTime.Item2 == null)
                     {
                         SensusServiceHelper.Get().Logger.Log("Cancelling survey at agent's request.", LoggingLevel.Normal, GetType());
+
+                        await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
                     }
                     else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
                     {
                         SensusServiceHelper.Get().Logger.Log("Rescheduling survey for " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+
+                        await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
 
                         // check whether we need to expire the rescheduled script at some future point
                         DateTime? expiration = null;
