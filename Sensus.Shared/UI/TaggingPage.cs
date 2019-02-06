@@ -27,14 +27,14 @@ namespace Sensus.UI
         {
             Title = "Tagging";
 
-            Button selectTagButton = new Button
+            Button selectTagsButton = new Button
             {
                 Text = GetSelectTagButtonText(protocol),
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand
             };
 
-            selectTagButton.Clicked += async (sender, e) =>
+            selectTagsButton.Clicked += async (sender, e) =>
             {
                 List<object> availableTags = protocol.AvailableTags.Cast<object>().ToList();
                 availableTags.Sort();
@@ -51,7 +51,7 @@ namespace Sensus.UI
                 {
                     protocol.TaggedEventTags = (tagPickerInput.Value as List<object>).Cast<string>().ToList();
                     protocol.TaggedEventTags.Sort();
-                    selectTagButton.Text = GetSelectTagButtonText(protocol);
+                    selectTagsButton.Text = GetSelectTagButtonText(protocol);
                 }
             };
 
@@ -64,14 +64,14 @@ namespace Sensus.UI
 
             addTagButton.Clicked += async (sender, e) =>
             {
-                SingleLineTextInput textInput = await SensusServiceHelper.Get().PromptForInputAsync("Add Tag",
-                                                                                                    new SingleLineTextInput("Tag:", Keyboard.Text)
-                                                                                                    {
-                                                                                                        Required = true
-                                                                                                    },
-                                                                                                    null, true, "Add", null, null, null, false) as SingleLineTextInput;
+                SingleLineTextInput tagInput = await SensusServiceHelper.Get().PromptForInputAsync("Add Tag",
+                                                                                                   new SingleLineTextInput("Tag:", Keyboard.Text)
+                                                                                                   {
+                                                                                                       Required = true
+                                                                                                   },
+                                                                                                   null, true, "Add", null, null, null, false) as SingleLineTextInput;
 
-                string tagToAdd = textInput?.Value?.ToString().Trim();
+                string tagToAdd = tagInput?.Value?.ToString().Trim();
 
                 if (!string.IsNullOrWhiteSpace(tagToAdd) && !protocol.AvailableTags.Contains(tagToAdd))
                 {
@@ -117,6 +117,7 @@ namespace Sensus.UI
 
             startStopButton.Clicked += async (sender, e) =>
             {
+                // start tagging
                 if (startStopButton.Text == "Start")
                 {
                     if (protocol.TaggedEventTags.Count > 0)
@@ -128,13 +129,14 @@ namespace Sensus.UI
                         protocol.TaggedEventId = Guid.NewGuid().ToString();
 
                         startStopButton.Text = "Stop";
-                        selectTagButton.IsEnabled = addTagButton.IsEnabled = exportTaggingsButton.IsEnabled = false;
+                        selectTagsButton.IsEnabled = addTagButton.IsEnabled = exportTaggingsButton.IsEnabled = false;
                     }
                     else
                     {
                         await SensusServiceHelper.Get().FlashNotificationAsync("Must select 1 or more tags before starting.");
                     }
                 }
+                // stop tagging
                 else
                 {
                     // hang on to the id, as we're about to clear it.
@@ -159,15 +161,16 @@ namespace Sensus.UI
                         await SensusServiceHelper.Get().FlashNotificationAsync("Tagging discarded.");
                     }
 
+                    // reset start and end. don't reset the currently set tags, as the user likely wishes to use them again.
                     protocol.TaggingStartTimestamp = protocol.TaggingEndTimestamp = null;
 
                     startStopButton.Text = "Start";
-                    selectTagButton.IsEnabled = addTagButton.IsEnabled = exportTaggingsButton.IsEnabled = true;
+                    selectTagsButton.IsEnabled = addTagButton.IsEnabled = exportTaggingsButton.IsEnabled = true;
                 }
             };
 
-            // a tagging might have been started on a previous display of this page
-            selectTagButton.IsEnabled = addTagButton.IsEnabled = exportTaggingsButton.IsEnabled = protocol.TaggedEventId == null;
+            // a tagging might have been started on a previous display of this page. enabled buttons if a tagging is not ongoing.
+            selectTagsButton.IsEnabled = addTagButton.IsEnabled = exportTaggingsButton.IsEnabled = protocol.TaggedEventId == null;
 
             Content = new ScrollView
             {
@@ -177,7 +180,7 @@ namespace Sensus.UI
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children =
                     {
-                        selectTagButton,
+                        selectTagsButton,
                         addTagButton,
                         startStopButton,
                         exportTaggingsButton

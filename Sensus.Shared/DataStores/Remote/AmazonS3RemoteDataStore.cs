@@ -690,5 +690,13 @@ namespace Sensus.DataStores.Remote
 
             return result;
         }
+
+        public override void Reset()
+        {
+            base.Reset();
+
+            // session tokens are not meant to persist across instantiations of the protocol.
+            _sessionToken = null;
+        }
     }
 }
