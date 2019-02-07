@@ -614,9 +614,15 @@ namespace Sensus.Probes.User.Scripts
             await SensusServiceHelper.Get().SaveAsync();
         }
 
-        private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
+        /// <summary>
+        /// Schedules a script run. 
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="triggerTime">Trigger time.</param>
+        /// <param name="scriptId">Script identifier. If null, a random identifier will be generated for the script to run.</param>
+        private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime, string scriptId = null)
         {
-            ScheduledCallback callback = CreateScriptRunCallback(triggerTime);
+            ScheduledCallback callback = CreateScriptRunCallback(triggerTime, scriptId);
 
             // there is a race condition, so far only seen in ios, in which multiple script runner notifications
             // accumulate and are executed concurrently when the user opens the app. when these script runners
@@ -639,11 +645,23 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime)
+        /// <summary>
+        /// Creates the script run callback.
+        /// </summary>
+        /// <returns>The script run callback.</returns>
+        /// <param name="triggerTime">Trigger time.</param>
+        /// <param name="scriptId">Script identifier. If null, then a random identifier will be generated for the script that will be run.</param>
+        private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime, string scriptId = null)
         {
             Script scriptToRun = Script.Copy(true);
             scriptToRun.ExpirationDate = triggerTime.Expiration;
             scriptToRun.ScheduledRunTime = triggerTime.Trigger;
+
+            // if we're passed a run ID, then override the random one that was generated above in the call to Script.Copy.
+            if (scriptId != null)
+            {
+                scriptToRun.Id = scriptId;
+            }
 
             ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
             {
@@ -768,13 +786,13 @@ namespace Sensus.Probes.User.Scripts
                 {
                     if (deliverFutureTime.Item2 == null)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Cancelling survey at agent's request.", LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Agent has declined survey without deferral.", LoggingLevel.Normal, GetType());
 
                         await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
                     }
                     else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Rescheduling survey for " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Agent has deferred survey until:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
 
                         await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
 
@@ -789,12 +807,15 @@ namespace Sensus.Probes.User.Scripts
                         // there is no window, so just add a descriptive, unique descriptor in place of the window
                         ScriptTriggerTime triggerTime = new ScriptTriggerTime(trigger, expiration, "DEFERRED-" + Guid.NewGuid());
 
-                        // schedule the trigger
-                        await ScheduleScriptRunAsync(triggerTime);
+                        // schedule the trigger. since this is a deferral, use the same script identifier that we currently have. this 
+                        // will maintain consistency and interpretability of the ScriptStateDatum objects that are recording the progression
+                        // of scripts. this will also let survey agents better interpret what's going on with deferrals. this identifier is
+                        // used as the RunId in the various tracked data types.
+                        await ScheduleScriptRunAsync(triggerTime, script.Id);
                     }
                     else
                     {
-                        SensusServiceHelper.Get().Logger.Log("Warning:  Survey reschedule time is in the past:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Warning:  Agent has deferred survey to a time in the past:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
                     }
 
                     // do not proceed. the calling method (if scheduler-based) will take care of removing the current script.
