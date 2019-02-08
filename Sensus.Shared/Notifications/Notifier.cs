@@ -186,7 +186,7 @@ namespace Sensus.Notifications
 
                     protocolStartTaskId = UIKit.UIApplication.SharedApplication.BeginBackgroundTask(() =>
                     {
-                        // can't think of anything to do if we run out of time.
+                        // can't think of anything to do if we run out of time. report the error.
                         SensusException.Report("Ran out of background time when starting protocol for push notification.");
                     });
                 });

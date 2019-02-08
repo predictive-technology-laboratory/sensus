@@ -590,7 +590,7 @@ namespace Sensus.Probes.User.Scripts
                     // can involve the submission of a push notification request to the remote data store. we don't want to run afoul
                     // of background execution time constraints as a result. we'll need to defer scheduling script runs until the
                     // user foregrounds the app again.
-                    if (UIKit.UIApplication.SharedApplication.BackgroundTimeRemaining < 10)
+                    if (UIKit.UIApplication.SharedApplication.BackgroundTimeRemaining < 15)
                     {
                         SensusServiceHelper.Get().Logger.Log("Running out of background time. Aborting scheduling script runs.", LoggingLevel.Normal, GetType());
                         break;

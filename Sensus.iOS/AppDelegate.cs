@@ -253,7 +253,7 @@ namespace Sensus.iOS
             try
             {
                 // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
-                // be on the conservative side and only run for 25 seconds.
+                // be on the conservative side and only run for 25 seconds in the background.
                 TimeSpan processingTimeLimit = TimeSpan.FromSeconds(25);
                 cancellationTokenSource.CancelAfter(processingTimeLimit);
                 cancellationTokenSource.Token.Register(() =>
