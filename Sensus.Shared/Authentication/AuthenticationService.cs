@@ -272,9 +272,10 @@ namespace Sensus.Authentication
             {
                 // don't report the exceptions caused by connection issues, as we'll get these under normal operating conditions (e.g., lack of wifi).
                 if (ex.Status == WebExceptionStatus.ConnectFailure ||
-                    ex.Status == WebExceptionStatus.NameResolutionFailure)
+                    ex.Status == WebExceptionStatus.NameResolutionFailure ||
+                    ex.Status == WebExceptionStatus.SecureChannelFailure)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to connect when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Connection failure when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
                 // report non-connect based exceptions
                 else
