@@ -110,14 +110,14 @@ namespace Sensus.Authentication
                 SensusException.Report("Exception while deserializing account:  " + ex.Message, ex);
             }
 
-            // check properties
+            // check properties. trim while we're at it.
 
-            if (string.IsNullOrWhiteSpace(Account.ParticipantId))
+            if (string.IsNullOrWhiteSpace(Account.ParticipantId = Account.ParticipantId?.Trim()))
             {
                 SensusException.Report("Empty " + nameof(Account.ParticipantId) + " returned by authentication service for device " + SensusServiceHelper.Get().DeviceId + " and participant " + (participantId ?? "[null]."));
             }
 
-            if (string.IsNullOrWhiteSpace(Account.Password))
+            if (string.IsNullOrWhiteSpace(Account.Password = Account.Password?.Trim()))
             {
                 SensusException.Report("Empty " + nameof(Account.Password) + " returned by authentication service for device " + SensusServiceHelper.Get().DeviceId + " and participant " + (participantId ?? "[null]."));
             }
@@ -172,44 +172,44 @@ namespace Sensus.Authentication
                             throw ex;
                         }
 
-                        // check properties
+                        // check properties. trim while we're at it.
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.AccessKeyId))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.AccessKeyId = AmazonS3Credentials.AccessKeyId?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.AccessKeyId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.CustomerMasterKey))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.CustomerMasterKey = AmazonS3Credentials.CustomerMasterKey?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.CustomerMasterKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ExpirationUnixTimeMilliseconds))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ExpirationUnixTimeMilliseconds = AmazonS3Credentials.ExpirationUnixTimeMilliseconds?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.ExpirationUnixTimeMilliseconds) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolId))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolId = AmazonS3Credentials.ProtocolId?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL = AmazonS3Credentials.ProtocolURL?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolURL) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region = AmazonS3Credentials.Region?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.Region) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey = AmazonS3Credentials.SecretAccessKey?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.SecretAccessKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SessionToken))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SessionToken = AmazonS3Credentials.SessionToken?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.SessionToken) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
