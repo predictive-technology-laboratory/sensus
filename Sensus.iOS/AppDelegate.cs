@@ -293,25 +293,18 @@ namespace Sensus.iOS
                     throw new Exception("Exception while extracting notification from APS object:  " + ex.Message);
                 }
 
-                try
+                if (SensusContext.Current == null)
                 {
-                    if (SensusContext.Current == null)
-                    {
-                        throw new NullReferenceException("Null context");
-                    }
-
-                    if (SensusContext.Current.Notifier == null)
-                    {
-                        throw new NullReferenceException("Null notifier");
-                    }
-
-                    // wait for the push notification to be processed
-                    await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
+                    throw new NullReferenceException("Null context");
                 }
-                catch (Exception ex)
+
+                if (SensusContext.Current.Notifier == null)
                 {
-                    throw new Exception("Exception while requesting notifier to process received push notification:  " + ex.Message);
+                    throw new NullReferenceException("Null notifier");
                 }
+
+                // wait for the push notification to be processed
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
             }
             catch (Exception processingException)
             {

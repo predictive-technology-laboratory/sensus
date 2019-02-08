@@ -46,8 +46,6 @@ namespace Sensus.Authentication
         [JsonProperty(PropertyName = "cmk")]
         public string CustomerMasterKey { get; set; }
 
-        public DateTimeOffset AcquisitionTimestamp { get; } = DateTimeOffset.UtcNow;
-
         public DateTimeOffset ExpirationTimestamp
         {
             get
@@ -62,8 +60,6 @@ namespace Sensus.Authentication
                 }
             }
         }
-
-        public TimeSpan ValidityTimeSpan => ExpirationTimestamp - AcquisitionTimestamp;
 
         public bool WillBeValidFor(TimeSpan? duration = null)
         {
