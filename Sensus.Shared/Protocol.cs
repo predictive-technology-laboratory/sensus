@@ -1580,10 +1580,11 @@ namespace Sensus
 
         /// <summary>
         /// Resets the current <see cref="Protocol"/> such that properties and members do not contain state information specific to 
-        /// a particular instantiation of the protocol.
+        /// a particular instantiation of the <see cref="Protocol"/>.
         /// </summary>
         /// <returns>The async.</returns>
-        /// <param name="resetId">If set to <c>true</c> reset identifier.</param>
+        /// <param name="resetId">If set to <c>true</c> reset the <see cref="Protocol"/>'s identifier as well as other identifiers
+        /// (e.g., for any <see cref="Input"/>s and <see cref="InputGroup"/>s) that are tied to the <see cref="Protocol"/>'s identifer.</param>
         private async Task ResetAsync(bool resetId)
         {
             Random random = new Random();
