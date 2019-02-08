@@ -768,13 +768,6 @@ namespace Sensus
                                         newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
                                         newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
 
-                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing 
-                                        // to be gained in doing so. rather, just report the exception and continue running the new protocol.
-                                        if (newProtocol.Id != testCredentials.ProtocolId)
-                                        {
-                                            SensusException.Report("Retrieved new protocol, but its identifier does not match that of the credentials.");
-                                        }
-
                                         // if the old protocol is currently starting or running, then start the new protocol. do this before 
                                         // stopping/deleting the old one, as we might fail to start the new protocol,  or the cancellation 
                                         // token might expire -- in either case we must maintain continuous operation.

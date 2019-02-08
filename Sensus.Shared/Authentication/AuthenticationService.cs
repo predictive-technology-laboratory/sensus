@@ -13,8 +13,11 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -38,6 +41,16 @@ namespace Sensus.Authentication
         private const string CREATE_ACCOUNT_PATH = "/createaccount?deviceId={0}&participantId={1}&deviceType={2}";
         private const string GET_CREDENTIALS_PATH = "/getcredentials?participantId={0}&password={1}&deviceId={2}";
 
+        /// <summary>
+        /// The ignored web exception statuses. These are statuses that we expect to encounter under normal operating 
+        /// conditions (e.g., due to lack of internet connection, server-side errors, etc.).
+        /// </summary>
+        private readonly List<WebExceptionStatus> IGNORED_WEB_EXCEPTION_STATUSES = new[] { WebExceptionStatus.ConnectFailure,
+                                                                                           WebExceptionStatus.NameResolutionFailure,
+                                                                                           WebExceptionStatus.SecureChannelFailure,
+                                                                                           WebExceptionStatus.Timeout,
+                                                                                           WebExceptionStatus.TrustFailure,
+                                                                                           WebExceptionStatus.ReceiveFailure }.ToList();
         private readonly string _createAccountURL;
         private readonly string _getCredentialsURL;
         private Task<AmazonS3Credentials> _getCredentialsTask;
@@ -268,40 +281,67 @@ namespace Sensus.Authentication
                 byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
                 encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
-            catch (WebException ex)
+            // the following catch statements attempt to filter out expected exceptions (e.g., due to naturally lacking internet connections)
+            // from those that are fixable errors within the app. expected exceptions are logged but not reported to the app center, whereas
+            // all others are reported to the app center. our approach is to whitelist excepted exceptions as we see them appear in the app
+            // center, in order to ensure that we don't miss any fixable errors.
+            catch (HttpRequestException ex)
             {
-                // don't report the exceptions caused by connection issues, as we'll get these under normal operating conditions (e.g., lack of wifi).
-                if (ex.Status == WebExceptionStatus.ConnectFailure ||
-                    ex.Status == WebExceptionStatus.NameResolutionFailure ||
-                    ex.Status == WebExceptionStatus.SecureChannelFailure)
+                bool logged = false;
+
+                if (ex.InnerException is WebException)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Connection failure when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    WebException webException = ex.InnerException as WebException;
+
+                    if (IGNORED_WEB_EXCEPTION_STATUSES.Contains(webException.Status))
+                    {
+                        LogKmsEnvelopeException(ex);
+                        logged = true;
+                    }
                 }
-                // report non-connect based exceptions
+
+                if (!logged)
+                {
+                    ReportKmsEnvelopeException(ex);
+                }
+
+                throw ex;
+            }
+            catch (WebException webException)
+            {
+                if (IGNORED_WEB_EXCEPTION_STATUSES.Contains(webException.Status))
+                {
+                    LogKmsEnvelopeException(webException);
+                }
                 else
                 {
-                    SensusException.Report("Non-connection web exception when running KMS-based envelope encryption:  " + ex.Message, ex);
+                    ReportKmsEnvelopeException(webException);
                 }
 
-                // always throw the exception, as we did not succeed.
-                throw ex;
+                throw webException;
             }
-            // do not report cancellation exceptions, as we'll get these under normal operating conditions (timeouts, delays, etc.)
             catch (OperationCanceledException ex)
             {
-                SensusServiceHelper.Get().Logger.Log("Cancelled KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+                LogKmsEnvelopeException(ex);
 
-                // always throw the exception, as we did not succeed.
                 throw ex;
             }
-            // any other exceptions may be problematic, so report and throw them.
             catch (Exception ex)
             {
-                SensusException.Report("Exception when running KMS-based envelope encryption:  " + ex.Message, ex);
+                ReportKmsEnvelopeException(ex);
 
-                // always throw the exception, as we did not succeed.
                 throw ex;
             }
+        }
+
+        private void LogKmsEnvelopeException(Exception ex)
+        {
+            SensusServiceHelper.Get().Logger.Log("Non-reportable exception when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+        }
+
+        private void ReportKmsEnvelopeException(Exception ex)
+        {
+            SensusException.Report("Reportable exception when running KMS-based envelope encryption:  " + ex.Message, ex);
         }
     }
 }
