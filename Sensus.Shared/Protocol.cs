@@ -1578,6 +1578,12 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Resets the current <see cref="Protocol"/> such that properties and members do not contain state information specific to 
+        /// a particular instantiation of the protocol.
+        /// </summary>
+        /// <returns>The async.</returns>
+        /// <param name="resetId">If set to <c>true</c> reset identifier.</param>
         private async Task ResetAsync(bool resetId)
         {
             Random random = new Random();
@@ -1643,6 +1649,16 @@ namespace Sensus
             {
                 _remoteDataStore.Reset();
             }
+
+            // reset taggings, as they're not relevant to the future of the protocol.
+            TaggedEventId = null;
+            TaggedEventTags.Clear();
+            TaggingStartTimestamp = null;
+            TaggingEndTimestamp = null;
+            TaggingsToExport.Clear();
+
+            // do not retain the authentication service. we do not want it to be passed around.
+            AuthenticationService = null;
         }
 
         private void ResetStorageDirectory()
@@ -1662,16 +1678,16 @@ namespace Sensus
 
         public async Task<Protocol> CopyAsync(bool resetId, bool register)
         {
-            Protocol protocol = JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS).DeserializeJson<Protocol>();
+            Protocol protocolCopy = JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS).DeserializeJson<Protocol>();
 
-            await protocol.ResetAsync(resetId);
+            await protocolCopy.ResetAsync(resetId);
 
             if (register)
             {
-                SensusServiceHelper.Get().RegisterProtocol(protocol);
+                SensusServiceHelper.Get().RegisterProtocol(protocolCopy);
             }
 
-            return protocol;
+            return protocolCopy;
         }
 
         public async Task ShareAsync()

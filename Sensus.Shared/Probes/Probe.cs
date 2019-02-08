@@ -416,11 +416,15 @@ namespace Sensus.Probes
                 datum.ProtocolId = Protocol.Id;
                 datum.ParticipantId = Protocol.ParticipantId;
 
-                // tag the data if we're in tagging mode, indicated with a non-null event id on the protocol.
-                if (Protocol.TaggedEventId != null)
+                // tag the data if we're in tagging mode, indicated with a non-null event id on the protocol. avoid 
+                // any race conditions related to starting/stopping a tagging by getting the required values and
+                // then checking both for validity. we need to guarantee that any tagged datum has both an id and tags.
+                string taggedEventId = Protocol.TaggedEventId;
+                List<string> taggedEventTags = Protocol.TaggedEventTags.ToList();
+                if (!string.IsNullOrWhiteSpace(taggedEventId) && taggedEventTags.Count > 0)
                 {
-                    datum.TaggedEventId = Protocol.TaggedEventId;
-                    datum.TaggedEventTags = Protocol.TaggedEventTags;
+                    datum.TaggedEventId = taggedEventId;
+                    datum.TaggedEventTags = taggedEventTags;
                 }
             }
 
