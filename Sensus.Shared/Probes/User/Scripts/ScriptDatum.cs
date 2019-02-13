@@ -48,7 +48,9 @@ namespace Sensus.Probes.User.Scripts
         private DateTimeOffset _submissionTimestamp;
 
         /// <summary>
-        /// Identifier for a script. This does not change across invocations of the script.
+        /// Identifier for the <see cref="Script"/> within the <see cref="Protocol"/> that produced this <see cref="ScriptDatum"/>. 
+        /// This identifier does not change across invocations of the <see cref="Script"/>. Compare this with <see cref="RunId"/>, 
+        /// which identifies a particular invocation of a <see cref="Script"/>.
         /// </summary>
         /// <value>The script identifier.</value>
         public string ScriptId
@@ -64,7 +66,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Descriptive name for a script.
+        /// Descriptive name for the <see cref="Script"/> that generated this <see cref="ScriptDatum"/>.
         /// </summary>
         /// <value>The name of the script.</value>
         public string ScriptName
@@ -80,7 +82,9 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Identifier for a set of inputs within the script. This does not change across invocations of the script.
+        /// Identifier for the <see cref="InputGroup"/> containing the <see cref="Input"/> that generated
+        /// this <see cref="ScriptDatum"/>. In the UI, an <see cref="InputGroup"/> is rendered as a page
+        /// of survey items. This identifier does not change across invocations of the <see cref="Script"/>.
         /// </summary>
         /// <value>The group identifier.</value>
         public string GroupId
@@ -96,7 +100,8 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Identifier for an input within the script. This does not change across invocations of the script.
+        /// Identifier for the <see cref="Input"/> that generated this <see cref="ScriptDatum"/>. This 
+        /// identifier does not change across invocations of the <see cref="Script"/>.
         /// </summary>
         /// <value>The input identifier.</value>
         public string InputId
@@ -112,7 +117,9 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Identifier for a particular invocation of a script. This changes for each new invocation of the script.
+        /// Identifier for a particular invocation of a <see cref="Script"/>. This identifier changes for 
+        /// each new invocation of a <see cref="Script"/>. Use this identifier to tie together all 
+        /// generated <see cref="ScriptDatum"/> values for a single run of the <see cref="Script"/>.
         /// </summary>
         /// <value>The run identifier.</value>
         public string RunId
@@ -128,7 +135,12 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// User's response to an input within the script.
+        /// User's response to an <see cref="Input"/> within a particular invocation of a <see cref="Script"/>. The <see cref="Response"/>
+        /// will be empty (null) when the user does not respond to the <see cref="Input"/>. Even when <see cref="Input.Required"/>
+        /// is enabled, the user is still allowed to skip the <see cref="Input"/> after a warning message, resulting in a null 
+        /// <see cref="Response"/>. The only way to ensure a non-empty <see cref="Response"/> is to enable 
+        /// <see cref="InputGroup.ForceValidInputs"/>; however, this is not generally recommended as it is bad practice to lock user's
+        /// into particular UI screens.
         /// </summary>
         /// <value>The response.</value>
         public object Response
@@ -138,7 +150,8 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// If the script is triggered by a <see cref="Datum"/> from another probe, this is the <see cref="Datum.Id"/>.
+        /// If the <see cref="Script"/> is triggered by a <see cref="Datum"/> from another <see cref="Probe"/>, then this is the <see cref="Datum.Id"/>
+        /// of the triggering <see cref="Datum"/>.
         /// </summary>
         /// <value>The trigger datum identifier.</value>
         [Anonymizable("Triggering Datum ID:", typeof(StringHashAnonymizer), false)]
@@ -149,7 +162,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Latitude of GPS reading taken when user submitted the response (if enabled).
+        /// Latitude of GPS reading taken when user submitted the <see cref="Script"/> (if enabled).
         /// </summary>
         /// <value>The latitude.</value>
         [DoubleProbeTriggerProperty]
@@ -161,7 +174,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Longitude of GPS reading taken when user submitted the response (if enabled).
+        /// Longitude of GPS reading taken when user submitted the <see cref="Script"/> (if enabled).
         /// </summary>
         /// <value>The longitude.</value>
         [DoubleProbeTriggerProperty]
@@ -170,22 +183,6 @@ namespace Sensus.Probes.User.Scripts
         {
             get { return _longitude; }
             set { _longitude = value; }
-        }
-
-        /// <summary>
-        /// Timestamp of when a script survey was made available to the user for completion.
-        /// </summary>
-        /// <value>The run timestamp.</value>
-        public DateTimeOffset RunTimestamp
-        {
-            get
-            {
-                return _runTimestamp;
-            }
-            set
-            {
-                _runTimestamp = value;
-            }
         }
 
         /// <summary>
@@ -205,7 +202,24 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// A trace of activity for the input.
+        /// Timestamp of when a <see cref="Script"/> was made available to the user for completion.
+        /// </summary>
+        /// <value>The run timestamp.</value>
+        public DateTimeOffset RunTimestamp
+        {
+            get
+            {
+                return _runTimestamp;
+            }
+            set
+            {
+                _runTimestamp = value;
+            }
+        }
+
+        /// <summary>
+        /// A trace of user activity for the <see cref="Input"/> that generated this <see cref="Script"/>. This is
+        /// enabled by setting <see cref="Input.StoreCompletionRecords"/>.
         /// </summary>
         /// <value>The completion records.</value>
         public List<InputCompletionRecord> CompletionRecords

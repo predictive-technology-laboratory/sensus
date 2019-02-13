@@ -19,7 +19,11 @@ using Newtonsoft.Json.Converters;
 namespace Sensus.Probes.User.Scripts
 {
     /// <summary>
-    /// Records state updates for each <see cref="Script"/> as it progresses from delivery through removal from the system.
+    /// Records state transitions for each <see cref="Script"/> as it progresses from delivery to the user through removal from 
+    /// the system, either by the user completing and submitting it or deleting it without submission. This data stream in some
+    /// ways parallels that of <see cref="ScriptDatum"/>, with the latter tracking data resulting from submission of the
+    /// <see cref="Script"/> by the user. The <see cref="ScriptStateDatum"/> stream will be generated and submitted to the
+    /// <see cref="DataStores.Remote.RemoteDataStore"/> regardless of whether the user submits the <see cref="Script"/>.
     /// </summary>
     public class ScriptStateDatum : Datum
     {
@@ -31,7 +35,7 @@ namespace Sensus.Probes.User.Scripts
         private string _triggerDatumId;
 
         /// <summary>
-        /// Gets or sets the state.
+        /// The <see cref="ScriptState"/> of the <see cref="Script"/> over the course of its life cycle.
         /// </summary>
         /// <value>The state.</value>
         [JsonConverter(typeof(StringEnumConverter))]
@@ -42,7 +46,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Identifier for a script. This does not change across invocations of the script.
+        /// See <see cref="ScriptDatum.ScriptId"/>.
         /// </summary>
         /// <value>The script identifier.</value>
         public string ScriptId
@@ -58,7 +62,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Descriptive name for a script.
+        /// See <see cref="ScriptDatum.ScriptName"/>
         /// </summary>
         /// <value>The name of the script.</value>
         public string ScriptName
@@ -74,7 +78,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Identifier for a particular invocation of a script. This changes for each new invocation of the script.
+        /// See <see cref="ScriptDatum.RunId"/>.
         /// </summary>
         /// <value>The run identifier.</value>
         public string RunId
@@ -90,8 +94,8 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Some scripts are triggered by other probes, and some scripts are scheduled. If the script is of the latter type, 
-        /// this field indicates when the script was scheduled to run.
+        /// Each <see cref="Script"/> is either triggered by another <see cref="Probe"/> or is triggered on a schedule. In
+        /// the latter case, this field indicates when the <see cref="Script"/> was scheduled to run.
         /// </summary>
         /// <value>The scheduled timestamp.</value>
         public DateTimeOffset? ScheduledTimestamp
@@ -107,7 +111,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// If the script is triggered by a Datum from another probe, this is the Id of that datum.
+        /// See <see cref="ScriptDatum.TriggerDatumId"/>.
         /// </summary>
         /// <value>The trigger datum identifier.</value>
         public string TriggerDatumId

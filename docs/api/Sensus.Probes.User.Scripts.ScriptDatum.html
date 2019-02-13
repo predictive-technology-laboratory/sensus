@@ -257,7 +257,8 @@ the deployment and response/non-response of surveys, Sensus also submits additio
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_CompletionRecords_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.CompletionRecords*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_CompletionRecords" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.CompletionRecords">CompletionRecords</h4>
-  <div class="markdown level1 summary"><p>A trace of activity for the input.</p>
+  <div class="markdown level1 summary"><p>A trace of user activity for the <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> that generated this <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>. This is
+enabled by setting <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_StoreCompletionRecords">StoreCompletionRecords</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -311,7 +312,9 @@ the deployment and response/non-response of surveys, Sensus also submits additio
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_GroupId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.GroupId*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_GroupId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.GroupId">GroupId</h4>
-  <div class="markdown level1 summary"><p>Identifier for a set of inputs within the script. This does not change across invocations of the script.</p>
+  <div class="markdown level1 summary"><p>Identifier for the <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a> containing the <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> that generated
+this <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>. In the UI, an <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a> is rendered as a page
+of survey items. This identifier does not change across invocations of the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -338,7 +341,8 @@ the deployment and response/non-response of surveys, Sensus also submits additio
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_InputId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.InputId*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_InputId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.InputId">InputId</h4>
-  <div class="markdown level1 summary"><p>Identifier for an input within the script. This does not change across invocations of the script.</p>
+  <div class="markdown level1 summary"><p>Identifier for the <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> that generated this <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>. This 
+identifier does not change across invocations of the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -365,7 +369,7 @@ the deployment and response/non-response of surveys, Sensus also submits additio
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_Latitude_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Latitude*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_Latitude" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Latitude">Latitude</h4>
-  <div class="markdown level1 summary"><p>Latitude of GPS reading taken when user submitted the response (if enabled).</p>
+  <div class="markdown level1 summary"><p>Latitude of GPS reading taken when user submitted the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> (if enabled).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -421,7 +425,7 @@ public Nullable&lt;double&gt; Latitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_Longitude_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Longitude*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_Longitude" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Longitude">Longitude</h4>
-  <div class="markdown level1 summary"><p>Longitude of GPS reading taken when user submitted the response (if enabled).</p>
+  <div class="markdown level1 summary"><p>Longitude of GPS reading taken when user submitted the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> (if enabled).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -450,7 +454,12 @@ public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_Response_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Response*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_Response" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.Response">Response</h4>
-  <div class="markdown level1 summary"><p>User&apos;s response to an input within the script.</p>
+  <div class="markdown level1 summary"><p>User&apos;s response to an <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> within a particular invocation of a <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>. The <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_Response">Response</a>
+will be empty (null) when the user does not respond to the <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>. Even when <a class="xref" href="Sensus.UI.Inputs.Input.html#Sensus_UI_Inputs_Input_Required">Required</a>
+is enabled, the user is still allowed to skip the <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a> after a warning message, resulting in a null 
+<a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_Response">Response</a>. The only way to ensure a non-empty <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_Response">Response</a> is to enable 
+<a class="xref" href="Sensus.UI.Inputs.InputGroup.html#Sensus_UI_Inputs_InputGroup_ForceValidInputs">ForceValidInputs</a>; however, this is not generally recommended as it is bad practice to lock user&apos;s
+into particular UI screens.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -477,7 +486,9 @@ public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_RunId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunId*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_RunId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunId">RunId</h4>
-  <div class="markdown level1 summary"><p>Identifier for a particular invocation of a script. This changes for each new invocation of the script.</p>
+  <div class="markdown level1 summary"><p>Identifier for a particular invocation of a <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>. This identifier changes for 
+each new invocation of a <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>. Use this identifier to tie together all 
+generated <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a> values for a single run of the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -504,7 +515,7 @@ public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunTimestamp*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_RunTimestamp" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.RunTimestamp">RunTimestamp</h4>
-  <div class="markdown level1 summary"><p>Timestamp of when a script survey was made available to the user for completion.</p>
+  <div class="markdown level1 summary"><p>Timestamp of when a <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> was made available to the user for completion.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -531,7 +542,9 @@ public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptId*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptId">ScriptId</h4>
-  <div class="markdown level1 summary"><p>Identifier for a script. This does not change across invocations of the script.</p>
+  <div class="markdown level1 summary"><p>Identifier for the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> within the <a class="xref" href="Sensus.Protocol.html">Protocol</a> that produced this <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>. 
+This identifier does not change across invocations of the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>. Compare this with <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html#Sensus_Probes_User_Scripts_ScriptDatum_RunId">RunId</a>, 
+which identifies a particular invocation of a <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -558,7 +571,7 @@ public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptName_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptName*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_ScriptName" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.ScriptName">ScriptName</h4>
-  <div class="markdown level1 summary"><p>Descriptive name for a script.</p>
+  <div class="markdown level1 summary"><p>Descriptive name for the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> that generated this <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -641,7 +654,8 @@ public Nullable&lt;double&gt; Longitude { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptDatum_TriggerDatumId_" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.TriggerDatumId*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptDatum_TriggerDatumId" data-uid="Sensus.Probes.User.Scripts.ScriptDatum.TriggerDatumId">TriggerDatumId</h4>
-  <div class="markdown level1 summary"><p>If the script is triggered by a <a class="xref" href="Sensus.Datum.html">Datum</a> from another probe, this is the <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Id</a>.</p>
+  <div class="markdown level1 summary"><p>If the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> is triggered by a <a class="xref" href="Sensus.Datum.html">Datum</a> from another <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>, then this is the <a class="xref" href="Sensus.Datum.html#Sensus_Datum_Id">Id</a>
+of the triggering <a class="xref" href="Sensus.Datum.html">Datum</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

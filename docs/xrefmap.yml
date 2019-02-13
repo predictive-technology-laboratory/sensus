@@ -21259,18 +21259,6 @@ references:
   commentId: Overload:Sensus.Authentication.AmazonS3Credentials.AccessKeyId
   fullName: Sensus.Authentication.AmazonS3Credentials.AccessKeyId
   nameWithType: AmazonS3Credentials.AccessKeyId
-- uid: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
-  name: AcquisitionTimestamp
-  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_AcquisitionTimestamp
-  commentId: P:Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
-  fullName: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
-  nameWithType: AmazonS3Credentials.AcquisitionTimestamp
-- uid: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp*
-  name: AcquisitionTimestamp
-  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_AcquisitionTimestamp_
-  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
-  fullName: Sensus.Authentication.AmazonS3Credentials.AcquisitionTimestamp
-  nameWithType: AmazonS3Credentials.AcquisitionTimestamp
 - uid: Sensus.Authentication.AmazonS3Credentials.CustomerMasterKey
   name: CustomerMasterKey
   href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_CustomerMasterKey
@@ -21379,18 +21367,6 @@ references:
   commentId: Overload:Sensus.Authentication.AmazonS3Credentials.SessionToken
   fullName: Sensus.Authentication.AmazonS3Credentials.SessionToken
   nameWithType: AmazonS3Credentials.SessionToken
-- uid: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
-  name: ValidityTimeSpan
-  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ValidityTimeSpan
-  commentId: P:Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
-  fullName: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
-  nameWithType: AmazonS3Credentials.ValidityTimeSpan
-- uid: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan*
-  name: ValidityTimeSpan
-  href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_ValidityTimeSpan_
-  commentId: Overload:Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
-  fullName: Sensus.Authentication.AmazonS3Credentials.ValidityTimeSpan
-  nameWithType: AmazonS3Credentials.ValidityTimeSpan
 - uid: Sensus.Authentication.AmazonS3Credentials.WillBeValidFor(System.Nullable{System.TimeSpan})
   name: WillBeValidFor(Nullable<TimeSpan>)
   href: api/Sensus.Authentication.AmazonS3Credentials.html#Sensus_Authentication_AmazonS3Credentials_WillBeValidFor_System_Nullable_System_TimeSpan__
@@ -23214,6 +23190,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   nameWithType: AmazonS3RemoteDataStore.Region
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset
+  name: Reset()
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Reset
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset()
+  nameWithType: AmazonS3RemoteDataStore.Reset()
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset*
+  name: Reset
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Reset_
+  commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset
+  nameWithType: AmazonS3RemoteDataStore.Reset
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SendPushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   name: SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SendPushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_
