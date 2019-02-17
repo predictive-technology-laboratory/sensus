@@ -38,7 +38,6 @@ using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
 using Sensus.Encryption;
 using System.Text.RegularExpressions;
-using Microsoft.AppCenter.Analytics;
 using System.ComponentModel;
 using Sensus.Concurrent;
 using Amazon.S3;
@@ -60,6 +59,7 @@ using Plugin.Geolocator.Abstractions;
 
 #if __ANDROID__
 using Sensus.Android;
+using Microsoft.AppCenter.Analytics;
 #endif
 
 namespace Sensus
@@ -1411,6 +1411,18 @@ namespace Sensus
         /// <value>The protocol compatibility mode.</value>
         [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
+
+#if __ANDROID__
+        /// <summary>
+        /// Whether or not to display the participation percentage (see <see cref="ParticipationHorizonDays"/>) in the 
+        /// foreground service notification. If multiple <see cref="Protocol"/>s enable this option, then the average
+        /// percentage across these will be displayed. This only applies to Android, as iOS does not have a concept
+        /// analogous to foreground service notifications.
+        /// </summary>
+        /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Display Participation:", true, 55)]
+        public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
+#endif
 
         /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 

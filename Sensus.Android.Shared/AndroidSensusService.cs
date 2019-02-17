@@ -235,10 +235,12 @@ namespace Sensus.Android
                 string contentText = "";
 
                 // although the number of studies might be greater than 0, the protocols might not yet be started (e.g., after starting sensus).
-                List<Protocol> runningProtocols = serviceHelper.GetRunningProtocols();
-                if (runningProtocols.Count > 0)
+                // also, only display the percentage if at least one protocol is configured to display it.
+                List<Protocol> protocolsToAverageParticipation = serviceHelper.GetRunningProtocols()
+                                                                              .Where(runningProtocol => runningProtocol.DisplayParticipationPercentageInForegroundServiceNotification).ToList();
+                if (protocolsToAverageParticipation.Count > 0)
                 {
-                    double avgParticipation = runningProtocols.Average(protocol => protocol.Participation) * 100;
+                    double avgParticipation = protocolsToAverageParticipation.Average(protocol => protocol.Participation) * 100;
                     contentText += "Your overall participation level is " + Math.Round(avgParticipation, 0) + "%. ";
                 }
 
