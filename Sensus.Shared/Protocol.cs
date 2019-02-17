@@ -2521,6 +2521,8 @@ namespace Sensus
 
         public async Task DeleteAsync()
         {
+            await StopAsync();
+
             await SensusServiceHelper.Get().UnregisterProtocolAsync(this);
 
             try

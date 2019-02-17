@@ -722,15 +722,16 @@ namespace Sensus
                 {
                     _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
                     {
-                        // test protocols
-                        foreach (Protocol protocolToTest in _registeredProtocols.ToList())
+                        // test running protocols. we used to test all protocols, but this causes problems when editing stopped
+                        // protocols, as they might be replaced without the user intending after the user manually sets the id.
+                        foreach (Protocol protocolToTest in GetRunningProtocols())
                         {
                             if (cancellationToken.IsCancellationRequested)
                             {
                                 break;
                             }
 
-                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" (" + protocolToTest.Id + ") is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
 
                             bool testCurrentProtocol = true;
 
@@ -776,8 +777,7 @@ namespace Sensus
                                             await newProtocol.StartAsync(cancellationToken);
                                         }
 
-                                        // stop and delete the old protocol
-                                        await protocolToTest.StopAsync();
+                                        // delete the old protocol (this first stops it)
                                         await protocolToTest.DeleteAsync();
                                     }
                                 }
@@ -1339,10 +1339,11 @@ namespace Sensus
             });
         }
 
-        public async Task UnregisterProtocolAsync(Protocol protocol)
+        public Task UnregisterProtocolAsync(Protocol protocol)
         {
             _registeredProtocols.Remove(protocol);
-            await protocol.StopAsync();
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

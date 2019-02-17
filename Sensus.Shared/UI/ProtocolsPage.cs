@@ -149,7 +149,10 @@ namespace Sensus.UI
                     actions.Add("Scan Participation Barcode");
                 }
 
-                actions.Add("Edit");
+                if (selectedProtocol.State == ProtocolState.Stopped)
+                {
+                    actions.Add("Edit");
+                }
 
                 if (selectedProtocol.AllowCopy)
                 {
