@@ -310,7 +310,9 @@ namespace Sensus.Probes.User.Scripts
         public string IncompleteSubmissionConfirmation { get; set; }
 
         /// <summary>
-        /// Whether or not to shuffle the order of the survey's input groups prior to displaying them to the user.
+        /// Whether or not to shuffle the order of the survey's <see cref="InputGroup"/>s prior to displaying them to the user. This 
+        /// only applies if none of the groups contain <see cref="Input"/>s with display conditions. If display conditions are present, 
+        /// then it is not possible to shuffle the <see cref="InputGroup"/>s and this setting will have no effect.
         /// </summary>
         /// <value><c>true</c> if shuffle input groups; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
