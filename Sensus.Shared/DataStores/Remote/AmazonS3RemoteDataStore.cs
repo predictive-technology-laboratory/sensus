@@ -552,19 +552,6 @@ namespace Sensus.DataStores.Remote
                     throw s3Exception;
                 }
             }
-            catch (WebException ex)
-            {
-                // this can happen if the endpoint is using a self-signed certificate and we're not pinning. when
-                // we pin we permit self-signed certificates via the ServicePointManager.ServerCertificateValidationCallback
-                // delegate within the SensusServiceHelper, which checks for the expected certificate public key.
-                if (ex.Status == WebExceptionStatus.TrustFailure)
-                {
-                    string message = "A trust failure has occurred between Sensus and the AWS S3 endpoint.";
-                    SensusException.Report(message, ex);
-                }
-
-                throw ex;
-            }
             catch (Exception ex)
             {
                 string message = "Failed to write data stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;

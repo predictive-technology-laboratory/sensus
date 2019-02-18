@@ -286,9 +286,12 @@ namespace Sensus
                             }
                         }
 
-                        // store any data that have accumulated locally
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Submitting data from previous study...");
-                        await existingProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
+                        // store any data that have accumulated locally, if we have a local data store (might be null if protocol isn't fully configured)
+                        if (existingProtocol.LocalDataStore != null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Submitting data from previous study...");
+                            await existingProtocol.LocalDataStore.WriteToRemoteAsync(CancellationToken.None);
+                        }
 
                         // stop the study and unregister it 
                         await SensusServiceHelper.Get().FlashNotificationAsync("Stopping previous study...");

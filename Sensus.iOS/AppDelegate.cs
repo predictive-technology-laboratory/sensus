@@ -107,11 +107,11 @@ namespace Sensus.iOS
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
-        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
         {
-            System.Threading.Tasks.Task.Run(async () =>
+            if (url?.PathExtension == "json")
             {
-                if (url?.PathExtension == "json")
+                System.Threading.Tasks.Task.Run(async () =>
                 {
                     try
                     {
@@ -132,16 +132,20 @@ namespace Sensus.iOS
                     {
                         InvokeOnMainThread(() =>
                         {
-                            string message = "Failed to start study:  " + ex.Message;
-                            new UIAlertView("Error", message, default(IUIAlertViewDelegate), "Close").Show();
+                            string message = "Failed to get study:  " + ex.Message;
                             SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
+                            new UIAlertView("Error", message, default(IUIAlertViewDelegate), "Close").Show();
                         });
                     }
-                }
-            });
+                });
 
-            // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works.
-            return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public override async void OnActivated(UIApplication uiApplication)
