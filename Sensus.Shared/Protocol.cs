@@ -71,7 +71,7 @@ namespace Sensus
     /// study's Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.
     /// 
     /// </summary>
-    public class Protocol : INotifyPropertyChanged
+    public class Protocol : INotifyPropertyChanged, IProtocol
     {
         #region static members
 
@@ -2122,7 +2122,7 @@ namespace Sensus
                 }
 
                 inputs.Add(new LabelOnlyInput("Data:  This study intends to collect the following data types:" + Environment.NewLine +
-                                              Environment.NewLine + 
+                                              Environment.NewLine +
                                               collectionSummary, summaryFontSize)
                 {
                     Frame = true
@@ -2386,7 +2386,7 @@ namespace Sensus
             string eventName = TrackedEvent.Miscellaneous + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Wake Lock Count", androidSensusServiceHelper.WakeLockAcquisitionCount.ToString() }                
+                { "Wake Lock Count", androidSensusServiceHelper.WakeLockAcquisitionCount.ToString() }
             };
 
             Analytics.TrackEvent(eventName, properties);
@@ -2591,6 +2591,25 @@ namespace Sensus
         private void FireSubCaptionChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SubCaption)));
+        }
+
+        public async Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            if (TryGetProbe(typeof(ScriptProbe), out Probe probe))
+            {
+                ScriptProbe scriptProbe = probe as ScriptProbe;
+
+                if (scriptProbe?.Agent != null)
+                {
+                    // retrieve and set the policy
+                    string policyJSON = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
+                    await scriptProbe.Agent.SetPolicyAsync(policyJSON);
+
+                    // save policy within app state (agent itself is not serialized)
+                    scriptProbe.AgentPolicyJSON = policyJSON;
+                    await SensusServiceHelper.Get().SaveAsync();
+                }
+            }
         }
     }
 }

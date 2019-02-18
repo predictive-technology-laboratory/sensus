@@ -55,7 +55,8 @@ namespace Sensus.Notifications
     /// 
     /// * <see cref="UPDATE_SCRIPT_AGENT_POLICY_COMMAND"/>:  Upon receipt of this command, Sensus will fetch the policy from the <see cref="DataStores.Remote.RemoteDataStore"/>
     ///   via <see cref="DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)"/>. The content of the returned
-    ///   JSON file will be passed to <see cref="Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(string)"/>.
+    ///   JSON file will be passed to <see cref="Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(string)"/>. See <see cref="DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)"/>
+    ///   for information about this JSON file.
     /// </summary>
     public class PushNotificationRequest
     {

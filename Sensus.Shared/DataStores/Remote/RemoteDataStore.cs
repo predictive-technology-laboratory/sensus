@@ -355,6 +355,11 @@ namespace Sensus.DataStores.Remote
             return false;
         }
 
+        /// <summary>
+        /// Gets the script agent policy from the <see cref="RemoteDataStore"/>. See concrete class implementation for details.
+        /// </summary>
+        /// <returns>The script agent policy.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
 
         public abstract Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken);

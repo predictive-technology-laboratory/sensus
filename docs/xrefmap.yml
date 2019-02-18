@@ -124,6 +124,18 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Id
   fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.Id
   nameWithType: ExampleAdaptiveScriptProbeAgent.Id
+- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  name: InitializeAsync(ISensusServiceHelper, IProtocol)
+  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_
+  commentId: M:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper, Sensus.IProtocol)
+  nameWithType: ExampleAdaptiveScriptProbeAgent.InitializeAsync(ISensusServiceHelper, IProtocol)
+- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.InitializeAsync*
+  name: InitializeAsync
+  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_InitializeAsync_
+  commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.InitializeAsync
+  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.InitializeAsync
+  nameWithType: ExampleAdaptiveScriptProbeAgent.InitializeAsync
 - uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync(Sensus.IDatum)
   name: ObserveAsync(IDatum)
   href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ObserveAsync_Sensus_IDatum_
@@ -142,18 +154,6 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync
   fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ObserveAsync
   nameWithType: ExampleAdaptiveScriptProbeAgent.ObserveAsync
-- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  name: ResetAsync(ISensusServiceHelper)
-  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ResetAsync_Sensus_ISensusServiceHelper_
-  commentId: M:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  nameWithType: ExampleAdaptiveScriptProbeAgent.ResetAsync(ISensusServiceHelper)
-- uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync*
-  name: ResetAsync
-  href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_ResetAsync_
-  commentId: Overload:ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync
-  fullName: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.ResetAsync
-  nameWithType: ExampleAdaptiveScriptProbeAgent.ResetAsync
 - uid: ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.SetPolicyAsync(System.String)
   name: SetPolicyAsync(String)
   href: api/ExampleScriptProbeAgent.ExampleAdaptiveScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleAdaptiveScriptProbeAgent_SetPolicyAsync_System_String_
@@ -268,6 +268,18 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.Id
   fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.Id
   nameWithType: ExampleRandomScriptProbeAgent.Id
+- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  name: InitializeAsync(ISensusServiceHelper, IProtocol)
+  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_
+  commentId: M:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper, Sensus.IProtocol)
+  nameWithType: ExampleRandomScriptProbeAgent.InitializeAsync(ISensusServiceHelper, IProtocol)
+- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.InitializeAsync*
+  name: InitializeAsync
+  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_InitializeAsync_
+  commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.InitializeAsync
+  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.InitializeAsync
+  nameWithType: ExampleRandomScriptProbeAgent.InitializeAsync
 - uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ObserveAsync(Sensus.IDatum)
   name: ObserveAsync(IDatum)
   href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_ObserveAsync_Sensus_IDatum_
@@ -286,18 +298,6 @@ references:
   commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ObserveAsync
   fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ObserveAsync
   nameWithType: ExampleRandomScriptProbeAgent.ObserveAsync
-- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  name: ResetAsync(ISensusServiceHelper)
-  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_ResetAsync_Sensus_ISensusServiceHelper_
-  commentId: M:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  nameWithType: ExampleRandomScriptProbeAgent.ResetAsync(ISensusServiceHelper)
-- uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ResetAsync*
-  name: ResetAsync
-  href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_ResetAsync_
-  commentId: Overload:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ResetAsync
-  fullName: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.ResetAsync
-  nameWithType: ExampleRandomScriptProbeAgent.ResetAsync
 - uid: ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.SetPolicyAsync(System.String)
   name: SetPolicyAsync(String)
   href: api/ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent.html#ExampleScriptProbeAgent_ExampleRandomScriptProbeAgent_SetPolicyAsync_System_String_
@@ -23013,6 +23013,12 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.#ctor
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.AmazonS3RemoteDataStore
   nameWithType: AmazonS3RemoteDataStore.AmazonS3RemoteDataStore
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.ADAPTIVE_EMA_POLICIES_DIRECTORY
+  name: ADAPTIVE_EMA_POLICIES_DIRECTORY
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_ADAPTIVE_EMA_POLICIES_DIRECTORY
+  commentId: F:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.ADAPTIVE_EMA_POLICIES_DIRECTORY
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.ADAPTIVE_EMA_POLICIES_DIRECTORY
+  nameWithType: AmazonS3RemoteDataStore.ADAPTIVE_EMA_POLICIES_DIRECTORY
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Bucket
   name: Bucket
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket
@@ -23037,6 +23043,12 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.CanRetrieveWrittenData
   nameWithType: AmazonS3RemoteDataStore.CanRetrieveWrittenData
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DATA_DIRECTORY
+  name: DATA_DIRECTORY
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DATA_DIRECTORY
+  commentId: F:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DATA_DIRECTORY
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DATA_DIRECTORY
+  nameWithType: AmazonS3RemoteDataStore.DATA_DIRECTORY
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)
   name: DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_
@@ -23178,6 +23190,18 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedServiceURL
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PinnedServiceURL
   nameWithType: AmazonS3RemoteDataStore.PinnedServiceURL
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PROTOCOL_UPDATES_DIRECTORY
+  name: PROTOCOL_UPDATES_DIRECTORY
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PROTOCOL_UPDATES_DIRECTORY
+  commentId: F:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PROTOCOL_UPDATES_DIRECTORY
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PROTOCOL_UPDATES_DIRECTORY
+  nameWithType: AmazonS3RemoteDataStore.PROTOCOL_UPDATES_DIRECTORY
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_DIRECTORY
+  name: PUSH_NOTIFICATIONS_DIRECTORY
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PUSH_NOTIFICATIONS_DIRECTORY
+  commentId: F:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_DIRECTORY
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_DIRECTORY
+  nameWithType: AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_DIRECTORY
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Region
   name: Region
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Region
@@ -29043,6 +29067,24 @@ references:
   commentId: Overload:Sensus.iOS.UI.SliderInputEffect.OnDetached
   fullName: Sensus.iOS.UI.SliderInputEffect.OnDetached
   nameWithType: SliderInputEffect.OnDetached
+- uid: Sensus.IProtocol
+  name: IProtocol
+  href: api/Sensus.IProtocol.html
+  commentId: T:Sensus.IProtocol
+  fullName: Sensus.IProtocol
+  nameWithType: IProtocol
+- uid: Sensus.IProtocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)
+  name: UpdateScriptAgentPolicyAsync(CancellationToken)
+  href: api/Sensus.IProtocol.html#Sensus_IProtocol_UpdateScriptAgentPolicyAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.IProtocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)
+  fullName: Sensus.IProtocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)
+  nameWithType: IProtocol.UpdateScriptAgentPolicyAsync(CancellationToken)
+- uid: Sensus.IProtocol.UpdateScriptAgentPolicyAsync*
+  name: UpdateScriptAgentPolicyAsync
+  href: api/Sensus.IProtocol.html#Sensus_IProtocol_UpdateScriptAgentPolicyAsync_
+  commentId: Overload:Sensus.IProtocol.UpdateScriptAgentPolicyAsync
+  fullName: Sensus.IProtocol.UpdateScriptAgentPolicyAsync
+  nameWithType: IProtocol.UpdateScriptAgentPolicyAsync
 - uid: Sensus.ISensusServiceHelper
   name: ISensusServiceHelper
   href: api/Sensus.ISensusServiceHelper.html
@@ -42519,6 +42561,18 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.Id
   fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.Id
   nameWithType: IScriptProbeAgent.Id
+- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  name: InitializeAsync(ISensusServiceHelper, IProtocol)
+  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_
+  commentId: M:Sensus.Probes.User.Scripts.IScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.InitializeAsync(Sensus.ISensusServiceHelper, Sensus.IProtocol)
+  nameWithType: IScriptProbeAgent.InitializeAsync(ISensusServiceHelper, IProtocol)
+- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.InitializeAsync*
+  name: InitializeAsync
+  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_InitializeAsync_
+  commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.InitializeAsync
+  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.InitializeAsync
+  nameWithType: IScriptProbeAgent.InitializeAsync
 - uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync(Sensus.IDatum)
   name: ObserveAsync(IDatum)
   href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_ObserveAsync_Sensus_IDatum_
@@ -42537,18 +42591,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync
   fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.ObserveAsync
   nameWithType: IScriptProbeAgent.ObserveAsync
-- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  name: ResetAsync(ISensusServiceHelper)
-  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_ResetAsync_Sensus_ISensusServiceHelper_
-  commentId: M:Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync(Sensus.ISensusServiceHelper)
-  nameWithType: IScriptProbeAgent.ResetAsync(ISensusServiceHelper)
-- uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync*
-  name: ResetAsync
-  href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_ResetAsync_
-  commentId: Overload:Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync
-  fullName: Sensus.Probes.User.Scripts.IScriptProbeAgent.ResetAsync
-  nameWithType: IScriptProbeAgent.ResetAsync
 - uid: Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(System.String)
   name: SetPolicyAsync(String)
   href: api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_System_String_
@@ -44985,6 +45027,18 @@ references:
   commentId: Overload:Sensus.Protocol.DisplayAndStartAsync
   fullName: Sensus.Protocol.DisplayAndStartAsync
   nameWithType: Protocol.DisplayAndStartAsync
+- uid: Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification
+  name: DisplayParticipationPercentageInForegroundServiceNotification
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification
+  commentId: P:Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification
+  fullName: Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification
+  nameWithType: Protocol.DisplayParticipationPercentageInForegroundServiceNotification
+- uid: Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification*
+  name: DisplayParticipationPercentageInForegroundServiceNotification
+  href: api/Sensus.Protocol.html#Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification_
+  commentId: Overload:Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification
+  fullName: Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification
+  nameWithType: Protocol.DisplayParticipationPercentageInForegroundServiceNotification
 - uid: Sensus.Protocol.EndDate
   name: EndDate
   href: api/Sensus.Protocol.html#Sensus_Protocol_EndDate
@@ -45708,6 +45762,18 @@ references:
   commentId: Overload:Sensus.Protocol.TryGetProbe
   fullName: Sensus.Protocol.TryGetProbe
   nameWithType: Protocol.TryGetProbe
+- uid: Sensus.Protocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)
+  name: UpdateScriptAgentPolicyAsync(CancellationToken)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_UpdateScriptAgentPolicyAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Protocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Protocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)
+  nameWithType: Protocol.UpdateScriptAgentPolicyAsync(CancellationToken)
+- uid: Sensus.Protocol.UpdateScriptAgentPolicyAsync*
+  name: UpdateScriptAgentPolicyAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_UpdateScriptAgentPolicyAsync_
+  commentId: Overload:Sensus.Protocol.UpdateScriptAgentPolicyAsync
+  fullName: Sensus.Protocol.UpdateScriptAgentPolicyAsync
+  nameWithType: Protocol.UpdateScriptAgentPolicyAsync
 - uid: Sensus.Protocol.VariableValue
   name: VariableValue
   href: api/Sensus.Protocol.html#Sensus_Protocol_VariableValue

@@ -240,7 +240,7 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
 
-            await (Agent?.ResetAsync(SensusServiceHelper.Get()) ?? Task.CompletedTask);
+            await (Agent?.InitializeAsync(SensusServiceHelper.Get(), Protocol) ?? Task.CompletedTask);
         }
 
         protected override async Task ProtectedStartAsync()

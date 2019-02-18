@@ -270,21 +270,7 @@ namespace Sensus.Notifications
                 #region update script agent policy
                 else if (commandParts.First() == PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND)
                 {
-                    if (protocol.TryGetProbe(typeof(ScriptProbe), out Probe probe))
-                    {
-                        ScriptProbe scriptProbe = probe as ScriptProbe;
-
-                        if (scriptProbe?.Agent != null)
-                        {
-                            // retrieve and set the policy
-                            string policyJSON = await protocol.RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
-                            await scriptProbe.Agent.SetPolicyAsync(policyJSON);
-
-                            // save policy within app state (agent itself is not serialized)
-                            scriptProbe.AgentPolicyJSON = policyJSON;
-                            await SensusServiceHelper.Get().SaveAsync();
-                        }
-                    }
+                    await protocol.UpdateScriptAgentPolicyAsync(cancellationToken);
                 }
                 #endregion
 

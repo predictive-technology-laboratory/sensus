@@ -41,7 +41,15 @@ namespace Sensus.Probes.User.Scripts
         TimeSpan? DeliveryIntervalToleranceAfter { get; }
 
         /// <summary>
-        /// Sets the policy of the agent
+        /// Sets the survey policy of the current <see cref="IScriptProbeAgent"/>. This method will be called in the following
+        /// situations:
+        /// 
+        ///   * When a push notification arrives instructing the app to update the policy.
+        ///   * When the <see cref="IScriptProbeAgent"/> itself instructs the app to update the policy, through a call to
+        ///     <see cref="IProtocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)"/>.
+        /// 
+        /// In any case, the current policy stored within the <see cref="IProtocol"/>'s remote data store will be fetched
+        /// and the content of the policy will be passed to this method. See the remote data store class for more information.
         /// </summary>
         /// <param name="policyJSON">Policy JSON.</param>
         Task SetPolicyAsync(string policyJSON);
@@ -74,9 +82,11 @@ namespace Sensus.Probes.User.Scripts
         Task ObserveAsync(IScript script, ScriptState state);
 
         /// <summary>
-        /// Asks the agent to reset itself
+        /// Initializes the <see cref="IScriptProbeAgent"/>. This is called when the <see cref="IProtocol"/> associated with this
+        /// <see cref="IScriptProbeAgent"/> is started.
         /// </summary>
         /// <param name="sensusServiceHelper">A reference to the service helper, which provides access to the app's core functionality.</param>
-        Task ResetAsync(ISensusServiceHelper sensusServiceHelper);
+        /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="IScriptProbeAgent"/>.</param>
+        Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol);
     }
 }

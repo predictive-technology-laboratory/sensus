@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Sensus;
@@ -42,6 +43,7 @@ namespace ExampleScriptProbeAgent
         private double _deliveryProbability = 0.5;
         private TimeSpan _deferralInterval = TimeSpan.FromSeconds(30);
         private ISensusServiceHelper _sensusServiceHelper;
+        private IProtocol _protocol;
 
         /// <summary>
         /// Gets the description.
@@ -148,17 +150,30 @@ namespace ExampleScriptProbeAgent
         }
 
         /// <summary>
-        /// Reset this instance.
+        /// Initializes this <see cref="IScriptProbeAgent"/>. This is called when the <see cref="IProtocol"/> associated with
+        /// this <see cref="IScriptProbeAgent"/> is started.
         /// </summary>
         /// <param name="sensusServiceHelper">A reference to the Sensus helper.</param>
-        public Task ResetAsync(ISensusServiceHelper sensusServiceHelper)
+        /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="IScriptProbeAgent"/>.</param>
+        public Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
         {
             _sensusServiceHelper = sensusServiceHelper;
+            _protocol = protocol;
+
+            // download the initial policy
+            try
+            {
+                _protocol.UpdateScriptAgentPolicyAsync(CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                _sensusServiceHelper?.Logger.Log("Exception while downloading the policy:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
 
             _numDataObserved = 0;
             _deliveryProbability = 0.5;
 
-            _sensusServiceHelper?.Logger.Log("Agent has been reset.", LoggingLevel.Normal, GetType());
+            _sensusServiceHelper?.Logger.Log("Agent has been initialized.", LoggingLevel.Normal, GetType());
 
             return Task.CompletedTask;
         }

@@ -96,12 +96,13 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.IProtocol.html">IProtocol</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Protocol_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged, IProtocol</code></pre>
   </div>
   <h3 id="fields">Fields
   </h3>
@@ -729,6 +730,37 @@ public string Description { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><p>The description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification_" data-uid="Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification*"></a>
+  <h4 id="Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification" data-uid="Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification">DisplayParticipationPercentageInForegroundServiceNotification</h4>
+  <div class="markdown level1 summary"><p>Whether or not to display the participation percentage (see <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizonDays">ParticipationHorizonDays</a>) in the 
+foreground service notification. If multiple <a class="xref" href="Sensus.Protocol.html">Protocol</a>s enable this option, then the average
+percentage across these will be displayed. This only applies to Android, as iOS does not have a concept
+analogous to foreground service notifications.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Display Participation:&quot;, true, 55)]
+public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if display participation percentage in foreground service notification; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -2722,6 +2754,48 @@ to show progress and prevent the user from interacting with the app until the <a
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync*"></a>
+  <h4 id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_System_Threading_CancellationToken_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)">UpdateScriptAgentPolicyAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="events">Events
   </h3>
   
@@ -2775,6 +2849,9 @@ to show progress and prevent the user from interacting with the app until the <a
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.IProtocol.html">IProtocol</a>
   </div>
 </article>
           </div>
