@@ -101,7 +101,7 @@ namespace ExampleScriptProbeAgent
         /// </summary>
         /// <param name="sensusServiceHelper">A reference to the Sensus helper.</param>
         /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="IScriptProbeAgent"/>.</param>
-        public Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
+        public async Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
         {
             _sensusServiceHelper = sensusServiceHelper;
             _protocol = protocol;
@@ -109,7 +109,7 @@ namespace ExampleScriptProbeAgent
             // download the initial policy
             try
             {
-                _protocol.UpdateScriptAgentPolicyAsync(CancellationToken.None);
+                await _protocol.UpdateScriptAgentPolicyAsync(CancellationToken.None);
             }
             catch (Exception ex)
             {
@@ -117,8 +117,6 @@ namespace ExampleScriptProbeAgent
             }
 
             _sensusServiceHelper?.Logger.Log("Agent has been initialized.", LoggingLevel.Normal, GetType());
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
