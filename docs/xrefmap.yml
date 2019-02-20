@@ -25134,12 +25134,12 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.OnActivated
   fullName: Sensus.iOS.AppDelegate.OnActivated
   nameWithType: AppDelegate.OnActivated
-- uid: Sensus.iOS.AppDelegate.OpenUrl(UIKit.UIApplication,Foundation.NSUrl,System.String,Foundation.NSObject)
-  name: OpenUrl(UIApplication, NSUrl, String, NSObject)
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_OpenUrl_UIKit_UIApplication_Foundation_NSUrl_System_String_Foundation_NSObject_
-  commentId: M:Sensus.iOS.AppDelegate.OpenUrl(UIKit.UIApplication,Foundation.NSUrl,System.String,Foundation.NSObject)
-  fullName: Sensus.iOS.AppDelegate.OpenUrl(UIKit.UIApplication, Foundation.NSUrl, System.String, Foundation.NSObject)
-  nameWithType: AppDelegate.OpenUrl(UIApplication, NSUrl, String, NSObject)
+- uid: Sensus.iOS.AppDelegate.OpenUrl(UIKit.UIApplication,Foundation.NSUrl,Foundation.NSDictionary)
+  name: OpenUrl(UIApplication, NSUrl, NSDictionary)
+  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_OpenUrl_UIKit_UIApplication_Foundation_NSUrl_Foundation_NSDictionary_
+  commentId: M:Sensus.iOS.AppDelegate.OpenUrl(UIKit.UIApplication,Foundation.NSUrl,Foundation.NSDictionary)
+  fullName: Sensus.iOS.AppDelegate.OpenUrl(UIKit.UIApplication, Foundation.NSUrl, Foundation.NSDictionary)
+  nameWithType: AppDelegate.OpenUrl(UIApplication, NSUrl, NSDictionary)
 - uid: Sensus.iOS.AppDelegate.OpenUrl*
   name: OpenUrl
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_OpenUrl_

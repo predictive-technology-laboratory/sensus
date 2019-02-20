@@ -86,3 +86,19 @@ survey agent that attempts to adapt to the user by increasing and decreasing the
 * You can implement your own agent implementations following the instructions above for Android and email 
 our team (uva.ptl@gmail.com) to include them in a future release.
 
+## Testing and Debugging
+
+Regardless of whether your survey agent targets Android or iOS, there are a few ways to test and debug it:
+
+* Write to the log file:  See the code for the example agents above. You will see calls that write to the log file. Use similar
+calls in your code to write information about the behavior of your agent to the log. Run your agent for a while in the app and
+then share the log file with yourself from within the app. Note that the size of the log file is limited, so you might not be 
+able to view the entire log history of your agent.
+
+* Flash notifications on the screen:  On Android, you can flash notifications on the screen as shown in the example code. These
+messages will appear for a short duration.
+
+* Run your agent in the debugger:  By far the most useful approach is to [configure a development system](xref:dev_config) and
+run Sensus in the debugger with your survey agent. You will need to add your agent code to the Sensus app projects in order to 
+step through it in the debugger.
+
