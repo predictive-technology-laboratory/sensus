@@ -64,7 +64,7 @@ namespace Sensus.UI
 
             copyIdButton.Clicked += async (o, e) =>
             {
-                CrossClipboard.Current.SetText(protocol.Id);
+                CrossClipboard.Current.SetText(_protocol.Id);
                 await SensusServiceHelper.Get().FlashNotificationAsync("Copied study identifier to clipboard.");
             };
 
@@ -75,6 +75,7 @@ namespace Sensus.UI
                 Text = "Set Study Identifier",
                 FontSize = 20,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
+                IsEnabled = _protocol.State == ProtocolState.Stopped
             };
 
             setIdButton.Clicked += async (o, e) =>
@@ -104,7 +105,7 @@ namespace Sensus.UI
                     }
                     else
                     {
-                        if (protocol.Id == newId)
+                        if (_protocol.Id == newId)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Identifier unchanged.");
                         }
@@ -114,7 +115,7 @@ namespace Sensus.UI
                         }
                         else
                         {
-                            protocol.Id = newId;
+                            _protocol.Id = newId;
                             await SensusServiceHelper.Get().FlashNotificationAsync("Identifier set.");
                         }
                     }
@@ -351,7 +352,12 @@ namespace Sensus.UI
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                 {
-                    editLocalDataStoreButton.IsEnabled = createLocalDataStoreButton.IsEnabled = editRemoteDataStoreButton.IsEnabled = createRemoteDataStoreButton.IsEnabled = state == ProtocolState.Stopped;
+                    setIdButton.IsEnabled =                  // don't let the user set the protocol id when the protocol is running. if an auth server is in use, the health test will attempt to replace the protocol because the id will not match that of the credentials
+                    editLocalDataStoreButton.IsEnabled =     // don't let the user edit data stores when the protocol is running
+                    createLocalDataStoreButton.IsEnabled =   // don't let the user edit data stores when the protocol is running
+                    editRemoteDataStoreButton.IsEnabled =    // don't let the user edit data stores when the protocol is running
+                    createRemoteDataStoreButton.IsEnabled =  // don't let the user edit data stores when the protocol is running
+                    state == ProtocolState.Stopped;
                 });
             };
 
