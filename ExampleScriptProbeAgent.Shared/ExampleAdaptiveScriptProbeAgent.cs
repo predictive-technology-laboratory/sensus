@@ -171,7 +171,6 @@ namespace ExampleScriptProbeAgent
             }
 
             _numDataObserved = 0;
-            _deliveryProbability = 0.5;
 
             _sensusServiceHelper?.Logger.Log("Agent has been initialized.", LoggingLevel.Normal, GetType());
         }
