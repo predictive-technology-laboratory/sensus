@@ -152,7 +152,7 @@ namespace Sensus.Callbacks
         /// <param name="actionAsync">Action to execute when callback time arrives.</param>
         /// <param name="delay">How long to delay callback execution.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
-        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
+        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another within the same domain, then it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
@@ -186,7 +186,7 @@ namespace Sensus.Callbacks
         /// <param name="initialDelay">How long to delay callback execution.</param>
         /// <param name="repeatDelay">How long to delay repeating callback executions following the first callback.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
-        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
+        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another in the same domain, then it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>

@@ -543,21 +543,22 @@ namespace Sensus.Probes.User.Scripts
 
                 // get future callbacks that need to be rescheduled. it can happen that the app crashes or is killed 
                 // and then resumes (e.g., on ios push notification), and it's important for the times of the scheduled 
-                // callbacks to be maintained. this is particularly important for runs that are very far out in the future. 
-                // if the app is restarted more often than the script is run, then the script will likely never be run.
+                // callbacks to be maintained. this is particularly important for scheduled times that are very far out 
+                // in the future. if the app is restarted more often than the script is run, then the script will likely 
+                // never be run.
                 foreach (Tuple<ScheduledCallback, ScriptTriggerTime> callbackTime in _scheduledCallbackTimes.ToList())
                 {
                     if (!SensusContext.Current.CallbackScheduler.ContainsCallback(callbackTime.Item1))
                     {
                         callbackTimesToReschedule.Add(callbackTime.Item2);
 
-                        // we're about to reschedule callback. remove the old one so we don't have duplicates.
+                        // we're about to reschedule the callback. remove the old one so we don't have duplicates.
                         _scheduledCallbackTimes.Remove(callbackTime);
                     }
                 }
             }
 
-            // reschedule as needed
+            // reschedule script runs as needed
             foreach (ScriptTriggerTime callbackTimeToReschedule in callbackTimesToReschedule)
             {
                 await ScheduleScriptRunAsync(callbackTimeToReschedule);
@@ -687,7 +688,7 @@ namespace Sensus.Probes.User.Scripts
                 // time to update the scheduled callbacks to run this script.
                 await ScheduleScriptRunsAsync();
 
-            }, triggerTime.TimeTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol, null, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
+            }, triggerTime.TimeTillTrigger, Script.Id + "-" + GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Probe.Protocol.Id, Probe.Protocol, null, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));  // use Script.Id rather than script.Id for the callback identifier. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 

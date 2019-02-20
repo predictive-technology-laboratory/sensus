@@ -752,33 +752,34 @@ namespace Sensus
 
                                     if (protocolToTest.Id != testCredentials.ProtocolId)
                                     {
-                                        // we're about to stop and delete the current protocol. don't bother testing it once we're done.
+                                        Logger.Log("Protocol identifier no longer matches that of credentials. Updating to new protocol.", LoggingLevel.Normal, GetType());
+
+                                        // if the current protocol is starting or running, then we'll start the new protocol.
+                                        bool startNewProtocol = protocolToTest.State == ProtocolState.Starting || protocolToTest.State == ProtocolState.Running;
+
+                                        // delete the current protocol (this first stops it). previously, we waited to stop/delete the current
+                                        // protocol until after we had started the new one; however, this is both confusing (the user was seeing
+                                        // two protocols listed) as well as error prone (the protocols may share identifiers like those on 
+                                        // scripts, which eventually make their way into callback IDs that might clash with those currently scheduled
+                                        // as a result -- see issue #736 on github).
+                                        await protocolToTest.DeleteAsync();
+
+                                        // we just stopped/deleted the current protocol. don't bother testing it.
                                         testCurrentProtocol = false;
 
-                                        Logger.Log("Protocol identifier no longer matches that of credentials. Downloading new protocol.", LoggingLevel.Normal, GetType());
-
                                         // download the desired protocol. as we're initiating the download without user interaction, do not explicitly
-                                        // offer to replace the existing protocol. in principle, this should not even happen, as the credentials indicate
-                                        // that the protocol in the authentication service has an identifier that is different than the the one on the
-                                        // protocol we are currently testing. however, things might just be misconfigured in the authentication service.
-                                        // so, if the identifier in the protocol that we download duplicates one on the current device, don't bother the
-                                        // user (as they did not initiate the action) and expect an exception to be thrown back.
+                                        // offer to replace the existing protocol. if the identifier in the protocol that we download duplicates one on 
+                                        // the current device, don't bother the user (as they did not initiate the action). an exception to be thrown.
                                         Protocol newProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), false, testCredentials);
 
                                         // wire up new protocol with the current authentication service
                                         newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
                                         newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
 
-                                        // if the old protocol is currently starting or running, then start the new protocol. do this before 
-                                        // stopping/deleting the old one, as we might fail to start the new protocol,  or the cancellation 
-                                        // token might expire -- in either case we must maintain continuous operation.
-                                        if (protocolToTest.State == ProtocolState.Starting || protocolToTest.State == ProtocolState.Running)
+                                        if (startNewProtocol)
                                         {
                                             await newProtocol.StartAsync(cancellationToken);
                                         }
-
-                                        // delete the old protocol (this first stops it)
-                                        await protocolToTest.DeleteAsync();
                                     }
                                 }
                                 catch (Exception ex)
