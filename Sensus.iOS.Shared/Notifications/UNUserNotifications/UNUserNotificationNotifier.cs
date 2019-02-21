@@ -51,6 +51,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
             info.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
+            info.SetValueForKey(NSNumber.FromBoolean(alertUser), new NSString(NOTIFICATION_ALERTING_KEY));
 
             UNMutableNotificationContent content = new UNMutableNotificationContent
             {
@@ -69,17 +70,25 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 content.Body = message;
             }
 
-            // protocol might be null when issuing the pending surveys notification.
-            if (alertUser && (protocol == null || !protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay)))
+            await IssueNotificationAsync(id, content, protocol, triggerDateTime, requestCreated);
+        }
+
+        public async Task IssueNotificationAsync(string id, UNMutableNotificationContent content, Protocol protocol, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
+        {
+            // if the notification is configured to alert users and the trigger time doesn't fall within 
+            // one of the protocol's alert exclusion windows, then set the sound.
+            bool notificationIsAlerting = (content.UserInfo.ValueForKey(new NSString(NOTIFICATION_ALERTING_KEY)) as NSNumber).BoolValue;
+            bool triggerIsWithinExclusionWindow = protocol?.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay) ?? false;
+
+            if (notificationIsAlerting && !triggerIsWithinExclusionWindow)
             {
                 content.Sound = UNNotificationSound.Default;
             }
+            else
+            {
+                content.Sound = null;
+            }
 
-            await IssueNotificationAsync(id, content, triggerDateTime, requestCreated);
-        }
-
-        public async Task IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
-        {
             UNCalendarNotificationTrigger trigger = null;
 
             // we're going to specify an absolute trigger date below. if this time is in the past by the time

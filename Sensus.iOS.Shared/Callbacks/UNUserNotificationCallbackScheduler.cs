@@ -79,7 +79,7 @@ namespace Sensus.iOS.Callbacks
 
         protected override async Task ReissueSilentNotificationAsync(string id)
         {
-            // the following needs to be done on the main thread since we're working with UILocalNotification objects.
+            // the following needs to be done on the main thread
             await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
@@ -121,7 +121,7 @@ namespace Sensus.iOS.Callbacks
                         // reissue the notification request using the next execution date on the callback. the following call will not return until
                         // the request has been created, ensuring that the request has been updated in _callbackIdRequest before the next caller 
                         // obtains the current lock.
-                        await (SensusContext.Current.Notifier as UNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.NextExecution.Value, newRequest =>
+                        await (SensusContext.Current.Notifier as UNUserNotificationNotifier).IssueNotificationAsync(request.Identifier, newContent, callback.Protocol, callback.NextExecution.Value, newRequest =>
                         {
                             lock (_callbackIdRequest)
                             {
