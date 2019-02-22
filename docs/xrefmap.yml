@@ -26193,6 +26193,12 @@ references:
   commentId: Overload:Sensus.iOS.Notifications.iOSNotifier.#ctor
   fullName: Sensus.iOS.Notifications.iOSNotifier.iOSNotifier
   nameWithType: iOSNotifier.iOSNotifier
+- uid: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ALERTING_KEY
+  name: NOTIFICATION_ALERTING_KEY
+  href: api/Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_NOTIFICATION_ALERTING_KEY
+  commentId: F:Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ALERTING_KEY
+  fullName: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ALERTING_KEY
+  nameWithType: iOSNotifier.NOTIFICATION_ALERTING_KEY
 - uid: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ID_KEY
   name: NOTIFICATION_ID_KEY
   href: api/Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_NOTIFICATION_ID_KEY
@@ -26313,15 +26319,15 @@ references:
   fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UserNotifications.UNNotificationRequest))
   nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
   nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
-- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNNotificationContent,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})
-  name: IssueNotificationAsync(String, UNNotificationContent, DateTime, Action<UNNotificationRequest>)
-  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_UserNotifications_UNNotificationContent_System_DateTime_System_Action_UserNotifications_UNNotificationRequest__
-  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNNotificationContent,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})
-  name.vb: IssueNotificationAsync(String, UNNotificationContent, DateTime, Action(Of UNNotificationRequest))
-  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, UserNotifications.UNNotificationContent, System.DateTime, System.Action<UserNotifications.UNNotificationRequest>)
-  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, UserNotifications.UNNotificationContent, System.DateTime, System.Action(Of UserNotifications.UNNotificationRequest))
-  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, UNNotificationContent, DateTime, Action<UNNotificationRequest>)
-  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, UNNotificationContent, DateTime, Action(Of UNNotificationRequest))
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNMutableNotificationContent,Sensus.Protocol,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})
+  name: IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action<UNNotificationRequest>)
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_UserNotifications_UNMutableNotificationContent_Sensus_Protocol_System_DateTime_System_Action_UserNotifications_UNNotificationRequest__
+  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNMutableNotificationContent,Sensus.Protocol,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})
+  name.vb: IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action(Of UNNotificationRequest))
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, UserNotifications.UNMutableNotificationContent, Sensus.Protocol, System.DateTime, System.Action<UserNotifications.UNNotificationRequest>)
+  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, UserNotifications.UNMutableNotificationContent, Sensus.Protocol, System.DateTime, System.Action(Of UserNotifications.UNNotificationRequest))
+  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action<UNNotificationRequest>)
+  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action(Of UNNotificationRequest))
 - uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(UserNotifications.UNNotificationRequest)
   name: IssueNotificationAsync(UNNotificationRequest)
   href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_UserNotifications_UNNotificationRequest_

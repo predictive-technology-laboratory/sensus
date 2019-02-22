@@ -32,31 +32,33 @@ using CoreLocation;
 namespace Sensus.Probes
 {
     /// <summary>
-    /// Polling Probes are triggered at regular intervals. When triggered, Polling Probes ask the device (and perhaps the user) for some type of 
-    /// information and store the resulting information in the <see cref="LocalDataStore"/>.
+    /// Polling Probes are triggered at regular intervals. When triggered, the <see cref="PollingProbe"/> asks the device (and perhaps the user) 
+    /// for some type of information and stores the resulting information in the <see cref="LocalDataStore"/>.
     /// 
     /// # Background Considerations
-    /// On Android, all Polling Probes are able to periodically wake up in the background, take a reading, and allow the system to go back to 
+    /// On Android, each <see cref="PollingProbe"/> is able to periodically wake up in the background, take a reading, and allow the system to go back to 
     /// sleep. The Android operating system will occasionally delay the wake-up signal in order to batch wake-ups and thereby conserve energy; however, 
-    /// this delay is usually only 5-10 seconds. So, if you configure a Polling Probe to poll every 60 seconds, you may see actual polling delays of 
-    /// 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.
+    /// this delay is usually only 5-10 seconds. So, if you configure a <see cref="PollingProbe"/> to poll every 60 seconds, you may see actual polling 
+    /// delays of 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.
     /// 
     /// Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
     /// with the following exceptions for <see cref="PollingProbe"/>s:
     /// 
-    ///   * Significant location change processing:  If SignificantChangePoll is enabled, the Polling Probe will wake up each time
+    ///   * Significant location change processing:  If SignificantChangePoll is enabled, the <see cref="PollingProbe"/> will wake up each time
     ///     the user's physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
     ///     order of several kilometers.
     /// 
-    ///   * Push notification processing:  If you [configure push notifications](xref:push_notifications), the Polling Probe will be woken up
+    ///   * Push notification processing:  If you [configure push notifications](xref:push_notifications), the <see cref="PollingProbe"/> will be woken up
     ///     at the desired time to take a reading. Note that the reliability of these timings is subject to push notification throttling imposed
     ///     by the Apple Push Notification Service. The value of <see cref="PollingSleepDurationMS"/> should be set conservatively for all probes,
-    ///     for example no lower than 15-20 minutes.
+    ///     for example no lower than 15-20 minutes. The push notification backend server will attempt to deliver push notifications slightly ahead of their
+    ///     scheduled times. If such a push notification arrives at the device before the scheduled time, then the local notification (if 
+    ///     AlertUserWhenBackgrounded is enabled) will be cancelled.
     /// 
-    /// Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support Polling 
-    /// Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 
-    /// user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, the user 
-    /// might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
+    /// Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support 
+    /// <see cref="PollingProbe"/>s on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This 
+    /// relies on the user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, 
+    /// the user might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
     /// </summary>
     public abstract class PollingProbe : Probe
     {
@@ -194,6 +196,18 @@ namespace Sensus.Probes
             get { return _significantChangePollOverridesScheduledPolls; }
             set { _significantChangePollOverridesScheduledPolls = value; }
         }
+
+        /// <summary>
+        /// Whether or not to alert the user with a notification when polling should occur and the
+        /// app is in the background. See the <see cref="PollingProbe"/> overview for information
+        /// about background considerations. The notifications issued when this setting is enabled
+        /// encourage the user to bring the app to the foreground so that data polling may occur.
+        /// Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+        /// become excessive for the user.
+        /// </summary>
+        /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Alert User When Backgrounded:", true, 11)]
+        public bool AlertUserWhenBackgrounded { get; set; } = true;
 #endif
 
         /// <summary>
@@ -201,7 +215,7 @@ namespace Sensus.Probes
         /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 11, true)]
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 12, true)]
         public int DelayToleranceBeforeMS { get; set; }
 
         /// <summary>
@@ -209,7 +223,7 @@ namespace Sensus.Probes
         /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 12, true)]
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 13, true)]
         public int DelayToleranceAfterMS { get; set; }
 
         public override string CollectionDescription
@@ -313,15 +327,14 @@ namespace Sensus.Probes
         {
             await base.ProtectedStartAsync();
 
+            string userNotificationMessage = null;
+
 #if __IOS__
-            string userNotificationMessage = DisplayName + " data requested.";
-#elif __ANDROID__
-            string userNotificationMessage = null;
-#elif LOCAL_TESTS
-            string userNotificationMessage = null;
-#else
-#warning "Unrecognized platform"
-            string userNotificationMessage = null;
+            // on ios, throw an alert at the user so they'll notice that polling is required.
+            if (AlertUserWhenBackgrounded)
+            {
+                userNotificationMessage = DisplayName + " data requested.";
+            }
 #endif
 
             // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
