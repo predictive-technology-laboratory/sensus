@@ -123,6 +123,12 @@ namespace Sensus.Callbacks
         /// <value>The delay tolerance total.</value>
         public TimeSpan DelayToleranceTotal => DelayToleranceBefore + DelayToleranceAfter;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> has been batched with another <see cref="ScheduledCallback"/>.
+        /// </summary>
+        /// <value><c>true</c> if batched; otherwise, <c>false</c>.</value>
+        public bool Batched { get; set; }
+
 #if __IOS__
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> is silent. Silent 

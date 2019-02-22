@@ -59,11 +59,15 @@ namespace Sensus.Callbacks
             }
             else if (_idCallback.TryAdd(callback.Id, callback))
             {
-                // assign an invocation identifier and update state
                 callback.InvocationId = Guid.NewGuid().ToString();
-                callback.State = ScheduledCallbackState.Scheduled;
 
                 BatchNextExecutionWithToleratedDelay(callback);
+
+                // the state needs to be updated after batching is performed, so that other callbacks don't
+                // attempt to batch with it, but before the invocations are requested, so that if the invocation
+                // comes back immediately (e.g., being scheduled in the past) the callback is scheduled and 
+                // ready to run.
+                callback.State = ScheduledCallbackState.Scheduled;
 
                 await RequestLocalInvocationAsync(callback);
 
@@ -84,28 +88,36 @@ namespace Sensus.Callbacks
         /// <param name="callback">Callback.</param>
         private void BatchNextExecutionWithToleratedDelay(ScheduledCallback callback)
         {
+            callback.Batched = false;
+
             // if delay tolerance is allowed, look for other scheduled callbacks in range of the delay tolerance.
             if (callback.DelayToleranceTotal.Ticks > 0)
             {
                 DateTime rangeStart = callback.NextExecution.Value - callback.DelayToleranceBefore;
                 DateTime rangeEnd = callback.NextExecution.Value + callback.DelayToleranceAfter;
 
-                ScheduledCallback closestCallbackInRange = _idCallback.Values.Where(existingCallback => existingCallback != callback &&                        // the current callback will already have been added to the collection. don't consider it.
-                                                                                                        existingCallback.NextExecution.Value >= rangeStart &&  // consider callbacks within range of the current
-                                                                                                        existingCallback.NextExecution.Value <= rangeEnd)      // consider callbacks within range of the current
+                ScheduledCallback closestCallbackInRange = _idCallback.Values.Where(existingCallback => existingCallback != callback &&                              // the current callback will already have been added to the collection. don't consider it.
+                                                                                                        existingCallback.NextExecution.Value >= rangeStart &&        // consider callbacks within range of the current
+                                                                                                        existingCallback.NextExecution.Value <= rangeEnd &&          // consider callbacks within range of the current
+                                                                                                        !existingCallback.Batched &&                                 // don't consider batching with other callbacks that are themselves batched, as this can potentially create batch cycling if the delay tolerance values are large.
+                                                                                                        existingCallback.State == ScheduledCallbackState.Scheduled)  // consider callbacks that are already scheduled. we don't want to batch with callbacks that are, e.g., running or recently completed.
 
-                                                                             .OrderBy(existingCallback => Math.Abs(callback.NextExecution.Value.Ticks - existingCallback.NextExecution.Value.Ticks))  // get existing callback with execution time closest to the current callback's time
-                                                                             .FirstOrDefault();  // there might not be a callback within range
+                                                                             // get existing callback with execution time closest to the current callback's time
+                                                                             .OrderBy(existingCallback => Math.Abs(callback.NextExecution.Value.Ticks - existingCallback.NextExecution.Value.Ticks))
+
+                                                                             // there might not be a callback within range
+                                                                             .FirstOrDefault();
                 // use the closest if there is one in range
                 if (closestCallbackInRange != null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Batching callback " + callback.Id + ":" + Environment.NewLine +
-                                                         "\tCurrent time:  " + callback.NextExecution + Environment.NewLine + 
-                                                         "\tRange:  " + rangeStart + " -- " + rangeEnd + Environment.NewLine + 
-                                                         "\tNearest:  " + closestCallbackInRange.Id + Environment.NewLine + 
+                                                         "\tCurrent time:  " + callback.NextExecution + Environment.NewLine +
+                                                         "\tRange:  " + rangeStart + " -- " + rangeEnd + Environment.NewLine +
+                                                         "\tNearest:  " + closestCallbackInRange.Id + Environment.NewLine +
                                                          "\tNew time:  " + closestCallbackInRange.NextExecution, LoggingLevel.Normal, GetType());
 
                     callback.NextExecution = closestCallbackInRange.NextExecution;
+                    callback.Batched = true;
                 }
             }
         }
@@ -271,9 +283,14 @@ namespace Sensus.Callbacks
                             {
                                 callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
                                 callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
-                                callback.State = ScheduledCallbackState.Scheduled;
 
                                 BatchNextExecutionWithToleratedDelay(callback);
+
+                                // the state needs to be updated after batching is performed, so that other callbacks don't
+                                // attempt to batch with it, but before the invocations are requested, so that if the invocation
+                                // comes back immediately (e.g., being scheduled in the past) the callback is scheduled and 
+                                // ready to run.
+                                callback.State = ScheduledCallbackState.Scheduled;
 
                                 await RequestLocalInvocationAsync(callback);
 
