@@ -246,7 +246,7 @@ namespace Sensus.DataStores.Remote
             userNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
+            _writeCallback = new ScheduledCallback(cancellationToken => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver

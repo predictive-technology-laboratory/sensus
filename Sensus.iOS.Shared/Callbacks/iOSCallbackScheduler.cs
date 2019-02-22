@@ -145,9 +145,8 @@ namespace Sensus.iOS.Callbacks
             });
 
             // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
-            // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
-            // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-            await RaiseCallbackAsync(callback, invocationId, false, null, null);
+            // furthermore, there's nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
+            await RaiseCallbackAsync(callback, invocationId, false);
 
             // end the background task
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>

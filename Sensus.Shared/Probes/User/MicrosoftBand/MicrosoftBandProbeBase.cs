@@ -177,7 +177,7 @@ namespace Sensus.Probes.User.MicrosoftBand
             }
         }
 
-        public static async Task TestBandClientAsync(string callbackId, CancellationToken cancellationToken, Action letDeviceSleepCallback)
+        public static async Task TestBandClientAsync(CancellationToken cancellationToken)
         {
             // if no band probes should be running, then ignore the current test and unschedule the test callback.
             if (BandProbesThatShouldBeRunning.Count == 0)

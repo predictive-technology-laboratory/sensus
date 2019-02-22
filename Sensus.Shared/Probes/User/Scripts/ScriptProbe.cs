@@ -258,7 +258,7 @@ namespace Sensus.Probes.User.Scripts
             // if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
             if (Agent?.DeliveryInterval != null)
             {
-                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async (id, cancellationToken, letDeviceSleepCallback) =>
+                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async cancellationToken =>
                 {
                     foreach (ScriptRunner scriptRunner in _scriptRunners)
                     {

@@ -70,11 +70,6 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 content.Body = message;
             }
 
-            await IssueNotificationAsync(id, content, protocol, triggerDateTime, requestCreated);
-        }
-
-        public async Task IssueNotificationAsync(string id, UNMutableNotificationContent content, Protocol protocol, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
-        {
             // if the notification is configured to alert users and the trigger time doesn't fall within 
             // one of the protocol's alert exclusion windows, then set the sound.
             bool notificationIsAlerting = (content.UserInfo.ValueForKey(new NSString(NOTIFICATION_ALERTING_KEY)) as NSNumber).BoolValue;
@@ -114,6 +109,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
             requestCreated?.Invoke(notificationRequest);
+
             await IssueNotificationAsync(notificationRequest);
         }
 

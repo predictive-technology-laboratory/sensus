@@ -31,7 +31,7 @@ namespace Sensus.Android.Callbacks
             _service = service;
         }
 
-        protected override Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)
+        protected override Task RequestLocalInvocationAsync(ScheduledCallback callback)
         {
             Intent callbackIntent = CreateCallbackIntent(callback);
             PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
@@ -129,46 +129,17 @@ namespace Sensus.Android.Callbacks
             // if the callback is present, it's fine. if it's not, then unschedule it.
             if (ContainsCallback(callback))
             {
-                bool wakeLockReleased = false;
-
                 string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
 
                 // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                await RaiseCallbackAsync(callback, invocationId, true,
-
-                    // schedule a new alarm for the same callback at the desired time.
-                    () =>
-                    {
-                        // update the intent with the new invocation ID.
-                        intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
-
-                        // reschedule the alarm. the alarm date will already have been set on the callback.
-                        ScheduleCallbackAlarm(callback, CreateCallbackPendingIntent(intent));
-
-                        return Task.CompletedTask;
-                    },
-
-                    // if the callback indicates that it's okay for the device to sleep, release the wake lock now.
-                    () =>
-                    {
-                        wakeLockReleased = true;
-                        serviceHelper.LetDeviceSleep();
-                        serviceHelper.Logger.Log("Wake lock released preemptively for scheduled callback action.", LoggingLevel.Normal, GetType());
-                    }
-                );
-
-                // release wake lock now if we didn't while the callback action was executing.
-                if (!wakeLockReleased)
-                {
-                    serviceHelper.LetDeviceSleep();
-                    serviceHelper.Logger.Log("Wake lock released after scheduled callback action completed.", LoggingLevel.Normal, GetType());
-                }
+                await RaiseCallbackAsync(callback, invocationId, true);
             }
             else
             {
                 await UnscheduleCallbackAsync(callback);
-                serviceHelper.LetDeviceSleep();
             }
+
+            serviceHelper.LetDeviceSleep();
         }
 
         public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
@@ -190,7 +161,7 @@ namespace Sensus.Android.Callbacks
             await ServiceCallbackAsync(intent);
         }
 
-        protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)
+        protected override void CancelLocalInvocation(ScheduledCallback callback)
         {
             // we don't need a reference to the original pending intent in order to cancel the alarm. we just need a pending intent
             // with the same request code and underlying intent with the same action. extras are not considered, and we don't use

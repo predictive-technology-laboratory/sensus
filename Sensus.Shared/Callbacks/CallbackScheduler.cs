@@ -41,8 +41,8 @@ namespace Sensus.Callbacks
             _idCallback = new ConcurrentDictionary<string, ScheduledCallback>();
         }
 
-        protected abstract Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback);
-        protected abstract void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback);
+        protected abstract Task RequestLocalInvocationAsync(ScheduledCallback callback);
+        protected abstract void CancelLocalInvocation(ScheduledCallback callback);
 
         public async Task<ScheduledCallbackState> ScheduleCallbackAsync(ScheduledCallback callback)
         {
@@ -63,14 +63,11 @@ namespace Sensus.Callbacks
                 callback.InvocationId = Guid.NewGuid().ToString();
                 callback.State = ScheduledCallbackState.Scheduled;
 
-                // batch next execution if possible
                 BatchNextExecutionWithToleratedDelay(callback);
 
-                // schedule callback locally per the current platform
-                await ScheduleCallbackPlatformSpecificAsync(callback);
+                await RequestLocalInvocationAsync(callback);
 
-                // request a push notification for the callback (adds redundancy) 
-                await RequestPushNotificationAsync(callback);
+                await RequestRemoteInvocationAsync(callback);
             }
             else
             {
@@ -173,15 +170,14 @@ namespace Sensus.Callbacks
         public abstract Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId);
 
         /// <summary>
-        /// Raises a callback.
+        /// Raises a callback. This involves initiating the callback, setting up cancellation timing for the callback's actions, and scheduling the next
+        /// invocation of the callback in the case of repeating callbacks.
         /// </summary>
         /// <returns>Async task</returns>
         /// <param name="callback">Callback to raise.</param>
         /// <param name="invocationId">Identifier of invocation.</param>
         /// <param name="notifyUser">If set to <c>true</c>, then notify user that the callback is being raised.</param>
-        /// <param name="scheduleRepeatCallbackAsync">Platform-specific action to execute to schedule the next execution of the callback.</param>
-        /// <param name="letDeviceSleepCallback">Action to execute when the system should be allowed to sleep.</param>
-        public virtual async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Func<Task> scheduleRepeatCallbackAsync, Action letDeviceSleepCallback)
+        public virtual async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser)
         {
             try
             {
@@ -237,7 +233,7 @@ namespace Sensus.Callbacks
                                 callback.Canceller.CancelAfter(callback.Timeout.Value);
                             }
 
-                            await callback.ActionAsync(callback.Id, callback.Canceller.Token, letDeviceSleepCallback);
+                            await callback.ActionAsync(callback.Canceller.Token);
                         }
                     }
                     catch (Exception raiseException)
@@ -271,8 +267,7 @@ namespace Sensus.Callbacks
                             // schedule callback again if it is still scheduled with a valid repeat delay
                             if (ContainsCallback(callback) &&
                                 callback.RepeatDelay.HasValue &&
-                                callback.RepeatDelay.Value.Ticks > 0 &&
-                                scheduleRepeatCallbackAsync != null)
+                                callback.RepeatDelay.Value.Ticks > 0)
                             {
                                 callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
                                 callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
@@ -280,15 +275,9 @@ namespace Sensus.Callbacks
 
                                 BatchNextExecutionWithToleratedDelay(callback);
 
-                                // schedule callback locally
-                                await scheduleRepeatCallbackAsync();
+                                await RequestLocalInvocationAsync(callback);
 
-                                // request a push notification for the callback, to be delivered in parallel with the local notification.
-                                // only one of these will be allowed to run based on the invocation id and locking code above. there is
-                                // perhaps an argument to make for deleting the previously requested push notification and thereby preventing
-                                // push notifications from building up in the backend. however, our primary objective should be minimizing 
-                                // the amount of network I/O from the app to S3. the backend will handle filtering out stale invocation IDs.
-                                await RequestPushNotificationAsync(callback);
+                                await RequestRemoteInvocationAsync(callback);
                             }
                             else
                             {
@@ -308,10 +297,16 @@ namespace Sensus.Callbacks
             }
         }
 
-        private async Task RequestPushNotificationAsync(ScheduledCallback callback)
+        /// <summary>
+        /// Requests remote invocation for a <see cref="ScheduledCallback"/>, to be delivered in parallel with the 
+        /// local invocation loop (e.g., via the Android alarm manager and iOS local notification center). Only one of
+        /// these (the remote or local) will ultimately be allowed to run -- whichever arrives first.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="callback">Callback.</param>
+        private async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
         {
-            // push notification requests for scheduled callbacks do not make sense on android, as the callback will reliably 
-            // come back to the app through the alarm system.
+            // remote invocation only makes sense for ios at this time. local invocation is sufficient for android.
 #if __IOS__
             await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
 #else
@@ -396,7 +391,7 @@ namespace Sensus.Callbacks
                 _idCallback.TryRemove(callback.Id, out ScheduledCallback removedCallback);
 
                 // tell the current platform cancel its hook into the system's callback system
-                UnscheduleCallbackPlatformSpecific(callback);
+                CancelLocalInvocation(callback);
 
                 // delete the push notification
                 await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);

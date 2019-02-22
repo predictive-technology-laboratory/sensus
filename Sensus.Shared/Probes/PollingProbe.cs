@@ -290,7 +290,7 @@ namespace Sensus.Probes
                         pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                     }   
 
-                    await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +313,7 @@ namespace Sensus.Probes
                             pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                         }
 
-                        await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                        await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                     }
                 }
                 catch (Exception ex)
@@ -350,7 +350,7 @@ namespace Sensus.Probes
             //
             // given the above, we now use an initial delay equal to the standard delay. the only cost is a single lost
             // reading at the very beginning.
-            _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _pollCallback = new ScheduledCallback(async cancellationToken =>
             {
                 if (Running)
                 {

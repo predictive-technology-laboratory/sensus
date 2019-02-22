@@ -666,9 +666,9 @@ namespace Sensus.Probes.User.Scripts
                 scriptToRun.Id = scriptId;
             }
 
-            ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback callback = new ScheduledCallback(async cancellationToken =>
             {
-                SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Running script \"" + Name + "\".", LoggingLevel.Normal, GetType());
 
                 if (!Probe.Running || !_enabled)
                 {
@@ -676,11 +676,6 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 await RunAsync(scriptToRun);
-
-                lock (_scheduledCallbackTimes)
-                {
-                    _scheduledCallbackTimes.RemoveAll(scriptRunCallbackTime => scriptRunCallbackTime.Item1.Id == callbackId);
-                }
 
                 // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
                 // delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened

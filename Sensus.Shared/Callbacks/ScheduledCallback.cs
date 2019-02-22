@@ -28,11 +28,9 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Delegate for scheduled callback actions.
         /// </summary>
-        /// <param name="id">Identifier of the callback.</param>
         /// <param name="cancellationToken">Cancellation token for action.</param>
-        /// <param name="letDeviceSleepCallback">Action to call if the system should be allowed to sleep prior to completion of the action. Can be null.</param>
         /// <returns>A task that can be awaited while the action completes.</returns>
-        public delegate Task ActionAsyncDelegate(string id, CancellationToken cancellationToken, Action letDeviceSleepCallback);
+        public delegate Task ActionAsyncDelegate(CancellationToken cancellationToken);
 
         /// <summary>
         /// Action to execute.

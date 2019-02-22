@@ -1978,7 +1978,7 @@ namespace Sensus
         {
             TimeSpan timeUntilStart = _startTimestamp - DateTime.Now;
 
-            _scheduledStartCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStartCallback = new ScheduledCallback(async cancellationToken =>
             {
                 await PrivateStartAsync(cancellationToken);
                 _scheduledStartCallback = null;
@@ -2019,7 +2019,7 @@ namespace Sensus
         {
             TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
 
-            _scheduledStopCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStopCallback = new ScheduledCallback(async cancellationToken =>
             {
                 await StopAsync();
                 _scheduledStopCallback = null;
