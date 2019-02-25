@@ -1,73 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-     <key>CFBundleDocumentTypes</key>
-    <array>
-      <dict>
-        <key>CFBundleTypeName</key>
-        <string>CFBundleTypeName</string>
-        <key>LSItemContentTypes</key>
-        <array>
-          <string>edu.virginia.sie.ptl.sensus.protocol</string>
-        </array>
-      </dict>
-    </array>
-    <key>UTExportedTypeDeclarations</key>
-    <array>
-      <dict>
-        <key>UTTypeDescription</key>
-        <string>Sensus Protocol</string>
-        <key>UTTypeIdentifier</key>
-        <string>edu.virginia.sie.ptl.sensus.protocol</string>
-        <key>UTTypeTagSpecification</key>
-        <dict>
-          <key>public.filename-extension</key>
-          <string>json</string>
-          <key>public.mime-type</key>
-          <string>application/json</string>
-        </dict>
-        <key>UTTypeConformsTo</key>
-        <array>
-          <string>public.data</string>
-        </array>
-      </dict>
-    </array>
-    <key>XSAppIconAssets</key>
-    <string>Resources/Images.xcassets/AppIcons.appiconset</string>
-    <key>UIBackgroundModes</key>
-    <array>
-      <string>location</string>
-      <string>bluetooth-central</string>
-      <string>bluetooth-peripheral</string>
-      <string>remote-notification</string>
-    </array>
-    <key>CFBundleName</key>
-    <string>Sensus</string>
-    <key>NSCalendarsUsageDescription</key>
-    <string>Sensus collects calendar information for studies you enroll in.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Sensus collects photos for studies you enroll in.</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
-    <key>NSHealthShareUsageDescription</key>
-    <string>Sensus uses HealthKit to collect information for studies you enroll in.</string>
-    <key>NSHealthUpdateUsageDescription</key>
-    <string>Sensus does not share health information with other apps.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.</string>
-    <key>NSLocationUsageDescription</key>
-    <string>Sensus uses GPS to collect location information for studies you enroll in.</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Sensus uses GPS to collect location information for studies you enroll in.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Sensus uses GPS to collect location information for studies you enroll in.</string>
-    <key>NSMotionUsageDescription</key>
-    <string>Sensus uses movement sensors to collect information for studies you enroll in.</string>
-    <key>NSCameraUsageDescription</key>
-    <string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
-    <key>CFBundleShortVersionString</key>
-    <string>15.14.0</string>
-    <key>CFBundleVersion</key>
-    <string>1.1.1</string>
-  </dict>
+<dict>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>CFBundleDisplayName</key>
+	<string>Sensus</string>
+	<key>CFBundleIdentifier</key>
+	<string>edu.virginia.sie.ptl.sensus</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>MinimumOSVersion</key>
+	<string>10.0</string>
+	<key>UIDeviceFamily</key>
+	<array>
+		<integer>1</integer>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainNibFile</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Sensus uses GPS to collect location information for studies you enroll in.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb873948892650954</string>
+			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>edu.virginia.sie.ptl.sensuss</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>sensuss</string>
+			</array>
+			<key>CFBundleURLTypes</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>CFBundleTypeName</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>edu.virginia.sie.ptl.sensus.protocol</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>Sensus Protocol</string>
+			<key>UTTypeIdentifier</key>
+			<string>edu.virginia.sie.ptl.sensus.protocol</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>json</string>
+				<key>public.mime-type</key>
+				<string>application/json</string>
+			</dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+		</dict>
+	</array>
+	<key>XSAppIconAssets</key>
+	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+		<string>remote-notification</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>Sensus</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Sensus collects calendar information for studies you enroll in.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Sensus collects photos for studies you enroll in.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Sensus uses HealthKit to collect information for studies you enroll in.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Sensus does not share health information with other apps.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Sensus uses GPS to collect location information for studies you enroll in.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sensus uses GPS to collect location information for studies you enroll in.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Sensus uses GPS to collect location information for studies you enroll in.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Sensus uses movement sensors to collect information for studies you enroll in.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
+	<key>CFBundleShortVersionString</key>
+	<string>15.14.0</string>
+	<key>CFBundleVersion</key>
+	<string>1.1.1</string>
+</dict>
 </plist>
