@@ -174,33 +174,34 @@ namespace Sensus.Android
 
                 Task.Run(async () =>
                 {
-                    // the service can be stopped without destroying the service object. in such cases, 
-                    // subsequent calls to start the service will not call OnCreate. therefore, it's 
-                    // important that any code called here is okay to call multiple times, even if the 
-                    // service is running. calling this when the service is running can happen because 
-                    // sensus receives a signal on device boot and for any callback alarms that are 
-                    // requested. furthermore, all calls here should be nonblocking / async so we don't 
-                    // tie up the UI thread.
-                    await serviceHelper.StartAsync();
+                    try
+                    {
+                        // the service can be stopped without destroying the service object. in such cases, 
+                        // subsequent calls to start the service will not call OnCreate. therefore, it's 
+                        // important that any code called here is okay to call multiple times, even if the 
+                        // service is running. calling this when the service is running can happen because 
+                        // sensus receives a signal on device boot and for any callback alarms that are 
+                        // requested. furthermore, all calls here should be nonblocking / async so we don't 
+                        // tie up the UI thread.
+                        await serviceHelper.StartAsync();
 
-                    if (intent == null)
+                        if (intent != null)
+                        {
+                            AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
+
+                            if (callbackScheduler.IsCallback(intent))
+                            {
+                                await callbackScheduler.ServiceCallbackAsync(intent);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        serviceHelper.Logger.Log("Exception while responding to on-start command:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                    finally
                     {
                         serviceHelper.LetDeviceSleep();
-                    }
-                    else
-                    {
-                        AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
-
-                        // is this a callback intent?
-                        if (callbackScheduler.IsCallback(intent))
-                        {
-                            // service the callback -- the matching LetDeviceSleep will be called therein
-                            await callbackScheduler.ServiceCallbackAsync(intent);
-                        }
-                        else
-                        {
-                            serviceHelper.LetDeviceSleep();
-                        }
                     }
                 });
             }

@@ -18,6 +18,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
+#if __ANDROID__
+using Sensus.Android;
+#endif
+
 namespace Sensus.Probes
 {
     /// <summary>
@@ -37,7 +41,10 @@ namespace Sensus.Probes
     {
         private double? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
+
+#if __ANDROID__
         private bool _deviceAwake;
+#endif
 
         /// <summary>
         /// The maximum number of readings that may be stored in one second.
@@ -251,17 +258,24 @@ namespace Sensus.Probes
         {
             _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
+
+#if __ANDROID__
             _deviceAwake = false;
+#endif
+
         }
 
         protected sealed override async Task ProtectedStartAsync()
         {
+
+#if __ANDROID__
             // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
             if (!Running && _keepDeviceAwake)
             {
-                SensusServiceHelper.Get().KeepDeviceAwake();
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).KeepDeviceAwake();
                 _deviceAwake = true;
             }
+#endif
 
             await base.ProtectedStartAsync();
 
@@ -276,11 +290,14 @@ namespace Sensus.Probes
 
             await StopListeningAsync();
 
+#if __ANDROID__
             if (_deviceAwake)
             {
-                SensusServiceHelper.Get().LetDeviceSleep();
+                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).LetDeviceSleep();
                 _deviceAwake = false;
             }
+#endif
+
         }
 
         protected abstract Task StopListeningAsync();
@@ -289,7 +306,10 @@ namespace Sensus.Probes
         {
             await base.ResetAsync();
 
+#if __ANDROID__
             _deviceAwake = false;
+#endif
+
         }
     }
 }

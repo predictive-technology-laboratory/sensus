@@ -114,16 +114,6 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void KeepDeviceAwake()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void LetDeviceSleep()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             throw new NotImplementedException();

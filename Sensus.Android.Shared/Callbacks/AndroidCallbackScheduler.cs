@@ -138,8 +138,6 @@ namespace Sensus.Android.Callbacks
             {
                 await UnscheduleCallbackAsync(callback);
             }
-
-            serviceHelper.LetDeviceSleep();
         }
 
         public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
