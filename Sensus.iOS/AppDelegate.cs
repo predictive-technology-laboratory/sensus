@@ -34,6 +34,7 @@ using Sensus.Encryption;
 using System.Threading;
 using System.Threading.Tasks;
 using Sensus.iOS.Notifications;
+using Facebook.CoreKit;
 
 namespace Sensus.iOS
 {
