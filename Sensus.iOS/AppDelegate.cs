@@ -107,7 +107,50 @@ namespace Sensus.iOS
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
 
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            System.Threading.Tasks.Task.Run(async () =>
 
+            {
+                if (url != null)
+                {
+                    if (url.PathExtension == "json")
+                    {
+                        Protocol protocol = null;
+
+                        if (url.Scheme == "sensuss")
+                        {
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(new Uri("https://" + url.AbsoluteString.Substring(url.AbsoluteString.IndexOf('/') + 2).Trim()));
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from HTTPS URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+                            }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                protocol = await Protocol.DeserializeAsync(File.ReadAllBytes(url.Path));
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Failed to get Sensus study from file URL \"" + url.AbsoluteString + "\":  " + ex.Message, LoggingLevel.Verbose, GetType());
+
+                            }
+                        }
+
+                        await Protocol.DisplayAndStartAsync(protocol);
+
+                    }
+                }
+            });
+
+            // We need to handle URLs by passing them to their own OpenUrl in order to make the Facebook SSO authentication works. 
+            return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
+        }
 
         public override async void OnActivated(UIApplication uiApplication)
         {

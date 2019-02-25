@@ -328,7 +328,6 @@
     <Compile Include="Tests\Extensions\DateTimeExtensionsTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="packages.config" />
     <None Include="..\Sensus.Android\Properties\AndroidManifest.xml">

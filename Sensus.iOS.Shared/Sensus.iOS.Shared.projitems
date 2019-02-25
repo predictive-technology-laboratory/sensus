@@ -54,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Probes\Apps\" />
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\UILocalNotifications\" />
