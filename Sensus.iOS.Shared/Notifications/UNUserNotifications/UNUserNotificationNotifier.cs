@@ -37,7 +37,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user. furthermore, it appears that notifications must have content in order to come back.
-            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
+            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
         }
 
         public async Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
@@ -70,11 +70,6 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 content.Body = message;
             }
 
-            await IssueNotificationAsync(id, content, protocol, triggerDateTime, requestCreated);
-        }
-
-        public async Task IssueNotificationAsync(string id, UNMutableNotificationContent content, Protocol protocol, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
-        {
             // if the notification is configured to alert users and the trigger time doesn't fall within 
             // one of the protocol's alert exclusion windows, then set the sound.
             bool notificationIsAlerting = (content.UserInfo.ValueForKey(new NSString(NOTIFICATION_ALERTING_KEY)) as NSNumber).BoolValue;
@@ -114,6 +109,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
             requestCreated?.Invoke(notificationRequest);
+
             await IssueNotificationAsync(notificationRequest);
         }
 

@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Sensus.Concurrent;
-using Sensus.Extensions;
 using Sensus.UI.UiProperties;
 using Sensus.Context;
 using Sensus.Callbacks;
@@ -223,10 +222,12 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Public property for serialization only. Do not reference due to concurrency issues.
+        /// Property for serialization only. Do not reference due to concurrency issues. Instead, reference
+        /// the field <see cref="_scheduledCallbackTimes"/> within a lock statement.
         /// </summary>
         /// <value>The scheduled callbacks.</value>
-        public List<Tuple<ScheduledCallback, ScriptTriggerTime>> ScheduledCallbackTimes
+        [JsonProperty]
+        private List<Tuple<ScheduledCallback, ScriptTriggerTime>> ScheduledCallbackTimes
         {
             get
             {
@@ -329,11 +330,11 @@ namespace Sensus.Probes.User.Scripts
         public bool UseTriggerDatumTimestampInSubcaption { get; set; }
 
         /// <summary>
-        /// Whether or not to force a local-to-remote transfer to run each time this survey is completed
+        /// Whether or not to force a local-to-remote transfer to run each time this survey is submitted
         /// by the user.
         /// </summary>
-        /// <value><c>true</c> to force transfer on survey submission; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Force Remote Storage On Survey Submission:", true, 18)]
+        /// <value><c>true</c> to force transfer on submission; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Force Remote Storage On Submission:", true, 18)]
         public bool ForceRemoteStorageOnSurveySubmission { get; set; }
 
         /// <summary>
@@ -538,7 +539,9 @@ namespace Sensus.Probes.User.Scripts
             List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
             lock (_scheduledCallbackTimes)
             {
-                // remove any callbacks whose times have passed
+                // remove any callbacks whose times have passed. be sure to use the callback's next execution time, as this may differ
+                // from the script trigger time when callback batching is enabled. for example, if the callback permit delay tolerance
+                // prior to the trigger time, then the scheduled callback next execution time may precede the trigger time. 
                 _scheduledCallbackTimes.RemoveAll(scriptRunCallback => scriptRunCallback.Item1.NextExecution.GetValueOrDefault(DateTime.MinValue) < DateTime.Now);
 
                 // get future callbacks that need to be rescheduled. it can happen that the app crashes or is killed 
@@ -550,6 +553,8 @@ namespace Sensus.Probes.User.Scripts
                 {
                     if (!SensusContext.Current.CallbackScheduler.ContainsCallback(callbackTime.Item1))
                     {
+                        // it's correct to reference the trigger time rather than the callback time, as the former
+                        // is what should be used in callback batching.
                         callbackTimesToReschedule.Add(callbackTime.Item2);
 
                         // we're about to reschedule the callback. remove the old one so we don't have duplicates.
@@ -666,9 +671,9 @@ namespace Sensus.Probes.User.Scripts
                 scriptToRun.Id = scriptId;
             }
 
-            ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            ScheduledCallback callback = new ScheduledCallback(async cancellationToken =>
             {
-                SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log("Running script \"" + Name + "\".", LoggingLevel.Normal, GetType());
 
                 if (!Probe.Running || !_enabled)
                 {
@@ -676,11 +681,6 @@ namespace Sensus.Probes.User.Scripts
                 }
 
                 await RunAsync(scriptToRun);
-
-                lock (_scheduledCallbackTimes)
-                {
-                    _scheduledCallbackTimes.RemoveAll(scriptRunCallbackTime => scriptRunCallbackTime.Item1.Id == callbackId);
-                }
 
                 // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
                 // delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened

@@ -51,6 +51,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8
 		DocFX\articles\local-only-storage.md = DocFX\articles\local-only-storage.md
 		DocFX\articles\adaptive-surveys.md = DocFX\articles\adaptive-surveys.md
 		DocFX\articles\authentication-servers.md = DocFX\articles\authentication-servers.md
+		DocFX\articles\device-os-app.md = DocFX\articles\device-os-app.md
+		DocFX\articles\burden-tuning.md = DocFX\articles\burden-tuning.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"

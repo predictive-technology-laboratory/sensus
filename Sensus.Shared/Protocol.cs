@@ -49,12 +49,12 @@ using Sensus.Authentication;
 using Sensus.UI;
 using Sensus.Exceptions;
 using Sensus.Extensions;
+using Plugin.Geolocator.Abstractions;
 
 #if __IOS__
 using HealthKit;
 using Foundation;
 using Sensus.iOS.Probes.User.Health;
-using Plugin.Geolocator.Abstractions;
 #endif
 
 #if __ANDROID__
@@ -65,11 +65,9 @@ using Microsoft.AppCenter.Analytics;
 namespace Sensus
 {
     /// <summary>
-    /// 
-    /// A Protocol defines a plan for collecting (via <see cref="Probe"/>s), anonymizing (via <see cref="Anonymization.Anonymizers.Anonymizer"/>s), and 
+    /// A <see cref="Protocol"/> defines a plan for collecting (via <see cref="Probe"/>s), anonymizing (via <see cref="Anonymization.Anonymizers.Anonymizer"/>s), and 
     /// storing (via <see cref="LocalDataStore"/>s and <see cref="RemoteDataStore"/>s) data from a device. Study organizers use Sensus to configure the 
-    /// study's Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.
-    /// 
+    /// study's <see cref="Protocol"/>. Study participants use Sensus to load a <see cref="Protocol"/> and enroll in the study. All of this happens within the Sensus app.
     /// </summary>
     public class Protocol : INotifyPropertyChanged, IProtocol
     {
@@ -78,6 +76,8 @@ namespace Sensus
         public const int GPS_DEFAULT_ACCURACY_METERS = 25;
         public const int GPS_DEFAULT_MIN_TIME_DELAY_MS = 5000;
         public const int GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS = 50;
+        public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500;
+        public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5;
         public const string MANAGED_URL_STRING = "managed";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
@@ -518,6 +518,8 @@ namespace Sensus
         private float _gpsDesiredAccuracyMeters;
         private int _gpsMinTimeDelayMS;
         private float _gpsMinDistanceDelayMeters;
+        private float _gpsDeferralDistanceMeters;
+        private float _gpsDeferralTimeMinutes;
         private Dictionary<string, string> _variableValue;
         private ProtocolStartConfirmationMode _startConfirmationMode;
         private string _participantId;
@@ -1092,22 +1094,41 @@ namespace Sensus
 
         #region iOS-specific protocol properties
 
-#if __IOS__
-        [OnOffUiProperty("GPS - Pause Location Updates:", true, 30)]
+        /// <summary>
+        /// Available on iOS only. Whether or not to pause location updates when movement is unlikely.
+        /// </summary>
+        /// <value><c>true</c> if gps pause location updates automatically; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("(iOS) GPS - Pause Location Updates:", true, 31)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 31, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation }, false)]
+        /// <summary>
+        /// Available on iOS only. The types of activities that should be considered for pausing activities, if
+        /// <see cref="GpsPauseLocationUpdatesAutomatically"/> is enabled.
+        /// </summary>
+        /// <value>The type of the gps pause activity.</value>
+        [ListUiProperty("(iOS) GPS - Pause Activity Type:", true, 32, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation }, false)]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
-        [OnOffUiProperty("GPS - Significant Changes:", true, 32)]
+        /// <summary>
+        /// Available on iOS only. Whether or not to use significant changes in location (e.g., moving between
+        /// cellular towers) in place of GPS.
+        /// </summary>
+        /// <value><c>true</c> if gps listen for significant changes; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("(iOS) GPS - Significant Changes:", true, 33)]
         public bool GpsListenForSignificantChanges { get; set; } = false;
 
-        [OnOffUiProperty("GPS - Defer Location Updates:", true, 33)]
+        /// <summary>
+        /// Available on iOS only. Whether or not to defer location updates until the app is active, thereby conserving battery.
+        /// </summary>
+        /// <value><c>true</c> if gps defer location updates; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("(iOS) GPS - Defer Location Updates:", true, 34)]
         public bool GpsDeferLocationUpdates { get; set; } = false;
 
-        private float _gpsDeferralDistanceMeters = 500;
-
-        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 34, false)]
+        /// <summary>
+        /// Available on iOS only. How far to travel before deferred location updates are delivered.
+        /// </summary>
+        /// <value>The gps deferral distance meters.</value>
+        [EntryFloatUiProperty("(iOS) GPS - Deferral Distance (Meters):", true, 35, false)]
         public float GpsDeferralDistanceMeters
         {
             get
@@ -1125,9 +1146,11 @@ namespace Sensus
             }
         }
 
-        private float _gpsDeferralTimeMinutes = 5;
-
-        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 35, false)]
+        /// <summary>
+        /// Available on iOS only. How long to wait before deferred location updates are delivered.
+        /// </summary>
+        /// <value>The gps deferral time minutes.</value>
+        [EntryFloatUiProperty("(iOS) GPS - Deferral Time (Mins.):", true, 36, false)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
@@ -1141,7 +1164,8 @@ namespace Sensus
                 _gpsDeferralTimeMinutes = value;
             }
         }
-#endif
+
+        #endregion
 
         /// <summary>
         /// A comma-separated list of time windows during which alerts from Sensus (e.g., notifications
@@ -1246,8 +1270,6 @@ namespace Sensus
                 }
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Whether or not to allow the user to view data being collected by the <see cref="Protocol"/>.
@@ -1415,17 +1437,14 @@ namespace Sensus
         [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
-#if __ANDROID__
         /// <summary>
-        /// Whether or not to display the participation percentage (see <see cref="ParticipationHorizonDays"/>) in the 
-        /// foreground service notification. If multiple <see cref="Protocol"/>s enable this option, then the average
-        /// percentage across these will be displayed. This only applies to Android, as iOS does not have a concept
-        /// analogous to foreground service notifications.
+        /// Available on Android only. Whether or not to display the participation percentage (see <see cref="ParticipationHorizonDays"/>) in the 
+        /// foreground service notification. If multiple <see cref="Protocol"/>s enable this option, then the average percentage across these will
+        /// be displayed.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Display Participation:", true, 55)]
+        [OnOffUiProperty("(Android) Display Participation:", true, 55)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
-#endif
 
         /// <summary>
         /// We regenerate the offset every time a protocol starts, so there's 
@@ -1550,6 +1569,8 @@ namespace Sensus
             _gpsDesiredAccuracyMeters = GPS_DEFAULT_ACCURACY_METERS;
             _gpsMinTimeDelayMS = GPS_DEFAULT_MIN_TIME_DELAY_MS;
             _gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
+            _gpsDeferralDistanceMeters = GPS_DEFAULT_DEFERRAL_DISTANCE_METERS;
+            _gpsDeferralTimeMinutes = GPS_DEFAULT_DEFERRAL_TIME_MINUTES;
             _variableValue = new Dictionary<string, string>();
             _startConfirmationMode = ProtocolStartConfirmationMode.None;
             _probes = new List<Probe>();
@@ -1978,7 +1999,7 @@ namespace Sensus
         {
             TimeSpan timeUntilStart = _startTimestamp - DateTime.Now;
 
-            _scheduledStartCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStartCallback = new ScheduledCallback(async cancellationToken =>
             {
                 await PrivateStartAsync(cancellationToken);
                 _scheduledStartCallback = null;
@@ -2019,7 +2040,7 @@ namespace Sensus
         {
             TimeSpan timeUntilStop = _endTimestamp - DateTime.Now;
 
-            _scheduledStopCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _scheduledStopCallback = new ScheduledCallback(async cancellationToken =>
             {
                 await StopAsync();
                 _scheduledStopCallback = null;

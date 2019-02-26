@@ -28,8 +28,16 @@ namespace Sensus.Android.Notifications
     {
         public async override void OnMessageReceived(RemoteMessage message)
         {
+            AndroidSensusServiceHelper serviceHelper = null;
+
             try
             {
+                serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting 
+                // any execution requested by the push notification.
+                serviceHelper.KeepDeviceAwake();
+
                 // extract push notification information
                 string protocolId = message.Data["protocol"];
                 string id = message.Data["id"];
@@ -44,6 +52,10 @@ namespace Sensus.Android.Notifications
             catch (Exception ex)
             {
                 SensusException.Report("Exception while processing remote notification:  " + ex.Message, ex);
+            }
+            finally
+            {
+                serviceHelper?.LetDeviceSleep();
             }
         }
     }

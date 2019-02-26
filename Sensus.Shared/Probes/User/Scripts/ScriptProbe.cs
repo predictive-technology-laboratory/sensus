@@ -38,6 +38,7 @@ namespace Sensus.Probes.User.Scripts
     {
 
 #if __ANDROID__
+
         // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
         // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
 
@@ -258,7 +259,7 @@ namespace Sensus.Probes.User.Scripts
             // if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
             if (Agent?.DeliveryInterval != null)
             {
-                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async (id, cancellationToken, letDeviceSleepCallback) =>
+                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async cancellationToken =>
                 {
                     foreach (ScriptRunner scriptRunner in _scriptRunners)
                     {

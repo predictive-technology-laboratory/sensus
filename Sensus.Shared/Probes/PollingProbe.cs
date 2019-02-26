@@ -44,7 +44,7 @@ namespace Sensus.Probes
     /// Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
     /// with the following exceptions for <see cref="PollingProbe"/>s:
     /// 
-    ///   * Significant location change processing:  If SignificantChangePoll is enabled, the <see cref="PollingProbe"/> will wake up each time
+    ///   * Significant location change processing:  If <see cref="SignificantChangePoll"/> is enabled, the <see cref="PollingProbe"/> will wake up each time
     ///     the user's physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
     ///     order of several kilometers.
     /// 
@@ -53,7 +53,7 @@ namespace Sensus.Probes
     ///     by the Apple Push Notification Service. The value of <see cref="PollingSleepDurationMS"/> should be set conservatively for all probes,
     ///     for example no lower than 15-20 minutes. The push notification backend server will attempt to deliver push notifications slightly ahead of their
     ///     scheduled times. If such a push notification arrives at the device before the scheduled time, then the local notification (if 
-    ///     AlertUserWhenBackgrounded is enabled) will be cancelled.
+    ///     <see cref="AlertUserWhenBackgrounded"/> is enabled) will be cancelled.
     /// 
     /// Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support 
     /// <see cref="PollingProbe"/>s on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This 
@@ -70,10 +70,10 @@ namespace Sensus.Probes
         private bool _acPowerConnectPoll;
         private bool _acPowerConnectPollOverridesScheduledPolls;
         private EventHandler<bool> _powerConnectionChanged;
-
-#if __IOS__
         private bool _significantChangePoll;
         private bool _significantChangePollOverridesScheduledPolls;
+
+#if __IOS__
         private CLLocationManager _locationManager;
 #endif
 
@@ -170,14 +170,13 @@ namespace Sensus.Probes
             set { _acPowerConnectPollOverridesScheduledPolls = value; }
         }
 
-#if __IOS__
         /// <summary>
         /// Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
         /// [here](https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for 
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Poll On Significant Location Change:", true, 9)]
+        [OnOffUiProperty("(iOS) Poll On Significant Location Change:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -190,7 +189,7 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 10)]
+        [OnOffUiProperty("(iOS) Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
@@ -198,17 +197,15 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Whether or not to alert the user with a notification when polling should occur and the
-        /// app is in the background. See the <see cref="PollingProbe"/> overview for information
-        /// about background considerations. The notifications issued when this setting is enabled
-        /// encourage the user to bring the app to the foreground so that data polling may occur.
-        /// Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+        /// Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
+        /// app is in the background. See the <see cref="PollingProbe"/> overview for information about background considerations. 
+        /// The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
+        /// data polling may occur. Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
         /// become excessive for the user.
         /// </summary>
         /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Alert User When Backgrounded:", true, 11)]
+        [OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 11)]
         public bool AlertUserWhenBackgrounded { get; set; } = true;
-#endif
 
         /// <summary>
         /// Tolerance in milliseconds for running the <see cref="PollingProbe"/> before the scheduled 
@@ -273,10 +270,10 @@ namespace Sensus.Probes
             _pollTimes = new List<DateTime>();
             _acPowerConnectPoll = false;
             _acPowerConnectPollOverridesScheduledPolls = false;
-
-#if __IOS__
             _significantChangePoll = false;
             _significantChangePollOverridesScheduledPolls = false;
+
+#if __IOS__
             _locationManager = new CLLocationManager();
             _locationManager.LocationsUpdated += async (sender, e) =>
             {
@@ -290,7 +287,7 @@ namespace Sensus.Probes
                         pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                     }   
 
-                    await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                 }
                 catch (Exception ex)
                 {
@@ -313,7 +310,7 @@ namespace Sensus.Probes
                             pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                         }
 
-                        await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                        await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                     }
                 }
                 catch (Exception ex)
@@ -350,7 +347,7 @@ namespace Sensus.Probes
             //
             // given the above, we now use an initial delay equal to the standard delay. the only cost is a single lost
             // reading at the very beginning.
-            _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _pollCallback = new ScheduledCallback(async cancellationToken =>
             {
                 if (Running)
                 {

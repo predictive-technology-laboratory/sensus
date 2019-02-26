@@ -427,7 +427,6 @@ namespace Sensus
         #region iOS GPS listener settings
 
 #if __IOS__
-
         [JsonIgnore]
         public bool GpsPauseLocationUpdatesAutomatically
         {
@@ -487,7 +486,6 @@ namespace Sensus
                 return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralTimeMinutes);
             }
         }
-
 #endif
 
         #endregion
@@ -604,10 +602,6 @@ namespace Sensus
 
         public abstract Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback);
 
-        public abstract void KeepDeviceAwake();
-
-        public abstract void LetDeviceSleep();
-
         public abstract Task BringToForegroundAsync();
 
         /// <summary>
@@ -720,7 +714,7 @@ namespace Sensus
             {
                 if (_healthTestCallback == null)
                 {
-                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+                    _healthTestCallback = new ScheduledCallback(async cancellationToken =>
                     {
                         // test running protocols. we used to test all protocols, but this causes problems when editing stopped
                         // protocols, as they might be replaced without the user intending after the user manually sets the id.
@@ -731,7 +725,7 @@ namespace Sensus
                                 break;
                             }
 
-                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" (" + protocolToTest.Id + ") is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" (" + protocolToTest.Id + ") is running.", LoggingLevel.Normal, GetType());
 
                             bool testCurrentProtocol = true;
 

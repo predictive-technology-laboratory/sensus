@@ -759,7 +759,7 @@ namespace Sensus.Android
 
         #region device awake / sleep
 
-        public override void KeepDeviceAwake()
+        public void KeepDeviceAwake()
         {
             if (_wakeLock != null)
             {
@@ -781,7 +781,7 @@ namespace Sensus.Android
             }
         }
 
-        public override void LetDeviceSleep()
+        public void LetDeviceSleep()
         {
             if (_wakeLock != null)
             {
