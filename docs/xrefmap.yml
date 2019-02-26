@@ -16,6 +16,9 @@ references:
 - uid: build_problems
   name: Common Problems
   href: articles/build-problems.html
+- uid: burden_tuning
+  name: Burden Tuning
+  href: articles/burden-tuning.html
 - uid: coding_conventions
   name: Coding Conventions
   href: articles/coding-conventions.html
@@ -25,6 +28,9 @@ references:
 - uid: dev_config
   name: Configuring a Development System
   href: articles/configuring-a-development-system.html
+- uid: device_os_app
+  name: Device, Operating System, and App Changes
+  href: articles/device-os-app.html
 - uid: encryption
   name: Asymmetric Key Encryption
   href: articles/encryption.html
@@ -1543,6 +1549,18 @@ references:
   commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.#ctor
   fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.AndroidCallbackScheduler
   nameWithType: AndroidCallbackScheduler.AndroidCallbackScheduler
+- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  name: CancelLocalInvocation(ScheduledCallback)
+  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_CancelLocalInvocation_Sensus_Callbacks_ScheduledCallback_
+  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  nameWithType: AndroidCallbackScheduler.CancelLocalInvocation(ScheduledCallback)
+- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.CancelLocalInvocation*
+  name: CancelLocalInvocation
+  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_CancelLocalInvocation_
+  commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.CancelLocalInvocation
+  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.CancelLocalInvocation
+  nameWithType: AndroidCallbackScheduler.CancelLocalInvocation
 - uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.IsCallback(Android.Content.Intent)
   name: IsCallback(Intent)
   href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_IsCallback_Android_Content_Intent_
@@ -1555,18 +1573,18 @@ references:
   commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.IsCallback
   fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.IsCallback
   nameWithType: AndroidCallbackScheduler.IsCallback
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  name: ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync*
-  name: ScheduleCallbackPlatformSpecificAsync
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_
-  commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  nameWithType: AndroidCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
+- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  name: RequestLocalInvocationAsync(ScheduledCallback)
+  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_
+  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  nameWithType: AndroidCallbackScheduler.RequestLocalInvocationAsync(ScheduledCallback)
+- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync*
+  name: RequestLocalInvocationAsync
+  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_RequestLocalInvocationAsync_
+  commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync
+  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync
+  nameWithType: AndroidCallbackScheduler.RequestLocalInvocationAsync
 - uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Android.Content.Intent)
   name: ServiceCallbackAsync(Intent)
   href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_ServiceCallbackAsync_Android_Content_Intent_
@@ -1597,18 +1615,6 @@ references:
   commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.TryGetCallback
   fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.TryGetCallback
   nameWithType: AndroidCallbackScheduler.TryGetCallback
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  name: UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_UnscheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific*
-  name: UnscheduleCallbackPlatformSpecific
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_UnscheduleCallbackPlatformSpecific_
-  commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific
-  nameWithType: AndroidCallbackScheduler.UnscheduleCallbackPlatformSpecific
 - uid: Sensus.Android.Concurrent
   name: Sensus.Android.Concurrent
   href: api/Sensus.Android.Concurrent.html
@@ -21487,6 +21493,18 @@ references:
   commentId: Overload:Sensus.Callbacks.CallbackScheduler.#ctor
   fullName: Sensus.Callbacks.CallbackScheduler.CallbackScheduler
   nameWithType: CallbackScheduler.CallbackScheduler
+- uid: Sensus.Callbacks.CallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  name: CancelLocalInvocation(ScheduledCallback)
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_CancelLocalInvocation_Sensus_Callbacks_ScheduledCallback_
+  commentId: M:Sensus.Callbacks.CallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  fullName: Sensus.Callbacks.CallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  nameWithType: CallbackScheduler.CancelLocalInvocation(ScheduledCallback)
+- uid: Sensus.Callbacks.CallbackScheduler.CancelLocalInvocation*
+  name: CancelLocalInvocation
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_CancelLocalInvocation_
+  commentId: Overload:Sensus.Callbacks.CallbackScheduler.CancelLocalInvocation
+  fullName: Sensus.Callbacks.CallbackScheduler.CancelLocalInvocation
+  nameWithType: CallbackScheduler.CancelLocalInvocation
 - uid: Sensus.Callbacks.CallbackScheduler.CancelRaisedCallback(Sensus.Callbacks.ScheduledCallback)
   name: CancelRaisedCallback(ScheduledCallback)
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_CancelRaisedCallback_Sensus_Callbacks_ScheduledCallback_
@@ -21511,21 +21529,30 @@ references:
   commentId: Overload:Sensus.Callbacks.CallbackScheduler.ContainsCallback
   fullName: Sensus.Callbacks.CallbackScheduler.ContainsCallback
   nameWithType: CallbackScheduler.ContainsCallback
-- uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)
-  name: RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func<Task>, Action)
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Func_System_Threading_Tasks_Task__System_Action_
-  commentId: M:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)
-  name.vb: RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func(Of Task), Action)
-  fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean, System.Func<System.Threading.Tasks.Task>, System.Action)
-  fullName.vb: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean, System.Func(Of System.Threading.Tasks.Task), System.Action)
-  nameWithType: CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func<Task>, Action)
-  nameWithType.vb: CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func(Of Task), Action)
+- uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean)
+  name: RaiseCallbackAsync(ScheduledCallback, String, Boolean)
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_
+  commentId: M:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean)
+  fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean)
+  nameWithType: CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean)
 - uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*
   name: RaiseCallbackAsync
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_
   commentId: Overload:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync
   fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync
   nameWithType: CallbackScheduler.RaiseCallbackAsync
+- uid: Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  name: RequestLocalInvocationAsync(ScheduledCallback)
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_
+  commentId: M:Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  fullName: Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  nameWithType: CallbackScheduler.RequestLocalInvocationAsync(ScheduledCallback)
+- uid: Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync*
+  name: RequestLocalInvocationAsync
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RequestLocalInvocationAsync_
+  commentId: Overload:Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync
+  fullName: Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync
+  nameWithType: CallbackScheduler.RequestLocalInvocationAsync
 - uid: Sensus.Callbacks.CallbackScheduler.ScheduleCallbackAsync(Sensus.Callbacks.ScheduledCallback)
   name: ScheduleCallbackAsync(ScheduledCallback)
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ScheduleCallbackAsync_Sensus_Callbacks_ScheduledCallback_
@@ -21538,18 +21565,6 @@ references:
   commentId: Overload:Sensus.Callbacks.CallbackScheduler.ScheduleCallbackAsync
   fullName: Sensus.Callbacks.CallbackScheduler.ScheduleCallbackAsync
   nameWithType: CallbackScheduler.ScheduleCallbackAsync
-- uid: Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  name: ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: CallbackScheduler.ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-- uid: Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync*
-  name: ScheduleCallbackPlatformSpecificAsync
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecificAsync_
-  commentId: Overload:Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  fullName: Sensus.Callbacks.CallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  nameWithType: CallbackScheduler.ScheduleCallbackPlatformSpecificAsync
 - uid: Sensus.Callbacks.CallbackScheduler.SENSUS_CALLBACK_INVOCATION_ID_KEY
   name: SENSUS_CALLBACK_INVOCATION_ID_KEY
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_SENSUS_CALLBACK_INVOCATION_ID_KEY
@@ -21622,18 +21637,6 @@ references:
   commentId: Overload:Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackAsync
   fullName: Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackAsync
   nameWithType: CallbackScheduler.UnscheduleCallbackAsync
-- uid: Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  name: UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: CallbackScheduler.UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-- uid: Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackPlatformSpecific*
-  name: UnscheduleCallbackPlatformSpecific
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackPlatformSpecific_
-  commentId: Overload:Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackPlatformSpecific
-  fullName: Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackPlatformSpecific
-  nameWithType: CallbackScheduler.UnscheduleCallbackPlatformSpecific
 - uid: Sensus.Callbacks.ScheduledCallback
   name: ScheduledCallback
   href: api/Sensus.Callbacks.ScheduledCallback.html
@@ -21694,12 +21697,12 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.#ctor
   fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.ActionAsyncDelegate
   nameWithType: ScheduledCallback.ActionAsyncDelegate.ActionAsyncDelegate
-- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)
-  name: BeginInvoke(String, CancellationToken, Action, AsyncCallback, Object)
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_System_String_System_Threading_CancellationToken_System_Action_System_AsyncCallback_System_Object_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String,System.Threading.CancellationToken,System.Action,System.AsyncCallback,System.Object)
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.String, System.Threading.CancellationToken, System.Action, System.AsyncCallback, System.Object)
-  nameWithType: ScheduledCallback.ActionAsyncDelegate.BeginInvoke(String, CancellationToken, Action, AsyncCallback, Object)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.Threading.CancellationToken,System.AsyncCallback,System.Object)
+  name: BeginInvoke(CancellationToken, AsyncCallback, Object)
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_System_Threading_CancellationToken_System_AsyncCallback_System_Object_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.Threading.CancellationToken,System.AsyncCallback,System.Object)
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke(System.Threading.CancellationToken, System.AsyncCallback, System.Object)
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.BeginInvoke(CancellationToken, AsyncCallback, Object)
 - uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.BeginInvoke*
   name: BeginInvoke
   href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_BeginInvoke_
@@ -21718,18 +21721,30 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke
   fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.EndInvoke
   nameWithType: ScheduledCallback.ActionAsyncDelegate.EndInvoke
-- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)
-  name: Invoke(String, CancellationToken, Action)
-  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_System_String_System_Threading_CancellationToken_System_Action_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String,System.Threading.CancellationToken,System.Action)
-  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.String, System.Threading.CancellationToken, System.Action)
-  nameWithType: ScheduledCallback.ActionAsyncDelegate.Invoke(String, CancellationToken, Action)
+- uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.Threading.CancellationToken)
+  name: Invoke(CancellationToken)
+  href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_System_Threading_CancellationToken_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.Threading.CancellationToken)
+  fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke(System.Threading.CancellationToken)
+  nameWithType: ScheduledCallback.ActionAsyncDelegate.Invoke(CancellationToken)
 - uid: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke*
   name: Invoke
   href: api/Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html#Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_Invoke_
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke
   fullName: Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.Invoke
   nameWithType: ScheduledCallback.ActionAsyncDelegate.Invoke
+- uid: Sensus.Callbacks.ScheduledCallback.Batched
+  name: Batched
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Batched
+  commentId: P:Sensus.Callbacks.ScheduledCallback.Batched
+  fullName: Sensus.Callbacks.ScheduledCallback.Batched
+  nameWithType: ScheduledCallback.Batched
+- uid: Sensus.Callbacks.ScheduledCallback.Batched*
+  name: Batched
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Batched_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.Batched
+  fullName: Sensus.Callbacks.ScheduledCallback.Batched
+  nameWithType: ScheduledCallback.Batched
 - uid: Sensus.Callbacks.ScheduledCallback.Canceller
   name: Canceller
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Canceller
@@ -25386,6 +25401,18 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CallbackIds
   fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CallbackIds
   nameWithType: UNUserNotificationCallbackScheduler.CallbackIds
+- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  name: CancelLocalInvocation(ScheduledCallback)
+  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelLocalInvocation_Sensus_Callbacks_ScheduledCallback_
+  commentId: M:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)
+  nameWithType: UNUserNotificationCallbackScheduler.CancelLocalInvocation(ScheduledCallback)
+- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation*
+  name: CancelLocalInvocation
+  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelLocalInvocation_
+  commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation
+  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation
+  nameWithType: UNUserNotificationCallbackScheduler.CancelLocalInvocation
 - uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications
   name: CancelSilentNotifications()
   href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelSilentNotifications
@@ -25398,21 +25425,6 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications
   fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications
   nameWithType: UNUserNotificationCallbackScheduler.CancelSilentNotifications
-- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)
-  name: RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func<Task>, Action)
-  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Func_System_Threading_Tasks_Task__System_Action_
-  commentId: M:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)
-  name.vb: RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func(Of Task), Action)
-  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean, System.Func<System.Threading.Tasks.Task>, System.Action)
-  fullName.vb: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean, System.Func(Of System.Threading.Tasks.Task), System.Action)
-  nameWithType: UNUserNotificationCallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func<Task>, Action)
-  nameWithType.vb: UNUserNotificationCallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func(Of Task), Action)
-- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync*
-  name: RaiseCallbackAsync
-  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RaiseCallbackAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync
-  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync
-  nameWithType: UNUserNotificationCallbackScheduler.RaiseCallbackAsync
 - uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ReissueSilentNotificationAsync(System.String)
   name: ReissueSilentNotificationAsync(String)
   href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_ReissueSilentNotificationAsync_System_String_
@@ -25425,30 +25437,18 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ReissueSilentNotificationAsync
   fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ReissueSilentNotificationAsync
   nameWithType: UNUserNotificationCallbackScheduler.ReissueSilentNotificationAsync
-- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  name: ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)
-- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync*
-  name: ScheduleCallbackPlatformSpecificAsync
-  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-  nameWithType: UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync
-- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  name: UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_UnscheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_
-  commentId: M:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)
-  nameWithType: UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(ScheduledCallback)
-- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific*
-  name: UnscheduleCallbackPlatformSpecific
-  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_UnscheduleCallbackPlatformSpecific_
-  commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific
-  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific
-  nameWithType: UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific
+- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  name: RequestLocalInvocationAsync(ScheduledCallback)
+  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_
+  commentId: M:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
+  nameWithType: UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync(ScheduledCallback)
+- uid: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync*
+  name: RequestLocalInvocationAsync
+  href: api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html#Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RequestLocalInvocationAsync_
+  commentId: Overload:Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync
+  fullName: Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync
+  nameWithType: UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync
 - uid: Sensus.iOS.Concurrent
   name: Sensus.iOS.Concurrent
   href: api/Sensus.iOS.Concurrent.html
@@ -25809,30 +25809,6 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
   fullName: Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
   nameWithType: iOSSensusServiceHelper.IsOnMainThread
-- uid: Sensus.iOS.iOSSensusServiceHelper.KeepDeviceAwake
-  name: KeepDeviceAwake()
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_KeepDeviceAwake
-  commentId: M:Sensus.iOS.iOSSensusServiceHelper.KeepDeviceAwake
-  fullName: Sensus.iOS.iOSSensusServiceHelper.KeepDeviceAwake()
-  nameWithType: iOSSensusServiceHelper.KeepDeviceAwake()
-- uid: Sensus.iOS.iOSSensusServiceHelper.KeepDeviceAwake*
-  name: KeepDeviceAwake
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_KeepDeviceAwake_
-  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.KeepDeviceAwake
-  fullName: Sensus.iOS.iOSSensusServiceHelper.KeepDeviceAwake
-  nameWithType: iOSSensusServiceHelper.KeepDeviceAwake
-- uid: Sensus.iOS.iOSSensusServiceHelper.LetDeviceSleep
-  name: LetDeviceSleep()
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_LetDeviceSleep
-  commentId: M:Sensus.iOS.iOSSensusServiceHelper.LetDeviceSleep
-  fullName: Sensus.iOS.iOSSensusServiceHelper.LetDeviceSleep()
-  nameWithType: iOSSensusServiceHelper.LetDeviceSleep()
-- uid: Sensus.iOS.iOSSensusServiceHelper.LetDeviceSleep*
-  name: LetDeviceSleep
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_LetDeviceSleep_
-  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.LetDeviceSleep
-  fullName: Sensus.iOS.iOSSensusServiceHelper.LetDeviceSleep
-  nameWithType: iOSSensusServiceHelper.LetDeviceSleep
 - uid: Sensus.iOS.iOSSensusServiceHelper.OperatingSystem
   name: OperatingSystem
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_OperatingSystem
@@ -26319,15 +26295,6 @@ references:
   fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UserNotifications.UNNotificationRequest))
   nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
   nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
-- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNMutableNotificationContent,Sensus.Protocol,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})
-  name: IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action<UNNotificationRequest>)
-  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_UserNotifications_UNMutableNotificationContent_Sensus_Protocol_System_DateTime_System_Action_UserNotifications_UNNotificationRequest__
-  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNMutableNotificationContent,Sensus.Protocol,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})
-  name.vb: IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action(Of UNNotificationRequest))
-  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, UserNotifications.UNMutableNotificationContent, Sensus.Protocol, System.DateTime, System.Action<UserNotifications.UNNotificationRequest>)
-  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, UserNotifications.UNMutableNotificationContent, Sensus.Protocol, System.DateTime, System.Action(Of UserNotifications.UNNotificationRequest))
-  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action<UNNotificationRequest>)
-  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, UNMutableNotificationContent, Protocol, DateTime, Action(Of UNNotificationRequest))
 - uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(UserNotifications.UNNotificationRequest)
   name: IssueNotificationAsync(UNNotificationRequest)
   href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_UserNotifications_UNNotificationRequest_
@@ -37677,6 +37644,18 @@ references:
   commentId: Overload:Sensus.Probes.PollingProbe.AcPowerConnectPollOverridesScheduledPolls
   fullName: Sensus.Probes.PollingProbe.AcPowerConnectPollOverridesScheduledPolls
   nameWithType: PollingProbe.AcPowerConnectPollOverridesScheduledPolls
+- uid: Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded
+  name: AlertUserWhenBackgrounded
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded
+  commentId: P:Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded
+  fullName: Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded
+  nameWithType: PollingProbe.AlertUserWhenBackgrounded
+- uid: Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded*
+  name: AlertUserWhenBackgrounded
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded_
+  commentId: Overload:Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded
+  fullName: Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded
+  nameWithType: PollingProbe.AlertUserWhenBackgrounded
 - uid: Sensus.Probes.PollingProbe.CollectionDescription
   name: CollectionDescription
   href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_CollectionDescription
@@ -37833,6 +37812,30 @@ references:
   commentId: Overload:Sensus.Probes.PollingProbe.ResetAsync
   fullName: Sensus.Probes.PollingProbe.ResetAsync
   nameWithType: PollingProbe.ResetAsync
+- uid: Sensus.Probes.PollingProbe.SignificantChangePoll
+  name: SignificantChangePoll
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePoll
+  commentId: P:Sensus.Probes.PollingProbe.SignificantChangePoll
+  fullName: Sensus.Probes.PollingProbe.SignificantChangePoll
+  nameWithType: PollingProbe.SignificantChangePoll
+- uid: Sensus.Probes.PollingProbe.SignificantChangePoll*
+  name: SignificantChangePoll
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePoll_
+  commentId: Overload:Sensus.Probes.PollingProbe.SignificantChangePoll
+  fullName: Sensus.Probes.PollingProbe.SignificantChangePoll
+  nameWithType: PollingProbe.SignificantChangePoll
+- uid: Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls
+  name: SignificantChangePollOverridesScheduledPolls
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePollOverridesScheduledPolls
+  commentId: P:Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls
+  fullName: Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls
+  nameWithType: PollingProbe.SignificantChangePollOverridesScheduledPolls
+- uid: Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls*
+  name: SignificantChangePollOverridesScheduledPolls
+  href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePollOverridesScheduledPolls_
+  commentId: Overload:Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls
+  fullName: Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls
+  nameWithType: PollingProbe.SignificantChangePollOverridesScheduledPolls
 - uid: Sensus.Probes.PollingProbe.StopAsync
   name: StopAsync()
   href: api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_StopAsync
@@ -41697,12 +41700,12 @@ references:
   commentId: Overload:Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.StopWhenNotWorn
   fullName: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.StopWhenNotWorn
   nameWithType: MicrosoftBandProbeBase.StopWhenNotWorn
-- uid: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync(System.String,System.Threading.CancellationToken,System.Action)
-  name: TestBandClientAsync(String, CancellationToken, Action)
-  href: api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html#Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbeBase_TestBandClientAsync_System_String_System_Threading_CancellationToken_System_Action_
-  commentId: M:Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync(System.String,System.Threading.CancellationToken,System.Action)
-  fullName: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync(System.String, System.Threading.CancellationToken, System.Action)
-  nameWithType: MicrosoftBandProbeBase.TestBandClientAsync(String, CancellationToken, Action)
+- uid: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync(System.Threading.CancellationToken)
+  name: TestBandClientAsync(CancellationToken)
+  href: api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html#Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbeBase_TestBandClientAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync(System.Threading.CancellationToken)
+  nameWithType: MicrosoftBandProbeBase.TestBandClientAsync(CancellationToken)
 - uid: Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.TestBandClientAsync*
   name: TestBandClientAsync
   href: api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html#Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbeBase_TestBandClientAsync_
@@ -44022,18 +44025,6 @@ references:
   commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
   fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackDescriptions
   nameWithType: ScriptRunner.ScheduledCallbackDescriptions
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
-  name: ScheduledCallbackTimes
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes
-  commentId: P:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
-  nameWithType: ScriptRunner.ScheduledCallbackTimes
-- uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes*
-  name: ScheduledCallbackTimes
-  href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes_
-  commentId: Overload:Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
-  fullName: Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes
-  nameWithType: ScriptRunner.ScheduledCallbackTimes
 - uid: Sensus.Probes.User.Scripts.ScriptRunner.ScheduleScriptRunsAsync
   name: ScheduleScriptRunsAsync()
   href: api/Sensus.Probes.User.Scripts.ScriptRunner.html#Sensus_Probes_User_Scripts_ScriptRunner_ScheduleScriptRunsAsync
@@ -45111,6 +45102,18 @@ references:
   commentId: F:Sensus.Protocol.GPS_DEFAULT_ACCURACY_METERS
   fullName: Sensus.Protocol.GPS_DEFAULT_ACCURACY_METERS
   nameWithType: Protocol.GPS_DEFAULT_ACCURACY_METERS
+- uid: Sensus.Protocol.GPS_DEFAULT_DEFERRAL_DISTANCE_METERS
+  name: GPS_DEFAULT_DEFERRAL_DISTANCE_METERS
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GPS_DEFAULT_DEFERRAL_DISTANCE_METERS
+  commentId: F:Sensus.Protocol.GPS_DEFAULT_DEFERRAL_DISTANCE_METERS
+  fullName: Sensus.Protocol.GPS_DEFAULT_DEFERRAL_DISTANCE_METERS
+  nameWithType: Protocol.GPS_DEFAULT_DEFERRAL_DISTANCE_METERS
+- uid: Sensus.Protocol.GPS_DEFAULT_DEFERRAL_TIME_MINUTES
+  name: GPS_DEFAULT_DEFERRAL_TIME_MINUTES
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GPS_DEFAULT_DEFERRAL_TIME_MINUTES
+  commentId: F:Sensus.Protocol.GPS_DEFAULT_DEFERRAL_TIME_MINUTES
+  fullName: Sensus.Protocol.GPS_DEFAULT_DEFERRAL_TIME_MINUTES
+  nameWithType: Protocol.GPS_DEFAULT_DEFERRAL_TIME_MINUTES
 - uid: Sensus.Protocol.GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS
   name: GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS
   href: api/Sensus.Protocol.html#Sensus_Protocol_GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS
@@ -45123,6 +45126,42 @@ references:
   commentId: F:Sensus.Protocol.GPS_DEFAULT_MIN_TIME_DELAY_MS
   fullName: Sensus.Protocol.GPS_DEFAULT_MIN_TIME_DELAY_MS
   nameWithType: Protocol.GPS_DEFAULT_MIN_TIME_DELAY_MS
+- uid: Sensus.Protocol.GpsDeferLocationUpdates
+  name: GpsDeferLocationUpdates
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDeferLocationUpdates
+  commentId: P:Sensus.Protocol.GpsDeferLocationUpdates
+  fullName: Sensus.Protocol.GpsDeferLocationUpdates
+  nameWithType: Protocol.GpsDeferLocationUpdates
+- uid: Sensus.Protocol.GpsDeferLocationUpdates*
+  name: GpsDeferLocationUpdates
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDeferLocationUpdates_
+  commentId: Overload:Sensus.Protocol.GpsDeferLocationUpdates
+  fullName: Sensus.Protocol.GpsDeferLocationUpdates
+  nameWithType: Protocol.GpsDeferLocationUpdates
+- uid: Sensus.Protocol.GpsDeferralDistanceMeters
+  name: GpsDeferralDistanceMeters
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDeferralDistanceMeters
+  commentId: P:Sensus.Protocol.GpsDeferralDistanceMeters
+  fullName: Sensus.Protocol.GpsDeferralDistanceMeters
+  nameWithType: Protocol.GpsDeferralDistanceMeters
+- uid: Sensus.Protocol.GpsDeferralDistanceMeters*
+  name: GpsDeferralDistanceMeters
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDeferralDistanceMeters_
+  commentId: Overload:Sensus.Protocol.GpsDeferralDistanceMeters
+  fullName: Sensus.Protocol.GpsDeferralDistanceMeters
+  nameWithType: Protocol.GpsDeferralDistanceMeters
+- uid: Sensus.Protocol.GpsDeferralTimeMinutes
+  name: GpsDeferralTimeMinutes
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDeferralTimeMinutes
+  commentId: P:Sensus.Protocol.GpsDeferralTimeMinutes
+  fullName: Sensus.Protocol.GpsDeferralTimeMinutes
+  nameWithType: Protocol.GpsDeferralTimeMinutes
+- uid: Sensus.Protocol.GpsDeferralTimeMinutes*
+  name: GpsDeferralTimeMinutes
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDeferralTimeMinutes_
+  commentId: Overload:Sensus.Protocol.GpsDeferralTimeMinutes
+  fullName: Sensus.Protocol.GpsDeferralTimeMinutes
+  nameWithType: Protocol.GpsDeferralTimeMinutes
 - uid: Sensus.Protocol.GpsDesiredAccuracyMeters
   name: GpsDesiredAccuracyMeters
   href: api/Sensus.Protocol.html#Sensus_Protocol_GpsDesiredAccuracyMeters
@@ -45135,6 +45174,18 @@ references:
   commentId: Overload:Sensus.Protocol.GpsDesiredAccuracyMeters
   fullName: Sensus.Protocol.GpsDesiredAccuracyMeters
   nameWithType: Protocol.GpsDesiredAccuracyMeters
+- uid: Sensus.Protocol.GpsListenForSignificantChanges
+  name: GpsListenForSignificantChanges
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsListenForSignificantChanges
+  commentId: P:Sensus.Protocol.GpsListenForSignificantChanges
+  fullName: Sensus.Protocol.GpsListenForSignificantChanges
+  nameWithType: Protocol.GpsListenForSignificantChanges
+- uid: Sensus.Protocol.GpsListenForSignificantChanges*
+  name: GpsListenForSignificantChanges
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsListenForSignificantChanges_
+  commentId: Overload:Sensus.Protocol.GpsListenForSignificantChanges
+  fullName: Sensus.Protocol.GpsListenForSignificantChanges
+  nameWithType: Protocol.GpsListenForSignificantChanges
 - uid: Sensus.Protocol.GpsLongitudeAnonymizationParticipantOffset
   name: GpsLongitudeAnonymizationParticipantOffset
   href: api/Sensus.Protocol.html#Sensus_Protocol_GpsLongitudeAnonymizationParticipantOffset
@@ -45183,6 +45234,30 @@ references:
   commentId: Overload:Sensus.Protocol.GpsMinTimeDelayMS
   fullName: Sensus.Protocol.GpsMinTimeDelayMS
   nameWithType: Protocol.GpsMinTimeDelayMS
+- uid: Sensus.Protocol.GpsPauseActivityType
+  name: GpsPauseActivityType
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsPauseActivityType
+  commentId: P:Sensus.Protocol.GpsPauseActivityType
+  fullName: Sensus.Protocol.GpsPauseActivityType
+  nameWithType: Protocol.GpsPauseActivityType
+- uid: Sensus.Protocol.GpsPauseActivityType*
+  name: GpsPauseActivityType
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsPauseActivityType_
+  commentId: Overload:Sensus.Protocol.GpsPauseActivityType
+  fullName: Sensus.Protocol.GpsPauseActivityType
+  nameWithType: Protocol.GpsPauseActivityType
+- uid: Sensus.Protocol.GpsPauseLocationUpdatesAutomatically
+  name: GpsPauseLocationUpdatesAutomatically
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsPauseLocationUpdatesAutomatically
+  commentId: P:Sensus.Protocol.GpsPauseLocationUpdatesAutomatically
+  fullName: Sensus.Protocol.GpsPauseLocationUpdatesAutomatically
+  nameWithType: Protocol.GpsPauseLocationUpdatesAutomatically
+- uid: Sensus.Protocol.GpsPauseLocationUpdatesAutomatically*
+  name: GpsPauseLocationUpdatesAutomatically
+  href: api/Sensus.Protocol.html#Sensus_Protocol_GpsPauseLocationUpdatesAutomatically_
+  commentId: Overload:Sensus.Protocol.GpsPauseLocationUpdatesAutomatically
+  fullName: Sensus.Protocol.GpsPauseLocationUpdatesAutomatically
+  nameWithType: Protocol.GpsPauseLocationUpdatesAutomatically
 - uid: Sensus.Protocol.Groupable
   name: Groupable
   href: api/Sensus.Protocol.html#Sensus_Protocol_Groupable
@@ -46410,30 +46485,6 @@ references:
   commentId: F:Sensus.SensusServiceHelper.JSON_SERIALIZER_SETTINGS
   fullName: Sensus.SensusServiceHelper.JSON_SERIALIZER_SETTINGS
   nameWithType: SensusServiceHelper.JSON_SERIALIZER_SETTINGS
-- uid: Sensus.SensusServiceHelper.KeepDeviceAwake
-  name: KeepDeviceAwake()
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_KeepDeviceAwake
-  commentId: M:Sensus.SensusServiceHelper.KeepDeviceAwake
-  fullName: Sensus.SensusServiceHelper.KeepDeviceAwake()
-  nameWithType: SensusServiceHelper.KeepDeviceAwake()
-- uid: Sensus.SensusServiceHelper.KeepDeviceAwake*
-  name: KeepDeviceAwake
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_KeepDeviceAwake_
-  commentId: Overload:Sensus.SensusServiceHelper.KeepDeviceAwake
-  fullName: Sensus.SensusServiceHelper.KeepDeviceAwake
-  nameWithType: SensusServiceHelper.KeepDeviceAwake
-- uid: Sensus.SensusServiceHelper.LetDeviceSleep
-  name: LetDeviceSleep()
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_LetDeviceSleep
-  commentId: M:Sensus.SensusServiceHelper.LetDeviceSleep
-  fullName: Sensus.SensusServiceHelper.LetDeviceSleep()
-  nameWithType: SensusServiceHelper.LetDeviceSleep()
-- uid: Sensus.SensusServiceHelper.LetDeviceSleep*
-  name: LetDeviceSleep
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_LetDeviceSleep_
-  commentId: Overload:Sensus.SensusServiceHelper.LetDeviceSleep
-  fullName: Sensus.SensusServiceHelper.LetDeviceSleep
-  nameWithType: SensusServiceHelper.LetDeviceSleep
 - uid: Sensus.SensusServiceHelper.Logger
   name: Logger
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Logger

@@ -137,6 +137,9 @@
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_System_String_System_String_System_Threading_CancellationToken_">CallbackScheduler.ServiceCallbackFromPushNotificationAsync(String, String, CancellationToken)</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_">CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean)</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_TestHealth">CallbackScheduler.TestHealth()</a>
     </div>
     <div>
@@ -197,25 +200,13 @@
   </h3>
   
   
-  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelSilentNotifications_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelSilentNotifications" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications">CancelSilentNotifications()</h4>
+  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelLocalInvocation_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation*"></a>
+  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelLocalInvocation_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelLocalInvocation(Sensus.Callbacks.ScheduledCallback)">CancelLocalInvocation(ScheduledCallback)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void CancelSilentNotifications()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_CancelSilentNotifications">iOSCallbackScheduler.CancelSilentNotifications()</a></div>
-  
-  
-  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Func_System_Threading_Tasks_Task__System_Action_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean,System.Func{System.Threading.Tasks.Task},System.Action)">RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func&lt;Task&gt;, Action)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser, Func&lt;Task&gt; scheduleRepeatCallbackAsync, Action letDeviceSleepCallback)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override void CancelLocalInvocation(ScheduledCallback callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -232,45 +223,22 @@
         <td><span class="parametername">callback</span></td>
         <td></td>
       </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">invocationId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">notifyUser</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
-        <td><span class="parametername">scheduleRepeatCallbackAsync</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span></td>
-        <td><span class="parametername">letDeviceSleepCallback</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_System_Func_System_Threading_Tasks_Task__System_Action_">CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean, Func&lt;Task&gt;, Action)</a></div>
+  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_CancelLocalInvocation_Sensus_Callbacks_ScheduledCallback_">CallbackScheduler.CancelLocalInvocation(ScheduledCallback)</a></div>
+  
+  
+  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelSilentNotifications_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications*"></a>
+  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_CancelSilentNotifications" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.CancelSilentNotifications">CancelSilentNotifications()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void CancelSilentNotifications()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_CancelSilentNotifications">iOSCallbackScheduler.CancelSilentNotifications()</a></div>
   
   
   <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_ReissueSilentNotificationAsync_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ReissueSilentNotificationAsync*"></a>
@@ -317,13 +285,13 @@
   <div><a class="xref" href="Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_ReissueSilentNotificationAsync_System_String_">iOSCallbackScheduler.ReissueSilentNotificationAsync(String)</a></div>
   
   
-  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.ScheduleCallbackPlatformSpecificAsync(Sensus.Callbacks.ScheduledCallback)">ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)</h4>
+  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RequestLocalInvocationAsync_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync*"></a>
+  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)">RequestLocalInvocationAsync(ScheduledCallback)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task ScheduleCallbackPlatformSpecificAsync(ScheduledCallback callback)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task RequestLocalInvocationAsync(ScheduledCallback callback)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -358,36 +326,7 @@
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ScheduleCallbackPlatformSpecificAsync_Sensus_Callbacks_ScheduledCallback_">CallbackScheduler.ScheduleCallbackPlatformSpecificAsync(ScheduledCallback)</a></div>
-  
-  
-  <a id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_UnscheduleCallbackPlatformSpecific_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific*"></a>
-  <h4 id="Sensus_iOS_Callbacks_UNUserNotificationCallbackScheduler_UnscheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.UnscheduleCallbackPlatformSpecific(Sensus.Callbacks.ScheduledCallback)">UnscheduleCallbackPlatformSpecific(ScheduledCallback)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void UnscheduleCallbackPlatformSpecific(ScheduledCallback callback)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
-        <td><span class="parametername">callback</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackPlatformSpecific_Sensus_Callbacks_ScheduledCallback_">CallbackScheduler.UnscheduleCallbackPlatformSpecific(ScheduledCallback)</a></div>
+  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_">CallbackScheduler.RequestLocalInvocationAsync(ScheduledCallback)</a></div>
 </article>
           </div>
           

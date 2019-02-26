@@ -119,7 +119,7 @@ delays of 65-70 seconds and maybe even more. This is by design within Android an
 <p>Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
 with the following exceptions for <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>s:</p>
 <ul>
-<li><p>Significant location change processing:  If SignificantChangePoll is enabled, the <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> will wake up each time
+<li><p>Significant location change processing:  If <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePoll">SignificantChangePoll</a> is enabled, the <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> will wake up each time
 the user&apos;s physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
 order of several kilometers.</p>
 </li>
@@ -128,7 +128,7 @@ at the desired time to take a reading. Note that the reliability of these timing
 by the Apple Push Notification Service. The value of <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a> should be set conservatively for all probes,
 for example no lower than 15-20 minutes. The push notification backend server will attempt to deliver push notifications slightly ahead of their
 scheduled times. If such a push notification arrives at the device before the scheduled time, then the local notification (if 
-AlertUserWhenBackgrounded is enabled) will be cancelled.</p>
+<a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> is enabled) will be cancelled.</p>
 </li>
 </ul>
 <p>Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support 

@@ -93,7 +93,7 @@ delays of 65-70 seconds and maybe even more. This is by design within Android an
 <p>Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
 with the following exceptions for <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>s:</p>
 <ul>
-<li><p>Significant location change processing:  If SignificantChangePoll is enabled, the <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> will wake up each time
+<li><p>Significant location change processing:  If <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_SignificantChangePoll">SignificantChangePoll</a> is enabled, the <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> will wake up each time
 the user&apos;s physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
 order of several kilometers.</p>
 </li>
@@ -102,7 +102,7 @@ at the desired time to take a reading. Note that the reliability of these timing
 by the Apple Push Notification Service. The value of <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a> should be set conservatively for all probes,
 for example no lower than 15-20 minutes. The push notification backend server will attempt to deliver push notifications slightly ahead of their
 scheduled times. If such a push notification arrives at the device before the scheduled time, then the local notification (if 
-AlertUserWhenBackgrounded is enabled) will be cancelled.</p>
+<a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> is enabled) will be cancelled.</p>
 </li>
 </ul>
 <p>Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support 
@@ -300,6 +300,38 @@ public bool AcPowerConnectPollOverridesScheduledPolls { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><p><code>true</code> if AC power connect poll overrides scheduled polls; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded_" data-uid="Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded" data-uid="Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
+app is in the background. See the <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> overview for information about background considerations. 
+The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
+data polling may occur. Depending on how many <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>s are enabled, these notifications can
+become excessive for the user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) Alert User When Backgrounded:&quot;, true, 11)]
+public bool AlertUserWhenBackgrounded { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to alert user when backgrounded; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -576,6 +608,66 @@ public int PollingTimeoutMinutes { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RawParticipation">Probe.RawParticipation</a></div>
+  
+  
+  <a id="Sensus_Probes_PollingProbe_SignificantChangePoll_" data-uid="Sensus.Probes.PollingProbe.SignificantChangePoll*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_SignificantChangePoll" data-uid="Sensus.Probes.PollingProbe.SignificantChangePoll">SignificantChangePoll</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
+<a href="https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html">here</a> for 
+more information on significant changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) Poll On Significant Location Change:&quot;, true, 9)]
+public bool SignificantChangePoll { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if significant change poll; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_PollingProbe_SignificantChangePollOverridesScheduledPolls_" data-uid="Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_SignificantChangePollOverridesScheduledPolls" data-uid="Sensus.Probes.PollingProbe.SignificantChangePollOverridesScheduledPolls">SignificantChangePollOverridesScheduledPolls</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Has no effect if significant-change polling is disabled. If significant-change polling is enabled:  (1) If this 
+is on, polling will only occur on significant changes. (2) If this is off, polling will occur based on <a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a> and 
+on significant changes.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) Significant Change Poll Overrides Scheduled Polls:&quot;, true, 10)]
+public bool SignificantChangePollOverridesScheduledPolls { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if significant change poll overrides scheduled polls; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   

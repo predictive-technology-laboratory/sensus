@@ -83,9 +83,9 @@
   
   <h1 id="Sensus_Protocol" data-uid="Sensus.Protocol" class="text-break">Class Protocol
   </h1>
-  <div class="markdown level0 summary"><p>A Protocol defines a plan for collecting (via <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s), anonymizing (via <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a>s), and 
+  <div class="markdown level0 summary"><p>A <a class="xref" href="Sensus.Protocol.html">Protocol</a> defines a plan for collecting (via <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s), anonymizing (via <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a>s), and 
 storing (via <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_LocalDataStore">LocalDataStore</a>s and <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_RemoteDataStore">RemoteDataStore</a>s) data from a device. Study organizers use Sensus to configure the 
-study&apos;s Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.</p>
+study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study participants use Sensus to load a <a class="xref" href="Sensus.Protocol.html">Protocol</a> and enroll in the study. All of this happens within the Sensus app.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -114,6 +114,54 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_ACCURACY_METERS = 25</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_DEFERRAL_DISTANCE_METERS" data-uid="Sensus.Protocol.GPS_DEFAULT_DEFERRAL_DISTANCE_METERS">GPS_DEFAULT_DEFERRAL_DISTANCE_METERS</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_DEFERRAL_TIME_MINUTES" data-uid="Sensus.Protocol.GPS_DEFAULT_DEFERRAL_TIME_MINUTES">GPS_DEFAULT_DEFERRAL_TIME_MINUTES</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -738,15 +786,14 @@ public string Description { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification_" data-uid="Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification*"></a>
   <h4 id="Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification" data-uid="Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification">DisplayParticipationPercentageInForegroundServiceNotification</h4>
-  <div class="markdown level1 summary"><p>Whether or not to display the participation percentage (see <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizonDays">ParticipationHorizonDays</a>) in the 
-foreground service notification. If multiple <a class="xref" href="Sensus.Protocol.html">Protocol</a>s enable this option, then the average
-percentage across these will be displayed. This only applies to Android, as iOS does not have a concept
-analogous to foreground service notifications.</p>
+  <div class="markdown level1 summary"><p>Available on Android only. Whether or not to display the participation percentage (see <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizonDays">ParticipationHorizonDays</a>) in the 
+foreground service notification. If multiple <a class="xref" href="Sensus.Protocol.html">Protocol</a>s enable this option, then the average percentage across these will
+be displayed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Display Participation:&quot;, true, 55)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(Android) Display Participation:&quot;, true, 55)]
 public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -848,6 +895,90 @@ public TimeSpan EndTime { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_GpsDeferLocationUpdates_" data-uid="Sensus.Protocol.GpsDeferLocationUpdates*"></a>
+  <h4 id="Sensus_Protocol_GpsDeferLocationUpdates" data-uid="Sensus.Protocol.GpsDeferLocationUpdates">GpsDeferLocationUpdates</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to defer location updates until the app is active, thereby conserving battery.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) GPS - Defer Location Updates:&quot;, true, 34)]
+public bool GpsDeferLocationUpdates { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if gps defer location updates; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsDeferralDistanceMeters_" data-uid="Sensus.Protocol.GpsDeferralDistanceMeters*"></a>
+  <h4 id="Sensus_Protocol_GpsDeferralDistanceMeters" data-uid="Sensus.Protocol.GpsDeferralDistanceMeters">GpsDeferralDistanceMeters</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. How far to travel before deferred location updates are delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;(iOS) GPS - Deferral Distance (Meters):&quot;, true, 35, false)]
+public float GpsDeferralDistanceMeters { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>The gps deferral distance meters.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsDeferralTimeMinutes_" data-uid="Sensus.Protocol.GpsDeferralTimeMinutes*"></a>
+  <h4 id="Sensus_Protocol_GpsDeferralTimeMinutes" data-uid="Sensus.Protocol.GpsDeferralTimeMinutes">GpsDeferralTimeMinutes</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. How long to wait before deferred location updates are delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;(iOS) GPS - Deferral Time (Mins.):&quot;, true, 36, false)]
+public float GpsDeferralTimeMinutes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>The gps deferral time minutes.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_GpsDesiredAccuracyMeters_" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters*"></a>
   <h4 id="Sensus_Protocol_GpsDesiredAccuracyMeters" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters">GpsDesiredAccuracyMeters</h4>
   <div class="markdown level1 summary"><p>The desired accuracy in meters of the collected GPS readings. There are no guarantees that this accuracy
@@ -871,6 +1002,35 @@ public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Single</span></td>
         <td><p>The GPS desired accuracy, in meters.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsListenForSignificantChanges_" data-uid="Sensus.Protocol.GpsListenForSignificantChanges*"></a>
+  <h4 id="Sensus_Protocol_GpsListenForSignificantChanges" data-uid="Sensus.Protocol.GpsListenForSignificantChanges">GpsListenForSignificantChanges</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to use significant changes in location (e.g., moving between
+cellular towers) in place of GPS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) GPS - Significant Changes:&quot;, true, 33)]
+public bool GpsListenForSignificantChanges { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if gps listen for significant changes; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -981,6 +1141,63 @@ public int GpsMinTimeDelayMS { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><p>The GPS minimum time delay, in milliseconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsPauseActivityType_" data-uid="Sensus.Protocol.GpsPauseActivityType*"></a>
+  <h4 id="Sensus_Protocol_GpsPauseActivityType" data-uid="Sensus.Protocol.GpsPauseActivityType">GpsPauseActivityType</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. The types of activities that should be considered for pausing activities, if
+<a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_GpsPauseLocationUpdatesAutomatically">GpsPauseLocationUpdatesAutomatically</a> is enabled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListUiProperty]
+public ActivityType GpsPauseActivityType { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Plugin.Geolocator.Abstractions.ActivityType</span></td>
+        <td><p>The type of the gps pause activity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsPauseLocationUpdatesAutomatically_" data-uid="Sensus.Protocol.GpsPauseLocationUpdatesAutomatically*"></a>
+  <h4 id="Sensus_Protocol_GpsPauseLocationUpdatesAutomatically" data-uid="Sensus.Protocol.GpsPauseLocationUpdatesAutomatically">GpsPauseLocationUpdatesAutomatically</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to pause location updates when movement is unlikely.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) GPS - Pause Location Updates:&quot;, true, 31)]
+public bool GpsPauseLocationUpdatesAutomatically { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if gps pause location updates automatically; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
