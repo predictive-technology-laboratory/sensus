@@ -91,14 +91,13 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// This parameter only affects Android, and it determines whether or not to keep the device awake while listening for readings while Sensus is 
-        /// backgrounded. If turned on, readings will be delivered to Sensus in the backgrounded; however, more power will be consumed because the processor 
-        /// will not be allowed to sleep. If turned off, readings will be paused when Sensus is backgrounded. This will conserve power because the processor 
-        /// will be allowed to sleep, but readings will be delayed and possibly dropped entirely. When the device wakes up, some readings that were cached 
-        /// while asleep may be delivered in bulk to Sensus. This bulk delivery may not include all readings, and the readings delivered in bulk will have 
-        /// their <see cref="Datum.Timestamp"/> fields set to the time of bulk delivery rather than the time the reading originated. Even a single listening 
-        /// probe with this setting turned on will be sufficient to keep the processor awake and delivering readings to all listening probes in all protocols
-        /// within Sensus.
+        /// Available on Android only. Whether or not to keep the device awake while listening for readings while Sensus is backgrounded. If enabled, readings 
+        /// will be delivered to Sensus in the backgrounded; however, more power will be consumed because the processor will not be allowed to sleep. If disabled,
+        /// readings will be paused when Sensus is backgrounded. This will conserve power because the processor will be allowed to sleep, but readings will be 
+        /// delayed and possibly dropped entirely. When the device wakes up, some readings that were cached while asleep may be delivered in bulk to Sensus. 
+        /// This bulk delivery may not include all readings, and the readings delivered in bulk will have their <see cref="Datum.Timestamp"/> fields set to the
+        /// time of bulk delivery rather than the time the reading originated. Even a single listening probe with this setting turned on will be sufficient to 
+        /// keep the processor awake and delivering readings to all listening probes in all protocols within Sensus.
         /// </summary>
         /// <value><c>true</c> to keep device awake; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(Android) Keep Device Awake:", true, int.MaxValue - 1)]

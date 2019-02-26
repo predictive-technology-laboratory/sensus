@@ -1094,18 +1094,40 @@ namespace Sensus
 
         #region iOS-specific protocol properties
 
+        /// <summary>
+        /// Available on iOS only. Whether or not to pause location updates when movement is unlikely.
+        /// </summary>
+        /// <value><c>true</c> if gps pause location updates automatically; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(iOS) GPS - Pause Location Updates:", true, 31)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
+        /// <summary>
+        /// Available on iOS only. The types of activities that should be considered for pausing activities, if
+        /// <see cref="GpsPauseLocationUpdatesAutomatically"/> is enabled.
+        /// </summary>
+        /// <value>The type of the gps pause activity.</value>
         [ListUiProperty("(iOS) GPS - Pause Activity Type:", true, 32, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation }, false)]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
+        /// <summary>
+        /// Available on iOS only. Whether or not to use significant changes in location (e.g., moving between
+        /// cellular towers) in place of GPS.
+        /// </summary>
+        /// <value><c>true</c> if gps listen for significant changes; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(iOS) GPS - Significant Changes:", true, 33)]
         public bool GpsListenForSignificantChanges { get; set; } = false;
 
+        /// <summary>
+        /// Available on iOS only. Whether or not to defer location updates until the app is active, thereby conserving battery.
+        /// </summary>
+        /// <value><c>true</c> if gps defer location updates; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(iOS) GPS - Defer Location Updates:", true, 34)]
         public bool GpsDeferLocationUpdates { get; set; } = false;
 
+        /// <summary>
+        /// Available on iOS only. How far to travel before deferred location updates are delivered.
+        /// </summary>
+        /// <value>The gps deferral distance meters.</value>
         [EntryFloatUiProperty("(iOS) GPS - Deferral Distance (Meters):", true, 35, false)]
         public float GpsDeferralDistanceMeters
         {
@@ -1124,6 +1146,10 @@ namespace Sensus
             }
         }
 
+        /// <summary>
+        /// Available on iOS only. How long to wait before deferred location updates are delivered.
+        /// </summary>
+        /// <value>The gps deferral time minutes.</value>
         [EntryFloatUiProperty("(iOS) GPS - Deferral Time (Mins.):", true, 36, false)]
         public float GpsDeferralTimeMinutes
         {
@@ -1412,10 +1438,9 @@ namespace Sensus
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
-        /// Whether or not to display the participation percentage (see <see cref="ParticipationHorizonDays"/>) in the 
-        /// foreground service notification. If multiple <see cref="Protocol"/>s enable this option, then the average
-        /// percentage across these will be displayed. This only applies to Android, as iOS does not have a concept
-        /// analogous to foreground service notifications.
+        /// Available on Android only. Whether or not to display the participation percentage (see <see cref="ParticipationHorizonDays"/>) in the 
+        /// foreground service notification. If multiple <see cref="Protocol"/>s enable this option, then the average percentage across these will
+        /// be displayed.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(Android) Display Participation:", true, 55)]

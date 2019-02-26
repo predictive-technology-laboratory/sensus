@@ -176,7 +176,7 @@ namespace Sensus.Probes
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(iOS)  Poll On Significant Location Change:", true, 9)]
+        [OnOffUiProperty("(iOS) Poll On Significant Location Change:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -189,7 +189,7 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(iOS)  Significant Change Poll Overrides Scheduled Polls:", true, 10)]
+        [OnOffUiProperty("(iOS) Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
@@ -197,15 +197,14 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Whether or not to alert the user with a notification when polling should occur and the
-        /// app is in the background. See the <see cref="PollingProbe"/> overview for information
-        /// about background considerations. The notifications issued when this setting is enabled
-        /// encourage the user to bring the app to the foreground so that data polling may occur.
-        /// Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+        /// Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
+        /// app is in the background. See the <see cref="PollingProbe"/> overview for information about background considerations. 
+        /// The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
+        /// data polling may occur. Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
         /// become excessive for the user.
         /// </summary>
         /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(iOS)  Alert User When Backgrounded:", true, 11)]
+        [OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 11)]
         public bool AlertUserWhenBackgrounded { get; set; } = true;
 
         /// <summary>

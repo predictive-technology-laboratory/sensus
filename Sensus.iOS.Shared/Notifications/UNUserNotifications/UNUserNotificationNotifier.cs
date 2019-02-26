@@ -37,7 +37,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user. furthermore, it appears that notifications must have content in order to come back.
-            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
+            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
         }
 
         public async Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
