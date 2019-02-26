@@ -425,6 +425,8 @@ namespace Sensus
         public abstract string DeviceModel { get; }
 
         #region iOS GPS listener settings
+
+#if __IOS__
         [JsonIgnore]
         public bool GpsPauseLocationUpdatesAutomatically
         {
@@ -484,6 +486,8 @@ namespace Sensus
                 return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralTimeMinutes);
             }
         }
+#endif
+
         #endregion
 
         #endregion

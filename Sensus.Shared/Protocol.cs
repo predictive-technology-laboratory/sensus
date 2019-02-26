@@ -1094,19 +1094,19 @@ namespace Sensus
 
         #region iOS-specific protocol properties
 
-        [OnOffUiProperty("GPS - Pause Location Updates:", true, 31)]
+        [OnOffUiProperty("(iOS) GPS - Pause Location Updates:", true, 31)]
         public bool GpsPauseLocationUpdatesAutomatically { get; set; } = false;
 
-        [ListUiProperty("GPS - Pause Activity Type:", true, 32, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation }, false)]
+        [ListUiProperty("(iOS) GPS - Pause Activity Type:", true, 32, new object[] { ActivityType.Other, ActivityType.AutomotiveNavigation, ActivityType.Fitness, ActivityType.OtherNavigation }, false)]
         public ActivityType GpsPauseActivityType { get; set; } = ActivityType.Other;
 
-        [OnOffUiProperty("GPS - Significant Changes:", true, 33)]
+        [OnOffUiProperty("(iOS) GPS - Significant Changes:", true, 33)]
         public bool GpsListenForSignificantChanges { get; set; } = false;
 
-        [OnOffUiProperty("GPS - Defer Location Updates:", true, 34)]
+        [OnOffUiProperty("(iOS) GPS - Defer Location Updates:", true, 34)]
         public bool GpsDeferLocationUpdates { get; set; } = false;
 
-        [EntryFloatUiProperty("GPS - Deferral Distance (Meters):", true, 35, false)]
+        [EntryFloatUiProperty("(iOS) GPS - Deferral Distance (Meters):", true, 35, false)]
         public float GpsDeferralDistanceMeters
         {
             get
@@ -1124,7 +1124,7 @@ namespace Sensus
             }
         }
 
-        [EntryFloatUiProperty("GPS - Deferral Time (Mins.):", true, 36, false)]
+        [EntryFloatUiProperty("(iOS) GPS - Deferral Time (Mins.):", true, 36, false)]
         public float GpsDeferralTimeMinutes
         {
             get { return _gpsDeferralTimeMinutes; }
@@ -1418,7 +1418,7 @@ namespace Sensus
         /// analogous to foreground service notifications.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Display Participation:", true, 55)]
+        [OnOffUiProperty("(Android) Display Participation:", true, 55)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
         /// <summary>

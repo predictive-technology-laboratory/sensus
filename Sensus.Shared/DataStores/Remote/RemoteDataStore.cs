@@ -154,7 +154,7 @@ namespace Sensus.DataStores.Remote
         /// will open Sensus to transmit the data.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("User Notification Message:", true, 56, true)]
+        [EntryStringUiProperty("(iOS) User Notification Message:", true, 56, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }

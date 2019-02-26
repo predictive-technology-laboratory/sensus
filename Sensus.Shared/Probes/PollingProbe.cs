@@ -176,7 +176,7 @@ namespace Sensus.Probes
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Poll On Significant Location Change:", true, 9)]
+        [OnOffUiProperty("(iOS)  Poll On Significant Location Change:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -189,7 +189,7 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 10)]
+        [OnOffUiProperty("(iOS)  Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
@@ -205,7 +205,7 @@ namespace Sensus.Probes
         /// become excessive for the user.
         /// </summary>
         /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Alert User When Backgrounded:", true, 11)]
+        [OnOffUiProperty("(iOS)  Alert User When Backgrounded:", true, 11)]
         public bool AlertUserWhenBackgrounded { get; set; } = true;
 
         /// <summary>

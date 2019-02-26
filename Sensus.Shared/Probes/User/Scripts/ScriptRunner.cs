@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Sensus.Concurrent;
-using Sensus.Extensions;
 using Sensus.UI.UiProperties;
 using Sensus.Context;
 using Sensus.Callbacks;

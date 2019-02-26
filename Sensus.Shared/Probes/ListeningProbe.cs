@@ -101,7 +101,7 @@ namespace Sensus.Probes
         /// within Sensus.
         /// </summary>
         /// <value><c>true</c> to keep device awake; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Keep Device Awake:", true, int.MaxValue - 1)]
+        [OnOffUiProperty("(Android) Keep Device Awake:", true, int.MaxValue - 1)]
         public bool KeepDeviceAwake
         {
             get
