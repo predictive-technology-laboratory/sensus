@@ -338,7 +338,7 @@ namespace Sensus.Notifications
                             }
                             else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
                             {
-                                // update/restart each probe dervied from the target type
+                                // update/restart each probe derived from the target type
                                 foreach (Probe probe in protocol.Probes)
                                 {
                                     if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
