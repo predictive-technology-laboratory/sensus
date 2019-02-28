@@ -85,6 +85,8 @@ namespace Sensus.Probes
         private DataRateCalculator _uiUpdateRateCalculator;
         private EventHandler<bool> _powerConnectionChanged;
         private CancellationTokenSource _processDataCanceller;
+        private readonly object _restartLocker = new object();
+        private bool _restarting = false;
 
         [JsonIgnore]
         public abstract string DisplayName { get; }
@@ -568,8 +570,28 @@ namespace Sensus.Probes
 
         public async Task RestartAsync()
         {
-            await StopAsync();
-            await StartAsync();
+            // prevent concurrent restarts
+            lock (_restartLocker)
+            {
+                if (_restarting)
+                {
+                    return;
+                }
+                else
+                {
+                    _restarting = true;
+                }
+            }
+
+            try
+            {
+                await StopAsync();
+                await StartAsync();
+            }
+            finally
+            {
+                _restarting = false;
+            }
         }
 
         public virtual Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
@@ -602,7 +624,9 @@ namespace Sensus.Probes
                 properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
                 properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
             }
-            else
+            // the probe might not be running because it's in the middle of being restarted. only 
+            // return a signal to resart the probe if it is not currently being restarted.
+            else if (!_restarting)
             {
                 Analytics.TrackEvent(eventName, properties);
                 result = HealthTestResult.Restart;

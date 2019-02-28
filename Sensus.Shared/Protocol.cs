@@ -2376,8 +2376,9 @@ namespace Sensus
                             {
                                 await probe.RestartAsync();
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                SensusServiceHelper.Get().Logger.Log("Exception while restarting probe within health test:  " + ex.Message, LoggingLevel.Normal, GetType());
                             }
                         }
                         else
