@@ -281,6 +281,7 @@ namespace Sensus.Notifications
                     string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(cancellationToken);
                     JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
                     bool restartProtocol = false;
+                    List<Probe> updatedProbesToRestart = new List<Probe>();
                     foreach (JObject protocolUpdate in protocolUpdates.Value<JArray>("updates"))
                     {
                         // catch any exceptions so that we process all updates
@@ -338,17 +339,17 @@ namespace Sensus.Notifications
                             }
                             else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
                             {
-                                // update/restart each probe derived from the target type
+                                // update each probe derived from the target type
                                 foreach (Probe probe in protocol.Probes)
                                 {
                                     if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
                                     {
                                         property.SetValue(probe, valueObject);
 
-                                        // restart any running probes to take on updated settings
-                                        if (probe.Running)
+                                        // if the probe is running, then mark it for restarting
+                                        if (probe.Running && !updatedProbesToRestart.Contains(probe))
                                         {
-                                            await probe.RestartAsync();
+                                            updatedProbesToRestart.Add(probe);
                                         }
                                     }
                                 }
@@ -366,19 +367,31 @@ namespace Sensus.Notifications
                         }
                     }
 
-                    // restart the protocol if needed. this will have the side-effect of saving the app state.
+                    // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
                     if (restartProtocol)
                     {
                         await protocol.StopAsync();
                         await protocol.StartAsync(cancellationToken);
                     }
-                    // save the app state to record the changes.
                     else
                     {
+                        // restart individual probes to take on updated settings
+                        foreach (Probe probeToRestart in updatedProbesToRestart)
+                        {
+                            try
+                            {
+                                await probeToRestart.RestartAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                SensusServiceHelper.Get().Logger.Log("Exception while restarting probe following push notification update:  " + ex.Message, LoggingLevel.Normal, GetType());
+                            }
+                        }
+
                         await SensusServiceHelper.Get().SaveAsync();
                     }
 
-                    // let the user know if requested
+                    // let the user know what happened if requested
                     JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
                     if (userNotification != null)
                     {
