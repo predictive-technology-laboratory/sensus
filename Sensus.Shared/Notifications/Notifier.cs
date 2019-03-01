@@ -346,6 +346,9 @@ namespace Sensus.Notifications
                                     {
                                         property.SetValue(probe, valueObject);
 
+                                        // record the update as a datum in the data store, so that we can analyze results of updates retrospectively.
+                                        protocol.LocalDataStore.WriteDatum(new ProtocolUpdateDatum(DateTimeOffset.UtcNow, propertyTypeName, propertyName, targetTypeName, valueString), cancellationToken);
+
                                         // if the probe is running, then mark it for restarting
                                         if (probe.Running && !updatedProbesToRestart.Contains(probe))
                                         {
