@@ -26,10 +26,7 @@ using Newtonsoft.Json;
 using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using System.ComponentModel;
-
-#if __IOS__
 using Sensus.Notifications;
-#endif
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -520,7 +517,11 @@ namespace Sensus.Probes.User.Scripts
         public async Task StopAsync()
         {
             await UnscheduleCallbacksAsync();
-            await SensusServiceHelper.Get().RemoveScriptsForRunnerAsync(this, true);
+
+            if (SensusServiceHelper.Get().RemoveScriptsForRunner(this))
+            {
+                await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, Probe.Protocol);
+            }
         }
 
         public async Task ScheduleScriptRunsAsync()

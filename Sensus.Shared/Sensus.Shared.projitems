@@ -272,6 +272,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonDotNetExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PendingSurveyNotificationMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

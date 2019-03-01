@@ -165,7 +165,7 @@ namespace Sensus.Android
                 // through the crash analytics service and we'll be able to track it
                 _serviceBindWait.WaitOne(TimeSpan.FromSeconds(10000));
 
-                SensusServiceHelper.Get().ClearPendingSurveysNotification();
+                SensusServiceHelper.Get().CancelPendingSurveysNotification();
 
                 // now that the service connection has been established, reenable UI.
                 try

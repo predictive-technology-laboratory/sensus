@@ -59,7 +59,7 @@ namespace Sensus.Notifications
             _pushNotificationRequestIdProtocolIdsToDelete = new List<Tuple<string, string>>();
         }
 
-        public abstract Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage);
+        public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, DisplayPage displayPage);
 
         public abstract void CancelNotification(string id);
 
@@ -227,7 +227,7 @@ namespace Sensus.Notifications
             {
                 if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
                 {
-                    await IssueNotificationAsync(title, body, id, protocol, !string.IsNullOrWhiteSpace(sound), DisplayPage.None);
+                    await IssueNotificationAsync(title, body, id, !string.IsNullOrWhiteSpace(sound), protocol, null, DisplayPage.None);
                 }
             }
             catch (Exception ex)
@@ -383,7 +383,7 @@ namespace Sensus.Notifications
                     if (userNotification != null)
                     {
                         string message = userNotification.Value<string>("message");
-                        await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, protocol, true, DisplayPage.None);
+                        await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, true, protocol, null, DisplayPage.None);
                     }
                 }
                 #endregion

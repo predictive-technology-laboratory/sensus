@@ -30,14 +30,16 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
         /// <param name="completionHandler"></param>
         public override async void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, Action<UNNotificationPresentationOptions> completionHandler)
         {
-            SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (notification?.Request?.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
+            string identifier = notification?.Request?.Identifier;
+
+            SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
             // long story:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
             // dismisses the tapped notification and brings up sensus. upon activation sensus then updates and reissues all notifications. these reissued
             // notifications will come directly to the app as long as it's in the foreground. the original notifications that were in the iOS notification
             // tray will still be there, despite the fact that the notifications have been sent to the app via the current method. short story:  we need to 
             // cancel each notification as it comes in to remove it from the notification center.
-            SensusContext.Current.Notifier.CancelNotification(notification?.Request?.Identifier);
+            SensusContext.Current.Notifier.CancelNotification(identifier);
 
             // if the notification is for a callback, service the callback and do not show the notification.
             NSDictionary notificationInfo = notification?.Request?.Content?.UserInfo;
@@ -47,12 +49,21 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 await callbackScheduler.ServiceCallbackAsync(notificationInfo);
                 completionHandler?.Invoke(UNNotificationPresentationOptions.None);
             }
-
-            // if the notification is for pending surveys or study updates, show the notification along with any alert or sound.
-            if (notification?.Request?.Identifier == SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID ||
-                notification?.Request?.Identifier == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
+            else if (identifier == SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID)
+            {
+                completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge | UNNotificationPresentationOptions.Sound);
+            }
+            else if (identifier == SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID)
+            {
+                completionHandler?.Invoke(UNNotificationPresentationOptions.Badge);
+            }
+            else if (identifier == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
+            }
+            else
+            {
+                completionHandler?.Invoke(UNNotificationPresentationOptions.None);
             }
         }
 

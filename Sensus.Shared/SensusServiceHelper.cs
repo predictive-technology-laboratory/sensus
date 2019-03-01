@@ -57,7 +57,8 @@ namespace Sensus
         #region static members
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
-        public const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+        public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
+        public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
         public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
 
         /// <summary>
@@ -907,7 +908,11 @@ namespace Sensus
 
             if (modifiedScriptsToRun)
             {
-                await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+                // clear out any expired scripts
+                await RemoveExpiredScriptsAsync();
+
+                // update the pending surveys notification
+                await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol);
 
                 // save the app state. if the app crashes we want to keep the surveys around so they can be 
                 // taken. this will not result in duplicate surveys in cases where the script probe restarts
@@ -925,32 +930,34 @@ namespace Sensus
             }
         }
 
-        public async Task RemoveScriptAsync(Script script, bool issueNotification)
+        public bool RemoveScriptsForRunner(ScriptRunner runner)
         {
-            await RemoveScriptsAsync(issueNotification, script);
+            return RemoveScripts(_scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner, bool issueNotification)
+        public async Task<bool> RemoveExpiredScriptsAsync()
         {
-            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
-        }
+            bool removed = false;
 
-        public async Task RemoveExpiredScriptsAsync(bool issueNotification)
-        {
             foreach (Script script in _scriptsToRun)
             {
                 if (script.Expired)
                 {
-                    await RemoveScriptAsync(script, issueNotification);
-
                     // let the script agent know and store a datum to record the event
                     await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
                     await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+
+                    if (RemoveScripts(script))
+                    {
+                        removed = true;
+                    }
                 }
             }
+
+            return removed;
         }
 
-        public async Task ClearScriptsAsync()
+        public async Task<bool> ClearScriptsAsync()
         {
             foreach (Script script in _scriptsToRun)
             {
@@ -959,42 +966,65 @@ namespace Sensus
                 await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
-            _scriptsToRun.Clear();
-
-            await IssuePendingSurveysNotificationAsync(null, false);
+            return RemoveScripts(_scriptsToRun.ToArray());
         }
 
-        /// <summary>
-        /// Issues the pending surveys notification.
-        /// </summary>
-        /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
-        /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public async Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
+        public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol)
         {
-            await RemoveExpiredScriptsAsync(false);
+            // clear any existing notifications/badges
+            CancelPendingSurveysNotification();
 
             await _scriptsToRun.Concurrent.ExecuteThreadSafe(async () =>
             {
                 int numScriptsToRun = _scriptsToRun.Count;
 
-                if (numScriptsToRun == 0)
-                {
-                    ClearPendingSurveysNotification();
-                }
-                else
+                if (numScriptsToRun > 0 && notificationMode != PendingSurveyNotificationMode.None)
                 {
                     string s = numScriptsToRun == 1 ? "" : "s";
                     string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                     DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                     string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+
+                    string notificationId = null;
+                    bool alertUser = false;
+
+                    if (notificationMode == PendingSurveyNotificationMode.Badge)
+                    {
+                        notificationId = PENDING_SURVEY_BADGE_NOTIFICATION_ID;
+                    }
+                    else if (notificationMode == PendingSurveyNotificationMode.BadgeText)
+                    {
+                        notificationId = PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        alertUser = false;
+                    }
+                    else if (notificationMode == PendingSurveyNotificationMode.BadgeTextAlert)
+                    {
+                        notificationId = PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        alertUser = true;
+                    }
+                    else
+                    {
+                        SensusException.Report("Unrecognized pending survey notification mode:  " + notificationMode);
+                        return;
+                    }
+
+                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, DisplayPage.PendingSurveys);
                 }
             });
         }
 
-        public void ClearPendingSurveysNotification()
+        public void CancelPendingSurveysNotification()
         {
-            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_TEXT_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_BADGE_NOTIFICATION_ID);
+
+#if __IOS__
+            // clear the budge -- must be done from UI thread
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                UIKit.UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+            });
+#endif
         }
 
         /// <summary>
@@ -1707,8 +1737,7 @@ namespace Sensus
             await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
         }
 
-        #region Private Methods
-        private async Task RemoveScriptsAsync(bool issueNotification, params Script[] scripts)
+        public bool RemoveScripts(params Script[] scripts)
         {
             bool removed = false;
 
@@ -1720,10 +1749,7 @@ namespace Sensus
                 }
             }
 
-            if (removed && issueNotification)
-            {
-                await IssuePendingSurveysNotificationAsync(null, false);
-            }
+            return removed;               
         }
 
         private int GetScriptIndex(Script script)
@@ -1752,6 +1778,5 @@ namespace Sensus
 
             return index;
         }
-        #endregion
     }
 }

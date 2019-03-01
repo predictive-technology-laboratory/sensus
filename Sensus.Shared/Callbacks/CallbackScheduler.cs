@@ -231,7 +231,7 @@ namespace Sensus.Callbacks
 
                             if (notifyUser)
                             {
-                                await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage);
+                                await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.DisplayPage);
                             }
 
                             // if the callback specified a timeout, request cancellation at the specified time.
