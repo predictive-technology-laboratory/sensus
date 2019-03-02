@@ -5,7 +5,7 @@ then
     echo ""
     echo "Purpose:  Pushes an updates file to devices. Reads devices from standard input."
     echo ""
-    echo "  Usage:  ./push-updates.sh [updates file]"
+    echo "  Usage:  ./push-updates.sh [updates file] [update id]"
     echo ""
     exit 1
 fi
@@ -39,6 +39,7 @@ do
 "\"body\": \"\","\
 "\"sound\": \"\","\
 "\"command\": \"UPDATE-PROTOCOL\","\
+"\"command-class\": \"${device}-${protocol}-$2\","\
 "\"format\": \"$format\","\
 "\"creation-time\": $current_time_seconds,"\
 "\"time\": $current_time_seconds"\

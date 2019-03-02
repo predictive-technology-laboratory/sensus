@@ -77,20 +77,32 @@ do
     body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    command_class=$(jq -r '.command-class' $n)  # pull out the raw JSON value, as we only use is for tracking processed commands.
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)       # the value indicates unix time in seconds.
 
-    # if this is a push notification command, check if we've already sent a push notification 
-    # for the command class (everything except for the invocation ID). we're processing the
-    # push notification requests with newest times first, so if we have already processed the
-    # command class then we can safely ignore all others as they are older and obsolete.
-    command_class=${command%|*}        # strip the invocation ID
-    command_class=${command_class#\"}  # strip the leading double-quote (retained above)
-    command_class=${command_class%\"}  # strip the trailing double-quote (retained above)
+    # previously, we did not send an explicit command-class field. instead, we were able to 
+    # hack it out of the command because at that time we were only sending callback commands
+    # in which the command class comprised everything but the final invocation identifier.
+    # but now we wish to send other kinds of commands that do not have this format, making
+    # it necessary to explicitly provide a command-class field. for backwards compatibility,
+    # if no command-class field is passed to us then revert to the hacking approach.
     if [[ $command_class = "" ]]
     then
-	echo "No command found."
+        # if this is a push notification command, check if we've already sent a push notification 
+        # for the command class (everything except for the invocation ID). we're processing the
+        # push notification requests with newest times first, so if we have already processed the
+        # command class then we can safely ignore all others as they are older and obsolete.
+	command_class=${command%|*}        # strip the invocation ID
+	command_class=${command_class#\"}  # strip the leading double-quote (retained above)
+	command_class=${command_class%\"}  # strip the trailing double-quote (retained above)
+    fi
+
+    # check for a command class and whether we've already processed it
+    if [[ $command_class = "" ]]
+    then
+	echo "No command class found."
     else
 	if [[ ${processed_command_classes[$command_class]} ]]
 	then

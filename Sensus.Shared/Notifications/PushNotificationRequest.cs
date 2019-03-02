@@ -105,6 +105,7 @@ namespace Sensus.Notifications
         private string _body;
         private string _sound;
         private string _command;
+        private string _commandClass;
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _creationTime;
         private DateTimeOffset _notificationTime;
@@ -136,6 +137,7 @@ namespace Sensus.Notifications
                            "\"body\":" + JsonConvert.ToString(_body) + "," +
                            "\"sound\":" + JsonConvert.ToString(_sound) + "," +
                            "\"command\":" + JsonConvert.ToString(_command) + "," +
+                           "\"command-class\":" + JsonConvert.ToString(_commandClass) + "," +
                            "\"format\":" + JsonConvert.ToString(GetFormatString(_format)) + "," +
                            "\"creation-time\":" + _creationTime.ToUnixTimeSeconds() + "," +
                            "\"time\":" + _notificationTime.ToUnixTimeSeconds() +
@@ -143,7 +145,7 @@ namespace Sensus.Notifications
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset notificationTime, string deviceId, PushNotificationRequestFormat format)
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, string commandClass, DateTimeOffset notificationTime, string deviceId, PushNotificationRequestFormat format)
         {
             _id = Guid.NewGuid().ToString();
             _protocol = protocol;
@@ -151,6 +153,7 @@ namespace Sensus.Notifications
             _body = body;
             _sound = sound;
             _command = command;
+            _commandClass = commandClass;
             _creationTime = DateTimeOffset.UtcNow;
             _notificationTime = notificationTime;
             _deviceId = deviceId;
@@ -162,8 +165,8 @@ namespace Sensus.Notifications
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, DateTimeOffset time)
-            : this(protocol, title, body, sound, command, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
+        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, string commandClass, DateTimeOffset time)
+            : this(protocol, title, body, sound, command, commandClass, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
         {
         }
 
