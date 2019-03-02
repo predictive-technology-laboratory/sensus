@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [[ $# -ne 1 ]]
+if [[ $# -ne 2 ]]
 then
     echo ""
     echo "Purpose:  Pushes an updates file to devices. Reads devices from standard input."

@@ -77,7 +77,7 @@ do
     body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    command_class=$(jq -r '.command-class' $n)  # pull out the raw JSON value, as we only use is for tracking processed commands.
+    command_class=$(jq -r '.["command-class"]' $n)  # pull out the raw JSON value, as we only use is for tracking processed commands. must use the bracketed syntax to prevent the dash from being interpreted as a subtraction.
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)       # the value indicates unix time in seconds.
