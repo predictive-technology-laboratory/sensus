@@ -108,7 +108,7 @@ namespace Sensus.DataStores.Remote
             throw new NotImplementedException();
         }
 
-        public override Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken)
+        public override Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

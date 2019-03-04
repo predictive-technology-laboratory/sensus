@@ -268,17 +268,17 @@ namespace Sensus.Notifications
                 #endregion
 
                 #region update script agent policy
-                else if (commandParts.First() == PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND)
+                else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY)
                 {
                     await protocol.UpdateScriptAgentPolicyAsync(cancellationToken);
                 }
                 #endregion
 
                 #region update protocol
-                else if (commandParts.First() == PushNotificationRequest.UPDATE_PROTOCOL_COMMAND)
+                else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_PROTOCOL)
                 {
                     // retrieve and process the protocol updates
-                    string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(cancellationToken);
+                    string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(commandParts[1], cancellationToken);
                     JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
                     bool restartProtocol = false;
                     List<Probe> updatedProbesToRestart = new List<Probe>();

@@ -12,13 +12,15 @@ fi
 
 while read bucket_device_protocol
 do
-    # add protocol updates to S3
+    # 1) add protocol updates to S3 overwiting the given id if it already exists
     bucket=$(echo -e $bucket_device_protocol | cut -f1 -d ' ')
     device=$(echo -e $bucket_device_protocol | cut -f2 -d ' ')
     protocol=$(echo -e $bucket_device_protocol | cut -f3 -d ' ')
-    aws s3 cp $1 s3://$bucket/protocol-updates/$device
+    aws s3 cp $1 s3://$bucket/protocol-updates/$2
 
-    # request push notification to alert app about updates
+    # 2) request push notification to alert app about updates
+
+    # ios device IDs have dashes in them whereas android device IDs do not
     if [[ $device == *-* ]]
     then
 	format="apple"
@@ -27,9 +29,9 @@ do
     fi
     
     current_time_seconds=$(date +%s)
-
     push_notification_file=$(mktemp)
     push_notification_id=$(uuidgen)
+
     echo \
 "{"\
 "\"id\": \"$push_notification_id\","\
@@ -38,8 +40,8 @@ do
 "\"title\": \"\","\
 "\"body\": \"\","\
 "\"sound\": \"\","\
-"\"command\": \"UPDATE-PROTOCOL\","\
-"\"command-class\": \"${device}-${protocol}-$2\","\
+"\"command\": \"UPDATE-PROTOCOL|$2\","\
+"\"command-id\": \"${device}-${protocol}-$2\","\
 "\"format\": \"$format\","\
 "\"creation-time\": $current_time_seconds,"\
 "\"time\": $current_time_seconds"\

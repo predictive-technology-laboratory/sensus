@@ -423,13 +423,13 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    // the command class does not include the invocation ID, as any newer invocation ID makes others obsolete
-                    string commandClass = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
+                    // the command id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
+                    string commandId = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
 
                     // the full command includes the invocation ID
-                    string command = commandClass + "|" + callback.InvocationId;
+                    string command = commandId + "|" + callback.InvocationId;
 
-                    return new PushNotificationRequest(callback.Protocol, "", "", "", command, commandClass, callback.NextExecution.Value);
+                    return new PushNotificationRequest(callback.Protocol, "", "", "", command, commandId, callback.NextExecution.Value);
                 }
                 catch (Exception ex)
                 {
