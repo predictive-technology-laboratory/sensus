@@ -808,14 +808,6 @@ namespace Sensus.Android
             }
         }
 
-        /// <summary>
-        /// Brings the Sensus UI to the foreground.
-        /// </summary>
-        public override Task BringToForegroundAsync()
-        {
-            return RunActionUsingMainActivityAsync(activity => { }, true, false);
-        }
-
         #endregion
 
         public void ReissueForegroundServiceNotification()

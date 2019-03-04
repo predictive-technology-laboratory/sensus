@@ -3,13 +3,13 @@
 # This command will set the before/after delay tolerance values to a random
 # value with a given maximum, picking a value of 0 half of the time.
 #
-# ./set-delay-tolerance.sh BUCKET MAX
+# ./set-delay-tolerance-random.sh BUCKET MAX
 #
 # Where BUCKET is the S3 bucket name and MAX is the maximum tolerance.
 #
 # Example:  Set the before/after delay tolerance to somewhere in [0,30] minutes:
 #
-# ./set-delay-tolerance.sh BUCKET $((1000*60*30))
+# ./set-delay-tolerance-random.sh BUCKET $((1000*60*30))
 # 
 
 bucket=$1

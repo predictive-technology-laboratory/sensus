@@ -25,6 +25,7 @@ using Sensus.Encryption;
 using System.Linq;
 using System.Threading.Tasks;
 using Sensus.Android.Notifications;
+using Plugin.CurrentActivity;
 
 // the unit test project contains the Resource class in its namespace rather than the Sensus.Android
 // namespace. include that namespace below.
@@ -84,6 +85,13 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
+            // initialize the current activity plugin at the service level, as doing this at the activity
+            // level misses the case when the service is started on boot (or restarted by the OS) and the
+            // activity is never created. if the plugin initialization is done at the activity level, then
+            // the various permissions that are requested on protocol startup will fail. initializing the
+            // current activity here ensures that all such requests will succeed.
+            CrossCurrentActivity.Current.Init(Application);
+
             SensusContext.Current = new AndroidSensusContext
             {
                 Platform = Platform.Android,
@@ -134,7 +142,7 @@ namespace Sensus.Android
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
             // we might have failed to create the service helper. it's also happened that the service is created after the 
-            // service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+            // service helper is disposed.
             if (serviceHelper == null)
             {
                 Stop();

@@ -379,6 +379,8 @@ namespace Sensus.Notifications
                     else
                     {
                         // restart individual probes to take on updated settings
+                        SensusServiceHelper.Get().Logger.Log("Restarting updated probes following push notification.", LoggingLevel.Normal, GetType());
+
                         foreach (Probe probeToRestart in updatedProbesToRestart)
                         {
                             try

@@ -80,7 +80,6 @@ namespace Sensus.Android
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
-            CrossCurrentActivity.Current.Init(this, savedInstanceState);
 
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>

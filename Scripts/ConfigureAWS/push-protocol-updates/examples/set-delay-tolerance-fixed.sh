@@ -3,7 +3,7 @@
 # This command will set the before/after delay tolerance values to 15000
 # milliseconds.
 #
-# ./set-delay-tolerance.sh BUCKET
+# ./set-delay-tolerance-fixed.sh BUCKET
 #
 # Where BUCKET is the S3 bucket.
 #
