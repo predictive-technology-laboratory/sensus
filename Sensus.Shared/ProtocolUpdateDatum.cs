@@ -17,7 +17,7 @@ using System;
 namespace Sensus
 {
     /// <summary>
-    /// Records updates applied to the <see cref="Protocol"/> via [push notification](remote_updates).
+    /// Records updates applied to the <see cref="Protocol"/> via [push notification](xref:remote_updates).
     /// </summary>
     public class ProtocolUpdateDatum : Datum
     {

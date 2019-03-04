@@ -388,6 +388,9 @@ references:
 - uid: redeploying
   name: Redeploying Sensus
   href: articles/redeploying-sensus.html
+- uid: remote_updates
+  name: Remote Updates
+  href: articles/remote-updates.html
 - uid: Sensus
   name: Sensus
   href: api/Sensus.html
@@ -985,18 +988,6 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
   fullName: Sensus.Android.AndroidSensusServiceHelper.BatteryChargePercent
   nameWithType: AndroidSensusServiceHelper.BatteryChargePercent
-- uid: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
-  name: BringToForegroundAsync()
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync
-  commentId: M:Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
-  fullName: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync()
-  nameWithType: AndroidSensusServiceHelper.BringToForegroundAsync()
-- uid: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync*
-  name: BringToForegroundAsync
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
-  fullName: Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync
-  nameWithType: AndroidSensusServiceHelper.BringToForegroundAsync
 - uid: Sensus.Android.AndroidSensusServiceHelper.DeviceId
   name: DeviceId
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_DeviceId
@@ -1897,12 +1888,15 @@ references:
   commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder
   fullName: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder
   nameWithType: AndroidNotifier.CreateNotificationBuilder
-- uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
-  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  fullName: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage)
-  nameWithType: AndroidNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
+- uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
+  fullName: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage)
+  fullName.vb: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage)
+  nameWithType: AndroidNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
+  nameWithType.vb: AndroidNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
 - uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync*
   name: IssueNotificationAsync
   href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_
@@ -23145,12 +23139,12 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetDatumKey
   nameWithType: AmazonS3RemoteDataStore.GetDatumKey
-- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  name: GetProtocolUpdatesAsync(CancellationToken)
-  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  nameWithType: AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)
+  name: GetProtocolUpdatesAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync*
   name: GetProtocolUpdatesAsync
   href: api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_
@@ -23427,12 +23421,12 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetDatumKey
   nameWithType: ConsoleRemoteDataStore.GetDatumKey
-- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  name: GetProtocolUpdatesAsync(CancellationToken)
-  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  nameWithType: ConsoleRemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)
+  name: GetProtocolUpdatesAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: ConsoleRemoteDataStore.GetProtocolUpdatesAsync(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync*
   name: GetProtocolUpdatesAsync
   href: api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html#Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_
@@ -23622,12 +23616,12 @@ references:
   commentId: Overload:Sensus.DataStores.Remote.RemoteDataStore.GetDatumKey
   fullName: Sensus.DataStores.Remote.RemoteDataStore.GetDatumKey
   nameWithType: RemoteDataStore.GetDatumKey
-- uid: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  name: GetProtocolUpdatesAsync(CancellationToken)
-  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)
-  nameWithType: RemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)
+- uid: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)
+  name: GetProtocolUpdatesAsync(String, CancellationToken)
+  href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_
+  commentId: M:Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)
+  fullName: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.String, System.Threading.CancellationToken)
+  nameWithType: RemoteDataStore.GetProtocolUpdatesAsync(String, CancellationToken)
 - uid: Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync*
   name: GetProtocolUpdatesAsync
   href: api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_
@@ -25689,18 +25683,6 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
   fullName: Sensus.iOS.iOSSensusServiceHelper.BatteryChargePercent
   nameWithType: iOSSensusServiceHelper.BatteryChargePercent
-- uid: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
-  name: BringToForegroundAsync()
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BringToForegroundAsync
-  commentId: M:Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
-  fullName: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync()
-  nameWithType: iOSSensusServiceHelper.BringToForegroundAsync()
-- uid: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync*
-  name: BringToForegroundAsync
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_BringToForegroundAsync_
-  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
-  fullName: Sensus.iOS.iOSSensusServiceHelper.BringToForegroundAsync
-  nameWithType: iOSSensusServiceHelper.BringToForegroundAsync
 - uid: Sensus.iOS.iOSSensusServiceHelper.DeviceId
   name: DeviceId
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_DeviceId
@@ -26169,12 +26151,6 @@ references:
   commentId: Overload:Sensus.iOS.Notifications.iOSNotifier.#ctor
   fullName: Sensus.iOS.Notifications.iOSNotifier.iOSNotifier
   nameWithType: iOSNotifier.iOSNotifier
-- uid: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ALERTING_KEY
-  name: NOTIFICATION_ALERTING_KEY
-  href: api/Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_NOTIFICATION_ALERTING_KEY
-  commentId: F:Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ALERTING_KEY
-  fullName: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ALERTING_KEY
-  nameWithType: iOSNotifier.NOTIFICATION_ALERTING_KEY
 - uid: Sensus.iOS.Notifications.iOSNotifier.NOTIFICATION_ID_KEY
   name: NOTIFICATION_ID_KEY
   href: api/Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_NOTIFICATION_ID_KEY
@@ -26280,21 +26256,24 @@ references:
   commentId: Overload:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.CancelNotification
   fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.CancelNotification
   nameWithType: UNUserNotificationNotifier.CancelNotification
-- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
-  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage)
-  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
-- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
-  name: IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
-  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_System_DateTime_Foundation_NSMutableDictionary_System_Action_UserNotifications_UNNotificationRequest__
-  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
-  name.vb: IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
-  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action<UserNotifications.UNNotificationRequest>)
-  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UserNotifications.UNNotificationRequest))
-  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
-  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
+  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage)
+  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage)
+  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
+  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_System_DateTime_Foundation_NSMutableDictionary_System_Action_UserNotifications_UNNotificationRequest__
+  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action<UserNotifications.UNNotificationRequest>)
+  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UserNotifications.UNNotificationRequest))
+  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
+  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
 - uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(UserNotifications.UNNotificationRequest)
   name: IssueNotificationAsync(UNNotificationRequest)
   href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_UserNotifications_UNNotificationRequest_
@@ -29301,12 +29280,15 @@ references:
   commentId: F:Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY
   fullName: Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY
   nameWithType: Notifier.DISPLAY_PAGE_KEY
-- uid: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
-  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)
-  fullName: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, Sensus.Protocol, System.Boolean, Sensus.Notifications.DisplayPage)
-  nameWithType: Notifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)
+- uid: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
+  commentId: M:Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
+  fullName: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage)
+  fullName.vb: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage)
+  nameWithType: Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
+  nameWithType.vb: Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
 - uid: Sensus.Notifications.Notifier.IssueNotificationAsync*
   name: IssueNotificationAsync
   href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_
@@ -29361,30 +29343,78 @@ references:
   commentId: Overload:Sensus.Notifications.Notifier.TestHealthAsync
   fullName: Sensus.Notifications.Notifier.TestHealthAsync
   nameWithType: Notifier.TestHealthAsync
+- uid: Sensus.Notifications.PendingSurveyNotificationMode
+  name: PendingSurveyNotificationMode
+  href: api/Sensus.Notifications.PendingSurveyNotificationMode.html
+  commentId: T:Sensus.Notifications.PendingSurveyNotificationMode
+  fullName: Sensus.Notifications.PendingSurveyNotificationMode
+  nameWithType: PendingSurveyNotificationMode
+- uid: Sensus.Notifications.PendingSurveyNotificationMode.Badge
+  name: Badge
+  href: api/Sensus.Notifications.PendingSurveyNotificationMode.html#Sensus_Notifications_PendingSurveyNotificationMode_Badge
+  commentId: F:Sensus.Notifications.PendingSurveyNotificationMode.Badge
+  fullName: Sensus.Notifications.PendingSurveyNotificationMode.Badge
+  nameWithType: PendingSurveyNotificationMode.Badge
+- uid: Sensus.Notifications.PendingSurveyNotificationMode.BadgeText
+  name: BadgeText
+  href: api/Sensus.Notifications.PendingSurveyNotificationMode.html#Sensus_Notifications_PendingSurveyNotificationMode_BadgeText
+  commentId: F:Sensus.Notifications.PendingSurveyNotificationMode.BadgeText
+  fullName: Sensus.Notifications.PendingSurveyNotificationMode.BadgeText
+  nameWithType: PendingSurveyNotificationMode.BadgeText
+- uid: Sensus.Notifications.PendingSurveyNotificationMode.BadgeTextAlert
+  name: BadgeTextAlert
+  href: api/Sensus.Notifications.PendingSurveyNotificationMode.html#Sensus_Notifications_PendingSurveyNotificationMode_BadgeTextAlert
+  commentId: F:Sensus.Notifications.PendingSurveyNotificationMode.BadgeTextAlert
+  fullName: Sensus.Notifications.PendingSurveyNotificationMode.BadgeTextAlert
+  nameWithType: PendingSurveyNotificationMode.BadgeTextAlert
+- uid: Sensus.Notifications.PendingSurveyNotificationMode.None
+  name: None
+  href: api/Sensus.Notifications.PendingSurveyNotificationMode.html#Sensus_Notifications_PendingSurveyNotificationMode_None
+  commentId: F:Sensus.Notifications.PendingSurveyNotificationMode.None
+  fullName: Sensus.Notifications.PendingSurveyNotificationMode.None
+  nameWithType: PendingSurveyNotificationMode.None
+- uid: Sensus.Notifications.PendingSurveyNotificationMode.value__
+  name: value__
+  href: api/Sensus.Notifications.PendingSurveyNotificationMode.html#Sensus_Notifications_PendingSurveyNotificationMode_value__
+  commentId: F:Sensus.Notifications.PendingSurveyNotificationMode.value__
+  fullName: Sensus.Notifications.PendingSurveyNotificationMode.value__
+  nameWithType: PendingSurveyNotificationMode.value__
 - uid: Sensus.Notifications.PushNotificationRequest
   name: PushNotificationRequest
   href: api/Sensus.Notifications.PushNotificationRequest.html
   commentId: T:Sensus.Notifications.PushNotificationRequest
   fullName: Sensus.Notifications.PushNotificationRequest
   nameWithType: PushNotificationRequest
-- uid: Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.DateTimeOffset)
-  name: PushNotificationRequest(Protocol, String, String, String, String, DateTimeOffset)
-  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest__ctor_Sensus_Protocol_System_String_System_String_System_String_System_String_System_DateTimeOffset_
-  commentId: M:Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.DateTimeOffset)
-  fullName: Sensus.Notifications.PushNotificationRequest.PushNotificationRequest(Sensus.Protocol, System.String, System.String, System.String, System.String, System.DateTimeOffset)
-  nameWithType: PushNotificationRequest.PushNotificationRequest(Protocol, String, String, String, String, DateTimeOffset)
-- uid: Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.DateTimeOffset,System.String,Sensus.Notifications.PushNotificationRequestFormat)
-  name: PushNotificationRequest(Protocol, String, String, String, String, DateTimeOffset, String, PushNotificationRequestFormat)
-  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest__ctor_Sensus_Protocol_System_String_System_String_System_String_System_String_System_DateTimeOffset_System_String_Sensus_Notifications_PushNotificationRequestFormat_
-  commentId: M:Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.DateTimeOffset,System.String,Sensus.Notifications.PushNotificationRequestFormat)
-  fullName: Sensus.Notifications.PushNotificationRequest.PushNotificationRequest(Sensus.Protocol, System.String, System.String, System.String, System.String, System.DateTimeOffset, System.String, Sensus.Notifications.PushNotificationRequestFormat)
-  nameWithType: PushNotificationRequest.PushNotificationRequest(Protocol, String, String, String, String, DateTimeOffset, String, PushNotificationRequestFormat)
+- uid: Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.String,System.DateTimeOffset)
+  name: PushNotificationRequest(Protocol, String, String, String, String, String, DateTimeOffset)
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest__ctor_Sensus_Protocol_System_String_System_String_System_String_System_String_System_String_System_DateTimeOffset_
+  commentId: M:Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.String,System.DateTimeOffset)
+  fullName: Sensus.Notifications.PushNotificationRequest.PushNotificationRequest(Sensus.Protocol, System.String, System.String, System.String, System.String, System.String, System.DateTimeOffset)
+  nameWithType: PushNotificationRequest.PushNotificationRequest(Protocol, String, String, String, String, String, DateTimeOffset)
+- uid: Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.String,System.DateTimeOffset,System.String,Sensus.Notifications.PushNotificationRequestFormat)
+  name: PushNotificationRequest(Protocol, String, String, String, String, String, DateTimeOffset, String, PushNotificationRequestFormat)
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest__ctor_Sensus_Protocol_System_String_System_String_System_String_System_String_System_String_System_DateTimeOffset_System_String_Sensus_Notifications_PushNotificationRequestFormat_
+  commentId: M:Sensus.Notifications.PushNotificationRequest.#ctor(Sensus.Protocol,System.String,System.String,System.String,System.String,System.String,System.DateTimeOffset,System.String,Sensus.Notifications.PushNotificationRequestFormat)
+  fullName: Sensus.Notifications.PushNotificationRequest.PushNotificationRequest(Sensus.Protocol, System.String, System.String, System.String, System.String, System.String, System.DateTimeOffset, System.String, Sensus.Notifications.PushNotificationRequestFormat)
+  nameWithType: PushNotificationRequest.PushNotificationRequest(Protocol, String, String, String, String, String, DateTimeOffset, String, PushNotificationRequestFormat)
 - uid: Sensus.Notifications.PushNotificationRequest.#ctor*
   name: PushNotificationRequest
   href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest__ctor_
   commentId: Overload:Sensus.Notifications.PushNotificationRequest.#ctor
   fullName: Sensus.Notifications.PushNotificationRequest.PushNotificationRequest
   nameWithType: PushNotificationRequest.PushNotificationRequest
+- uid: Sensus.Notifications.PushNotificationRequest.COMMAND_UPDATE_PROTOCOL
+  name: COMMAND_UPDATE_PROTOCOL
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_COMMAND_UPDATE_PROTOCOL
+  commentId: F:Sensus.Notifications.PushNotificationRequest.COMMAND_UPDATE_PROTOCOL
+  fullName: Sensus.Notifications.PushNotificationRequest.COMMAND_UPDATE_PROTOCOL
+  nameWithType: PushNotificationRequest.COMMAND_UPDATE_PROTOCOL
+- uid: Sensus.Notifications.PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY
+  name: COMMAND_UPDATE_SCRIPT_AGENT_POLICY
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_COMMAND_UPDATE_SCRIPT_AGENT_POLICY
+  commentId: F:Sensus.Notifications.PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY
+  fullName: Sensus.Notifications.PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY
+  nameWithType: PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY
 - uid: Sensus.Notifications.PushNotificationRequest.DeviceId
   name: DeviceId
   href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_DeviceId
@@ -29409,18 +29439,18 @@ references:
   commentId: Overload:Sensus.Notifications.PushNotificationRequest.Equals
   fullName: Sensus.Notifications.PushNotificationRequest.Equals
   nameWithType: PushNotificationRequest.Equals
-- uid: Sensus.Notifications.PushNotificationRequest.GetFormatString(Sensus.Notifications.PushNotificationRequestFormat)
-  name: GetFormatString(PushNotificationRequestFormat)
-  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_GetFormatString_Sensus_Notifications_PushNotificationRequestFormat_
-  commentId: M:Sensus.Notifications.PushNotificationRequest.GetFormatString(Sensus.Notifications.PushNotificationRequestFormat)
-  fullName: Sensus.Notifications.PushNotificationRequest.GetFormatString(Sensus.Notifications.PushNotificationRequestFormat)
-  nameWithType: PushNotificationRequest.GetFormatString(PushNotificationRequestFormat)
-- uid: Sensus.Notifications.PushNotificationRequest.GetFormatString*
-  name: GetFormatString
-  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_GetFormatString_
-  commentId: Overload:Sensus.Notifications.PushNotificationRequest.GetFormatString
-  fullName: Sensus.Notifications.PushNotificationRequest.GetFormatString
-  nameWithType: PushNotificationRequest.GetFormatString
+- uid: Sensus.Notifications.PushNotificationRequest.GetAzureFormatIdentifier(Sensus.Notifications.PushNotificationRequestFormat)
+  name: GetAzureFormatIdentifier(PushNotificationRequestFormat)
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_GetAzureFormatIdentifier_Sensus_Notifications_PushNotificationRequestFormat_
+  commentId: M:Sensus.Notifications.PushNotificationRequest.GetAzureFormatIdentifier(Sensus.Notifications.PushNotificationRequestFormat)
+  fullName: Sensus.Notifications.PushNotificationRequest.GetAzureFormatIdentifier(Sensus.Notifications.PushNotificationRequestFormat)
+  nameWithType: PushNotificationRequest.GetAzureFormatIdentifier(PushNotificationRequestFormat)
+- uid: Sensus.Notifications.PushNotificationRequest.GetAzureFormatIdentifier*
+  name: GetAzureFormatIdentifier
+  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_GetAzureFormatIdentifier_
+  commentId: Overload:Sensus.Notifications.PushNotificationRequest.GetAzureFormatIdentifier
+  fullName: Sensus.Notifications.PushNotificationRequest.GetAzureFormatIdentifier
+  nameWithType: PushNotificationRequest.GetAzureFormatIdentifier
 - uid: Sensus.Notifications.PushNotificationRequest.GetHashCode
   name: GetHashCode()
   href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_GetHashCode
@@ -29469,18 +29499,6 @@ references:
   commentId: Overload:Sensus.Notifications.PushNotificationRequest.Protocol
   fullName: Sensus.Notifications.PushNotificationRequest.Protocol
   nameWithType: PushNotificationRequest.Protocol
-- uid: Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
-  name: UPDATE_PROTOCOL_COMMAND
-  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_UPDATE_PROTOCOL_COMMAND
-  commentId: F:Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
-  fullName: Sensus.Notifications.PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
-  nameWithType: PushNotificationRequest.UPDATE_PROTOCOL_COMMAND
-- uid: Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
-  name: UPDATE_SCRIPT_AGENT_POLICY_COMMAND
-  href: api/Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_UPDATE_SCRIPT_AGENT_POLICY_COMMAND
-  commentId: F:Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
-  fullName: Sensus.Notifications.PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
-  nameWithType: PushNotificationRequest.UPDATE_SCRIPT_AGENT_POLICY_COMMAND
 - uid: Sensus.Notifications.PushNotificationRequestFormat
   name: PushNotificationRequestFormat
   href: api/Sensus.Notifications.PushNotificationRequestFormat.html
@@ -45993,6 +46011,96 @@ references:
   commentId: F:Sensus.ProtocolState.value__
   fullName: Sensus.ProtocolState.value__
   nameWithType: ProtocolState.value__
+- uid: Sensus.ProtocolUpdateDatum
+  name: ProtocolUpdateDatum
+  href: api/Sensus.ProtocolUpdateDatum.html
+  commentId: T:Sensus.ProtocolUpdateDatum
+  fullName: Sensus.ProtocolUpdateDatum
+  nameWithType: ProtocolUpdateDatum
+- uid: Sensus.ProtocolUpdateDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String)
+  name: ProtocolUpdateDatum(DateTimeOffset, String, String, String, String)
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum__ctor_System_DateTimeOffset_System_String_System_String_System_String_System_String_
+  commentId: M:Sensus.ProtocolUpdateDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String)
+  fullName: Sensus.ProtocolUpdateDatum.ProtocolUpdateDatum(System.DateTimeOffset, System.String, System.String, System.String, System.String)
+  nameWithType: ProtocolUpdateDatum.ProtocolUpdateDatum(DateTimeOffset, String, String, String, String)
+- uid: Sensus.ProtocolUpdateDatum.#ctor*
+  name: ProtocolUpdateDatum
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum__ctor_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.#ctor
+  fullName: Sensus.ProtocolUpdateDatum.ProtocolUpdateDatum
+  nameWithType: ProtocolUpdateDatum.ProtocolUpdateDatum
+- uid: Sensus.ProtocolUpdateDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_DisplayDetail
+  commentId: P:Sensus.ProtocolUpdateDatum.DisplayDetail
+  fullName: Sensus.ProtocolUpdateDatum.DisplayDetail
+  nameWithType: ProtocolUpdateDatum.DisplayDetail
+- uid: Sensus.ProtocolUpdateDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_DisplayDetail_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.DisplayDetail
+  fullName: Sensus.ProtocolUpdateDatum.DisplayDetail
+  nameWithType: ProtocolUpdateDatum.DisplayDetail
+- uid: Sensus.ProtocolUpdateDatum.PropertyName
+  name: PropertyName
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyName
+  commentId: P:Sensus.ProtocolUpdateDatum.PropertyName
+  fullName: Sensus.ProtocolUpdateDatum.PropertyName
+  nameWithType: ProtocolUpdateDatum.PropertyName
+- uid: Sensus.ProtocolUpdateDatum.PropertyName*
+  name: PropertyName
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyName_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.PropertyName
+  fullName: Sensus.ProtocolUpdateDatum.PropertyName
+  nameWithType: ProtocolUpdateDatum.PropertyName
+- uid: Sensus.ProtocolUpdateDatum.PropertyType
+  name: PropertyType
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyType
+  commentId: P:Sensus.ProtocolUpdateDatum.PropertyType
+  fullName: Sensus.ProtocolUpdateDatum.PropertyType
+  nameWithType: ProtocolUpdateDatum.PropertyType
+- uid: Sensus.ProtocolUpdateDatum.PropertyType*
+  name: PropertyType
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyType_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.PropertyType
+  fullName: Sensus.ProtocolUpdateDatum.PropertyType
+  nameWithType: ProtocolUpdateDatum.PropertyType
+- uid: Sensus.ProtocolUpdateDatum.StringPlaceholderValue
+  name: StringPlaceholderValue
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_StringPlaceholderValue
+  commentId: P:Sensus.ProtocolUpdateDatum.StringPlaceholderValue
+  fullName: Sensus.ProtocolUpdateDatum.StringPlaceholderValue
+  nameWithType: ProtocolUpdateDatum.StringPlaceholderValue
+- uid: Sensus.ProtocolUpdateDatum.StringPlaceholderValue*
+  name: StringPlaceholderValue
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_StringPlaceholderValue_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.StringPlaceholderValue
+  fullName: Sensus.ProtocolUpdateDatum.StringPlaceholderValue
+  nameWithType: ProtocolUpdateDatum.StringPlaceholderValue
+- uid: Sensus.ProtocolUpdateDatum.TargetType
+  name: TargetType
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_TargetType
+  commentId: P:Sensus.ProtocolUpdateDatum.TargetType
+  fullName: Sensus.ProtocolUpdateDatum.TargetType
+  nameWithType: ProtocolUpdateDatum.TargetType
+- uid: Sensus.ProtocolUpdateDatum.TargetType*
+  name: TargetType
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_TargetType_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.TargetType
+  fullName: Sensus.ProtocolUpdateDatum.TargetType
+  nameWithType: ProtocolUpdateDatum.TargetType
+- uid: Sensus.ProtocolUpdateDatum.Value
+  name: Value
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_Value
+  commentId: P:Sensus.ProtocolUpdateDatum.Value
+  fullName: Sensus.ProtocolUpdateDatum.Value
+  nameWithType: ProtocolUpdateDatum.Value
+- uid: Sensus.ProtocolUpdateDatum.Value*
+  name: Value
+  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_Value_
+  commentId: Overload:Sensus.ProtocolUpdateDatum.Value
+  fullName: Sensus.ProtocolUpdateDatum.Value
+  nameWithType: ProtocolUpdateDatum.Value
 - uid: Sensus.QrCodePrefix
   name: QrCodePrefix
   href: api/Sensus.QrCodePrefix.html
@@ -46107,36 +46215,24 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.BatteryChargePercent
   fullName: Sensus.SensusServiceHelper.BatteryChargePercent
   nameWithType: SensusServiceHelper.BatteryChargePercent
-- uid: Sensus.SensusServiceHelper.BringToForegroundAsync
-  name: BringToForegroundAsync()
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForegroundAsync
-  commentId: M:Sensus.SensusServiceHelper.BringToForegroundAsync
-  fullName: Sensus.SensusServiceHelper.BringToForegroundAsync()
-  nameWithType: SensusServiceHelper.BringToForegroundAsync()
-- uid: Sensus.SensusServiceHelper.BringToForegroundAsync*
-  name: BringToForegroundAsync
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForegroundAsync_
-  commentId: Overload:Sensus.SensusServiceHelper.BringToForegroundAsync
-  fullName: Sensus.SensusServiceHelper.BringToForegroundAsync
-  nameWithType: SensusServiceHelper.BringToForegroundAsync
 - uid: Sensus.SensusServiceHelper.BUILD_ID
   name: BUILD_ID
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BUILD_ID
   commentId: F:Sensus.SensusServiceHelper.BUILD_ID
   fullName: Sensus.SensusServiceHelper.BUILD_ID
   nameWithType: SensusServiceHelper.BUILD_ID
-- uid: Sensus.SensusServiceHelper.ClearPendingSurveysNotification
-  name: ClearPendingSurveysNotification()
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearPendingSurveysNotification
-  commentId: M:Sensus.SensusServiceHelper.ClearPendingSurveysNotification
-  fullName: Sensus.SensusServiceHelper.ClearPendingSurveysNotification()
-  nameWithType: SensusServiceHelper.ClearPendingSurveysNotification()
-- uid: Sensus.SensusServiceHelper.ClearPendingSurveysNotification*
-  name: ClearPendingSurveysNotification
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearPendingSurveysNotification_
-  commentId: Overload:Sensus.SensusServiceHelper.ClearPendingSurveysNotification
-  fullName: Sensus.SensusServiceHelper.ClearPendingSurveysNotification
-  nameWithType: SensusServiceHelper.ClearPendingSurveysNotification
+- uid: Sensus.SensusServiceHelper.CancelPendingSurveysNotification
+  name: CancelPendingSurveysNotification()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_CancelPendingSurveysNotification
+  commentId: M:Sensus.SensusServiceHelper.CancelPendingSurveysNotification
+  fullName: Sensus.SensusServiceHelper.CancelPendingSurveysNotification()
+  nameWithType: SensusServiceHelper.CancelPendingSurveysNotification()
+- uid: Sensus.SensusServiceHelper.CancelPendingSurveysNotification*
+  name: CancelPendingSurveysNotification
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_CancelPendingSurveysNotification_
+  commentId: Overload:Sensus.SensusServiceHelper.CancelPendingSurveysNotification
+  fullName: Sensus.SensusServiceHelper.CancelPendingSurveysNotification
+  nameWithType: SensusServiceHelper.CancelPendingSurveysNotification
 - uid: Sensus.SensusServiceHelper.ClearScriptsAsync
   name: ClearScriptsAsync()
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearScriptsAsync
@@ -46467,12 +46563,12 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.IsOnMainThread
   fullName: Sensus.SensusServiceHelper.IsOnMainThread
   nameWithType: SensusServiceHelper.IsOnMainThread
-- uid: Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Protocol,System.Boolean)
-  name: IssuePendingSurveysNotificationAsync(Protocol, Boolean)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Protocol_System_Boolean_
-  commentId: M:Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Protocol,System.Boolean)
-  fullName: Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Protocol, System.Boolean)
-  nameWithType: SensusServiceHelper.IssuePendingSurveysNotificationAsync(Protocol, Boolean)
+- uid: Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Notifications.PendingSurveyNotificationMode,Sensus.Protocol)
+  name: IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode, Protocol)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Notifications_PendingSurveyNotificationMode_Sensus_Protocol_
+  commentId: M:Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Notifications.PendingSurveyNotificationMode,Sensus.Protocol)
+  fullName: Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Notifications.PendingSurveyNotificationMode, Sensus.Protocol)
+  nameWithType: SensusServiceHelper.IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode, Protocol)
 - uid: Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync*
   name: IssuePendingSurveysNotificationAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_
@@ -46527,12 +46623,18 @@ references:
   commentId: F:Sensus.SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS
   fullName: Sensus.SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS
   nameWithType: SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS
-- uid: Sensus.SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID
-  name: PENDING_SURVEY_NOTIFICATION_ID
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PENDING_SURVEY_NOTIFICATION_ID
-  commentId: F:Sensus.SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID
-  fullName: Sensus.SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID
-  nameWithType: SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID
+- uid: Sensus.SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID
+  name: PENDING_SURVEY_BADGE_NOTIFICATION_ID
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PENDING_SURVEY_BADGE_NOTIFICATION_ID
+  commentId: F:Sensus.SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID
+  fullName: Sensus.SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID
+  nameWithType: SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID
+- uid: Sensus.SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID
+  name: PENDING_SURVEY_TEXT_NOTIFICATION_ID
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PENDING_SURVEY_TEXT_NOTIFICATION_ID
+  commentId: F:Sensus.SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID
+  fullName: Sensus.SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID
+  nameWithType: SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID
 - uid: Sensus.SensusServiceHelper.PointsOfInterest
   name: PointsOfInterest
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PointsOfInterest
@@ -46680,12 +46782,12 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.RegisterWithNotificationHubAsync
   fullName: Sensus.SensusServiceHelper.RegisterWithNotificationHubAsync
   nameWithType: SensusServiceHelper.RegisterWithNotificationHubAsync
-- uid: Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync(System.Boolean)
-  name: RemoveExpiredScriptsAsync(Boolean)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync_System_Boolean_
-  commentId: M:Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync(System.Boolean)
-  fullName: Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync(System.Boolean)
-  nameWithType: SensusServiceHelper.RemoveExpiredScriptsAsync(Boolean)
+- uid: Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync
+  name: RemoveExpiredScriptsAsync()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync
+  commentId: M:Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync
+  fullName: Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync()
+  nameWithType: SensusServiceHelper.RemoveExpiredScriptsAsync()
 - uid: Sensus.SensusServiceHelper.RemoveExpiredScriptsAsync*
   name: RemoveExpiredScriptsAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync_
@@ -46704,30 +46806,33 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.RemoveRunningProtocolIdAsync
   fullName: Sensus.SensusServiceHelper.RemoveRunningProtocolIdAsync
   nameWithType: SensusServiceHelper.RemoveRunningProtocolIdAsync
-- uid: Sensus.SensusServiceHelper.RemoveScriptAsync(Sensus.Probes.User.Scripts.Script,System.Boolean)
-  name: RemoveScriptAsync(Script, Boolean)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptAsync_Sensus_Probes_User_Scripts_Script_System_Boolean_
-  commentId: M:Sensus.SensusServiceHelper.RemoveScriptAsync(Sensus.Probes.User.Scripts.Script,System.Boolean)
-  fullName: Sensus.SensusServiceHelper.RemoveScriptAsync(Sensus.Probes.User.Scripts.Script, System.Boolean)
-  nameWithType: SensusServiceHelper.RemoveScriptAsync(Script, Boolean)
-- uid: Sensus.SensusServiceHelper.RemoveScriptAsync*
-  name: RemoveScriptAsync
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptAsync_
-  commentId: Overload:Sensus.SensusServiceHelper.RemoveScriptAsync
-  fullName: Sensus.SensusServiceHelper.RemoveScriptAsync
-  nameWithType: SensusServiceHelper.RemoveScriptAsync
-- uid: Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync(Sensus.Probes.User.Scripts.ScriptRunner,System.Boolean)
-  name: RemoveScriptsForRunnerAsync(ScriptRunner, Boolean)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunnerAsync_Sensus_Probes_User_Scripts_ScriptRunner_System_Boolean_
-  commentId: M:Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync(Sensus.Probes.User.Scripts.ScriptRunner,System.Boolean)
-  fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync(Sensus.Probes.User.Scripts.ScriptRunner, System.Boolean)
-  nameWithType: SensusServiceHelper.RemoveScriptsForRunnerAsync(ScriptRunner, Boolean)
-- uid: Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync*
-  name: RemoveScriptsForRunnerAsync
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunnerAsync_
-  commentId: Overload:Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync
-  fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunnerAsync
-  nameWithType: SensusServiceHelper.RemoveScriptsForRunnerAsync
+- uid: Sensus.SensusServiceHelper.RemoveScripts(Sensus.Probes.User.Scripts.Script[])
+  name: RemoveScripts(Script[])
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScripts_Sensus_Probes_User_Scripts_Script___
+  commentId: M:Sensus.SensusServiceHelper.RemoveScripts(Sensus.Probes.User.Scripts.Script[])
+  name.vb: RemoveScripts(Script())
+  fullName: Sensus.SensusServiceHelper.RemoveScripts(Sensus.Probes.User.Scripts.Script[])
+  fullName.vb: Sensus.SensusServiceHelper.RemoveScripts(Sensus.Probes.User.Scripts.Script())
+  nameWithType: SensusServiceHelper.RemoveScripts(Script[])
+  nameWithType.vb: SensusServiceHelper.RemoveScripts(Script())
+- uid: Sensus.SensusServiceHelper.RemoveScripts*
+  name: RemoveScripts
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScripts_
+  commentId: Overload:Sensus.SensusServiceHelper.RemoveScripts
+  fullName: Sensus.SensusServiceHelper.RemoveScripts
+  nameWithType: SensusServiceHelper.RemoveScripts
+- uid: Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)
+  name: RemoveScriptsForRunner(ScriptRunner)
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunner_Sensus_Probes_User_Scripts_ScriptRunner_
+  commentId: M:Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)
+  fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunner(Sensus.Probes.User.Scripts.ScriptRunner)
+  nameWithType: SensusServiceHelper.RemoveScriptsForRunner(ScriptRunner)
+- uid: Sensus.SensusServiceHelper.RemoveScriptsForRunner*
+  name: RemoveScriptsForRunner
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunner_
+  commentId: Overload:Sensus.SensusServiceHelper.RemoveScriptsForRunner
+  fullName: Sensus.SensusServiceHelper.RemoveScriptsForRunner
+  nameWithType: SensusServiceHelper.RemoveScriptsForRunner
 - uid: Sensus.SensusServiceHelper.RequestNewPushNotificationToken
   name: RequestNewPushNotificationToken()
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RequestNewPushNotificationToken

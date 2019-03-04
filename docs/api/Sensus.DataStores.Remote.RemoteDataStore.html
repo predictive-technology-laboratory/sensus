@@ -719,12 +719,13 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   
   
   <a id="Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)">GetProtocolUpdatesAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)">GetProtocolUpdatesAsync(String, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Gets the protocol updates.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task&lt;string&gt; GetProtocolUpdatesAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task&lt;string&gt; GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -737,9 +738,16 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">identifier</span></td>
+        <td><p>Update identifier.</p>
+</td>
+      </tr>
+      <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
+        <td><p>Cancellation token.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -754,7 +762,8 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
-        <td></td>
+        <td><p>The protocol updates.</p>
+</td>
       </tr>
     </tbody>
   </table>

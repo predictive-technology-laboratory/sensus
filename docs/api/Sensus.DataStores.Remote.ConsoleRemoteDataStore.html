@@ -515,12 +515,12 @@ off of the device.</p>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)">GetProtocolUpdatesAsync(CancellationToken)</h4>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)">GetProtocolUpdatesAsync(String, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; GetProtocolUpdatesAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -532,6 +532,11 @@ off of the device.</p>
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">identifier</span></td>
+        <td></td>
+      </tr>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
@@ -555,7 +560,7 @@ off of the device.</p>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_">RemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_">RemoteDataStore.GetProtocolUpdatesAsync(String, CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetScriptAgentPolicyAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetScriptAgentPolicyAsync*"></a>

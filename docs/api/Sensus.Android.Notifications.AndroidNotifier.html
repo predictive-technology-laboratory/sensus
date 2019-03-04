@@ -231,13 +231,12 @@
   
   
   <a id="Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_" data-uid="Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_" data-uid="Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</h4>
-  <div class="markdown level1 summary"><p>Issues the notification.</p>
-</div>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_" data-uid="Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)">IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, DisplayPage)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, Nullable&lt;int&gt; badgeNumber, DisplayPage displayPage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -252,38 +251,37 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">title</span></td>
-        <td><p>Title.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">message</span></td>
-        <td><p>Message.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">id</span></td>
-        <td><p>Identifier of notification.</p>
-</td>
-      </tr>
-      <tr>
-        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
-        <td><span class="parametername">protocol</span></td>
-        <td><p>Protocol to check for alert exclusion time windows.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">alertUser</span></td>
-        <td><p>If set to <code>true</code> alert user.</p>
-</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="parametername">badgeNumber</span></td>
+        <td></td>
       </tr>
       <tr>
         <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
         <td><span class="parametername">displayPage</span></td>
-        <td><p>Display page.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -303,7 +301,7 @@
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</a></div>
+  <div><a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, DisplayPage)</a></div>
 </article>
           </div>
           

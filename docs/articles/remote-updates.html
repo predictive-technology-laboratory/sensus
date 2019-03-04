@@ -5,11 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Namespace Sensus.Notifications
-   | Sensus Documentation </title>
+    <title>Remote Updates | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Namespace Sensus.Notifications
-   | Sensus Documentation ">
+    <meta name="title" content="Remote Updates | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
     <link rel="shortcut icon" href="../images/favicon.ico">
@@ -78,32 +76,25 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Notifications">
-  
-  <h1 id="Sensus_Notifications" data-uid="Sensus.Notifications" class="text-break">Namespace Sensus.Notifications
-  </h1>
-  <div class="markdown level0 summary"></div>
-  <div class="markdown level0 conceptual"></div>
-  <div class="markdown level0 remarks"></div>
-    <h3 id="classes">Classes
-  </h3>
-      <h4><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></h4>
-      <section><p>Page to display when a callback notification is tapped by the user.</p>
-</section>
-      <h4><a class="xref" href="Sensus.Notifications.Notifier.html">Notifier</a></h4>
-      <section><p>Exposes the user-facing notification functionality of a platform. Also manages push notifications.</p>
-</section>
-      <h4><a class="xref" href="Sensus.Notifications.PendingSurveyNotificationMode.html">PendingSurveyNotificationMode</a></h4>
-      <section></section>
-      <h4><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html">PushNotificationRequest</a></h4>
-      <section><p>See <a class="xref" href="../articles/push-notifications.html">here</a> for an overview of push notifications within Sensus. The <a class="xref" href="Sensus.Notifications.PushNotificationRequest.html">PushNotificationRequest</a>
-class represents push notification requests submitted to the <a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> for processing by the 
-push notification backend. See the 
-<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-notification-request.json">example</a>
-for the format of such requests. See the constant fields in this class for more information on commands that may be sent to Sensus.</p>
-</section>
-      <h4><a class="xref" href="Sensus.Notifications.PushNotificationRequestFormat.html">PushNotificationRequestFormat</a></h4>
-      <section></section>
+            <article class="content wrap" id="_content" data-uid="remote_updates">
+<h1 id="remote-updates">Remote Updates</h1>
+
+<p>After configuring <a class="xref" href="push-notifications.html">push notifications</a>, it is possible
+to send protocol update commands to devices. This article describes the updates
+that are directly supported:</p>
+<ul>
+<li><p>Polling delay tolerance:  Use the following command within the home directory of your 
+push notification backend to update the <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS">DelayToleranceBeforeMS</a> and
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a> values:</p>
+<pre><code>./list-devices.sh BUCKET | ./set-delay-tolerance.sh MS_BEFORE MS_AFTER MESSAGE
+</code></pre><p>where <code>BUCKET</code> is the S3 bucket name, <code>MS_BEFORE</code> is the new value for <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS">DelayToleranceBeforeMS</a>,
+<code>MS_AFTER</code> is the new value for <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a>, and <code>MESSAGE</code>
+is a message to display to the user to notify them of the update. </p>
+</li>
+</ul>
+<p>The above commands are the only ones that are directly supported; however, the remote update 
+capability is entirely generalized. See the <a href="https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/push-protocol-updates">scripts</a>
+for how to extend the above set of commands to update any settings of interest.</p>
 </article>
           </div>
           
@@ -111,6 +102,9 @@ for the format of such requests. See the constant fields in this class for more 
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/remote-updates.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
