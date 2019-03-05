@@ -780,8 +780,8 @@ namespace Sensus.Android
 
                     Logger.Log("Wake lock acquired" + (firstAcquisition ? " for the first time" : "") + ".", LoggingLevel.Normal, GetType());
 
-                    // if this is the first acquisition, then mark the time.
-                    if (firstAcquisition)
+                    // if this is the first successful acquisition, then mark the time.
+                    if (firstAcquisition && _wakeLock.IsHeld)
                     {
                         if (_wakeLockTimestamp != null)
                         {

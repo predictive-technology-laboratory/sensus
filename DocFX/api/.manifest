@@ -122,7 +122,7 @@
   "Sensus.Android.AndroidSensusServiceHelper.UnregisterFromNotificationHubAsync(System.Tuple{System.String,System.String})": "Sensus.Android.AndroidSensusServiceHelper.yml",
   "Sensus.Android.AndroidSensusServiceHelper.UserDeniedBluetoothEnable": "Sensus.Android.AndroidSensusServiceHelper.yml",
   "Sensus.Android.AndroidSensusServiceHelper.Version": "Sensus.Android.AndroidSensusServiceHelper.yml",
-  "Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount": "Sensus.Android.AndroidSensusServiceHelper.yml",
+  "Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld": "Sensus.Android.AndroidSensusServiceHelper.yml",
   "Sensus.Android.AndroidSensusServiceHelper.WakeLockTime": "Sensus.Android.AndroidSensusServiceHelper.yml",
   "Sensus.Android.AndroidSensusServiceHelper.WiFiConnected": "Sensus.Android.AndroidSensusServiceHelper.yml",
   "Sensus.Android.AndroidServiceConnectedEventArgs": "Sensus.Android.AndroidServiceConnectedEventArgs.yml",

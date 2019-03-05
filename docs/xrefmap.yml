@@ -1360,18 +1360,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.Version
   fullName: Sensus.Android.AndroidSensusServiceHelper.Version
   nameWithType: AndroidSensusServiceHelper.Version
-- uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
-  name: WakeLockAcquisitionCount
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockAcquisitionCount
-  commentId: P:Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
-  fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
-  nameWithType: AndroidSensusServiceHelper.WakeLockAcquisitionCount
-- uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount*
-  name: WakeLockAcquisitionCount
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockAcquisitionCount_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
-  fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount
-  nameWithType: AndroidSensusServiceHelper.WakeLockAcquisitionCount
+- uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld
+  name: WakeLockHeld
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockHeld
+  commentId: P:Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld
+  fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld
+  nameWithType: AndroidSensusServiceHelper.WakeLockHeld
+- uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld*
+  name: WakeLockHeld
+  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockHeld_
+  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld
+  fullName: Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld
+  nameWithType: AndroidSensusServiceHelper.WakeLockHeld
 - uid: Sensus.Android.AndroidSensusServiceHelper.WakeLockTime
   name: WakeLockTime
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_WakeLockTime

@@ -80,17 +80,18 @@
 <h1 id="burden-tuning">Burden Tuning</h1>
 
 <p>Burden is a key consideration when deploying Sensus to users. This article addresses key dimensions of
-burden placed on the user and the device and offers advice for tuning the balance of burden and data
-collection.</p>
-<h2 id="data-pollingxrefsensusprobespollingprobe"><a class="xref" href="../api/Sensus.Probes.PollingProbe.html">Data polling</a></h2>
+burden placed on the user and the user&#39;s device. It also offers advice for tuning the balance of burden 
+and data collection.</p>
+<h2 id="data-pollingxrefsensusprobespollingprobe"><a class="xref" href="../api/Sensus.Probes.PollingProbe.html">Data Polling</a></h2>
 <p>Polling-style probes within Sensus run on schedules. Sensus will attempt to poll for data according to these
-schedules. Each polling operation consumes power, the actual amount of which depends on the hardware involved. 
+schedules. Each polling operation consumes power, the effective amount of which depends on the hardware involved. 
 For example, the <a class="xref" href="../api/Sensus.Probes.Location.PollingLocationProbe.html">PollingLocationProbe</a> uses the device&#39;s GPS chip, which consumes 
-significant power. Regardless of the probe and hardware involved, the following parameters govern polling
-behavior and associated power consumption.</p>
+significant power. Contrast this with the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a>, which uses the device&#39;s 
+accelerometer chip -- a relatively low-power component. Regardless of the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> and hardware 
+involved, the following parameters govern polling behavior and associated power consumption.</p>
 <ul>
 <li><p><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a>:  This parameter determines how frequently the
-probe attempts to poll for data.</p>
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a> attempts to poll for data.</p>
 </li>
 <li><p><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a> and <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a>:
 Each polling probe runs on its own schedule independent of the other probes&#39; schedules. As a result, the overall polling
@@ -99,15 +100,46 @@ therefore have fewer opportunities to turn off the CPU and conserve power. To ad
 configure tolerance within the polling schedule using these two parameters. If a polling probe is scheduled to poll
 for data at time <code>t</code>, these two parameters will create a window around <code>t</code> within which to search for other polling
 events that are already scheduled for other probes. If another polling operation is already scheduled within this 
-window, then the new polling operation will be batched with the existing operation and will be executed at the
-same time. Widening the scheduling tolerance around <code>t</code> will increase the prevalence of batching, decrease
+window, then the new polling operation will be batched with the existing operation and will be executed at approximately 
+the same time. Widening the scheduling tolerance around <code>t</code> will increase the prevalence of batching, decrease
 crowding of the overall polling timeline, and increase the amount of time when CPU is allowed to sleep.</p>
 </li>
-<li><p>Android listening</p>
+<li><p><a class="xref" href="../api/Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> (Android only):  This parameter determines whether Sensus 
+will hold a <a href="https://developer.android.com/reference/android/os/PowerManager.html#PARTIAL_WAKE_LOCK">partial wake lock</a>
+on the CPU when running a <a class="xref" href="../api/Sensus.Probes.ListeningProbe.html">ListeningProbe</a>. If this parameter is enabled for any such probe, then
+all probes regardless of type will collect data unabated, as the CPU will be powered on despite the display being
+off.</p>
 </li>
 </ul>
 <h2 id="data-transfer">Data Transfer</h2>
+<p>It is expensive, both in terms of power and data network usage, to transfer collected data from the device to a 
+<a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>. The following parameters govern transfer behavior and associated
+power and network usage:</p>
+<ul>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS">WriteDelayMS</a>:  This parameter determines how frequently
+Sensus writes data from the device to the <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>. After writing
+data successfully, the data are deleted and subsequent writes operate only on data subsequently collected.
+The power and network usage of these writes will be determined by the number, type, and configuration of
+probes that are enabled.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireWiFi">RequireWiFi</a>:  This parameter determines whether WiFi
+is required for data transfer.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireCharging">RequireCharging</a>:  This parameter determines whether
+external power is required for data transfer.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequiredBatteryChargeLevelPercent">RequiredBatteryChargeLevelPercent</a>:  If external power
+is not required, then this parameter determines a minimum charge level required for data transfer.</p>
+</li>
+</ul>
 <h2 id="notifications">Notifications</h2>
+<p>Sensus will issue notifications for various states of the app. Whether a notification is issued for each app state
+is partially configurable depending on the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> and operating system.</p>
+<ul>
+<li><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> (iOS only):  Each 
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a> in iOS is capable of issuing a notification to the user when the 
+polling operation is scheduled to occur. This parameter determines whether these notifications are issued.</li>
+</ul>
 </article>
           </div>
           
