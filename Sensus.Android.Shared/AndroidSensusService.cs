@@ -85,11 +85,10 @@ namespace Sensus.Android
         {
             base.OnCreate();
 
-            // initialize the current activity plugin at the service level, as doing this at the activity
-            // level misses the case when the service is started on boot (or restarted by the OS) and the
-            // activity is never created. if the plugin initialization is done at the activity level, then
-            // the various permissions that are requested on protocol startup will fail. initializing the
-            // current activity here ensures that all such requests will succeed.
+            // initialize the current activity plugin here as well as in the main activity
+            // since this service may be created by iteself without a main activity (e.g., 
+            // on boot or on OS restart of the service). we want the plugin to have be 
+            // initialized regardless of how the app comes to be created.
             CrossCurrentActivity.Current.Init(Application);
 
             SensusContext.Current = new AndroidSensusContext
