@@ -101,7 +101,10 @@
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS">SensusServiceHelper.PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PENDING_SURVEY_NOTIFICATION_ID">SensusServiceHelper.PENDING_SURVEY_NOTIFICATION_ID</a>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PENDING_SURVEY_TEXT_NOTIFICATION_ID">SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PENDING_SURVEY_BADGE_NOTIFICATION_ID">SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PROTOCOL_UPDATED_NOTIFICATION_ID">SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID</a>
@@ -170,22 +173,19 @@
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_AddScriptAsync_Sensus_Probes_User_Scripts_Script_Sensus_Probes_User_Scripts_RunMode_">SensusServiceHelper.AddScriptAsync(Script, RunMode)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptAsync_Sensus_Probes_User_Scripts_Script_System_Boolean_">SensusServiceHelper.RemoveScriptAsync(Script, Boolean)</a>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunner_Sensus_Probes_User_Scripts_ScriptRunner_">SensusServiceHelper.RemoveScriptsForRunner(ScriptRunner)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScriptsForRunnerAsync_Sensus_Probes_User_Scripts_ScriptRunner_System_Boolean_">SensusServiceHelper.RemoveScriptsForRunnerAsync(ScriptRunner, Boolean)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync_System_Boolean_">SensusServiceHelper.RemoveExpiredScriptsAsync(Boolean)</a>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveExpiredScriptsAsync">SensusServiceHelper.RemoveExpiredScriptsAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearScriptsAsync">SensusServiceHelper.ClearScriptsAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Protocol_System_Boolean_">SensusServiceHelper.IssuePendingSurveysNotificationAsync(Protocol, Boolean)</a>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Notifications_PendingSurveyNotificationMode_Sensus_Protocol_">SensusServiceHelper.IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode, Protocol)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ClearPendingSurveysNotification">SensusServiceHelper.ClearPendingSurveysNotification()</a>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_CancelPendingSurveysNotification">SensusServiceHelper.CancelPendingSurveysNotification()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_FlashNotificationAsync_System_String_">SensusServiceHelper.FlashNotificationAsync(String)</a>
@@ -225,6 +225,9 @@
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_StopAsync">SensusServiceHelper.StopAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_RemoveScripts_Sensus_Probes_User_Scripts_Script___">SensusServiceHelper.RemoveScripts(Script[])</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Logger">SensusServiceHelper.Logger</a>
@@ -547,13 +550,13 @@
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_Version">SensusServiceHelper.Version</a></div>
   
   
-  <a id="Sensus_Android_AndroidSensusServiceHelper_WakeLockAcquisitionCount_" data-uid="Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount*"></a>
-  <h4 id="Sensus_Android_AndroidSensusServiceHelper_WakeLockAcquisitionCount" data-uid="Sensus.Android.AndroidSensusServiceHelper.WakeLockAcquisitionCount">WakeLockAcquisitionCount</h4>
+  <a id="Sensus_Android_AndroidSensusServiceHelper_WakeLockHeld_" data-uid="Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld*"></a>
+  <h4 id="Sensus_Android_AndroidSensusServiceHelper_WakeLockHeld" data-uid="Sensus.Android.AndroidSensusServiceHelper.WakeLockHeld">WakeLockHeld</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int WakeLockAcquisitionCount { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public bool WakeLockHeld { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -565,7 +568,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Int32</span></td>
+        <td><span class="xref">System.Boolean</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -624,34 +627,6 @@
   <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_WiFiConnected">SensusServiceHelper.WiFiConnected</a></div>
   <h3 id="methods">Methods
   </h3>
-  
-  
-  <a id="Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync*"></a>
-  <h4 id="Sensus_Android_AndroidSensusServiceHelper_BringToForegroundAsync" data-uid="Sensus.Android.AndroidSensusServiceHelper.BringToForegroundAsync">BringToForegroundAsync()</h4>
-  <div class="markdown level1 summary"><p>Brings the Sensus UI to the foreground.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task BringToForegroundAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_BringToForegroundAsync">SensusServiceHelper.BringToForegroundAsync()</a></div>
   
   
   <a id="Sensus_Android_AndroidSensusServiceHelper_DisableBluetoothAsync_" data-uid="Sensus.Android.AndroidSensusServiceHelper.DisableBluetoothAsync*"></a>

@@ -231,7 +231,7 @@ namespace Sensus.Callbacks
 
                             if (notifyUser)
                             {
-                                await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, callback.Protocol, true, callback.DisplayPage);
+                                await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.DisplayPage);
                             }
 
                             // if the callback specified a timeout, request cancellation at the specified time.
@@ -423,7 +423,13 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    return new PushNotificationRequest(callback.Protocol, "", "", "", SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id + "|" + callback.InvocationId, callback.NextExecution.Value);
+                    // the command id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
+                    string commandId = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
+
+                    // the full command includes the invocation ID
+                    string command = commandId + "|" + callback.InvocationId;
+
+                    return new PushNotificationRequest(callback.Protocol, "", "", "", command, commandId, callback.NextExecution.Value);
                 }
                 catch (Exception ex)
                 {

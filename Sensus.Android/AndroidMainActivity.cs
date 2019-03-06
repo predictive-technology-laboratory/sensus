@@ -40,7 +40,7 @@ using Plugin.Permissions;
 
 namespace Sensus.Android
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "SensusMobile", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.json")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsAppCompatActivity
@@ -80,6 +80,13 @@ namespace Sensus.Android
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
+
+            // initialize the current activity plugin here as well as in the service,
+            // since this activity will be starting the service after it is created.
+            // only initializing the plugin in the service was keeping the plugin from
+            // being properly initialized, presumably because the plugin missed the 
+            // lifecycle events of the activity. we want the plugin to have be 
+            // initialized regardless of how the app comes to be created.
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
 
 #if UI_TESTING
@@ -165,7 +172,7 @@ namespace Sensus.Android
                 // through the crash analytics service and we'll be able to track it
                 _serviceBindWait.WaitOne(TimeSpan.FromSeconds(10000));
 
-                SensusServiceHelper.Get().ClearPendingSurveysNotification();
+                SensusServiceHelper.Get().CancelPendingSurveysNotification();
 
                 // now that the service connection has been established, reenable UI.
                 try

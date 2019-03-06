@@ -89,11 +89,11 @@ namespace Sensus.Android.Probes.Location
         protected override async Task StartListeningAsync()
         {
             Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
-                                                                                               .SetSmallIcon(Resource.Drawable.notification_icon_background)
-                                                                                               .SetContentTitle("Beacon Scan")
-                                                                                               .SetContentText("Scanning...")
-                                                                                               .SetOngoing(true)
-                                                                                               .Build();
+                                                                                           .SetSmallIcon(Resource.Drawable.notification_icon_background)
+                                                                                           .SetContentTitle("Beacon Scan")
+                                                                                           .SetContentText("Scanning...")
+                                                                                           .SetOngoing(true)
+                                                                                           .Build();
             if (Beacons.Count > 0)
             {
                 _proximityObserver = new ProximityObserverBuilder(Application.Context, new Estimote.Android.Proximity.EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))

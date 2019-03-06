@@ -24,11 +24,6 @@ namespace Sensus.iOS.Notifications
         /// </summary>
         public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
 
-        /// <summary>
-        /// Key for the notification's alerting status, which is a boolean indicating whether or not to play a sound, vibrate, etc.
-        /// </summary>
-        public const string NOTIFICATION_ALERTING_KEY = "ALERTING";
-
         public abstract void RemoveAllNotifications();
     }
 }

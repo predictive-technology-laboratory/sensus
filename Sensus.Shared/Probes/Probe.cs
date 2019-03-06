@@ -339,7 +339,7 @@ namespace Sensus.Probes
                     }
                 }
 
-                string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
+                string message = "Sensus failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 await SensusServiceHelper.Get().FlashNotificationAsync(message);
 

@@ -21,6 +21,7 @@ using Sensus.Probes.User.Scripts;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Sensus.Notifications;
 
 namespace Sensus.UI
 {
@@ -59,7 +60,10 @@ namespace Sensus.UI
                 {
                     Script scriptToDelete = (sender as MenuItem).CommandParameter as Script;
 
-                    await SensusServiceHelper.Get().RemoveScriptAsync(scriptToDelete, true);
+                    if (SensusServiceHelper.Get().RemoveScripts(scriptToDelete))
+                    {
+                        await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, scriptToDelete.Runner.Probe.Protocol);
+                    }
 
                     // let the script agent know and store a datum to record the event
                     await (scriptToDelete.Runner.Probe.Agent?.ObserveAsync(scriptToDelete, ScriptState.Deleted) ?? Task.CompletedTask);
@@ -233,10 +237,13 @@ namespace Sensus.UI
                 }
 
                 // remove the submitted script. this should be done before the script is marked 
-                // as not submitting in order to prevent the user from retaking the script.
+                // as not submitting in order to prevent the user from reopening it.
                 if (!userCancelled)
                 {
-                    await SensusServiceHelper.Get().RemoveScriptAsync(selectedScript, true);
+                    if (SensusServiceHelper.Get().RemoveScripts(selectedScript))
+                    {
+                        await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, selectedScript.Runner.Probe.Protocol);
+                    }
                 }
 
                 // update UI to indicate that the script is no longer being submitted. this should 
@@ -284,7 +291,10 @@ namespace Sensus.UI
             {
                 if (await DisplayAlert("Clear all surveys?", "This action cannot be undone.", "Clear", "Cancel"))
                 {
-                    await SensusServiceHelper.Get().ClearScriptsAsync();
+                    if (await SensusServiceHelper.Get().ClearScriptsAsync())
+                    {
+                        await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, null);
+                    }
                 }
             }));
 
@@ -293,7 +303,10 @@ namespace Sensus.UI
 
             filterTimer.Elapsed += async (sender, e) =>
             {
-                await SensusServiceHelper.Get().RemoveExpiredScriptsAsync(true);
+                if (await SensusServiceHelper.Get().RemoveExpiredScriptsAsync())
+                {
+                    await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, null);
+                }
             };
 
             Appearing += (sender, e) =>

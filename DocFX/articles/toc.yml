@@ -12,6 +12,15 @@
     
   - name: Local-Only Storage
     href: local-only-storage.md
+    
+  - name: Burden Tuning
+    href: burden-tuning.md
+    
+  - name: Device, Operating System, and App Changes
+    href: device-os-app.md
+    
+  - name: Remote Updates
+    href: remote-updates.md
 
 - name: Data Protection
   items:
