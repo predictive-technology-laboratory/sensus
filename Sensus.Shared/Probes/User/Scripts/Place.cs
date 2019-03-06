@@ -1,6 +1,6 @@
 ﻿
 
-namespace AdapEMASensus
+namespace Sensus
 {
     public class Place
     {

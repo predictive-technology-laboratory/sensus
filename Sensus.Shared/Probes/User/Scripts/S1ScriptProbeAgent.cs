@@ -9,7 +9,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 using System.Threading;
 
-namespace AdapEMASensus
+namespace Sensus
 {
     public class S1ScriptProbeAgent : IScriptProbeAgent
     {
