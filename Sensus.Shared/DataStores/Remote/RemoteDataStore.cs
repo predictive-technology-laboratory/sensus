@@ -363,7 +363,13 @@ namespace Sensus.DataStores.Remote
         /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
 
-        public abstract Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets the protocol updates.
+        /// </summary>
+        /// <returns>The protocol updates.</returns>
+        /// <param name="identifier">Update identifier.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.

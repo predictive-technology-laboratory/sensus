@@ -637,7 +637,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken)
+        public override async Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -645,7 +645,7 @@ namespace Sensus.DataStores.Remote
             {
                 s3 = await CreateS3ClientAsync();
 
-                Stream responseStream = (await s3.GetObjectAsync(_bucket, PROTOCOL_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, PROTOCOL_UPDATES_DIRECTORY + "/" + identifier, cancellationToken)).ResponseStream;
 
                 string protocolUpdatesJSON;
                 using (StreamReader reader = new StreamReader(responseStream))

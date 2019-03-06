@@ -407,11 +407,6 @@ namespace Sensus.iOS
             await FlashNotificationAsync("This is not supported on iOS.");
         }
 
-        public override Task BringToForegroundAsync()
-        {
-            return Task.CompletedTask;
-        }
-
         #endregion
     }
 }

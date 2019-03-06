@@ -57,7 +57,8 @@ namespace Sensus
         #region static members
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
-        public const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
+        public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
+        public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
         public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
 
         /// <summary>
@@ -602,8 +603,6 @@ namespace Sensus
 
         public abstract Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback);
 
-        public abstract Task BringToForegroundAsync();
-
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
         /// listening location probe as well as the polling location probe. This method allows the platforms to
@@ -907,7 +906,11 @@ namespace Sensus
 
             if (modifiedScriptsToRun)
             {
-                await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+                // clear out any expired scripts
+                await RemoveExpiredScriptsAsync();
+
+                // update the pending surveys notification
+                await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol);
 
                 // save the app state. if the app crashes we want to keep the surveys around so they can be 
                 // taken. this will not result in duplicate surveys in cases where the script probe restarts
@@ -925,32 +928,34 @@ namespace Sensus
             }
         }
 
-        public async Task RemoveScriptAsync(Script script, bool issueNotification)
+        public bool RemoveScriptsForRunner(ScriptRunner runner)
         {
-            await RemoveScriptsAsync(issueNotification, script);
+            return RemoveScripts(_scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner, bool issueNotification)
+        public async Task<bool> RemoveExpiredScriptsAsync()
         {
-            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
-        }
+            bool removed = false;
 
-        public async Task RemoveExpiredScriptsAsync(bool issueNotification)
-        {
             foreach (Script script in _scriptsToRun)
             {
                 if (script.Expired)
                 {
-                    await RemoveScriptAsync(script, issueNotification);
-
                     // let the script agent know and store a datum to record the event
                     await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
                     await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+
+                    if (RemoveScripts(script))
+                    {
+                        removed = true;
+                    }
                 }
             }
+
+            return removed;
         }
 
-        public async Task ClearScriptsAsync()
+        public async Task<bool> ClearScriptsAsync()
         {
             foreach (Script script in _scriptsToRun)
             {
@@ -959,42 +964,65 @@ namespace Sensus
                 await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
-            _scriptsToRun.Clear();
-
-            await IssuePendingSurveysNotificationAsync(null, false);
+            return RemoveScripts(_scriptsToRun.ToArray());
         }
 
-        /// <summary>
-        /// Issues the pending surveys notification.
-        /// </summary>
-        /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
-        /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public async Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
+        public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol)
         {
-            await RemoveExpiredScriptsAsync(false);
+            // clear any existing notifications/badges
+            CancelPendingSurveysNotification();
 
             await _scriptsToRun.Concurrent.ExecuteThreadSafe(async () =>
             {
                 int numScriptsToRun = _scriptsToRun.Count;
 
-                if (numScriptsToRun == 0)
-                {
-                    ClearPendingSurveysNotification();
-                }
-                else
+                if (numScriptsToRun > 0 && notificationMode != PendingSurveyNotificationMode.None)
                 {
                     string s = numScriptsToRun == 1 ? "" : "s";
                     string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                     DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                     string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+
+                    string notificationId = null;
+                    bool alertUser = false;
+
+                    if (notificationMode == PendingSurveyNotificationMode.Badge)
+                    {
+                        notificationId = PENDING_SURVEY_BADGE_NOTIFICATION_ID;
+                    }
+                    else if (notificationMode == PendingSurveyNotificationMode.BadgeText)
+                    {
+                        notificationId = PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        alertUser = false;
+                    }
+                    else if (notificationMode == PendingSurveyNotificationMode.BadgeTextAlert)
+                    {
+                        notificationId = PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        alertUser = true;
+                    }
+                    else
+                    {
+                        SensusException.Report("Unrecognized pending survey notification mode:  " + notificationMode);
+                        return;
+                    }
+
+                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, DisplayPage.PendingSurveys);
                 }
             });
         }
 
-        public void ClearPendingSurveysNotification()
+        public void CancelPendingSurveysNotification()
         {
-            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_TEXT_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_BADGE_NOTIFICATION_ID);
+
+#if __IOS__
+            // clear the budge -- must be done from UI thread
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                UIKit.UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+            });
+#endif
         }
 
         /// <summary>
@@ -1152,8 +1180,6 @@ namespace Sensus
                 }
                 else
                 {
-                    await BringToForegroundAsync();
-
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         int stepNumber = inputGroupNum + 1;
@@ -1424,81 +1450,87 @@ namespace Sensus
         {
             return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
-                // before using the plugin.
-                await BringToForegroundAsync();
-
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                 {
                     return PermissionStatus.Granted;
                 }
 
-                string rationale = null;
+                // if the user has previously denied our permission request, then we should be given an opportunity to
+                // display a rationale for the request. if the user has selected the "don't ask again" option, then
+                // we will not be able to display the rationale and all requests for the permission will fail.
+                if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                {
+                    string rationale = null;
 
-                if (permission == Permission.Calendar)
-                {
-                    rationale = "Sensus collects calendar information for studies you enroll in.";
-                }
-                else if (permission == Permission.Camera)
-                {
-                    rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
-                }
-                else if (permission == Permission.Contacts)
-                {
-                    rationale = "Sensus collects calendar information for studies you enroll in.";
-                }
-                else if (permission == Permission.Location)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                }
-                else if (permission == Permission.LocationAlways)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                }
-                else if (permission == Permission.LocationWhenInUse)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                }
-                else if (permission == Permission.MediaLibrary)
-                {
-                    rationale = "Sensus collects media for studies you enroll in.";
-                }
-                else if (permission == Permission.Microphone)
-                {
-                    rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
-                }
-                else if (permission == Permission.Phone)
-                {
-                    rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
-                }
-                else if (permission == Permission.Photos)
-                {
-                    rationale = "Sensus collects photos for studies you enroll in.";
-                }
-                else if (permission == Permission.Reminders)
-                {
-                    rationale = "Sensus collects reminder information for studies you enroll in.";
-                }
-                else if (permission == Permission.Sensors)
-                {
-                    rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
-                }
-                else if (permission == Permission.Sms)
-                {
-                    rationale = "Sensus collects text messages for studies you enroll in.";
-                }
-                else if (permission == Permission.Speech)
-                {
-                    rationale = "Sensus uses the microphone for studies you enroll in.";
-                }
-                else if (permission == Permission.Storage)
-                {
-                    rationale = "Sensus must be able to write to your device's storage for proper operation.";
-                }
+                    if (permission == Permission.Calendar)
+                    {
+                        rationale = "Sensus collects calendar information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Camera)
+                    {
+                        rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
+                    }
+                    else if (permission == Permission.Contacts)
+                    {
+                        rationale = "Sensus collects calendar information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Location)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.LocationAlways)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.LocationWhenInUse)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.MediaLibrary)
+                    {
+                        rationale = "Sensus collects media for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Microphone)
+                    {
+                        rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+                    }
+                    else if (permission == Permission.Phone)
+                    {
+                        rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+                    }
+                    else if (permission == Permission.Photos)
+                    {
+                        rationale = "Sensus collects photos for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Reminders)
+                    {
+                        rationale = "Sensus collects reminder information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Sensors)
+                    {
+                        rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Sms)
+                    {
+                        rationale = "Sensus collects text messages for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Speech)
+                    {
+                        rationale = "Sensus uses the microphone for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Storage)
+                    {
+                        rationale = "Sensus must be able to write to your device's storage for proper operation.";
+                    }
+                    else
+                    {
+                        SensusException.Report("Missing rationale for permission request:  " + permission);
+                    }
 
-                if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-                {
-                    await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
+                    if (rationale != null)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
+                    }
                 }
 
                 try
@@ -1707,8 +1739,7 @@ namespace Sensus
             await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
         }
 
-        #region Private Methods
-        private async Task RemoveScriptsAsync(bool issueNotification, params Script[] scripts)
+        public bool RemoveScripts(params Script[] scripts)
         {
             bool removed = false;
 
@@ -1720,10 +1751,7 @@ namespace Sensus
                 }
             }
 
-            if (removed && issueNotification)
-            {
-                await IssuePendingSurveysNotificationAsync(null, false);
-            }
+            return removed;               
         }
 
         private int GetScriptIndex(Script script)
@@ -1752,6 +1780,5 @@ namespace Sensus
 
             return index;
         }
-        #endregion
     }
 }

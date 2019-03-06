@@ -51,7 +51,6 @@ namespace Sensus.Android
         private AndroidMainActivity _focusedMainActivity;
         private readonly object _focusedMainActivityLocker = new object();
         private PowerManager.WakeLock _wakeLock;
-        private int _wakeLockAcquisitionCount;
         private List<Action<AndroidMainActivity>> _actionsToRunUsingMainActivity;
         private bool _userDeniedBluetoothEnable;
         private TimeSpan _wakeLockTime;
@@ -183,9 +182,20 @@ namespace Sensus.Android
         }
 
         [JsonIgnore]
-        public int WakeLockAcquisitionCount
+        public bool WakeLockHeld
         {
-            get { return _wakeLockAcquisitionCount; }
+            get
+            {
+                if (_wakeLock != null)
+                {
+                    lock (_wakeLock)
+                    {
+                        return _wakeLock.IsHeld;
+                    }
+                }
+
+                return false;
+            }
         }
 
         [JsonIgnore]
@@ -236,7 +246,6 @@ namespace Sensus.Android
             else
             {
                 _wakeLock = (_service.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
-                _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
             }
         }
@@ -765,14 +774,18 @@ namespace Sensus.Android
             {
                 lock (_wakeLock)
                 {
-                    _wakeLock.Acquire();
-                    Logger.Log("Wake lock acquisition count:  " + ++_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
+                    bool firstAcquisition = !_wakeLock.IsHeld;
 
-                    if (_wakeLockAcquisitionCount == 1)
+                    _wakeLock.Acquire();
+
+                    Logger.Log("Wake lock acquired" + (firstAcquisition ? " for the first time" : "") + ".", LoggingLevel.Normal, GetType());
+
+                    // if this is the first successful acquisition, then mark the time.
+                    if (firstAcquisition && _wakeLock.IsHeld)
                     {
                         if (_wakeLockTimestamp != null)
                         {
-                            SensusException.Report("Device awake timestamp is not null, but we just acquired the first wake lock.");
+                            SensusException.Report("Acquired wake lock for the first time but with an existing timestamp.");
                         }
 
                         _wakeLockTimestamp = DateTime.Now;
@@ -787,33 +800,38 @@ namespace Sensus.Android
             {
                 lock (_wakeLock)
                 {
-                    _wakeLock.Release();
-                    Logger.Log("Wake lock acquisition count:  " + --_wakeLockAcquisitionCount, LoggingLevel.Normal, GetType());
-
-                    if (_wakeLockAcquisitionCount == 0)
+                    // ensure the wake lock is held in order to prevent under-locking exceptions
+                    if (_wakeLock.IsHeld)
                     {
-                        if (_wakeLockTimestamp == null)
-                        {
-                            SensusException.Report("Device awake timestamp is null, but we just released the final wake lock.");
-                        }
-                        else
-                        {
-                            _wakeLockTime += DateTime.Now - _wakeLockTimestamp.Value;
-                            _wakeLockTimestamp = null;
+                        _wakeLock.Release();
 
-                            SensusServiceHelper.Get().Logger.Log("Spent " + _wakeLockTime + " holding wake lock(s).", LoggingLevel.Normal, GetType());
+                        Logger.Log("Wake lock released" + (_wakeLock.IsHeld ? "" : " for the final time") + ".", LoggingLevel.Normal, GetType());
+
+                        // if wake lock is no longer held, then update the amount of time spent holding it.
+                        if (!_wakeLock.IsHeld)
+                        {
+                            if (_wakeLockTimestamp == null)
+                            {
+                                SensusException.Report("Released wake lock for the final time without a timestamp on the first acquisition.");
+                            }
+                            else
+                            {
+                                _wakeLockTime += DateTime.Now - _wakeLockTimestamp.Value;
+
+                                SensusServiceHelper.Get().Logger.Log("Has spent " + _wakeLockTime + " holding the wake lock.", LoggingLevel.Normal, GetType());
+
+                                _wakeLockTimestamp = null;
+                            }
                         }
+                    }
+                    else
+                    {
+                        SensusException.Report("Attempted to call " + nameof(LetDeviceSleep) + ", but the wake lock is not currently held.");
+
+                        _wakeLockTimestamp = null;
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Brings the Sensus UI to the foreground.
-        /// </summary>
-        public override Task BringToForegroundAsync()
-        {
-            return RunActionUsingMainActivityAsync(activity => { }, true, false);
         }
 
         #endregion

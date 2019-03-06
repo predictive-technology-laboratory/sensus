@@ -89,11 +89,6 @@ namespace Sensus.Tests.Classes
             }
         }
 
-        public override Task BringToForegroundAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
         {
             throw new NotImplementedException();

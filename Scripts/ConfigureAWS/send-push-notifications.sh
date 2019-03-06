@@ -52,7 +52,7 @@ done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 sas=$(node get-sas.js $2 $3 $4)
 
 # process push notification requests
-declare -A processed_command_classes
+declare -A processed_command_ids
 echo -e "\n\n************* PROCESSING PNRs *************"
 while read n
 do
@@ -77,31 +77,43 @@ do
     body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    command_id=$(jq -r '.["command-id"]' $n)  # pull out the raw JSON value, as we only use is for tracking processed commands. must use the bracketed syntax to prevent the dash from being interpreted as a subtraction.
     id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
     time=$(jq -r '.time' $n)       # the value indicates unix time in seconds.
 
-    # if this is a push notification command, check if we've already sent a push notification 
-    # for the command class (everything except for the invocation ID). we're processing the
-    # push notification requests with newest times first, so if we have already processed the
-    # command class then we can safely ignore all others as they are older and obsolete.
-    command_class=${command%|*}        # strip the invocation ID
-    command_class=${command_class#\"}  # strip the leading double-quote (retained above)
-    command_class=${command_class%\"}  # strip the trailing double-quote (retained above)
-    if [[ $command_class = "" ]]
+    # previously, we did not send an explicit command-id field. instead, we were able to 
+    # hack it out of the command because at that time we were only sending callback commands
+    # in which the command id comprised everything but the final invocation identifier.
+    # but now we wish to send other kinds of commands that do not have this format, making
+    # it necessary to explicitly provide a command-id field. for backwards compatibility,
+    # if no command-id field is passed to us then revert to the hacking approach.
+    if [[ $command_id = "" ]]
     then
-	echo "No command found."
+        # if this is a push notification command, check if we've already sent a push notification 
+        # for the command id (everything except for the invocation ID). we're processing the
+        # push notification requests with newest times first, so if we have already processed the
+        # command id then we can safely ignore all others as they are older and obsolete.
+	command_id=${command%|*}     # strip the invocation ID
+	command_id=${command_id#\"}  # strip the leading double-quote (retained above)
+	command_id=${command_id%\"}  # strip the trailing double-quote (retained above)
+    fi
+
+    # check for a command id and whether we've already processed it
+    if [[ $command_id = "" ]]
+    then
+	echo "No command id found."
     else
-	if [[ ${processed_command_classes[$command_class]} ]]
+	if [[ ${processed_command_ids[$command_id]} ]]
 	then
-	    echo "Obsolete command class $command_class (time $time). Deleting file..."
+	    echo "Obsolete command id $command_id (time $time). Deleting file..."
 	    aws s3 rm "$s3_path/$(basename $n)" &
 	    rm $n
 	    echo ""
 	    continue
 	else
-	    echo "New command class:  $command_class (time $time)."
-	    processed_command_classes[$command_class]=1
+	    echo "New command id:  $command_id (time $time)."
+	    processed_command_ids[$command_id]=1
 	fi
     fi
 	

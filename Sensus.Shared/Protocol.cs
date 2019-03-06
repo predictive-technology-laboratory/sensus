@@ -2411,7 +2411,7 @@ namespace Sensus
             string eventName = TrackedEvent.Miscellaneous + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Wake Lock Count", androidSensusServiceHelper.WakeLockAcquisitionCount.ToString() }
+                { "Wake Lock Held", androidSensusServiceHelper.WakeLockHeld.ToString() }
             };
 
             Analytics.TrackEvent(eventName, properties);

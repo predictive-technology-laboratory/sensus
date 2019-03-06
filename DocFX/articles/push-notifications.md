@@ -58,6 +58,8 @@ the `DefaultFullSharedAccessSignature` of the Azure Notification Hub.
 1. Note that APNS has been observed to throttle push notification delivery rate. Please see the [Polling Probe](xref:Sensus.Probes.PollingProbe)
    documentation for more information on polling rates and push notification throttling.
 
-## Conclusion
+## Conclusion and Next Steps
 If the above steps are successful, your Sensus protocol should now receive push notification support when
-installed and started on participant devices.
+installed and started on participant devices. Here are some things you can now do:
+
+  * [Remote protocol updates](xref:remote_updates)
