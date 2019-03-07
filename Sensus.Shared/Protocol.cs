@@ -2599,7 +2599,7 @@ namespace Sensus
 
 #if __ANDROID__
                 // the foreground service notification's pause/resume buttons depend on protocol state. reissue the notification to reflect new state.
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
+                (SensusContext.Current.Notifier as Sensus.Android.Notifications.AndroidNotifier).ReissueForegroundServiceNotification();
 #endif
             }
             catch (Exception ex)

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Android.Content;
+using Sensus.Android.Notifications;
 using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Sensus.Android
 
                 if (serviceHelper != null)
                 {
-                    if (intent.Action == AndroidSensusService.NOTIFICATION_ACTION_PAUSE)
+                    if (intent.Action == AndroidNotifier.NOTIFICATION_ACTION_PAUSE)
                     {
                         List<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.AllowPause).ToList();
 
@@ -46,7 +47,7 @@ namespace Sensus.Android
                             await pausableProtocol.PauseAsync();
                         }
                     }
-                    else if (intent.Action == AndroidSensusService.NOTIFICATION_ACTION_RESUME)
+                    else if (intent.Action == AndroidNotifier.NOTIFICATION_ACTION_RESUME)
                     {
                         foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
                         {

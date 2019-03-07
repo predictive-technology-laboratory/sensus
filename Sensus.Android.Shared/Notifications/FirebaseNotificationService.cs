@@ -34,6 +34,14 @@ namespace Sensus.Android.Notifications
             {
                 serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
+                // based on log messages, it looks like the os might kill the service component of the application
+                // but leave the rest of the application (e.g., the service helper) intact and resident in memory. 
+                // if this happens then the serivce helper will be present, but the service itself will be destroyed. 
+                // this may also mean that the protocols are stopped. regardless, we desire for the service to always
+                // be running, as this ensure that the app will continue as a foreground service. ask the os to start 
+                // the service any time a push notification is received.
+                AndroidSensusService.Start(Application.Context, true);
+
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting 
                 // any execution requested by the push notification.
                 serviceHelper.KeepDeviceAwake();

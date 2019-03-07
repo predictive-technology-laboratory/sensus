@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Android.OS;
 using System.Threading.Tasks;
+using Android.App;
 
 namespace Sensus.Android
 {
@@ -31,7 +32,7 @@ namespace Sensus.Android
 
         private readonly object _locker = new object();
 
-        public AndroidTextToSpeech(AndroidSensusService service)
+        public AndroidTextToSpeech()
         {
             // initialize wait handles before passing the current object as a listener
             // below. if the listener OnInit method is called before the wait handles are
@@ -41,7 +42,7 @@ namespace Sensus.Android
             _disposed = false;
 
             // initialize speech module
-            _textToSpeech = new TextToSpeech(service, this);
+            _textToSpeech = new TextToSpeech(Application.Context, this);
             _textToSpeech.SetLanguage(Java.Util.Locale.Default);
             _textToSpeech.SetOnUtteranceProgressListener(this);
         }

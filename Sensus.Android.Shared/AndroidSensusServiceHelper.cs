@@ -46,7 +46,6 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-        private AndroidSensusService _service;
         private string _deviceId;
         private AndroidMainActivity _focusedMainActivity;
         private readonly object _focusedMainActivityLocker = new object();
@@ -75,7 +74,7 @@ namespace Sensus.Android
         {
             get
             {
-                ConnectivityManager connectivityManager = _service.GetSystemService(global::Android.Content.Context.ConnectivityService) as ConnectivityManager;
+                ConnectivityManager connectivityManager = Application.Context.GetSystemService(global::Android.Content.Context.ConnectivityService) as ConnectivityManager;
 
                 if (connectivityManager == null)
                 {
@@ -115,7 +114,7 @@ namespace Sensus.Android
             get
             {
                 IntentFilter filter = new IntentFilter(Intent.ActionBatteryChanged);
-                BatteryStatus status = (BatteryStatus)_service.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
+                BatteryStatus status = (BatteryStatus)Application.Context.RegisterReceiver(null, filter).GetIntExtra(BatteryManager.ExtraStatus, -1);
                 return status == BatteryStatus.Charging || status == BatteryStatus.Full;
             }
         }
@@ -161,14 +160,14 @@ namespace Sensus.Android
             {
                 // we should always have a service. if we do not, assume the worst -- that we're on the main thread. this will hopefully
                 // produce an error report back at xamarin insights.
-                if (_service == null)
+                if (Application.Context == null)
                 {
                     return true;
                 }
                 // if we have a service, compare the current thread's looper to the main thread's looper
                 else
                 {
-                    return Looper.MyLooper() == _service.MainLooper;
+                    return Looper.MyLooper() == Application.Context.MainLooper;
                 }
             }
         }
@@ -177,7 +176,7 @@ namespace Sensus.Android
         {
             get
             {
-                return _service?.PackageManager.GetPackageInfo(_service.PackageName, PackageInfoFlags.Activities).VersionName ?? null;
+                return Application.Context?.PackageManager.GetPackageInfo(Application.Context.PackageName, PackageInfoFlags.Activities).VersionName ?? null;
             }
         }
 
@@ -229,25 +228,8 @@ namespace Sensus.Android
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
             _userDeniedBluetoothEnable = false;
-        }
-
-        public void SetService(AndroidSensusService service)
-        {
-            _service = service;
-
-            if (_service == null)
-            {
-                if (_wakeLock != null)
-                {
-                    _wakeLock.Dispose();
-                    _wakeLock = null;
-                }
-            }
-            else
-            {
-                _wakeLock = (_service.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
-                _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
-            }
+            _wakeLock = (Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
+            _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
         }
 
         #region main activity
@@ -283,9 +265,9 @@ namespace Sensus.Android
 
                             // start the activity. when it starts, it will call back to SetFocusedMainActivity indicating readiness. once 
                             // this happens, we'll be ready to run the action that was just passed in as well as any others that need to be run.
-                            Intent intent = new Intent(_service, typeof(AndroidMainActivity));
+                            Intent intent = new Intent(Application.Context, typeof(AndroidMainActivity));
                             intent.AddFlags(ActivityFlags.FromBackground | ActivityFlags.NewTask);
-                            _service.StartActivity(intent);
+                            Application.Context.StartActivity(intent);
                         }
                         else if (holdActionIfNoActivity)
                         {
@@ -365,7 +347,7 @@ namespace Sensus.Android
                         {
                             try
                             {
-                                using (StreamReader file = new StreamReader(_service.ContentResolver.OpenInputStream(result.Item2.Data)))
+                                using (StreamReader file = new StreamReader(Application.Context.ContentResolver.OpenInputStream(result.Item2.Data)))
                                 {
                                     callback(file.ReadToEnd());
                                 }
@@ -418,7 +400,7 @@ namespace Sensus.Android
                         }
 
                         Java.IO.File file = new Java.IO.File(path);
-                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(_service, "edu.virginia.sie.ptl.sensus.fileprovider", file);
+                        global::Android.Net.Uri uri = FileProvider.GetUriForFile(Application.Context, "edu.virginia.sie.ptl.sensus.fileprovider", file);
                         intent.PutExtra(Intent.ExtraStream, uri);
 
                         mainActivity.StartActivity(intent);
@@ -450,7 +432,7 @@ namespace Sensus.Android
 
         public override async Task TextToSpeechAsync(string text)
         {
-            AndroidTextToSpeech textToSpeech = new AndroidTextToSpeech(_service);
+            AndroidTextToSpeech textToSpeech = new AndroidTextToSpeech();
             await textToSpeech.SpeakAsync(text);
             textToSpeech.Dispose();
         }
@@ -624,7 +606,7 @@ namespace Sensus.Android
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
 
             // ensure that the device has the required feature
-            if (bluetoothAdapter == null || !_service.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
+            if (bluetoothAdapter == null || !Application.Context.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
             {
                 await FlashNotificationAsync("This device does not have Bluetooth " + (lowEnergy ? "Low Energy" : "") + ".");
                 return false;
@@ -836,19 +818,9 @@ namespace Sensus.Android
 
         #endregion
 
-        public void ReissueForegroundServiceNotification()
-        {
-            _service.ReissueForegroundServiceNotification();
-        }
-
-        public void StopAndroidSensusService()
-        {
-            _service.Stop();
-        }
-
         public SensorManager GetSensorManager()
         {
-            return _service.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
+            return Application.Context.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
         }
     }
 }
