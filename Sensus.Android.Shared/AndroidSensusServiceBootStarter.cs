@@ -31,7 +31,7 @@ namespace Sensus.Android
             // this method is usually called on the UI thread and can crash the app if it throws an exception
             try
             {
-                AndroidSensusService.Start(context, true);
+                AndroidSensusService.Start(true);
             }
             catch (Exception ex)
             {

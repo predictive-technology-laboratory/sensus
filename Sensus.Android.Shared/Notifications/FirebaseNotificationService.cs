@@ -40,9 +40,18 @@ namespace Sensus.Android.Notifications
                 // start the service any time a push notification is received. this should be a no-op if the service
                 // is already running. don't ask for the service to be stopped in case no protocols are running, as
                 // it could just be the case that a push notification arrives late after the user has stopped protocols.
-                AndroidSensusService.Start(Application.Context, false);
+                AndroidSensusService.Start(false);
 
                 serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+                // if we just started the service above, then it's likely that the service helper will not yet be 
+                // initialized (it must be deserialized, which is slow). in this case, just bail out and wait for
+                // the next push notification to arrive, at which time the service helper will hopefully be ready.
+                if (serviceHelper == null)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Service helper not initialized following receipt of push notification and service start.", LoggingLevel.Normal, GetType());
+                    return;
+                }
 
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, 
                 // interrupting any execution requested by the push notification. the service 

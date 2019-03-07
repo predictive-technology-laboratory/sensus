@@ -50,10 +50,9 @@ namespace Sensus.Android
         /// <summary>
         /// Starts the service.
         /// </summary>
-        /// <returns>The service.</returns>
-        /// <param name="context">Context.</param>
+        /// <returns>The service intent.</returns>
         /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c> stop service if no protocols should run.</param>
-        public static Intent Start(global::Android.Content.Context context, bool stopServiceIfNoProtocolsShouldRun)
+        public static Intent Start(bool stopServiceIfNoProtocolsShouldRun)
         {
             Intent serviceIntent = GetIntent();
             serviceIntent.PutExtra(STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, stopServiceIfNoProtocolsShouldRun);
@@ -69,12 +68,12 @@ namespace Sensus.Android
 #if __ANDROID_26__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                context.StartForegroundService(serviceIntent);
+                Application.Context.StartForegroundService(serviceIntent);
             }
             else
 #endif
             {
-                context.StartService(serviceIntent);
+                Application.Context.StartService(serviceIntent);
             }
 
             return serviceIntent;
@@ -234,7 +233,7 @@ namespace Sensus.Android
                     }
                     catch (Exception ex)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Exception while notifying binding of service stop:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get()?.Logger.Log("Exception while notifying binding of service stop:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
@@ -264,13 +263,6 @@ namespace Sensus.Android
                 UnregisterReceiver(_powerBroadcastReceiver);
             }
             catch (Exception)
-            { }
-
-            try
-            {
-                (SensusContext.Current.Notifier as AndroidNotifier).OnDestroy();
-            }
-            catch(Exception)
             { }
             
             // do this last so that we don't dispose the service and its system services too early.

@@ -351,15 +351,5 @@ namespace Sensus.Android.Notifications
 
             (Application.Context.GetSystemService(Application.NotificationService) as NotificationManager).Notify(FOREGROUND_SERVICE_NOTIFICATION_ID, BuildForegroundServiceNotification());
         }
-
-        public void OnDestroy()
-        {
-            try
-            {
-                Application.Context.UnregisterReceiver(_notificationActionReceiver);
-            }
-            catch (Exception)
-            { }
-        }
     }
 }
