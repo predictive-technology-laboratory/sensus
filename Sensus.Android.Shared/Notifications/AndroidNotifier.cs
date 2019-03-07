@@ -66,8 +66,6 @@ namespace Sensus.Android.Notifications
                                                         .SetSmallIcon(Resource.Drawable.ic_launcher)
                                                         .SetContentIntent(mainActivityPendingIntent)
                                                         .SetOngoing(true);
-
-            UpdateForegroundServiceNotificationBuilder();
         }
 
         public Notification.Builder CreateNotificationBuilder(global::Android.Content.Context context, SensusNotificationChannel channel)
@@ -278,9 +276,9 @@ namespace Sensus.Android.Notifications
         /// <summary>
         /// Updates the foreground service notification builder, so that it reflects the enrollment status and participation level of the user.
         /// </summary>
-        private void UpdateForegroundServiceNotificationBuilder()
+        public void UpdateForegroundServiceNotificationBuilder()
         {
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
             // the service helper will be null when this method is called from OnCreate. set some generic text until
             // the service helper has a chance to load, at which time this method will be called again and we'll update

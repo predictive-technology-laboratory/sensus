@@ -32,18 +32,20 @@ namespace Sensus.Android.Notifications
 
             try
             {
-                serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
-
-                // based on log messages, it looks like the os might kill the service component of the application
+                // based on log messages, it looks like the os might destroy the service component of the application
                 // but leave the rest of the application (e.g., the service helper) intact and resident in memory. 
                 // if this happens then the serivce helper will be present, but the service itself will be destroyed. 
                 // this may also mean that the protocols are stopped. regardless, we desire for the service to always
-                // be running, as this ensure that the app will continue as a foreground service. ask the os to start 
-                // the service any time a push notification is received.
-                AndroidSensusService.Start(Application.Context, true);
+                // be running, as this ensures that the app will continue as a foreground service. so, ask the os to 
+                // start the service any time a push notification is received. this should be a no-op if the service
+                // is already running. don't ask for the service to be stopped in case no protocols are running, as
+                // it could just be the case that a push notification arrives late after the user has stopped protocols.
+                AndroidSensusService.Start(Application.Context, false);
 
-                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting 
-                // any execution requested by the push notification.
+                serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+                // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, 
+                // interrupting any execution requested by the push notification. the service 
                 serviceHelper.KeepDeviceAwake();
 
                 // extract push notification information
@@ -54,7 +56,6 @@ namespace Sensus.Android.Notifications
                 string sound = message.Data["sound"];
                 string command = message.Data["command"];
 
-                // wait for the push notification to be processed
                 await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, CancellationToken.None);
             }
             catch (Exception ex)

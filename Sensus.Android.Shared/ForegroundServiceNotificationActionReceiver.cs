@@ -36,6 +36,7 @@ namespace Sensus.Android
 
                 SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
+                // service helper will be null for a time when the app is starting up
                 if (serviceHelper != null)
                 {
                     if (intent.Action == AndroidNotifier.NOTIFICATION_ACTION_PAUSE)
