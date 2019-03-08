@@ -5,7 +5,7 @@ then
     echo ""
     echo "Purpose:  Pushes an updates file to devices. Reads devices from standard input."
     echo ""
-    echo "  Usage:  ./push-updates.sh [updates file] [update id]"
+    echo "Usage:  ./push-updates.sh [UPDATES FILE] [UPDATE ID]"
     echo ""
     exit 1
 fi

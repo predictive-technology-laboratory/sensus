@@ -5,7 +5,7 @@ then
     echo ""
     echo "Purpose:  Lists devices accepting push notifications. Does not read from standard input."
     echo ""
-    echo "  Usage:  ./list-devices.sh [bucket]"
+    echo "Usage:  ./list-devices.sh [BUCKET]"
     echo ""
     exit 1
 fi

@@ -5,7 +5,7 @@ then
     echo ""
     echo "Purpose:  Formats an update command to JSON. Does not read from standard input."
     echo ""
-    echo "  Usage:  ./format-protocol-update.sh [property type] [property name] [target type] [value]"
+    echo "Usage:  ./format-protocol-update.sh [PROPERTY TYPE] [PROPERTY NAME] [TARGET TYPE] [VALUE]"
     echo ""
     exit 1
 fi

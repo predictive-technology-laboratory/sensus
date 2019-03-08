@@ -5,7 +5,7 @@ then
     echo ""
     echo "Purpose:  Formats JSON update commands into full update JSON payload. Reads JSON update commands from standard input."
     echo ""
-    echo "  Usage:  ./format-protocol-updates.sh [user notification message]"
+    echo "Usage:  ./format-protocol-updates.sh [MESSAGE]"
     echo ""
     exit 1
 fi
