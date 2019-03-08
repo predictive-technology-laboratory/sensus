@@ -318,6 +318,14 @@ namespace Sensus.Probes
 
         public async Task StartAsync()
         {
+            // don't attempt to start the probe if it is not enabled. this can happen, e.g., when remote protocol updates
+            // disable the probe and the probe is subsequently restarted to take on the update values. bail out.
+            if (!Enabled)
+            {
+                SensusServiceHelper.Get().Logger.Log("Probe is not enabled. Not starting", LoggingLevel.Normal, GetType());
+                return;
+            }
+
             try
             {
                 await ProtectedStartAsync();

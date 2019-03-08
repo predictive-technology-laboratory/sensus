@@ -1880,9 +1880,9 @@ namespace Sensus
                                     // succeeds, all band probes will then be started.
                                     startMicrosoftBandProbes = false;
                                 }
-                                catch (Exception ex)
+                                catch (Exception probeStartException)
                                 {
-                                    SensusServiceHelper.Get().Logger.Log("Exception while starting probe:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                    SensusServiceHelper.Get().Logger.Log("Exception while starting probe:  " + probeStartException.Message, LoggingLevel.Normal, GetType());
                                 }
 
                                 // probe might become disabled during Start due to a NotSupportedException
@@ -1904,11 +1904,11 @@ namespace Sensus
                     {
                         cancelStartException = cancellationException;
                     }
-                    catch (Exception probeException)
+                    catch (Exception startException)
                     {
                         // don't stop the protocol if we get an exception while starting probes. we might recover 
                         // from a failed probe (e.g., permission denied).
-                        string message = "Failure while starting probes:  " + probeException.Message;
+                        string message = "Exception while starting probes:  " + startException.Message;
                         SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                         await SensusServiceHelper.Get().FlashNotificationAsync(message);
                     }
